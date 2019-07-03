@@ -1,0 +1,12 @@
+mutation {
+	createOrganization(
+		name: "{{ organization_name }}"
+		address: "{{ organization_address }}"
+		zipCode: "{{ organization_zip_code }}"
+		city: "{{ organization_city }}"
+		country: "{{ organization_country }}"
+	)
+	{
+		id
+	}
+}

@@ -1,0 +1,7 @@
+mutation {
+	deleteProject(
+		projectID: "{{ project_id }}"
+	){
+		id
+	}
+}

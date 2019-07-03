@@ -1,0 +1,11 @@
+mutation {
+	appendToTools(
+		projectID: "{{ project_id }}"
+		name: "{{ tool_name }}"
+		toolType: {{ tool_type }}
+		jsonSettings: "{{ tool_json_settings }}"
+	)
+	{
+		id
+	}
+}

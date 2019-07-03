@@ -1,0 +1,8 @@
+mutation {
+	forceProjectKpiComputation(
+		projectID: "{{ project_id }}"
+	)
+	{
+		id
+	}
+}

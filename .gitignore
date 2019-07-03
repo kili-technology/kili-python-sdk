@@ -1,0 +1,6 @@
+.DS_Store
+scripts_playground/.DS_Store
+.idea/
+__pycache__/
+scripts_playground/__pycache__/
+.ipynb_checkpoints/

@@ -1,0 +1,10 @@
+mutation {
+	appendToRoles(
+		projectID: "{{ project_id }}"
+		userEmail: "{{ user_email }}"
+		role: LABELER
+	)
+	{
+		id
+	}
+}

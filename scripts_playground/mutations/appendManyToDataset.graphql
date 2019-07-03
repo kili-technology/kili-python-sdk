@@ -1,0 +1,13 @@
+mutation {
+	appendManyToDataset(
+		projectIDArray: {{ project_ID_array }}
+		contentArray: {{ content_array }}
+		filenameArray: {{ file_name_array }}
+		isInstructionsArray: {{ is_instructions_array }}
+		instructionsArray: {{ instructions_array }}
+		isHoneypotArray: {{ is_honeypot_array }}
+	)
+	{
+		id
+	}
+}

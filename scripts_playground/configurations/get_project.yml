@@ -1,0 +1,8 @@
+authentication:
+  email: "my-user@my-company.com"
+  password: "********"
+project:
+  id: "PROJECT-ID-ABC"
+mutations:
+  - signIn
+  - getProject

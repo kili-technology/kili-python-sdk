@@ -1,0 +1,13 @@
+mutation {
+	signIn(
+		email: "{{ authentication_email }}",
+		password: "{{ authentication_password }}"
+	) {
+		id
+		token
+		user {
+			email
+			id
+		}
+	}
+}
