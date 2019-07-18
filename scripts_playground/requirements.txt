@@ -1,7 +1,0 @@
-certifi==2019.6.16
-Click==7.0
-graphqlclient==0.2.4
-Jinja2==2.10.1
-MarkupSafe==1.1.1
-PyYAML==5.1.1
-six==1.12.0

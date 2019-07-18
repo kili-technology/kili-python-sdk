@@ -1,89 +1,54 @@
-# kili-playground
+# Kili Playground
 
-## Execute mutations
-
-You have two ways for interacting with Kili's API :
-
-- Either execute a predefined sequence of mutations/queries using `scripts_playground/execute_mutation.py`
-- Or execute a custom mutation/query with Python's `graphqlclient`
-
-### Execute a predefined sequence of mutations/queries
-
-We already implemented several sequences in order to:
- 
-1. `scripts_playground_playground/configurations/add_new_project.yml`:
-  - Create the given organization
-  - Create all given users within this organization
-  - Create an empty project according to given properties
-
-2. `configurations/delete_project.yml`:
-  - Delete a project according to a given ID
-  
-3. `Kili's example notebook`:
-  - Add asset to project
-  - Download Assets 
-  - Add Label to assets  
-
-You can modify the content of the configurations to serve your needs:
-
-- update configuration properties
-- update sequence of mutations
-
-Then launch:
+## Installation
 
 ```bash
-cd scripts_playground
-pip install -r requirements.txt
-python execute_mutations.py --configuration_file configurations/CHOSEN_CONFIGURATION --graphql_client https://cloud.kili-technology.com/api/label/graphql
+git clone https://github.com/kili-technology/kili-playground.git
+cd kili-playground
 ```
 
+## Get started
 
-
-### Execute custom mutations/queries
-
-Kili's API secures all queries and mutations with [JWT tokens](https://en.wikipedia.org/wiki/JSON_Web_Token).
-
-If you decide to use Python's GraphQL you need to:
-
-- Authenticate via the `signIn` resolver, in order to retrieve the authentication token
+### Authenticate
 
 ```python
 from graphqlclient import GraphQLClient
 import json
 
-graphql_client = GraphQLClient("https://cloud.kili-technology.com/api/label/graphql")
+def authenticate(email, password):
+    client = GraphQLClient('https://cloud.kili-technology.com/api/label/graphql')
+    auth_payload = signin(client, email, password)
+    api_token = auth_payload['token']
+    client.inject_token('Bearer: ' + api_token)
+    user_id = auth_payload['user']['id']
+    return client, user_id
 
-sign_in = json.loads(graphql_client.execute('''mutation {
-    signIn(
-        email: "MY_EMAIL",
-        password: "MY_PASSWORD"
-    ) {
-       id
-        token
-    }
-}'''))
+client, user_id = authenticate('MY_EMAIL', 'MY_ADDRESS')
 ```
 
-- Retrieve the token and inject it in the GraphQL client
+### Data modifications (mutations)
 
 ```python
-token = sign_in['data']['signIn']['token']
-graphql_client.inject_token(f'Bearer: {token}')
+from helpers.mutations import *
+
+client, _ = authenticate('MY_EMAIL', 'MY_ADDRESS')
 ```
 
-- Launch the desired mutation/query
-````python
-graphql_client.execute('''
-    mutation {
-    	updateProject(
-    		projectID: "PROJECT_ID"
-    		title: "NEW_PROJECT_TITLE"
-    	)
-    	{
-    	  id
-        }
-    }
-''')
-````
+| Action                                  | Function signature                                                                              |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------- |
+|  Create a user                          |  `create_user(client, name, email, password, phone, organization_id, organization_role)`        |
+|  Create a project                       |  `create_project(client, title, description, tool_type, use_honeypot, interface_json_settings)` |
+|  Delete a project                       |  `delete_project(client, project_id)`                                                           |
+|  Append a user to a project             |  `append_to_roles(client, project_id, user_email, role)`                                        |
+|  Create a bulk of assets (image, text)  |  `create_assets(client, project_id, contents, external_ids)`                                    |
+|  Delete assets                          |  `delete_assets_by_external_id(client, project_id, external_id)`                                |
+|  Turn an asset into a honeypot          |  `create_honeypot(client, asset_id, json_response)`                                             |
+|  Push a prediction to be labeled        |  `create_prediction(client, asset_id, json_response)`                                           |
 
+## Data queries
 
+| Action                         | Function signature                                            |
+| ------------------------------ | ------------------------------------------------------------- |
+|  Get the list of my projects   |  `get_projects(client, user_id)`                              |
+|  Get a specific asset          |  `get_assets_by_external_id(client, project_id, external_id)` |
+|  Export all assets and labels  |  `export_assets(client, project_id)`                          |
