@@ -1,8 +1,0 @@
-mutation{
-	createProject(
-		userID: "first-user"
-	)
-	{
-		id
-	}
-}

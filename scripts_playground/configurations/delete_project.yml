@@ -1,6 +1,0 @@
-authentication:
-  email: "my-user@my-company.com"
-  password: "*******"
-mutations:
-  - signIn
-  - deleteProject

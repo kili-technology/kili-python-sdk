@@ -1,8 +1,0 @@
-query {
-	getProjects(
-		userID: "{{ user_id }}"
-	)
-	{
-		id
-	}
-}
