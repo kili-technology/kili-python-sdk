@@ -11,6 +11,8 @@ cd kili-playground
 
 ### Authenticate
 
+In python:
+
 ```python
 from graphqlclient import GraphQLClient
 import json
