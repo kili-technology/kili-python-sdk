@@ -1,6 +1,8 @@
 from json import loads, dumps
+import os
 
-def signin(client, email, password):
+
+def signin(client, email, password=os.getenv('KILI_USER_PASSWORD')):
     result = client.execute('''
     mutation {
       signIn(email: "%s", password: "%s") {
