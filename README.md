@@ -10,7 +10,7 @@ cd kili-playground
 
 - Set PYTHONPATH to point to the repository
 ```
-export PYTHONPATH=$PYTHONPATH:${pwd}
+export PYTHONPATH=$PYTHONPATH:/path/to/kili-playground
 ```
 
 ## Get started
