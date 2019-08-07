@@ -90,7 +90,7 @@ def compute_pixel_matrices_by_category(all_bounding_poly, categories, authors, g
     return kappa_matrices_by_category
 
 
-def compute_consensus_for_project(client, project_id="third-project", skip=0, first=100000):
+def compute_consensus_for_project(client, project_id, skip=0, first=100000):
     assets = get_assets(client, project_id, skip, first)
     assets_for_consensus = []
     for asset in assets:
@@ -115,3 +115,12 @@ def compute_consensus_for_project(client, project_id="third-project", skip=0, fi
         consensus_by_asset[asset["id"]] = kappa_mean_over_categories / len(categories)
 
     return consensus_by_asset
+
+
+def force_consensus_for_project(client, project_id):
+    consensus_by_asset = compute_consensus_for_project(client, project_id)
+    asset_ids = list(consensus_by_asset.keys())
+    consensus_marks = list(consensus_by_asset.values())
+    are_used_for_consensus = [True for _ in consensus_marks]
+
+    update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used_for_consensus)
