@@ -1,26 +1,6 @@
 from json import loads
 
 
-def update_properties_in_project(client, project_id, min_consensus_size=None, consensus_tot_coverage=None):
-    formatted_min_consensus_size = 'null' if min_consensus_size is None else int(min_consensus_size)
-    formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(consensus_tot_coverage)
-
-    result = client.execute('''
-        mutation {
-          updatePropertiesInProject(
-            where: {id: "%s"},
-            data: {
-              minConsensusSize: %s
-              consensusTotCoverage: %s
-            }
-          ) {
-            id
-          }
-        }
-        ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage))
-    return loads(result)['data']['updatePropertiesInProject']
-
-
 def create_project(client, title, description, tool_type, use_honeypot, interface_json_settings):
     result = client.execute('''
     mutation {
@@ -89,3 +69,23 @@ def append_to_roles(client, project_id, user_email, role):
     }
     ''' % (project_id, user_email, role))
     return loads(result)['data']['appendToRoles']
+
+
+def update_properties_in_project(client, project_id, min_consensus_size=None, consensus_tot_coverage=None):
+    formatted_min_consensus_size = 'null' if min_consensus_size is None else int(min_consensus_size)
+    formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(consensus_tot_coverage)
+
+    result = client.execute('''
+        mutation {
+          updatePropertiesInProject(
+            where: {id: "%s"},
+            data: {
+              minConsensusSize: %s
+              consensusTotCoverage: %s
+            }
+          ) {
+            id
+          }
+        }
+        ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage))
+    return loads(result)['data']['updatePropertiesInProject']
