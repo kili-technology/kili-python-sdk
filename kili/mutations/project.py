@@ -68,3 +68,32 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
         }
         ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage))
     return format_result('updatePropertiesInProject', result)
+
+
+def force_project_kpi_computation(client, project_id):
+    result = client.execute('''
+    mutation {
+      forceProjectKpiComputation(projectID: "%s") {
+        id
+        numberOfAssets
+        completionPercentage
+        numberOfAssetsWithoutLabel
+        numberOfAssetsWithEmptyLabels
+        numberOfReviewedAssets
+        numberOfLatestLabels
+        roles {
+          user { id }
+          lastLabelingAt
+          numberOfAnnotations
+          totalDuration
+          durationPerLabel
+          honeypotMark
+        }
+        dataset {
+          id
+          honeypotMark
+        }
+      }
+    }
+    ''' % (project_id))
+    return format_result('forceProjectKpiComputation', result)
