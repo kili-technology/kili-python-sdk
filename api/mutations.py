@@ -1,8 +1,7 @@
 from json import loads, dumps
-import os
 
 
-def signin(client, email, password=os.getenv('KILI_USER_PASSWORD')):
+def signin(client, email, password):
     result = client.execute('''
     mutation {
       signIn(email: "%s", password: "%s") {
@@ -15,6 +14,28 @@ def signin(client, email, password=os.getenv('KILI_USER_PASSWORD')):
     }
     ''' % (email, password))
     return loads(result)['data']['signIn']
+
+
+def kili_append_to_dataset(client, project_id, content, external_id, filename, is_instructions,
+                           instructions, is_honeypot, consensus_mark, honeypot_mark, status):
+    result = client.execute('''
+    mutation {
+      appendToDataset(projectID: "%s"
+        content: "%s",
+        externalID: "%s",
+        filename: "%s",
+        isInstructions: %s,
+        instructions: "%s",
+        isHoneypot: %s,
+        consensusMark: %d,
+        honeypotMark: %d,
+        status: %s) {
+        id
+      }
+    }
+    ''' % (project_id, content, external_id, filename, str(is_instructions).lower(),
+           instructions, str(is_honeypot).lower(), consensus_mark, honeypot_mark, status))
+    return loads(result)['data']['appendToDataset']
 
 
 def create_user(client, name, email, password, phone, organization_id, organization_role):
