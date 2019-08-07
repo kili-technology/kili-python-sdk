@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def signin(client, email, password):
@@ -13,7 +13,7 @@ def signin(client, email, password):
       }
     }
     ''' % (email, password))
-    return loads(result)['data']['signIn']
+    return format_result('signIn', result)
 
 
 def create_user(client, name, email, password, phone, organization_id, organization_role):
@@ -29,4 +29,4 @@ def create_user(client, name, email, password, phone, organization_id, organizat
       }
     }
     ''' % (name, email, password, phone, organization_id, organization_role))
-    return loads(result)['data']['createUser']
+    return format_result('createUser', result)

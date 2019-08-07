@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used_for_consensus):
@@ -18,4 +18,4 @@ def update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used
           }
         }
         ''' % (asset_ids_in_string, consensus_marks, are_used_for_consensus_in_string))
-    return loads(result)['data']['updateConsensusInManyAssets']
+    return format_result('updateConsensusInManyAssets', result)

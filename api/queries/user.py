@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def get_user(client, email):
@@ -9,4 +9,4 @@ def get_user(client, email):
       }
     }
     ''' % (email))
-    return loads(result)['data']['getUser']
+    return format_result('getUser', result)

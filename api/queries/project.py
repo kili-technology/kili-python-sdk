@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def get_projects(client, user_id):
@@ -28,7 +28,7 @@ def get_projects(client, user_id):
       }
     }
     ''' % (user_id))
-    return loads(result)['data']['getProjects']
+    return format_result('getProjects', result)
 
 
 def get_project(client, project_id):
@@ -39,4 +39,4 @@ def get_project(client, project_id):
       }
     }
     ''' % (project_id))
-    return loads(result)['data']['getProject']
+    return format_result('getProject', result)

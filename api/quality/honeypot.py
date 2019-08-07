@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def create_honeypot(client, asset_id, json_response):
@@ -21,4 +21,4 @@ def create_honeypot(client, asset_id, json_response):
       }
     }
     ''' % (asset_id, json_response))
-    return loads(result)['data']['createHoneypot']
+    return format_result('createHoneypot', result)

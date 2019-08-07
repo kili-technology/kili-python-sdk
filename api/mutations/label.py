@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def create_prediction(client, asset_id, json_response):
@@ -21,7 +21,7 @@ def create_prediction(client, asset_id, json_response):
       }
     }
     ''' % (asset_id, json_response))
-    return loads(result)['data']['createPrediction']
+    return format_result('createPrediction', result)
 
 
 def kili_append_to_labels(client, author_id, is_review, json_response, label_asset_id, label_type,
@@ -38,4 +38,4 @@ def kili_append_to_labels(client, author_id, is_review, json_response, label_ass
       }
     }
     ''' % (author_id, json_response, label_asset_id, label_type, milliseconds_to_label))
-    return loads(result)['data']['frontendAppendToLabels']
+    return format_result('frontendAppendToLabels', result)

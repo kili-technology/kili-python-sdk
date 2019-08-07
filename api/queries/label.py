@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def get_label(client, asset_id, user_id):
@@ -10,7 +10,7 @@ def get_label(client, asset_id, user_id):
       }
     }
     ''' % (asset_id, user_id))
-    return loads(result)['data']['getLabel']
+    return format_result('getLabel', result)
 
 
 def get_latest_labels_for_user(client, project_id, user_id):
@@ -22,7 +22,7 @@ def get_latest_labels_for_user(client, project_id, user_id):
       }
     }
     ''' % (project_id, user_id))
-    return loads(result)['data']['getLatestLabelsForUser']
+    return format_result('getLatestLabelsForUser', result)
 
 
 def get_latest_labels(client, project_id, skip, first):
@@ -34,4 +34,4 @@ def get_latest_labels(client, project_id, skip, first):
       }
     }
     ''' % (project_id, skip, first))
-    return loads(result)['data']['getLatestLabels']
+    return format_result('getLatestLabels', result)

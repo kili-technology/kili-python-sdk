@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def update_tool(client, tool_id, project_id, name, tool_type, json_settings):
@@ -13,4 +13,4 @@ def update_tool(client, tool_id, project_id, name, tool_type, json_settings):
       }
     }
     ''' % (tool_id, project_id, name, tool_type, json_settings))
-    return loads(result)['data']['updateTool']
+    return format_result('updateTool', result)

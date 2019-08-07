@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def create_project(client, title, description, tool_type, use_honeypot, interface_json_settings):
@@ -35,7 +35,7 @@ def create_project(client, title, description, tool_type, use_honeypot, interfac
       }
     }
     ''' % (title, description, tool_type, str(use_honeypot).lower(), interface_json_settings))
-    return loads(result)['data']['createProject']
+    return format_result('createProject', result)
 
 
 def delete_project(client, project_id):
@@ -46,7 +46,7 @@ def delete_project(client, project_id):
       }
     }
     ''' % (project_id))
-    return loads(result)['data']['deleteProject']
+    return format_result('deleteProject', result)
 
 
 def append_to_roles(client, project_id, user_email, role):
@@ -68,7 +68,7 @@ def append_to_roles(client, project_id, user_email, role):
       }
     }
     ''' % (project_id, user_email, role))
-    return loads(result)['data']['appendToRoles']
+    return format_result('appendToRoles', result)
 
 
 def update_properties_in_project(client, project_id, min_consensus_size=None, consensus_tot_coverage=None):
@@ -88,4 +88,4 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
           }
         }
         ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage))
-    return loads(result)['data']['updatePropertiesInProject']
+    return format_result('updatePropertiesInProject', result)

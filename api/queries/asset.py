@@ -1,4 +1,4 @@
-from json import loads
+from ..helper import format_result
 
 
 def get_asset(client, asset_id):
@@ -9,7 +9,7 @@ def get_asset(client, asset_id):
       }
     }
     ''' % (asset_id))
-    return loads(result)['data']['getAsset']
+    return format_result('getAsset', result)
 
 
 def get_assets(client, project_id, skip, first):
@@ -38,7 +38,7 @@ def get_assets(client, project_id, skip, first):
       }
     }
     ''' % (project_id, skip, first))
-    return loads(result)['data']['getAssets']
+    return format_result('getAssets', result)
 
 
 def get_assets_by_external_id(client, project_id, external_id):
@@ -68,7 +68,7 @@ def get_assets_by_external_id(client, project_id, external_id):
       }
     }
     ''' % (project_id, external_id))
-    return loads(result)['data']['getAssetsByExternalId']
+    return format_result('getAssetsByExternalId', result)
 
 
 def get_next_asset_from_label(client, label_asset_id, want_instructions_only):
@@ -79,7 +79,7 @@ def get_next_asset_from_label(client, label_asset_id, want_instructions_only):
       }
     }
     ''' % (label_asset_id, str(want_instructions_only).lower()))
-    return loads(result)['data']['getNextAssetFromLabel']
+    return format_result('getNextAssetFromLabel', result)
 
 
 def get_next_asset_from_project(client, project_id, want_instructions_only):
@@ -90,7 +90,7 @@ def get_next_asset_from_project(client, project_id, want_instructions_only):
       }
     }
     ''' % (project_id, str(want_instructions_only).lower()))
-    return loads(result)['data']['getNextAssetFromProject']
+    return format_result('getNextAssetFromProject', result)
 
 
 def export_assets(client, project_id):
@@ -119,4 +119,4 @@ def export_assets(client, project_id):
       }
     }
     ''' % (project_id))
-    return loads(result)['data']['exportAssets']
+    return format_result('exportAssets', result)

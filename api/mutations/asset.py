@@ -1,4 +1,6 @@
-from json import dumps, loads
+from json import dumps
+
+from ..helper import format_result
 
 
 def create_assets(client, project_id, contents, external_ids):
@@ -18,7 +20,7 @@ def create_assets(client, project_id, contents, external_ids):
       }
     }
     ''' % (project_id, dumps(contents), dumps(external_ids)))
-    return loads(result)['data']['createAssets']
+    return format_result('createAssets', result)
 
 
 def delete_assets_by_external_id(client, project_id, external_id):
@@ -29,7 +31,7 @@ def delete_assets_by_external_id(client, project_id, external_id):
       }
     }
     ''' % (project_id, external_id))
-    return loads(result)['data']['deleteAssetsByExternalId']
+    return format_result('deleteAssetsByExternalId', result)
 
 
 def kili_append_to_dataset(client, project_id, content, external_id, filename, is_instructions,
@@ -51,4 +53,4 @@ def kili_append_to_dataset(client, project_id, content, external_id, filename, i
     }
     ''' % (project_id, content, external_id, filename, str(is_instructions).lower(),
            instructions, str(is_honeypot).lower(), consensus_mark, honeypot_mark, status))
-    return loads(result)['data']['appendToDataset']
+    return format_result('appendToDataset', result)
