@@ -17,6 +17,7 @@ def create_assets(client, project_id, contents, external_ids):
           updatedAt
           isHoneypot
           status
+          jsonMetadata
       }
     }
     ''' % (project_id, dumps(contents), dumps(external_ids)))
