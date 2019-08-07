@@ -1,3 +1,6 @@
+from json import loads
+
+
 def get_projects(client, user_id):
     result = client.execute('''
     query {

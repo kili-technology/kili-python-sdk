@@ -1,3 +1,6 @@
+from json import loads
+
+
 def get_asset(client, asset_id):
     result = client.execute('''
     query {
@@ -38,26 +41,34 @@ def get_assets(client, project_id, skip, first):
     return loads(result)['data']['getAssets']
 
 
-def get_assets_by_external_id(client, project_id, asset_id):
+def get_assets_by_external_id(client, project_id, external_id):
     result = client.execute('''
     query {
       getAssetsByExternalId(projectID: "%s", externalID: "%s") {
-        id
-        externalId
-        content
-        filename
-        isInstructions
-        instructions
-        isHoneypot
-        consensusMark
-        honeypotMark
-        status
-        isUsedForConsensus
+          id
+          content
+          externalId
+          createdAt
+          updatedAt
+          isHoneypot
+          isUsedForConsensus
+          status
+          labels {
+            author {
+              id
+              email
+            }
+            labelType
+            jsonResponse
+            createdAt
+            millisecondsToLabel
+            totalMillisecondsToLabel
+            honeypotMark
+          }
       }
     }
-    ''' % (project_id, asset_id))
-    data = loads(result)['data']['getAssetsByExternalId']
-    return data if data else []
+    ''' % (project_id, external_id))
+    return loads(result)['data']['getAssetsByExternalId']
 
 
 def get_next_asset_from_label(client, label_asset_id, want_instructions_only):
@@ -80,3 +91,32 @@ def get_next_asset_from_project(client, project_id, want_instructions_only):
     }
     ''' % (project_id, str(want_instructions_only).lower()))
     return loads(result)['data']['getNextAssetFromProject']
+
+
+def export_assets(client, project_id):
+    result = client.execute('''
+    query {
+      exportAssets(projectID: "%s") {
+        id
+        content
+        externalId
+        createdAt
+        updatedAt
+        isHoneypot
+        status
+        labels {
+          author {
+            id
+            email
+          }
+          labelType
+          jsonResponse
+          createdAt
+          millisecondsToLabel
+          totalMillisecondsToLabel
+          honeypotMark
+        }
+      }
+    }
+    ''' % (project_id))
+    return loads(result)['data']['exportAssets']

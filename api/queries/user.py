@@ -1,3 +1,6 @@
+from json import loads
+
+
 def get_user(client, email):
     result = client.execute('''
     query {

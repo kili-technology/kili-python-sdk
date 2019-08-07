@@ -1,3 +1,6 @@
+from json import loads
+
+
 def update_tool(client, tool_id, project_id, name, tool_type, json_settings):
     result = client.execute('''
     mutation {

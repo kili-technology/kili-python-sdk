@@ -1,3 +1,6 @@
+from json import loads
+
+
 def get_tools(client, project_id):
     result = client.execute('''
     query {
