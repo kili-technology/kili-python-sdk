@@ -5,8 +5,10 @@ from graphqlclient import GraphQLClient
 from .mutations.user import signin
 
 
-def authenticate(email, password=os.getenv('KILI_USER_PASSWORD')):
-    client = GraphQLClient('https://cloud.kili-technology.com/api/label/graphql')
+def authenticate(email,
+                 password=os.getenv('KILI_USER_PASSWORD'),
+                 api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
+    client = GraphQLClient(api_endpoint)
     auth_payload = signin(client, email, password)
     api_token = auth_payload['token']
     client.inject_token('Bearer: ' + api_token)
