@@ -11,27 +11,6 @@ def create_project(client, title, description, tool_type, use_honeypot, interfac
       useHoneyPot: %s,
       interfaceJsonSettings: "%s") {
         id
-        title
-        description
-        author {
-            id
-            email
-        }
-        createdAt
-        interfaceTools {
-            name
-            toolType
-            jsonSettings
-        }
-        roles {
-            user {
-                id
-                email
-            }
-            role
-        }
-        updatedAt
-        useHoneyPot
       }
     }
     ''' % (title, description, tool_type, str(use_honeypot).lower(), interface_json_settings))

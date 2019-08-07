@@ -15,8 +15,8 @@ def create_honeypot(client, asset_id, json_response):
           labelType
           jsonResponse
           createdAt
-          millisecondsToLabel
-          totalMillisecondsToLabel
+          secondsToLabel
+          totalSecondsToLabel
           honeypotMark
       }
     }

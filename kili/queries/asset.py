@@ -61,8 +61,8 @@ def get_assets_by_external_id(client, project_id, external_id):
             labelType
             jsonResponse
             createdAt
-            millisecondsToLabel
-            totalMillisecondsToLabel
+            secondsToLabel
+            totalSecondsToLabel
             honeypotMark
           }
       }
@@ -112,8 +112,8 @@ def export_assets(client, project_id):
           labelType
           jsonResponse
           createdAt
-          millisecondsToLabel
-          totalMillisecondsToLabel
+          secondsToLabel
+          totalSecondsToLabel
           honeypotMark
         }
       }

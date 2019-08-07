@@ -15,8 +15,8 @@ def create_prediction(client, asset_id, json_response):
           labelType
           jsonResponse
           createdAt
-          millisecondsToLabel
-          totalMillisecondsToLabel
+          secondsToLabel
+          totalSecondsToLabel
           honeypotMark
       }
     }
@@ -33,7 +33,7 @@ def kili_append_to_labels(client, author_id, is_review, json_response, label_ass
         jsonResponse: "%s",
         labelAssetID: "%s",
         labelType: %s,
-        millisecondsToLabel: %d) {
+        secondsToLabel: %d) {
           id
       }
     }
