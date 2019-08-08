@@ -6,6 +6,24 @@ def get_asset(client, asset_id):
     query {
       getAsset(assetID: "%s") {
         id
+        externalId
+        content
+        filename
+        isInstructions
+        instructions
+        isHoneypot
+        consensusMark
+        honeypotMark
+        status
+        isUsedForConsensus
+        labels {
+          id
+          labelType
+          jsonResponse
+          author {
+          id
+          }
+        }
       }
     }
     ''' % (asset_id))
@@ -34,7 +52,7 @@ def get_assets(client, project_id, skip, first):
           author {
           id
           }
-      }
+        }
       }
     }
     ''' % (project_id, skip, first))
