@@ -123,4 +123,5 @@ def force_consensus_for_project(client, project_id):
     consensus_marks = list(consensus_by_asset.values())
     are_used_for_consensus = [True for _ in consensus_marks]
 
-    update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used_for_consensus)
+    if len(asset_ids) > 0:
+        update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used_for_consensus)
