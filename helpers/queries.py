@@ -66,8 +66,8 @@ def get_assets_by_external_id(client, project_id, external_id):
             labelType
             jsonResponse
             createdAt
-            millisecondsToLabel
-            totalMillisecondsToLabel
+            secondsToLabel
+            totalSecondsToLabel
             honeypotMark
           }
       }
