@@ -30,3 +30,44 @@ def create_user(client, name, email, password, phone, organization_id, organizat
     }
     ''' % (name, email, password, phone, organization_id, organization_role))
     return format_result('createUser', result)
+
+
+def update_user(client, user_id, name, email, phone, organization_id, organization_role):
+    result = client.execute('''
+    mutation {
+      updateUser(userID: "%s",
+      name: "%s",
+      email: "%s",
+      phone: "%s",
+      organizationID: "%s",
+      organizationRole: %s) {
+        id
+      }
+    }
+    ''' % (user_id, name, email, phone, organization_id, organization_role))
+    return format_result('updateUser', result)
+
+
+def delete_user(client, user_id):
+    result = client.execute('''
+    mutation {
+      deleteUser(userID: "%s") {
+        id
+      }
+    }
+    ''' % (user_id))
+    return format_result('deleteUser', result)
+
+
+def update_password(client, email, old_password, new_password_1, new_password_2):
+    result = client.execute('''
+    mutation {
+      updatePassword(email: "%s",
+      oldPassword: "%s",
+      newPassword1: "%s",
+      newPassword2: "%s") {
+        id
+      }
+    }
+    ''' % (email, old_password, new_password_1, new_password_2))
+    return format_result('updatePassword', result)
