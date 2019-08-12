@@ -6,6 +6,9 @@ def get_tools(client, project_id):
     query {
       getTools(projectID: "%s") {
         id
+        name
+        toolType
+        jsonSettings
       }
     }
     ''' % (project_id))
