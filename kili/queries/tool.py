@@ -8,7 +8,7 @@ def get_tools(client, project_id):
         id
         name
         toolType
-        jsonSettings
+        jsonSettings 
       }
     }
     ''' % (project_id))
