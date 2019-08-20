@@ -59,12 +59,12 @@ def append_to_dataset(client, project_id, content, external_id, filename, is_ins
     return format_result('appendToDataset', result)
 
 
-def append_many_to_dataset(client, project_id_array, content_array, external_id_array, filename_array, is_instructions_array,
+def append_many_to_dataset(client, project_id, content_array, external_id_array, filename_array, is_instructions_array,
                            instructions_array, is_honeypot_array, consensus_mark_array, honeypot_mark_array, status_array, json_metadata_array):
     result = client.execute('''
     mutation {
       appendManyToDataset(
-        projectIDArray: %s,
+        projectID: "%s",
         contentArray: %s,
         externalIDArray: %s,
         filenameArray: %s,
@@ -78,7 +78,7 @@ def append_many_to_dataset(client, project_id_array, content_array, external_id_
         id
       }
     }
-    ''' % (dumps(project_id_array), dumps(content_array), dumps(external_id_array), dumps(filename_array), dumps(is_instructions_array).lower(),
+    ''' % (project_id, dumps(content_array), dumps(external_id_array), dumps(filename_array), dumps(is_instructions_array).lower(),
            dumps(instructions_array), dumps(is_honeypot_array).lower(), dumps(
                consensus_mark_array), dumps(honeypot_mark_array), dumps(status_array).replace('"', ''),
            dumps(json_metadata_array)))
