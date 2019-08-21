@@ -36,6 +36,7 @@ def get_project(client, project_id):
     query {
       getProject(projectID: "%s") {
         id
+        interfaceCategory
       }
     }
     ''' % (project_id))
