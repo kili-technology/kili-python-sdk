@@ -24,6 +24,14 @@ def get_asset(client, asset_id):
           id
           }
         }
+        locks {
+          id
+          author {
+            email
+          }
+          createdAt
+          lockType
+        }
       }
     }
     ''' % (asset_id))
