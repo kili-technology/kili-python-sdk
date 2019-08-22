@@ -120,7 +120,8 @@ def compute_consensus_for_assets(assets_for_consensus):
                     dic_categories[checked_category["name"]]+=1
         consensus = 0
         if (nb_user-1)==0:
-            raise NameError("There should be at least two labelers for a consensus asset.")
+            continue 
+            #raise NameError("There should be at least two labelers for a consensus asset.")
         for category in categories:
             consensus += (1.0/(nb_user-1))*dic_categories[category]
         consensus_by_asset[asset["id"]] = (1.0/len(categories))*consensus
