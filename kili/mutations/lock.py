@@ -1,7 +1,7 @@
 from ..helper import format_result
 
 
-def delete_lock(client, asset_id):
+def delete_locks(client, asset_id):
     result = client.execute('''
     mutation {
       deleteLocks(assetID: "%s") {

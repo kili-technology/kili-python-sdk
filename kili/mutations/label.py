@@ -72,3 +72,21 @@ def update_label(client, label_id, label_asset_id, review_asset_id, author_id, l
     }
     ''' % (label_id, label_asset_id, review_asset_id, author_id, label_type, json_response, seconds_to_label))
     return format_result('updateLabel', result)
+
+
+def update_properties_in_label(client, label_id, seconds_to_label=None):
+    formatted_seconds_to_label = 'null' if seconds_to_label is None else f'{seconds_to_label}'
+
+    result = client.execute('''
+        mutation {
+          updatePropertiesInLabel(
+            where: {id: "%s"},
+            data: {
+              secondsToLabel: %s
+            }
+          ) {
+            id
+          }
+        }
+        ''' % (label_id, formatted_seconds_to_label))
+    return format_result('updatePropertiesInLabel', result)
