@@ -1,12 +1,12 @@
 from ..helper import format_result
 
 
-def delete_lock(client, lock_id):
+def delete_lock(client, asset_id):
     result = client.execute('''
     mutation {
-      deleteLock(lockID: "%s") {
+      deleteLocks(assetID: "%s") {
         id
       }
     }
-    ''' % (lock_id))
-    return format_result('deleteLock', result)
+    ''' % (asset_id))
+    return format_result('deleteLocks', result)
