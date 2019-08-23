@@ -71,3 +71,4 @@ def update_password(client, email, old_password, new_password_1, new_password_2)
     }
     ''' % (email, old_password, new_password_1, new_password_2))
     return format_result('updatePassword', result)
+

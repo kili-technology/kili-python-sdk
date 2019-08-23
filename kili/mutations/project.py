@@ -74,6 +74,22 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
     return format_result('updatePropertiesInProject', result)
 
 
+def update_interface_in_project(client, project_id, jsonSettings=None):
+    result = client.execute('''
+        mutation {
+          updatePropertiesInProject(
+            where: {id: "%s"},
+            data: {
+              jsonSettings: """%s""",
+            }
+          ) {
+            id
+          }
+        }
+        ''' % (project_id, jsonSettings))
+    return format_result('updatePropertiesInProject', result)
+
+
 def force_project_kpi_computation(client, project_id):
     result = client.execute('''
     mutation {
@@ -162,11 +178,13 @@ def update_project(client, project_id,
         id
       }
     }
-    ''' % (project_id, title, description, creation_active_step, dumps(creation_completed), dumps(creation_skipped).lower(),
-           interface_category, input_type, interface_title, interface_description, interface_url, str(
-               outsource).lower(),
-           consensus_tot_coverage, min_consensus_size, max_worker_count, min_agreement,
-           str(use_honey_pot).lower(), instructions, model_title, model_description, model_url))
+    ''' % (
+        project_id, title, description, creation_active_step, dumps(creation_completed),
+        dumps(creation_skipped).lower(),
+        interface_category, input_type, interface_title, interface_description, interface_url, str(
+            outsource).lower(),
+        consensus_tot_coverage, min_consensus_size, max_worker_count, min_agreement,
+        str(use_honey_pot).lower(), instructions, model_title, model_description, model_url))
     return format_result('updateProject', result)
 
 
