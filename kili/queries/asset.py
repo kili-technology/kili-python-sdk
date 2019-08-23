@@ -59,8 +59,9 @@ def get_assets(client, project_id, skip, first):
           id
           labelType
           jsonResponse
+          isLatestLabelForUser
           author {
-          id
+            id
           }
         }
       }

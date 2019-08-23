@@ -7,6 +7,10 @@ def get_projects(client, user_id):
       getProjects(userID: "%s") {
         id
         title
+        consensusTotCoverage
+        maxWorkerCount
+        minAgreement
+        minConsensusSize
         numberOfAssets
         completionPercentage
         numberOfAssetsWithoutLabel
