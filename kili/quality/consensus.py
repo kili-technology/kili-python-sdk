@@ -7,6 +7,7 @@ from statsmodels.stats.inter_rater import fleiss_kappa
 
 from ..helper import format_result
 from ..queries.asset import get_assets
+from ..queries.project import get_project
 
 
 def update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used_for_consensus):
@@ -29,12 +30,23 @@ def update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used
     return format_result('updateConsensusInManyAssets', result)
 
 
-def compute_authors_and_categories(labels):
+def compute_authors(labels):
     authors = []
     for label in labels:
         if label["labelType"] == "DEFAULT":
             authors.append(label["author"]["id"])
     return list(set(authors))
+
+def compute_present_categories(asset):
+    present_categories=[]
+    labels=asset["labels"]
+    for label in labels:
+        if label["labelType"] == "DEFAULT":
+            response = json.loads(label["jsonResponse"])
+            categories = response["categories"]
+            for checked_category in categories:
+                present_categories.append(checked_category["name"])
+    return list(set(present_categories))
 
 
 def compute_bounding_polygons(labels, authors, grid_definition=100):
@@ -89,8 +101,35 @@ def compute_pixel_matrices_by_category(all_bounding_poly, categories, authors, g
 
     return kappa_matrices_by_category
 
+def compute_consensus_for_assets(assets_for_consensus):
+    consensus_by_asset = {}
+    for asset in assets_for_consensus:
+        categories = compute_present_categories(asset)
+        dic_categories={}
+        for category in categories:
+            dic_categories[category]=-1
 
-def compute_consensus_for_project(client, project_id, skip=0, first=100000):
+        nb_user = 0
+        labels=asset["labels"]
+        for label in labels:
+            if label["labelType"] == "DEFAULT":
+                nb_user+=1
+                response = json.loads(label["jsonResponse"])
+                response_categories = response["categories"]
+                for checked_category in response_categories:
+                    dic_categories[checked_category["name"]]+=1
+        consensus = 0
+        if (nb_user-1)==0:
+            continue 
+            #raise NameError("There should be at least two labelers for a consensus asset.")
+        for category in categories:
+            consensus += (1.0/(nb_user-1))*dic_categories[category]
+        consensus_by_asset[asset["id"]] = (1.0/len(categories))*consensus
+    print(consensus_by_asset)
+    return consensus_by_asset
+
+
+def compute_consensus_for_project(client, project_id, interface_category, skip=0, first=100000):
     assets = get_assets(client, project_id, skip, first)
     assets_for_consensus = []
     for asset in assets:
@@ -98,27 +137,33 @@ def compute_consensus_for_project(client, project_id, skip=0, first=100000):
                 asset["isHoneypot"]:
             assets_for_consensus.append(asset)
 
-    consensus_by_asset = {}
-    for asset in assets_for_consensus:
-        labels = asset["labels"]
-        authors = compute_authors_and_categories(labels)
-        all_bounding_poly, categories = compute_bounding_polygons(labels, authors)
-        kappa_matrices_by_category = compute_pixel_matrices_by_category(all_bounding_poly, categories, authors,
-                                                                        grid_definition=100)
+    if interface_category == "IMAGE":
+        consensus_by_asset = {}
+        for asset in assets_for_consensus:
+            labels = asset["labels"]
+            authors = compute_authors(labels)
+            all_bounding_poly, categories = compute_bounding_polygons(labels, authors)
+            kappa_matrices_by_category = compute_pixel_matrices_by_category(all_bounding_poly, categories, authors,
+                                                                            grid_definition=100)
 
-        kappa_mean_over_categories = 0
-        for category in categories:
-            kappa_mean_over_categories += fleiss_kappa(kappa_matrices_by_category[category], method="fleiss")
-            print("Asset: {}, Category: {}, Fleiss-Kappa: {}".format(asset["id"], category,
-                                                                     fleiss_kappa(kappa_matrices_by_category[category],
-                                                                                  method="fleiss")))
-        consensus_by_asset[asset["id"]] = kappa_mean_over_categories / len(categories)
+            kappa_mean_over_categories = 0
+            for category in categories:
+                kappa_mean_over_categories += fleiss_kappa(kappa_matrices_by_category[category], method="fleiss")
+                print("Asset: {}, Category: {}, Fleiss-Kappa: {}".format(asset["id"], category,
+                                                                         fleiss_kappa(kappa_matrices_by_category[category],
+                                                                                      method="fleiss")))
+            consensus_by_asset[asset["id"]] = kappa_mean_over_categories / len(categories)
 
-    return consensus_by_asset
+        return consensus_by_asset
+
+    elif interface_category == "SINGLECLASS_TEXT_CLASSIFICATION" or interface_category == "MULTICLASS_TEXT_CLASSIFICATION":
+        return compute_consensus_for_assets(assets_for_consensus)
 
 
 def force_consensus_for_project(client, project_id):
-    consensus_by_asset = compute_consensus_for_project(client, project_id)
+    interface_category = get_project(client, project_id)['interfaceCategory']
+    print(interface_category)
+    consensus_by_asset = compute_consensus_for_project(client, project_id, interface_category)
     asset_ids = list(consensus_by_asset.keys())
     consensus_marks = list(consensus_by_asset.values())
     are_used_for_consensus = [True for _ in consensus_marks]

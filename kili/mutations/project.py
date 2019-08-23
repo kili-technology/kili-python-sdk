@@ -211,3 +211,23 @@ def delete_from_roles(client, role_id):
     }
     ''' % (role_id))
     return format_result('deleteFromRoles', result)
+
+
+def update_properties_in_project_user(client, project_user_id, total_duration=None, duration_per_label=None):
+    formatted_total_duration = 'null' if total_duration is None else f'{total_duration}'
+    formatted_duration_per_label = 'null' if duration_per_label is None else f'{duration_per_label}'
+
+    result = client.execute('''
+        mutation {
+          updatePropertiesInProjectUser(
+            where: {id: "%s"},
+            data: {
+              totalDuration: %s
+              durationPerLabel: %s
+            }
+          ) {
+            id
+          }
+        }
+        ''' % (project_user_id, formatted_total_duration, formatted_duration_per_label))
+    return format_result('updatePropertiesInProjectUser', result)

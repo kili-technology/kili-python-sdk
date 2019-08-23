@@ -18,11 +18,21 @@ def get_asset(client, asset_id):
         isUsedForConsensus
         labels {
           id
+          secondsToLabel
+          totalSecondsToLabel
           labelType
           jsonResponse
           author {
-          id
+            id
           }
+        }
+        locks {
+          id
+          author {
+            email
+          }
+          createdAt
+          lockType
         }
       }
     }
@@ -123,6 +133,7 @@ def export_assets(client, project_id):
         isHoneypot
         status
         labels {
+          id
           author {
             id
             email

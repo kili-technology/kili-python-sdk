@@ -14,7 +14,9 @@ def get_projects(client, user_id):
         numberOfReviewedAssets
         numberOfLatestLabels
         roles {
-          user { id }
+          id
+          user { id, name, email, organization { id } }
+          role
           lastLabelingAt
           numberOfAnnotations
           totalDuration
@@ -36,6 +38,7 @@ def get_project(client, project_id):
     query {
       getProject(projectID: "%s") {
         id
+        interfaceCategory
       }
     }
     ''' % (project_id))

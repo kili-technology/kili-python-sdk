@@ -110,6 +110,24 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
     return format_result('updateAsset', result)
 
 
+def update_properties_in_asset(client, asset_id, external_id=None):
+    formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
+
+    result = client.execute('''
+        mutation {
+          updatePropertiesInAsset(
+            where: {id: "%s"},
+            data: {
+              externalId: %s
+            }
+          ) {
+            id
+          }
+        }
+        ''' % (asset_id, formatted_external_id))
+    return format_result('updatePropertiesInAsset', result)
+
+
 def delete_from_dataset(client, asset_id):
     result = client.execute('''
     mutation {
