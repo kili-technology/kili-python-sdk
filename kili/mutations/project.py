@@ -1,6 +1,8 @@
 from json import dumps
 
 from ..helper import format_result
+from ..queries.asset import export_assets
+from .asset import force_update_status
 
 
 def create_project(client, title, description, tool_type, use_honeypot, interface_json_settings):
@@ -52,11 +54,28 @@ def append_to_roles(client, project_id, user_email, role):
     return format_result('appendToRoles', result)
 
 
-def update_properties_in_project(client, project_id, min_consensus_size=None, consensus_tot_coverage=None):
+def update_properties_in_project(client, project_id, min_consensus_size=None, consensus_tot_coverage=None,
+                                 number_of_assets=None,
+                                 completion_percentage=None,
+                                 number_of_remaining_assets=None,
+                                 number_of_assets_with_empty_labels=None,
+                                 number_of_reviewed_assets=None,
+                                 number_of_latest_labels=None):
     formatted_min_consensus_size = 'null' if min_consensus_size is None else int(
         min_consensus_size)
     formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(
         consensus_tot_coverage)
+    formatted_number_of_assets = 'null' if number_of_assets is None else int(
+        number_of_assets)
+    formatted_completion_percentage = 'null' if completion_percentage is None else completion_percentage
+    formatted_number_of_remaining_assets = 'null' if number_of_remaining_assets is None else int(
+        number_of_remaining_assets)
+    formatted_number_of_assets_with_empty_labels = 'null' if number_of_assets_with_empty_labels is None else int(
+        number_of_assets_with_empty_labels)
+    formatted_number_of_reviewed_assets = 'null' if number_of_reviewed_assets is None else int(
+        number_of_reviewed_assets)
+    formatted_number_of_latest_labels = 'null' if number_of_latest_labels is None else int(
+        number_of_latest_labels)
 
     result = client.execute('''
         mutation {
@@ -65,12 +84,20 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
             data: {
               minConsensusSize: %s
               consensusTotCoverage: %s
+              numberOfAssets: %s
+              completionPercentage: %s
+              numberOfRemainingAssets: %s
+              numberOfAssetsWithEmptyLabels: %s
+              numberOfReviewedAssets: %s
+              numberOfLatestLabels: %s
             }
           ) {
             id
           }
         }
-        ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage))
+        ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
+               formatted_number_of_assets, formatted_completion_percentage, formatted_number_of_remaining_assets,
+               formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets, formatted_number_of_latest_labels))
     return format_result('updatePropertiesInProject', result)
 
 
@@ -97,7 +124,7 @@ def force_project_kpi_computation(client, project_id):
         id
         numberOfAssets
         completionPercentage
-        numberOfAssetsWithoutLabel
+        numberOfRemainingAssets
         numberOfAssetsWithEmptyLabels
         numberOfReviewedAssets
         numberOfLatestLabels
@@ -179,7 +206,8 @@ def update_project(client, project_id,
       }
     }
     ''' % (
-        project_id, title, description, creation_active_step, dumps(creation_completed),
+        project_id, title, description, creation_active_step, dumps(
+            creation_completed),
         dumps(creation_skipped).lower(),
         interface_category, input_type, interface_title, interface_description, interface_url, str(
             outsource).lower(),
@@ -231,3 +259,16 @@ def update_properties_in_project_user(client, project_user_id, total_duration=No
         }
         ''' % (project_user_id, formatted_total_duration, formatted_duration_per_label))
     return format_result('updatePropertiesInProjectUser', result)
+
+
+def force_project_kpis(client, project_id):
+    assets = export_assets(client, project_id)
+    for asset in assets:
+        asset_updated = force_update_status(client, asset['id'])
+        asset['status'] = asset_updated['status']
+    number_of_assets = len([a for a in assets if not a['isInstructions']])
+    number_of_remaining_assets = len(
+        [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
+    completion_percentage = 1 - number_of_remaining_assets / number_of_assets
+    update_properties_in_project(client, project_id, number_of_assets=number_of_assets,
+                                 number_of_remaining_assets=number_of_remaining_assets, completion_percentage=completion_percentage)

@@ -33,7 +33,7 @@ def get_projects(client, user_id):
         useHoneyPot
         numberOfAssets
         completionPercentage
-        numberOfAssetsWithoutLabel
+        numberOfRemainingAssets
         numberOfAssetsWithEmptyLabels
         numberOfReviewedAssets
         numberOfLatestLabels

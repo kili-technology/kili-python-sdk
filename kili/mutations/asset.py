@@ -155,6 +155,7 @@ def force_update_status(client, asset_id):
     mutation {
       forceUpdateStatus(assetID: "%s") {
         id
+        status
       }
     }
     ''' % (asset_id))
