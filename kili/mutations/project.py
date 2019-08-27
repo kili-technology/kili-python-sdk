@@ -1,4 +1,5 @@
 from json import dumps
+from tqdm import tqdm
 
 from ..helper import format_result
 from ..queries.asset import export_assets
@@ -263,7 +264,7 @@ def update_properties_in_project_user(client, project_user_id, total_duration=No
 
 def force_project_kpis(client, project_id):
     assets = export_assets(client, project_id)
-    for asset in assets:
+    for asset in tqdm(assets):
         asset_updated = force_update_status(client, asset['id'])
         asset['status'] = asset_updated['status']
     number_of_assets = len([a for a in assets if not a['isInstructions']])
