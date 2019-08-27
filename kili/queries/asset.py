@@ -133,6 +133,7 @@ def export_assets(client, project_id):
         createdAt
         updatedAt
         isHoneypot
+        isInstructions
         status
         labels {
           id

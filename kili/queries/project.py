@@ -13,7 +13,7 @@ def get_projects(client, user_id):
         minConsensusSize
         numberOfAssets
         completionPercentage
-        numberOfAssetsWithoutLabel
+        numberOfRemainingAssets
         numberOfAssetsWithEmptyLabels
         numberOfReviewedAssets
         numberOfLatestLabels
