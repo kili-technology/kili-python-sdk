@@ -22,6 +22,7 @@ def get_asset(client, asset_id):
           totalSecondsToLabel
           labelType
           jsonResponse
+          isLatestLabelForUser
           author {
             id
           }

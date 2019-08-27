@@ -41,7 +41,7 @@ def compute_present_categories(asset):
     present_categories=[]
     labels=asset["labels"]
     for label in labels:
-        if label["labelType"] == "DEFAULT":
+        if label["labelType"] == "DEFAULT" and label["isLatestLabelForUser"]:
             response = json.loads(label["jsonResponse"])
             categories = response["categories"]
             for checked_category in categories:
@@ -55,7 +55,7 @@ def compute_bounding_polygons(labels, authors, grid_definition=100):
     for author in authors:
         all_bounding_poly[author] = []
     for label in labels:
-        if label["labelType"] == "DEFAULT":
+        if label["labelType"] == "DEFAULT" and label["isLatestLabelForUser"]:
             author = label["author"]["id"]
             annotations = json.loads(label["jsonResponse"])
             for annotation in annotations["annotations"]:
@@ -112,7 +112,7 @@ def compute_consensus_for_assets(assets_for_consensus):
         nb_user = 0
         labels=asset["labels"]
         for label in labels:
-            if label["labelType"] == "DEFAULT":
+            if label["labelType"] == "DEFAULT" and label["isLatestLabelForUser"]:
                 nb_user+=1
                 response = json.loads(label["jsonResponse"])
                 response_categories = response["categories"]
@@ -152,7 +152,7 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
                 print("Asset: {}, Category: {}, Fleiss-Kappa: {}".format(asset["id"], category,
                                                                          fleiss_kappa(kappa_matrices_by_category[category],
                                                                                       method="fleiss")))
-            consensus_by_asset[asset["id"]] = kappa_mean_over_categories / len(categories)
+            consensus_by_asset[asset["id"]] = max(0, kappa_mean_over_categories / len(categories))
 
         return consensus_by_asset
 
