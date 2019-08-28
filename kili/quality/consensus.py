@@ -7,6 +7,7 @@ from statsmodels.stats.inter_rater import fleiss_kappa
 
 from ..helper import format_result
 from ..queries.asset import get_assets
+from ..queries.tool import get_tools
 from ..queries.project import get_project
 
 
@@ -37,9 +38,10 @@ def compute_authors(labels):
             authors.append(label["author"]["id"])
     return list(set(authors))
 
+
 def compute_present_categories(asset):
-    present_categories=[]
-    labels=asset["labels"]
+    present_categories = []
+    labels = asset["labels"]
     for label in labels:
         if label["labelType"] == "DEFAULT" and label["isLatestLabelForUser"]:
             response = json.loads(label["jsonResponse"])
@@ -101,35 +103,37 @@ def compute_pixel_matrices_by_category(all_bounding_poly, categories, authors, g
 
     return kappa_matrices_by_category
 
+
 def compute_consensus_for_assets(assets_for_consensus):
     consensus_by_asset = {}
     for asset in assets_for_consensus:
         categories = compute_present_categories(asset)
-        dic_categories={}
+        dic_categories = {}
         for category in categories:
-            dic_categories[category]=-1
+            dic_categories[category] = -1
 
         nb_user = 0
-        labels=asset["labels"]
+        labels = asset["labels"]
         for label in labels:
             if label["labelType"] == "DEFAULT" and label["isLatestLabelForUser"]:
-                nb_user+=1
+                nb_user += 1
                 response = json.loads(label["jsonResponse"])
                 response_categories = response["categories"]
                 for checked_category in response_categories:
-                    dic_categories[checked_category["name"]]+=1
+                    dic_categories[checked_category["name"]] += 1
         consensus = 0
-        if (nb_user-1)==0:
-            continue 
-            #raise NameError("There should be at least two labelers for a consensus asset.")
+        if (nb_user - 1) == 0:
+            continue
+            # raise NameError("There should be at least two labelers for a consensus asset.")
         for category in categories:
-            consensus += (1.0/(nb_user-1))*dic_categories[category]
-        consensus_by_asset[asset["id"]] = (1.0/len(categories))*consensus
+            consensus += (1.0 / (nb_user - 1)) * dic_categories[category]
+        consensus_by_asset[asset["id"]] = (1.0 / len(categories)) * consensus
     print(consensus_by_asset)
     return consensus_by_asset
 
 
 def compute_consensus_for_project(client, project_id, interface_category, skip=0, first=100000):
+    categories = list(json.loads(get_tools(client, project_id)[0]["jsonSettings"])["annotation_types"].keys())
     assets = get_assets(client, project_id, skip, first)
     assets_for_consensus = []
     for asset in assets:
@@ -137,7 +141,7 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
                 asset["isHoneypot"]:
             assets_for_consensus.append(asset)
 
-    if interface_category == "IMAGE":
+    if interface_category == "IMAGE" or interface_category == "IMAGE_TO_TEXT":
         consensus_by_asset = {}
         for asset in assets_for_consensus:
             labels = asset["labels"]
@@ -150,14 +154,86 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
             for category in categories:
                 kappa_mean_over_categories += fleiss_kappa(kappa_matrices_by_category[category], method="fleiss")
                 print("Asset: {}, Category: {}, Fleiss-Kappa: {}".format(asset["id"], category,
-                                                                         fleiss_kappa(kappa_matrices_by_category[category],
-                                                                                      method="fleiss")))
+                                                                         fleiss_kappa(
+                                                                             kappa_matrices_by_category[category],
+                                                                             method="fleiss")))
             consensus_by_asset[asset["id"]] = max(0, kappa_mean_over_categories / len(categories))
-
-        return consensus_by_asset
+        if interface_category == "IMAGE":
+            print("Image consensus :", consensus_by_asset)
+            return consensus_by_asset
+        elif interface_category == "IMAGE_TO_TEXT":
+            consensus_by_asset_texts = compute_consensus_for_project_ocr_texts(assets_for_consensus, categories)
+            overall_consensus_by_asset = {}
+            for id in consensus_by_asset.keys():
+                overall_consensus_by_asset[id] = (consensus_by_asset[id] + consensus_by_asset_texts[id])/2
+            print("Image consensus :", consensus_by_asset)
+            print("Overall consensus :", overall_consensus_by_asset)
+            return overall_consensus_by_asset
 
     elif interface_category == "SINGLECLASS_TEXT_CLASSIFICATION" or interface_category == "MULTICLASS_TEXT_CLASSIFICATION":
         return compute_consensus_for_assets(assets_for_consensus)
+
+
+def levenshteinDistance(str1, str2):
+    m = len(str1)
+    n = len(str2)
+    lensum = float(m + n)
+    d = []
+    for i in range(m + 1):
+        d.append([i])
+    del d[0][0]
+    for j in range(n + 1):
+        d[0].append(j)
+    for j in range(1, n + 1):
+        for i in range(1, m + 1):
+            if str1[i - 1] == str2[j - 1]:
+                d[i].insert(j, d[i - 1][j - 1])
+            else:
+                minimum = min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + 2)
+                d[i].insert(j, minimum)
+    ldist = d[-1][-1]
+    if lensum > 0:
+        return (lensum - ldist) / lensum
+    else:
+        return 1
+
+
+def list_to_doubles(l):
+    result = []
+    for i in range(len(l)):
+        for j in range(i):
+            result.append((l[i], l[j]))
+    return result
+
+
+def compute_text_similarity_for_list_of_texts(texts, categories):
+    lists = dict((cat, []) for cat in categories)
+    for cat in categories:
+        for text in texts:
+            lists[cat].append(text[cat])
+    for cat in categories:
+        distances = [levenshteinDistance(a[0], a[1]) for a in list_to_doubles(lists[cat])]
+        lists[cat] = sum(distances) / len(distances) if len(distances) > 0 else 0
+    values = lists.values()
+    return sum(values) / len(values) if len(values) > 0 else 0
+
+
+def compute_consensus_for_project_ocr_texts(assets_for_consensus, categories):
+    consensus_by_asset = {}
+    texts_by_asset = dict.fromkeys([asset["id"] for asset in assets_for_consensus], [])
+    for asset in assets_for_consensus:
+        labels = [label for label in asset["labels"] if label["isLatestLabelForUser"]]
+        for label in labels:
+            texts = dict.fromkeys(categories, "")
+            annotations = json.loads(label["jsonResponse"])["annotations"]
+            for annotation in annotations:
+                category = list(annotation["description"][0].keys())[0]
+                texts[category] = annotation["text"]
+            texts_by_asset[asset["id"]].append(texts)
+
+        consensus_by_asset[asset["id"]] = compute_text_similarity_for_list_of_texts(texts_by_asset[asset["id"]], categories)
+    print("Text consensus :", consensus_by_asset)
+    return consensus_by_asset
 
 
 def force_consensus_for_project(client, project_id):
