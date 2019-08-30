@@ -7,7 +7,7 @@ from .mutations.user import signin
 
 def authenticate(email,
                  password=os.getenv('KILI_USER_PASSWORD'),
-                 api_endpoint='http://localhost:4000/graphql'):
+                 api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
     client = GraphQLClient(api_endpoint)
     auth_payload = signin(client, email, password)
     api_token = auth_payload['token']

@@ -157,7 +157,10 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
                                                                          fleiss_kappa(
                                                                              kappa_matrices_by_category[category],
                                                                              method="fleiss")))
-            consensus_by_asset[asset["id"]] = max(0, kappa_mean_over_categories / len(categories))
+            if len(categories) >0:
+                consensus_by_asset[asset["id"]] = max(0, kappa_mean_over_categories / len(categories))
+            else:
+                consensus_by_asset[asset["id"]]  = 0
         if interface_category == "IMAGE":
             print("Image consensus :", consensus_by_asset)
             return consensus_by_asset
