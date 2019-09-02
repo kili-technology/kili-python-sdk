@@ -4,6 +4,7 @@ import numpy as np
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from statsmodels.stats.inter_rater import fleiss_kappa
+from difflib import SequenceMatcher
 
 from ..helper import format_result
 from ..queries.asset import get_assets
@@ -157,10 +158,10 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
                                                                          fleiss_kappa(
                                                                              kappa_matrices_by_category[category],
                                                                              method="fleiss")))
-            if len(categories) >0:
+            if len(categories) > 0:
                 consensus_by_asset[asset["id"]] = max(0, kappa_mean_over_categories / len(categories))
             else:
-                consensus_by_asset[asset["id"]]  = 0
+                consensus_by_asset[asset["id"]] = 0
         if interface_category == "IMAGE":
             print("Image consensus :", consensus_by_asset)
             return consensus_by_asset
@@ -168,37 +169,13 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
             consensus_by_asset_texts = compute_consensus_for_project_ocr_texts(assets_for_consensus, categories)
             overall_consensus_by_asset = {}
             for id in consensus_by_asset.keys():
-                overall_consensus_by_asset[id] = (consensus_by_asset[id] + consensus_by_asset_texts[id])/2
+                overall_consensus_by_asset[id] = (consensus_by_asset[id] + consensus_by_asset_texts[id]) / 2
             print("Image consensus :", consensus_by_asset)
             print("Overall consensus :", overall_consensus_by_asset)
             return overall_consensus_by_asset
 
     elif interface_category == "SINGLECLASS_TEXT_CLASSIFICATION" or interface_category == "MULTICLASS_TEXT_CLASSIFICATION":
         return compute_consensus_for_assets(assets_for_consensus)
-
-
-def levenshteinDistance(str1, str2):
-    m = len(str1)
-    n = len(str2)
-    lensum = float(m + n)
-    d = []
-    for i in range(m + 1):
-        d.append([i])
-    del d[0][0]
-    for j in range(n + 1):
-        d[0].append(j)
-    for j in range(1, n + 1):
-        for i in range(1, m + 1):
-            if str1[i - 1] == str2[j - 1]:
-                d[i].insert(j, d[i - 1][j - 1])
-            else:
-                minimum = min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + 2)
-                d[i].insert(j, minimum)
-    ldist = d[-1][-1]
-    if lensum > 0:
-        return (lensum - ldist) / lensum
-    else:
-        return 1
 
 
 def list_to_doubles(l):
@@ -215,7 +192,7 @@ def compute_text_similarity_for_list_of_texts(texts, categories):
         for text in texts:
             lists[cat].append(text[cat])
     for cat in categories:
-        distances = [levenshteinDistance(a[0], a[1]) for a in list_to_doubles(lists[cat])]
+        distances = [SequenceMatcher(None, a[0], a[1]).ratio() for a in list_to_doubles(lists[cat])]
         lists[cat] = sum(distances) / len(distances) if len(distances) > 0 else 0
     values = lists.values()
     return sum(values) / len(values) if len(values) > 0 else 0
@@ -234,7 +211,8 @@ def compute_consensus_for_project_ocr_texts(assets_for_consensus, categories):
                 texts[category] = annotation["text"]
             texts_by_asset[asset["id"]].append(texts)
 
-        consensus_by_asset[asset["id"]] = compute_text_similarity_for_list_of_texts(texts_by_asset[asset["id"]], categories)
+        consensus_by_asset[asset["id"]] = compute_text_similarity_for_list_of_texts(texts_by_asset[asset["id"]],
+                                                                                    categories)
     print("Text consensus :", consensus_by_asset)
     return consensus_by_asset
 
