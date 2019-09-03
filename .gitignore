@@ -4,3 +4,6 @@ scripts_playground/.DS_Store
 __pycache__/
 scripts_playground/__pycache__/
 .ipynb_checkpoints/
+kili.egg-info
+dist
+build
