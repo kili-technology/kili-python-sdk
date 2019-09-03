@@ -23,7 +23,7 @@ setup(
 
     long_description=open('README.md').read(),
 
-    install_requires=["numpy", "statsmodels", "shapely", "tqdm", "difflib"],
+    install_requires=["numpy", "statsmodels", "shapely", "tqdm"],
 
     # Taking into account MANIFEST.in
     include_package_data=True,
