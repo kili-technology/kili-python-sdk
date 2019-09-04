@@ -3,7 +3,7 @@ import json
 import numpy as np
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-from statsmodels.stats.inter_rater import fleiss_kappa
+from .inter_rater import fleiss_kappa
 from difflib import SequenceMatcher
 
 from ..helper import format_result
@@ -65,10 +65,12 @@ def compute_bounding_polygons(labels, authors, grid_definition=100):
                 multi_categories = annotation["description"][0]
                 polygon_borders = []
                 for border in annotation["boundingPoly"][0]["normalizedVertices"]:
-                    polygon_borders.append((border['x'] * grid_definition, border['y'] * grid_definition))
+                    polygon_borders.append(
+                        (border['x'] * grid_definition, border['y'] * grid_definition))
                 for category in multi_categories:
                     categories.append(category)
-                    polygon = {"polygon": Polygon(polygon_borders), "category": category}
+                    polygon = {"polygon": Polygon(
+                        polygon_borders), "category": category}
                     all_bounding_poly[author].append(polygon)
     return all_bounding_poly, list(set(categories))
 
@@ -77,7 +79,8 @@ def compute_pixel_matrices_by_category(all_bounding_poly, categories, authors, g
     nb_users = len(authors)
     kappa_matrices_by_category = {}
     for category in categories:
-        kappa_matrices_by_category[category] = np.zeros(shape=(grid_definition ** 2, 2))
+        kappa_matrices_by_category[category] = np.zeros(
+            shape=(grid_definition ** 2, 2))
     for i in range(grid_definition):
         for j in range(grid_definition):
             nb_classification_for_pixel = {}
@@ -95,12 +98,13 @@ def compute_pixel_matrices_by_category(all_bounding_poly, categories, authors, g
 
                 for category in categories:
                     if pixel_is_in_category[category]:
-                        kappa_matrices_by_category[category][i * grid_definition + j, 1] += 1
+                        kappa_matrices_by_category[category][i *
+                                                             grid_definition + j, 1] += 1
                         nb_classification_for_pixel[category] += 1
 
             for category in categories:
                 kappa_matrices_by_category[category][i * grid_definition + j, 0] = nb_users - \
-                                                                                   nb_classification_for_pixel[category]
+                    nb_classification_for_pixel[category]
 
     return kappa_matrices_by_category
 
@@ -134,7 +138,8 @@ def compute_consensus_for_assets(assets_for_consensus):
 
 
 def compute_consensus_for_project(client, project_id, interface_category, skip=0, first=100000):
-    categories = list(json.loads(get_tools(client, project_id)[0]["jsonSettings"])["annotation_types"].keys())
+    categories = list(json.loads(get_tools(client, project_id)[
+                      0]["jsonSettings"])["annotation_types"].keys())
     assets = get_assets(client, project_id, skip, first)
     assets_for_consensus = []
     for asset in assets:
@@ -147,29 +152,34 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
         for asset in assets_for_consensus:
             labels = asset["labels"]
             authors = compute_authors(labels)
-            all_bounding_poly, categories = compute_bounding_polygons(labels, authors)
+            all_bounding_poly, categories = compute_bounding_polygons(
+                labels, authors)
             kappa_matrices_by_category = compute_pixel_matrices_by_category(all_bounding_poly, categories, authors,
                                                                             grid_definition=100)
 
             kappa_mean_over_categories = 0
             for category in categories:
-                kappa_mean_over_categories += fleiss_kappa(kappa_matrices_by_category[category], method="fleiss")
+                kappa_mean_over_categories += fleiss_kappa(
+                    kappa_matrices_by_category[category], method="fleiss")
                 print("Asset: {}, Category: {}, Fleiss-Kappa: {}".format(asset["id"], category,
                                                                          fleiss_kappa(
                                                                              kappa_matrices_by_category[category],
                                                                              method="fleiss")))
             if len(categories) > 0:
-                consensus_by_asset[asset["id"]] = max(0, kappa_mean_over_categories / len(categories))
+                consensus_by_asset[asset["id"]] = max(
+                    0, kappa_mean_over_categories / len(categories))
             else:
                 consensus_by_asset[asset["id"]] = 0
         if interface_category == "IMAGE":
             print("Image consensus :", consensus_by_asset)
             return consensus_by_asset
         elif interface_category == "IMAGE_TO_TEXT":
-            consensus_by_asset_texts = compute_consensus_for_project_ocr_texts(assets_for_consensus, categories)
+            consensus_by_asset_texts = compute_consensus_for_project_ocr_texts(
+                assets_for_consensus, categories)
             overall_consensus_by_asset = {}
             for id in consensus_by_asset.keys():
-                overall_consensus_by_asset[id] = (consensus_by_asset[id] + consensus_by_asset_texts[id]) / 2
+                overall_consensus_by_asset[id] = (
+                    consensus_by_asset[id] + consensus_by_asset_texts[id]) / 2
             print("Image consensus :", consensus_by_asset)
             print("Overall consensus :", overall_consensus_by_asset)
             return overall_consensus_by_asset
@@ -192,17 +202,21 @@ def compute_text_similarity_for_list_of_texts(texts, categories):
         for text in texts:
             lists[cat].append(text[cat])
     for cat in categories:
-        distances = [SequenceMatcher(None, a[0], a[1]).ratio() for a in list_to_doubles(lists[cat])]
-        lists[cat] = sum(distances) / len(distances) if len(distances) > 0 else 0
+        distances = [SequenceMatcher(None, a[0], a[1]).ratio()
+                     for a in list_to_doubles(lists[cat])]
+        lists[cat] = sum(distances) / \
+            len(distances) if len(distances) > 0 else 0
     values = lists.values()
     return sum(values) / len(values) if len(values) > 0 else 0
 
 
 def compute_consensus_for_project_ocr_texts(assets_for_consensus, categories):
     consensus_by_asset = {}
-    texts_by_asset = dict.fromkeys([asset["id"] for asset in assets_for_consensus], [])
+    texts_by_asset = dict.fromkeys([asset["id"]
+                                    for asset in assets_for_consensus], [])
     for asset in assets_for_consensus:
-        labels = [label for label in asset["labels"] if label["isLatestLabelForUser"]]
+        labels = [label for label in asset["labels"]
+                  if label["isLatestLabelForUser"]]
         for label in labels:
             texts = dict.fromkeys(categories, "")
             annotations = json.loads(label["jsonResponse"])["annotations"]
@@ -220,10 +234,12 @@ def compute_consensus_for_project_ocr_texts(assets_for_consensus, categories):
 def force_consensus_for_project(client, project_id):
     interface_category = get_project(client, project_id)['interfaceCategory']
     print(interface_category)
-    consensus_by_asset = compute_consensus_for_project(client, project_id, interface_category)
+    consensus_by_asset = compute_consensus_for_project(
+        client, project_id, interface_category)
     asset_ids = list(consensus_by_asset.keys())
     consensus_marks = list(consensus_by_asset.values())
     are_used_for_consensus = [True for _ in consensus_marks]
 
     if len(asset_ids) > 0:
-        update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used_for_consensus)
+        update_consensus_in_many_assets(
+            client, asset_ids, consensus_marks, are_used_for_consensus)
