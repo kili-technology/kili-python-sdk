@@ -23,7 +23,7 @@ setup(
 
     long_description=open('README.md').read(),
 
-    install_requires=["shapely", "tqdm"],
+    install_requires=["graphqlclient", "shapely", "tqdm"],
 
     # Taking into account MANIFEST.in
     include_package_data=True,
