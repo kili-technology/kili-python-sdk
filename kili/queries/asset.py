@@ -56,6 +56,7 @@ def get_assets(client, project_id, skip, first):
         honeypotMark
         status
         isUsedForConsensus
+        jsonMetadata
         labels {
           id
           labelType

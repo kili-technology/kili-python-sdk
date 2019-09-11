@@ -6,6 +6,9 @@ def get_user(client, email):
     query {
       getUser(email: "%s") {
         id
+        organization {
+            id
+        }
       }
     }
     ''' % (email))
