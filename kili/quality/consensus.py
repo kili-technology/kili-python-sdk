@@ -184,7 +184,8 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
             print("Overall consensus :", overall_consensus_by_asset)
             return overall_consensus_by_asset
 
-    elif interface_category == "SINGLECLASS_TEXT_CLASSIFICATION" or interface_category == "MULTICLASS_TEXT_CLASSIFICATION":
+    elif interface_category == "SINGLECLASS_TEXT_CLASSIFICATION" or interface_category == "MULTICLASS_TEXT_CLASSIFICATION" \
+            or interface_category == "VIDEO_CLASSIFICATION":
         return compute_consensus_for_assets(assets_for_consensus)
 
 
