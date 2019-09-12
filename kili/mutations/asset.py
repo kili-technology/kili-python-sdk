@@ -36,7 +36,7 @@ def delete_assets_by_external_id(client, project_id, external_id):
 
 
 def append_to_dataset(client, project_id, content, external_id, filename, is_instructions,
-                      instructions, is_honeypot, consensus_mark, honeypot_mark, status, json_metadata):
+                      instructions, is_honeypot, status, json_metadata):
     result = client.execute('''
     mutation {
       appendToDataset(projectID: "%s"
@@ -46,8 +46,6 @@ def append_to_dataset(client, project_id, content, external_id, filename, is_ins
         isInstructions: %s,
         instructions: "%s",
         isHoneypot: %s,
-        consensusMark: %d,
-        honeypotMark: %d,
         status: %s,
         jsonMetadata: "%s"
       ) {
@@ -55,12 +53,12 @@ def append_to_dataset(client, project_id, content, external_id, filename, is_ins
       }
     }
     ''' % (project_id, content, external_id, filename, str(is_instructions).lower(), instructions,
-           str(is_honeypot).lower(), consensus_mark, honeypot_mark, status, json_metadata))
+           str(is_honeypot).lower(), status, json_metadata))
     return format_result('appendToDataset', result)
 
 
 def append_many_to_dataset(client, project_id, content_array, external_id_array, filename_array, is_instructions_array,
-                           instructions_array, is_honeypot_array, consensus_mark_array, honeypot_mark_array, status_array, json_metadata_array):
+                           instructions_array, is_honeypot_array, status_array, json_metadata_array):
     result = client.execute('''
     mutation {
       appendManyToDataset(
@@ -71,17 +69,14 @@ def append_many_to_dataset(client, project_id, content_array, external_id_array,
         isInstructionsArray: %s,
         instructionsArray: %s,
         isHoneypotArray: %s,
-        consensusMarkArray: %s,
-        honeypotMarkArray: %s,
         statusArray: %s,
         jsonMetadataArray: %s) {
         id
       }
     }
-    ''' % (project_id, dumps(content_array), dumps(external_id_array), dumps(filename_array), dumps(is_instructions_array).lower(),
-           dumps(instructions_array), dumps(is_honeypot_array).lower(), dumps(
-               consensus_mark_array), dumps(honeypot_mark_array), dumps(status_array).replace('"', ''),
-           dumps(json_metadata_array)))
+    ''' % (project_id, dumps(content_array), dumps(external_id_array), dumps(filename_array),
+           dumps(is_instructions_array).lower(), dumps(instructions_array), dumps(is_honeypot_array).lower(),
+           dumps(status_array).replace('"', ''), dumps(json_metadata_array)))
     return format_result('appendManyToDataset', result)
 
 
