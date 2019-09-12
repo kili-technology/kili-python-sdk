@@ -46,6 +46,8 @@ def compute_present_categories(asset):
     for label in labels:
         if label["labelType"] == "DEFAULT" and label["isLatestLabelForUser"]:
             response = json.loads(label["jsonResponse"])
+            if "categories" not in response:
+                continue
             categories = response["categories"]
             for checked_category in categories:
                 present_categories.append(checked_category["name"])
@@ -115,7 +117,7 @@ def compute_consensus_for_assets(assets_for_consensus):
         categories = compute_present_categories(asset)
         dic_categories = {}
         for category in categories:
-            dic_categories[category] = -1
+            dic_categories[category] = 0
 
         nb_user = 0
         labels = asset["labels"]
@@ -123,24 +125,25 @@ def compute_consensus_for_assets(assets_for_consensus):
             if label["labelType"] == "DEFAULT" and label["isLatestLabelForUser"]:
                 nb_user += 1
                 response = json.loads(label["jsonResponse"])
+                if "categories" not in response:
+                    continue
                 response_categories = response["categories"]
                 for checked_category in response_categories:
                     dic_categories[checked_category["name"]] += 1
         consensus = 0
         if (nb_user - 1) == 0:
             continue
-            # raise NameError("There should be at least two labelers for a consensus asset.")
         for category in categories:
-            consensus += (1.0 / (nb_user - 1)) * dic_categories[category]
+            consensus += (1.0 / (nb_user)) * dic_categories[category]
         consensus_by_asset[asset["id"]] = (1.0 / len(categories)) * consensus
     print(consensus_by_asset)
     return consensus_by_asset
 
 
 def compute_consensus_for_project(client, project_id, interface_category, skip=0, first=100000):
-    categories = list(json.loads(get_tools(client, project_id)[
-                      0]["jsonSettings"])["annotation_types"].keys())
     assets = get_assets(client, project_id, skip, first)
+    if not assets:
+        return None
     assets_for_consensus = []
     for asset in assets:
         if asset["isUsedForConsensus"] and (asset["status"] == "LABELED" or asset["status"] == "REVIEWED") and not \
@@ -148,6 +151,8 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
             assets_for_consensus.append(asset)
 
     if interface_category == "IMAGE" or interface_category == "IMAGE_TO_TEXT":
+        categories = list(json.loads(get_tools(client, project_id)[
+                                         0]["jsonSettings"])["annotation_types"].keys())
         consensus_by_asset = {}
         for asset in assets_for_consensus:
             labels = asset["labels"]
@@ -184,7 +189,8 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
             print("Overall consensus :", overall_consensus_by_asset)
             return overall_consensus_by_asset
 
-    elif interface_category == "SINGLECLASS_TEXT_CLASSIFICATION" or interface_category == "MULTICLASS_TEXT_CLASSIFICATION":
+    elif interface_category == "SINGLECLASS_TEXT_CLASSIFICATION" or interface_category == "MULTICLASS_TEXT_CLASSIFICATION" \
+            or interface_category == "VIDEO_CLASSIFICATION":
         return compute_consensus_for_assets(assets_for_consensus)
 
 
@@ -236,6 +242,8 @@ def force_consensus_for_project(client, project_id):
     print(interface_category)
     consensus_by_asset = compute_consensus_for_project(
         client, project_id, interface_category)
+    if not consensus_by_asset:
+        return "WARNING : No asset in your project."
     asset_ids = list(consensus_by_asset.keys())
     consensus_marks = list(consensus_by_asset.values())
     are_used_for_consensus = [True for _ in consensus_marks]
