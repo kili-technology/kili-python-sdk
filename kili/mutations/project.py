@@ -2,7 +2,7 @@ from json import dumps
 from tqdm import tqdm
 
 from ..helper import format_result
-from ..queries.asset import export_assets
+from ..queries.asset import export_assets, get_assets
 from .asset import force_update_status
 
 
@@ -263,7 +263,7 @@ def update_properties_in_project_user(client, project_user_id, total_duration=No
 
 
 def force_project_kpis(client, project_id):
-    assets = export_assets(client, project_id)
+    assets = get_assets(client, project_id, 0, 100000000)
     for asset in tqdm(assets):
         asset_updated = force_update_status(client, asset['id'])
         asset['status'] = asset_updated['status']
