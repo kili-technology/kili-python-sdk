@@ -18,6 +18,7 @@ def get_asset(client, asset_id):
         isUsedForConsensus
         labels {
           id
+          createdAt
           secondsToLabel
           totalSecondsToLabel
           labelType
@@ -59,6 +60,7 @@ def get_assets(client, project_id, skip, first):
         jsonMetadata
         labels {
           id
+          createdAt
           labelType
           jsonResponse
           isLatestLabelForUser
