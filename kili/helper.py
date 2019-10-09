@@ -1,4 +1,4 @@
-from json import loads
+from json import loads, dumps
 
 
 class GraphQLError(Exception):
@@ -12,3 +12,8 @@ def format_result(name, result):
         raise GraphQLError(name, json_result['errors'])
 
     return json_result['data'][name]
+
+
+def json_escape(dict):
+    str = dumps(dict)
+    return str.replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r').replace('\\$', "$")

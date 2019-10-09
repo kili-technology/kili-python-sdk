@@ -1,4 +1,4 @@
-from ..helper import format_result
+from ..helper import format_result, json_escape
 
 
 def create_honeypot(client, asset_id, json_response):
@@ -20,5 +20,5 @@ def create_honeypot(client, asset_id, json_response):
           honeypotMark
       }
     }
-    ''' % (asset_id, json_response))
+    ''' % (asset_id, json_escape(json_response)))
     return format_result('createHoneypot', result)

@@ -1,6 +1,6 @@
 from json import dumps
 
-from ..helper import format_result
+from ..helper import format_result, json_escape
 
 
 def create_assets(client, project_id, contents, external_ids):
@@ -53,7 +53,7 @@ def append_to_dataset(client, project_id, content, external_id, filename, is_ins
       }
     }
     ''' % (project_id, content, external_id, filename, str(is_instructions).lower(), instructions,
-           str(is_honeypot).lower(), status, json_metadata))
+           str(is_honeypot).lower(), status, json_escape(json_metadata)))
     return format_result('appendToDataset', result)
 
 
@@ -75,8 +75,9 @@ def append_many_to_dataset(client, project_id, content_array, external_id_array,
       }
     }
     ''' % (project_id, dumps(content_array), dumps(external_id_array), dumps(filename_array),
-           dumps(is_instructions_array).lower(), dumps(instructions_array), dumps(is_honeypot_array).lower(),
-           dumps(status_array).replace('"', ''), dumps(json_metadata_array)))
+           dumps(is_instructions_array).lower(), dumps(
+               instructions_array), dumps(is_honeypot_array).lower(),
+           dumps(status_array).replace('"', ''), dumps([json_escape(elem) for elem in json_metadata_array])))
     return format_result('appendManyToDataset', result)
 
 
@@ -101,7 +102,7 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
       }
     }
     ''' % (asset_id, project_id, content, external_id, filename, str(is_instructions).lower(), instructions,
-           str(is_honeypot).lower(), consensus_mark, honeypot_mark, status, json_metadata))
+           str(is_honeypot).lower(), consensus_mark, honeypot_mark, status, json_escape(json_metadata)))
     return format_result('updateAsset', result)
 
 

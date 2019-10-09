@@ -1,4 +1,4 @@
-from ..helper import format_result
+from ..helper import format_result, json_escape
 
 
 def create_prediction(client, asset_id, json_response):
@@ -20,7 +20,7 @@ def create_prediction(client, asset_id, json_response):
           honeypotMark
       }
     }
-    ''' % (asset_id, json_response))
+    ''' % (asset_id, json_escape(json_response)))
     return format_result('createPrediction', result)
 
 
@@ -36,7 +36,7 @@ def append_to_labels(client, author_id, json_response, label_asset_id, label_typ
           id
       }
     }
-    ''' % (author_id, json_response, label_asset_id, label_type, seconds_to_label))
+    ''' % (author_id, json_escape(json_response), label_asset_id, label_type, seconds_to_label))
     return format_result('appendToLabels', result)
 
 
@@ -52,7 +52,7 @@ def frontend_append_to_labels(client, author_id, json_response, label_asset_id, 
           id
       }
     }
-    ''' % (author_id, json_response, label_asset_id, label_type, seconds_to_label))
+    ''' % (author_id, json_escape(json_response), label_asset_id, label_type, seconds_to_label))
     return format_result('frontendAppendToLabels', result)
 
 
@@ -70,7 +70,7 @@ def update_label(client, label_id, label_asset_id, review_asset_id, author_id, l
           id
       }
     }
-    ''' % (label_id, label_asset_id, review_asset_id, author_id, label_type, json_response, seconds_to_label))
+    ''' % (label_id, label_asset_id, review_asset_id, author_id, label_type, json_escape(json_response), seconds_to_label))
     return format_result('updateLabel', result)
 
 

@@ -1,7 +1,7 @@
 from json import dumps
 from tqdm import tqdm
 
-from ..helper import format_result
+from ..helper import format_result, json_escape
 from ..queries.asset import export_assets, get_assets
 from .asset import force_update_status
 
@@ -18,7 +18,7 @@ def create_project(client, title, description, tool_type, use_honeypot, interfac
         id
       }
     }
-    ''' % (title, description, tool_type, str(use_honeypot).lower(), interface_json_settings))
+    ''' % (title, description, tool_type, str(use_honeypot).lower(), json_escape(interface_json_settings)))
     return format_result('createProject', result)
 
 
