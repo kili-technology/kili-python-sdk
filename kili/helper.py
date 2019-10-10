@@ -16,4 +16,4 @@ def format_result(name, result):
 
 def json_escape(dict):
     str = dumps(dict)
-    return str.replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r').replace('\\$', "$")
+    return dumps(str)[1:-1]
