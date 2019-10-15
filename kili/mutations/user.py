@@ -48,17 +48,6 @@ def update_user(client, user_id, name, email, phone, organization_id, organizati
     return format_result('updateUser', result)
 
 
-def delete_user(client, user_id):
-    result = client.execute('''
-    mutation {
-      deleteUser(userID: "%s") {
-        id
-      }
-    }
-    ''' % (user_id))
-    return format_result('deleteUser', result)
-
-
 def update_password(client, email, old_password, new_password_1, new_password_2):
     result = client.execute('''
     mutation {
@@ -71,4 +60,3 @@ def update_password(client, email, old_password, new_password_1, new_password_2)
     }
     ''' % (email, old_password, new_password_1, new_password_2))
     return format_result('updatePassword', result)
-
