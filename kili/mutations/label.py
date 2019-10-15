@@ -24,7 +24,7 @@ def create_prediction(client, asset_id, json_response):
     return format_result('createPrediction', result)
 
 
-def append_to_labels(client, author_id, json_response, label_asset_id, label_type, seconds_to_label):
+def append_to_labels(client, author_id, json_response, label_asset_id, label_type, seconds_to_label, skipped=False):
     result = client.execute('''
     mutation {
       appendToLabels(
@@ -32,15 +32,16 @@ def append_to_labels(client, author_id, json_response, label_asset_id, label_typ
         jsonResponse: "%s",
         labelAssetID: "%s",
         labelType: %s,
-        secondsToLabel: %d) {
+        secondsToLabel: %d,
+        skipped: %s) {
           id
       }
     }
-    ''' % (author_id, json_escape(json_response), label_asset_id, label_type, seconds_to_label))
+    ''' % (author_id, json_escape(json_response), label_asset_id, label_type, seconds_to_label, str(skipped).lower()))
     return format_result('appendToLabels', result)
 
 
-def frontend_append_to_labels(client, author_id, json_response, label_asset_id, label_type, seconds_to_label):
+def frontend_append_to_labels(client, author_id, json_response, label_asset_id, label_type, seconds_to_label, skipped=False):
     result = client.execute('''
     mutation {
       frontendAppendToLabels(
@@ -48,11 +49,12 @@ def frontend_append_to_labels(client, author_id, json_response, label_asset_id, 
         jsonResponse: "%s",
         labelAssetID: "%s",
         labelType: %s,
-        secondsToLabel: %d) {
+        secondsToLabel: %d,
+        skipped: %s) {
           id
       }
     }
-    ''' % (author_id, json_escape(json_response), label_asset_id, label_type, seconds_to_label))
+    ''' % (author_id, json_escape(json_response), label_asset_id, label_type, seconds_to_label, str(skipped).lower()))
     return format_result('frontendAppendToLabels', result)
 
 
