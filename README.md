@@ -12,6 +12,11 @@ Kili Technology allows you to:
 - Monitor production quality using leading indicators and workflows for production monitoring and data quality validation
 - Easily export the produced data
 
+## What is Kili Playground ?
+
+Kili Playground is a Python client wrapping the GraphQL API of Kili Technology.
+It allows data scientists and developers to control Kili Technology from an IDE.
+
 ## Installation
 
 - Clone the repository
