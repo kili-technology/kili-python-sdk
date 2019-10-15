@@ -1,4 +1,4 @@
-# Kili Playground
+# Image and Text Annotation tool - Kili Playground
 
 ## What is Kili Technology?
 
