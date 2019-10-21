@@ -76,8 +76,10 @@ def update_label(client, label_id, label_asset_id, review_asset_id, author_id, l
     return format_result('updateLabel', result)
 
 
-def update_properties_in_label(client, label_id, seconds_to_label=None):
+def update_properties_in_label(client, label_id, seconds_to_label=None, json_response = None):
     formatted_seconds_to_label = 'null' if seconds_to_label is None else f'{seconds_to_label}'
+    formatted_json_response = 'null' if json_response is None else f'{json_response}'
+
 
     result = client.execute('''
         mutation {
@@ -85,10 +87,11 @@ def update_properties_in_label(client, label_id, seconds_to_label=None):
             where: {id: "%s"},
             data: {
               secondsToLabel: %s
+              jsonResponse: "%s"
             }
           ) {
             id
           }
         }
-        ''' % (label_id, formatted_seconds_to_label))
+        ''' % (label_id, formatted_seconds_to_label, json_escape(json_response)))
     return format_result('updatePropertiesInLabel', result)
