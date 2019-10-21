@@ -14,7 +14,7 @@ def get_projects(client, user_id):
         numberOfAssets
         completionPercentage
         numberOfRemainingAssets
-        numberOfAssetsWithEmptyLabels
+        numberOfAssetsWithSkippedLabels
         numberOfReviewedAssets
         numberOfLatestLabels
         roles {

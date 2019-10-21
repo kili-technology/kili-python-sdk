@@ -88,7 +88,7 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
               numberOfAssets: %s
               completionPercentage: %s
               numberOfRemainingAssets: %s
-              numberOfAssetsWithEmptyLabels: %s
+              numberOfAssetsWithSkippedLabels: %s
               numberOfReviewedAssets: %s
               numberOfLatestLabels: %s
             }
@@ -126,7 +126,7 @@ def force_project_kpi_computation(client, project_id):
         numberOfAssets
         completionPercentage
         numberOfRemainingAssets
-        numberOfAssetsWithEmptyLabels
+        numberOfAssetsWithSkippedLabels
         numberOfReviewedAssets
         numberOfLatestLabels
         roles {
