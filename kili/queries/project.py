@@ -23,6 +23,7 @@ def get_projects(client, user_id):
           role
           lastLabelingAt
           numberOfAnnotations
+          numberOfLabeledAssets
           totalDuration
           durationPerLabel
           honeypotMark

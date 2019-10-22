@@ -133,6 +133,7 @@ def force_project_kpi_computation(client, project_id):
           user { id }
           lastLabelingAt
           numberOfAnnotations
+          numberOfLabeledAssets
           totalDuration
           durationPerLabel
           honeypotMark
