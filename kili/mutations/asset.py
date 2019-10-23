@@ -109,8 +109,7 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
 def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None):
     formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
     formatted_priority = 'null' if priority is None else f'{priority}'
-    formatted_json_metadata = 'null' if json_metadata is None else json_escape(
-        json_metadata)
+    formatted_json_metadata = 'null' if json_metadata is None else f'"{json_escape(json_metadata)}"'
 
     result = client.execute('''
         mutation {
