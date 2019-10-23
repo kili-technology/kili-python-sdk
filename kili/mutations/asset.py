@@ -106,8 +106,9 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
     return format_result('updateAsset', result)
 
 
-def update_properties_in_asset(client, asset_id, external_id=None):
+def update_properties_in_asset(client, asset_id, external_id=None, priority=None):
     formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
+    formatted_priority = 'null' if priority is None else f'{priority}'
 
     result = client.execute('''
         mutation {
@@ -115,12 +116,13 @@ def update_properties_in_asset(client, asset_id, external_id=None):
             where: {id: "%s"},
             data: {
               externalId: %s
+              priority: %s
             }
           ) {
             id
           }
         }
-        ''' % (asset_id, formatted_external_id))
+        ''' % (asset_id, formatted_external_id, formatted_priority))
     return format_result('updatePropertiesInAsset', result)
 
 
