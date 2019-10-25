@@ -44,6 +44,17 @@ def get_project(client, project_id):
       getProject(projectID: "%s") {
         id
         interfaceCategory
+        roles {
+          id
+          user { id, name, email, organization { id } }
+          role
+          lastLabelingAt
+          numberOfAnnotations
+          numberOfLabeledAssets
+          totalDuration
+          durationPerLabel
+          honeypotMark
+        }
       }
     }
     ''' % (project_id))
