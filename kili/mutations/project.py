@@ -1,9 +1,11 @@
 from json import dumps
+
 from tqdm import tqdm
 
-from ..helper import format_result, json_escape
-from ..queries.asset import export_assets, get_assets
 from .asset import force_update_status
+from ..helper import GraphQLError, format_result, json_escape
+from ..queries.asset import get_assets
+from ..queries.project import get_project
 
 
 def create_project(client, title, description, tool_type, use_honeypot, interface_json_settings):
@@ -98,7 +100,8 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
         }
         ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
                formatted_number_of_assets, formatted_completion_percentage, formatted_number_of_remaining_assets,
-               formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets, formatted_number_of_latest_labels))
+               formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets,
+               formatted_number_of_latest_labels))
     return format_result('updatePropertiesInProject', result)
 
 
@@ -243,9 +246,13 @@ def delete_from_roles(client, role_id):
     return format_result('deleteFromRoles', result)
 
 
-def update_properties_in_project_user(client, project_user_id, total_duration=None, duration_per_label=None):
+def update_properties_in_project_user(client, project_user_id,
+                                      total_duration=None,
+                                      duration_per_label=None,
+                                      number_of_labeled_assets=None):
     formatted_total_duration = 'null' if total_duration is None else f'{total_duration}'
     formatted_duration_per_label = 'null' if duration_per_label is None else f'{duration_per_label}'
+    number_of_labeled_assets = 'null' if number_of_labeled_assets is None else f'{number_of_labeled_assets}'
 
     result = client.execute('''
         mutation {
@@ -254,23 +261,47 @@ def update_properties_in_project_user(client, project_user_id, total_duration=No
             data: {
               totalDuration: %s
               durationPerLabel: %s
+              numberOfLabeledAssets: %s
             }
           ) {
             id
           }
         }
-        ''' % (project_user_id, formatted_total_duration, formatted_duration_per_label))
+        ''' % (project_user_id, formatted_total_duration, formatted_duration_per_label, number_of_labeled_assets))
     return format_result('updatePropertiesInProjectUser', result)
 
 
 def force_project_kpis(client, project_id):
     assets = get_assets(client, project_id, 0, 100000000)
+    numbers_of_labeled_assets = {}
     for asset in tqdm(assets):
         asset_updated = force_update_status(client, asset['id'])
         asset['status'] = asset_updated['status']
+        asset_authors = [label['author']['id'] for label in asset['labels']]
+        for asset_author in asset_authors:
+            numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
+                numbers_of_labeled_assets[asset_author] + 1
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
     completion_percentage = 1 - number_of_remaining_assets / number_of_assets
     update_properties_in_project(client, project_id, number_of_assets=number_of_assets,
-                                 number_of_remaining_assets=number_of_remaining_assets, completion_percentage=completion_percentage)
+                                 number_of_remaining_assets=number_of_remaining_assets,
+                                 completion_percentage=completion_percentage)
+
+    project = get_project(client, project_id)
+    project_users = project['roles']
+    for project_user in project_users:
+        total_duration = project_user['totalDuration']
+        duration_per_label = project_user['durationPerLabel']
+        user_id = project_user['user']['id']
+        number_of_labeled_assets = numbers_of_labeled_assets[user_id] if user_id in numbers_of_labeled_assets else 0
+        try:
+            update_properties_in_project_user(client, project_user['id'], total_duration=total_duration,
+                                              duration_per_label=duration_per_label,
+                                              number_of_labeled_assets=number_of_labeled_assets)
+        except GraphQLError as e:
+            if 'is trying to access projectUser' in str(e):
+                print(f'Could not update {user_id}')
+            else:
+                raise e
