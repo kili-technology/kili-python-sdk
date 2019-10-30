@@ -247,8 +247,8 @@ def force_project_kpis(client, project_id):
     for asset in tqdm(assets):
         asset_updated = force_update_status(client, asset['id'])
         asset['status'] = asset_updated['status']
-        asset_authors = [label['author']['id'] for label in asset['labels']]
-        for asset_author in asset_authors:
+        unique_asset_authors = list(set([label['author']['id'] for label in asset['labels']]))
+        for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
     number_of_assets = len([a for a in assets if not a['isInstructions']])
