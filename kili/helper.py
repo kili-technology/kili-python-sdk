@@ -7,11 +7,9 @@ class GraphQLError(Exception):
 
 
 def format_result(name, result):
-    json_result = loads(result)
-    if 'errors' in json_result:
-        raise GraphQLError(name, json_result['errors'])
-
-    return json_result['data'][name]
+    if 'errors' in result:
+        raise GraphQLError(name, result['errors'])
+    return result['data'][name]
 
 
 def json_escape(dict):

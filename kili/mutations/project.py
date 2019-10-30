@@ -136,24 +136,28 @@ def frontend_create_project(client, user_id):
 def update_project(client, project_id,
                    title,
                    description,
-                   creation_active_step,
-                   creation_completed,
-                   creation_skipped,
                    interface_category,
-                   input_type,
-                   interface_title,
-                   interface_description,
-                   interface_url,
-                   outsource,
-                   consensus_tot_coverage,
-                   min_consensus_size,
-                   max_worker_count,
-                   min_agreement,
-                   use_honey_pot,
-                   instructions,
-                   model_title,
-                   model_description,
-                   model_url):
+                   creation_active_step=0,
+                   creation_completed=[0, 1, 2, 3, 4, 5, 6],
+                   creation_skipped=[],
+                   input_type='TEXT',
+                   interface_title=None,
+                   interface_description=None,
+                   interface_url=None,
+                   outsource=False,
+                   consensus_tot_coverage=0,
+                   min_consensus_size=1,
+                   max_worker_count=4,
+                   min_agreement=66,
+                   use_honey_pot=False,
+                   instructions=None,
+                   model_title="",
+                   model_description="",
+                   model_url=""):
+    formatted_interface_title = 'null' if interface_title is None else f'"{interface_title}"'
+    formatted_interface_description = 'null' if interface_description is None else f'"{interface_description}"'
+    formatted_interface_url = 'null' if interface_url is None else f'"{interface_url}"'
+    formatted_instructions = 'null' if instructions is None else f'"{instructions}"'
     result = client.execute('''
     mutation {
       updateProject(projectID: "%s",
@@ -164,16 +168,16 @@ def update_project(client, project_id,
         creationSkipped: %s,
         interfaceCategory: %s,
         inputType: %s,
-        interfaceTitle: "%s",
-        interfaceDescription: "%s",
-        interfaceUrl: "%s",
+        interfaceTitle: %s,
+        interfaceDescription: %s,
+        interfaceUrl: %s,
         outsource: %s,
         consensusTotCoverage: %d,
         minConsensusSize: %d,
         maxWorkerCount: %d,
         minAgreement: %d,
         useHoneyPot: %s,
-        instructions: "%s",
+        instructions: %s,
         modelTitle: "%s",
         modelDescription: "%s",
         modelUrl: "%s") {
@@ -184,10 +188,10 @@ def update_project(client, project_id,
         project_id, title, description, creation_active_step, dumps(
             creation_completed),
         dumps(creation_skipped).lower(),
-        interface_category, input_type, interface_title, interface_description, interface_url, str(
+        interface_category, input_type, formatted_interface_title, formatted_interface_description, formatted_interface_url, str(
             outsource).lower(),
         consensus_tot_coverage, min_consensus_size, max_worker_count, min_agreement,
-        str(use_honey_pot).lower(), instructions, model_title, model_description, model_url))
+        str(use_honey_pot).lower(), formatted_instructions, model_title, model_description, model_url))
     return format_result('updateProject', result)
 
 
@@ -265,7 +269,8 @@ def force_project_kpis(client, project_id):
         total_duration = project_user['totalDuration']
         duration_per_label = project_user['durationPerLabel']
         user_id = project_user['user']['id']
-        number_of_labeled_assets = numbers_of_labeled_assets[user_id] if user_id in numbers_of_labeled_assets else 0
+        number_of_labeled_assets = numbers_of_labeled_assets[
+            user_id] if user_id in numbers_of_labeled_assets else 0
         try:
             update_properties_in_project_user(client, project_user['id'], total_duration=total_duration,
                                               duration_per_label=duration_per_label,
