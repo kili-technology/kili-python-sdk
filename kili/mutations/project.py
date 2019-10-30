@@ -121,36 +121,6 @@ def update_interface_in_project(client, project_id, jsonSettings=None):
     return format_result('updatePropertiesInProject', result)
 
 
-def force_project_kpi_computation(client, project_id):
-    result = client.execute('''
-    mutation {
-      forceProjectKpiComputation(projectID: "%s") {
-        id
-        numberOfAssets
-        completionPercentage
-        numberOfRemainingAssets
-        numberOfAssetsWithSkippedLabels
-        numberOfReviewedAssets
-        numberOfLatestLabels
-        roles {
-          user { id }
-          lastLabelingAt
-          numberOfAnnotations
-          numberOfLabeledAssets
-          totalDuration
-          durationPerLabel
-          honeypotMark
-        }
-        dataset {
-          id
-          honeypotMark
-        }
-      }
-    }
-    ''' % (project_id))
-    return format_result('forceProjectKpiComputation', result)
-
-
 def frontend_create_project(client, user_id):
     result = client.execute('''
     mutation {
