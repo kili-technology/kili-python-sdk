@@ -2,6 +2,7 @@ import os
 import click
 import yaml
 import hashlib
+import json
 
 from kili.authentication import authenticate
 from kili.mutations.organization import create_organization
@@ -77,9 +78,11 @@ def execute_mutations(configuration_file, graphql_client):
                 for j, tool in enumerate(tools):
                     if i == j:
                         project_id = project['id']
-                        args = ['name', 'type', 'json_settings']
+                        args = ['name', 'type']
                         values = [get(tool, a) for a in args]
-                        append_to_tools(client, project_id, *values)
+                        json_settings = json.loads(get(tool, 'json_settings'))
+                        append_to_tools(
+                            client, project_id, *values, json_settings=json_settings)
 
         if 'appendToRoles' in mutation_name:
             for i, project in enumerate(projects):
