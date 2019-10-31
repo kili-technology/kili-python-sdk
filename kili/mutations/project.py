@@ -256,8 +256,9 @@ def force_project_kpis(client, project_id):
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
-        for label in asset["labels"]:
-            number_of_latest_labels +=1
+        for label in asset['labels']:
+            if label['isLatestLabelForUser']:
+                number_of_latest_labels +=1
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
