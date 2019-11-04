@@ -121,16 +121,16 @@ def update_interface_in_project(client, project_id, jsonSettings=None):
     return format_result('updatePropertiesInProject', result)
 
 
-def frontend_create_project(client, user_id):
+def create_empty_project(client, user_id):
     result = client.execute('''
     mutation {
-      frontendCreateProject(userID: "%s") {
+      createEmptyProject(userID: "%s") {
         id
 
       }
     }
     ''' % (user_id))
-    return format_result('frontendCreateProject', result)
+    return format_result('createEmptyProject', result)
 
 
 def update_project(client, project_id,
@@ -252,13 +252,14 @@ def force_project_kpis(client, project_id):
     for asset in tqdm(assets):
         asset_updated = force_update_status(client, asset['id'])
         asset['status'] = asset_updated['status']
-        unique_asset_authors = list(set([label['author']['id'] for label in asset['labels']]))
+        unique_asset_authors = list(
+            set([label['author']['id'] for label in asset['labels']]))
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
         for label in asset['labels']:
             if label['isLatestLabelForUser']:
-                number_of_latest_labels +=1
+                number_of_latest_labels += 1
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
