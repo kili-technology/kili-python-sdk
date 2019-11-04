@@ -60,10 +60,10 @@ def execute_mutations(configuration_file, graphql_client):
                     client, *values, organization_id, organization_role)
                 configuration['users'][i]['id'] = user['id']
 
-        if 'frontendCreateProject' in mutation_name:
+        if 'createEmptyProject' in mutation_name:
             user_id = authentication['user']['id']
             for i, project in enumerate(projects):
-                project = frontend_create_project(
+                project = create_empty_project(
                     client, user_id)
                 configuration['projects'][i]['id'] = project['id']
 

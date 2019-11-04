@@ -29,7 +29,7 @@ mutations:
   - signIn
   - createOrganization
   - createUser
-  - frontendCreateProject
+  - createEmptyProject
   - updateProject
   - appendToTools
   - appendToRoles
