@@ -4,6 +4,8 @@ import yaml
 import hashlib
 import json
 
+from tqdm import tqdm
+
 from kili.authentication import authenticate
 from kili.mutations.organization import create_organization
 from kili.mutations.user import create_user
@@ -34,7 +36,7 @@ def execute_mutations(configuration_file, graphql_client):
     with open(configuration_file, 'r') as f:
         configuration = yaml.safe_load(f)
 
-    for mutation_name in configuration['mutations']:
+    for mutation_name in tqdm(configuration['mutations']):
 
         organization = get(configuration, 'organization')
         projects = get(configuration, 'projects')
@@ -89,7 +91,6 @@ def execute_mutations(configuration_file, graphql_client):
                 for user in users:
                     project_id = project['id']
                     args = ['email', 'role']
-                    print(user)
                     values = [get(user, a) for a in args]
                     append_to_roles(client, project_id, *values)
 
