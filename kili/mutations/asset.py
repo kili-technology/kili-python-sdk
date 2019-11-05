@@ -35,8 +35,8 @@ def delete_assets_by_external_id(client, project_id, external_id):
     return format_result('deleteAssetsByExternalId', result)
 
 
-def append_to_dataset(client, project_id, content, external_id, filename, is_instructions,
-                      instructions, is_honeypot, status, json_metadata):
+def append_to_dataset(client, project_id, content, external_id, filename='', is_instructions=False,
+                      instructions='', is_honeypot=False, status='TODO', json_metadata={}):
     result = client.execute('''
     mutation {
       appendToDataset(projectID: "%s"
