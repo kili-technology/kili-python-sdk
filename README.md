@@ -19,16 +19,14 @@ It allows data scientists and developers to control Kili Technology from an IDE.
 
 ## Installation
 
-- Clone the repository
+- Clone the repository and install with pip
 ```bash
 git clone https://github.com/kili-technology/kili-playground.git
 cd kili-playground
+pip install .
 ```
 
-- Set PYTHONPATH to point to the repository
-```
-export PYTHONPATH=$PYTHONPATH:/path/to/kili-playground
-```
+- **Note**: If you're on Windows, install Shapely by following [this tutorial](https://towardsdatascience.com/install-shapely-on-windows-72b6581bb46c).
 
 ## Get started
 
