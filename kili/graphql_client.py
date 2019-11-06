@@ -26,9 +26,15 @@ class GraphQLClient:
             headers[self.headername] = '{}'.format(self.token)
 
         if self.session is not None:
-            req = self.session.post(self.endpoint, json.dumps(
-                data).encode('utf-8'), headers=headers)
-            return req.json()
+            try:
+                req = self.session.post(self.endpoint, json.dumps(
+                    data).encode('utf-8'), headers=headers)
+                return req.json()
+            except Exception as e:
+                print('Request failed with error:\n')
+                print(req.content)
+                print('')
+                raise e
 
         req = urllib.request.Request(
             self.endpoint, json.dumps(data).encode('utf-8'), headers)

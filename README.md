@@ -12,13 +12,13 @@ Kili Technology allows you to:
 - Monitor production quality using leading indicators and workflows for production monitoring and data quality validation
 - Easily export the produced data
 
-### Text annotation tasks
+### Text annotation example
 
 ![](https://github.com/kili-technology/kili-docs/blob/gh-pages/img/AM_10s.gif)
 
-### Image annotation tasks
+### Image annotation example
 
-![](https://github.com/kili-technology/kili-docs/blob/gh-pages/img/AM_10s.gif)
+![](https://github.com/kili-technology/kili-docs/blob/gh-pages/img/VDX_10s.gif)
 
 ## What is Kili Playground ?
 
