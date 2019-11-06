@@ -1,16 +1,16 @@
-import os
-import click
-import yaml
+import getpass
 import hashlib
 import json
 
+import click
+import yaml
 from tqdm import tqdm
 
 from kili.authentication import authenticate
 from kili.mutations.organization import create_organization
-from kili.mutations.user import create_user
 from kili.mutations.project import create_empty_project, update_project, append_to_roles
 from kili.mutations.tool import append_to_tools
+from kili.mutations.user import create_user
 from kili.queries.project import get_projects
 
 
@@ -103,7 +103,7 @@ def execute_mutations(configuration_file, graphql_client):
 
         if 'signIn' in mutation_name:
             email = get(authentication, 'email')
-            password = get(authentication, 'password')
+            password = getpass.getpass(f'Enter password for user "{email}":')
             client, user_id = authenticate(email, password, graphql_client)
             authentication['user'] = {'id': user_id}
 
