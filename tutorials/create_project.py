@@ -45,6 +45,9 @@ def execute_mutations(configuration_file, graphql_client):
         authentication = get(configuration, 'authentication')
 
         if 'createOrganization' in mutation_name:
+            if 'id' in organization:
+                configuration['organization'] = organization
+                continue
             args = ['name', 'address', 'zip_code', 'city', 'country']
             values = [get(organization, a) for a in args]
             configuration['organization'] = create_organization(
