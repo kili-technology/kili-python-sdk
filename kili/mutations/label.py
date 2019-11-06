@@ -41,23 +41,6 @@ def append_to_labels(client, author_id, json_response, label_asset_id, label_typ
     return format_result('appendToLabels', result)
 
 
-def frontend_append_to_labels(client, author_id, json_response, label_asset_id, label_type, seconds_to_label, skipped=False):
-    result = client.execute('''
-    mutation {
-      frontendAppendToLabels(
-        authorID: "%s",
-        jsonResponse: "%s",
-        labelAssetID: "%s",
-        labelType: %s,
-        secondsToLabel: %d,
-        skipped: %s) {
-          id
-      }
-    }
-    ''' % (author_id, json_escape(json_response), label_asset_id, label_type, seconds_to_label, str(skipped).lower()))
-    return format_result('frontendAppendToLabels', result)
-
-
 def update_label(client, label_id, label_asset_id, review_asset_id, author_id, label_type, json_response, seconds_to_label):
     result = client.execute('''
     mutation {
@@ -76,10 +59,9 @@ def update_label(client, label_id, label_asset_id, review_asset_id, author_id, l
     return format_result('updateLabel', result)
 
 
-def update_properties_in_label(client, label_id, seconds_to_label=None, json_response = None):
+def update_properties_in_label(client, label_id, seconds_to_label=None, json_response=None):
     formatted_seconds_to_label = 'null' if seconds_to_label is None else f'{seconds_to_label}'
     formatted_json_response = 'null' if json_response is None else f'{json_response}'
-
 
     result = client.execute('''
         mutation {

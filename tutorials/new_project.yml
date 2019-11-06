@@ -1,0 +1,35 @@
+authentication:
+  email: "pierre@kili-technology.com"
+organization:
+  id: "directly-specify-kili-ID-if-organization-already-exists"
+  name: "My Beautiful Company"
+  address: "1 Parvis Alan Turing"
+  zip_code: "75013"
+  city: "Paris"
+  country: "France"
+users:
+  - name: "Jean Dupont"
+    email: "jean.dupont@example.com"
+    role: REVIEWER
+  - name: "John Doe"
+    email: "john.doe@example.com"
+    role: LABELER
+
+projects:
+  - title: "Classification de mails single-class"
+    description: "Classifier des mails suivant une seule catégorie"
+    interface_category: SINGLECLASS_TEXT_CLASSIFICATION
+
+tools:
+  - name: "Categories simples"
+    type: TEXT_CLASSIFICATION
+    json_settings: '{"categories": {"ORDER": "Ordre","COMPLAIN": "Plainte"}}'
+
+mutations:
+  - signIn
+  - createOrganization
+  - createUser
+  - createEmptyProject
+  - updateProject
+  - appendToTools
+  - appendToRoles
