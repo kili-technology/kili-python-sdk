@@ -6,11 +6,19 @@ Kili Technology is an image, text and voice data annotation tool designed to hel
 
 Kili Technology allows you to:
 
-- Quickly annotate thanks to simple and intuitive interfaces
+- Quickly annotate **text**, **images**, **video**, **audio** thanks to simple and intuitive interfaces
 - Easily ingest data, in drag & drop, from your cloud provider, or while keeping your data On Premise, when necessary.
 - Manage participants, roles and responsibilities
 - Monitor production quality using leading indicators and workflows for production monitoring and data quality validation
 - Easily export the produced data
+
+### Text annotation tasks
+
+![](https://github.com/kili-technology/kili-docs/blob/gh-pages/img/AM_10s.gif)
+
+### Image annotation tasks
+
+![](https://github.com/kili-technology/kili-docs/blob/gh-pages/img/AM_10s.gif)
 
 ## What is Kili Playground ?
 
@@ -20,6 +28,7 @@ It allows data scientists and developers to control Kili Technology from an IDE.
 ## Installation
 
 - Clone the repository and install with pip
+
 ```bash
 git clone https://github.com/kili-technology/kili-playground.git
 cd kili-playground
@@ -32,10 +41,10 @@ pip install .
 
 Follow the [technical documentation](https://kili-technology.github.io/kili-docs/docs/api-graphql/api-graphql).
 
-
 ## Change interface
 
 Changing the interface of a given project:
+
 ```python
 from kili.authentication import authenticate
 client, user_id = authenticate('EMAIL', 'PASSWORD')
@@ -43,13 +52,15 @@ from kili.mutations.project import update_interface_in_project
 json_settings = "{\"tools\":[\"polygon\",\"rectangle\"],\"annotation_types\": { \"GRAPE\": \"Grape\", \"HIHI\": \"HIHI\"}}"
 update_interface_in_project(client, 'PROJECT_ID', json_settings)
 ```
+
 Almost all image related interfaces have the same json structure with 2 properties: tools, annotation types:
 
 example:
+
 ```json
 {
-  "tools": ["polygon","rectangle"],
-  "annotation_types": { "GRAPE": "Grape", "LEAF": "Leaf"},
+  "tools": ["polygon", "rectangle"],
+  "annotation_types": { "GRAPE": "Grape", "LEAF": "Leaf" }
 }
 ```
 
