@@ -20,7 +20,7 @@ password = getpass.getpass()
 project_id = input('Enter project id: ')
 
 
-with open('./new_users.yml', 'r') as f:
+with open('./conf/new_users.yml', 'r') as f:
     configuration = yaml.safe_load(f)
 
 users = configuration['users']
@@ -28,8 +28,7 @@ users = configuration['users']
 
 DEFAULT_ORGANIZATION_ROLE = 'USER'
 
-client, user_id = authenticate(
-    email, password, 'http://localhost:4000/graphql')
+client, user_id = authenticate(email, password)
 
 organization_id = get_user(client, email)['organization']['id']
 

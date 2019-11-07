@@ -7,24 +7,18 @@
 2. Execute:
 
 ```bash
-python create_project.py --configuration_file ./new_project.yml --graphql_client https://cloud.kili-technology.com/api/label/graphql
+python create_project.py --configuration_file ./conf/new_project.yml --graphql_client https://cloud.kili-technology.com/api/label/graphql
 ```
 
-## How to pre-annotate assets
+## How to update interface settings
 
-### Named-entity recognition
+1. Edit `new_interface_settings.json`.
 
-1. Create a NER project and retrieve its ID.
-
-2. Make sure that your GCP authentication is set up properly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)).
-
-3. Execute:
+2. Execute:
 
 ```bash
-python ner/insert_google_predictions.py
+python update_interface_settings.py
 ```
-
-### Image object detection
 
 ## How to massively add users
 
@@ -38,10 +32,44 @@ python add_users.py
 
 **Note:** You need to have ADMIN right at Organization level to create users.
 
+## How to import assets with metadata
+
+1. Edit `new_assets.yml`. Metadata may contain some information about assets. Used for interface category `IMAGE_WITH_SEARCH`.
+
+2. Execute:
+
+```bash
+python import_assets.py
+```
+
+## How to push pre-annotation to existing assets
+
+1. Edit `new_predictions.yml`.
+
+2. Execute:
+
+```bash
+python import_predictions.py
+```
+
 ## How to export and parse labels
 
 1. Execute:
 
 ```bash
 python export_labels.py
+```
+
+## How to push assets pre-labeled with Google Named-Entity Recognition
+
+Example based on Enron email dataset. Its downloads the data, get the first 50 emails, pre-label them with Google NLP and push both assets and predictions to Kili.
+
+1. Create a NER project and retrieve its ID.
+
+2. Make sure that your GCP authentication is set up properly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)).
+
+3. Execute:
+
+```bash
+python google_ner_pre_labeling.py
 ```
