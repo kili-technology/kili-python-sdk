@@ -2,9 +2,9 @@
 
 ## How to create a project
 
-Update `new_project.yml` with your values.
+1. Update `new_project.yml` with your values.
 
-Then execute:
+2. Execute:
 
 ```bash
 python create_project.py --configuration_file ./new_project.yml --graphql_client https://cloud.kili-technology.com/api/label/graphql
@@ -14,11 +14,11 @@ python create_project.py --configuration_file ./new_project.yml --graphql_client
 
 ### Named-entity recognition
 
-Create a NER project and retrieve its ID.
+1. Create a NER project and retrieve its ID.
 
-Make sure that your GCP authentication is set up properly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)).
+2. Make sure that your GCP authentication is set up properly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)).
 
-Then execute:
+3. Execute:
 
 ```bash
 python ner/insert_google_predictions.py
@@ -28,9 +28,9 @@ python ner/insert_google_predictions.py
 
 ## How to massively add users
 
-Edit `new_users.yml`.
+1. Edit `new_users.yml`.
 
-Execute:
+2. Execute:
 
 ```bash
 python add_users.py
@@ -40,7 +40,7 @@ python add_users.py
 
 ## How to export and parse labels
 
-Execute:
+1. Execute:
 
 ```bash
 python export_labels.py
