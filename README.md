@@ -39,11 +39,11 @@ pip install .
 
 ## Get started
 
-Here are [some recipes](/recipes/) on:
+Here are [some recipes](/recipes/). Among them:
 
 - How to create a project
 - How to pre-annotate assets
 - How to massively add users
 - How to export and parse labels
 
-If you want more details on what you can do with the API, follow the [technical documentation](https://kili-technology.github.io/kili-docs/docs/api-graphql/api-graphql).
+If you want more details on what you can do with the API, follow the [technical documentation](https://kili-technology.github.io/kili-docs/docs/graphql-api/api-graphql).

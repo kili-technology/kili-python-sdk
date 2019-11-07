@@ -1,4 +1,4 @@
-# Tutorials
+# Recipes
 
 ## How to create a project
 
@@ -60,9 +60,9 @@ python import_predictions.py
 python export_labels.py
 ```
 
-## How to push assets pre-labeled with Google Named-Entity Recognition
+## How to do Named-Entity Recognition with Google
 
-Example based on Enron email dataset. Its downloads the data, get the first 50 emails, pre-label them with Google NLP and push both assets and predictions to Kili.
+Example based on Enron email dataset. Its downloads the data, get the first 50 emails, pre-label them with Google NLP, push both assets and predictions to Kili and prioritize the assets.
 
 1. Create a NER project and retrieve its ID.
 
