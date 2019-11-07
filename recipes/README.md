@@ -24,6 +24,8 @@ Then execute:
 python ner/insert_google_predictions.py
 ```
 
+### Image object detection
+
 ## How to massively add users
 
 Edit `new_users.yml`.
