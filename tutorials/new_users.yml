@@ -1,0 +1,9 @@
+users:
+  - name: "Jean Dupont"
+    email: "jean.dupont@example.com"
+    password: abc123
+    role: REVIEWER
+  - name: "Jeanne Doe"
+    email: "jeanne.dupont@example.com"
+    password: abc123
+    role: LABELER
