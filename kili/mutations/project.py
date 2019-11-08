@@ -121,69 +121,43 @@ def update_interface_in_project(client, project_id, jsonSettings=None):
     return format_result('updatePropertiesInProject', result)
 
 
-def force_project_kpi_computation(client, project_id):
+def create_empty_project(client, user_id):
     result = client.execute('''
     mutation {
-      forceProjectKpiComputation(projectID: "%s") {
-        id
-        numberOfAssets
-        completionPercentage
-        numberOfRemainingAssets
-        numberOfAssetsWithSkippedLabels
-        numberOfReviewedAssets
-        numberOfLatestLabels
-        roles {
-          user { id }
-          lastLabelingAt
-          numberOfAnnotations
-          numberOfLabeledAssets
-          totalDuration
-          durationPerLabel
-          honeypotMark
-        }
-        dataset {
-          id
-          honeypotMark
-        }
-      }
-    }
-    ''' % (project_id))
-    return format_result('forceProjectKpiComputation', result)
-
-
-def frontend_create_project(client, user_id):
-    result = client.execute('''
-    mutation {
-      frontendCreateProject(userID: "%s") {
+      createEmptyProject(userID: "%s") {
         id
 
       }
     }
     ''' % (user_id))
-    return format_result('frontendCreateProject', result)
+    return format_result('createEmptyProject', result)
 
 
 def update_project(client, project_id,
                    title,
                    description,
-                   creation_active_step,
-                   creation_completed,
-                   creation_skipped,
                    interface_category,
-                   input_type,
-                   interface_title,
-                   interface_description,
-                   interface_url,
-                   outsource,
-                   consensus_tot_coverage,
-                   min_consensus_size,
-                   max_worker_count,
-                   min_agreement,
-                   use_honey_pot,
-                   instructions,
-                   model_title,
-                   model_description,
-                   model_url):
+                   creation_active_step=0,
+                   creation_completed=[0, 1, 2, 3, 4, 5, 6],
+                   creation_skipped=[],
+                   input_type='TEXT',
+                   interface_title=None,
+                   interface_description=None,
+                   interface_url=None,
+                   outsource=False,
+                   consensus_tot_coverage=0,
+                   min_consensus_size=1,
+                   max_worker_count=4,
+                   min_agreement=66,
+                   use_honey_pot=False,
+                   instructions=None,
+                   model_title="",
+                   model_description="",
+                   model_url=""):
+    formatted_interface_title = 'null' if interface_title is None else f'"{interface_title}"'
+    formatted_interface_description = 'null' if interface_description is None else f'"{interface_description}"'
+    formatted_interface_url = 'null' if interface_url is None else f'"{interface_url}"'
+    formatted_instructions = 'null' if instructions is None else f'"{instructions}"'
     result = client.execute('''
     mutation {
       updateProject(projectID: "%s",
@@ -194,16 +168,16 @@ def update_project(client, project_id,
         creationSkipped: %s,
         interfaceCategory: %s,
         inputType: %s,
-        interfaceTitle: "%s",
-        interfaceDescription: "%s",
-        interfaceUrl: "%s",
+        interfaceTitle: %s,
+        interfaceDescription: %s,
+        interfaceUrl: %s,
         outsource: %s,
         consensusTotCoverage: %d,
         minConsensusSize: %d,
         maxWorkerCount: %d,
         minAgreement: %d,
         useHoneyPot: %s,
-        instructions: "%s",
+        instructions: %s,
         modelTitle: "%s",
         modelDescription: "%s",
         modelUrl: "%s") {
@@ -214,10 +188,10 @@ def update_project(client, project_id,
         project_id, title, description, creation_active_step, dumps(
             creation_completed),
         dumps(creation_skipped).lower(),
-        interface_category, input_type, interface_title, interface_description, interface_url, str(
+        interface_category, input_type, formatted_interface_title, formatted_interface_description, formatted_interface_url, str(
             outsource).lower(),
         consensus_tot_coverage, min_consensus_size, max_worker_count, min_agreement,
-        str(use_honey_pot).lower(), instructions, model_title, model_description, model_url))
+        str(use_honey_pot).lower(), formatted_instructions, model_title, model_description, model_url))
     return format_result('updateProject', result)
 
 
@@ -274,20 +248,26 @@ def update_properties_in_project_user(client, project_user_id,
 def force_project_kpis(client, project_id):
     assets = get_assets(client, project_id, 0, 100000000)
     numbers_of_labeled_assets = {}
+    number_of_latest_labels = 0
     for asset in tqdm(assets):
         asset_updated = force_update_status(client, asset['id'])
         asset['status'] = asset_updated['status']
-        asset_authors = [label['author']['id'] for label in asset['labels']]
-        for asset_author in asset_authors:
+        unique_asset_authors = list(
+            set([label['author']['id'] for label in asset['labels']]))
+        for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
+        for label in asset['labels']:
+            if label['isLatestLabelForUser']:
+                number_of_latest_labels += 1
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
     completion_percentage = 1 - number_of_remaining_assets / number_of_assets
     update_properties_in_project(client, project_id, number_of_assets=number_of_assets,
                                  number_of_remaining_assets=number_of_remaining_assets,
-                                 completion_percentage=completion_percentage)
+                                 completion_percentage=completion_percentage,
+                                 number_of_latest_labels=number_of_latest_labels)
 
     project = get_project(client, project_id)
     project_users = project['roles']
@@ -295,7 +275,8 @@ def force_project_kpis(client, project_id):
         total_duration = project_user['totalDuration']
         duration_per_label = project_user['durationPerLabel']
         user_id = project_user['user']['id']
-        number_of_labeled_assets = numbers_of_labeled_assets[user_id] if user_id in numbers_of_labeled_assets else 0
+        number_of_labeled_assets = numbers_of_labeled_assets[
+            user_id] if user_id in numbers_of_labeled_assets else 0
         try:
             update_properties_in_project_user(client, project_user['id'], total_duration=total_duration,
                                               duration_per_label=duration_per_label,
