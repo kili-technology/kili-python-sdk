@@ -1,7 +1,12 @@
 import os
 import getpass
+import tarfile
+import urllib.request
 from tqdm import tqdm
 import click
+import json
+import shutil
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,17 +23,36 @@ import autosklearn.classification
 
 from kili.authentication import authenticate
 from kili.mutations.asset import append_to_dataset
-from kili.mutations.label import create_prediction
-from kili.queries.asset import get_assets_by_external_id
+from kili.mutations.label import create_prediction, append_to_labels
+from kili.queries.asset import get_assets_by_external_id, export_assets
 
 
 NGRAM_RANGE = (1, 2)
 TOP_K = 20000
 TOKEN_MODE = 'word'
 MIN_DOC_FREQ = 2
+converter_label_to_name = {0: "NEGATIVE", 1: "POSITIVE"}
+converter_name_to_label = {"NEGATIVE": 0, "POSITIVE": 1}
+
+def download_dataset():
+    url = 'https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz'
+    filename = url.split('/')[-1]
+    target_path = os.path.join('/tmp', filename)
+    if not os.path.exists(target_path):
+        print('downloading...')
+        urllib.request.urlretrieve(url, target_path)
+    return target_path
+
+def extract_dataset(path):
+    target_path = './IMDB'
+    if not os.path.exists(target_path):
+        tar = tarfile.open(path)
+        tar.extractall(path=target_path)
+        tar.close()
+    return target_path
 
 def shuffle(X, y):
-    perm = np.random.permutation(len(X))
+    perm = np.random.RandomState(seed=10).permutation(len(X))
     X = X[perm]
     y = y[perm]
     return X, y
@@ -61,6 +85,8 @@ def load_imdb_dataset(path):
 
     # Shuffle the training dataset
     train_texts, train_labels = shuffle(train_texts, train_labels)
+    test_texts, test_labels = shuffle(test_texts, test_labels)
+
 
     # Return the dataset
     return train_texts, train_labels, test_texts, test_labels
@@ -132,6 +158,16 @@ def print_infos_dataset(X_train,y_train,X_test,y_test):
     for _class in uniq_class_arr:
         print ('Counts for class ', uniq_class_arr[_class], ': ', counts[_class])
 
+def extract_train_for_autoML(assets):
+    X_train = []
+    y_train = []
+    for asset in assets:
+        for label in asset["labels"]:
+            if label["labelType"] == "DEFAULT":
+                jsonResponse = json.loads(label["jsonResponse"])
+                X_train.append(asset["content"])
+                y_train.append(converter_name_to_label[jsonResponse["categories"][0]["name"]])
+    return X_train, y_train
 
 def escape_content(str):
     return str.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r').replace('\\$', "$")
@@ -144,46 +180,76 @@ def load_dataset_and_predictions(data_path, figure_path):
     print_infos_dataset(X_train,y_train,X_test,y_test)
     plot_sample_length_distribution(figure_path, X_train)
     plot_most_frequent_words_or_ngrams(figure_path, X_train)
-    
-    x_train, x_test = ngram_vectorize(X_train, y_train, X_test)
-    cls = autosklearn.classification.AutoSklearnClassifier(n_jobs =4, time_left_for_this_task = 3600,
-                                                           per_run_time_limit=800,
-                                                           tmp_folder='./autosklearn_parallel_1_example_tmp',
-                                            output_folder='./autosklearn_parallel_1_example_out')
-    cls.fit(x_train, y_train)
-    predictions = cls.predict(x_test)
-    print("Accuracy: {}".format(accuracy_score(y_test, predictions)))
-    print("Precision|Recall|F1Score|Support: {}".format(precision_recall_fscore_support(y_test, predictions)))
-    return X_test, predictions
 
-    
+
+    return X_train, y_train, X_test, y_test
+
+def automl_train_and_predict(X_train, y_train, X_to_be_predicted, y_to_be_predicted):
+    x_train, x_to_be_predicted = ngram_vectorize(X_train, y_train, X_to_be_predicted)
+
+    tmp_folder = './autosklearn_parallel_1_example_tmp'
+    output_folder = './autosklearn_parallel_1_example_out'
+
+    cls = autosklearn.classification.AutoSklearnClassifier(n_jobs =4, time_left_for_this_task = 200,
+                                                           per_run_time_limit=20,
+                                                           tmp_folder=tmp_folder,
+                                                           output_folder=output_folder,
+                                                           seed=10
+                                                        )
+    cls.fit(x_train, y_train)
+    assert x_train.shape[1] == x_to_be_predicted.shape[1]
+    predictions = cls.predict(x_to_be_predicted)
+    print("Accuracy: {}".format(accuracy_score(y_to_be_predicted, predictions)))
+    print("Precision|Recall|F1Score|Support: {}".format(precision_recall_fscore_support(y_to_be_predicted, predictions)))
+    shutil.rmtree(tmp_folder)
+    shutil.rmtree(output_folder)
+    return predictions
+
 
 
 @click.command()
-@click.option('--mail', help='Client mail', required=True)
-@click.option('--graphql_client', default='http://localhost:4000/graphql', help='Endpoint of GraphQL client')
-@click.option('--data_path', default='./aclImdb/', help='Path to IMDB dataset')
-@click.option('--figure_path', default='./', help='Path to figures')
-def main(mail, graphql_client, data_path, figure_path):
-    password = getpass.getpass(f'Enter password for user "{mail}":')
-    X_test, predictions = load_dataset_and_predictions(data_path, figure_path)
+@click.option('--graphql_client', default='https://staging.cloud.kili-technology.com/api/label/graphql', help='Endpoint of GraphQL client')
+def main(graphql_client):
+    path_gz = download_dataset()
+    data_root_path = extract_dataset(path_gz)
+    data_path = os.path.join(data_root_path, 'aclImdb')
+    plot_path = os.path.join(data_root_path, 'plots')
+    if not os.path.exists(plot_path):
+        os.mkdir(plot_path)
 
+    mail = input('Enter Email: ')
+    password =getpass.getpass('Enter password for user {}:'.format(mail))
     client, user_id = authenticate( mail, password, api_endpoint=graphql_client)
     project_id = input('Enter project id: ')
 
-    converter_label_to_name = {0:"NEGATIVE", 1:"POSITIVE"}
+    X_train_origin, y_train_origin, X_test, y_test = load_dataset_and_predictions(data_path, plot_path)
 
+    # Push dataset on project
+    converter_external_id_to_id = {}
     for external_id, content in enumerate(tqdm(X_test)):
         # Insert asset
         append_to_dataset(
             client, project_id, escape_content(content), external_id)
         asset = get_assets_by_external_id(client, project_id, external_id)
         asset_id = asset[0]['id']
+        converter_external_id_to_id[external_id] = asset_id
 
-        # Insert pre-annotations
-        json_response = {"categories":[{"name":converter_label_to_name[predictions[external_id]],"confidence":100}]}
-        create_prediction(client, asset_id, json_response)
+    # Check and load new predictions
+    STOP_CONDITION = True
+    while STOP_CONDITION:
+        print("Export assets and labels...")
+        assets = export_assets(client, project_id)
+        print("Done.\n")
+        X_train, y_train = extract_train_for_autoML(assets)
 
+        if len(X_train)>5:
+            print("Online Learning is on its way...")
+            predictions = automl_train_and_predict(X_train, y_train, X_test, y_test)
+            # Insert pre-annotations
+            for external_id, prediction in enumerate(tqdm(predictions)):
+                json_response = {"categories":[{"name":converter_label_to_name[prediction],"confidence":100}]}
+                create_prediction(client, converter_external_id_to_id[external_id], json_response)
+            print("Done.\n")
 
 if __name__ == '__main__':
     main()
