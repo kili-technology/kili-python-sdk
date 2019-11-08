@@ -115,3 +115,17 @@ query {
   }
 }
 ```
+
+## How to append assets and leverage online learning with AutoML
+
+- Create Project for TextClassification with `JsonSetting = "{\"categories\":{\"POSITIVE\": \"Review positive\",\"NEGATIVE\": \"Review négative\"}}" `
+ 
+- Then execute:
+```bash
+python python create_auto_model.py (OPTIONNAL --graphql_client https://cloud.kili-technology.com/api/label/graphql)
+```
+- Enter your personnal information : Mail, Password, ProjectID
+
+- Annotate
+
+- See predictions 
