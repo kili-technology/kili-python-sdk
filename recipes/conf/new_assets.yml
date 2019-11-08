@@ -1,0 +1,7 @@
+assets:
+  - externalId: "img 1"
+    content: "https://images.caradisiac.com/logos/3/8/6/7/253867/S0-tesla-enregistre-d-importantes-pertes-au-premier-trimestre-175948.jpg"
+    metadata: '["PORSCHE","TESLA"]'
+  - externalId: "img 2"
+    content: "https://img.sportauto.fr/news/2018/11/28/1533574/1920%7C1280%7Cc096243e5460db3e5e70c773.jpg"
+    metadata: '["PORSCHE"]'
