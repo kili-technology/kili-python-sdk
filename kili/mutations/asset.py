@@ -106,8 +106,8 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
     return format_result('updateAsset', result)
 
 
-def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None, consensusMark=None):
-    args = [external_id, priority, json_escape(json_metadata), consensusMark]
+def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None, consensus_mark=None):
+    args = [external_id, priority, json_escape(json_metadata), consensus_mark]
     formatted_args = ['null' if arg is None else f'"{arg}"' for arg in args]
 
     result = client.execute('''

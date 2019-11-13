@@ -63,22 +63,12 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
                                  number_of_remaining_assets=None,
                                  number_of_assets_with_empty_labels=None,
                                  number_of_reviewed_assets=None,
-                                 number_of_latest_labels=None):
-    formatted_min_consensus_size = 'null' if min_consensus_size is None else int(
-        min_consensus_size)
-    formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(
-        consensus_tot_coverage)
-    formatted_number_of_assets = 'null' if number_of_assets is None else int(
-        number_of_assets)
-    formatted_completion_percentage = 'null' if completion_percentage is None else completion_percentage
-    formatted_number_of_remaining_assets = 'null' if number_of_remaining_assets is None else int(
-        number_of_remaining_assets)
-    formatted_number_of_assets_with_empty_labels = 'null' if number_of_assets_with_empty_labels is None else int(
-        number_of_assets_with_empty_labels)
-    formatted_number_of_reviewed_assets = 'null' if number_of_reviewed_assets is None else int(
-        number_of_reviewed_assets)
-    formatted_number_of_latest_labels = 'null' if number_of_latest_labels is None else int(
-        number_of_latest_labels)
+                                 number_of_latest_labels=None,
+                                 consensus_mark=None):
+    args = [int(min_consensus_size), int(consensus_tot_coverage), int(number_of_assets), completion_percentage,
+            int(number_of_remaining_assets), int(number_of_assets_with_empty_labels), int(number_of_reviewed_assets),
+            int(number_of_latest_labels), float(consensus_mark)]
+    formatted_args = ['null' if arg is None else arg for arg in args]
 
     result = client.execute('''
         mutation {
@@ -93,15 +83,13 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
               numberOfAssetsWithSkippedLabels: %s
               numberOfReviewedAssets: %s
               numberOfLatestLabels: %s
+              consensusMark: %s
             }
           ) {
             id
           }
         }
-        ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
-               formatted_number_of_assets, formatted_completion_percentage, formatted_number_of_remaining_assets,
-               formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets,
-               formatted_number_of_latest_labels))
+        ''' % (project_id, *formatted_args))
     return format_result('updatePropertiesInProject', result)
 
 
@@ -188,7 +176,8 @@ def update_project(client, project_id,
         project_id, title, description, creation_active_step, dumps(
             creation_completed),
         dumps(creation_skipped).lower(),
-        interface_category, input_type, formatted_interface_title, formatted_interface_description, formatted_interface_url, str(
+        interface_category, input_type, formatted_interface_title, formatted_interface_description,
+        formatted_interface_url, str(
             outsource).lower(),
         consensus_tot_coverage, min_consensus_size, max_worker_count, min_agreement,
         str(use_honey_pot).lower(), formatted_instructions, model_title, model_description, model_url))
@@ -223,10 +212,10 @@ def delete_from_roles(client, role_id):
 def update_properties_in_project_user(client, project_user_id,
                                       total_duration=None,
                                       duration_per_label=None,
-                                      number_of_labeled_assets=None):
-    formatted_total_duration = 'null' if total_duration is None else f'{total_duration}'
-    formatted_duration_per_label = 'null' if duration_per_label is None else f'{duration_per_label}'
-    number_of_labeled_assets = 'null' if number_of_labeled_assets is None else f'{number_of_labeled_assets}'
+                                      number_of_labeled_assets=None,
+                                      consensus_mark=None):
+    args = [total_duration, duration_per_label, number_of_labeled_assets, consensus_mark]
+    formatted_args = ['null' if arg is None else f'{arg}' for arg in args]
 
     result = client.execute('''
         mutation {
@@ -236,12 +225,13 @@ def update_properties_in_project_user(client, project_user_id,
               totalDuration: %s
               durationPerLabel: %s
               numberOfLabeledAssets: %s
+              consensusMark: %s
             }
           ) {
             id
           }
         }
-        ''' % (project_user_id, formatted_total_duration, formatted_duration_per_label, number_of_labeled_assets))
+        ''' % (project_user_id, *formatted_args))
     return format_result('updatePropertiesInProjectUser', result)
 
 
@@ -255,7 +245,7 @@ def force_project_kpis(client, project_id):
         unique_asset_authors = list(
             set([label['author']['id'] for label in asset['labels']]))
         update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
-                                   json_metadata=asset['jsonMetadata'], consensusMark=asset['calculatedConsensusMark'])
+                                   json_metadata=asset['jsonMetadata'], consensus_mark=asset['calculatedConsensusMark'])
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
@@ -266,12 +256,14 @@ def force_project_kpis(client, project_id):
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
     completion_percentage = 1 - number_of_remaining_assets / number_of_assets
+    project = get_project(client, project_id)
+
     update_properties_in_project(client, project_id, number_of_assets=number_of_assets,
                                  number_of_remaining_assets=number_of_remaining_assets,
                                  completion_percentage=completion_percentage,
-                                 number_of_latest_labels=number_of_latest_labels)
+                                 number_of_latest_labels=number_of_latest_labels,
+                                 consensus_mark=project['calculatedConsensusMark'])
 
-    project = get_project(client, project_id)
     project_users = project['roles']
     for project_user in project_users:
         total_duration = project_user['totalDuration']
@@ -282,7 +274,8 @@ def force_project_kpis(client, project_id):
         try:
             update_properties_in_project_user(client, project_user['id'], total_duration=total_duration,
                                               duration_per_label=duration_per_label,
-                                              number_of_labeled_assets=number_of_labeled_assets)
+                                              number_of_labeled_assets=number_of_labeled_assets,
+                                              consensus_mark=project_user['calculatedConsensusMark'])
         except GraphQLError as e:
             if 'is trying to access projectUser' in str(e):
                 print(f'Could not update {user_id}')
