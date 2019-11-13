@@ -106,10 +106,9 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
     return format_result('updateAsset', result)
 
 
-def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None):
-    formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
-    formatted_priority = 'null' if priority is None else f'{priority}'
-    formatted_json_metadata = 'null' if json_metadata is None else f'"{json_escape(json_metadata)}"'
+def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None, consensusMark=None):
+    args = [external_id, priority, json_escape(json_metadata), consensusMark]
+    formatted_args = ['null' if arg is None else f'"{arg}"' for arg in args]
 
     result = client.execute('''
         mutation {
@@ -119,12 +118,13 @@ def update_properties_in_asset(client, asset_id, external_id=None, priority=None
               externalId: %s
               priority: %s
               jsonMetadata: %s
+              consensusMark: %s
             }
           ) {
             id
           }
         }
-        ''' % (asset_id, formatted_external_id, formatted_priority, formatted_json_metadata))
+        ''' % (asset_id, *formatted_args))
     return format_result('updatePropertiesInAsset', result)
 
 

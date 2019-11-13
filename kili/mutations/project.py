@@ -2,7 +2,7 @@ from json import dumps
 
 from tqdm import tqdm
 
-from .asset import force_update_status
+from .asset import force_update_status, update_properties_in_asset
 from ..helper import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
 from ..queries.project import get_project
@@ -254,6 +254,8 @@ def force_project_kpis(client, project_id):
         asset['status'] = asset_updated['status']
         unique_asset_authors = list(
             set([label['author']['id'] for label in asset['labels']]))
+        update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
+                                   json_metadata=asset['jsonMetadata'], consensusMark=asset['calculatedConsensusMark'])
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
