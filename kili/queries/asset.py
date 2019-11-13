@@ -59,6 +59,7 @@ def get_assets(client, project_id, skip, first):
         status
         isUsedForConsensus
         jsonMetadata
+        priority
         labels {
           id
           createdAt

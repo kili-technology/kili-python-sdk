@@ -65,10 +65,22 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
                                  number_of_reviewed_assets=None,
                                  number_of_latest_labels=None,
                                  consensus_mark=None):
-    args = [int(min_consensus_size), int(consensus_tot_coverage), int(number_of_assets), completion_percentage,
-            int(number_of_remaining_assets), int(number_of_assets_with_empty_labels), int(number_of_reviewed_assets),
-            int(number_of_latest_labels), float(consensus_mark)]
-    formatted_args = ['null' if arg is None else arg for arg in args]
+    formatted_min_consensus_size = 'null' if min_consensus_size is None else int(
+        min_consensus_size)
+    formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(
+        consensus_tot_coverage)
+    formatted_number_of_assets = 'null' if number_of_assets is None else int(
+        number_of_assets)
+    formatted_completion_percentage = 'null' if completion_percentage is None else completion_percentage
+    formatted_number_of_remaining_assets = 'null' if number_of_remaining_assets is None else int(
+        number_of_remaining_assets)
+    formatted_number_of_assets_with_empty_labels = 'null' if number_of_assets_with_empty_labels is None else int(
+        number_of_assets_with_empty_labels)
+    formatted_number_of_reviewed_assets = 'null' if number_of_reviewed_assets is None else int(
+        number_of_reviewed_assets)
+    formatted_number_of_latest_labels = 'null' if number_of_latest_labels is None else int(
+        number_of_latest_labels)
+    formatted_consensus_mark = 'null' if consensus_mark is None else float(consensus_mark)
 
     result = client.execute('''
         mutation {
@@ -89,7 +101,10 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
             id
           }
         }
-        ''' % (project_id, *formatted_args))
+        ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
+               formatted_number_of_assets, formatted_completion_percentage, formatted_number_of_remaining_assets,
+               formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets,
+               formatted_number_of_latest_labels, formatted_consensus_mark))
     return format_result('updatePropertiesInProject', result)
 
 
