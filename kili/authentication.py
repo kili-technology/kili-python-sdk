@@ -6,9 +6,9 @@ from .graphql_client import GraphQLClient
 
 from .mutations.user import signin
 
-MAX_RETRIES = 20
-
 warnings.simplefilter("always")
+
+MAX_RETRIES = 20
 
 
 def authenticate(email,
