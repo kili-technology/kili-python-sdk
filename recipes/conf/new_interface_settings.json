@@ -1,0 +1,13 @@
+{
+  "tools": ["rectangle"],
+  "annotation_types": {
+    "PORSCHE": {
+      "text": "Porsche",
+      "image": "https://bit.ly/2WPJpCb"
+    },
+    "TESLA": {
+      "text": "Tesla",
+      "image": "https://bit.ly/2pOuM5O"
+    }
+  }
+}
