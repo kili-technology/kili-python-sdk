@@ -53,11 +53,13 @@ def get_assets(client, project_id, skip, first):
         isInstructions
         instructions
         isHoneypot
+        calculatedConsensusMark
         consensusMark
         honeypotMark
         status
         isUsedForConsensus
         jsonMetadata
+        priority
         labels {
           id
           createdAt
