@@ -12,6 +12,15 @@ def authenticate(email,
                  password=os.getenv('KILI_USER_PASSWORD'),
                  api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
 
+    print("""Warning: authenticate has been renamed, and is not recommended for use.
+Use instead:
+  from kili.authentication import KiliAuth
+  from kili.playground import Playground
+  kauth = KiliAuth()
+  playground = Playground(kauth)
+  assets = playground.export_assets(project_id)
+""")
+
     session = requests.Session()
     adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
     session.mount('https://', adapter)
@@ -23,3 +32,30 @@ def authenticate(email,
     client.inject_token('Bearer: ' + api_token)
     user_id = auth_payload['user']['id']
     return client, user_id
+
+
+class KiliAuth(object):
+    """
+    from kili.authentication import KiliAuth
+    from kili.playground import Playground
+    kauth = KiliAuth()
+    playground = Playground(kauth)
+    assets = playground.export_assets(project_id)
+    """
+
+    def __init__(self,
+                 email=os.getenv('KILI_USER_EMAIL'),
+                 password=os.getenv('KILI_USER_PASSWORD'),
+                 api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
+        self.session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
+        self.session.mount('https://', adapter)
+        self.session.mount('http://', adapter)
+        self.client = GraphQLClient(api_endpoint, self.session)
+        auth_payload = signin(self.client, email, password)
+        api_token = auth_payload['token']
+        self.client.inject_token('Bearer: ' + api_token)
+        self.user_id = auth_payload['user']['id']
+
+    def __del__(self):
+        self.session.close()
