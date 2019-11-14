@@ -23,7 +23,7 @@ setup(
 
     long_description=open('README.md').read(),
 
-    install_requires=["numpy", "requests", "shapely", "six", "tqdm"],
+    install_requires=["numpy", "requests", "scipy", "shapely", "six", "tqdm"],
 
     # Taking into account MANIFEST.in
     include_package_data=True,
