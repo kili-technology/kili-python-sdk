@@ -6,7 +6,9 @@ from .graphql_client import GraphQLClient
 
 from .mutations.user import signin
 
-warnings.simplefilter("always")
+warnings.simplefilter('always')
+warnings.filterwarnings('ignore', category=ImportWarning)
+
 
 MAX_RETRIES = 20
 
