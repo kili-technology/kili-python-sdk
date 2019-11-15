@@ -225,8 +225,8 @@ def automl_train_and_predict(X_train, y_train, X_to_be_predicted, y_to_be_predic
 
 
 @click.command()
-@click.option('--graphql_client', default='https://staging.cloud.kili-technology.com/api/label/graphql', help='Endpoint of GraphQL client')
-def main(graphql_client):
+@click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/graphql', help='Endpoint of GraphQL client')
+def main(api_endpoint):
     path_gz = download_dataset()
     data_root_path = extract_dataset(path_gz)
     data_path = os.path.join(data_root_path, 'aclImdb')
@@ -236,7 +236,7 @@ def main(graphql_client):
 
     email = input('Enter Email: ')
     password = getpass.getpass('Enter password for user {}:'.format(email))
-    kauth = KiliAuth(email, password, api_endpoint=graphql_client)
+    kauth = KiliAuth(email, password, api_endpoint=api_endpoint)
     playground = Playground(kauth)
     project_id = input('Enter project id: ')
 
