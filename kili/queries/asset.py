@@ -109,7 +109,7 @@ def get_assets_by_external_id(client, project_id, external_id):
 def get_next_asset_from_label(client, label_asset_id, want_instructions_only, in_review):
     result = client.execute('''
     query {
-      getNextAssetFromLabel(labelAssetID: "%s", wantInstructionsOnly: %s, inReview: %s) {
+      getNextAssetFromLabel(labelAssetID: "%s", wantInstructionsOnly: %s, inReview: %s, where: {}) {
         id
       }
     }
