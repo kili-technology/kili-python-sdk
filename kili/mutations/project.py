@@ -268,7 +268,7 @@ def force_project_kpis(client, project_id):
         unique_asset_authors = list(
             set([label['author']['id'] for label in asset['labels']]))
         update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
-                                   json_metadata=asset['jsonMetadata'], consensus_mark=asset['calculatedConsensusMark'])
+                                   json_metadata=asset['jsonMetadata'], consensus_mark=asset['calculatedConsensusMark'], honeypot_mark=asset['calculatedHoneypotMark'])
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
@@ -286,7 +286,8 @@ def force_project_kpis(client, project_id):
                                  number_of_remaining_assets=number_of_remaining_assets,
                                  completion_percentage=completion_percentage,
                                  number_of_latest_labels=number_of_latest_labels,
-                                 consensus_mark=project['calculatedConsensusMark'])
+                                 consensus_mark=project['calculatedConsensusMark'],
+                                 honeypot_mark=project['calculatedHoneypotMark'])
 
     project_users = project['roles']
     for project_user in project_users:
@@ -299,7 +300,8 @@ def force_project_kpis(client, project_id):
             update_properties_in_project_user(client, project_user['id'], total_duration=total_duration,
                                               duration_per_label=duration_per_label,
                                               number_of_labeled_assets=number_of_labeled_assets,
-                                              consensus_mark=project_user['calculatedConsensusMark'])
+                                              consensus_mark=project_user['calculatedConsensusMark'],
+                                              honeypot_mark=project_user['calculatedHoneypotMark'])
         except GraphQLError as e:
             if 'is trying to access projectUser' in str(e):
                 print(f'Could not update {user_id}')
