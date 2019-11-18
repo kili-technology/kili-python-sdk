@@ -77,7 +77,7 @@ python google_ner_pre_labeling.py
 ## How to use GraphQL Playground
 
 For more flexibility, you can directly query GraphQL API without using
-``kili-playground``.
+`kili-playground`.
 
 1. Go to http://cloud.kili-technology.com/api/label/playground
 
@@ -95,7 +95,7 @@ mutation {
 ```
 
 3. In the bottom left corner of the screen, click on `HTTP headers` and write
-the retrieved token in the authorization headers:
+   the retrieved token in the authorization headers:
 
 ```json
 {
@@ -118,14 +118,16 @@ query {
 
 ## How to append assets and leverage online learning with AutoML
 
-- Create Project for TextClassification with `JsonSetting = "{\"categories\":{\"POSITIVE\": \"Review positive\",\"NEGATIVE\": \"Review négative\"}}" `
- 
+- Create Project for TextClassification with `JsonSetting = "{\"categories\":{\"POSITIVE\": \"Review positive\",\"NEGATIVE\": \"Review négative\"}}"`
+
 - Then execute:
+
 ```bash
-python python create_auto_model.py (OPTIONNAL --graphql_client https://cloud.kili-technology.com/api/label/graphql)
+python python create_auto_model.py (OPTIONNAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
 ```
+
 - Enter your personnal information : Mail, Password, ProjectID
 
 - Annotate
 
-- See predictions 
+- See predictions
