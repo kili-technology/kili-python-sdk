@@ -42,6 +42,14 @@ python add_users.py
 python import_assets.py
 ```
 
+## How to delete all assets
+
+1. Execute:
+
+```bash
+python delete_all_assets.py
+```
+
 ## How to push pre-annotation to existing assets
 
 1. Edit `new_predictions.yml`.
