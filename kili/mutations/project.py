@@ -1,4 +1,5 @@
 from json import dumps
+import time
 
 from tqdm import tqdm
 
@@ -64,7 +65,8 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
                                  number_of_assets_with_empty_labels=None,
                                  number_of_reviewed_assets=None,
                                  number_of_latest_labels=None,
-                                 consensus_mark=None):
+                                 consensus_mark=None,
+                                 honeypot_mark=None):
     formatted_min_consensus_size = 'null' if min_consensus_size is None else int(
         min_consensus_size)
     formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(
@@ -80,7 +82,10 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
         number_of_reviewed_assets)
     formatted_number_of_latest_labels = 'null' if number_of_latest_labels is None else int(
         number_of_latest_labels)
-    formatted_consensus_mark = 'null' if consensus_mark is None else float(consensus_mark)
+    formatted_consensus_mark = 'null' if consensus_mark is None else float(
+        consensus_mark)
+    formatted_honeypot_mark = 'null' if honeypot_mark is None else float(
+        honeypot_mark)
 
     result = client.execute('''
         mutation {
@@ -96,6 +101,7 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
               numberOfReviewedAssets: %s
               numberOfLatestLabels: %s
               consensusMark: %s
+              honeypotMark: %s
             }
           ) {
             id
@@ -104,7 +110,7 @@ def update_properties_in_project(client, project_id, min_consensus_size=None, co
         ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
                formatted_number_of_assets, formatted_completion_percentage, formatted_number_of_remaining_assets,
                formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets,
-               formatted_number_of_latest_labels, formatted_consensus_mark))
+               formatted_number_of_latest_labels, formatted_consensus_mark, formatted_honeypot_mark))
     return format_result('updatePropertiesInProject', result)
 
 
@@ -228,8 +234,10 @@ def update_properties_in_project_user(client, project_user_id,
                                       total_duration=None,
                                       duration_per_label=None,
                                       number_of_labeled_assets=None,
-                                      consensus_mark=None):
-    args = [total_duration, duration_per_label, number_of_labeled_assets, consensus_mark]
+                                      consensus_mark=None,
+                                      honeypot_mark=None):
+    args = [total_duration, duration_per_label,
+            number_of_labeled_assets, consensus_mark, honeypot_mark]
     formatted_args = ['null' if arg is None else f'{arg}' for arg in args]
 
     result = client.execute('''
@@ -267,6 +275,7 @@ def force_project_kpis(client, project_id):
         for label in asset['labels']:
             if label['isLatestLabelForUser']:
                 number_of_latest_labels += 1
+        time.sleep(1)
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])

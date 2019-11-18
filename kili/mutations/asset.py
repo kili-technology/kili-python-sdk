@@ -106,11 +106,12 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
     return format_result('updateAsset', result)
 
 
-def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None, consensus_mark=None):
+def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None, consensus_mark=None, honeypot_mark=None):
     formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
     formatted_priority = 'null' if priority is None else f'{priority}'
     formatted_json_metadata = 'null' if json_metadata is None else f'"{json_escape(json_metadata)}"'
     formatted_consensus_mark = 'null' if consensus_mark is None else f'{consensus_mark}'
+    formatted_honeypot_mark = 'null' if honeypot_mark is None else f'{honeypot_mark}'
 
     result = client.execute('''
         mutation {
@@ -121,12 +122,13 @@ def update_properties_in_asset(client, asset_id, external_id=None, priority=None
               priority: %s
               jsonMetadata: %s
               consensusMark: %s
+              honeypotMark: %s
             }
           ) {
             id
           }
         }
-        ''' % (asset_id, formatted_external_id, formatted_priority, formatted_json_metadata, formatted_consensus_mark))
+        ''' % (asset_id, formatted_external_id, formatted_priority, formatted_json_metadata, formatted_consensus_mark, formatted_honeypot_mark))
     return format_result('updatePropertiesInAsset', result)
 
 
