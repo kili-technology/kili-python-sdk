@@ -249,6 +249,7 @@ def update_properties_in_project_user(client, project_user_id,
               durationPerLabel: %s
               numberOfLabeledAssets: %s
               consensusMark: %s
+              honeypotMark: %s
             }
           ) {
             id
