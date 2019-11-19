@@ -57,27 +57,40 @@ def append_to_dataset(client, project_id, content, external_id, filename='', is_
     return format_result('appendToDataset', result)
 
 
-def append_many_to_dataset(client, project_id, content_array, external_id_array, filename_array, is_instructions_array,
-                           instructions_array, is_honeypot_array, status_array, json_metadata_array):
+def append_many_to_dataset(client, project_id, content_array, external_id_array,
+                           filename_array=None, is_instructions_array=None, instructions_array=None,
+                           is_honeypot_array=None, status_array=None, json_metadata_array=None):
+    filename_array = [
+        ''] * len(content_array) if not filename_array else filename_array
+    is_instructions_array = [
+        False] * len(content_array) if not is_instructions_array else is_instructions_array
+    instructions_array = [
+        ''] * len(content_array) if not instructions_array else instructions_array
+    is_honeypot_array = [
+        False] * len(content_array) if not is_honeypot_array else is_honeypot_array
+    status_array = ['TODO'] * \
+        len(content_array) if not status_array else status_array
+    json_metadata_array = [
+        {}] * len(content_array) if not json_metadata_array else json_metadata_array
     result = client.execute('''
-    mutation {
-      appendManyToDataset(
-        projectID: "%s",
-        contentArray: %s,
-        externalIDArray: %s,
-        filenameArray: %s,
-        isInstructionsArray: %s,
-        instructionsArray: %s,
-        isHoneypotArray: %s,
-        statusArray: %s,
-        jsonMetadataArray: %s) {
-        id
-      }
-    }
+        mutation {
+          appendManyToDataset(
+            projectID: "%s",
+            contentArray: %s,
+            externalIDArray: %s,
+            filenameArray: %s,
+            isInstructionsArray: %s,
+            instructionsArray: %s,
+            isHoneypotArray: %s,
+            statusArray: %s,
+            jsonMetadataArray: %s) {
+            id
+          }
+        }
     ''' % (project_id, dumps(content_array), dumps(external_id_array), dumps(filename_array),
            dumps(is_instructions_array).lower(), dumps(
                instructions_array), dumps(is_honeypot_array).lower(),
-           dumps(status_array).replace('"', ''), dumps([json_escape(elem) for elem in json_metadata_array])))
+           dumps(status_array).replace('"', ''), dumps([dumps(elem) for elem in json_metadata_array])))
     return format_result('appendManyToDataset', result)
 
 
