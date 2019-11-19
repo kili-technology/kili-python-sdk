@@ -54,6 +54,7 @@ def get_assets(client, project_id, skip, first):
         instructions
         isHoneypot
         calculatedConsensusMark
+        calculatedHoneypotMark
         consensusMark
         honeypotMark
         status

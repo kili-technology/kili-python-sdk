@@ -42,13 +42,18 @@ python add_users.py
 python import_assets.py
 ```
 
+To massively import data:
+
+````bash
+python import_assets_by_chunks.py
+
 ## How to delete all assets
 
 1. Execute:
 
 ```bash
 python delete_all_assets.py
-```
+````
 
 ## How to push pre-annotation to existing assets
 

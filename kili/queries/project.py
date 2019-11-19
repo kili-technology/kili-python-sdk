@@ -45,6 +45,7 @@ def get_project(client, project_id):
         id
         interfaceCategory
         calculatedConsensusMark
+        calculatedHoneypotMark
         consensusMark
         roles {
           id
@@ -57,6 +58,7 @@ def get_project(client, project_id):
           durationPerLabel
           honeypotMark
           calculatedConsensusMark
+          calculatedHoneypotMark
           consensusMark
         }
       }
