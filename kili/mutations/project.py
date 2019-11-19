@@ -4,6 +4,7 @@ import time
 from tqdm import tqdm
 
 from .asset import force_update_status, update_properties_in_asset
+from .lock import delete_locks
 from ..helper import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
 from ..queries.project import get_project
@@ -276,6 +277,7 @@ def force_project_kpis(client, project_id):
         for label in asset['labels']:
             if label['isLatestLabelForUser']:
                 number_of_latest_labels += 1
+        delete_locks(client, asset['id'])
         time.sleep(1)
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
