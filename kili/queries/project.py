@@ -19,7 +19,7 @@ def get_projects(client, user_id):
         numberOfLatestLabels
         roles {
           id
-          user { id, name, email, organization { id } }
+          user { id, name, email }
           role
           lastLabelingAt
           numberOfAnnotations
@@ -49,7 +49,7 @@ def get_project(client, project_id):
         consensusMark
         roles {
           id
-          user { id, name, email, organization { id } }
+          user { id, name, email }
           role
           lastLabelingAt
           numberOfAnnotations

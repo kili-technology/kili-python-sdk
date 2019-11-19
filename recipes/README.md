@@ -123,9 +123,6 @@ mutation {
 query {
   getUser(email: "YOUR_EMAIL") {
     id
-    organization {
-      id
-    }
   }
 }
 ```
