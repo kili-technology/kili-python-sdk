@@ -38,6 +38,5 @@ for asset_chunk in tqdm(list(chunks(assets, CHUNK_SIZE))):
     external_id_array = [get(a, 'externalId') for a in asset_chunk]
     content_array = [get(a, 'content') for a in asset_chunk]
     json_metadata_array = [json.loads(get(a, 'metadata')) for a in asset_chunk]
-    print(json_metadata_array)
     append_many_to_dataset(client, project_id, content_array,
                            external_id_array, json_metadata_array=json_metadata_array)
