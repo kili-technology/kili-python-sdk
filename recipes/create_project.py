@@ -6,8 +6,12 @@ import click
 import yaml
 from tqdm import tqdm
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili.authentication import authenticate
+from kili.mutations.organization import create_organization
+from kili.mutations.project import create_empty_project, update_project, append_to_roles
+from kili.mutations.tool import append_to_tools
+from kili.mutations.user import create_user
+from kili.queries.project import get_projects
 
 
 def get(dic, key):
