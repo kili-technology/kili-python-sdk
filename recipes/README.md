@@ -152,3 +152,13 @@ python python create_auto_model.py (OPTIONNAL --api_endpoint https://cloud.kili-
 - Annotate
 
 - See predictions
+
+## How to import OCR metadata
+
+1. Edit `new_assets.yml` where metadata has the format of `./examples/invoice.json` and the content points to the URL of `invoice.png`.
+
+2. Execute:
+
+```bash
+python import_assets.py
+```
