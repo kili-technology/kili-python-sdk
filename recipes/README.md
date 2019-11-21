@@ -48,6 +48,16 @@ To massively import data:
 python import_assets_by_chunks.py
 ```
 
+## How to import assets with S3
+
+1. Edit `new_assets_with_s3.yml`.
+
+2. Execute:
+
+```bash
+python import_assets_with_s3.py
+```
+
 ## How to delete all assets
 
 1. Execute:
