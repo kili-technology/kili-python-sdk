@@ -48,6 +48,16 @@ To massively import data:
 python import_assets_by_chunks.py
 ```
 
+## How to import assets with S3
+
+1. Edit `new_assets_with_s3.yml`.
+
+2. Execute:
+
+```bash
+python import_assets_with_s3.py
+```
+
 ## How to delete all assets
 
 1. Execute:
@@ -129,12 +139,12 @@ query {
 
 ## How to append assets and leverage online learning with AutoML
 
-- Create Project for TextClassification with `JsonSetting = "{\"categories\":{\"POSITIVE\": \"Review positive\",\"NEGATIVE\": \"Review négative\"}}"`
+- Create Project for TextClassification with `jsonSetting = "{\"categories\":{\"POSITIVE\": \"Review positive\",\"NEGATIVE\": \"Review négative\"}}"`
 
 - Then execute:
 
 ```bash
-python python create_auto_model.py (OPTIONNAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
+python python use_online_learning.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
 ```
 
 - Enter your personnal information : Mail, Password, ProjectID
@@ -142,3 +152,13 @@ python python create_auto_model.py (OPTIONNAL --api_endpoint https://cloud.kili-
 - Annotate
 
 - See predictions
+
+## How to import OCR metadata
+
+1. Edit `new_assets.yml` where metadata has the format of `./examples/invoice.json` and the content points to the URL of `invoice.png`.
+
+2. Execute:
+
+```bash
+python import_assets.py
+```
