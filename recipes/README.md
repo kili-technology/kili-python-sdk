@@ -139,12 +139,12 @@ query {
 
 ## How to append assets and leverage online learning with AutoML
 
-- Create Project for TextClassification with `JsonSetting = "{\"categories\":{\"POSITIVE\": \"Review positive\",\"NEGATIVE\": \"Review négative\"}}"`
+- Create Project for TextClassification with `jsonSetting = "{\"categories\":{\"POSITIVE\": \"Review positive\",\"NEGATIVE\": \"Review négative\"}}"`
 
 - Then execute:
 
 ```bash
-python python create_auto_model.py (OPTIONNAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
+python python use_online_learning.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
 ```
 
 - Enter your personnal information : Mail, Password, ProjectID
