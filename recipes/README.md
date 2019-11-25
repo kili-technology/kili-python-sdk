@@ -144,7 +144,7 @@ query {
 - Then execute:
 
 ```bash
-python python online_learning_text_classification.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
+python online_learning_text_classification.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
 ```
 
 - Enter your personnal information : Mail, Password, ProjectID
