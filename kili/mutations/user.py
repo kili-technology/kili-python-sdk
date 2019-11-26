@@ -1,7 +1,7 @@
 from ..helper import format_result
 
 
-def signin(client, email, password):
+def signin(client, email: str, password: str):
     result = client.execute('''
     mutation {
       signIn(email: "%s", password: "%s") {
@@ -16,7 +16,7 @@ def signin(client, email, password):
     return format_result('signIn', result)
 
 
-def create_user(client, name, email, password, phone, organization_id, organization_role):
+def create_user(client, name: str, email: str, password: str, phone: str, organization_id: str, organization_role: str):
     result = client.execute('''
     mutation {
       createUser(name: "%s",
@@ -32,7 +32,7 @@ def create_user(client, name, email, password, phone, organization_id, organizat
     return format_result('createUser', result)
 
 
-def create_user_from_email_if_not_exists(client, name, email, organization_name, organization_role, project_id):
+def create_user_from_email_if_not_exists(client, name: str, email: str, organization_name: str, organization_role: str, project_id: str):
     result = client.execute('''
     mutation {
       createUserFromEmailIfNotExists(name: "%s",
@@ -47,7 +47,7 @@ def create_user_from_email_if_not_exists(client, name, email, organization_name,
     return format_result('createUserFromEmailIfNotExists', result)
 
 
-def update_user(client, user_id, name, email, phone, organization_id, organization_role):
+def update_user(client, user_id: str, name: str, email: str, phone: str, organization_id: str, organization_role: str):
     result = client.execute('''
     mutation {
       updateUser(userID: "%s",
@@ -63,7 +63,7 @@ def update_user(client, user_id, name, email, phone, organization_id, organizati
     return format_result('updateUser', result)
 
 
-def update_password(client, email, old_password, new_password_1, new_password_2):
+def update_password(client, email: str, old_password: str, new_password_1: str, new_password_2: str):
     result = client.execute('''
     mutation {
       updatePassword(email: "%s",
@@ -77,7 +77,7 @@ def update_password(client, email, old_password, new_password_1, new_password_2)
     return format_result('updatePassword', result)
 
 
-def reset_password(client, email):
+def reset_password(client, email: str):
     result = client.execute('''
     mutation {
       resetPassword(email: "%s") {

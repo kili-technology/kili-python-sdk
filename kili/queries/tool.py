@@ -1,14 +1,14 @@
 from ..helper import format_result
 
 
-def get_tools(client, project_id):
+def get_tools(client, project_id: str):
     result = client.execute('''
     query {
       getTools(projectID: "%s") {
         id
         name
         toolType
-        jsonSettings 
+        jsonSettings
       }
     }
     ''' % (project_id))

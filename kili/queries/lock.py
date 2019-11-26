@@ -1,7 +1,7 @@
 from ..helper import format_result
 
 
-def get_locks(client, project_id):
+def get_locks(client, project_id: str):
     result = client.execute('''
     query {
       getLocks(projectID: "%s") {

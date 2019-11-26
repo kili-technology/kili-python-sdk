@@ -1,7 +1,7 @@
 from ..helper import format_result
 
 
-def get_user(client, email):
+def get_user(client, email: str):
     result = client.execute('''
     query {
       getUser(email: "%s") {
