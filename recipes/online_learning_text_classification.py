@@ -8,7 +8,6 @@ import time
 from tempfile import TemporaryDirectory
 
 import numpy as np
-import matplotlib.pyplot as plt
 import autosklearn
 import autosklearn.classification
 from sklearn.feature_extraction.text import CountVectorizer
