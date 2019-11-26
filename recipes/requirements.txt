@@ -1,3 +1,4 @@
+auto-sklearn
+click
 google-cloud-language
 protobuf
-auto-sklearn
