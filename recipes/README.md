@@ -48,6 +48,16 @@ To massively import data:
 python import_assets_by_chunks.py
 ```
 
+## How to update assets metadata
+
+1. Edit `new_assets.yml`. Metadata may contain some information about assets. Used for interface category `IMAGE_WITH_SEARCH`.
+
+2. Execute:
+
+```bash
+python update_assets_metadata.py
+```
+
 ## How to import assets with S3
 
 1. Edit `new_assets_with_s3.yml`.
@@ -144,7 +154,7 @@ query {
 - Then execute:
 
 ```bash
-python python online_learning_text_classification.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
+python online_learning_text_classification.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
 ```
 
 - Enter your personnal information : Mail, Password, ProjectID
