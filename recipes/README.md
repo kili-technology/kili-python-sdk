@@ -173,7 +173,7 @@ docker run -it --network="host" kili-playground bash
 # In the docker:
 
 cd kili-playground/recipes
-python3 /app/kili-playground/recipes/online_learning_text_classification.py --api_endpoint https://staging.cloud.kili-technology.com/api/label/graphql
+python3 /app/kili-playground/recipes/online_learning_text_classification.py --api_endpoint https://cloud.kili-technology.com/api/label/graphql
 ```
 
 ## How to import OCR metadata
