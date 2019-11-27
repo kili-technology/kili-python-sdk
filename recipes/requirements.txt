@@ -1,5 +1,5 @@
-auto-sklearn
-click
-python-dotenv
-google-cloud-language
-protobuf
+auto-sklearn==0.5.2
+Click==7.0
+google-cloud-language==1.1.0
+protobuf==3.6.1
+python-dotenv==0.10.3
