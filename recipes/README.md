@@ -165,15 +165,21 @@ python online_learning_text_classification.py (OPTIONAL --api_endpoint https://c
 
 ### In docker
 
+1. Create a `.env` file in this folder containing your settings:
+
+```bash
+EMAIL=
+PASSWORD=
+PROJECT_ID=
+API_ENDPOINT=
+```
+
+2. Build the docker and launch it:
+
 ```bash
 docker build -t kili-playground .
 
-docker run -it --network="host" kili-playground bash
-
-# In the docker:
-
-cd kili-playground/recipes
-python3 /app/kili-playground/recipes/online_learning_text_classification.py --api_endpoint https://cloud.kili-technology.com/api/label/graphql
+docker run -it --network="host" kili-playground online-learning
 ```
 
 ## How to import OCR metadata

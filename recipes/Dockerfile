@@ -1,8 +1,5 @@
 FROM ubuntu:18.04
 
-
-WORKDIR /app
-
 RUN apt-get update && apt-get install -y locales
 
 # Set the locale
@@ -14,9 +11,13 @@ ENV LC_ALL en_US.UTF-8
 
 RUN apt-get update && apt-get install -y git python3 python3-pip build-essential
 
-RUN git clone https://github.com/kili-technology/kili-playground.git
-
 RUN pip3 install kili
 
 RUN apt-get install -y swig
-RUN cd kili-playground/recipes && pip3 install -r requirements.txt
+
+WORKDIR /app
+ADD . /app
+
+RUN pip3 install -r requirements.txt
+
+ENTRYPOINT [ "/app/entrypoint.sh" ]

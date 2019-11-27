@@ -1,4 +1,5 @@
 auto-sklearn
 click
+python-dotenv
 google-cloud-language
 protobuf
