@@ -30,14 +30,20 @@ It allows data scientists and developers to control Kili Technology from an IDE.
 - Clone the repository and install with pip
 
 ```bash
-git clone https://github.com/kili-technology/kili-playground.git
-cd kili-playground
-pip install .
+pip install kili
 ```
 
 - **Note**: If you're on Windows, install Shapely by following [this tutorial](https://towardsdatascience.com/install-shapely-on-windows-72b6581bb46c).
 
 ## Get started
+
+```python
+from kili.authentication import KiliAuth
+from kili.playground import Playground
+
+kauth = KiliAuth(email, password)
+playground = Playground(kauth)
+```
 
 Here are [some recipes](/recipes/). Among them:
 
