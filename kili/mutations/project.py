@@ -1,13 +1,13 @@
-from json import dumps
 import time
+from json import dumps
 
 from tqdm import tqdm
 
-from .asset import force_update_status, update_properties_in_asset
-from .lock import delete_locks
 from ..helper import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
 from ..queries.project import get_project
+from .asset import force_update_status, update_properties_in_asset
+from .lock import delete_locks
 
 
 def create_project(client, title, description, tool_type, use_honeypot, interface_json_settings):
@@ -270,7 +270,7 @@ def force_project_kpis(client, project_id):
         unique_asset_authors = list(
             set([label['author']['id'] for label in asset['labels']]))
         update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
-                                   json_metadata=asset['jsonMetadata'], consensus_mark=asset['calculatedConsensusMark'], honeypot_mark=asset['calculatedHoneypotMark'])
+                                   json_metadata=json.loads(asset['jsonMetadata']), consensus_mark=asset['calculatedConsensusMark'], honeypot_mark=asset['calculatedHoneypotMark'])
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
