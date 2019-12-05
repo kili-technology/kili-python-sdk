@@ -164,6 +164,9 @@ class Playground(object):
     def get_assets(self, **kwargs):
         return kili.queries.asset.get_assets(self.auth.client, **kwargs)
 
+    def get_assets_with_search(self, **kwargs):
+        return kili.queries.asset.get_assets_with_search(self.auth.client, **kwargs)
+
     def get_assets_by_external_id(self, **kwargs):
         return kili.queries.asset.get_assets_by_external_id(self.auth.client, **kwargs)
 

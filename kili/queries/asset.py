@@ -1,3 +1,6 @@
+from json import dumps
+from typing import List
+
 import pandas as pd
 
 from ..helper import format_result
@@ -77,6 +80,73 @@ def get_assets(client, project_id: str, skip: int, first: int):
     }
     ''' % (project_id, skip, first))
     return format_result('getAssets', result)
+
+
+def get_assets_with_search(client, project_id: str, skip: int, first: int,
+                           external_id_contains: str = None,
+                           status_in: List[str] = None,
+                           author_in: List[str] = None,
+                           consensus_mark_gt: float = None,
+                           consensus_mark_lt: float = None, honeypot_mark_gt: float = None,
+                           honeypot_mark_lt: float = None, skipped: bool = None):
+    formatted_external_id_contains = 'null' if external_id_contains is None else f'"{external_id_contains}"'
+    formatted_status_in = dumps([]) if status_in is None else dumps(status_in)
+    formatted_author_in = dumps([]) if author_in is None else dumps(author_in)
+    formatted_consensus_mark_gt = 'null' if consensus_mark_gt is None else f'{consensus_mark_gt}'
+    formatted_consensus_mark_lt = 'null' if consensus_mark_lt is None else f'{consensus_mark_lt}'
+    formatted_honeypot_mark_gt = 'null' if honeypot_mark_gt is None else f'{honeypot_mark_gt}'
+    formatted_honeypot_mark_lt = 'null' if honeypot_mark_lt is None else f'{honeypot_mark_lt}'
+    formatted_skipped = 'null' if honeypot_mark_lt is None else f'{skipped}'.lower(
+    )
+    result = client.execute('''
+    query {
+      getAssetsWithSearch(projectID: "%s", skip: %d, first: %d
+        where: {
+          externalIdContains: %s
+          statusIn: %s
+          authorIn: %s
+          consensusMarkGt: %s
+          consensusMarkLt: %s
+          honeypotMarkGt: %s
+          honeypotMarkLt: %s
+          skipped: %s
+        }) {
+        id
+        externalId
+        content
+        filename
+        isInstructions
+        instructions
+        isHoneypot
+        calculatedConsensusMark
+        calculatedHoneypotMark
+        consensusMark
+        honeypotMark
+        status
+        isUsedForConsensus
+        jsonMetadata
+        priority
+        labels {
+          id
+          createdAt
+          labelType
+          jsonResponse
+          isLatestLabelForUser
+          author {
+            id
+          }
+        }
+      }
+    }
+    ''' % (project_id, skip, first, formatted_external_id_contains,
+           formatted_status_in,
+           formatted_author_in,
+           formatted_consensus_mark_gt,
+           formatted_consensus_mark_lt,
+           formatted_honeypot_mark_gt,
+           formatted_honeypot_mark_lt,
+           formatted_skipped))
+    return format_result('getAssetsWithSearch', result)
 
 
 def get_assets_by_external_id(client, project_id: str, external_id: str):
