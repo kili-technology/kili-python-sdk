@@ -6,9 +6,10 @@ import json
 import warnings
 import time
 from tempfile import TemporaryDirectory
+from dotenv import load_dotenv
+import os
 
 import numpy as np
-import matplotlib.pyplot as plt
 import autosklearn
 import autosklearn.classification
 from sklearn.feature_extraction.text import CountVectorizer
@@ -20,6 +21,7 @@ from sklearn.model_selection import train_test_split
 
 from kili.authentication import KiliAuth
 from kili.playground import Playground
+
 
 warnings.filterwarnings('ignore', 'Mean of empty slice')
 
@@ -110,11 +112,20 @@ def automl_train_and_predict(X, y, X_to_be_predicted):
 @click.command()
 @click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/graphql', help='Endpoint of GraphQL client')
 def main(api_endpoint):
-    email = input('Enter Email: ')
-    password = getpass.getpass('Enter password for user {}:'.format(email))
+
+    if os.path.exists('.env'):
+        load_dotenv()
+        email = os.getenv('EMAIL')
+        password = os.getenv('PASSWORD')
+        project_id = os.getenv('PROJECT_ID')
+        api_endpoint = os.getenv('API_ENDPOINT')
+    else:
+        email = input('Enter Email: ')
+        password = getpass.getpass('Enter password for user {}:'.format(email))
+        project_id = input('Enter project id: ')
+
     kauth = KiliAuth(email, password, api_endpoint=api_endpoint)
     playground = Playground(kauth)
-    project_id = input('Enter project id: ')
 
     # Check and load new predictions
     STOP_CONDITION = True
