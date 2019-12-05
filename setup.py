@@ -23,7 +23,13 @@ setup(
 
     long_description=open('README.md').read(),
 
-    install_requires=["numpy", "requests", "scipy", "shapely", "six", "tqdm"],
+    install_requires=["numpy",
+                      "pandas",
+                      "requests",
+                      "scipy",
+                      "shapely",
+                      "six",
+                      "tqdm"],
 
     # Taking into account MANIFEST.in
     include_package_data=True,
@@ -53,7 +59,6 @@ setup(
                   'Implementation :: PyPy')
                  ],
 
-
     # It's a plugin system, but we use it almost exclusively
     # To create commands, like "django-admin".
     # For example, if you want to create the fabulous "proclaim-sm" command, you
@@ -64,6 +69,5 @@ setup(
         'console_scripts': [
         ],
     },
-
 
 )

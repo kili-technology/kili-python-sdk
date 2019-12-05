@@ -1,3 +1,7 @@
+import pandas as pd
+
+from .asset import export_assets
+from .project import get_project
 from ..helper import format_result
 
 
@@ -35,3 +39,43 @@ def get_latest_labels(client, project_id: str, skip: int, first: int):
     }
     ''' % (project_id, skip, first))
     return format_result('getLatestLabels', result)
+
+
+def parse_json_response_for_single_classification(json_response):
+    categories = parse_json_response_for_multi_classification(json_response)
+    if len(categories) == 0:
+        return []
+
+    return categories[0]
+
+
+def parse_json_response_for_multi_classification(json_response):
+    formatted_json_response = eval(json_response)
+    if 'categories' not in formatted_json_response:
+        return []
+    categories = formatted_json_response['categories']
+    return list(map(lambda category: category['name'], categories))
+
+
+def parse_json_response(json_response, interface_category):
+    if interface_category == 'SINGLECLASS_TEXT_CLASSIFICATION':
+        return parse_json_response_for_single_classification(json_response)
+    if interface_category == 'MULTICLASS_TEXT_CLASSIFICATION':
+        return parse_json_response_for_multi_classification(json_response)
+
+    return json_response
+
+
+def export_labels_as_df(client, project_id: str):
+    project = get_project(client, project_id)
+    if 'interfaceCategory' not in project:
+        return pd.DataFrame()
+
+    interface_category = project['interfaceCategory']
+    assets = export_assets(client, project_id)
+    labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
+              for asset in assets for label in asset['labels']]
+    labels_df = pd.DataFrame(labels)
+    labels_df['y'] = labels_df['jsonResponse'].apply(
+        lambda json_response: parse_json_response(json_response, interface_category))
+    return labels_df

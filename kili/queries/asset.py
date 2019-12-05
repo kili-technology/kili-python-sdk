@@ -1,3 +1,5 @@
+import pandas as pd
+
 from ..helper import format_result
 
 
@@ -158,3 +160,8 @@ def export_assets(client, project_id: str):
     }
     ''' % (project_id))
     return format_result('exportAssets', result)
+
+
+def export_assets_as_df(client, project_id: str):
+    assets = export_assets(client, project_id)
+    return pd.DataFrame(assets)
