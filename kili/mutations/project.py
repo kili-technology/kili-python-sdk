@@ -270,8 +270,9 @@ def force_project_kpis(client, project_id: str):
         asset['status'] = asset_updated['status']
         unique_asset_authors = list(
             set([label['author']['id'] for label in asset['labels']]))
+        json_metadata = None if asset['jsonMetadata'] is None else loads(asset['jsonMetadata'])
         update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
-                                   json_metadata=loads(asset['jsonMetadata']), consensus_mark=asset['calculatedConsensusMark'], honeypot_mark=asset['calculatedHoneypotMark'])
+                                   json_metadata=json_metadata, consensus_mark=asset['calculatedConsensusMark'], honeypot_mark=asset['calculatedHoneypotMark'])
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
