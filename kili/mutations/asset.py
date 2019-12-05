@@ -1,9 +1,10 @@
 from json import dumps
+from typing import List
 
 from ..helper import format_result, json_escape
 
 
-def create_assets(client, project_id, contents, external_ids):
+def create_assets(client, project_id: str, contents: List[str], external_ids: List[str]):
     result = client.execute('''
     mutation {
       createAssets(
@@ -24,7 +25,7 @@ def create_assets(client, project_id, contents, external_ids):
     return format_result('createAssets', result)
 
 
-def delete_assets_by_external_id(client, project_id, external_id):
+def delete_assets_by_external_id(client, project_id: str, external_id: str):
     result = client.execute('''
     mutation {
       deleteAssetsByExternalId(projectID: "%s", externalID: "%s") {
@@ -35,8 +36,8 @@ def delete_assets_by_external_id(client, project_id, external_id):
     return format_result('deleteAssetsByExternalId', result)
 
 
-def append_to_dataset(client, project_id, content, external_id, filename='', is_instructions=False,
-                      instructions='', is_honeypot=False, status='TODO', json_metadata={}):
+def append_to_dataset(client, project_id: str, content: str, external_id: str, filename: str = '', is_instructions: bool = False,
+                      instructions: str = '', is_honeypot: bool = False, status: str = 'TODO', json_metadata: dict = {}):
     result = client.execute('''
     mutation {
       appendToDataset(projectID: "%s"
@@ -57,9 +58,9 @@ def append_to_dataset(client, project_id, content, external_id, filename='', is_
     return format_result('appendToDataset', result)
 
 
-def append_many_to_dataset(client, project_id, content_array, external_id_array,
-                           filename_array=None, is_instructions_array=None, instructions_array=None,
-                           is_honeypot_array=None, status_array=None, json_metadata_array=None):
+def append_many_to_dataset(client, project_id: str, content_array: List[str], external_id_array: List[str],
+                           filename_array: List[str] = None, is_instructions_array: List[bool] = None, instructions_array: List[str] = None,
+                           is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[str] = None):
     filename_array = [
         ''] * len(content_array) if not filename_array else filename_array
     is_instructions_array = [
@@ -94,8 +95,8 @@ def append_many_to_dataset(client, project_id, content_array, external_id_array,
     return format_result('appendManyToDataset', result)
 
 
-def update_asset(client, asset_id, project_id, content, external_id, filename, is_instructions, instructions,
-                 is_honeypot, consensus_mark, honeypot_mark, status, json_metadata):
+def update_asset(client, asset_id: str, project_id: str, content: str, external_id: str, filename: str, is_instructions: bool, instructions: str,
+                 is_honeypot: bool, consensus_mark: float, honeypot_mark: float, status: str, json_metadata: str):
     result = client.execute('''
     mutation {
       updateAsset(
@@ -119,12 +120,15 @@ def update_asset(client, asset_id, project_id, content, external_id, filename, i
     return format_result('updateAsset', result)
 
 
-def update_properties_in_asset(client, asset_id, external_id=None, priority=None, json_metadata=None, consensus_mark=None, honeypot_mark=None):
+def update_properties_in_asset(client, asset_id: str, external_id: str = None,
+                               priority: int = None, json_metadata: str = None, consensus_mark: float = None,
+                               honeypot_mark: float = None, to_be_labeled_by: List[str] = None):
     formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
     formatted_priority = 'null' if priority is None else f'{priority}'
     formatted_json_metadata = 'null' if json_metadata is None else f'"{json_escape(json_metadata)}"'
     formatted_consensus_mark = 'null' if consensus_mark is None else f'{consensus_mark}'
     formatted_honeypot_mark = 'null' if honeypot_mark is None else f'{honeypot_mark}'
+    formatted_to_be_labeled_by = 'null' if to_be_labeled_by is None else f'{dumps(to_be_labeled_by)}'
 
     result = client.execute('''
         mutation {
@@ -136,16 +140,19 @@ def update_properties_in_asset(client, asset_id, external_id=None, priority=None
               jsonMetadata: %s
               consensusMark: %s
               honeypotMark: %s
+              toBeLabeledBy: %s
             }
           ) {
             id
           }
         }
-        ''' % (asset_id, formatted_external_id, formatted_priority, formatted_json_metadata, formatted_consensus_mark, formatted_honeypot_mark))
+        ''' % (asset_id, formatted_external_id, formatted_priority,
+               formatted_json_metadata, formatted_consensus_mark,
+               formatted_honeypot_mark, formatted_to_be_labeled_by))
     return format_result('updatePropertiesInAsset', result)
 
 
-def delete_from_dataset(client, asset_id):
+def delete_from_dataset(client, asset_id: str):
     result = client.execute('''
     mutation {
       deleteFromDataset(assetID: "%s") {
@@ -156,7 +163,7 @@ def delete_from_dataset(client, asset_id):
     return format_result('deleteFromDataset', result)
 
 
-def delete_many_from_dataset(client, asset_ids):
+def delete_many_from_dataset(client, asset_ids: List[str]):
     result = client.execute('''
     mutation {
       deleteManyFromDataset(assetIDs: %s) {
@@ -167,7 +174,7 @@ def delete_many_from_dataset(client, asset_ids):
     return format_result('deleteManyFromDataset', result)
 
 
-def force_update_status(client, asset_id):
+def force_update_status(client, asset_id: str):
     result = client.execute('''
     mutation {
       forceUpdateStatus(assetID: "%s") {

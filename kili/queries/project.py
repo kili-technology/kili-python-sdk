@@ -1,7 +1,7 @@
 from ..helper import format_result
 
 
-def get_projects(client, user_id):
+def get_projects(client, user_id: str):
     result = client.execute('''
     query {
       getProjects(userID: "%s") {
@@ -38,7 +38,7 @@ def get_projects(client, user_id):
     return format_result('getProjects', result)
 
 
-def get_project(client, project_id):
+def get_project(client, project_id: str):
     result = client.execute('''
     query {
       getProject(projectID: "%s") {

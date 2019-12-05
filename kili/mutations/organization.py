@@ -1,7 +1,7 @@
 from ..helper import format_result
 
 
-def create_organization(client, name, address, zip_code, city, country):
+def create_organization(client, name: str, address: str, zip_code: str, city: str, country: str):
     result = client.execute('''
     mutation {
       createOrganization(name: "%s",
@@ -16,7 +16,7 @@ def create_organization(client, name, address, zip_code, city, country):
     return format_result('createOrganization', result)
 
 
-def update_organization(client, organization_id, name, address, zip_code, city, country):
+def update_organization(client, organization_id: str, name: str, address: str, zip_code: str, city: str, country: str):
     result = client.execute('''
     mutation {
       updateOrganization(organizationID: "%s",
@@ -32,7 +32,7 @@ def update_organization(client, organization_id, name, address, zip_code, city, 
     return format_result('updateOrganization', result)
 
 
-def delete_organization(client, organization_id):
+def delete_organization(client, organization_id: str):
     result = client.execute('''
     mutation {
       deleteOrganization(organizationID: "%s") {

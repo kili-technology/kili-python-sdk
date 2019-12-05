@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 import numpy as np
 from shapely.geometry import Point
@@ -12,7 +13,7 @@ from ..queries.tool import get_tools
 from ..queries.project import get_project
 
 
-def update_consensus_in_many_assets(client, asset_ids, consensus_marks, are_used_for_consensus):
+def update_consensus_in_many_assets(client, asset_ids: List[str], consensus_marks: List[float], are_used_for_consensus: List[float]):
     asset_ids_in_string = '", "'.join(asset_ids)
     are_used_for_consensus_in_string = ', '.join(
         [str(is_used_for_consensus).lower() for is_used_for_consensus in are_used_for_consensus])
@@ -152,7 +153,7 @@ def compute_consensus_for_project(client, project_id, interface_category, skip=0
 
     if interface_category == "IMAGE" or interface_category == "IMAGE_TO_TEXT":
         categories = list(json.loads(get_tools(client, project_id)[
-                                         0]["jsonSettings"])["annotation_types"].keys())
+            0]["jsonSettings"])["annotation_types"].keys())
         consensus_by_asset = {}
         for asset in assets_for_consensus:
             labels = asset["labels"]
@@ -237,7 +238,7 @@ def compute_consensus_for_project_ocr_texts(assets_for_consensus, categories):
     return consensus_by_asset
 
 
-def force_consensus_for_project(client, project_id):
+def force_consensus_for_project(client, project_id: str):
     interface_category = get_project(client, project_id)['interfaceCategory']
     print(interface_category)
     consensus_by_asset = compute_consensus_for_project(
