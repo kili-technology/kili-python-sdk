@@ -120,12 +120,15 @@ def update_asset(client, asset_id: str, project_id: str, content: str, external_
     return format_result('updateAsset', result)
 
 
-def update_properties_in_asset(client, asset_id: str, external_id: str = None, priority: int = None, json_metadata: str = None, consensus_mark: float = None, honeypot_mark: float = None):
+def update_properties_in_asset(client, asset_id: str, external_id: str = None,
+                               priority: int = None, json_metadata: str = None, consensus_mark: float = None,
+                               honeypot_mark: float = None, to_be_labeled_by: List[str] = None):
     formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
     formatted_priority = 'null' if priority is None else f'{priority}'
     formatted_json_metadata = 'null' if json_metadata is None else f'"{json_escape(json_metadata)}"'
     formatted_consensus_mark = 'null' if consensus_mark is None else f'{consensus_mark}'
     formatted_honeypot_mark = 'null' if honeypot_mark is None else f'{honeypot_mark}'
+    formatted_to_be_labeled_by = 'null' if to_be_labeled_by is None else f'{dumps(to_be_labeled_by)}'
 
     result = client.execute('''
         mutation {
@@ -137,12 +140,15 @@ def update_properties_in_asset(client, asset_id: str, external_id: str = None, p
               jsonMetadata: %s
               consensusMark: %s
               honeypotMark: %s
+              toBeLabeledBy: %s
             }
           ) {
             id
           }
         }
-        ''' % (asset_id, formatted_external_id, formatted_priority, formatted_json_metadata, formatted_consensus_mark, formatted_honeypot_mark))
+        ''' % (asset_id, formatted_external_id, formatted_priority,
+               formatted_json_metadata, formatted_consensus_mark,
+               formatted_honeypot_mark, formatted_to_be_labeled_by))
     return format_result('updatePropertiesInAsset', result)
 
 

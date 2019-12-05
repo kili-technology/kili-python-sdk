@@ -191,3 +191,13 @@ docker run -it --network="host" kili-playground online-learning
 ```bash
 python import_assets.py
 ```
+
+## How to set assets only to be labeled by some users
+
+1. Edit `new_assets.yml` and change the field `toBeLabeledBy`. When this field no exists, assets can be labeled by everyone.
+
+2. Execute:
+
+```bash
+python set_asset_to_be_labeled_by.py
+```
