@@ -220,6 +220,7 @@ def export_assets(client, project_id: str):
           secondsToLabel
           totalSecondsToLabel
           honeypotMark
+          isLatestLabelForUser
         }
       }
     }

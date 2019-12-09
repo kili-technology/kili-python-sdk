@@ -7,3 +7,5 @@ scripts_playground/__pycache__/
 kili.egg-info
 dist
 build
+*.weights
+*.pt
