@@ -13,6 +13,6 @@ ENV PROJECT_ID=$PROJECT_ID
 ENV API_ENDPOINT=$API_ENDPOINT
 ENV PYTHONPATH=/usr/src/app
 
-RUN /app/download_yolov3_weights.sh
+RUN /app/yolov3/weights/download_yolov3_weights.sh
 
-ENTRYPOINT [ "python", "/app/online_learning_image_object_detection.py" ]
+ENTRYPOINT [ "python", "/app/main.py" ]
