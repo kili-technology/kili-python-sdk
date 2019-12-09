@@ -211,7 +211,7 @@ kauth = KiliAuth(email=email, password=password)
 playground = Playground(kauth)
 ```
 
-## How to delete one asset identified by its externalId ?
+## How to delete one asset identified by its external id ?
 
 Use:
 
