@@ -207,6 +207,9 @@ python set_asset_to_be_labeled_by.py
 Use:
 
 ```bash
+from kili.authentication import KiliAuth
+from kili.playground import Playground
+
 kauth = KiliAuth(email=email, password=password)
 playground = Playground(kauth)
 ```
