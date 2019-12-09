@@ -201,3 +201,20 @@ python import_assets.py
 ```bash
 python set_asset_to_be_labeled_by.py
 ```
+
+## How to authenticate to the API ?
+
+Use:
+
+```bash
+kauth = KiliAuth(email=email, password=password)
+playground = Playground(kauth)
+```
+
+## How to delete one asset identified by its externalId ?
+
+Use:
+
+```bash
+playground.delete_assets_by_external_id(project_id=project_id, external_id=external_id)
+```
