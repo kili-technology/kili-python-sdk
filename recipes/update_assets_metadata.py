@@ -1,13 +1,12 @@
 import getpass
-from tqdm import tqdm
-import yaml
 import json
-import click
 
-from kili.authentication import authenticate
-from kili.mutations.asset import update_properties_in_asset
-from kili.queries.asset import get_assets_by_external_id
+import click
+import yaml
 from tqdm import tqdm
+
+from kili.authentication import KiliAuth
+from kili.playground import Playground
 
 
 def get(dic, key):
@@ -28,16 +27,18 @@ def main(api_endpoint):
 
     assets = configuration['assets']
 
-    client, user_id = authenticate(email, password, api_endpoint)
+    kauth = KiliAuth(email=email, password=password, api_endpoint=api_endpoint)
+    playground = Playground(kauth)
 
     for asset in tqdm(assets):
         external_id = get(asset, 'externalId')
         json_metadata = json.loads(get(asset, 'metadata'))
-        assets = get_assets_by_external_id(client, project_id, external_id)
+        assets = playground.get_assets_by_external_id(
+            project_id=project_id, external_id=external_id)
         assert len(assets) == 1
         asset_id = assets[0]['id']
-        update_properties_in_asset(
-            client, asset_id, json_metadata=json_metadata)
+        playground.update_properties_in_asset(
+            asset_id=asset_id, json_metadata=json_metadata)
 
 
 if __name__ == '__main__':

@@ -4,11 +4,8 @@ import os
 import random
 
 import boto3
-
-
 from kili.authentication import KiliAuth
 from kili.playground import Playground
-
 
 S3_ACCESS_KEY = os.getenv('S3_ACCESS_KEY')
 S3_SECRET_KEY = os.getenv('S3_SECRET_KEY')
@@ -45,4 +42,4 @@ for asset in tqdm(assets):
     external_id = get(asset, 'externalId')
     json_metadata = json.loads(get(asset, 'metadata'))
     project = playground.append_to_dataset(
-        client, project_id, content, external_id)
+        project_id=project_id, content=content, external_id=external_id)

@@ -1,13 +1,12 @@
 import getpass
-from tqdm import tqdm
-import yaml
 import json
-import click
 
-from kili.authentication import authenticate
-from kili.mutations.label import create_prediction
-from kili.queries.asset import get_assets_by_external_id
+import click
+import yaml
 from tqdm import tqdm
+
+from kili.authentication import KiliAuth
+from kili.playground import Playground
 
 
 def get(dic, key):
@@ -28,15 +27,18 @@ def main(api_endpoint):
 
     predictions = configuration['predictions']
 
-    client, user_id = authenticate(email, password, api_endpoint)
+    kauth = KiliAuth(email=email, password=password, api_endpoint=api_endpoint)
+    playground = Playground(kauth)
 
     for prediction in tqdm(predictions):
         external_id = get(prediction, 'externalId')
-        assets = get_assets_by_external_id(client, project_id, external_id)
+        assets = playground.get_assets_by_external_id(
+            project_id=project_id, external_id=external_id)
         assert len(assets) == 1
         asset_id = assets[0]['id']
         json_response = json.loads(get(prediction, 'response'))
-        create_prediction(client, asset_id, json_response)
+        playground.create_prediction(
+            asset_id=asset_id, json_response=json_response)
 
 
 if __name__ == '__main__':

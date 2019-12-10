@@ -1,8 +1,8 @@
 import pandas as pd
 
-from .asset import export_assets
-from .project import get_project
 from ..helper import format_result
+from .asset import get_assets
+from .project import get_project
 
 
 def get_label(client, asset_id: str, user_id: str):
@@ -72,7 +72,7 @@ def export_labels_as_df(client, project_id: str):
         return pd.DataFrame()
 
     interface_category = project['interfaceCategory']
-    assets = export_assets(client, project_id)
+    assets = get_assets(client, project_id=project_id)
     labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
               for asset in assets for label in asset['labels']]
     labels_df = pd.DataFrame(labels)
