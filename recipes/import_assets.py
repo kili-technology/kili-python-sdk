@@ -1,11 +1,11 @@
 import getpass
-from tqdm import tqdm
-import yaml
 import json
 
-from kili.authentication import authenticate
-from kili.mutations.asset import append_to_dataset
+import yaml
 from tqdm import tqdm
+
+from kili.authentication import KiliAuth
+from kili.playground import Playground
 
 
 def get(dic, key):
@@ -23,12 +23,12 @@ with open('./conf/new_assets.yml', 'r') as f:
 
 assets = configuration['assets']
 
-
-client, user_id = authenticate(email, password)
+kauth = KiliAuth(email=email, password=password)
+playground = Playground(kauth)
 
 for asset in tqdm(assets):
     external_id = get(asset, 'externalId')
     content = get(asset, 'content')
     json_metadata = json.loads(get(asset, 'metadata'))
-    append_to_dataset(client, project_id, content,
-                      external_id, json_metadata=json_metadata)
+    playground.append_to_dataset(project_id=project_id, content=content,
+                                 external_id=external_id, json_metadata=json_metadata)

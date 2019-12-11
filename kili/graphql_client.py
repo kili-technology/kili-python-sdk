@@ -1,5 +1,7 @@
-from six.moves import urllib
 import json
+import time
+
+from six.moves import urllib
 
 
 class GraphQLClient:
@@ -27,8 +29,13 @@ class GraphQLClient:
 
         if self.session is not None:
             try:
-                req = self.session.post(self.endpoint, json.dumps(
-                    data).encode('utf-8'), headers=headers)
+                number_of_trials = 3
+                for n in range(number_of_trials):
+                    req = self.session.post(self.endpoint, json.dumps(
+                        data).encode('utf-8'), headers=headers)
+                    if req.status_code == 200:
+                        break
+                    time.sleep(1)
                 return req.json()
             except Exception as e:
                 print('Request failed with error:\n')

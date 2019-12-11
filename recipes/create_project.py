@@ -6,11 +6,13 @@ import click
 import yaml
 from tqdm import tqdm
 
-from kili.authentication import authenticate
+from kili.authentication import KiliAuth, authenticate
 from kili.mutations.organization import create_organization
-from kili.mutations.project import create_empty_project, update_project, append_to_roles
+from kili.mutations.project import (append_to_roles, create_empty_project,
+                                    update_project)
 from kili.mutations.tool import append_to_tools
 from kili.mutations.user import create_user
+from kili.playground import Playground
 from kili.queries.project import get_projects
 
 
@@ -48,64 +50,72 @@ def execute_mutations(configuration_file, graphql_client):
             if 'id' in organization:
                 configuration['organization'] = organization
                 continue
-            args = ['name', 'address', 'zip_code', 'city', 'country']
-            values = [get(organization, a) for a in args]
-            configuration['organization'] = create_organization(
-                client, *values)
+            configuration['organization'] = playground.create_organization(
+                name=get(organization, 'name'),
+                address=get(organization, 'address'),
+                zip_code=get(organization, 'zip_code'),
+                city=get(organization, 'city'),
+                country=get(organization, 'country'))
 
         if 'createUser' in mutation_name or 'getUser' in mutation_name:
             for i, user in enumerate(users):
                 if is_blacklisted(user['email']):
                     continue
-                args = ['name', 'email', 'password', 'phone']
-                values = [get(user, a) for a in args]
-                organization_id = organization['id']
-                organization_role = 'USER'
-                user = create_user(
-                    client, *values, organization_id, organization_role)
+                user = playground.create_user(
+                    name=get(user, 'name'),
+                    email=get(user, 'email'),
+                    password=get(user, 'password'),
+                    phone=get(user, 'phone'),
+                    organization_id=organization['id'],
+                    organization_role='USER')
                 configuration['users'][i]['id'] = user['id']
 
         if 'createEmptyProject' in mutation_name:
             user_id = authentication['user']['id']
             for i, project in enumerate(projects):
-                project = create_empty_project(
-                    client, user_id)
+                project = playground.create_empty_project(
+                    user_id=user_id)
                 configuration['projects'][i]['id'] = project['id']
 
         if 'updateProject' in mutation_name or 'deleteProject' in mutation_name:
             for i, project in enumerate(projects):
-                args = ['id', 'title', 'description', 'interface_category']
-                values = [get(project, a) for a in args]
-                update_project(client, *values)
+                playground.update_project(
+                    project_id=get(project, 'id'),
+                    title=get(project, 'title'),
+                    description=get(project, 'description'),
+                    interface_category=get(project, 'interface_category'))
 
         if 'appendToTools' in mutation_name:
             for i, project in enumerate(projects):
                 for j, tool in enumerate(tools):
                     if i == j:
                         project_id = project['id']
-                        args = ['name', 'type']
-                        values = [get(tool, a) for a in args]
                         json_settings = json.loads(get(tool, 'json_settings'))
-                        append_to_tools(
-                            client, project_id, *values, json_settings=json_settings)
+                        playground.append_to_tools(
+                            project_id=project_id,
+                            name=get(tool, 'name'),
+                            type=get(tool, 'type'),
+                            json_settings=json_settings)
 
         if 'appendToRoles' in mutation_name:
             for i, project in enumerate(projects):
                 for user in users:
                     project_id = project['id']
-                    args = ['email', 'role']
-                    values = [get(user, a) for a in args]
-                    append_to_roles(client, project_id, *values)
+                    playground.append_to_roles(project_id=project_id,
+                                               email=get(user, 'email'),
+                                               role=get(user, 'role'))
 
         if 'getProjects' in mutation_name:
             user = authentication['user']
-            get_projects(client, user_id=user['id'])
+            playground.get_projects(user_id=user['id'])
 
         if 'signIn' in mutation_name:
             email = get(authentication, 'email')
             password = getpass.getpass(f'Enter password for user "{email}":')
-            client, user_id = authenticate(email, password, graphql_client)
-            authentication['user'] = {'id': user_id}
+            kauth = KiliAuth(email=email, password=password,
+                             api_endpoint=graphql_client)
+            playground = Playground(kauth)
+            authentication['user'] = {'id': kauth.user_id}
 
 
 @click.command()
