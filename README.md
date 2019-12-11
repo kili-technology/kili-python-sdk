@@ -40,7 +40,6 @@ pip install kili
 ```python
 from kili.authentication import KiliAuth
 from kili.playground import Playground
-
 kauth = KiliAuth(email, password)
 playground = Playground(kauth)
 ```
