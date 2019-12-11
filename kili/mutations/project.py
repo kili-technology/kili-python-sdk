@@ -262,7 +262,7 @@ def update_properties_in_project_user(client, project_user_id: str,
 
 
 def force_project_kpis(client, project_id: str):
-    assets = get_assets(client, project_id, 0, 100000000)
+    assets = get_assets(client, project_id=project_id)
     numbers_of_labeled_assets = {}
     number_of_latest_labels = 0
     for asset in tqdm(assets):
@@ -270,7 +270,8 @@ def force_project_kpis(client, project_id: str):
         asset['status'] = asset_updated['status']
         unique_asset_authors = list(
             set([label['author']['id'] for label in asset['labels']]))
-        json_metadata = None if asset['jsonMetadata'] is None else loads(asset['jsonMetadata'])
+        json_metadata = None if asset['jsonMetadata'] is None else loads(
+            asset['jsonMetadata'])
         update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
                                    json_metadata=json_metadata, consensus_mark=asset['calculatedConsensusMark'], honeypot_mark=asset['calculatedHoneypotMark'])
         for asset_author in unique_asset_authors:

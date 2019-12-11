@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-__version__ = "1.0.9"
+__version__ = "1.0.10"
 
-from kili import mutations
-from kili import queries
-from kili import quality
+from kili import mutations, quality, queries
