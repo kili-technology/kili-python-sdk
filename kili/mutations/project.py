@@ -4,11 +4,11 @@ from typing import List
 
 from tqdm import tqdm
 
-from .asset import force_update_status, update_properties_in_asset
-from .lock import delete_locks
 from ..helper import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
 from ..queries.project import get_project
+from .asset import force_update_status, update_properties_in_asset
+from .lock import delete_locks
 
 
 def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool,
@@ -276,10 +276,12 @@ def force_project_kpis(client, project_id: str):
         asset['status'] = asset_updated['status']
         unique_asset_authors = list(
             set([label['author']['id'] for label in asset['labels']]))
-        json_metadata = None if asset['jsonMetadata'] is None else loads(
-            asset['jsonMetadata'])
+        json_metadata = asset['jsonMetadata']
+        if asset['jsonMetadata'] is not None and not asset['jsonMetadata'].startswith('http') and asset['jsonMetadata'] != '':
+            json_metadata = loads(asset['jsonMetadata'])
         update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
-                                   json_metadata=json_metadata, consensus_mark=asset['calculatedConsensusMark'],
+                                   json_metadata=json_metadata, consensus_mark=asset[
+                                       'calculatedConsensusMark'],
                                    honeypot_mark=asset['calculatedHoneypotMark'])
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
