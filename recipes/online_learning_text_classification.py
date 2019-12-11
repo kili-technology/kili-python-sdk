@@ -1,27 +1,23 @@
-import os
 import getpass
-from tqdm import tqdm
-import click
 import json
-import warnings
-import time
-from tempfile import TemporaryDirectory
-from dotenv import load_dotenv
 import os
+import time
+import warnings
+from tempfile import TemporaryDirectory
 
-import numpy as np
 import autosklearn
 import autosklearn.classification
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import f_classif
+import click
+import numpy as np
+from dotenv import load_dotenv
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 from kili.authentication import KiliAuth
 from kili.playground import Playground
-
 
 warnings.filterwarnings('ignore', 'Mean of empty slice')
 
@@ -136,7 +132,7 @@ def main(api_endpoint):
                           'categories'].keys())
 
         print('Export assets and labels...')
-        assets = playground.export_assets(project_id=project_id)
+        assets = playground.get_assets(project_id=project_id)
         print('Done.\n')
         X, y, X_to_be_predicted, ids_X_to_be_predicted = extract_train_for_autoML(
             assets, categories)

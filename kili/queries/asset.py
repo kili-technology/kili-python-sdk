@@ -1,9 +1,12 @@
+import time
 from json import dumps
 from typing import List
 
 import pandas as pd
+from tqdm import tqdm
 
 from ..helper import format_result
+from .project import get_project
 
 
 def get_asset(client, asset_id: str):
@@ -47,48 +50,15 @@ def get_asset(client, asset_id: str):
     return format_result('getAsset', result)
 
 
-def get_assets(client, project_id: str, skip: int, first: int):
-    result = client.execute('''
-    query {
-      getAssets(projectID: "%s", skip: %d, first: %d) {
-        id
-        externalId
-        content
-        filename
-        isInstructions
-        instructions
-        isHoneypot
-        calculatedConsensusMark
-        calculatedHoneypotMark
-        consensusMark
-        honeypotMark
-        status
-        isUsedForConsensus
-        jsonMetadata
-        priority
-        labels {
-          id
-          createdAt
-          labelType
-          jsonResponse
-          isLatestLabelForUser
-          author {
-            id
-          }
-        }
-      }
-    }
-    ''' % (project_id, skip, first))
-    return format_result('getAssets', result)
-
-
-def get_assets_with_search(client, project_id: str, skip: int, first: int,
-                           external_id_contains: str = None,
-                           status_in: List[str] = None,
-                           author_in: List[str] = None,
-                           consensus_mark_gt: float = None,
-                           consensus_mark_lt: float = None, honeypot_mark_gt: float = None,
-                           honeypot_mark_lt: float = None, skipped: bool = None):
+def get_assets(client, project_id: str, skip: int = None, first: int = None,
+               external_id_contains: str = None,
+               status_in: List[str] = None,
+               author_in: List[str] = None,
+               consensus_mark_gt: float = None,
+               consensus_mark_lt: float = None, honeypot_mark_gt: float = None,
+               honeypot_mark_lt: float = None, skipped: bool = None, format: str = None):
+    formatted_skip = 0 if skip is None else skip
+    formatted_first = 100
     formatted_external_id_contains = 'null' if external_id_contains is None else f'"{external_id_contains}"'
     formatted_status_in = dumps([]) if status_in is None else dumps(status_in)
     formatted_author_in = dumps([]) if author_in is None else dumps(author_in)
@@ -98,55 +68,78 @@ def get_assets_with_search(client, project_id: str, skip: int, first: int,
     formatted_honeypot_mark_lt = 'null' if honeypot_mark_lt is None else f'{honeypot_mark_lt}'
     formatted_skipped = 'null' if honeypot_mark_lt is None else f'{skipped}'.lower(
     )
-    result = client.execute('''
-    query {
-      getAssetsWithSearch(projectID: "%s", skip: %d, first: %d
-        where: {
-          externalIdContains: %s
-          statusIn: %s
-          authorIn: %s
-          consensusMarkGt: %s
-          consensusMarkLt: %s
-          honeypotMarkGt: %s
-          honeypotMarkLt: %s
-          skipped: %s
-        }) {
-        id
-        externalId
-        content
-        filename
-        isInstructions
-        instructions
-        isHoneypot
-        calculatedConsensusMark
-        calculatedHoneypotMark
-        consensusMark
-        honeypotMark
-        status
-        isUsedForConsensus
-        jsonMetadata
-        priority
-        labels {
-          id
-          createdAt
-          labelType
-          jsonResponse
-          isLatestLabelForUser
-          author {
-            id
-          }
-        }
-      }
-    }
-    ''' % (project_id, skip, first, formatted_external_id_contains,
-           formatted_status_in,
-           formatted_author_in,
-           formatted_consensus_mark_gt,
-           formatted_consensus_mark_lt,
-           formatted_honeypot_mark_gt,
-           formatted_honeypot_mark_lt,
-           formatted_skipped))
-    return format_result('getAssetsWithSearch', result)
+    project = get_project(client, project_id)
+    number_of_assets = project['numberOfAssets']
+    total = number_of_assets if first is None else first
+    with tqdm(total=total) as pbar:
+        paged_assets = []
+        while True:
+            result = client.execute('''
+            query {
+              getAssetsWithSearch(projectID: "%s", skip: %d, first: %d
+                where: {
+                  externalIdContains: %s
+                  statusIn: %s
+                  authorIn: %s
+                  consensusMarkGt: %s
+                  consensusMarkLt: %s
+                  honeypotMarkGt: %s
+                  honeypotMarkLt: %s
+                  skipped: %s
+                }) {
+                id
+                externalId
+                content
+                filename
+                isInstructions
+                instructions
+                isHoneypot
+                calculatedConsensusMark
+                calculatedHoneypotMark
+                consensusMark
+                honeypotMark
+                status
+                isUsedForConsensus
+                jsonMetadata
+                priority
+                labels {
+                  id
+                  createdAt
+                  labelType
+                  jsonResponse
+                  isLatestLabelForUser
+                  author {
+                    id
+                  }
+                }
+              }
+            }
+            ''' % (project_id, formatted_skip, formatted_first, formatted_external_id_contains,
+                   formatted_status_in,
+                   formatted_author_in,
+                   formatted_consensus_mark_gt,
+                   formatted_consensus_mark_lt,
+                   formatted_honeypot_mark_gt,
+                   formatted_honeypot_mark_lt,
+                   formatted_skipped))
+            assets = format_result('getAssetsWithSearch', result)
+            if assets is None or (first is not None and len(paged_assets) == first):
+                if format == 'pandas':
+                    return pd.DataFrame(paged_assets)
+                return paged_assets
+            if first is not None:
+                assets = assets[:max(0, first - len(paged_assets))]
+            paged_assets += assets
+            formatted_skip += formatted_first
+            pbar.update(len(assets))
+
+
+def export_assets(**kwargs):
+    print('export_assets has been deprecated. Please use get_assets instead.')
+
+
+def get_assets_with_search(**kwargs):
+    print('get_assets_with_search has been renamed in get_assets. Please use get_assets instead.')
 
 
 def get_assets_by_external_id(client, project_id: str, external_id: str):
@@ -230,8 +223,3 @@ def export_assets(client, project_id: str):
     }
     ''' % (project_id))
     return format_result('exportAssets', result)
-
-
-def export_assets_as_df(client, project_id: str):
-    assets = export_assets(client, project_id)
-    return pd.DataFrame(assets)

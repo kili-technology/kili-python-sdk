@@ -1,11 +1,11 @@
 import getpass
-from tqdm import tqdm
-import yaml
 import json
 
-from kili.authentication import authenticate
-from kili.mutations.asset import append_many_to_dataset
+import yaml
 from tqdm import tqdm
+
+from kili.authentication import KiliAuth
+from kili.playground import Playground
 
 CHUNK_SIZE = 100
 
@@ -31,12 +31,12 @@ with open('./conf/new_assets.yml', 'r') as f:
 
 assets = configuration['assets']
 
-
-client, user_id = authenticate(email, password)
+kauth = KiliAuth(email=email, password=password)
+playground = Playground(kauth)
 
 for asset_chunk in tqdm(list(chunks(assets, CHUNK_SIZE))):
     external_id_array = [get(a, 'externalId') for a in asset_chunk]
     content_array = [get(a, 'content') for a in asset_chunk]
     json_metadata_array = [json.loads(get(a, 'metadata')) for a in asset_chunk]
-    append_many_to_dataset(client, project_id, content_array,
-                           external_id_array, json_metadata_array=json_metadata_array)
+    playground.append_many_to_dataset(project_id=project_id, content_array=content_array,
+                                      external_id_array=external_id_array, json_metadata_array=json_metadata_array)

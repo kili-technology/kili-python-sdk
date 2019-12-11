@@ -221,3 +221,13 @@ Use:
 ```bash
 playground.delete_assets_by_external_id(project_id=project_id, external_id=external_id)
 ```
+
+## How to update instructions in project?
+
+Currently instructions can be set as a link to a PDF or an external web page.
+
+You can update instructions with:
+
+```bash
+python update_project_instructions.py
+```

@@ -4,16 +4,14 @@ import json
 import os
 import tarfile
 import urllib.request
-from tqdm import tqdm
 
 from google.cloud import language
 from google.cloud.language import enums as language_enums
 from google.protobuf.json_format import MessageToDict
+from tqdm import tqdm
 
-from kili.authentication import authenticate
-from kili.mutations.asset import append_to_dataset, update_properties_in_asset
-from kili.mutations.label import create_prediction
-from kili.queries.asset import get_assets_by_external_id
+from kili.authentication import KiliAuth
+from kili.playground import Playground
 
 
 def download_dataset():
@@ -69,24 +67,28 @@ path_dir = extract_dataset(path_gz)
 only_files = [os.path.join(path, name) for path,
               subdirs, files in os.walk(path_dir) for name in files]
 
-client, user_id = authenticate(email, password)
+
+kauth = KiliAuth(email=email, password=password)
+playground = Playground(kauth)
 
 for filepath in tqdm(only_files[:MAX_NUMBER_OF_ASSET]):
     with open(filepath, 'r') as f:
         content = f.read()
     external_id = filepath
     # Insert asset
-    append_to_dataset(
-        client, project_id, escape_content(content), external_id)
-    asset = get_assets_by_external_id(client, project_id, external_id)
+    playground.append_to_dataset(
+        project_id=project_id, content=escape_content(content), external_id=external_id)
+    asset = playground.get_assets_by_external_id(
+        project_id=project_id, external_id=external_id)
     asset_id = asset[0]['id']
 
     # Prioritize assets
-    update_properties_in_asset(client, asset_id, priority=1)
+    playground.update_properties_in_asset(asset_id=asset_id, priority=1)
 
     # Insert pre-annotations
     response = analyze_entities(content)
     entities = [e for e in response['entities']
                 if isinstance(e['type'], str) and e['type'] != 'OTHER']
     json_response = {'entities': add_id_to_entities(entities)}
-    create_prediction(client, asset_id, json_response)
+    playground.create_prediction(
+        asset_id=asset_id, json_response=json_response)

@@ -4,14 +4,15 @@ from typing import List
 
 from tqdm import tqdm
 
+from .asset import force_update_status, update_properties_in_asset
+from .lock import delete_locks
 from ..helper import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
 from ..queries.project import get_project
-from .asset import force_update_status, update_properties_in_asset
-from .lock import delete_locks
 
 
-def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool, interface_json_settings: str):
+def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool,
+                   interface_json_settings: str):
     result = client.execute('''
     mutation {
       createProject(
@@ -60,7 +61,8 @@ def append_to_roles(client, project_id: str, user_email: str, role: str):
     return format_result('appendToRoles', result)
 
 
-def update_properties_in_project(client, project_id: str, min_consensus_size: int = None, consensus_tot_coverage: int = None,
+def update_properties_in_project(client, project_id: str, min_consensus_size: int = None,
+                                 consensus_tot_coverage: int = None,
                                  number_of_assets: int = None,
                                  completion_percentage: float = None,
                                  number_of_remaining_assets: int = None,
@@ -68,7 +70,8 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
                                  number_of_reviewed_assets: int = None,
                                  number_of_latest_labels: int = None,
                                  consensus_mark: float = None,
-                                 honeypot_mark: float = None):
+                                 honeypot_mark: float = None,
+                                 instructions: str = None):
     formatted_min_consensus_size = 'null' if min_consensus_size is None else int(
         min_consensus_size)
     formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(
@@ -88,6 +91,7 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
         consensus_mark)
     formatted_honeypot_mark = 'null' if honeypot_mark is None else float(
         honeypot_mark)
+    formatted_instructions = 'null' if instructions is None else f'{dumps(instructions)}'
 
     result = client.execute('''
         mutation {
@@ -104,6 +108,7 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
               numberOfLatestLabels: %s
               consensusMark: %s
               honeypotMark: %s
+              instructions: %s
             }
           ) {
             id
@@ -112,7 +117,8 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
         ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
                formatted_number_of_assets, formatted_completion_percentage, formatted_number_of_remaining_assets,
                formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets,
-               formatted_number_of_latest_labels, formatted_consensus_mark, formatted_honeypot_mark))
+               formatted_number_of_latest_labels, formatted_consensus_mark, formatted_honeypot_mark,
+               formatted_instructions))
     return format_result('updatePropertiesInProject', result)
 
 
@@ -273,7 +279,8 @@ def force_project_kpis(client, project_id: str):
         json_metadata = None if asset['jsonMetadata'] is None else loads(
             asset['jsonMetadata'])
         update_properties_in_asset(client, asset['id'], external_id=asset['externalId'], priority=asset['priority'],
-                                   json_metadata=json_metadata, consensus_mark=asset['calculatedConsensusMark'], honeypot_mark=asset['calculatedHoneypotMark'])
+                                   json_metadata=json_metadata, consensus_mark=asset['calculatedConsensusMark'],
+                                   honeypot_mark=asset['calculatedHoneypotMark'])
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1

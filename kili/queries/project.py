@@ -43,6 +43,8 @@ def get_project(client, project_id: str):
     query {
       getProject(projectID: "%s") {
         id
+        title
+        numberOfAssets
         interfaceCategory
         calculatedConsensusMark
         calculatedHoneypotMark

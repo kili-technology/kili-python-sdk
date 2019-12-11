@@ -1,22 +1,20 @@
 import getpass
-from tqdm import tqdm
-import yaml
 import json
 
-from kili.authentication import authenticate
-from kili.mutations.asset import delete_from_dataset
-from kili.queries.asset import export_assets
+import yaml
 from tqdm import tqdm
 
+from kili.authentication import KiliAuth
+from kili.playground import Playground
 
 email = input('Enter email: ')
 password = getpass.getpass()
 project_id = input('Enter project id: ')
 
+kauth = KiliAuth(email=email, password=password)
+playground = Playground(kauth)
 
-client, user_id = authenticate(email, password)
-
-assets = export_assets(client, project_id)
+assets = playground.get_assets(project_id=project_id)
 
 for asset in tqdm(assets):
-    delete_from_dataset(client, asset['id'])
+    playground.delete_from_dataset(asset_id=asset['id'])
