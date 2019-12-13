@@ -163,6 +163,25 @@ python online_learning_text_classification.py (OPTIONAL --api_endpoint https://c
 
 - See predictions
 
+### In docker
+
+1. Create a `.env` file in this folder containing your settings:
+
+```bash
+EMAIL=
+PASSWORD=
+PROJECT_ID=
+API_ENDPOINT=
+```
+
+2. Build the docker and launch it:
+
+```bash
+docker build -t kili-playground .
+
+docker run -it --network="host" kili-playground online-learning
+```
+
 ## How to do online learning with YOLOv3 (for object detection)
 
 1. Create a project for single-class object detection
@@ -200,25 +219,6 @@ docker run -it -e "EMAIL=mypassword@kili-technology.com" \
 ```
 
 5. The script will continuously create predictions on non-labelled assets.
-
-### In docker
-
-1. Create a `.env` file in this folder containing your settings:
-
-```bash
-EMAIL=
-PASSWORD=
-PROJECT_ID=
-API_ENDPOINT=
-```
-
-2. Build the docker and launch it:
-
-```bash
-docker build -t kili-playground .
-
-docker run -it --network="host" kili-playground online-learning
-```
 
 ## How to import OCR metadata
 
