@@ -5,26 +5,7 @@ from ..helper import format_result, json_escape
 
 
 def create_prediction(client, asset_id: str, json_response: str):
-    result = client.execute('''
-    mutation {
-      createPrediction(
-        assetID: "%s",
-        jsonResponse: "%s") {
-          id
-          author {
-            id
-            email
-          }
-          labelType
-          jsonResponse
-          createdAt
-          secondsToLabel
-          totalSecondsToLabel
-          honeypotMark
-      }
-    }
-    ''' % (asset_id, json_escape(json_response)))
-    return format_result('createPrediction', result)
+    print('create_prediction is deprecated. Please use create_predictions instead. For an example, see: https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.py')
 
 
 def create_predictions(client, project_id: str, external_id_array: List[str], json_response_array: List[str]):
