@@ -55,6 +55,9 @@ class Playground(object):
     def create_prediction(self, **kwargs):
         return kili.mutations.label.create_prediction(self.auth.client, **kwargs)
 
+    def create_predictions(self, **kwargs):
+        return kili.mutations.label.create_predictions(self.auth.client, **kwargs)
+
     def append_to_labels(self, **kwargs):
         return kili.mutations.label.append_to_labels(self.auth.client, **kwargs)
 

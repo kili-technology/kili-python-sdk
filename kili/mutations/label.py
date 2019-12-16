@@ -1,3 +1,6 @@
+from json import dumps
+from typing import List
+
 from ..helper import format_result, json_escape
 
 
@@ -22,6 +25,20 @@ def create_prediction(client, asset_id: str, json_response: str):
     }
     ''' % (asset_id, json_escape(json_response)))
     return format_result('createPrediction', result)
+
+
+def create_predictions(client, project_id: str, external_id_array: List[str], json_response_array: List[str]):
+    result = client.execute('''
+    mutation {
+      createPredictions(
+        projectID: "%s",
+        externalIDArray: %s,
+        jsonResponseArray: %s) {
+          id
+      }
+    }
+    ''' % (project_id, dumps(external_id_array), dumps([dumps(elem) for elem in json_response_array])))
+    return format_result('createPredictions', result)
 
 
 def append_to_labels(client, author_id: str, json_response: str, label_asset_id: str, label_type: str, seconds_to_label: int, skipped: bool = False):

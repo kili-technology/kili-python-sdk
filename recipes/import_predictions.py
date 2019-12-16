@@ -30,15 +30,13 @@ def main(api_endpoint):
     kauth = KiliAuth(email=email, password=password, api_endpoint=api_endpoint)
     playground = Playground(kauth)
 
-    for prediction in tqdm(predictions):
-        external_id = get(prediction, 'externalId')
-        assets = playground.get_assets_by_external_id(
-            project_id=project_id, external_id=external_id)
-        assert len(assets) == 1
-        asset_id = assets[0]['id']
-        json_response = json.loads(get(prediction, 'response'))
-        playground.create_prediction(
-            asset_id=asset_id, json_response=json_response)
+    external_id_array = [get(prediction, 'externalId')
+                         for prediction in predictions]
+    json_response_array = [json.loads(
+        get(prediction, 'response')) for prediction in predictions]
+    playground.create_predictions(
+        project_id=project_id,
+        external_id_array=external_id_array, json_response_array=json_response_array)
 
 
 if __name__ == '__main__':
