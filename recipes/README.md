@@ -231,3 +231,11 @@ You can update instructions with:
 ```bash
 python update_project_instructions.py
 ```
+
+## How to get labeler statistics?
+
+You can get an excel file summing up the asset / labeler / day doing:
+
+```bash
+python get_labeler_stats.py
+```
