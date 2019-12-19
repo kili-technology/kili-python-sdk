@@ -56,7 +56,8 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                author_in: List[str] = None,
                consensus_mark_gt: float = None,
                consensus_mark_lt: float = None, honeypot_mark_gt: float = None,
-               honeypot_mark_lt: float = None, skipped: bool = None, format: str = None):
+               honeypot_mark_lt: float = None, skipped: bool = None, format: str = None,
+               disable_tqdm: bool = False):
     formatted_skip = 0 if skip is None else skip
     formatted_first = 100
     formatted_external_id_contains = 'null' if external_id_contains is None else f'"{external_id_contains}"'
@@ -71,7 +72,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
     project = get_project(client, project_id)
     number_of_assets = project['numberOfAssets']
     total = number_of_assets if first is None else first
-    with tqdm(total=total) as pbar:
+    with tqdm(total=total, disable=disable_tqdm) as pbar:
         paged_assets = []
         while True:
             result = client.execute('''
