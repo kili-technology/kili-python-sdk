@@ -1,7 +1,7 @@
 from json import dumps
 from typing import List
 
-from ..helper import format_result, json_escape
+from ..helper import content_escape, format_result, json_escape
 
 
 def create_assets(client, project_id: str, contents: List[str], external_ids: List[str]):
@@ -38,24 +38,16 @@ def delete_assets_by_external_id(client, project_id: str, external_id: str):
 
 def append_to_dataset(client, project_id: str, content: str, external_id: str, filename: str = '', is_instructions: bool = False,
                       instructions: str = '', is_honeypot: bool = False, status: str = 'TODO', json_metadata: dict = {}):
-    result = client.execute('''
-    mutation {
-      appendToDataset(projectID: "%s"
-        content: "%s",
-        externalID: "%s",
-        filename: "%s",
-        isInstructions: %s,
-        instructions: "%s",
-        isHoneypot: %s,
-        status: %s,
-        jsonMetadata: "%s"
-      ) {
-          id
-      }
-    }
-    ''' % (project_id, content, external_id, filename, str(is_instructions).lower(), instructions,
-           str(is_honeypot).lower(), status, json_escape(json_metadata)))
-    return format_result('appendToDataset', result)
+    print("append_to_dataset: This method will be deprecated soon. Please use append_many_to_dataset instead.")
+    return append_many_to_dataset(client, project_id,
+                                  content_array=[content],
+                                  external_id_array=[external_id],
+                                  filename_array=[filename],
+                                  is_instructions_array=[is_instructions],
+                                  instructions_array=[instructions],
+                                  is_honeypot_array=[is_honeypot],
+                                  status_array=[status],
+                                  json_metadata_array=[json_metadata])
 
 
 def append_many_to_dataset(client, project_id: str, content_array: List[str], external_id_array: List[str],
