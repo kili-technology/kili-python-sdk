@@ -25,8 +25,6 @@ WEIGHTS_FILE = 'weights/yolov3.pt'
 BEST_WEIGHTS_FILE = 'weights/best.pt'
 LAST_WEIGHTS_FILE = 'weights/last.pt'
 
-# TODO: Give the possibility to predict only with YOLO weights without training
-
 os.chdir(PYTHONPATH)
 
 
