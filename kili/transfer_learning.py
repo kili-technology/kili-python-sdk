@@ -7,8 +7,14 @@ from kili.playground import Playground
 SECONDS_TO_WAIT = 10
 
 
-class OnlineLearning:
-    def __init__(self, email, password, api_endpoint, project_id):
+def get_labels_of_types(asset, label_types):
+    labels = [label for label in asset['labels']
+              if label['labelType'] in label_types and label['isLatestLabelForUser']]
+    return sorted(labels, key=lambda label: label['createdAt'])
+
+
+class TransferLearning:
+    def __init__(self, email, password, api_endpoint, project_id, minimum_number_of_assets_to_launch_training=100):
         kauth = KiliAuth(email, password, api_endpoint=api_endpoint)
 
         self.playground = Playground(kauth)
@@ -16,6 +22,7 @@ class OnlineLearning:
         self.current_training_number = 0
         self.last_training_number = -1
         self.assets_seen_in_training = []
+        self.minimum_number_of_assets_to_launch_training = minimum_number_of_assets_to_launch_training
 
     def _current_training_number(self):
         return self.current_training_number
@@ -24,15 +31,16 @@ class OnlineLearning:
         assets = self.playground.export_assets(project_id=self.project_id)
         assets_to_train = []
         for asset in assets:
-            labels = [label for label in asset['labels']
-                      if label['labelType'] in ['DEFAULT', 'REVIEWED'] and label['isLatestLabelForUser']]
-
-            if len(labels) == 0:
-                continue
-            if len(labels) == 1:
-                assets_to_train.append(asset)
-            else:
+            default_labels = get_labels_of_types(asset, ['DEFAULT'])
+            review_labels = get_labels_of_types(asset, ['REVIEWED'])
+            if len(review_labels) > 0:
+                assets_to_train.append(review_labels[-1])
+            elif len(default_labels) == 0:
+                assets_to_train.append(default_labels[-1])
+            elif len(review_labels) == 0 and len(default_labels) > 0:
                 print(f'Asset {asset["id"]} has several labels: it should be reviewed')
+            else:
+                continue
 
         return assets_to_train
 
@@ -49,7 +57,7 @@ class OnlineLearning:
             filtered_assets_to_train = [asset for asset in assets_to_train
                                         if all([asset['id'] not in training
                                                 for training in self.assets_seen_in_training])]
-        if len(filtered_assets_to_train) > 0:
+        if len(filtered_assets_to_train) >= self.minimum_number_of_assets_to_launch_training:
             self.train(filtered_assets_to_train)
             self.current_training_number += 1
             self.assets_seen_in_training.append([asset['id'] for asset in filtered_assets_to_train])
@@ -58,8 +66,7 @@ class OnlineLearning:
         assets = self.playground.export_assets(project_id=self.project_id)
         assets_to_predict = []
         for asset in assets:
-            labels = [label for label in asset['labels']
-                      if label['labelType'] in ['DEFAULT', 'REVIEWED'] and label['isLatestLabelForUser']]
+            labels = get_labels_of_types(asset, ['DEFAULT', 'REVIEWED'])
 
             if len(labels) == 0:
                 assets_to_predict.append(asset)

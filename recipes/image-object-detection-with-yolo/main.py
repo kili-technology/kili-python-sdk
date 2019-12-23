@@ -7,19 +7,13 @@ from tempfile import TemporaryDirectory
 import requests
 from PIL import Image
 
-from kili.online_learning import OnlineLearning
+from kili.transfer_learning import TransferLearning
 
-EMAIL = 'pierre@kili-technology.com'
-PASSWORD = ''
-PROJECT_ID = 'ck3taifjq3n4u0800x9fkae2l'
-API_ENDPOINT = 'https://cloud.kili-technology.com/api/label/graphql'
-PYTHONPATH = '//Users/pmarcenac/kili-playground/recipes/image-object-detection-with-yolo/yolov3'
-
-# EMAIL = os.environ['EMAIL']
-# PASSWORD = os.environ['PASSWORD']
-# PROJECT_ID = os.environ['PROJECT_ID']
-# API_ENDPOINT = os.environ['API_ENDPOINT']
-# PYTHONPATH = os.environ['PYTHONPATH']
+EMAIL = os.environ['EMAIL']
+PASSWORD = os.environ['PASSWORD']
+PROJECT_ID = os.environ['PROJECT_ID']
+API_ENDPOINT = os.environ['API_ENDPOINT']
+PYTHONPATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'yolov3')
 
 COCO_NAMES_FILE = 'data/coco.names'
 COCO_TRAIN_TEST_TXT_FILE = 'data/coco.txt'
@@ -28,6 +22,7 @@ COCO_DATA_FILE_TEMPLATE = 'data/coco.template.data'
 CONFIG_FILE = 'cfg/yolov3.cfg'
 CONFIG_FILE_TEMPLATE = 'cfg/yolov3.template.cfg'
 WEIGHTS_FILE = 'weights/yolov3.pt'
+BEST_WEIGHTS_FILE = 'weights/best.pt'
 LAST_WEIGHTS_FILE = 'weights/last.pt'
 
 # TODO: Give the possibility to predict only with YOLO weights without training
@@ -82,7 +77,7 @@ def convert_from_kili_to_yolo_format(label):
     return converted_annotations
 
 
-class YoloOnlineLearning(OnlineLearning):
+class YoloTransferLearning(TransferLearning):
     def train(self, assets_to_train):
         print(f'Launch training for {len(assets_to_train)} assets: {[asset["id"] for asset in assets_to_train]}')
 
@@ -108,7 +103,6 @@ class YoloOnlineLearning(OnlineLearning):
                     if not block:
                         break
                     f.write(block)
-            # TODO: Choose best label (= last review or last default label)
             # TODO: Random train/test split
             annotations = convert_from_kili_to_yolo_format(asset['labels'][0])
             with open(os.path.join(labels_folder, f'{filename}.txt'), 'wb') as f:
@@ -122,7 +116,6 @@ class YoloOnlineLearning(OnlineLearning):
         # Train with YOLO v3 framework
         train_parameters = ['python3', 'train.py',
                             '--cfg', f'{CONFIG_FILE}',
-                            # '--epochs', '1',  # TODO: Compute exact number of epochs
                             '--data', f'{COCO_DATA_FILE}',
                             '--cache-images']
         if self.current_training_number > 0:
@@ -159,7 +152,7 @@ class YoloOnlineLearning(OnlineLearning):
                               '--source', f'{input.name}',
                               '--output', f'{output.name}',
                               '--cfg', f'{CONFIG_FILE}',
-                              '--weights', f'weights/best.pt']
+                              '--weights', BEST_WEIGHTS_FILE]
         print(f'Running inference with parameters: {" ".join(predict_parameters)}')
         subprocess.run(predict_parameters)
 
@@ -184,9 +177,8 @@ class YoloOnlineLearning(OnlineLearning):
 
 
 def main():
-    online_learning = YoloOnlineLearning(EMAIL, PASSWORD, API_ENDPOINT, PROJECT_ID)
-    # online_learning.predict([{'id': 'ck3tz2oba4mqa0800qngjo6cv', 'content': 'https://cloud.kili-technology.com/api/label/files?id=d45af0a0-248a-46a3-86c3-94353bb3fd3d'}])
-    # exit(0)
+    online_learning = YoloTransferLearning(EMAIL, PASSWORD, API_ENDPOINT, PROJECT_ID,
+                                           minimum_number_of_assets_to_launch_training=3)
 
     print('Checking project configuration...')
     tools = online_learning.playground.get_tools(project_id=online_learning.project_id)
