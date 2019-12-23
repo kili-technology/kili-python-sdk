@@ -35,7 +35,7 @@ class TransferLearning:
             review_labels = get_labels_of_types(asset, ['REVIEWED'])
             if len(review_labels) > 0:
                 assets_to_train.append(review_labels[-1])
-            elif len(default_labels) == 0:
+            elif len(default_labels) == 1:
                 assets_to_train.append(default_labels[-1])
             elif len(review_labels) == 0 and len(default_labels) > 0:
                 print(f'Asset {asset["id"]} has several labels: it should be reviewed')
