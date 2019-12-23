@@ -177,8 +177,7 @@ class YoloTransferLearning(TransferLearning):
 
 
 def main():
-    transfer_learning = YoloTransferLearning(EMAIL, PASSWORD, API_ENDPOINT, PROJECT_ID,
-                                             minimum_number_of_assets_to_launch_training=3)
+    transfer_learning = YoloTransferLearning(EMAIL, PASSWORD, API_ENDPOINT, PROJECT_ID)
 
     print('Checking project configuration...')
     tools = transfer_learning.playground.get_tools(project_id=transfer_learning.project_id)
