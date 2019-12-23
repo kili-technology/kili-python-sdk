@@ -177,11 +177,11 @@ class YoloTransferLearning(TransferLearning):
 
 
 def main():
-    online_learning = YoloTransferLearning(EMAIL, PASSWORD, API_ENDPOINT, PROJECT_ID,
-                                           minimum_number_of_assets_to_launch_training=3)
+    transfer_learning = YoloTransferLearning(EMAIL, PASSWORD, API_ENDPOINT, PROJECT_ID,
+                                             minimum_number_of_assets_to_launch_training=3)
 
     print('Checking project configuration...')
-    tools = online_learning.playground.get_tools(project_id=online_learning.project_id)
+    tools = transfer_learning.playground.get_tools(project_id=transfer_learning.project_id)
     assert len(tools) == 1
     json_settings = json.loads(tools[0]['jsonSettings'])
     assert 'annotation_types' in json_settings, 'Please configure project with Yolo classes as explained in README.md'
@@ -211,8 +211,8 @@ def main():
             f.write(template.encode())
     print('OK\n')
 
-    print('Launching online learning...')
-    online_learning.launch()
+    print('Launching transfer learning...')
+    transfer_learning.launch()
     print('OK\n')
 
 
