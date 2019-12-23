@@ -182,6 +182,44 @@ docker build -t kili-playground .
 docker run -it --network="host" kili-playground online-learning
 ```
 
+## How to do online learning with YOLOv3 (for object detection)
+
+1. Create a project for single-class object detection
+
+2. Update settings to respect YOLOv3's way of dealing with classes
+(key is an integer starting from zero and value is in lower case)
+
+```
+{
+  "tools":[
+    "rectangle"
+  ],
+  "annotation_types": {
+    "0": "face"
+  }
+}
+```
+
+3. Build the docker in the folder:
+
+```bash
+cd image-object-detection-with-yolo
+docker build -t kili-playground-yolo .
+```
+
+4. Launch it by setting `EMAIL`/`PASSWORD`/`PROJECT_ID`/`API_ENDPOINT`
+environment variables:
+
+```bash
+docker run -it -e "EMAIL=mypassword@kili-technology.com" \
+  -e "PASSWORD=my_password" \
+  -e "PROJECT_ID=1234567890" \
+  -e "API_ENDPOINT=https://cloud.kili-technology.com/api/label/graphql" \
+  --network="host" kili-playground-yolo
+```
+
+5. The script will continuously create predictions on non-labelled assets.
+
 ## How to import OCR metadata
 
 1. Edit `new_assets.yml` where metadata has the format of `./examples/invoice.json` and the content points to the URL of `invoice.png`.
