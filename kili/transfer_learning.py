@@ -28,15 +28,17 @@ class TransferLearning:
         return self.current_training_number
 
     def get_assets_to_train(self):
-        assets = self.playground.export_assets(project_id=self.project_id)
+        assets = self.playground.get_assets(project_id=self.project_id)
         assets_to_train = []
         for asset in assets:
             default_labels = get_labels_of_types(asset, ['DEFAULT'])
             review_labels = get_labels_of_types(asset, ['REVIEWED'])
             if len(review_labels) > 0:
-                assets_to_train.append(review_labels[-1])
+                asset['labels'] = [review_labels[-1]]
+                assets_to_train.append(asset)
             elif len(default_labels) == 1:
-                assets_to_train.append(default_labels[-1])
+                asset['labels'] = [default_labels[-1]]
+                assets_to_train.append(asset)
             elif len(review_labels) == 0 and len(default_labels) > 0:
                 print(f'Asset {asset["id"]} has several labels: it should be reviewed')
             else:
