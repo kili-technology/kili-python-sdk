@@ -1,8 +1,6 @@
 FROM ultralytics/yolov3:v98
 
-RUN pip install -U \
-  kili \
-  gdown
+RUN pip install -U kili
 
 WORKDIR /app
 ADD . /app
