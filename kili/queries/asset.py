@@ -67,7 +67,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
     formatted_consensus_mark_lt = 'null' if consensus_mark_lt is None else f'{consensus_mark_lt}'
     formatted_honeypot_mark_gt = 'null' if honeypot_mark_gt is None else f'{honeypot_mark_gt}'
     formatted_honeypot_mark_lt = 'null' if honeypot_mark_lt is None else f'{honeypot_mark_lt}'
-    formatted_skipped = 'null' if honeypot_mark_lt is None else f'{skipped}'.lower(
+    formatted_skipped = 'null' if skipped is None else f'{skipped}'.lower(
     )
     project = get_project(client, project_id)
     number_of_assets = project['numberOfAssets']

@@ -179,9 +179,6 @@ class Playground(object):
     def get_next_asset_from_project(self, **kwargs):
         return kili.queries.asset.get_next_asset_from_project(self.auth.client, **kwargs)
 
-    def export_assets(self, **kwargs):
-        return kili.queries.asset.export_assets(self.auth.client, **kwargs)
-
     # Queries Label
 
     def get_label(self, **kwargs):

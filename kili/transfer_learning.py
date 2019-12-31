@@ -65,7 +65,7 @@ class TransferLearning:
             self.assets_seen_in_training.append([asset['id'] for asset in filtered_assets_to_train])
 
     def get_assets_to_predict(self):
-        assets = self.playground.export_assets(project_id=self.project_id)
+        assets = self.playground.get_assets(project_id=self.project_id)
         assets_to_predict = []
         for asset in assets:
             labels = get_labels_of_types(asset, ['DEFAULT', 'REVIEWED'])
