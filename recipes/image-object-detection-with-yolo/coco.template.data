@@ -1,6 +1,6 @@
 classes=%%NUMBER_OF_CLASSES%%
-train=%%COCO_TRAIN_TEST_TXT_FILE%%
-valid=%%COCO_TRAIN_TEST_TXT_FILE%%
+train=%%COCO_TRAIN_TXT_FILE%%
+valid=%%COCO_VALID_TXT_FILE%%
 names=%%COCO_NAMES_FILE%%
 backup=backup/
 eval=coco
