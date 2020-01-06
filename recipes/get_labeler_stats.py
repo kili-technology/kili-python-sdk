@@ -1,8 +1,10 @@
+import click
+from datetime import datetime
 import pandas as pd
+import getpass
 
 from kili.authentication import KiliAuth
 from kili.playground import Playground
-from settings import *
 
 
 @click.command()
@@ -11,7 +13,7 @@ from settings import *
 def main(api_endpoint):
     email = input('Enter email: ')
     password = getpass.getpass()
-    source_project_id = input('Enter project id: ')
+    source_project_id = input('Enter project IDs (separate them by "," if you want to provide several): ')
 
     kauth = KiliAuth(email=email,
                      password=password,
@@ -30,4 +32,9 @@ def main(api_endpoint):
                 df = df.append({'Project': title, 'Date': created_at,
                                 'Email': author_email}, ignore_index=True)
     df_grouped = df.groupby(['Project', 'Date', 'Email']).size()
-    df_grouped.to_excel(f"labeler-stats.xlsx")
+    time = datetime.now().strftime('%Y%m%d%H%M')
+    df_grouped.to_excel(f'labeler-stats-{time}.xlsx')
+
+
+if __name__ == '__main__':
+    main()
