@@ -179,7 +179,7 @@ class YoloTransferLearning(TransferLearning):
         train_parameters = ['python3', 'train.py',
                             '--data', f'{COCO_DATA_FILE}',
                             '--cache-images']
-        if self.override_cfg:
+        if not self.override_cfg:
             train_parameters.extend(['--cfg', f'{CONFIG_FILE}'])
         else: 
             train_parameters.extend(['--cfg', self.cfg])
@@ -277,7 +277,7 @@ def main():
                 .replace('%%COCO_VALID_TXT_FILE%%', COCO_VALID_TXT_FILE) \
                 .replace('%%COCO_NAMES_FILE%%', COCO_NAMES_FILE)
             f.write(template.encode())
-    if args.override:
+    if not args.override:
         with open(CONFIG_FILE_TEMPLATE, 'rb') as f_template:
             with open(CONFIG_FILE, 'wb') as f:
                 number_of_filters = (4 + 1 + number_of_classes) * 3
