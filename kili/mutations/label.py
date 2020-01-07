@@ -57,9 +57,26 @@ def update_label(client, label_id: str, label_asset_id: str, review_asset_id: st
     return format_result('updateLabel', result)
 
 
-def update_properties_in_label(client, label_id: str, seconds_to_label: int = None, json_response: str = None):
+def update_kpis_in_label(client, label_id: str, number_of_annotations: int = None):
+    formatted_number_of_annotations = 'null' if number_of_annotations is None else f'{number_of_annotations}'
+    result = client.execute('''
+        mutation {
+          updateKPIsInLabel(
+            where: {id: "%s"},
+            data: {
+              numberOfAnnotations: %s
+            }
+          ) {
+            id
+          }
+        }
+        ''' % (label_id, formatted_number_of_annotations))
+    return format_result('updateKPIsInLabel', result)
+
+def update_properties_in_label(client, label_id: str, seconds_to_label: int = None, json_response: str = None, number_of_annotations: int = None):
+  
     formatted_seconds_to_label = 'null' if seconds_to_label is None else f'{seconds_to_label}'
-    formatted_json_response = 'null' if json_response is None else f'{json_response}'
+    formatted_json_response = 'null' if json_response is None else f'{json_escape(json_response)}'
 
     result = client.execute('''
         mutation {
@@ -73,5 +90,5 @@ def update_properties_in_label(client, label_id: str, seconds_to_label: int = No
             id
           }
         }
-        ''' % (label_id, formatted_seconds_to_label, json_escape(json_response)))
+        ''' % (label_id, formatted_seconds_to_label, formatted_json_response))
     return format_result('updatePropertiesInLabel', result)

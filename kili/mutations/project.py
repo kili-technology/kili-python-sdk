@@ -9,6 +9,7 @@ from ..queries.asset import get_assets
 from ..queries.project import get_project
 from .asset import force_update_status, update_properties_in_asset
 from .lock import delete_locks
+from .label import update_kpis_in_label
 
 
 def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool,
@@ -292,15 +293,24 @@ def force_project_kpis(client, project_id: str):
         for asset_author in unique_asset_authors:
             numbers_of_labeled_assets[asset_author] = 1 if asset_author not in numbers_of_labeled_assets else \
                 numbers_of_labeled_assets[asset_author] + 1
+            
+        is_instructions = asset['isInstructions']
 
         for label in asset['labels']:
             label_id = label['id']
             label_author = label['author']['id']
+            if label['isLatestLabelForUser']:
+                number_of_latest_labels += 1
+            is_latest = label['isLatestLabelForUser']
+            is_review = label['labelType'] == 'REVIEW'
+            if (not is_latest) or (is_review):
+                continue
             current_label_annotations_count = compute_annotations(label['jsonResponse'], project_category)
             number_of_annotations[label_author] =  current_label_annotations_count if label_author not in number_of_annotations else \
                 number_of_annotations[label_author] + current_label_annotations_count
-            if label['isLatestLabelForUser']:
-                number_of_latest_labels += 1
+
+            update_kpis_in_label(client, label_id=label_id, number_of_annotations=current_label_annotations_count)
+
         delete_locks(client, asset['id'])
         time.sleep(1)
         
