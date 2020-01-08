@@ -16,50 +16,47 @@ def signin(client, email: str, password: str):
     return format_result('signIn', result)
 
 
-def create_user(client, name: str, email: str, password: str, phone: str, organization_id: str, organization_role: str):
+def create_user(client, name: str, email: str, password: str, phone: str, organization_role: str):
     result = client.execute('''
     mutation {
       createUser(name: "%s",
       email: "%s",
       password: "%s",
       phone: "%s",
-      organizationID: "%s",
       organizationRole: %s) {
         id
       }
     }
-    ''' % (name, email, password, phone, organization_id, organization_role))
+    ''' % (name, email, password, phone, organization_role))
     return format_result('createUser', result)
 
 
-def create_user_from_email_if_not_exists(client, name: str, email: str, organization_name: str, organization_role: str, project_id: str):
+def create_user_from_email_if_not_exists(client, name: str, email: str, organization_role: str, project_id: str):
     result = client.execute('''
     mutation {
       createUserFromEmailIfNotExists(name: "%s",
       email: "%s",
-      organizationName: "%s",
       organizationRole: %s,
       projectID: "%s") {
         id
       }
     }
-    ''' % (name, email, organization_name, organization_role, project_id))
+    ''' % (name, email, organization_role, project_id))
     return format_result('createUserFromEmailIfNotExists', result)
 
 
-def update_user(client, user_id: str, name: str, email: str, phone: str, organization_id: str, organization_role: str):
+def update_user(client, user_id: str, name: str, email: str, phone: str, organization_role: str):
     result = client.execute('''
     mutation {
       updateUser(userID: "%s",
       name: "%s",
       email: "%s",
       phone: "%s",
-      organizationID: "%s",
       organizationRole: %s) {
         id
       }
     }
-    ''' % (user_id, name, email, phone, organization_id, organization_role))
+    ''' % (user_id, name, email, phone, organization_role))
     return format_result('updateUser', result)
 
 
