@@ -243,10 +243,9 @@ def update_properties_in_project_user(client, project_user_id: str,
                                       duration_per_label: float = None,
                                       number_of_labeled_assets: int = None,
                                       consensus_mark: float = None,
-                                      honeypot_mark: float = None,
-                                      number_of_annotations: int = None):
+                                      honeypot_mark: float = None):
     args = [total_duration, duration_per_label,
-            number_of_labeled_assets, consensus_mark, honeypot_mark, number_of_annotations]
+            number_of_labeled_assets, consensus_mark, honeypot_mark]
     formatted_args = ['null' if arg is None else f'{arg}' for arg in args]
 
     result = client.execute('''
@@ -259,7 +258,6 @@ def update_properties_in_project_user(client, project_user_id: str,
               numberOfLabeledAssets: %s
               consensusMark: %s
               honeypotMark: %s
-              numberOfAnnotations: %s
             }
           ) {
             id
@@ -272,9 +270,7 @@ def update_properties_in_project_user(client, project_user_id: str,
 def force_project_kpis(client, project_id: str):
     project = get_project(client, project_id=project_id)
     assets = get_assets(client, project_id=project_id)
-    project_category = project['interfaceCategory']
     numbers_of_labeled_assets = {}
-    number_of_annotations = {}
     number_of_latest_labels = 0
     for asset in tqdm(assets):
         asset_updated = force_update_status(client, asset['id'])
@@ -294,11 +290,6 @@ def force_project_kpis(client, project_id: str):
                 numbers_of_labeled_assets[asset_author] + 1
 
         for label in asset['labels']:
-            label_id = label['id']
-            label_author = label['author']['id']
-            current_label_annotations_count = compute_annotations(label['jsonResponse'], project_category)
-            number_of_annotations[label_author] =  current_label_annotations_count if label_author not in number_of_annotations else \
-                number_of_annotations[label_author] + current_label_annotations_count
             if label['isLatestLabelForUser']:
                 number_of_latest_labels += 1
         delete_locks(client, asset['id'])
@@ -323,71 +314,14 @@ def force_project_kpis(client, project_id: str):
         user_id = project_user['user']['id']
         number_of_labeled_assets = numbers_of_labeled_assets[
             user_id] if user_id in numbers_of_labeled_assets else 0
-        number_of_user_annotations = number_of_annotations[user_id] if user_id in number_of_annotations else 0
         try:
             update_properties_in_project_user(client, project_user['id'], total_duration=total_duration,
                                               duration_per_label=duration_per_label,
                                               number_of_labeled_assets=number_of_labeled_assets,
                                               consensus_mark=project_user['calculatedConsensusMark'],
-                                              honeypot_mark=project_user['calculatedHoneypotMark'],
-                                              number_of_annotations=number_of_user_annotations)
+                                              honeypot_mark=project_user['calculatedHoneypotMark'])
         except GraphQLError as e:
             if 'is trying to access projectUser' in str(e):
                 print(f'Could not update {user_id}')
             else:
                 raise e
-
-
-def compute_annotations(json_response, project_category):
-    
-    try:
-        payload = loads(json_response)
-    except:
-        print("Could not parse label json")
-        return 0
-    if payload is None:
-        return 0
-
-    number_of_annotations = 0
-
-    if project_category in ["NER", "NER_WITH_RELATIONS"]:
-
-        if 'entities' not in payload:
-            return 0
-        entities = payload['entities']
-        for entity in entities:
-            if 'mentions' not in entity:
-                continue
-            else:
-                mentions = entity['mentions']
-                number_of_annotations = number_of_annotations + len(mentions)
-    
-    if project_category in ["IMAGE", "MULTICLASS_IMAGE", "IMAGE_TO_GRAPH", "IMAGE_WITH_SEARCH", "IMAGE_TO_TEXT"]:
-
-        if 'annotations' not in payload:
-            return 0
-        annotations = payload['annotations']
-        for annotation in annotations:
-            if "boundingPoly" not in annotation:
-                continue
-            else:
-                bounding_poly = annotation['boundingPoly']
-                for poly in bounding_poly:
-                    if "normalizedVertices" not in poly:
-                        continue
-                    else:
-                        number_of_annotations = number_of_annotations + 1
-    
-    if project_category in [
-        'VIDEO_CLASSIFICATION', 'MULTICLASS_IMAGE_CLASSIFICATION', 'SINGLECLASS_IMAGE_CLASSIFICATION', 
-        'MULTICLASS_TEXT_CLASSIFICATION', 'SINGLECLASS_TEXT_CLASSIFICATION']:
-
-        if 'categories' not in payload:
-            return 0
-        
-        categories = payload['categories']
-        number_of_annotations = number_of_annotations + len(categories)
-    
-    return number_of_annotations
-
-
