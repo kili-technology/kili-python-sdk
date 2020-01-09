@@ -97,6 +97,8 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                 isHoneypot
                 consensusMark
                 honeypotMark
+                calculatedConsensusMark
+                calculatedHoneypotMark
                 status
                 isUsedForConsensus
                 jsonMetadata
