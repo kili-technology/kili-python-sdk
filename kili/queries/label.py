@@ -11,6 +11,7 @@ def get_label(client, asset_id: str, user_id: str):
       getLabel(assetID: "%s", userID: "%s") {
         id
         jsonResponse
+        numberOfAnnotations
       }
     }
     ''' % (asset_id, user_id))
