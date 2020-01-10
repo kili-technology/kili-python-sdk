@@ -6,10 +6,10 @@ from tqdm import tqdm
 
 from ..helper import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
+from ..queries.label import get_label
 from ..queries.project import get_project
 from .asset import force_update_status, update_properties_in_asset
 from .lock import delete_locks
-from ..queries.label import get_label
 
 
 def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool,
@@ -65,7 +65,6 @@ def append_to_roles(client, project_id: str, user_email: str, role: str):
 def update_properties_in_project(client, project_id: str, min_consensus_size: int = None,
                                  consensus_tot_coverage: int = None,
                                  number_of_assets: int = None,
-                                 completion_percentage: float = None,
                                  number_of_remaining_assets: int = None,
                                  number_of_assets_with_empty_labels: int = None,
                                  number_of_reviewed_assets: int = None,
@@ -79,7 +78,6 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
         consensus_tot_coverage)
     formatted_number_of_assets = 'null' if number_of_assets is None else int(
         number_of_assets)
-    formatted_completion_percentage = 'null' if completion_percentage is None else completion_percentage
     formatted_number_of_remaining_assets = 'null' if number_of_remaining_assets is None else int(
         number_of_remaining_assets)
     formatted_number_of_assets_with_empty_labels = 'null' if number_of_assets_with_empty_labels is None else int(
@@ -102,7 +100,6 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
               minConsensusSize: %s
               consensusTotCoverage: %s
               numberOfAssets: %s
-              completionPercentage: %s
               numberOfRemainingAssets: %s
               numberOfAssetsWithSkippedLabels: %s
               numberOfReviewedAssets: %s
@@ -116,7 +113,7 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
           }
         }
         ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
-               formatted_number_of_assets, formatted_completion_percentage, formatted_number_of_remaining_assets,
+               formatted_number_of_assets, formatted_number_of_remaining_assets,
                formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets,
                formatted_number_of_latest_labels, formatted_consensus_mark, formatted_honeypot_mark,
                formatted_instructions))
@@ -241,11 +238,10 @@ def delete_from_roles(client, role_id: str):
 
 def update_properties_in_project_user(client, project_user_id: str,
                                       total_duration: int = None,
-                                      duration_per_label: float = None,
                                       number_of_labeled_assets: int = None,
                                       consensus_mark: float = None,
                                       honeypot_mark: float = None):
-    args = [total_duration, duration_per_label,
+    args = [total_duration,
             number_of_labeled_assets, consensus_mark, honeypot_mark]
     formatted_args = ['null' if arg is None else f'{arg}' for arg in args]
 
@@ -255,7 +251,6 @@ def update_properties_in_project_user(client, project_user_id: str,
             where: {id: "%s"},
             data: {
               totalDuration: %s
-              durationPerLabel: %s
               numberOfLabeledAssets: %s
               consensusMark: %s
               honeypotMark: %s
@@ -298,17 +293,15 @@ def force_project_kpis(client, project_id: str):
         delete_locks(client, asset['id'])
         time.sleep(1)
 
-    # Refresh project    
+    # Refresh project
     get_project(client, project_id=project_id)
 
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
-    completion_percentage = 1 - number_of_remaining_assets / number_of_assets
 
     update_properties_in_project(client, project_id, number_of_assets=number_of_assets,
                                  number_of_remaining_assets=number_of_remaining_assets,
-                                 completion_percentage=completion_percentage,
                                  number_of_latest_labels=number_of_latest_labels,
                                  consensus_mark=project['calculatedConsensusMark'],
                                  honeypot_mark=project['calculatedHoneypotMark'])
@@ -316,13 +309,11 @@ def force_project_kpis(client, project_id: str):
     project_users = project['roles']
     for project_user in project_users:
         total_duration = project_user['totalDuration']
-        duration_per_label = project_user['durationPerLabel']
         user_id = project_user['user']['id']
         number_of_labeled_assets = numbers_of_labeled_assets[
             user_id] if user_id in numbers_of_labeled_assets else 0
         try:
             update_properties_in_project_user(client, project_user['id'], total_duration=total_duration,
-                                              duration_per_label=duration_per_label,
                                               number_of_labeled_assets=number_of_labeled_assets,
                                               consensus_mark=project_user['calculatedConsensusMark'],
                                               honeypot_mark=project_user['calculatedHoneypotMark'])
@@ -331,4 +322,3 @@ def force_project_kpis(client, project_id: str):
                 print(f'Could not update {user_id}')
             else:
                 raise e
-    
