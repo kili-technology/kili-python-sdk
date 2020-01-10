@@ -9,6 +9,7 @@ from ..queries.asset import get_assets
 from ..queries.project import get_project
 from .asset import force_update_status, update_properties_in_asset
 from .lock import delete_locks
+from ..queries.label import get_label
 
 
 def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool,
@@ -290,11 +291,16 @@ def force_project_kpis(client, project_id: str):
                 numbers_of_labeled_assets[asset_author] + 1
 
         for label in asset['labels']:
+            label_author = label['author']
             if label['isLatestLabelForUser']:
                 number_of_latest_labels += 1
+            get_label(client, asset_id=asset['id'], user_id=label_author)
         delete_locks(client, asset['id'])
         time.sleep(1)
-        
+
+    # Refresh project    
+    get_project(client, project_id=project_id)
+
     number_of_assets = len([a for a in assets if not a['isInstructions']])
     number_of_remaining_assets = len(
         [a for a in assets if a['status'] == 'TODO' or a['status'] == 'ONGOING'])
@@ -325,3 +331,4 @@ def force_project_kpis(client, project_id: str):
                 print(f'Could not update {user_id}')
             else:
                 raise e
+    
