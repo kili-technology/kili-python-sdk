@@ -12,7 +12,6 @@ def get_projects(client, user_id: str):
         minAgreement
         minConsensusSize
         numberOfAssets
-        completionPercentage
         numberOfRemainingAssets
         numberOfAssetsWithSkippedLabels
         numberOfReviewedAssets
@@ -25,7 +24,6 @@ def get_projects(client, user_id: str):
           numberOfAnnotations
           numberOfLabeledAssets
           totalDuration
-          durationPerLabel
           honeypotMark
         }
         dataset {
@@ -57,7 +55,6 @@ def get_project(client, project_id: str):
           numberOfAnnotations
           numberOfLabeledAssets
           totalDuration
-          durationPerLabel
           honeypotMark
           calculatedConsensusMark
           calculatedHoneypotMark
