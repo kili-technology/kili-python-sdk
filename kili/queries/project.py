@@ -44,8 +44,7 @@ def get_project(client, project_id: str):
         title
         numberOfAssets
         interfaceCategory
-        calculatedConsensusMark
-        calculatedHoneypotMark
+        honeypotMark
         consensusMark
         roles {
           id
@@ -56,8 +55,6 @@ def get_project(client, project_id: str):
           numberOfLabeledAssets
           totalDuration
           honeypotMark
-          calculatedConsensusMark
-          calculatedHoneypotMark
           consensusMark
         }
       }
