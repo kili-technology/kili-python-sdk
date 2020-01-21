@@ -8,17 +8,22 @@ def create_prediction(client, asset_id: str, json_response: str):
     print('create_prediction is deprecated. Please use create_predictions instead. For an example, see: https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.py')
 
 
-def create_predictions(client, project_id: str, external_id_array: List[str], json_response_array: List[str]):
+def create_predictions(client, project_id: str, external_id_array: List[str], model_name_array: List[str], json_response_array: List[str]):
+    assert len(external_id_array) == len(
+        json_response_array), "IDs list and predictions list should have the same length"
+    assert len(external_id_array) == len(
+        model_name_array), "IDs list and model names list should have the same length"
     result = client.execute('''
     mutation {
       createPredictions(
         projectID: "%s",
         externalIDArray: %s,
+        modelNameArray: %s,
         jsonResponseArray: %s) {
           id
       }
     }
-    ''' % (project_id, dumps(external_id_array), dumps([dumps(elem) for elem in json_response_array])))
+    ''' % (project_id, dumps(external_id_array), dumps(model_name_array), dumps([dumps(elem) for elem in json_response_array])))
     return format_result('createPredictions', result)
 
 
@@ -59,7 +64,7 @@ def update_label(client, label_id: str, label_asset_id: str, review_asset_id: st
 
 def update_properties_in_label(client, label_id: str, seconds_to_label: int = None, json_response: str = None):
     formatted_seconds_to_label = 'null' if seconds_to_label is None else f'{seconds_to_label}'
-    formatted_json_response = 'null' if json_response is None else f'{json_response}'
+    formatted_json_response = 'null' if json_response is None else f'{json_escape(json_response)}'
 
     result = client.execute('''
         mutation {
@@ -73,5 +78,5 @@ def update_properties_in_label(client, label_id: str, seconds_to_label: int = No
             id
           }
         }
-        ''' % (label_id, formatted_seconds_to_label, json_escape(json_response)))
+        ''' % (label_id, formatted_seconds_to_label, formatted_json_response))
     return format_result('updatePropertiesInLabel', result)
