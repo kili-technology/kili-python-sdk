@@ -57,6 +57,7 @@ def get_project(client, project_id: str):
           honeypotMark
           consensusMark
         }
+        inputType
       }
     }
     ''' % (project_id))

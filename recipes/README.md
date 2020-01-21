@@ -68,6 +68,16 @@ python update_assets_metadata.py
 python import_assets_with_s3.py
 ```
 
+## How to import images
+
+1. Edit `import_images.py` with correct image paths.
+
+2. Execute:
+
+```bash
+python import_images.py
+```
+
 ## How to delete all assets
 
 1. Execute:
@@ -187,7 +197,7 @@ docker run -it --network="host" kili-playground online-learning
 1. Create a project for single-class object detection
 
 2. Update settings to respect YOLOv3's way of dealing with classes
-(key is an integer starting from zero and value is in lower case)
+   (key is an integer starting from zero and value is in lower case)
 
 ```
 {
@@ -208,7 +218,7 @@ docker build -t kili-playground-yolo .
 ```
 
 4. Launch it by setting `EMAIL`/`PASSWORD`/`PROJECT_ID`/`API_ENDPOINT`
-environment variables:
+   environment variables:
 
 ```bash
 docker run -it -e "EMAIL=mypassword@kili-technology.com" \

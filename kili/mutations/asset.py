@@ -1,28 +1,16 @@
 from json import dumps
 from typing import List
 
-from ..helper import content_escape, format_result, json_escape
+from ..helper import (content_escape, encode_image, format_result, is_url,
+                      json_escape)
+from ..queries.project import get_project
 
 
 def create_assets(client, project_id: str, contents: List[str], external_ids: List[str]):
-    result = client.execute('''
-    mutation {
-      createAssets(
-        projectID: "%s",
-        contents: %s,
-        externalIDs: %s) {
-          id
-          content
-          externalId
-          createdAt
-          updatedAt
-          isHoneypot
-          status
-          jsonMetadata
-      }
-    }
-    ''' % (project_id, dumps(contents), dumps(external_ids)))
-    return format_result('createAssets', result)
+    print("create_assets: This method will be deprecated soon. Please use append_many_to_dataset instead.")
+    return append_many_to_dataset(client, project_id,
+                                  content_array=contents,
+                                  external_id_array=external_ids)
 
 
 def delete_assets_by_external_id(client, project_id: str, external_id: str):
@@ -65,6 +53,10 @@ def append_many_to_dataset(client, project_id: str, content_array: List[str], ex
         len(content_array) if not status_array else status_array
     json_metadata_array = [
         {}] * len(content_array) if not json_metadata_array else json_metadata_array
+    input_type = get_project(client, project_id)['inputType']
+    if input_type == 'IMAGE':
+        content_array = [content if is_url(content) else encode_image(
+            content) for content in content_array]
     result = client.execute('''
         mutation {
           appendManyToDataset(
