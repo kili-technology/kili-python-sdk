@@ -70,12 +70,10 @@ python import_assets_with_s3.py
 
 ## How to import images
 
-1. Edit `import_images.py` with correct image paths.
-
-2. Execute:
+1. Execute:
 
 ```bash
-python import_images.py
+python import_image.py
 ```
 
 ## How to delete all assets
