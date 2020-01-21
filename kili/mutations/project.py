@@ -62,7 +62,10 @@ def append_to_roles(client, project_id: str, user_email: str, role: str):
     return format_result('appendToRoles', result)
 
 
-def update_properties_in_project(client, project_id: str, min_consensus_size: int = None,
+def update_properties_in_project(client, project_id: str,
+                                 title: str = None,
+                                 description: str = None,
+                                 min_consensus_size: int = None,
                                  consensus_tot_coverage: int = None,
                                  number_of_assets: int = None,
                                  number_of_remaining_assets: int = None,
@@ -72,6 +75,10 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
                                  consensus_mark: float = None,
                                  honeypot_mark: float = None,
                                  instructions: str = None):
+    formatted_title = 'null' if title is None else f'"{title}"'
+    formatted_description = 'null' if description is None else f'"{description}"'
+    formatted_min_consensus_size = 'null' if min_consensus_size is None else int(
+        min_consensus_size)
     formatted_min_consensus_size = 'null' if min_consensus_size is None else int(
         min_consensus_size)
     formatted_consensus_tot_coverage = 'null' if consensus_tot_coverage is None else int(
@@ -97,6 +104,8 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
           updatePropertiesInProject(
             where: {id: "%s"},
             data: {
+              title: %s
+              description: %s
               minConsensusSize: %s
               consensusTotCoverage: %s
               numberOfAssets: %s
@@ -112,7 +121,8 @@ def update_properties_in_project(client, project_id: str, min_consensus_size: in
             id
           }
         }
-        ''' % (project_id, formatted_min_consensus_size, formatted_consensus_tot_coverage,
+        ''' % (project_id, formatted_title, formatted_description,
+               formatted_min_consensus_size, formatted_consensus_tot_coverage,
                formatted_number_of_assets, formatted_number_of_remaining_assets,
                formatted_number_of_assets_with_empty_labels, formatted_number_of_reviewed_assets,
                formatted_number_of_latest_labels, formatted_consensus_mark, formatted_honeypot_mark,
