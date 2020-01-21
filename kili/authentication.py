@@ -1,14 +1,14 @@
 import os
-import requests
 import warnings
 
-from .graphql_client import GraphQLClient
+import requests
 
+from . import __version__
+from .graphql_client import GraphQLClient
 from .mutations.user import signin
 
 warnings.simplefilter('always')
 warnings.filterwarnings('ignore', category=ImportWarning)
-
 
 MAX_RETRIES = 20
 
@@ -16,7 +16,6 @@ MAX_RETRIES = 20
 def authenticate(email,
                  password=os.getenv('KILI_USER_PASSWORD'),
                  api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
-
     message = '''Deprecated: authenticate has been renamed, and is not recommended for use.
 Use instead:
   from kili.authentication import KiliAuth
@@ -54,6 +53,9 @@ class KiliAuth(object):
                  password=os.getenv('KILI_USER_PASSWORD'),
                  api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
         self.session = requests.Session()
+
+        self.check_versions_match(api_endpoint)
+
         adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
         self.session.mount('https://', adapter)
         self.session.mount('http://', adapter)
@@ -65,3 +67,13 @@ class KiliAuth(object):
 
     def __del__(self):
         self.session.close()
+
+    @staticmethod
+    def check_versions_match(api_endpoint):
+        url = api_endpoint.replace('/graphql', '/version')
+        response = requests.get(url).json()
+        version = response['version']
+        if version != __version__:
+            message = 'Kili Playground version should match with Kili API version.\n' + \
+                      f'Please install version: "pip install kili=={version}"'
+            warnings.warn(message, UserWarning)
