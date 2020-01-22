@@ -56,8 +56,19 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                author_in: List[str] = None,
                consensus_mark_gt: float = None,
                consensus_mark_lt: float = None, honeypot_mark_gt: float = None,
-               honeypot_mark_lt: float = None, skipped: bool = None, format: str = None,
-               disable_tqdm: bool = False):
+               honeypot_mark_lt: float = None, skipped: bool = None,
+               label_external_id_contains: str = None,
+               label_type_in: List[str] = None,
+               label_status_in: List[str] = None,
+               label_author_in: List[str] = None,
+               label_consensus_mark_gt: float = None,
+               label_consensus_mark_lt: float = None,
+               label_honeypot_mark_gt: float = None,
+               label_honeypot_mark_lt: float = None,
+               label_created_at_gt: float = None,
+               label_created_at_lt: float = None,
+               label_skipped: bool = None,
+               format: str = None, disable_tqdm: bool = False):
     formatted_skip = 0 if skip is None else skip
     formatted_first = 100
     formatted_external_id_contains = 'null' if external_id_contains is None else f'"{external_id_contains}"'
@@ -67,7 +78,21 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
     formatted_consensus_mark_lt = 'null' if consensus_mark_lt is None else f'{consensus_mark_lt}'
     formatted_honeypot_mark_gt = 'null' if honeypot_mark_gt is None else f'{honeypot_mark_gt}'
     formatted_honeypot_mark_lt = 'null' if honeypot_mark_lt is None else f'{honeypot_mark_lt}'
-    formatted_skipped = 'null' if skipped is None else f'{skipped}'.lower(
+    formatted_skipped = 'null' if skipped is None else f'{skipped}'.lower()
+    formatted_label_external_id_contains = 'null' if label_external_id_contains is None else f'"{label_external_id_contains}"'
+    formatted_label_type_in = dumps(
+        []) if label_type_in is None else dumps(label_type_in)
+    formatted_label_status_in = dumps(
+        []) if label_status_in is None else dumps(label_status_in)
+    formatted_label_author_in = dumps(
+        []) if label_author_in is None else dumps(label_author_in)
+    formatted_label_consensus_mark_gt = 'null' if label_consensus_mark_gt is None else f'{label_consensus_mark_gt}'
+    formatted_label_consensus_mark_lt = 'null' if label_consensus_mark_lt is None else f'{label_consensus_mark_lt}'
+    formatted_label_honeypot_mark_gt = 'null' if label_honeypot_mark_gt is None else f'{label_honeypot_mark_gt}'
+    formatted_label_honeypot_mark_lt = 'null' if label_honeypot_mark_lt is None else f'{label_honeypot_mark_lt}'
+    formatted_label_created_at_gt = 'null' if label_created_at_gt is None else f'"{label_created_at_gt}"'
+    formatted_label_created_at_lt = 'null' if label_created_at_lt is None else f'"{label_created_at_lt}"'
+    formatted_label_skipped = 'null' if label_skipped is None else f'{label_skipped}'.lower(
     )
     project = get_project(client, project_id)
     number_of_assets = project['numberOfAssets']
@@ -78,7 +103,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
             result = client.execute('''
             query {
               getAssetsWithSearch(projectID: "%s", skip: %d, first: %d
-                where: {
+                assetsWhere: {
                   externalIdContains: %s
                   statusIn: %s
                   authorIn: %s
@@ -86,6 +111,19 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                   consensusMarkLt: %s
                   honeypotMarkGt: %s
                   honeypotMarkLt: %s
+                  skipped: %s
+                }
+                labelsWhere: {
+                  externalIdContains: %s
+                  typeIn: %s
+                  statusIn: %s
+                  authorIn: %s
+                  consensusMarkGt: %s
+                  consensusMarkLt: %s
+                  honeypotMarkGt: %s
+                  honeypotMarkLt: %s
+                  createdAtGt: %s
+                  createdAtLt: %s
                   skipped: %s
                 }) {
                 id
@@ -122,7 +160,18 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                    formatted_consensus_mark_lt,
                    formatted_honeypot_mark_gt,
                    formatted_honeypot_mark_lt,
-                   formatted_skipped))
+                   formatted_skipped,
+                   formatted_label_external_id_contains,
+                   formatted_label_type_in,
+                   formatted_label_status_in,
+                   formatted_label_author_in,
+                   formatted_label_consensus_mark_gt,
+                   formatted_label_consensus_mark_lt,
+                   formatted_label_honeypot_mark_gt,
+                   formatted_label_honeypot_mark_lt,
+                   formatted_label_created_at_gt,
+                   formatted_label_created_at_lt,
+                   formatted_label_skipped))
             assets = format_result('getAssetsWithSearch', result)
             if assets is None or (first is not None and len(paged_assets) == first):
                 if format == 'pandas':
