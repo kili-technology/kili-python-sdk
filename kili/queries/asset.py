@@ -147,6 +147,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                   labelType
                   jsonResponse
                   isLatestLabelForUser
+                  numberOfAnnotations
                   skipped
                   author {
                     id
