@@ -109,10 +109,10 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                   externalIdContains: %s
                   statusIn: %s
                   authorIn: %s
-                  consensusMarkGt: %s
-                  consensusMarkLt: %s
-                  honeypotMarkGt: %s
-                  honeypotMarkLt: %s
+                  consensusMarkGte: %s
+                  consensusMarkLte: %s
+                  honeypotMarkGte: %s
+                  honeypotMarkLte: %s
                   skipped: %s
                 }
                 labelsWhere: {
@@ -120,12 +120,12 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                   typeIn: %s
                   statusIn: %s
                   authorIn: %s
-                  consensusMarkGt: %s
-                  consensusMarkLt: %s
-                  honeypotMarkGt: %s
-                  honeypotMarkLt: %s
-                  createdAtGt: %s
-                  createdAtLt: %s
+                  consensusMarkGte: %s
+                  consensusMarkLte: %s
+                  honeypotMarkGte: %s
+                  honeypotMarkLte: %s
+                  createdAtGte: %s
+                  createdAtLte: %s
                   skipped: %s
                 }) {
                 id
