@@ -26,10 +26,6 @@ def get_projects(client, user_id: str):
           totalDuration
           honeypotMark
         }
-        dataset {
-          id
-          honeypotMark
-        }
       }
     }
     ''' % (user_id))
