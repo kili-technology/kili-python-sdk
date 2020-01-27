@@ -32,11 +32,15 @@ def main(api_endpoint):
 
     external_id_array = [get(prediction, 'externalId')
                          for prediction in predictions]
+    model_name_array = [get(prediction, 'modelName')
+                        for prediction in predictions]
     json_response_array = [json.loads(
         get(prediction, 'response')) for prediction in predictions]
     playground.create_predictions(
         project_id=project_id,
-        external_id_array=external_id_array, json_response_array=json_response_array)
+        external_id_array=external_id_array,
+        model_name_array=model_name_array,
+        json_response_array=json_response_array)
 
 
 if __name__ == '__main__':
