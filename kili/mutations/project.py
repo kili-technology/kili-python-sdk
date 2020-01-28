@@ -13,7 +13,7 @@ from .lock import delete_locks
 
 
 def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool,
-                   interface_json_settings: str):
+                   interface_json_settings: dict):
     result = client.execute('''
     mutation {
       createProject(

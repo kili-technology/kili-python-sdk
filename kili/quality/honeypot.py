@@ -1,7 +1,7 @@
 from ..helper import format_result, json_escape
 
 
-def create_honeypot(client, asset_id: str, json_response: str):
+def create_honeypot(client, asset_id: str, json_response: dict):
     result = client.execute('''
     mutation {
       createHoneypot(

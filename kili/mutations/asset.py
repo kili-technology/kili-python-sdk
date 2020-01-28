@@ -40,7 +40,7 @@ def append_to_dataset(client, project_id: str, content: str, external_id: str, f
 
 def append_many_to_dataset(client, project_id: str, content_array: List[str], external_id_array: List[str],
                            filename_array: List[str] = None, is_instructions_array: List[bool] = None, instructions_array: List[str] = None,
-                           is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[str] = None):
+                           is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
     filename_array = [
         ''] * len(content_array) if not filename_array else filename_array
     is_instructions_array = [
@@ -80,7 +80,7 @@ def append_many_to_dataset(client, project_id: str, content_array: List[str], ex
 
 
 def update_asset(client, asset_id: str, project_id: str, content: str, external_id: str, filename: str, is_instructions: bool, instructions: str,
-                 is_honeypot: bool, consensus_mark: float, honeypot_mark: float, status: str, json_metadata: str):
+                 is_honeypot: bool, consensus_mark: float, honeypot_mark: float, status: str, json_metadata: dict):
     result = client.execute('''
     mutation {
       updateAsset(
@@ -105,7 +105,7 @@ def update_asset(client, asset_id: str, project_id: str, content: str, external_
 
 
 def update_properties_in_asset(client, asset_id: str, external_id: str = None,
-                               priority: int = None, json_metadata: str = None, consensus_mark: float = None,
+                               priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
                                honeypot_mark: float = None, to_be_labeled_by: List[str] = None):
     formatted_external_id = 'null' if external_id is None else f'"{external_id}"'
     formatted_priority = 'null' if priority is None else f'{priority}'

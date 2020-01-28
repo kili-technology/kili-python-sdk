@@ -1,7 +1,7 @@
 from ..helper import format_result, json_escape
 
 
-def update_tool(client, tool_id: str, project_id: str, name: str, tool_type: str, json_settings: str):
+def update_tool(client, tool_id: str, project_id: str, name: str, tool_type: str, json_settings: dict):
     result = client.execute('''
     mutation {
       updateTool(toolID: "%s",
@@ -16,7 +16,7 @@ def update_tool(client, tool_id: str, project_id: str, name: str, tool_type: str
     return format_result('updateTool', result)
 
 
-def append_to_tools(client, project_id: str, name: str, tool_type: str, json_settings: str):
+def append_to_tools(client, project_id: str, name: str, tool_type: str, json_settings: dict):
     result = client.execute('''
     mutation {
       appendToTools(
