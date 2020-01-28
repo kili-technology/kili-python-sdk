@@ -51,7 +51,7 @@ def get_asset(client, asset_id: str):
 
 
 def get_assets(client, project_id: str, skip: int = None, first: int = None,
-               external_id_contains: str = None,
+               external_id_contains: List[str] = None,
                status_in: List[str] = None,
                author_in: List[str] = None,
                consensus_mark_gt: float = None,
@@ -73,7 +73,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                format: str = None, disable_tqdm: bool = False):
     formatted_skip = 0 if skip is None else skip
     formatted_first = 100
-    formatted_external_id_contains = 'null' if external_id_contains is None else f'"{external_id_contains}"'
+    formatted_external_id_contains = dumps([]) if external_id_contains is None else dumps(external_id_contains)
     formatted_status_in = dumps([]) if status_in is None else dumps(status_in)
     formatted_author_in = dumps([]) if author_in is None else dumps(author_in)
     formatted_consensus_mark_gt = 'null' if consensus_mark_gt is None else f'{consensus_mark_gt}'
@@ -81,7 +81,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
     formatted_honeypot_mark_gt = 'null' if honeypot_mark_gt is None else f'{honeypot_mark_gt}'
     formatted_honeypot_mark_lt = 'null' if honeypot_mark_lt is None else f'{honeypot_mark_lt}'
     formatted_skipped = 'null' if skipped is None else f'{skipped}'.lower()
-    formatted_label_external_id_contains = 'null' if label_external_id_contains is None else f'"{label_external_id_contains}"'
+    formatted_label_external_id_contains = dumps([]) if label_external_id_contains is None else dumps(label_external_id_contains)
     formatted_label_type_in = dumps(
         []) if label_type_in is None else dumps(label_type_in)
     formatted_label_status_in = dumps(
@@ -106,7 +106,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
             query {
               getAssetsWithSearch(projectID: "%s", skip: %d, first: %d
                 assetsWhere: {
-                  externalIdContains: %s
+                  externalIdIn: %s
                   statusIn: %s
                   authorIn: %s
                   consensusMarkGte: %s
@@ -116,7 +116,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                   skipped: %s
                 }
                 labelsWhere: {
-                  externalIdContains: %s
+                  externalIdIn: %s
                   typeIn: %s
                   statusIn: %s
                   authorIn: %s
