@@ -11,7 +11,7 @@ class GraphQLError(Exception):
 def format_result(name, result):
     if 'errors' in result:
         raise GraphQLError(name, result['errors'])
-    return result['data'][name]
+    return format_json(result['data'][name])
 
 
 def json_escape(dict):
@@ -37,3 +37,21 @@ def encode_image(path):
 
 def is_url(path):
     return re.match(r'^(http://|https://)', path.lower())
+
+
+def format_json(result):
+    if result is None:
+        return result
+    if isinstance(result, list):
+        return [format_json(elem) for elem in result]
+    if isinstance(result, dict):
+        for key, value in result.items():
+            if key in ['jsonMetadata', 'jsonResponse', 'jsonSettings']:
+                if value == '' or value is None:
+                    result[key] = dict()
+                else:
+                    result[key] = loads(value)
+            else:
+                result[key] = format_json(value)
+        return result
+    return result
