@@ -4,7 +4,7 @@ from typing import List
 
 from tqdm import tqdm
 
-from ..helper import GraphQLError, format_result, json_escape
+from ..helpers import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
 from ..queries.label import get_label
 from ..queries.project import get_project

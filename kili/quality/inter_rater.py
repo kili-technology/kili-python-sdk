@@ -7,9 +7,9 @@ fleiss_kappa
 cohens_kappa
 
 aggregate_raters:
-    helper function to get data into fleiss_kappa format
+    helpers function to get data into fleiss_kappa format
 to_table:
-    helper function to create contingency table, can be used for cohens_kappa
+    helpers function to create contingency table, can be used for cohens_kappa
 
 Created on Thu Dec 06 22:57:56 2012
 Author: Josef Perktold
@@ -56,7 +56,7 @@ class ResultsBunch(dict):
 
 
 def _int_ifclose(x, dec=1, width=4):
-    '''helper function for creating result string for int or float
+    '''helpers function for creating result string for int or float
 
     only dec=1 and width=4 is implemented
 

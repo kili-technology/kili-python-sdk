@@ -1,7 +1,7 @@
 from json import dumps
 from typing import List
 
-from ..helper import format_result, json_escape
+from ..helpers import format_result, json_escape
 
 
 def create_prediction(client, asset_id: str, json_response: str):

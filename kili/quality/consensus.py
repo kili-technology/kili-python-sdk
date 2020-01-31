@@ -7,7 +7,7 @@ from shapely.geometry.polygon import Polygon
 from .inter_rater import fleiss_kappa
 from difflib import SequenceMatcher
 
-from ..helper import format_result
+from ..helpers import format_result
 from ..queries.asset import get_assets
 from ..queries.tool import get_tools
 from ..queries.project import get_project

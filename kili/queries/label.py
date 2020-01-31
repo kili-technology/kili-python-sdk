@@ -1,6 +1,6 @@
 import pandas as pd
 
-from ..helper import format_result
+from ..helpers import format_result
 from .asset import get_assets
 from .project import get_project
 

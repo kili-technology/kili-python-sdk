@@ -1,4 +1,4 @@
-from ..helper import format_result
+from ..helpers import format_result
 
 
 def get_locks(client, project_id: str):

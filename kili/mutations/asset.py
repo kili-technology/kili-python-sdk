@@ -1,7 +1,7 @@
 from json import dumps
 from typing import List
 
-from ..helper import (content_escape, encode_image, format_result, is_url,
+from ..helpers import (content_escape, encode_image, format_result, is_url,
                       json_escape)
 from ..queries.project import get_project
 

@@ -1,4 +1,4 @@
-from ..helper import format_result
+from ..helpers import format_result
 
 
 def create_organization(client, name: str, address: str, zip_code: str, city: str, country: str):
