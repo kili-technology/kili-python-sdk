@@ -1,4 +1,4 @@
-from ..helper import format_result
+from ..helpers import format_result
 
 
 def delete_locks(client, asset_id: str):

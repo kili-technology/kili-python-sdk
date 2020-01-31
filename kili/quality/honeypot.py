@@ -1,4 +1,4 @@
-from ..helper import format_result, json_escape
+from ..helpers import format_result, json_escape
 
 
 def create_honeypot(client, asset_id: str, json_response: dict):

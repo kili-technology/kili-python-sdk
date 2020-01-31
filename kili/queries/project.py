@@ -1,4 +1,4 @@
-from ..helper import format_result
+from ..helpers import format_result
 
 
 def get_projects(client, user_id: str):

@@ -1,4 +1,4 @@
-from ..helper import format_result, json_escape
+from ..helpers import format_result, json_escape
 
 
 def update_tool(client, tool_id: str, project_id: str, name: str, tool_type: str, json_settings: dict):
