@@ -2,15 +2,8 @@ from json import dumps
 from typing import List
 
 from ..helpers import (content_escape, encode_image, format_result, is_url,
-                      json_escape)
+                       json_escape)
 from ..queries.project import get_project
-
-
-def create_assets(client, project_id: str, contents: List[str], external_ids: List[str]):
-    print("create_assets: This method will be deprecated soon. Please use append_many_to_dataset instead.")
-    return append_many_to_dataset(client, project_id,
-                                  content_array=contents,
-                                  external_id_array=external_ids)
 
 
 def delete_assets_by_external_id(client, project_id: str, external_id: str):
@@ -22,20 +15,6 @@ def delete_assets_by_external_id(client, project_id: str, external_id: str):
     }
     ''' % (project_id, external_id))
     return format_result('deleteAssetsByExternalId', result)
-
-
-def append_to_dataset(client, project_id: str, content: str, external_id: str, filename: str = '', is_instructions: bool = False,
-                      instructions: str = '', is_honeypot: bool = False, status: str = 'TODO', json_metadata: dict = {}):
-    print("append_to_dataset: This method will be deprecated soon. Please use append_many_to_dataset instead.")
-    return append_many_to_dataset(client, project_id,
-                                  content_array=[content],
-                                  external_id_array=[external_id],
-                                  filename_array=[filename],
-                                  is_instructions_array=[is_instructions],
-                                  instructions_array=[instructions],
-                                  is_honeypot_array=[is_honeypot],
-                                  status_array=[status],
-                                  json_metadata_array=[json_metadata])
 
 
 def append_many_to_dataset(client, project_id: str, content_array: List[str], external_id_array: List[str],
