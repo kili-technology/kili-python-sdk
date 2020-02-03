@@ -23,14 +23,8 @@ class Playground(object):
 
     # Mutations Asset
 
-    def create_assets(self, **kwargs):
-        return kili.mutations.asset.create_assets(self.auth.client, **kwargs)
-
     def delete_assets_by_external_id(self, **kwargs):
         return kili.mutations.asset.delete_assets_by_external_id(self.auth.client, **kwargs)
-
-    def append_to_dataset(self, **kwargs):
-        return kili.mutations.asset.append_to_dataset(self.auth.client, **kwargs)
 
     def append_many_to_dataset(self, **kwargs):
         return kili.mutations.asset.append_many_to_dataset(self.auth.client, **kwargs)
