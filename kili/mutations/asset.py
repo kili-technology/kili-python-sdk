@@ -18,10 +18,7 @@ def delete_assets_by_external_id(client, project_id: str, external_id: str):
 
 
 def append_many_to_dataset(client, project_id: str, content_array: List[str], external_id_array: List[str],
-                           is_instructions_array: List[bool] = None,
                            is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
-    is_instructions_array = [
-        False] * len(content_array) if not is_instructions_array else is_instructions_array
     is_honeypot_array = [
         False] * len(content_array) if not is_honeypot_array else is_honeypot_array
     status_array = ['TODO'] * \
@@ -38,7 +35,6 @@ def append_many_to_dataset(client, project_id: str, content_array: List[str], ex
             projectID: "%s",
             contentArray: %s,
             externalIDArray: %s,
-            isInstructionsArray: %s,
             isHoneypotArray: %s,
             statusArray: %s,
             jsonMetadataArray: %s) {
@@ -46,13 +42,12 @@ def append_many_to_dataset(client, project_id: str, content_array: List[str], ex
           }
         }
     ''' % (project_id, dumps(content_array), dumps(external_id_array),
-           dumps(is_instructions_array).lower(), dumps(
-               is_honeypot_array).lower(),
+           dumps(is_honeypot_array).lower(),
            dumps(status_array).replace('"', ''), dumps([dumps(elem) for elem in json_metadata_array])))
     return format_result('appendManyToDataset', result)
 
 
-def update_asset(client, asset_id: str, project_id: str, content: str, external_id: str, is_instructions: bool,
+def update_asset(client, asset_id: str, project_id: str, content: str, external_id: str,
                  is_honeypot: bool, consensus_mark: float, honeypot_mark: float, status: str, json_metadata: dict):
     result = client.execute('''
     mutation {
@@ -61,7 +56,6 @@ def update_asset(client, asset_id: str, project_id: str, content: str, external_
         projectID: "%s",
         content: "%s",
         externalID: "%s",
-        isInstructions: %s,
         isHoneypot: %s,
         consensusMark: %d,
         honeypotMark: %d,
@@ -70,7 +64,7 @@ def update_asset(client, asset_id: str, project_id: str, content: str, external_
         id
       }
     }
-    ''' % (asset_id, project_id, content, external_id, str(is_instructions).lower(),
+    ''' % (asset_id, project_id, content, external_id,
            str(is_honeypot).lower(), consensus_mark, honeypot_mark, status, json_escape(json_metadata)))
     return format_result('updateAsset', result)
 

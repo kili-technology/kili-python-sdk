@@ -16,7 +16,6 @@ def get_asset(client, asset_id: str):
         id
         externalId
         content
-        isInstructions
         isHoneypot
         consensusMark
         honeypotMark
@@ -134,7 +133,6 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                 id
                 externalId
                 content
-                isInstructions
                 isHoneypot
                 duration
                 consensusMark
@@ -264,7 +262,6 @@ def export_assets(client, project_id: str):
         createdAt
         updatedAt
         isHoneypot
-        isInstructions
         status
         labels {
           id
