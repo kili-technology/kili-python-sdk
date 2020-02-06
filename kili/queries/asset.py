@@ -16,9 +16,7 @@ def get_asset(client, asset_id: str):
         id
         externalId
         content
-        filename
         isInstructions
-        instructions
         isHoneypot
         consensusMark
         honeypotMark
@@ -136,9 +134,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                 id
                 externalId
                 content
-                filename
                 isInstructions
-                instructions
                 isHoneypot
                 duration
                 consensusMark
