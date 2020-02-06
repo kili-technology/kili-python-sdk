@@ -162,62 +162,38 @@ def update_project(client, project_id: str,
                    title: str,
                    description: str,
                    interface_category: str,
-                   creation_active_step: int = 0,
-                   creation_completed: List[int] = [0, 1, 2, 3, 4, 5, 6],
-                   creation_skipped: List[int] = [],
                    input_type: str = 'TEXT',
-                   interface_title: str = None,
-                   interface_description: str = None,
-                   interface_url: str = None,
                    outsource: bool = False,
                    consensus_tot_coverage: int = 0,
                    min_consensus_size: int = 1,
                    max_worker_count: int = 4,
                    min_agreement: int = 66,
                    use_honey_pot: bool = False,
-                   instructions: str = None,
-                   model_title: str = "",
-                   model_description: str = "",
-                   model_url: str = ""):
-    formatted_interface_title = 'null' if interface_title is None else f'"{interface_title}"'
-    formatted_interface_description = 'null' if interface_description is None else f'"{interface_description}"'
-    formatted_interface_url = 'null' if interface_url is None else f'"{interface_url}"'
+                   instructions: str = None):
     formatted_instructions = 'null' if instructions is None else f'"{instructions}"'
     result = client.execute('''
     mutation {
       updateProject(projectID: "%s",
         title: "%s",
         description: "%s",
-        creationActiveStep: %d,
-        creationCompleted: %s,
-        creationSkipped: %s,
         interfaceCategory: %s,
         inputType: %s,
-        interfaceTitle: %s,
-        interfaceDescription: %s,
-        interfaceUrl: %s,
         outsource: %s,
         consensusTotCoverage: %d,
         minConsensusSize: %d,
         maxWorkerCount: %d,
         minAgreement: %d,
         useHoneyPot: %s,
-        instructions: %s,
-        modelTitle: "%s",
-        modelDescription: "%s",
-        modelUrl: "%s") {
+        instructions: %s) {
         id
       }
     }
     ''' % (
-        project_id, title, description, creation_active_step, dumps(
-            creation_completed),
-        dumps(creation_skipped).lower(),
-        interface_category, input_type, formatted_interface_title, formatted_interface_description,
-        formatted_interface_url, str(
+        project_id, title, description,
+        interface_category, input_type, str(
             outsource).lower(),
         consensus_tot_coverage, min_consensus_size, max_worker_count, min_agreement,
-        str(use_honey_pot).lower(), formatted_instructions, model_title, model_description, model_url))
+        str(use_honey_pot).lower(), formatted_instructions))
     return format_result('updateProject', result)
 
 
