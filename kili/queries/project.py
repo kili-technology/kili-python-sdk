@@ -25,6 +25,7 @@ def get_projects(client, user_id: str):
           numberOfLabeledAssets
           totalDuration
           honeypotMark
+          consensusMark
         }
       }
     }
@@ -38,20 +39,26 @@ def get_project(client, project_id: str):
       getProject(projectID: "%s") {
         id
         title
-        numberOfAssets
         interfaceCategory
-        honeypotMark
         consensusMark
+        honeypotMark
+        numberOfRemainingAssets
+        numberOfAssets
+        numberOfAssetsWithSkippedLabels
+        numberOfReviewedAssets
+        numberOfLatestLabels
+        numberOfRoles
         roles {
           id
           user { id, name, email }
           role
+          consensusMark
+          honeypotMark
           lastLabelingAt
           numberOfAnnotations
+          numberOfLabels
           numberOfLabeledAssets
           totalDuration
-          honeypotMark
-          consensusMark
         }
         inputType
       }

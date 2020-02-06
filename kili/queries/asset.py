@@ -140,6 +140,7 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                 isInstructions
                 instructions
                 isHoneypot
+                duration
                 consensusMark
                 honeypotMark
                 status
@@ -153,6 +154,8 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
                   jsonResponse
                   isLatestLabelForUser
                   numberOfAnnotations
+                  totalSecondsToLabel
+                  honeypotMark
                   skipped
                   author {
                     id
