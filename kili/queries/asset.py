@@ -100,8 +100,8 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
     formatted_label_skipped = 'null' if label_skipped is None else f'{label_skipped}'.lower(
     )
     count_args = {k: v for (k, v) in saved_args.items()
-                  if k not in ['skip', 'first']}
-    total = count_assets(*count_args.values())
+                  if k not in ['skip', 'first', 'disable_tqdm', 'format']}
+    total = count_assets(**count_args)
     if total == 0:
         return
     with tqdm(total=total, disable=disable_tqdm) as pbar:

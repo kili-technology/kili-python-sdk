@@ -23,8 +23,7 @@ def count_assets(client, project_id: str,
                  label_honeypot_mark_lt: float = None,
                  label_created_at_gt: float = None,
                  label_created_at_lt: float = None,
-                 label_skipped: bool = None,
-                 format: str = None, disable_tqdm: bool = False):
+                 label_skipped: bool = None):
     formatted_external_id_contains = dumps(
         []) if external_id_contains is None else dumps(external_id_contains)
     formatted_status_in = dumps([]) if status_in is None else dumps(status_in)
