@@ -163,7 +163,6 @@ def update_project(client, project_id: str,
                    description: str,
                    interface_category: str,
                    input_type: str = 'TEXT',
-                   outsource: bool = False,
                    consensus_tot_coverage: int = 0,
                    min_consensus_size: int = 1,
                    max_worker_count: int = 4,
@@ -178,7 +177,6 @@ def update_project(client, project_id: str,
         description: "%s",
         interfaceCategory: %s,
         inputType: %s,
-        outsource: %s,
         consensusTotCoverage: %d,
         minConsensusSize: %d,
         maxWorkerCount: %d,
@@ -190,8 +188,7 @@ def update_project(client, project_id: str,
     }
     ''' % (
         project_id, title, description,
-        interface_category, input_type, str(
-            outsource).lower(),
+        interface_category, input_type,
         consensus_tot_coverage, min_consensus_size, max_worker_count, min_agreement,
         str(use_honey_pot).lower(), formatted_instructions))
     return format_result('updateProject', result)
