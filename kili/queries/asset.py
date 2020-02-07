@@ -230,25 +230,25 @@ def get_assets_by_external_id(client, project_id: str, external_id: str):
     return format_result('getAssetsByExternalId', result)
 
 
-def get_next_asset_from_label(client, label_asset_id: str, want_instructions_only: bool):
+def get_next_asset_from_label(client, label_asset_id: str):
     result = client.execute('''
     query {
-      getNextAssetFromLabel(labelAssetID: "%s", wantInstructionsOnly: %s, where: {}) {
+      getNextAssetFromLabel(labelAssetID: "%s", where: {}) {
         id
       }
     }
-    ''' % (label_asset_id, str(want_instructions_only).lower()))
+    ''' % (label_asset_id))
     return format_result('getNextAssetFromLabel', result)
 
 
-def get_next_asset_from_project(client, project_id: str, want_instructions_only: bool):
+def get_next_asset_from_project(client, project_id: str):
     result = client.execute('''
     query {
-      getNextAssetFromProject(projectID: "%s", wantInstructionsOnly: %s) {
+      getNextAssetFromProject(projectID: "%s") {
         id
       }
     }
-    ''' % (project_id, str(want_instructions_only).lower()))
+    ''' % (project_id))
     return format_result('getNextAssetFromProject', result)
 
 
