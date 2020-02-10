@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 import kili
 
@@ -23,11 +23,8 @@ setup(
 
     long_description=open('README.md').read(),
 
-    install_requires=["numpy",
-                      "pandas",
+    install_requires=["pandas",
                       "requests",
-                      "scipy",
-                      "shapely",
                       "six",
                       "tqdm"],
 

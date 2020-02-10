@@ -5,8 +5,6 @@ import kili.mutations.organization
 import kili.mutations.project
 import kili.mutations.tool
 import kili.mutations.user
-import kili.quality.consensus
-import kili.quality.honeypot
 import kili.queries.asset
 import kili.queries.label
 import kili.queries.lock
@@ -139,19 +137,6 @@ class Playground(object):
 
     def reset_password(self, **kwargs):
         return kili.mutations.user.reset_password(self.auth.client, **kwargs)
-
-    # Quality Consensus
-
-    def update_consensus_in_many_assets(self, **kwargs):
-        return kili.quality.consensus.update_consensus_in_many_assets(self.auth.client, **kwargs)
-
-    def force_consensus_for_project(self, **kwargs):
-        return kili.quality.consensus.force_consensus_for_project(self.auth.client, **kwargs)
-
-    # Quality Honeypot
-
-    def create_honeypot(self, **kwargs):
-        return kili.quality.honeypot.create_honeypot(self.auth.client, **kwargs)
 
     # Queries Asset
 
