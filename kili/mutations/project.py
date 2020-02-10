@@ -12,20 +12,19 @@ from .asset import force_update_status, update_properties_in_asset
 from .lock import delete_locks
 
 
-def create_project(client, title: str, description: str, tool_type: str, use_honeypot: bool,
+def create_project(client, title: str, description: str, use_honeypot: bool,
                    interface_json_settings: dict):
     result = client.execute('''
     mutation {
       createProject(
       title: "%s",
       description: "%s",
-      toolType: %s,
       useHoneyPot: %s,
       interfaceJsonSettings: "%s") {
         id
       }
     }
-    ''' % (title, description, tool_type, str(use_honeypot).lower(), json_escape(interface_json_settings)))
+    ''' % (title, description, str(use_honeypot).lower(), json_escape(interface_json_settings)))
     return format_result('createProject', result)
 
 
