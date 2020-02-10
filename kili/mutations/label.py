@@ -82,3 +82,26 @@ def update_properties_in_label(client, label_id: str, seconds_to_label: int = No
         }
         ''' % (label_id, formatted_seconds_to_label, formatted_model_name, formatted_json_response))
     return format_result('updatePropertiesInLabel', result)
+
+
+def create_honeypot(client, asset_id: str, json_response: dict):
+    result = client.execute('''
+    mutation {
+      createHoneypot(
+        assetID: "%s",
+        jsonResponse: "%s") {
+          id
+          author {
+            id
+            email
+          }
+          labelType
+          jsonResponse
+          createdAt
+          secondsToLabel
+          totalSecondsToLabel
+          honeypotMark
+      }
+    }
+    ''' % (asset_id, json_escape(json_response)))
+    return format_result('createHoneypot', result)
