@@ -59,6 +59,9 @@ class Playground(object):
     def update_properties_in_label(self, **kwargs):
         return kili.mutations.label.update_properties_in_label(self.auth.client, **kwargs)
 
+    def create_honeypot(self, **kwargs):
+        return kili.mutations.label.create_honeypot(self.auth.client, **kwargs)
+
     # Mutations Lock
 
     def delete_locks(self, **kwargs):
