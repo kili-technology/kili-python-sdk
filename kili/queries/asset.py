@@ -17,20 +17,27 @@ def get_asset(client, asset_id: str):
         externalId
         content
         isHoneypot
+        duration
         consensusMark
         honeypotMark
         status
         isUsedForConsensus
+        jsonMetadata
+        priority
         labels {
           id
           createdAt
-          secondsToLabel
-          totalSecondsToLabel
           labelType
           jsonResponse
           isLatestLabelForUser
+          numberOfAnnotations
+          secondsToLabel
+          totalSecondsToLabel
+          honeypotMark
+          skipped
           author {
             id
+            email
           }
         }
         locks {
