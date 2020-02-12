@@ -2,13 +2,7 @@
 
 ## How to create a project
 
-1. Update `new_project.yml` with your values.
-
-2. Execute:
-
-```bash
-python create_project.py --configuration_file ./conf/new_project.yml --graphql_client https://cloud.kili-technology.com/api/label/graphql
-```
+You can refer to the following [documentation](https://kili-technology.github.io/kili-docs/docs/python-graphql-api/create-a-project).
 
 ## How to update interface settings
 
