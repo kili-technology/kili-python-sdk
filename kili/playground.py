@@ -39,9 +39,6 @@ class Playground(object):
     def delete_many_from_dataset(self, **kwargs):
         return kili.mutations.asset.delete_many_from_dataset(self.auth.client, **kwargs)
 
-    def force_update_status(self, **kwargs):
-        return kili.mutations.asset.force_update_status(self.auth.client, **kwargs)
-
     # Mutations Label
 
     def create_prediction(self, **kwargs):

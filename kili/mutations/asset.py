@@ -130,15 +130,3 @@ def delete_many_from_dataset(client, asset_ids: List[str]):
     }
     ''' % (dumps(asset_ids)))
     return format_result('deleteManyFromDataset', result)
-
-
-def force_update_status(client, asset_id: str):
-    result = client.execute('''
-    mutation {
-      forceUpdateStatus(assetID: "%s") {
-        id
-        status
-      }
-    }
-    ''' % (asset_id))
-    return format_result('forceUpdateStatus', result)

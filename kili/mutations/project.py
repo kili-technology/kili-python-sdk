@@ -8,7 +8,7 @@ from ..helpers import GraphQLError, format_result, json_escape
 from ..queries.asset import get_assets
 from ..queries.label import get_label
 from ..queries.project import get_project
-from .asset import force_update_status, update_properties_in_asset
+from .asset import update_properties_in_asset
 from .lock import delete_locks
 
 
