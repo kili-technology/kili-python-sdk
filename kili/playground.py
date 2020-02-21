@@ -138,6 +138,9 @@ class Playground(object):
     def reset_password(self, **kwargs):
         return kili.mutations.user.reset_password(self.auth.client, **kwargs)
 
+    def update_properties_in_user(self, **kwargs):
+        return kili.mutations.user.update_properties_in_user(self.auth.client, **kwargs)
+
     # Queries Asset
 
     def get_asset(self, **kwargs):
