@@ -64,8 +64,8 @@ def update_label(client, label_id: str, label_asset_id: str, review_asset_id: st
 
 def update_properties_in_label(client, label_id: str, seconds_to_label: int = None, model_name: str = None, json_response: dict = None):
     formatted_seconds_to_label = 'null' if seconds_to_label is None else f'{seconds_to_label}'
-    formatted_json_response = 'null' if json_response is None else f'{json_escape(json_response)}'
-    formatted_model_name = 'null' if model_name is None else f'{model_name}'
+    formatted_json_response = 'null' if json_response is None else f'"{json_escape(json_response)}"'
+    formatted_model_name = 'null' if model_name is None else f'"{model_name}"'
 
     result = client.execute('''
         mutation {
@@ -73,8 +73,8 @@ def update_properties_in_label(client, label_id: str, seconds_to_label: int = No
             where: {id: "%s"},
             data: {
               secondsToLabel: %s
-              modelName: "%s"
-              jsonResponse: "%s"
+              modelName: %s
+              jsonResponse: %s
             }
           ) {
             id

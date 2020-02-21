@@ -83,3 +83,28 @@ def reset_password(client, email: str):
     }
     ''' % email)
     return format_result('resetPassword', result)
+
+
+def update_properties_in_user(client, email: str, name: str = None, organization_id: str = None, organization_role: str = None, activated: bool = None):
+    formatted_name = 'null' if name is None else f'"{name}"'
+    formatted_organization_id = 'null' if organization_id is None else f'"{organization_id}"'
+    formatted_organization_role = 'null' if organization_role is None else f'"{organization_role}"'
+    formatted_activated = 'null' if activated is None else str(
+        activated).lower()
+
+    result = client.execute('''
+        mutation {
+          updatePropertiesInUser(
+            where: {email: "%s"},
+            data: {
+              name: %s
+              organizationId: %s
+              organizationRole: %s
+              activated: %s
+            }
+          ) {
+            id
+          }
+        }
+        ''' % (email, formatted_name, formatted_organization_id, formatted_organization_role, formatted_activated))
+    return format_result('updatePropertiesInUser', result)
