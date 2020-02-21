@@ -105,7 +105,8 @@ def get_assets(client, project_id: str, skip: int = None, first: int = None,
     )
     count_args = {k: v for (k, v) in saved_args.items()
                   if k not in ['skip', 'first', 'disable_tqdm', 'format']}
-    total = count_assets(**count_args)
+    number_of_assets_with_search = count_assets(**count_args)
+    total = min(number_of_assets_with_search, first) if first is not None else number_of_assets_with_search
     if total == 0:
         return
     with tqdm(total=total, disable=disable_tqdm) as pbar:
