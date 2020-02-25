@@ -1,45 +1,28 @@
 import pandas as pd
 
-from ..helpers import format_result
-from .asset import get_assets
-from .project import get_project
+from ...helpers import format_result
+from ..asset import get_assets
+from ..project import get_project
+from .queries import (GQL_GET_LABEL, GQL_GET_LATEST_LABELS,
+                      GQL_GET_LATEST_LABELS_FOR_USER)
 
 
 def get_label(client, asset_id: str, user_id: str):
-    result = client.execute('''
-    query {
-      getLabel(assetID: "%s", userID: "%s") {
-        id
-        jsonResponse
-        numberOfAnnotations
-      }
-    }
-    ''' % (asset_id, user_id))
-    return format_result('getLabel', result)
+    variables = {'assetID': asset_id, 'userID': user_id}
+    result = client.execute(GQL_GET_LABEL, variables)
+    return format_result('data', result)
 
 
 def get_latest_labels_for_user(client, project_id: str, user_id: str):
-    result = client.execute('''
-    query {
-      getLatestLabelsForUser(projectID: "%s", userID: "%s") {
-        id
-        jsonResponse
-      }
-    }
-    ''' % (project_id, user_id))
-    return format_result('getLatestLabelsForUser', result)
+    variables = {'projectID': project_id, 'userID': user_id}
+    result = client.execute(GQL_GET_LATEST_LABELS_FOR_USER, variables)
+    return format_result('data', result)
 
 
 def get_latest_labels(client, project_id: str, skip: int, first: int):
-    result = client.execute('''
-    query {
-      getLatestLabels(projectID: "%s", skip: %d, first: %d) {
-        id
-        jsonResponse
-      }
-    }
-    ''' % (project_id, skip, first))
-    return format_result('getLatestLabels', result)
+    variables = {'projectID': project_id, 'skip': skip, 'first': first}
+    result = client.execute(GQL_GET_LATEST_LABELS, variables)
+    return format_result('data', result)
 
 
 def parse_json_response_for_single_classification(json_response):
