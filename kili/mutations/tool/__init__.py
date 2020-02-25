@@ -1,29 +1,38 @@
-from json import dumps
-
-from ...helpers import format_result
-from .queries import GQL_APPEND_TO_TOOLS
+from ..helpers import format_result, json_escape
 
 
 def update_tool(client, tool_id: str, project_id: str, json_settings: dict):
-    variables = {
-        'toolID': tool_id,
-        'projectID': project_id,
-        'jsonSettings': dumps(json_settings)
+    result = client.execute('''
+    mutation {
+      updateTool(toolID: "%s",
+        projectID: "%s",
+        jsonSettings: "%s") {
+          id
+      }
     }
-    result = client.execute(GQL_UPDATE_TOOL, variables)
-    return format_result('data', result)
+    ''' % (tool_id, project_id, json_escape(json_settings)))
+    return format_result('updateTool', result)
 
 
 def append_to_tools(client, project_id: str,  json_settings: dict):
-    variables = {
-        'projectID': project_id,
-        'jsonSettings': dumps(json_settings)
+    result = client.execute('''
+    mutation {
+      appendToTools(
+        projectID: "%s",
+        jsonSettings: "%s") {
+          id
+      }
     }
-    result = client.execute(GQL_APPEND_TO_TOOLS, variables)
-    return format_result('data', result)
+    ''' % (project_id,  json_escape(json_settings)))
+    return format_result('appendToTools', result)
 
 
 def delete_from_tools(client, tool_id: str):
-    variables = {'toolID': tool_id}
-    result = client.execute(GQL_DELETE_FROM_TOOLS, variables)
-    return format_result('data', result)
+    result = client.execute('''
+    mutation {
+      deleteFromTools(toolID: "%s") {
+        id
+      }
+    }
+    ''' % (tool_id))
+    return format_result('deleteFromTools', result)
