@@ -11,7 +11,7 @@ mutation($toolID: ID!, $projectID: ID!, $jsonSettings: String!) {{
 '''
 
 GQL_APPEND_TO_TOOLS = f'''
-mutation($projectID !ID, $jsonSettings: String!) {{
+mutation($projectID: ID!, $jsonSettings: String!) {{
   data: appendToTools(
     projectID: $projectID
     jsonSettings: $jsonSettings) {{
