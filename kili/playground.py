@@ -89,9 +89,6 @@ class Playground(object):
     def update_properties_in_project(self, **kwargs):
         return kili.mutations.project.update_properties_in_project(self.auth.client, **kwargs)
 
-    def update_interface_in_project(self, **kwargs):
-        return kili.mutations.project.update_interface_in_project(self.auth.client, **kwargs)
-
     def create_empty_project(self, **kwargs):
         return kili.mutations.project.create_empty_project(self.auth.client, **kwargs)
 

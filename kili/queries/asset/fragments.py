@@ -41,6 +41,7 @@ ASSET_FRAGMENT_SIMPLIFIED = f'''
 id
 content
 externalId
+jsonMetadata
 createdAt
 updatedAt
 isHoneypot
