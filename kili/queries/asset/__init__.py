@@ -94,8 +94,8 @@ def get_assets_by_external_id(client, project_id: str, external_id: str):
     return format_result('data', result)
 
 
-def get_next_asset_from_label(client, label_asset_id: str):
-    variables = {'labelAssetID': label_asset_id}
+def get_next_asset_from_label(client, label_asset_ids: List[str]):
+    variables = {'labelAssetIDs': label_asset_ids}
     result = client.execute(GQL_GET_NEXT_ASSET_FROM_LABEL, variables)
     return format_result('data', result)
 

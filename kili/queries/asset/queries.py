@@ -76,8 +76,8 @@ query($projectID: ID!, $externalID: String!) {{
 '''
 
 GQL_GET_NEXT_ASSET_FROM_LABEL = f'''
-query($labelAssetID: ID!) {{
-  data: getNextAssetFromLabel(labelAssetID: $labelAssetID, where: {{}}) {{
+query($labelAssetIDs: [ID!]) {{
+  data: getNextAssetFromLabel(labelAssetIDs: $labelAssetIDs, where: {{}}) {{
     {ASSET_FRAGMENT_SIMPLIFIED}
   }}
 }}
