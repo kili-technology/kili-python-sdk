@@ -5,6 +5,7 @@ import random
 import subprocess
 from datetime import datetime
 from tempfile import TemporaryDirectory
+import random
 
 import requests
 from PIL import Image
@@ -71,7 +72,9 @@ def read_arguments():
 
 
 def convert_from_yolo_to_kili_format(x1, y1, x2, y2, category, score, total_width, total_height):
+    time_hash = datetime.now().strftime('%Y%m%d%H%M%S')
     annotations = {'score': float(score),
+                   'mid': f'{time_hash}-{random.getrandbits(52)}',
                    'categories': [{'name': str(category),
                                    'confidence': int(float(score) * 100)}],
                    'boundingPoly': [
