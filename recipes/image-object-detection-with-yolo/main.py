@@ -1,14 +1,15 @@
 import argparse
-import json
 import logging
 import os
 import random
 import subprocess
+from datetime import datetime
 from tempfile import TemporaryDirectory
-import requests
-from tqdm import tqdm
+import random
 
+import requests
 from PIL import Image
+from tqdm import tqdm
 
 from kili.transfer_learning import TransferLearning
 
@@ -28,6 +29,7 @@ CONFIG_FILE_TEMPLATE = os.path.join(MAIN_PATH, 'yolov3.template.cfg')
 BEST_WEIGHTS_FILE = 'weights/best.pt'
 LAST_WEIGHTS_FILE = 'weights/last.pt'
 
+
 def read_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("-e", "--email", type=str,
@@ -39,6 +41,9 @@ def read_arguments():
     parser.add_argument("-i", "--project_id", type=str,
                         default=os.environ.get('PROJECT_ID', None),
                         help="your kili project id")
+    parser.add_argument("-j", "--job_id", type=str,
+                        default=os.environ.get('JOB_ID', None),
+                        help="job ID of the object detection task in Kili JSON settings")
     parser.add_argument("-a", "--api_endpoint", type=str,
                         default=os.environ.get('API_ENDPOINT', None),
                         help="the kili API endpoint you would like to use")
@@ -47,17 +52,18 @@ def read_arguments():
                         help="path to the yolov3 repository")
     parser.add_argument("-t", "--no_transfer", action="store_false",
                         help="if you want to apply transfer learning from pre-existing weights")
-    parser.add_argument("-w", "--weights", type=str, 
-                        required=True, help="path to weights you would like to use as initialization of for transfer learning")
-    parser.add_argument("-o", "--override", action="store_true", 
+    parser.add_argument("-w", "--weights", type=str,
+                        required=True,
+                        help="path to weights you would like to use as initialization of for transfer learning")
+    parser.add_argument("-o", "--override", action="store_true",
                         help="should we override the cfg file with your custom classes ?")
     parser.add_argument('-c', "--cfg", type=str,
                         help="cfg file you would like to use")
     args = parser.parse_args()
     if any([
-        not args.email, 
-        not args.password, 
-        not args.project_id, 
+        not args.email,
+        not args.password,
+        not args.project_id,
         not args.yolo_path]):
         logging.error("Some required arguments are empty")
         exit(parser.print_usage())
@@ -66,8 +72,11 @@ def read_arguments():
 
 
 def convert_from_yolo_to_kili_format(x1, y1, x2, y2, category, score, total_width, total_height):
+    time_hash = datetime.now().strftime('%Y%m%d%H%M%S')
     annotations = {'score': float(score),
-                   'description': [{}],
+                   'mid': f'{time_hash}-{random.getrandbits(52)}',
+                   'categories': [{'name': str(category),
+                                   'confidence': int(float(score) * 100)}],
                    'boundingPoly': [
                        {'normalizedVertices': [
                            {'x': x1 / total_width, 'y': y1 / total_height},
@@ -77,19 +86,17 @@ def convert_from_yolo_to_kili_format(x1, y1, x2, y2, category, score, total_widt
                        ]}
                    ],
                    'type': 'RECTANGLE'}
-    annotations['description'][0][str(category)] = int(float(score) * 100)
 
     return annotations
 
 
-def convert_from_kili_to_yolo_format(label):
+def convert_from_kili_to_yolo_format(job_id, label):
     if 'jsonResponse' not in label:
         return []
-    import json
-    json_response = json.loads(label['jsonResponse'])
+    json_response = label['jsonResponse']
     if 'annotations' not in json_response:
         return []
-    annotations = json_response['annotations']
+    annotations = json_response[job_id]['annotations']
     converted_annotations = []
     for annotation in annotations:
         category = list(annotation['description'][0].keys())[0]
@@ -113,12 +120,13 @@ def convert_from_kili_to_yolo_format(label):
 
 
 class YoloTransferLearning(TransferLearning):
-    def __init__(self, email, password, api_endpoint, project_id, transfer, weights, override_cfg, cfg):
+    def __init__(self, email, password, api_endpoint, project_id, transfer, weights, override_cfg, cfg, job_id):
         TransferLearning.__init__(self, email, password, api_endpoint, project_id)
         self.transfer = transfer
         self.weights = weights
         self.override_cfg = override_cfg
         self.cfg = cfg
+        self.job_id = job_id
 
     def train(self, assets_to_train):
         logging.info(f'Launch training for {len(assets_to_train)} assets.')
@@ -158,7 +166,7 @@ class YoloTransferLearning(TransferLearning):
                         break
                     f.write(block)
 
-            annotations = convert_from_kili_to_yolo_format(asset['labels'][0])
+            annotations = convert_from_kili_to_yolo_format(self.job_id, asset['labels'][0])
             with open(os.path.join(labels_destination_folder, f'{filename}.txt'), 'wb') as f:
                 for category, x, y, w, h in annotations:
                     f.write(f'{category} {x} {y} {w} {h}\n'.encode())
@@ -181,7 +189,7 @@ class YoloTransferLearning(TransferLearning):
                             '--cache-images']
         if not self.override_cfg:
             train_parameters.extend(['--cfg', f'{CONFIG_FILE}'])
-        else: 
+        else:
             train_parameters.extend(['--cfg', self.cfg])
         if self.current_training_number > 0:
             logging.info('Resuming training...')
@@ -193,10 +201,10 @@ class YoloTransferLearning(TransferLearning):
                 train_parameters.append('--transfer')
         logging.info(f'Running training with parameters: {" ".join(train_parameters)}')
         subprocess.run(train_parameters)
-        
 
     def predict(self, assets_to_predict):
-        logging.info(f'Launch inference for {len(assets_to_predict)} assets: {[asset["id"] for asset in assets_to_predict]}')
+        logging.info(
+            f'Launch inference for {len(assets_to_predict)} assets: {[asset["id"] for asset in assets_to_predict]}')
 
         # Format to YOLO
         input = TemporaryDirectory()
@@ -214,18 +222,22 @@ class YoloTransferLearning(TransferLearning):
                     if not block:
                         break
                     f.write(block)
-            filename_to_ids[image_name] = asset['id']
+            filename_to_ids[image_name] = asset['externalId']
 
         # Predict with YOLO v3 framework
+        weights = BEST_WEIGHTS_FILE if os.path.isfile(BEST_WEIGHTS_FILE) else self.weights
         predict_parameters = ['python3', 'detect.py',
+                              '--save-txt',
                               '--source', f'{input.name}',
                               '--output', f'{output.name}',
                               '--cfg', f'{CONFIG_FILE}',
-                              '--weights', BEST_WEIGHTS_FILE]
+                              '--weights', weights]
         logging.info(f'Running inference with parameters: {" ".join(predict_parameters)}')
         subprocess.run(predict_parameters)
 
         # Insert predictions to Kili Technology
+        external_id_array = []
+        json_response_array = []
         for filename in os.listdir(output.name):
             with open(os.path.join(output.name, filename), 'rb') as f:
                 if filename.endswith('.txt'):
@@ -240,9 +252,14 @@ class YoloTransferLearning(TransferLearning):
                         annotations.append(convert_from_yolo_to_kili_format(int(start), int(end), int(height),
                                                                             int(width), category, score, total_width,
                                                                             total_height))
-                    asset_id = filename_to_ids[image_name]
-                    logging.info('Create predictions in Kili Technology...')
-                    self.playground.create_prediction(asset_id=asset_id, json_response={'annotations': annotations})
+                    external_id_array.append(filename_to_ids[image_name])
+                    json_response_array.append({self.job_id: {'annotations': annotations}})
+        logging.info('Create predictions in Kili Technology...')
+        model_name = datetime.now().strftime('model-yolo-%Y%m%d-%H%M%S')
+        self.playground.create_predictions(project_id=self.project_id,
+                                           external_id_array=external_id_array,
+                                           model_name_array=[model_name] * len(external_id_array),
+                                           json_response_array=json_response_array)
 
 
 def main():
@@ -250,25 +267,27 @@ def main():
     os.chdir(args.yolo_path)
 
     transfer_learning = YoloTransferLearning(
-        args.email, args.password, args.api_endpoint, args.project_id,
-        transfer=args.no_transfer, weights=args.weights, override_cfg=args.override, cfg=args.cfg
+        email=args.email, password=args.password, api_endpoint=args.api_endpoint, project_id=args.project_id,
+        transfer=args.no_transfer, weights=args.weights, override_cfg=args.override, cfg=args.cfg, job_id=args.job_id
     )
 
     logging.info('Checking project configuration...')
     tools = transfer_learning.playground.get_tools(project_id=transfer_learning.project_id)
-    assert len(tools) == 1
-    json_settings = json.loads(tools[0]['jsonSettings'])
-    assert 'annotation_types' in json_settings, 'Please configure project with Yolo classes as explained in README.md'
-    categories = json_settings['annotation_types']
+    try:
+        categories = tools[0]['jsonSettings']['jobs'][transfer_learning.job_id]['content']['categories']
+    except KeyError:
+        raise Exception('Please configure project with Yolo classes as explained in README.md')
     for index, key in enumerate(categories):
         assert int(key) == index, 'Please follow Yolo format for labels'
+        assert 'name' in categories[key]
     number_of_classes = len(categories)
     logging.info('OK\n')
 
     logging.info('Writing configuration...')
     with open(COCO_NAMES_FILE, 'wb') as f:
         for category in categories.values():
-            f.write(f'{category}\n'.lower().encode())
+            category_name = category['name']
+            f.write(f'{category_name}\n'.lower().encode())
     with open(COCO_DATA_FILE_TEMPLATE, 'rb') as f_template:
         with open(COCO_DATA_FILE, 'wb') as f:
             template = f_template.read().decode('utf-8') \
