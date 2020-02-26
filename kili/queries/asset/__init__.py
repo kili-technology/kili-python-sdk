@@ -48,7 +48,7 @@ def get_assets(client, project_id: str, skip: int = 0, first: int = None,
                 first) if first is not None else number_of_assets_with_search
     formatted_first = first if first else 100
     if total == 0:
-        return
+        return []
     with tqdm(total=total, disable=disable_tqdm) as pbar:
         paged_assets = []
         while True:
