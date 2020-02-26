@@ -255,7 +255,6 @@ class YoloTransferLearning(TransferLearning):
                     external_id_array.append(filename_to_ids[image_name])
                     json_response_array.append({self.job_id: {'annotations': annotations}})
         logging.info('Create predictions in Kili Technology...')
-        print(external_id_array, json_response_array)
         model_name = datetime.now().strftime('model-yolo-%Y%m%d-%H%M%S')
         self.playground.create_predictions(project_id=self.project_id,
                                            external_id_array=external_id_array,
