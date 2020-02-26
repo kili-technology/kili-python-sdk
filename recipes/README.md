@@ -193,14 +193,30 @@ docker run -it --network="host" kili-playground online-learning
 
 ```
 {
-  "tools":[
-    "rectangle"
-  ],
-  "annotation_types": {
-    "0": "face"
+  "filetype": "IMAGE",
+  "jobs": {
+    "OBJECT_DETECTION": {
+      "mlTask": "OBJECT_DETECTION",
+      "content": {
+        "input": "radio",
+        "categories": {
+          "0": {
+            "name": "face"
+          },
+          ...
+        }
+      },
+      "required": true,
+      "tools": [
+        "polygon"
+      ],
+      "instruction": "Detect following objects"
+    }
   }
 }
 ```
+
+You can use Kili Playground's recipe `update_interface_settings` to programmatically update interface.
 
 3. Build the docker in the folder:
 
@@ -213,11 +229,25 @@ docker build -t kili-playground-yolo .
    environment variables:
 
 ```bash
-docker run -it -e "EMAIL=mypassword@kili-technology.com" \
+docker run -it -e "EMAIL=myemail@kili-technology.com" \
   -e "PASSWORD=my_password" \
   -e "PROJECT_ID=1234567890" \
+  -e "JOB_ID=job_12345" \
   -e "API_ENDPOINT=https://cloud.kili-technology.com/api/label/graphql" \
   --network="host" kili-playground-yolo
+```
+
+You can also launch the script manually:
+
+```
+git clone git@github.com:ultralytics/yolov3.git /path/to/yolov3
+python main.py --weights /path/to/weights/yolov3.pt \
+  --email=myemail@kili-technology.com \
+  --password=mypassword \
+  --project_id=1234567890 \
+  --job_id=job_12345 \
+  --api_endpoint=https://cloud.kili-technology.com/api/label/graphql \
+  --yolo_path=/path/to/yolov3
 ```
 
 5. The script will continuously create predictions on non-labelled assets.
