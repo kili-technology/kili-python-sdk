@@ -19,7 +19,7 @@ def get_asset(client, asset_id: str):
     return format_result('data', result)
 
 
-def get_assets(client, project_id: str, skip: int = 0, first: int = 100,
+def get_assets(client, project_id: str, skip: int = 0, first: int = None,
                external_id_contains: List[str] = None,
                status_in: List[str] = None,
                author_in: List[str] = None,
@@ -46,6 +46,7 @@ def get_assets(client, project_id: str, skip: int = 0, first: int = 100,
     number_of_assets_with_search = count_assets(**count_args)
     total = min(number_of_assets_with_search,
                 first) if first is not None else number_of_assets_with_search
+    formatted_first = first if first else 100
     if total == 0:
         return
     with tqdm(total=total, disable=disable_tqdm) as pbar:
@@ -54,7 +55,7 @@ def get_assets(client, project_id: str, skip: int = 0, first: int = 100,
             variables = {
                 'projectID': project_id,
                 'skip': skip,
-                'first': first,
+                'first': formatted_first,
                 'externalIdIn': external_id_contains,
                 'statusIn': status_in,
                 'authorIn': author_in,
@@ -84,7 +85,7 @@ def get_assets(client, project_id: str, skip: int = 0, first: int = 100,
             if first is not None:
                 assets = assets[:max(0, first - len(paged_assets))]
             paged_assets += assets
-            skip += first
+            skip += formatted_first
             pbar.update(len(assets))
 
 
