@@ -17,14 +17,6 @@ mutation(
 }}
 '''
 
-GQL_DELETE_PROJECT = f'''
-mutation($projectID: ID!) {{
-  data: deleteProject(projectID: $projectID) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
-'''
-
 GQL_APPEND_TO_ROLES = f'''
 mutation($projectID: ID!, $userEmail: String!, $role: ProjectRole!) {{
   data: appendToRoles(
