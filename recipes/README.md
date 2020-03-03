@@ -90,11 +90,7 @@ python import_predictions.py
 
 ## How to export and parse labels
 
-1. Execute:
-
-```bash
-python export_labels.py
-```
+Check out [our recipe on how to export labels](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb)
 
 ## How to do Named-Entity Recognition with Google
 

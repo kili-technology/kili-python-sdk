@@ -51,6 +51,6 @@ Here are [some recipes](/recipes/). Among them:
 - How to create a project
 - How to pre-annotate assets
 - How to massively add users
-- How to export and parse labels
+- [How to export labels](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb)
 
 If you want more details on what you can do with the API, follow the [technical documentation](https://kili-technology.github.io/kili-docs/docs/graphql-api/api-graphql).
