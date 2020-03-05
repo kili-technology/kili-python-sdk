@@ -1,8 +1,8 @@
 from .fragments import PROJECT_FRAGMENT
 
 GQL_GET_PROJECTS = f'''
-query($userID: ID!) {{
-  data: getProjects(userID: $userID) {{
+query($userID: ID!, $searchQuery: String, $skip: Int!, $first: Int!) {{
+  data: getProjects(userID: $userID, searchQuery: $searchQuery, skip: $skip, first: $first) {{
     {PROJECT_FRAGMENT}
   }}
 }}
