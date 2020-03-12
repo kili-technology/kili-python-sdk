@@ -80,13 +80,7 @@ python delete_all_assets.py
 
 ## How to push pre-annotation to existing assets
 
-1. Edit `new_predictions.yml`.
-
-2. Execute:
-
-```bash
-python import_predictions.py
-```
+Check out [our recipe on how to import predictions](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
 
 ## How to export and parse labels
 
