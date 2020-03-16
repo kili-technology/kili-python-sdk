@@ -4,4 +4,4 @@
 
 __version__ = "1.4.1"
 
-from kili import mutations, queries
+from kili import mutations, queries, subscriptions
