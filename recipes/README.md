@@ -26,49 +26,9 @@ python add_users.py
 
 **Note:** You need to have ADMIN right at Organization level to create users.
 
-## How to import assets with metadata
+## How to import assets
 
-1. Edit `new_assets.yml`. Metadata may contain some information about assets. Used for interface category `IMAGE_WITH_SEARCH`.
-
-2. Execute:
-
-```bash
-python import_assets.py
-```
-
-To massively import data:
-
-```bash
-python import_assets_by_chunks.py
-```
-
-## How to update assets metadata
-
-1. Edit `new_assets.yml`. Metadata may contain some information about assets. Used for interface category `IMAGE_WITH_SEARCH`.
-
-2. Execute:
-
-```bash
-python update_assets_metadata.py
-```
-
-## How to import assets with S3
-
-1. Edit `new_assets_with_s3.yml`.
-
-2. Execute:
-
-```bash
-python import_assets_with_s3.py
-```
-
-## How to import images
-
-1. Execute:
-
-```bash
-python import_image.py
-```
+Check out [our recipe on how to import assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
 
 ## How to delete all assets
 
