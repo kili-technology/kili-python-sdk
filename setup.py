@@ -26,7 +26,8 @@ setup(
     install_requires=["pandas",
                       "requests",
                       "six",
-                      "tqdm"],
+                      "tqdm",
+                      "websocket"],
 
     # Taking into account MANIFEST.in
     include_package_data=True,
