@@ -11,6 +11,7 @@ import kili.queries.lock
 import kili.queries.project
 import kili.queries.tool
 import kili.queries.user
+import kili.subscriptions.label
 
 
 class Playground(object):
@@ -191,6 +192,11 @@ class Playground(object):
 
     def get_user(self, **kwargs):
         return kili.queries.user.get_user(self.auth.client, **kwargs)
+
+    # Subscriptions Label
+
+    def label_created_or_updated(self, **kwargs):
+        return kili.subscriptions.label.label_created_or_updated(self.auth.client, **kwargs)
 
 
 if __name__ == '__main__':
