@@ -78,7 +78,7 @@ def get_assets(client, project_id: str, skip: int = 0, first: int = None,
             }
             result = client.execute(GQL_GET_ASSETS_WITH_SEARCH, variables)
             assets = format_result('data', result)
-            if assets is None or (first is not None and len(paged_assets) == first):
+            if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
                 if format == 'pandas':
                     return pd.DataFrame(paged_assets)
                 return paged_assets
