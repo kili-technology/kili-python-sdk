@@ -78,9 +78,6 @@ class Playground(object):
 
     # Mutations Project
 
-    def create_project(self, **kwargs):
-        return kili.mutations.project.create_project(self.auth.client, **kwargs)
-
     def append_to_roles(self, **kwargs):
         return kili.mutations.project.append_to_roles(self.auth.client, **kwargs)
 

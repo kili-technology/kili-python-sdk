@@ -17,18 +17,6 @@ from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT,
                       GQL_UPDATE_ROLE)
 
 
-def create_project(client, title: str, description: str, use_honeypot: bool,
-                   interface_json_settings: dict):
-    variables = {
-        'title': title,
-        'description': description,
-        'useHoneyPot': use_honeypot,
-        'interfaceJsonSettings': dumps(interface_json_settings)
-    }
-    result = client.execute(GQL_CREATE_PROJECT, variables)
-    return format_result('data', result)
-
-
 def append_to_roles(client, project_id: str, user_email: str, role: str):
     variables = {
         'projectID': project_id,

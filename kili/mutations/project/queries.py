@@ -1,21 +1,5 @@
 from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID
 
-GQL_CREATE_PROJECT = f'''
-mutation(
-    $title: String!
-    $description: String!
-    $useHoneyPot: Boolean!
-    $interfaceJsonSettings: String!
-) {{
-  data: createProject(
-  title: $title
-  description: $description
-  useHoneyPot: $useHoneyPot
-  interfaceJsonSettings: $interfaceJsonSettings) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
-'''
 
 GQL_APPEND_TO_ROLES = f'''
 mutation($projectID: ID!, $userEmail: String!, $role: ProjectRole!) {{
