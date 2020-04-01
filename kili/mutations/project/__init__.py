@@ -11,7 +11,7 @@ from ...queries.project import get_project
 from ..asset import update_properties_in_asset
 from ..lock import delete_locks
 from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT,
-                      GQL_CREATE_PROJECT, GQL_DELETE_FROM_ROLES,
+                      GQL_DELETE_FROM_ROLES,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
                       GQL_UPDATE_PROJECT, GQL_UPDATE_PROPERTIES_IN_PROJECT,
                       GQL_UPDATE_ROLE)
