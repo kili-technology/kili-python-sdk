@@ -51,5 +51,6 @@ Here are [some recipes](/recipes/). Among them:
 - [How to import assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
 - [How to export labels](https://github.com/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb))
 - [How to import predictions](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
+- [How to use AutoML for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb) (run in [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
 
 If you want more details on what you can do with the API, follow the [technical documentation](https://kili-technology.github.io/kili-docs/docs/graphql-api/api-graphql).
