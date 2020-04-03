@@ -40,14 +40,16 @@ class TransferLearning:
                 asset['labels'] = [default_labels[-1]]
                 assets_to_train.append(asset)
             elif len(review_labels) == 0 and len(default_labels) > 0:
-                print(f'Asset {asset["id"]} has several labels: it should be reviewed')
+                print(
+                    f'Asset {asset["id"]} has several labels: it should be reviewed')
             else:
                 continue
 
         return assets_to_train
 
     def train(self, assets_to_train):
-        print(f'Launch training for {len(assets_to_train)} assets: {[asset["id"] for asset in assets_to_train]}')
+        print(
+            f'Launch training for {len(assets_to_train)} assets: {[asset["id"] for asset in assets_to_train]}')
         return
 
     def launch_train(self):
@@ -62,7 +64,8 @@ class TransferLearning:
         if len(filtered_assets_to_train) >= self.minimum_number_of_assets_to_launch_training:
             self.train(filtered_assets_to_train)
             self.current_training_number += 1
-            self.assets_seen_in_training.append([asset['id'] for asset in filtered_assets_to_train])
+            self.assets_seen_in_training.append(
+                [asset['id'] for asset in filtered_assets_to_train])
 
     def get_assets_to_predict(self):
         assets = self.playground.get_assets(project_id=self.project_id)
@@ -76,12 +79,13 @@ class TransferLearning:
         return assets_to_predict
 
     def predict(self, assets_to_predict):
-        print(f'Launch inference for {len(assets_to_predict)} assets: {[asset["id"] for asset in assets_to_predict]}')
+        print(
+            f'Launch inference for {len(assets_to_predict)} assets: {[asset["id"] for asset in assets_to_predict]}')
         return
 
     def launch_predict(self):
         time.sleep(SECONDS_TO_WAIT)
-        if self.current_training_number == 0 or self.current_training_number == self.last_training_number:
+        if self.current_training_number == self.last_training_number:
             print('Inference will not be launched for now...')
             return
         assets_to_predict = self.get_assets_to_predict()
