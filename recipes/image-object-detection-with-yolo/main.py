@@ -1,4 +1,5 @@
 import argparse
+import base64
 import logging
 import os
 import random
@@ -13,7 +14,8 @@ from tqdm import tqdm
 
 from kili.transfer_learning import TransferLearning
 
-logging.basicConfig(format='%(levelname)s:%(asctime)s %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format='%(levelname)s:%(asctime)s %(message)s', level=logging.INFO)
 
 random.seed(1337)
 
@@ -61,10 +63,10 @@ def read_arguments():
                         help="cfg file you would like to use")
     args = parser.parse_args()
     if any([
-        not args.email,
-        not args.password,
-        not args.project_id,
-        not args.yolo_path]):
+            not args.email,
+            not args.password,
+            not args.project_id,
+            not args.yolo_path]):
         logging.error("Some required arguments are empty")
         exit(parser.print_usage())
     else:
@@ -73,19 +75,21 @@ def read_arguments():
 
 def convert_from_yolo_to_kili_format(x1, y1, x2, y2, category, score, total_width, total_height):
     time_hash = datetime.now().strftime('%Y%m%d%H%M%S')
-    annotations = {'score': float(score),
-                   'mid': f'{time_hash}-{random.getrandbits(52)}',
-                   'categories': [{'name': str(category),
-                                   'confidence': int(float(score) * 100)}],
-                   'boundingPoly': [
-                       {'normalizedVertices': [
-                           {'x': x1 / total_width, 'y': y1 / total_height},
-                           {'x': x2 / total_width, 'y': y1 / total_height},
-                           {'x': x1 / total_width, 'y': y2 / total_height},
-                           {'x': x2 / total_width, 'y': y2 / total_height},
-                       ]}
-                   ],
-                   'type': 'RECTANGLE'}
+    annotations = {
+        'score': float(score),
+        'mid': f'{time_hash}-{random.getrandbits(52)}',
+        'categories': [{'name': str(category),
+                        'confidence': int(float(score) * 100)}],
+        'boundingPoly': [
+            {'normalizedVertices': [
+                {'x': x1 / total_width, 'y': y1 / total_height},
+                {'x': x2 / total_width, 'y': y1 / total_height},
+                {'x': x1 / total_width, 'y': y2 / total_height},
+                {'x': x2 / total_width, 'y': y2 / total_height},
+            ]}
+        ],
+        'type': 'rectangle'
+    }
 
     return annotations
 
@@ -121,7 +125,8 @@ def convert_from_kili_to_yolo_format(job_id, label):
 
 class YoloTransferLearning(TransferLearning):
     def __init__(self, email, password, api_endpoint, project_id, transfer, weights, override_cfg, cfg, job_id):
-        TransferLearning.__init__(self, email, password, api_endpoint, project_id)
+        TransferLearning.__init__(
+            self, email, password, api_endpoint, project_id)
         self.transfer = transfer
         self.weights = weights
         self.override_cfg = override_cfg
@@ -149,7 +154,8 @@ class YoloTransferLearning(TransferLearning):
             image_destination_folder = images_valid_folder if is_valid else images_folder
             labels_destination_folder = labels_valid_folder if is_valid else labels_folder
             filename = str(random.getrandbits(128))
-            full_image_name = os.path.join(image_destination_folder, f'{filename}.jpg')
+            full_image_name = os.path.join(
+                image_destination_folder, f'{filename}.jpg')
             if is_valid:
                 valid_full_image_names.append(full_image_name)
             else:
@@ -159,14 +165,16 @@ class YoloTransferLearning(TransferLearning):
                 content = asset['content']
                 response = requests.get(content, stream=True)
                 if not response.ok:
-                    logging.warn('Error while downloading image %s' % asset['id'])
+                    logging.warn('Error while downloading image %s' %
+                                 asset['id'])
                     continue
                 for block in response.iter_content(1024):
                     if not block:
                         break
                     f.write(block)
 
-            annotations = convert_from_kili_to_yolo_format(self.job_id, asset['labels'][0])
+            annotations = convert_from_kili_to_yolo_format(
+                self.job_id, asset['labels'][0])
             with open(os.path.join(labels_destination_folder, f'{filename}.txt'), 'wb') as f:
                 for category, x, y, w, h in annotations:
                     f.write(f'{category} {x} {y} {w} {h}\n'.encode())
@@ -199,7 +207,8 @@ class YoloTransferLearning(TransferLearning):
             train_parameters.extend(['--weights', self.weights])
             if self.transfer:
                 train_parameters.append('--transfer')
-        logging.info(f'Running training with parameters: {" ".join(train_parameters)}')
+        logging.info(
+            f'Running training with parameters: {" ".join(train_parameters)}')
         subprocess.run(train_parameters)
 
     def predict(self, assets_to_predict):
@@ -214,6 +223,12 @@ class YoloTransferLearning(TransferLearning):
             filename = str(random.getrandbits(128))
             content = asset['content']
             image_name = f'{filename}.jpg'
+            filename_to_ids[image_name] = asset['externalId']
+            if not content.startswith('http://') and not content.startswith('https://'):
+                with open(os.path.join(input.name, image_name), 'wb') as f:
+                    content = content.replace('data:image/jpeg;base64,', '')
+                    f.write(base64.b64decode(content))
+                continue
             with open(os.path.join(input.name, image_name), 'wb') as f:
                 response = requests.get(content, stream=True)
                 if not response.ok:
@@ -222,17 +237,18 @@ class YoloTransferLearning(TransferLearning):
                     if not block:
                         break
                     f.write(block)
-            filename_to_ids[image_name] = asset['externalId']
 
         # Predict with YOLO v3 framework
-        weights = BEST_WEIGHTS_FILE if os.path.isfile(BEST_WEIGHTS_FILE) else self.weights
+        weights = BEST_WEIGHTS_FILE if os.path.isfile(
+            BEST_WEIGHTS_FILE) else self.weights
         predict_parameters = ['python3', 'detect.py',
                               '--save-txt',
                               '--source', f'{input.name}',
                               '--output', f'{output.name}',
                               '--cfg', f'{CONFIG_FILE}',
                               '--weights', weights]
-        logging.info(f'Running inference with parameters: {" ".join(predict_parameters)}')
+        logging.info(
+            f'Running inference with parameters: {" ".join(predict_parameters)}')
         subprocess.run(predict_parameters)
 
         # Insert predictions to Kili Technology
@@ -248,17 +264,21 @@ class YoloTransferLearning(TransferLearning):
                     annotations = []
                     for line in lines:
                         annotation = line.decode('utf-8')
-                        [start, end, height, width, category, score, *_] = annotation.split(' ')
+                        [start, end, height, width, category,
+                            score, *_] = annotation.split(' ')
                         annotations.append(convert_from_yolo_to_kili_format(int(start), int(end), int(height),
-                                                                            int(width), category, score, total_width,
+                                                                            int(
+                                                                                width), category, score, total_width,
                                                                             total_height))
                     external_id_array.append(filename_to_ids[image_name])
-                    json_response_array.append({self.job_id: {'annotations': annotations}})
+                    json_response_array.append(
+                        {self.job_id: {'annotations': annotations}})
         logging.info('Create predictions in Kili Technology...')
         model_name = datetime.now().strftime('model-yolo-%Y%m%d-%H%M%S')
         self.playground.create_predictions(project_id=self.project_id,
                                            external_id_array=external_id_array,
-                                           model_name_array=[model_name] * len(external_id_array),
+                                           model_name_array=[
+                                               model_name] * len(external_id_array),
                                            json_response_array=json_response_array)
 
 
@@ -272,11 +292,13 @@ def main():
     )
 
     logging.info('Checking project configuration...')
-    tools = transfer_learning.playground.get_tools(project_id=transfer_learning.project_id)
+    tools = transfer_learning.playground.get_tools(
+        project_id=transfer_learning.project_id)
     try:
         categories = tools[0]['jsonSettings']['jobs'][transfer_learning.job_id]['content']['categories']
     except KeyError:
-        raise Exception('Please configure project with Yolo classes as explained in README.md')
+        raise Exception(
+            'Please configure project with Yolo classes as explained in README.md')
     for index, key in enumerate(categories):
         assert int(key) == index, 'Please follow Yolo format for labels'
         assert 'name' in categories[key]
