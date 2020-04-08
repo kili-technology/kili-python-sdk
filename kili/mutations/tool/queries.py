@@ -19,11 +19,3 @@ mutation($projectID: ID!, $jsonSettings: String!) {{
   }}
 }}
 '''
-
-GQL_DELETE_FROM_TOOLS = f'''
-mutation($toolID: ID!) {{
-  data: deleteFromTools(toolID: $toolID) {{
-    {TOOL_FRAGMENT}
-  }}
-}}
-'''

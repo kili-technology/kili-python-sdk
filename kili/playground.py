@@ -1,13 +1,11 @@
 import kili.mutations.asset
 import kili.mutations.label
-import kili.mutations.lock
 import kili.mutations.organization
 import kili.mutations.project
 import kili.mutations.tool
 import kili.mutations.user
 import kili.queries.asset
 import kili.queries.label
-import kili.queries.lock
 import kili.queries.project
 import kili.queries.tool
 import kili.queries.user
@@ -60,11 +58,6 @@ class Playground(object):
     def create_honeypot(self, **kwargs):
         return kili.mutations.label.create_honeypot(self.auth.client, **kwargs)
 
-    # Mutations Lock
-
-    def delete_locks(self, **kwargs):
-        return kili.mutations.lock.delete_locks(self.auth.client, **kwargs)
-
     # Mutations Organization
 
     def create_organization(self, **kwargs):
@@ -109,9 +102,6 @@ class Playground(object):
 
     def append_to_tools(self, **kwargs):
         return kili.mutations.tool.append_to_tools(self.auth.client, **kwargs)
-
-    def delete_from_tools(self, **kwargs):
-        return kili.mutations.tool.delete_from_tools(self.auth.client, **kwargs)
 
     # Mutations User
 
@@ -166,11 +156,6 @@ class Playground(object):
 
     def export_labels_as_df(self, **kwargs):
         return kili.queries.label.export_labels_as_df(self.auth.client, **kwargs)
-
-    # Queries Lock
-
-    def get_locks(self, **kwargs):
-        return kili.queries.lock.get_locks(self.auth.client, **kwargs)
 
     # Queries Project
 
