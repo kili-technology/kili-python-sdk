@@ -1,3 +1,0 @@
-LOCK_FRAGMENT = '''
-id
-'''
