@@ -1,4 +1,11 @@
-from ..lock.fragments import LOCK_FRAGMENT
+LOCK_FRAGMENT = '''
+id
+author {
+  email
+}
+createdAt
+lockType
+'''
 
 ASSET_FRAGMENT_AUTHOR = '''
 id
