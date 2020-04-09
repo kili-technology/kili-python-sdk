@@ -292,10 +292,10 @@ def main():
     )
 
     logging.info('Checking project configuration...')
-    tools = transfer_learning.playground.get_tools(
+    project = transfer_learning.playground.get_project(
         project_id=transfer_learning.project_id)
     try:
-        categories = tools[0]['jsonSettings']['jobs'][transfer_learning.job_id]['content']['categories']
+        categories = project['jsonInterface']['jobs'][transfer_learning.job_id]['content']['categories']
     except KeyError:
         raise Exception(
             'Please configure project with Yolo classes as explained in README.md')

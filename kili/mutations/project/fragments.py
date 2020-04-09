@@ -1,5 +1,6 @@
 PROJECT_FRAGMENT = '''
 id
+jsonInterface
 title
 roles {
     user {

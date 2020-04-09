@@ -41,7 +41,7 @@ def format_json(result):
         return [format_json(elem) for elem in result]
     if isinstance(result, dict):
         for key, value in result.items():
-            if key in ['jsonMetadata', 'jsonResponse', 'jsonSettings']:
+            if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse']:
                 if value == '' or value is None:
                     result[key] = dict()
                 else:

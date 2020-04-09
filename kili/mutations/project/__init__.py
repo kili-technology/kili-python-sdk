@@ -110,16 +110,18 @@ def delete_from_roles(client, role_id: str):
 
 
 def update_properties_in_project_user(client, project_user_id: str,
-                                      total_duration: int = None,
-                                      number_of_labeled_assets: int = None,
                                       consensus_mark: float = None,
-                                      honeypot_mark: float = None):
+                                      honeypot_mark: float = None,
+                                      json_interface: dict = None,
+                                      number_of_labeled_assets: int = None,
+                                      total_duration: int = None):
     variables = {
+        'consensusMark': consensus_mark,
+        'honeypotMark': honeypot_mark,
+        'jsonInterface': dumps(json_interface),
+        'numberOfLabeledAssets': number_of_labeled_assets,
         'projectUserID': project_user_id,
         'totalDuration': total_duration,
-        'numberOfLabeledAssets': number_of_labeled_assets,
-        'consensusMark': consensus_mark,
-        'honeypotMark': honeypot_mark
     }
     result = client.execute(
         GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)

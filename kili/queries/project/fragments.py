@@ -9,6 +9,7 @@ interfaceCategory
 inputType
 consensusMark
 honeypotMark
+jsonInterface
 numberOfRemainingAssets
 numberOfAssets
 numberOfAssetsWithSkippedLabels
