@@ -1,4 +1,5 @@
 from json import dumps
+import warnings
 
 from ...helpers import format_result
 from .queries import (GQL_APPEND_TO_TOOLS,
@@ -6,19 +7,24 @@ from .queries import (GQL_APPEND_TO_TOOLS,
 
 
 def update_tool(client, tool_id: str, project_id: str, json_settings: dict):
-    variables = {
-        'toolID': tool_id,
-        'projectID': project_id,
-        'jsonSettings': dumps(json_settings)
-    }
-    result = client.execute(GQL_UPDATE_TOOL, variables)
-    return format_result('data', result)
+    message = """This function is deprecated. Tools used to describe an interface. They are now called jsonInterface.
+    To update jsonInterface, use:
+        playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
+    """
+    warnings.warn(message, DeprecationWarning)
 
 
 def append_to_tools(client, project_id: str,  json_settings: dict):
-    variables = {
-        'projectID': project_id,
-        'jsonSettings': dumps(json_settings)
-    }
-    result = client.execute(GQL_APPEND_TO_TOOLS, variables)
-    return format_result('data', result)
+    message = """This function is deprecated. Tools used to describe an interface. They are now called jsonInterface.
+    To update jsonInterface, use:
+        playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
+    """
+    warnings.warn(message, DeprecationWarning)
+
+
+def delete_from_tools(client, tool_id: str):
+    message = """This function is deprecated. Tools used to describe an interface. They are now called jsonInterface.
+    To update jsonInterface, use:
+        playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
+    """
+    warnings.warn(message, DeprecationWarning)
