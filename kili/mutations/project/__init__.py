@@ -42,21 +42,21 @@ def update_properties_in_project(client, project_id: str,
                                  number_of_reviewed_assets: int = None,
                                  title: str = None):
     variables = {
-        'projectID': project_id,
-        'title': title,
-        'description': description,
-        'interfaceCategory': interface_category,
-        'jsonInterface': dumps(json_interface),
-        'minConsensusSize': min_consensus_size,
-        'consensusTotCoverage': consensus_tot_coverage,
-        'numberOfAssets': number_of_assets,
-        'numberOfRemainingAssets': number_of_remaining_assets,
-        'numberOfAssetsWithSkippedLabels': number_of_assets_with_empty_labels,
-        'numberOfReviewedAssets': number_of_reviewed_assets,
-        'numberOfLatestLabels': number_of_latest_labels,
         'consensusMark': consensus_mark,
+        'consensusTotCoverage': consensus_tot_coverage,
+        'description': description,
         'honeypotMark': honeypot_mark,
-        'instructions': instructions
+        'instructions': instructions,
+        'interfaceCategory': interface_category,
+        'jsonInterface': dumps(json_interface) if json_interface is not None else None,
+        'minConsensusSize': min_consensus_size,
+        'numberOfAssets': number_of_assets,
+        'numberOfAssetsWithSkippedLabels': number_of_assets_with_empty_labels,
+        'numberOfLatestLabels': number_of_latest_labels,
+        'numberOfRemainingAssets': number_of_remaining_assets,
+        'numberOfReviewedAssets': number_of_reviewed_assets,
+        'projectID': project_id,
+        'title': title
     }
     result = client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
     return format_result('data', result)
