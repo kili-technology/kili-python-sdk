@@ -19,6 +19,7 @@ mutation(
     $description: String
     $honeypotMark: Float
     $instructions: String
+    $interfaceCategory: InterfaceCategory
     $jsonInterface: String
     $minConsensusSize: Int
     $numberOfAssets: Int
@@ -37,6 +38,7 @@ mutation(
       description: $description
       honeypotMark: $honeypotMark
       instructions: $instructions
+      interfaceCategory: $interfaceCategory
       jsonInterface: $jsonInterface
       minConsensusSize: $minConsensusSize
       numberOfAssets: $numberOfAssets
