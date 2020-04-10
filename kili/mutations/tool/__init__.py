@@ -1,9 +1,4 @@
-from json import dumps
 import warnings
-
-from ...helpers import format_result
-from .queries import (GQL_APPEND_TO_TOOLS,
-                      GQL_UPDATE_TOOL)
 
 
 def update_tool(client, tool_id: str, project_id: str, json_settings: dict):
