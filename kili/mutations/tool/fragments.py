@@ -1,3 +1,0 @@
-TOOL_FRAGMENT = '''
-id
-'''

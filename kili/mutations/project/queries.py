@@ -14,37 +14,39 @@ mutation($projectID: ID!, $userEmail: String!, $role: ProjectRole!) {{
 
 GQL_UPDATE_PROPERTIES_IN_PROJECT = f'''
 mutation(
-    $projectID: ID!
-    $title: String
-    $description: String
-    $minConsensusSize: Int
-    $consensusTotCoverage: Int
-    $numberOfAssets: Int
-    $numberOfRemainingAssets: Int
-    $numberOfAssetsWithSkippedLabels: Int
-    $numberOfReviewedAssets: Int
-    $numberOfLatestLabels: Int
     $consensusMark: Float
+    $consensusTotCoverage: Int
+    $description: String
     $honeypotMark: Float
     $instructions: String
-    $jsonSettings: String
+    $interfaceCategory: InterfaceCategory
+    $jsonInterface: String
+    $minConsensusSize: Int
+    $numberOfAssets: Int
+    $numberOfAssetsWithSkippedLabels: Int
+    $numberOfLatestLabels: Int
+    $numberOfRemainingAssets: Int
+    $numberOfReviewedAssets: Int
+    $projectID: ID!
+    $title: String
 ) {{
   data: updatePropertiesInProject(
     where: {{id: $projectID}},
     data: {{
-      title: $title
-      description: $description
-      minConsensusSize: $minConsensusSize
-      consensusTotCoverage: $consensusTotCoverage
-      numberOfAssets: $numberOfAssets
-      numberOfRemainingAssets: $numberOfRemainingAssets
-      numberOfAssetsWithSkippedLabels: $numberOfAssetsWithSkippedLabels
-      numberOfReviewedAssets: $numberOfReviewedAssets
-      numberOfLatestLabels: $numberOfLatestLabels
       consensusMark: $consensusMark
+      consensusTotCoverage: $consensusTotCoverage
+      description: $description
       honeypotMark: $honeypotMark
       instructions: $instructions
-      jsonSettings: $jsonSettings
+      interfaceCategory: $interfaceCategory
+      jsonInterface: $jsonInterface
+      minConsensusSize: $minConsensusSize
+      numberOfAssets: $numberOfAssets
+      numberOfAssetsWithSkippedLabels: $numberOfAssetsWithSkippedLabels
+      numberOfLatestLabels: $numberOfLatestLabels
+      numberOfRemainingAssets: $numberOfRemainingAssets
+      numberOfReviewedAssets: $numberOfReviewedAssets
+      title: $title
     }}
   ) {{
     {PROJECT_FRAGMENT_ID}

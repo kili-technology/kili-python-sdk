@@ -27,32 +27,36 @@ def append_to_roles(client, project_id: str, user_email: str, role: str):
 
 
 def update_properties_in_project(client, project_id: str,
-                                 title: str = None,
-                                 description: str = None,
-                                 min_consensus_size: int = None,
-                                 consensus_tot_coverage: int = None,
-                                 number_of_assets: int = None,
-                                 number_of_remaining_assets: int = None,
-                                 number_of_assets_with_empty_labels: int = None,
-                                 number_of_reviewed_assets: int = None,
-                                 number_of_latest_labels: int = None,
                                  consensus_mark: float = None,
+                                 consensus_tot_coverage: int = None,
+                                 description: str = None,
                                  honeypot_mark: float = None,
-                                 instructions: str = None):
+                                 instructions: str = None,
+                                 interface_category: str = 'IV2',
+                                 json_interface: dict = None,
+                                 min_consensus_size: int = None,
+                                 number_of_assets: int = None,
+                                 number_of_assets_with_empty_labels: int = None,
+                                 number_of_latest_labels: int = None,
+                                 number_of_remaining_assets: int = None,
+                                 number_of_reviewed_assets: int = None,
+                                 title: str = None):
     variables = {
-        'projectID': project_id,
-        'title': title,
-        'description': description,
-        'minConsensusSize': min_consensus_size,
-        'consensusTotCoverage': consensus_tot_coverage,
-        'numberOfAssets': number_of_assets,
-        'numberOfRemainingAssets': number_of_remaining_assets,
-        'numberOfAssetsWithSkippedLabels': number_of_assets_with_empty_labels,
-        'numberOfReviewedAssets': number_of_reviewed_assets,
-        'numberOfLatestLabels': number_of_latest_labels,
         'consensusMark': consensus_mark,
+        'consensusTotCoverage': consensus_tot_coverage,
+        'description': description,
         'honeypotMark': honeypot_mark,
-        'instructions': instructions
+        'instructions': instructions,
+        'interfaceCategory': interface_category,
+        'jsonInterface': dumps(json_interface) if json_interface is not None else None,
+        'minConsensusSize': min_consensus_size,
+        'numberOfAssets': number_of_assets,
+        'numberOfAssetsWithSkippedLabels': number_of_assets_with_empty_labels,
+        'numberOfLatestLabels': number_of_latest_labels,
+        'numberOfRemainingAssets': number_of_remaining_assets,
+        'numberOfReviewedAssets': number_of_reviewed_assets,
+        'projectID': project_id,
+        'title': title
     }
     result = client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
     return format_result('data', result)
@@ -110,16 +114,18 @@ def delete_from_roles(client, role_id: str):
 
 
 def update_properties_in_project_user(client, project_user_id: str,
-                                      total_duration: int = None,
-                                      number_of_labeled_assets: int = None,
                                       consensus_mark: float = None,
-                                      honeypot_mark: float = None):
+                                      honeypot_mark: float = None,
+                                      json_interface: dict = None,
+                                      number_of_labeled_assets: int = None,
+                                      total_duration: int = None):
     variables = {
+        'consensusMark': consensus_mark,
+        'honeypotMark': honeypot_mark,
+        'jsonInterface': dumps(json_interface),
+        'numberOfLabeledAssets': number_of_labeled_assets,
         'projectUserID': project_user_id,
         'totalDuration': total_duration,
-        'numberOfLabeledAssets': number_of_labeled_assets,
-        'consensusMark': consensus_mark,
-        'honeypotMark': honeypot_mark
     }
     result = client.execute(
         GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
