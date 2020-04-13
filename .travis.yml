@@ -1,0 +1,36 @@
+language: python
+services:
+  - docker
+env:
+  global:
+    - KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql
+    - secure: "MlHLbzWbDteQHkjvvB3QLDT1xtr16F1oFvPDPjTPFLYbs2YYUa9LY7FZMJCD2Il/hI2MhAVzerMPcUqUVN5Er/KXXDLn8NkkiDmLQMf33eoOLXty6eiiQFJTbkhXVzRtcwPD2CesvulTARbpud/LFuHMFobiBRI+4Moo9m1PO7V0C9XLBnCRV2I7sIg3lq9akkhyx1dF6zJXnW9HIibrntwgixANjR32QSDTCNLO7dqvHpqN5+316VNXJeiKeemDoEIVv4o97sGu4bGzMS4sWlV7guvNfppVSpszxH7BS//UkK0Kt38O3wQ3AW0rWl67jIqk2UpYDD/Bfdk1jkU2s2ZBq0ELAqXYgMeYVu0ug2jKOrHbE7DutPqnPOGMdi4zgpfmvJ3p22PGvnbwxoTITqDzuM1wUNKLMlL3mocn5Dqy1fzsN58A/7mjOnQEzls2YEdlVGrbw5Gs5IDjWaPwO9d0AJfYKzLVnSMR6z5SYKI9NcjBwRgFlc3pVkanBifAOmFgIJfFol0XXyd9lDGUrGnxOTAhlkSo3KzuUw80/YNTgZle/jBHbtR7Xa3yNZq7lQDCHHyQffvNV311rw4+9SGzucMLQzTWmyqCBNEugpTFzeLYYuUThdNjGBYw77Vnj1ofK357w8psfPDr5vQKswHgZnBCYzdBcPMwImZ1rzQ="
+    - secure: "VyvQFcM3z2v/m/uBxwl6f/KRveG9ClwLDGaJmEcyrXMheBG24BKBC7JXmSVHJLuZV+O7yr8IHd9ZOoCu0FAcvA4t+s5Hw2CkmMSEAeF/yXCbOTLl81H9Fj0QxjAAI1GGMipHINhbVKt8h3SCjrGu3R/sKhR6u3XCpy8PSAJ8D4FIwcQRBf+qb1GbUXvXblyRYP/dhtLfRwsjfRl0lFepQTLD+flO4pVhZ4HfuoTT2ryyqVIg2d4O5OxwciOymkCQwiaiOWVdErLCup8S6KMw9S++ha3By8kVUrQw8qFgZpHDSeG0rJYfM9vJlWJjxA3sp7zIR9XhbJ1q+w9aPOD4m3FGq7JiTJWR0qJlRZU6APGb2d9UTS39wjzzFc8RKsU5IFgVp3vs+2TuCi1LP16hIiTrzpwVD4xqYRbfQYNKImYAU94yyLqH01hMTJTihIcJKP/1eZP80AF+s4bK+lbFjprhAkKapuKsYF2+63q4OoqbetSyvdQ+YKncd7SRLbr2ILzuMEAYivJhUaSJM2dccqQQMrwQl0yp+hB+FVKWqKsqWA27rYZbVTw8o7TDqz/CVvPC1zHTd6uzPsJw4FnYiZWJCnz3bkBCDZtoIva8OtRpipKLSr0aXCQuWGCOXbnIMFlpHbq5C+DCDSZ/GDX/+s2cF2CM+iLLHRVtCiM49bk="
+jobs:
+  include:
+    - &test-recipes
+      stage: Test *.ipynb in recipes
+      script:
+        - docker pull ${DOCKER_IMAGE}
+        - |
+          docker run \
+            --env KILI_API_ENDPOINT=${KILI_API_ENDPOINT} \
+            --env KILI_USER_EMAIL=${KILI_USER_EMAIL} \
+            --env KILI_USER_PASSWORD=${KILI_USER_PASSWORD} \
+            ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
+              apt-get install -y gcc && \
+              git clone --branch ${TRAVIS_BRANCH} https://github.com/marcenacp/kili-playground.git && \
+              pip install ./kili-playground && \
+              jupyter nbconvert \
+                --to notebook \
+                --ExecutePreprocessor.kernel_name=python3 \
+                --ExecutePreprocessor.timeout=500 \
+                --execute /root/kili-playground/${NOTEBOOK_PATH}"
+      env:
+        - DOCKER_IMAGE=continuumio/anaconda3:2020.02
+        - NOTEBOOK_PATH=recipes/image-object-detection-with-yolo/main.ipynb
+    # Declare other tests as follow:
+    # - <<: *test-recipes
+    #   env:
+    #     - DOCKER_IMAGE=docker/image
+    #     - NOTEBOOK_PATH=recipes/path/to.ipynb
