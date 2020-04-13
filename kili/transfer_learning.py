@@ -14,15 +14,17 @@ def get_labels_of_types(asset, label_types):
 
 
 class TransferLearning:
-    def __init__(self, email, password, api_endpoint, project_id, minimum_number_of_assets_to_launch_training=100):
+    def __init__(self, email, password, api_endpoint, project_id, number_of_inferences, minimum_number_of_assets_to_launch_training=100):
         kauth = KiliAuth(email, password, api_endpoint=api_endpoint)
 
         self.playground = Playground(kauth)
         self.project_id = project_id
+        self.current_inference_number = 0
         self.current_training_number = 0
         self.last_training_number = -1
         self.assets_seen_in_training = []
         self.minimum_number_of_assets_to_launch_training = minimum_number_of_assets_to_launch_training
+        self.number_of_inferences = number_of_inferences
 
     def _current_training_number(self):
         return self.current_training_number
@@ -93,6 +95,7 @@ class TransferLearning:
             current_training_number = self.current_training_number
             self.predict(assets_to_predict)
             self.last_training_number = current_training_number
+            self.current_inference_number += 1
 
     def launch_tensorboard(self):
         print('Starting Tensorboard...')
@@ -101,6 +104,6 @@ class TransferLearning:
 
     def launch(self):
         self.launch_tensorboard()
-        while True:
+        while self.current_inference_number < self.number_of_inferences:
             self.launch_train()
             self.launch_predict()
