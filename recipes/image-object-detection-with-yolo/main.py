@@ -61,6 +61,8 @@ def read_arguments():
                         help="should we override the cfg file with your custom classes ?")
     parser.add_argument('-c', "--cfg", type=str,
                         help="cfg file you would like to use")
+    parser.add_argument('-g', "--number_of_inferences", type=int,
+                        help="maximal number of inferences")
     args = parser.parse_args()
     if any([
             not args.email,
@@ -124,9 +126,9 @@ def convert_from_kili_to_yolo_format(job_id, label):
 
 
 class YoloTransferLearning(TransferLearning):
-    def __init__(self, email, password, api_endpoint, project_id, transfer, weights, override_cfg, cfg, job_id):
+    def __init__(self, email, password, api_endpoint, project_id, transfer, weights, override_cfg, cfg, job_id, number_of_inferences):
         TransferLearning.__init__(
-            self, email, password, api_endpoint, project_id)
+            self, email, password, api_endpoint, project_id, number_of_inferences)
         self.transfer = transfer
         self.weights = weights
         self.override_cfg = override_cfg
@@ -288,7 +290,8 @@ def main():
 
     transfer_learning = YoloTransferLearning(
         email=args.email, password=args.password, api_endpoint=args.api_endpoint, project_id=args.project_id,
-        transfer=args.no_transfer, weights=args.weights, override_cfg=args.override, cfg=args.cfg, job_id=args.job_id
+        transfer=args.no_transfer, weights=args.weights, override_cfg=args.override, cfg=args.cfg, job_id=args.job_id,
+        number_of_inferences=args.number_of_inferences
     )
 
     logging.info('Checking project configuration...')
