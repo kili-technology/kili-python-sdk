@@ -19,7 +19,7 @@ jobs:
             --env KILI_USER_PASSWORD=${KILI_USER_PASSWORD} \
             ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
               apt-get install -y gcc && \
-              git clone --branch ${TRAVIS_BRANCH} https://github.com/marcenacp/kili-playground.git && \
+              git clone --branch ${TRAVIS_BRANCH} https://github.com/kili-playground/kili-playground.git && \
               pip install ./kili-playground && \
               jupyter nbconvert \
                 --to notebook \
