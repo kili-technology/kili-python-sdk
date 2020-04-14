@@ -1,7 +1,7 @@
 # Image and Text Annotation Tool - Kili Playground
 
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
-[![Build Status](https://travis-ci.org/kili-playground/kili-playground.svg?branch=master)](https://travis-ci.org/marcenacp/kili-playground)
+[![Build Status](https://travis-ci.org/kili-playground/kili-playground.svg?branch=master)](https://travis-ci.org/kili-technology/kili-playground)
 
 ## What is Kili Technology?
 
