@@ -11,3 +11,5 @@ build
 *.pt
 */runs/
 *.pyc
+*.csv
+
