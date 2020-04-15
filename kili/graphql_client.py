@@ -43,6 +43,7 @@ class GraphQLClient:
                 return req.json()
             except Exception as e:
                 print('Request failed with error:\n')
+                print(req)
                 if req:
                     print(req.content)
                 print('')

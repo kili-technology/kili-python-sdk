@@ -1,8 +1,8 @@
 from .fragments import USER_FRAGMENT
 
-GQL_GET_USER = f'''
-query($email: String!) {{
-  data: getUser(email: $email) {{
+GQL_USERS = f'''
+query($where: UserWhere!) {{
+  data: users(where: $where) {{
     {USER_FRAGMENT}
   }}
 }}
