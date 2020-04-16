@@ -6,7 +6,7 @@ from ...queries.project import get_project
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_DELETE_ASSETS_BY_EXTERNAL_ID,
                       GQL_DELETE_MANY_FROM_DATASET,
-                      GQL_UPDATE_ASSET, GQL_UPDATE_PROPERTIES_IN_ASSET)
+                      GQL_UPDATE_PROPERTIES_IN_ASSET)
 
 
 def delete_assets_by_external_id(client, project_id: str, external_id: str):
@@ -40,26 +40,10 @@ def append_many_to_dataset(client, project_id: str, content_array: List[str], ex
     return format_result('data', result)
 
 
-def update_asset(client, asset_id: str, project_id: str, content: str, external_id: str,
-                 is_honeypot: bool, consensus_mark: float, honeypot_mark: float, status: str, json_metadata: dict):
-    formatted_json_metadata = dumps(json_metadata)
-    variables = {
-        'assetID': asset_id,
-        'projectID': project_id,
-        'content': content,
-        'externalID': external_id,
-        'isHoneypot': is_honeypot,
-        'consensusMark': consensus_mark,
-        'honeypotMark': honeypot_mark,
-        'status': status,
-        'jsonMetadata': formatted_json_metadata}
-    result = client.execute(GQL_UPDATE_ASSET, variables)
-    return format_result('data', result)
-
-
 def update_properties_in_asset(client, asset_id: str, external_id: str = None,
                                priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
-                               honeypot_mark: float = None, to_be_labeled_by: List[str] = None):
+                               honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
+                               status: str = None, is_used_for_consensus: bool = None, is_honeypot: bool = None):
     formatted_json_metadata = None
     if json_metadata is None:
         formatted_json_metadata = None
@@ -77,7 +61,11 @@ def update_properties_in_asset(client, asset_id: str, external_id: str = None,
         'jsonMetadata': formatted_json_metadata,
         'consensusMark': consensus_mark,
         'honeypotMark': honeypot_mark,
-        'toBeLabeledBy': to_be_labeled_by
+        'toBeLabeledBy': to_be_labeled_by,
+        'content': content,
+        'status': status,
+        'isUsedForConsensus': is_used_for_consensus,
+        'isHoneypot': is_honeypot,
     }
     result = client.execute(GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
     return format_result('data', result)

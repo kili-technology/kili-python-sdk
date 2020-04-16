@@ -20,7 +20,7 @@ mutation(
 }}
 '''
 
-GQL_UPDATE_ORGANIZATION = f'''
+GQL_UPDATE_PROPERTIES_IN_ORGANIZATION = f'''
 mutation(
     $organizationID: ID!
     $name: String!
@@ -29,22 +29,23 @@ mutation(
     $city: String!
     $country: String!
 ) {{
-  data: updateOrganization(
-    organizationID: $organizationID
-    name: $name
-    address: $address
-    zipCode: $zipCode
-    city: $city
-    country: $country
- ) {{
+  data: updatePropertiesInOrganization(
+    where: {{organizationID: $organizationID}}
+    data: {{
+      name: $name
+      address: $address
+      zipCode: $zipCode
+      city: $city
+      country: $country
+    }}
+  ) {{
     {ORGANIZATION_FRAGMENT}
   }}
 }}
 '''
 
 GQL_DELETE_ORGANIZATION = f'''
-mutation(
-    $organizationID: ID!
+mutation($organizationID: ID!
 ) {{
   data: deleteOrganization(organizationID: $organizationID) {{
     {ORGANIZATION_FRAGMENT}
