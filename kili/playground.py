@@ -74,8 +74,8 @@ class Playground(object):
     def update_project(self, **kwargs):
         return kili.mutations.project.update_project(self.auth.client, **kwargs)
 
-    def update_role(self, **kwargs):
-        return kili.mutations.project.update_role(self.auth.client, **kwargs)
+    def update_properties_in_role(self, **kwargs):
+        return kili.mutations.project.update_properties_in_role(self.auth.client, **kwargs)
 
     def delete_from_roles(self, **kwargs):
         return kili.mutations.project.delete_from_roles(self.auth.client, **kwargs)

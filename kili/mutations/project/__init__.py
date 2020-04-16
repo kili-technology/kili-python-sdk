@@ -13,7 +13,7 @@ from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT,
                       GQL_DELETE_FROM_ROLES,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
                       GQL_UPDATE_PROJECT, GQL_UPDATE_PROPERTIES_IN_PROJECT,
-                      GQL_UPDATE_ROLE)
+                      GQL_UPDATE_PROPERTIES_IN_ROLE)
 
 
 def append_to_roles(client, project_id: str, user_email: str, role: str):
@@ -96,14 +96,14 @@ def update_project(client, project_id: str,
     return format_result('data', result)
 
 
-def update_role(client, role_id: str, project_id: str, user_id: str, role: str):
+def update_properties_in_role(client, role_id: str, project_id: str, user_id: str, role: str):
     variables = {
         'roleID': role_id,
         'projectID': project_id,
         'userID': user_id,
         'role': role
     }
-    result = client.execute(GQL_UPDATE_ROLE, variables)
+    result = client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
     return format_result('data', result)
 
 
