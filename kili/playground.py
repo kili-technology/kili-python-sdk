@@ -32,9 +32,6 @@ class Playground(object):
     def update_properties_in_asset(self, **kwargs):
         return kili.mutations.asset.update_properties_in_asset(self.auth.client, **kwargs)
 
-    def delete_from_dataset(self, **kwargs):
-        return kili.mutations.asset.delete_from_dataset(self.auth.client, **kwargs)
-
     def delete_many_from_dataset(self, **kwargs):
         return kili.mutations.asset.delete_many_from_dataset(self.auth.client, **kwargs)
 

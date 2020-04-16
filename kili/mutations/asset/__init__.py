@@ -5,7 +5,7 @@ from ...helpers import content_escape, encode_image, format_result, is_url
 from ...queries.project import get_project
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_DELETE_ASSETS_BY_EXTERNAL_ID,
-                      GQL_DELETE_FROM_DATASET, GQL_DELETE_MANY_FROM_DATASET,
+                      GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_ASSET, GQL_UPDATE_PROPERTIES_IN_ASSET)
 
 
@@ -80,12 +80,6 @@ def update_properties_in_asset(client, asset_id: str, external_id: str = None,
         'toBeLabeledBy': to_be_labeled_by
     }
     result = client.execute(GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
-    return format_result('data', result)
-
-
-def delete_from_dataset(client, asset_id: str):
-    variables = {'assetID': asset_id}
-    result = client.execute(GQL_DELETE_FROM_DATASET, variables)
     return format_result('data', result)
 
 
