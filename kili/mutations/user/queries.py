@@ -13,13 +13,11 @@ mutation(
     $name: String!
     $email: String!
     $password: String!
-    $phone: String
     $organizationRole: OrganizationRole!
 ) {{
   data: createUser(name: $name
       email: $email
       password: $password
-      phone: $phone
       organizationRole: $organizationRole) {{
     {USER_FRAGMENT}
   }}
@@ -37,24 +35,6 @@ mutation(
       email: $email
       organizationRole: $sorganizationRole
       projectID: $projectID) {{
-    {USER_FRAGMENT}
-  }}
-}}
-'''
-
-GQL_UPDATE_USER = f'''
-mutation(
-    $userID: ID!
-    $name: String!
-    $email: String!
-    $phone: String
-    $organizationRole: OrganizationRole
-) {{
-  data: updateUser(userID: $userID
-      name: $name
-      email: $email
-      phone: $phone
-      organizationRole: $organizationRole) {{
     {USER_FRAGMENT}
   }}
 }}
@@ -96,6 +76,7 @@ mutation(
     where: {{email: $email}}
     data: {{
       name: $name
+      email: $email
       organizationId: $organizationId
       organizationRole: $organizationRole
       activated: $activated

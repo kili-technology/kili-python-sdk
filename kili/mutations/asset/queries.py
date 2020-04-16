@@ -29,32 +29,6 @@ mutation(
 }}
 '''
 
-GQL_UPDATE_ASSET = f'''
-mutation(
-    $assetID: ID!,
-    $projectID: ID!,
-    $content: String!,
-    $externalID: String,
-    $isHoneypot: Boolean,
-    $consensusMark: Float,
-    $honeypotMark: Float,
-    $status:  Status!,
-    $jsonMetadata: String
-) {{
-  data: updateAsset(
-    assetID: $assetID,
-    projectID: $projectID,
-    content: $content,
-    externalID: $externalID,
-    isHoneypot: $isHoneypot,
-    consensusMark: $consensusMark,
-    honeypotMark: $honeypotMark,
-    status: $status,
-    jsonMetadata: $jsonMetadata) {{
-    {ASSET_FRAGMENT}
-  }}
-}}
-'''
 
 GQL_UPDATE_PROPERTIES_IN_ASSET = f'''
 mutation(
@@ -65,6 +39,10 @@ mutation(
     $consensusMark: Float
     $honeypotMark: Float
     $toBeLabeledBy: [String!]
+    $content: String
+    $status: Status
+    $isUsedForConsensus: Boolean
+    $isHoneypot: Boolean
 ) {{
   data: updatePropertiesInAsset(
     where: {{id: $assetID}},
@@ -75,16 +53,12 @@ mutation(
       consensusMark: $consensusMark
       honeypotMark: $honeypotMark
       toBeLabeledBy: $toBeLabeledBy
+      content: $content
+      status: $status
+      isUsedForConsensus: $isUsedForConsensus
+      isHoneypot: $isHoneypot
     }}
   ) {{
-    {ASSET_FRAGMENT}
-  }}
-}}
-'''
-
-GQL_DELETE_FROM_DATASET = f'''
-mutation($assetID: ID!) {{
-  data: deleteFromDataset(assetID: $assetID) {{
     {ASSET_FRAGMENT}
   }}
 }}

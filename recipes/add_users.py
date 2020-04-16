@@ -37,8 +37,7 @@ for user in tqdm(users):
     user_name = get(user, 'name')
     user_email = get(user, 'email')
     user_password = get(user, 'password')
-    user_phone = get(user, 'phone')
-    playground.create_user(name=user_name, email=user_email, password=user_password, phone=user_phone,
+    playground.create_user(name=user_name, email=user_email, password=user_password,
                            organization_id=organization_id, organization_role=DEFAULT_ORGANIZATION_ROLE)
     user_role = get(user, 'role')
     playground.append_to_roles(

@@ -38,28 +38,6 @@ mutation(
 }}
 '''
 
-GQL_UPDATE_LABEL = f'''
-mutation(
-    $labelID: ID!
-    $labelAssetID: ID
-    $reviewAssetID: ID
-    $authorID: ID!
-    $labelType: LabelType!
-    $jsonResponse: String!
-    $secondsToLabel: Float
-) {{
-  data: updateLabel(
-    labelID: $labelID
-    labelAssetID: $labelAssetID
-    reviewAssetID: $reviewAssetID
-    authorID: $authorID
-    labelType: $labelType
-    jsonResponse: $jsonResponse
-    secondsToLabel: $secondsToLabel) {{
-      {LABEL_FRAGMENT_ID}
-  }}
-}}
-'''
 
 GQL_UPDATE_PROPERTIES_IN_LABEL = f'''
 mutation(

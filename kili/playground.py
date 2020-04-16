@@ -26,14 +26,8 @@ class Playground(object):
     def append_many_to_dataset(self, **kwargs):
         return kili.mutations.asset.append_many_to_dataset(self.auth.client, **kwargs)
 
-    def update_asset(self, **kwargs):
-        return kili.mutations.asset.update_asset(self.auth.client, **kwargs)
-
     def update_properties_in_asset(self, **kwargs):
         return kili.mutations.asset.update_properties_in_asset(self.auth.client, **kwargs)
-
-    def delete_from_dataset(self, **kwargs):
-        return kili.mutations.asset.delete_from_dataset(self.auth.client, **kwargs)
 
     def delete_many_from_dataset(self, **kwargs):
         return kili.mutations.asset.delete_many_from_dataset(self.auth.client, **kwargs)
@@ -46,9 +40,6 @@ class Playground(object):
     def append_to_labels(self, **kwargs):
         return kili.mutations.label.append_to_labels(self.auth.client, **kwargs)
 
-    def update_label(self, **kwargs):
-        return kili.mutations.label.update_label(self.auth.client, **kwargs)
-
     def update_properties_in_label(self, **kwargs):
         return kili.mutations.label.update_properties_in_label(self.auth.client, **kwargs)
 
@@ -60,8 +51,8 @@ class Playground(object):
     def create_organization(self, **kwargs):
         return kili.mutations.organization.create_organization(self.auth.client, **kwargs)
 
-    def update_organization(self, **kwargs):
-        return kili.mutations.organization.update_organization(self.auth.client, **kwargs)
+    def update_properties_in_organization(self, **kwargs):
+        return kili.mutations.organization.update_properties_in_organization(self.auth.client, **kwargs)
 
     def delete_organization(self, **kwargs):
         return kili.mutations.organization.delete_organization(self.auth.client, **kwargs)
@@ -80,8 +71,8 @@ class Playground(object):
     def update_project(self, **kwargs):
         return kili.mutations.project.update_project(self.auth.client, **kwargs)
 
-    def update_role(self, **kwargs):
-        return kili.mutations.project.update_role(self.auth.client, **kwargs)
+    def update_properties_in_role(self, **kwargs):
+        return kili.mutations.project.update_properties_in_role(self.auth.client, **kwargs)
 
     def delete_from_roles(self, **kwargs):
         return kili.mutations.project.delete_from_roles(self.auth.client, **kwargs)
@@ -107,9 +98,6 @@ class Playground(object):
 
     def create_user_from_email_if_not_exists(self, **kwargs):
         return kili.mutations.user.create_user_from_email_if_not_exists(self.auth.client, **kwargs)
-
-    def update_user(self, **kwargs):
-        return kili.mutations.user.update_user(self.auth.client, **kwargs)
 
     def update_password(self, **kwargs):
         return kili.mutations.user.update_password(self.auth.client, **kwargs)

@@ -3,7 +3,7 @@ from typing import List
 
 from ...helpers import format_result
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
-                      GQL_CREATE_PREDICTIONS, GQL_UPDATE_LABEL,
+                      GQL_CREATE_PREDICTIONS,
                       GQL_UPDATE_PROPERTIES_IN_LABEL)
 
 
@@ -32,20 +32,6 @@ def append_to_labels(client, author_id: str, json_response: dict, label_asset_id
         'skipped': skipped
     }
     result = client.execute(GQL_APPEND_TO_LABELS, variables)
-    return format_result('data', result)
-
-
-def update_label(client, label_id: str, label_asset_id: str, review_asset_id: str, author_id: str, label_type: str, json_response: dict, seconds_to_label: int):
-    variables = {
-        'labelID': label_id,
-        'labelAssetID': label_asset_id,
-        'reviewAssetID': review_asset_id,
-        'authorID': author_id,
-        'labelType': label_type,
-        'jsonResponse': dumps(json_response),
-        'secondsToLabel': seconds_to_label
-    }
-    result = client.execute(GQL_UPDATE_LABEL, variables)
     return format_result('data', result)
 
 

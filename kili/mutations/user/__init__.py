@@ -2,7 +2,7 @@ from ...helpers import format_result
 from .queries import (GQL_CREATE_USER,
                       GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS,
                       GQL_RESET_PASSWORD, GQL_SIGN_IN, GQL_UPDATE_PASSWORD,
-                      GQL_UPDATE_PROPERTIES_IN_USER, GQL_UPDATE_USER)
+                      GQL_UPDATE_PROPERTIES_IN_USER)
 
 
 def signin(client, email: str, password: str):
@@ -11,12 +11,11 @@ def signin(client, email: str, password: str):
     return format_result('data', result)
 
 
-def create_user(client, name: str, email: str, password: str, phone: str, organization_role: str):
+def create_user(client, name: str, email: str, password: str, organization_role: str):
     variables = {
         'name': name,
         'email': email,
         'password': password,
-        'phone': phone,
         'organizationRole': organization_role
     }
     result = client.execute(GQL_CREATE_USER, variables)
@@ -32,18 +31,6 @@ def create_user_from_email_if_not_exists(client, name: str, email: str, organiza
     }
     result = client.execute(
         GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS, variables)
-    return format_result('data', result)
-
-
-def update_user(client, user_id: str, name: str, email: str, phone: str, organization_role: str):
-    variables = {
-        'userID': user_id,
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'organizationRole': organization_role
-    }
-    result = client.execute(GQL_UPDATE_USER, variables)
     return format_result('data', result)
 
 

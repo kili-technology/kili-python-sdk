@@ -1,4 +1,4 @@
-from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID
+from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID, ROLE_FRAGMENT
 
 
 GQL_APPEND_TO_ROLES = f'''
@@ -94,19 +94,22 @@ mutation(
 }}
 '''
 
-GQL_UPDATE_ROLE = f'''
+GQL_UPDATE_PROPERTIES_IN_ROLE = f'''
 mutation(
     $roleID: ID!
     $projectID: ID!
     $userID: ID!
     $role: ProjectRole!
 ) {{
-  data: updateRole(
-    roleID: $roleID
-    projectID: $projectID
-    userID: $userID
-    role: $role) {{
-      {PROJECT_FRAGMENT_ID}
+  
+  data: updatePropertiesInRole(
+    where: {{roleID: $roleID}}
+    data: {{
+      projectID: $projectID
+      userID: $userID
+      role: $role
+    }}) {{
+      {ROLE_FRAGMENT}
   }}
 }}
 '''

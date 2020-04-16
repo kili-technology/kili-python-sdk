@@ -14,3 +14,11 @@ roles {
 PROJECT_FRAGMENT_ID = '''
 id
 '''
+
+ROLE_FRAGMENT = '''
+user {
+  id
+  email
+}
+role
+'''
