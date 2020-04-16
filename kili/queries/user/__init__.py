@@ -12,11 +12,13 @@ def get_user(client, email: str):
     warnings.warn(message, DeprecationWarning)
 
 
-def users(client, email=None, organization_id=None):
+def users(client, email=None, organization_id=None, first=100, skip=0):
     variables = {
+        'first': first,
+        'skip': skip,
         'where': {
             'email': email,
-            'organizationID': organization_id
+            'organizationId': organization_id,
         }
     }
     result = client.execute(GQL_USERS, variables)

@@ -1,8 +1,8 @@
 from .fragments import USER_FRAGMENT
 
 GQL_USERS = f'''
-query($where: UserWhere!) {{
-  data: users(where: $where) {{
+query($where: UserWhere!, $first: PageSize!, skip: Int!) {{
+  data: users(where: $where, first: $first, skip: $skip) {{
     {USER_FRAGMENT}
   }}
 }}
