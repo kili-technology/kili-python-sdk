@@ -40,9 +40,6 @@ class Playground(object):
     def append_to_labels(self, **kwargs):
         return kili.mutations.label.append_to_labels(self.auth.client, **kwargs)
 
-    def update_label(self, **kwargs):
-        return kili.mutations.label.update_label(self.auth.client, **kwargs)
-
     def update_properties_in_label(self, **kwargs):
         return kili.mutations.label.update_properties_in_label(self.auth.client, **kwargs)
 
