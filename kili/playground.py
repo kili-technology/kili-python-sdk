@@ -160,6 +160,9 @@ class Playground(object):
     def get_user(self, **kwargs):
         return kili.queries.user.get_user(self.auth.client, **kwargs)
 
+    def users(self, **kwargs):
+        return kili.queries.user.users(self.auth.client, **kwargs)
+
     # Subscriptions Label
 
     def label_created_or_updated(self, **kwargs):
