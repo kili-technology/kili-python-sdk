@@ -26,9 +26,3 @@ def update_properties_in_organization(client, organization_id: str, name: str, a
     }
     result = client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
     return format_result('data', result)
-
-
-def delete_organization(client, organization_id: str):
-    variables = {'organizationID': organization_id}
-    result = client.execute(GQL_DELETE_ORGANIZATION, variables)
-    return format_result('data', result)
