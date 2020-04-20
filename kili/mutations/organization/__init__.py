@@ -1,5 +1,5 @@
 from ...helpers import format_result
-from .queries import (GQL_CREATE_ORGANIZATION, GQL_DELETE_ORGANIZATION,
+from .queries import (GQL_CREATE_ORGANIZATION,
                       GQL_UPDATE_PROPERTIES_IN_ORGANIZATION)
 
 
