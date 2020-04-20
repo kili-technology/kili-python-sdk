@@ -8,6 +8,28 @@ env:
     - secure: "VpGcLYmEf7nXVTtFKCaKWSooS+JB/Ei6deB5NHRe9LIwL7nQe0g6vrCezF0Z8o5yZd3ikjUzD5aWBXerY8X6z0MVwwNW7kLRaal7PzWHAOdwdrfs7G1oRNPSjVbwd/f9w7149gAAE71rOknh4BmOpeBxB/9DFltQkEkugVeG+H0zYmTtVC1sFC0JRzqMoCulJwJjALsA6SosJevtwA+SfOyOTMdhjxyQcCC6d0XiuwXlINEj4XpYdrHpd7HUtnGFOYJbDfBaMylne0fJZtxDYU8SQmplTDqh8OVruXm+YUfjMShMi942UuDItA0DBj5XKpfDxK7zqKqElSPGvbSteTSsA+SNO2yTW12WKOGGBcnXOS4yUrogr8axrl49/kdLI0fOcb3SZ4tGQrj0B5dELSu5Ijzr1Tmit6r2M6m3BhdcbYtvb2jFS00OcdWnTPFRxF+vQ6wYQAe6E4fnzFUNcqIGiJeTs8slSF2loeiN7Cev5rW+TzuJZLZULajPGPH6ku5FXXNm5K15cLxbpDrhXp1X1UoGvcnPSmlR5fBOygdlHV3VpZ6vztIvyiHTboV2V1wFRWL5qQbMLRXmPYXSsz38H9/U0JT9zmtVdl8sJn5do+oO2Nm3pWd2chWiDb5jZh2EXhzlg5RG+Yds8gbwjWci9Qov15UIuNpF+uiQFjU="
 jobs:
   include:
+    # To debug a recipe by running it in a Docker locally as it is run in Travis, launch the following lines:
+    #
+    # DOCKER_IMAGE=...
+    # KILI_USER_EMAIL=...
+    # KILI_USER_PASSWORD=...
+    # TRAVIS_BRANCH=...
+    #
+    # docker pull ${DOCKER_IMAGE}
+    #
+    # docker run \
+    #   --env KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql \
+    #   --env KILI_USER_EMAIL=${KILI_USER_EMAIL} \
+    #   --env KILI_USER_PASSWORD=${KILI_USER_PASSWORD} \
+    #   --rm \
+    #   -p 10000:8888 \
+    #   ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
+    #     apt-get install -y gcc && \
+    #     git clone --branch ${TRAVIS_BRANCH} https://github.com/kili-technology/kili-playground.git && \
+    #     pip install ./kili-playground && \
+    #     jupyter notebook --allow-root --ip=0.0.0.0 --port=8888"
+    #
+    # Then start https://localhost:10000/?token=TOKEN_OUTPUTED_IN_CONSOLE
     - &test-recipes
       stage: Test *.ipynb in recipes
       script:
