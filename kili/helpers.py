@@ -1,3 +1,5 @@
+import functools
+import warnings
 import base64
 import re
 from json import dumps, loads
@@ -50,3 +52,13 @@ def format_json(result):
                 result[key] = format_json(value)
         return result
     return result
+
+
+def deprecate(msg, type=DeprecationWarning):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            warnings.warn(msg, type, stacklevel=2)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator

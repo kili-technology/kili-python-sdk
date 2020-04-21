@@ -2,15 +2,15 @@ import kili.mutations.asset
 import kili.mutations.label
 import kili.mutations.organization
 import kili.mutations.project
-import kili.mutations.tool
 import kili.mutations.user
 import kili.queries.asset
 import kili.queries.label
 import kili.queries.project
 import kili.queries.project_user
-import kili.queries.tool
 import kili.queries.user
 import kili.subscriptions.label
+
+from .helpers import deprecate
 
 
 class Playground(object):
@@ -83,11 +83,23 @@ class Playground(object):
 
     # Mutations Tool
 
+    @deprecate(
+        """
+        This function is deprecated. Tools used to describe an interface. They are now called jsonInterface.
+        To update jsonInterface, use:
+            > playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
+        """)
     def update_tool(self, **kwargs):
-        return kili.mutations.tool.update_tool(self.auth.client, **kwargs)
+        return None
 
+    @deprecate(
+        """
+        This function is deprecated. Tools used to describe an interface. They are now called jsonInterface.
+        To update jsonInterface, use:
+            > playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
+        """)
     def append_to_tools(self, **kwargs):
-        return kili.mutations.tool.append_to_tools(self.auth.client, **kwargs)
+        return None
 
     # Mutations User
 
@@ -113,9 +125,6 @@ class Playground(object):
 
     def get_assets(self, **kwargs):
         return kili.queries.asset.get_assets(self.auth.client, **kwargs)
-
-    def get_assets_with_search(self, **kwargs):
-        return kili.queries.asset.get_assets_with_search(self.auth.client, **kwargs)
 
     def get_assets_by_external_id(self, **kwargs):
         return kili.queries.asset.get_assets_by_external_id(self.auth.client, **kwargs)
@@ -150,8 +159,14 @@ class Playground(object):
 
     # Queries Tool
 
+    @deprecate(
+        """
+        This function is deprecated. Tools used to describe an interface. They are now called jsonInterface.
+        To update jsonInterface, use:
+            > playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
+        """)
     def get_tools(self, **kwargs):
-        return kili.queries.tool.get_tools(self.auth.client, **kwargs)
+        return None
 
     # Queries User
 
