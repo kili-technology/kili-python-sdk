@@ -43,12 +43,3 @@ mutation(
   }}
 }}
 '''
-
-GQL_DELETE_ORGANIZATION = f'''
-mutation($organizationID: ID!
-) {{
-  data: deleteOrganization(organizationID: $organizationID) {{
-    {ORGANIZATION_FRAGMENT}
-  }}
-}}
-'''

@@ -54,9 +54,6 @@ class Playground(object):
     def update_properties_in_organization(self, **kwargs):
         return kili.mutations.organization.update_properties_in_organization(self.auth.client, **kwargs)
 
-    def delete_organization(self, **kwargs):
-        return kili.mutations.organization.delete_organization(self.auth.client, **kwargs)
-
     # Mutations Project
 
     def append_to_roles(self, **kwargs):
