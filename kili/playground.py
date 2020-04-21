@@ -7,6 +7,7 @@ import kili.mutations.user
 import kili.queries.asset
 import kili.queries.label
 import kili.queries.project
+import kili.queries.project_user
 import kili.queries.tool
 import kili.queries.user
 import kili.subscriptions.label
@@ -159,6 +160,11 @@ class Playground(object):
 
     def users(self, **kwargs):
         return kili.queries.user.users(self.auth.client, **kwargs)
+
+    # Queries ProjectUser
+
+    def project_users(self, **kwargs):
+        return kili.queries.project_user.project_users(self.auth.client, **kwargs)
 
     # Subscriptions Label
 
