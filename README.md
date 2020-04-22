@@ -17,11 +17,11 @@ Kili Technology allows you to:
 
 ### Text annotation example
 
-![](https://github.com/kili-technology/kili-docs/blob/gh-pages/img/AM_10s.gif)
+![](https://github.com/kili-technology/kili-playground/blob/master/recipes/img/AM_10s.gif)
 
 ### Image annotation example
 
-![](https://github.com/kili-technology/kili-docs/blob/gh-pages/img/VDX_10s.gif)
+![](https://github.com/kili-technology/kili-playground/blob/master/recipes/img/VDX_10s.gif)
 
 ## What is Kili Playground ?
 
@@ -54,4 +54,4 @@ Here are [some recipes](/recipes/). Among them:
 - [How to import predictions](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
 - [How to use AutoML for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb) (run in [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
 
-If you want more details on what you can do with the API, follow the [technical documentation](https://kili-technology.github.io/kili-docs/docs/graphql-api/api-graphql).
+If you want more details on what you can do with the API, follow the [technical documentation](https://cloud.kili-technology.com/docs/graphql-api/api-graphql).
