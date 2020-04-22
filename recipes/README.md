@@ -2,7 +2,7 @@
 
 ## How to create a project
 
-You can refer to the following [documentation](https://kili-technology.github.io/kili-docs/docs/python-graphql-api/create-a-project).
+You can refer to the following [documentation](https://cloud.kili-technology.com/docs/python-graphql-api/create-a-project).
 
 ## How to update interface settings
 
