@@ -5,12 +5,36 @@ from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 from ...graphql_client import SubscriptionGraphQLClient
 
 
-def label_created_or_updated(client, project_id: str, callback: Callable[[str, str], None]):
-    ws_endpoint = client.endpoint.replace('http', 'ws')
-    ws = SubscriptionGraphQLClient(ws_endpoint)
-    headers = {'Accept': 'application/json',
-               'Content-Type': 'application/json'}
-    headers['Authorization'] = f'{client.token}'
-    variables = {'projectID': project_id}
-    ws.subscribe(GQL_LABEL_CREATED_OR_UPDATED, variables=variables,
-                 callback=callback, headers=headers)
+class SubscriptionsLabel:
+    def __init__(self, auth):
+        """
+        Initializes the subclass
+
+        Parameters
+        ----------
+        - auth : KiliAuth object
+        """
+        self.auth = auth
+
+    def label_created_or_updated(self, project_id: str, callback: Callable[[str, str], None]):
+        """
+        Subscribe a callback to a project, which is executed when a label is created or updated
+
+        Parameters
+        ----------
+        - project_id : str
+        - callback : function of (str, str) -> None
+            This function takes as input the id of the asset and its content.
+
+        Returns
+        -------
+        - None
+        """
+        ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
+        ws = SubscriptionGraphQLClient(ws_endpoint)
+        headers = {'Accept': 'application/json',
+                'Content-Type': 'application/json'}
+        headers['Authorization'] = f'{self.auth.client.token}'
+        variables = {'projectID': project_id}
+        ws.subscribe(GQL_LABEL_CREATED_OR_UPDATED, variables=variables,
+                    callback=callback, headers=headers)

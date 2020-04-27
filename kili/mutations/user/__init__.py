@@ -5,59 +5,176 @@ from .queries import (GQL_CREATE_USER,
                       GQL_UPDATE_PROPERTIES_IN_USER)
 
 
+class MutationsUser:
+
+    def __init__(self, auth):
+        """
+        Initializes the subclass
+
+        Parameters
+        ----------
+        - auth : KiliAuth object
+        """
+        self.auth = auth
+
+    def signin(self, email: str, password: str):
+        """
+        Sign in
+
+        Parameters
+        ----------
+        - email : str
+        - password : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {'email': email, 'password': password}
+        result = self.auth.client.execute(GQL_SIGN_IN, variables)
+        return format_result('data', result)
+
+
+    def create_user(self, name: str, email: str, password: str, organization_role: str):
+        """
+        Create a user
+
+        Parameters
+        ----------
+        - name : str
+        - email : str
+        - password : str
+        - organization_role : str
+            One of "ADMIN", "REVIEWER", "LABELER", "READER"
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {
+            'name': name,
+            'email': email,
+            'password': password,
+            'organizationRole': organization_role
+        }
+        result = self.auth.client.execute(GQL_CREATE_USER, variables)
+        return format_result('data', result)
+
+
+    def create_user_from_email_if_not_exists(self, name: str, email: str, organization_role: str, project_id: str):
+        """
+        Create a user for a given project
+
+        Parameters
+        ----------
+        - name : str
+        - email : str
+        - organization_role : str
+            One of "ADMIN", "REVIEWER", "LABELER", "READER"
+        - project_id : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {
+            'name': name,
+            'email': email,
+            'organizationRole': organization_role,
+            'projectID': project_id
+        }
+        result = self.auth.client.execute(
+            GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS, variables)
+        return format_result('data', result)
+
+
+    def update_password(self, email: str, old_password: str, new_password_1: str, new_password_2: str):
+        """
+        Update password
+
+        Parameters
+        ----------
+        - email : str
+        - old_password : str
+        - new_password_1 : str
+        - new_password_2 : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {
+            'email': email,
+            'oldPassword': old_password,
+            'newPassword1': new_password_1,
+            'newPassword2': new_password_2
+        }
+        result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
+        return format_result('data', result)
+
+
+    def reset_password(self, email: str):
+        """
+        Reset password
+
+        Parameters
+        ----------
+        - email : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {'email': email}
+        result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
+        return format_result('data', result)
+
+
+    def update_properties_in_user(self, email: str, name: str = None, organization_id: str = None, organization_role: str = None, activated: bool = None):
+        """
+        Update the properties of a user
+
+        Parameters
+        ----------
+        - email : str
+            The email is the identifier of the user
+        - name : str, optional (default = None)
+        - organization_id : str, optional (default = None)
+            Change the organization the user is related to.
+        - organization_role : str, optional (default = None)
+            Change the role of the user. One of "ADMIN", "REVIEWER", "LABELER", "READER".
+        - activated : bool, optional (default = None)
+            In case we want to deactivate a user, but keep it.
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {
+            'email': email,
+            'name': name,
+            'organizationId': organization_id,
+            'organizationRole': organization_role,
+            'activated': activated
+        }
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
+        return format_result('data', result)
+
+
 def signin(client, email: str, password: str):
+    """
+    Sign in
+
+    Parameters
+    ----------
+    - client : GraphQLClient object
+    - email : str
+    - password : str
+
+    Returns
+    -------
+    - a result object which indicates if the mutation was successful, or an error message else.
+    """
     variables = {'email': email, 'password': password}
     result = client.execute(GQL_SIGN_IN, variables)
-    return format_result('data', result)
-
-
-def create_user(client, name: str, email: str, password: str, organization_role: str):
-    variables = {
-        'name': name,
-        'email': email,
-        'password': password,
-        'organizationRole': organization_role
-    }
-    result = client.execute(GQL_CREATE_USER, variables)
-    return format_result('data', result)
-
-
-def create_user_from_email_if_not_exists(client, name: str, email: str, organization_role: str, project_id: str):
-    variables = {
-        'name': name,
-        'email': email,
-        'organizationRole': organization_role,
-        'projectID': project_id
-    }
-    result = client.execute(
-        GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS, variables)
-    return format_result('data', result)
-
-
-def update_password(client, email: str, old_password: str, new_password_1: str, new_password_2: str):
-    variables = {
-        'email': email,
-        'oldPassword': old_password,
-        'newPassword1': new_password_1,
-        'newPassword2': new_password_2
-    }
-    result = client.execute(GQL_UPDATE_PASSWORD, variables)
-    return format_result('data', result)
-
-
-def reset_password(client, email: str):
-    variables = {'email': email}
-    result = client.execute(GQL_RESET_PASSWORD, variables)
-    return format_result('data', result)
-
-
-def update_properties_in_user(client, email: str, name: str = None, organization_id: str = None, organization_role: str = None, activated: bool = None):
-    variables = {
-        'email': email,
-        'name': name,
-        'organizationId': organization_id,
-        'organizationRole': organization_role,
-        'activated': activated
-    }
-    result = client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
     return format_result('data', result)
