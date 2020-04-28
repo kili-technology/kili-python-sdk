@@ -6,10 +6,12 @@ from ..project import get_project
 from .queries import GQL_LABELS
 
 
-def labels(client, asset_id: str = None, user_id: str = None, skip: int = 0, first: int = None):
+def labels(client, asset_id: str = None, label_id: str = None, project_id: str = None, user_id: str = None, skip: int = 0, first: int = None):
     formatted_first = first if first else 100
     variables = {
         'assetID': asset_id,
+        'labelID': label_id,
+        'projectID': project_id,
         'userID': user_id,
         'skip': skip,
         'first': formatted_first

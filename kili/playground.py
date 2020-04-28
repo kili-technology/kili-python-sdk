@@ -149,6 +149,9 @@ class Playground(object):
     def get_latest_labels(self, **kwargs):
         return kili.queries.label.get_latest_labels(self.auth.client, **kwargs)
 
+    def labels(self, **kwargs):
+        return kili.queries.label.labels(self.auth.client, **kwargs)
+
     def export_labels_as_df(self, **kwargs):
         return kili.queries.label.export_labels_as_df(self.auth.client, **kwargs)
 
