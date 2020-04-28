@@ -7,7 +7,8 @@ from tqdm import tqdm
 from kili.authentication import KiliAuth
 from kili.playground import Playground
 
-logging.basicConfig(format='%(levelname)s:%(asctime)s %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format='%(levelname)s:%(asctime)s %(message)s', level=logging.INFO)
 
 
 def read_arguments():
@@ -26,13 +27,14 @@ def read_arguments():
                         help="the kili API endpoint you would like to use")
     args = parser.parse_args()
     if any([
-        not args.email, 
-        not args.password, 
-        not args.project_id]):
+            not args.email,
+            not args.password,
+            not args.project_id]):
         logging.error("Some required arguments are empty")
         exit(parser.print_usage())
     else:
         return args
+
 
 class ActiveLearner:
     def __init__(self, email, password, api_endpoint, project_id):
@@ -41,20 +43,22 @@ class ActiveLearner:
         self.project_id = project_id
 
     def get_assets_to_evaluate(self):
-        assets = self.playground.get_assets(project_id=self.project_id)
+        assets = self.playground.assets(project_id=self.project_id)
         assets_to_evaluate = []
         for asset in assets:
             if len(asset['labels']) == 0:
                 assets_to_evaluate.append(asset)
 
         return assets_to_evaluate
-    
+
     def prioritize_assets(self, assets, scorer, *args, **kwargs):
-        assets_score = [ scorer(asset, *args, **kwargs) for asset in assets ]
-        ranked_assets_with_score = sorted(list(zip(assets, assets_score)), key= lambda x: x[1], reverse=True)
-        ranked_assets = [ asset_with_score[0] for asset_with_score in ranked_assets_with_score ]
+        assets_score = [scorer(asset, *args, **kwargs) for asset in assets]
+        ranked_assets_with_score = sorted(
+            list(zip(assets, assets_score)), key=lambda x: x[1], reverse=True)
+        ranked_assets = [asset_with_score[0]
+                         for asset_with_score in ranked_assets_with_score]
         return ranked_assets
-    
+
     def update_assets_priority(self, assets):
         for i, asset in enumerate(tqdm(assets)):
             asset_id = asset['id']
@@ -73,9 +77,9 @@ def main():
 
     logging.info("Connecting to Kili...")
     active_learner = ActiveLearner(
-        args.email, 
-        args.password, 
-        args.api_endpoint, 
+        args.email,
+        args.password,
+        args.api_endpoint,
         args.project_id
     )
 
@@ -83,7 +87,8 @@ def main():
     to_evaluate_assets = active_learner.get_assets_to_evaluate()
 
     logging.info("Ranking assets...")
-    ranked_assets = active_learner.prioritize_assets(to_evaluate_assets, scorer)
+    ranked_assets = active_learner.prioritize_assets(
+        to_evaluate_assets, scorer)
 
     logging.info("Sending back assets in priority order to Kili...")
     active_learner.update_assets_priority(ranked_assets)

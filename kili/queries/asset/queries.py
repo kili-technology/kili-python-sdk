@@ -1,4 +1,4 @@
-from .fragments import ASSET_FRAGMENT, ASSET_FRAGMENT_SIMPLIFIED
+from .fragments import ASSET_FRAGMENT
 
 GQL_GET_ASSET = f'''
 query($assetID: ID!) {{
@@ -8,11 +8,14 @@ query($assetID: ID!) {{
 }}
 '''
 
-GQL_GET_ASSETS_WITH_SEARCH = f'''
+
+def GQL_ASSETS(fragment):
+    return f'''
 query(
-    $projectID: ID!
+    $assetID: ID
+    $projectID: ID
     $skip: Int!
-    $first: Int!
+    $first: PageSize!
     $externalIdIn: [String]
     $statusIn: [String]
     $authorIn: [String]
@@ -34,11 +37,12 @@ query(
     $labelSkipped: Boolean
 
 ) {{
-  data: getAssetsWithSearch(
-    projectID: $projectID
-    skip: $skip
-    first: $first
-    assetsWhere: {{
+  data: assets(
+    where: {{
+      id: $assetID
+      project: {{
+        id: $projectID
+      }}
       externalIdIn: $externalIdIn
       statusIn: $statusIn
       authorIn: $authorIn
@@ -47,38 +51,33 @@ query(
       honeypotMarkGte: $honeypotMarkGte
       honeypotMarkLte: $honeypotMarkLte
       skipped: $skipped
+      label: {{
+        externalIdContains: $labelExternalIdContains
+        typeIn: $labelTypeIn
+        statusIn: $labelStatusIn
+        authorIn: $labelAuthorIn
+        consensusMarkGte: $labelConsensusMarkGte
+        consensusMarkLte: $labelConsensusMarkLte
+        honeypotMarkGte: $labelHoneypotMarkGte
+        honeypotMarkLte: $labelHoneypotMarkLte
+        createdAtGte: $labelCreatedAtGte
+        createdAtLte: $labelCreatedAtLte
+        skipped: $labelSkipped
+      }}
     }}
-    labelsWhere: {{
-      externalIdContains: $labelExternalIdContains
-      typeIn: $labelTypeIn
-      statusIn: $labelStatusIn
-      authorIn: $labelAuthorIn
-      consensusMarkGte: $labelConsensusMarkGte
-      consensusMarkLte: $labelConsensusMarkLte
-      honeypotMarkGte: $labelHoneypotMarkGte
-      honeypotMarkLte: $labelHoneypotMarkLte
-      createdAtGte: $labelCreatedAtGte
-      createdAtLte: $labelCreatedAtLte
-      skipped: $labelSkipped
-    }}
+    skip: $skip
+    first: $first
   ) {{
-    {ASSET_FRAGMENT_SIMPLIFIED}
+    {fragment}
   }}
 }}
 '''
 
-GQL_GET_ASSETS_BY_EXTERNAL_ID = f'''
-query($projectID: ID!, $externalID: String!) {{
-  data: getAssetsByExternalId(projectID: $projectID, externalID: $externalID) {{
-    {ASSET_FRAGMENT_SIMPLIFIED}
-  }}
-}}
-'''
 
 GQL_GET_NEXT_ASSET_FROM_LABEL = f'''
 query($labelAssetIDs: [ID!]) {{
   data: getNextAssetFromLabel(labelAssetIDs: $labelAssetIDs, where: {{}}) {{
-    {ASSET_FRAGMENT_SIMPLIFIED}
+    {ASSET_FRAGMENT}
   }}
 }}
 '''
@@ -86,22 +85,15 @@ query($labelAssetIDs: [ID!]) {{
 GQL_GET_NEXT_ASSET_FROM_PROJECT = f'''
 query($projectID: ID!) {{
   data: getNextAssetFromProject(projectID: $projectID) {{
-    {ASSET_FRAGMENT_SIMPLIFIED}
+    {ASSET_FRAGMENT}
   }}
 }}
 '''
 
-GQL_EXPORT_ASSETS = f'''
-query($projectID: ID!) {{
-  exportAssets(projectID: $projectID) {{
-    {ASSET_FRAGMENT_SIMPLIFIED}
-  }}
-}}
-'''
-
-GQL_COUNT_ASSETS_WITH_SEARCH = f'''
+GQL_ASSETS_COUNT = f'''
 query(
-    $projectID: ID!
+    $assetID: ID
+    $projectID: ID
     $externalIdIn: [String]
     $statusIn: [String]
     $authorIn: [String]
@@ -121,11 +113,13 @@ query(
     $labelCreatedAtGte: String
     $labelCreatedAtLte: String
     $labelSkipped: Boolean
-
 ) {{
-  data: countAssetsWithSearch(
-    projectID: $projectID
-    assetsWhere: {{
+  data: countAssets(
+    where: {{
+      id: $assetID
+      project: {{
+        id: $projectID
+      }}
       externalIdIn: $externalIdIn
       statusIn: $statusIn
       authorIn: $authorIn
@@ -134,19 +128,19 @@ query(
       honeypotMarkGte: $honeypotMarkGte
       honeypotMarkLte: $honeypotMarkLte
       skipped: $skipped
-    }}
-    labelsWhere: {{
-      externalIdContains: $labelExternalIdContains
-      typeIn: $labelTypeIn
-      statusIn: $labelStatusIn
-      authorIn: $labelAuthorIn
-      consensusMarkGte: $labelConsensusMarkGte
-      consensusMarkLte: $labelConsensusMarkLte
-      honeypotMarkGte: $labelHoneypotMarkGte
-      honeypotMarkLte: $labelHoneypotMarkLte
-      createdAtGte: $labelCreatedAtGte
-      createdAtLte: $labelCreatedAtLte
-      skipped: $labelSkipped
+      label: {{
+        externalIdContains: $labelExternalIdContains
+        typeIn: $labelTypeIn
+        statusIn: $labelStatusIn
+        authorIn: $labelAuthorIn
+        consensusMarkGte: $labelConsensusMarkGte
+        consensusMarkLte: $labelConsensusMarkLte
+        honeypotMarkGte: $labelHoneypotMarkGte
+        honeypotMarkLte: $labelHoneypotMarkLte
+        createdAtGte: $labelCreatedAtGte
+        createdAtLte: $labelCreatedAtLte
+        skipped: $labelSkipped
+      }}
     }})
 }}
 '''

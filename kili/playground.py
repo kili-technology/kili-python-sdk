@@ -120,6 +120,9 @@ class Playground(object):
 
     # Queries Asset
 
+    def assets(self, **kwargs):
+        return kili.queries.asset.assets(self.auth.client, **kwargs)
+
     def get_asset(self, **kwargs):
         return kili.queries.asset.get_asset(self.auth.client, **kwargs)
 
@@ -193,5 +196,5 @@ if __name__ == '__main__':
     from kili.playground import Playground
     kauth = KiliAuth()
     playground = Playground(kauth)
-    assets = playground.export_assets(project_id="first-project")
+    assets = playground.assets(project_id="first-project")
     print(assets)

@@ -1,12 +1,5 @@
 from .fragments import ASSET_FRAGMENT
 
-GQL_DELETE_ASSETS_BY_EXTERNAL_ID = f'''
-mutation($projectID: ID!, $externalID: String!) {{
-  data: deleteAssetsByExternalId(projectID: $projectID, externalID: $externalID) {{
-    {ASSET_FRAGMENT}
-  }}
-}}
-'''
 
 GQL_APPEND_MANY_TO_DATASET = f'''
 mutation(

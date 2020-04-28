@@ -1,18 +1,22 @@
 from json import dumps
 from typing import List
 
-from ...helpers import content_escape, encode_image, format_result, is_url
+from ...helpers import content_escape, encode_image, format_result, is_url, deprecate
 from ...queries.project import get_project
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
-                      GQL_DELETE_ASSETS_BY_EXTERNAL_ID,
                       GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSET)
 
 
+@deprecate(
+    """
+        This function is deprecated. delete_assets_by_external_id used to delete some assets matchin on external ID. It is now achievable with get_assets and delete_many_from_dataset.
+        To fetch ann asset from its ID, use:
+            > assets = playground.assets(project_id=project_id, external_id_contains=[external_id])
+            > playground.delete_many_from_dataset(asset_ids=[a['id] for a in assets])
+        """)
 def delete_assets_by_external_id(client, project_id: str, external_id: str):
-    variables = {'projectID': project_id, 'externalID': external_id}
-    result = client.execute(GQL_DELETE_ASSETS_BY_EXTERNAL_ID, variables)
-    return format_result('data', result)
+    return None
 
 
 def append_many_to_dataset(client, project_id: str, content_array: List[str], external_id_array: List[str],

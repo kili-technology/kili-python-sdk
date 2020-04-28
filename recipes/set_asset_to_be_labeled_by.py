@@ -15,8 +15,8 @@ def get(dic, key):
 
 
 def get_asset_by_external_id(playground, project_id, external_id):
-    assets = playground.get_assets_by_external_id(
-        project_id=project_id, external_id=external_id)
+    assets = playground.assets(
+        project_id=project_id, external_id_contains=[external_id])
     assert len(assets) == 1
     return assets[0]
 

@@ -13,7 +13,8 @@ from kili.playground import Playground
 def main(api_endpoint):
     email = input('Enter email: ')
     password = getpass.getpass()
-    source_project_id = input('Enter project IDs (separate them by "," if you want to provide several): ')
+    source_project_id = input(
+        'Enter project IDs (separate them by "," if you want to provide several): ')
 
     kauth = KiliAuth(email=email,
                      password=password,
@@ -23,7 +24,7 @@ def main(api_endpoint):
     df = pd.DataFrame(columns=['Project', 'Date', 'Email'])
     for project_id in source_project_id.split(','):
         project = playground.get_project(project_id=project_id)
-        assets = playground.get_assets(project_id=project_id)
+        assets = playground.assets(project_id=project_id)
         title = project['title']
         for asset in assets:
             for label in asset['labels']:

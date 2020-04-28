@@ -30,7 +30,7 @@ class TransferLearning:
         return self.current_training_number
 
     def get_assets_to_train(self):
-        assets = self.playground.get_assets(project_id=self.project_id)
+        assets = self.playground.assets(project_id=self.project_id)
         assets_to_train = []
         for asset in assets:
             default_labels = get_labels_of_types(asset, ['DEFAULT'])
@@ -70,7 +70,7 @@ class TransferLearning:
                 [asset['id'] for asset in filtered_assets_to_train])
 
     def get_assets_to_predict(self):
-        assets = self.playground.get_assets(project_id=self.project_id)
+        assets = self.playground.assets(project_id=self.project_id)
         assets_to_predict = []
         for asset in assets:
             labels = get_labels_of_types(asset, ['DEFAULT', 'REVIEWED'])
