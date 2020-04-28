@@ -3,6 +3,7 @@
 ## How to create a project
 
 You can refer to the following [documentation](https://cloud.kili-technology.com/docs/python-graphql-api/create-a-project).
+You can also refer to [our recipe on how to create a project](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb))
 
 ## How to update interface settings
 
