@@ -17,11 +17,15 @@ Kili Technology allows you to:
 
 ### Text annotation example
 
-![](https://github.com/kili-technology/kili-playground/blob/master/recipes/img/AM_10s.gif)
+![](./recipes/img/relations-extraction.png)
 
 ### Image annotation example
 
-![](https://github.com/kili-technology/kili-playground/blob/master/recipes/img/VDX_10s.gif)
+![](./recipes/img/classification_nested.png)
+
+### Video annotation example
+
+![](./recipes/img/video_nested.png)
 
 ## What is Kili Playground ?
 

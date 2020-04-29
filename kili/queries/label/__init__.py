@@ -7,119 +7,225 @@ from ..project import get_project
 from .queries import GQL_LABELS
 
 
-def labels(client,
-           asset_id: str = None,
-           asset_status_in: List[str] = None,
-           asset_external_id_in: List[str] = None,
-           author_in: List[str] = None,
-           created_at: str = None,
-           created_at_gte: str = None,
-           created_at_lte: str = None,
-           first: int = None,
-           honeypot_mark_gte: float = None,
-           honeypot_mark_lte: float = None,
-           label_id: str = None,
-           project_id: str = None,
-           skip: int = 0,
-           skipped: bool = None,
-           type_in: List[str] = None,
-           user_id: str = None):
-    formatted_first = first if first else 100
-    variables = {
-        'where': {
-            'id': label_id,
-            'asset': {
-                'id': asset_id,
-                'externalIdIn': asset_external_id_in,
-                'statusIn': asset_status_in,
-            },
-            'project': {
-                'id': project_id,
-            },
-            'user': {
-                'id': user_id,
-            },
-            'typeIn': type_in,
-            'authorIn': author_in,
-            'honeypotMarkGte': honeypot_mark_gte,
-            'honeypotMarkLte': honeypot_mark_lte,
-            'createdAt': created_at,
-            'createdAtGte': created_at_gte,
-            'createdAtLte': created_at_lte,
-            'skipped': skipped,
-        },
-        'skip': skip,
-        'first': formatted_first,
-    }
-    result = client.execute(GQL_LABELS, variables)
-    return format_result('data', result)
+class QueriesLabel:
 
+    def __init__(self, auth):
+        """
+        Initializes the subclass
 
-@deprecate(
-    """
+        Parameters
+        ----------
+        - auth : KiliAuth object
+        """
+        self.auth = auth
+
+    @deprecate(
+        """
         This function is deprecated. get_label used to fetch labels from an asset_id and a user_id. It is now achievable with labels.
         To fetch labels from an asset_id and a user_id, use:
             > playground.labels(asset_id=asset_id, user_id=user_id)
         """)
-def get_label(client, asset_id: str, user_id: str):
-    return None
+    def get_label(self, asset_id: str, user_id: str):
+        """
+        Get labels corresponding to a given asset and user
 
+        Parameters
+        ----------
+        - asset_id : str
+        - user_id : str
 
-@deprecate(
-    """
+        Returns
+        -------
+        - a result object which contains the query if it was successful, or an error message else.
+        """
+        return None
+
+    @deprecate(
+        """
         This function is deprecated. get_latest_labels_for_user used to fetch labels from a project_id and a user_id. It is now achievable with labels.
         To fetch labels from a project_id and a user_id, use:
             > playground.labels(project_id=project_id, user_id=user_id)
         """)
-def get_latest_labels_for_user(client, project_id: str, user_id: str):
-    return None
+    def get_latest_labels_for_user(self, project_id: str, user_id: str):
+        """
+        Get latest labels corresponding to a given user and project
 
+        Parameters
+        ----------
+        - project_id : str
+        - user_id : str
 
-@deprecate(
-    """
+        Returns
+        -------
+        - a result object which contains the query if it was successful, or an error message else.
+        """
+        return None
+
+    @deprecate(
+        """
         This function is deprecated. get_latest_labels used to fetch labels from a project_id. It is now achievable with labels.
         To fetch labels from a project_id, use:
             > playground.labels(project_id=project_id)
         """)
-def get_latest_labels(client, project_id: str, skip: int, first: int):
-    return None
+    def get_latest_labels(self, project_id: str, skip: int, first: int):
+        """
+        Get latest labels corresponding to a given project
+
+        Parameters
+        ----------
+        - project_id : str
+        - skip : int
+            Number of labels to skip when returning them.
+        - first : int
+            Maximum number of labels returned.
+
+        Returns
+        -------
+        - a result object which contains the query if it was successful, or an error message else.
+        """
+        return None
+
+    def labels(self,
+               asset_id: str = None,
+               asset_status_in: List[str] = None,
+               asset_external_id_in: List[str] = None,
+               author_in: List[str] = None,
+               created_at: str = None,
+               created_at_gte: str = None,
+               created_at_lte: str = None,
+               first: int = None,
+               honeypot_mark_gte: float = None,
+               honeypot_mark_lte: float = None,
+               label_id: str = None,
+               project_id: str = None,
+               skip: int = 0,
+               skipped: bool = None,
+               type_in: List[str] = None,
+               user_id: str = None):
+        """
+        Get an array of labels from a project
+
+        Parameters
+        ----------
+        - asset_id : str
+            Identifier of the asset.
+        - asset_status_in : list of str, optional (default = None)
+            Returned labels should have a status that belongs to that list, if given.
+            Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+        - asset_external_id_in : list of str, optional (default = None)
+            Returned labels should have an external id that belongs to that list, if given.
+        - author_in : list of str, optional (default = None)
+            Returned labels should have a label whose status belongs to that list, if given.
+        - created_at : float, optional (default = None)
+            Returned labels should have a label whose creation date is equal to this date.
+        - created_at_gt : float, optional (default = None)
+            Returned labels should have a label whose creation date is greater than this date.
+        - created_at_lt : float, optional (default = None)
+            Returned labels should have a label whose creation date is lower than this date.
+        - first : int, optional (default = None)
+            Maximum number of labels to return.
+        - honeypot_mark_gt : float, optional (default = None)
+            Returned labels should have a label whose honeypot is greater than this number.
+        - honeypot_mark_lt : float, optional (default = None)
+            Returned labels should have a label whose honeypot is lower than this number.
+        - label_id : str
+            Identifier of the label.
+        - project_id : str
+            Identifier of the project.
+        - skip : int, optional (default = None)
+            Number of labels to skip (they are ordered by their date of creation, first to last).
+        - skipped : bool, optional (default = None)
+            Returned labels should have a label which is skipped
+        - type_in : list of str, optional (default = None)
+            Returned labels should have a label whose type belongs to that list, if given.
+        - user_id : str
+            Identifier of the user.
 
 
-def parse_json_response_for_single_classification(json_response):
-    categories = parse_json_response_for_multi_classification(json_response)
-    if len(categories) == 0:
-        return []
+        Returns
+        -------
+        - a result object which contains the query if it was successful, or an error message else.
+        """
+        formatted_first = first if first else 100
+        variables = {
+            'where': {
+                'id': label_id,
+                'asset': {
+                    'id': asset_id,
+                    'externalIdIn': asset_external_id_in,
+                    'statusIn': asset_status_in,
+                },
+                'project': {
+                    'id': project_id,
+                },
+                'user': {
+                    'id': user_id,
+                },
+                'typeIn': type_in,
+                'authorIn': author_in,
+                'honeypotMarkGte': honeypot_mark_gte,
+                'honeypotMarkLte': honeypot_mark_lte,
+                'createdAt': created_at,
+                'createdAtGte': created_at_gte,
+                'createdAtLte': created_at_lte,
+                'skipped': skipped,
+            },
+            'skip': skip,
+            'first': formatted_first,
+        }
+        result = client.execute(GQL_LABELS, variables)
+        return format_result('data', result)
 
-    return categories[0]
+    def parse_json_response_for_single_classification(self, json_response):
+        """
+        Get the names of categories from a json_response, for a single class - classification task
+        """
+        categories = self.parse_json_response_for_multi_classification(
+            json_response)
+        if len(categories) == 0:
+            return []
 
+        return categories[0]
 
-def parse_json_response_for_multi_classification(json_response):
-    formatted_json_response = eval(json_response)
-    if 'categories' not in formatted_json_response:
-        return []
-    categories = formatted_json_response['categories']
-    return list(map(lambda category: category['name'], categories))
+    def parse_json_response_for_multi_classification(self, json_response):
+        """
+        Get the names of categories from a json_response, for a multi class - classification task
+        """
+        formatted_json_response = eval(json_response)
+        if 'categories' not in formatted_json_response:
+            return []
+        categories = formatted_json_response['categories']
+        return list(map(lambda category: category['name'], categories))
 
+    def parse_json_response(self, json_response, interface_category):
+        if interface_category == 'SINGLECLASS_TEXT_CLASSIFICATION':
+            return self.parse_json_response_for_single_classification(json_response)
+        if interface_category == 'MULTICLASS_TEXT_CLASSIFICATION':
+            return self.parse_json_response_for_multi_classification(json_response)
 
-def parse_json_response(json_response, interface_category):
-    if interface_category == 'SINGLECLASS_TEXT_CLASSIFICATION':
-        return parse_json_response_for_single_classification(json_response)
-    if interface_category == 'MULTICLASS_TEXT_CLASSIFICATION':
-        return parse_json_response_for_multi_classification(json_response)
+        return json_response
 
-    return json_response
+    def export_labels_as_df(self, project_id: str):
+        """
+        Get the labels of a project as a pandas DataFrame
 
+        Parameters
+        ----------
+        - project_id : str
 
-def export_labels_as_df(client, project_id: str):
-    project = get_project(client, project_id)
-    if 'interfaceCategory' not in project:
-        return pd.DataFrame()
+        Returns
+        -------
+        - labels_df : pandas DataFrame containing the labels.
+        """
+        project = get_project(self.auth.client, project_id)
+        if 'interfaceCategory' not in project:
+            return pd.DataFrame()
 
-    interface_category = project['interfaceCategory']
-    _assets = assets(client, project_id=project_id)
-    labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
-              for asset in _assets for label in asset['labels']]
-    labels_df = pd.DataFrame(labels)
-    labels_df['y'] = labels_df['jsonResponse'].apply(
-        lambda json_response: parse_json_response(json_response, interface_category))
-    return labels_df
+        interface_category = project['interfaceCategory']
+        assets = get_assets(self.auth.client, project_id=project_id)
+        labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
+                  for asset in assets for label in asset['labels']]
+        labels_df = pd.DataFrame(labels)
+        labels_df['y'] = labels_df['jsonResponse'].apply(
+            lambda json_response: self.parse_json_response(json_response, interface_category))
+        return labels_df
