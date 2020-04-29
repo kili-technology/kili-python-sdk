@@ -44,6 +44,7 @@ locks {{
 }}
 '''
 
+
 ASSET_FRAGMENT_SIMPLIFIED = f'''
 id
 content

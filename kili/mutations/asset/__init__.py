@@ -1,10 +1,9 @@
 from json import dumps
 from typing import List
 
-from ...helpers import content_escape, encode_image, format_result, is_url
+from ...helpers import content_escape, encode_image, format_result, is_url, deprecate
 from ...queries.project import get_project
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
-                      GQL_DELETE_ASSETS_BY_EXTERNAL_ID,
                       GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSET)
 
@@ -21,6 +20,13 @@ class MutationsAssets:
         """
         self.auth = auth
 
+    @deprecate(
+        """
+        This function is deprecated. delete_assets_by_external_id used to delete some assets matchin on external ID. It is now achievable with get_assets and delete_many_from_dataset.
+        To fetch ann asset from its ID, use:
+            > assets = playground.assets(project_id=project_id, external_id_contains=[external_id])
+            > playground.delete_many_from_dataset(asset_ids=[a['id] for a in assets])
+        """)
     def delete_assets_by_external_id(self, project_id: str, external_id: str):
         """
         Delete assets from a project that have the given external id
@@ -31,18 +37,15 @@ class MutationsAssets:
             The identifier of the project
         - external_id : str
             The external identifier of the asset(s) to delete.
-        
+
         Returns
         -------
         - None
         """
-        variables = {'projectID': project_id, 'externalID': external_id}
-        result = self.auth.client.execute(GQL_DELETE_ASSETS_BY_EXTERNAL_ID, variables)
-        return format_result('data', result)
-
+        return None
 
     def append_many_to_dataset(self, project_id: str, content_array: List[str], external_id_array: List[str],
-                            is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
+                               is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
         """
         Append assets to a project
 
@@ -53,13 +56,13 @@ class MutationsAssets:
         - content_array : list of str
             List of elements added to the assets of the project
             - For a NLP project, the content is directly in text format
-            - For an Image / Video / Pdf project, the content must be hosted on a web server, 
+            - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs
         - external_id_array : list of str
             List of external ids given to identify the assets
         - is_honeypot_array : list of bool, optional (default = None)
         - status_array : list of str, optional (default = None)
-            By default, all imported assets are set to 'TODO'. It can also be set to 
+            By default, all imported assets are set to 'TODO'. It can also be set to
             'ONGOING', 'LABELED', 'REVIEWED'
         - json_metadata_array : list of dict , optional (default = None)
             The metadata given to each asset should be stored in a json like dict.
@@ -87,14 +90,14 @@ class MutationsAssets:
             'isHoneypotArray': is_honeypot_array,
             'statusArray': status_array,
             'jsonMetadataArray': formatted_json_metadata_array}
-        result = self.auth.client.execute(GQL_APPEND_MANY_TO_DATASET, variables)
+        result = self.auth.client.execute(
+            GQL_APPEND_MANY_TO_DATASET, variables)
         return format_result('data', result)
 
-
     def update_properties_in_asset(self, asset_id: str, external_id: str = None,
-                                priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
-                                honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
-                                status: str = None, is_used_for_consensus: bool = None, is_honeypot: bool = None):
+                                   priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
+                                   honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
+                                   status: str = None, is_used_for_consensus: bool = None, is_honeypot: bool = None):
         """
         Update the properties of one asset
 
@@ -116,7 +119,7 @@ class MutationsAssets:
             If given, should contain the emails of the labelers authorized to label the asset
         - content : str (default = None)
             - For a NLP project, the content is directly in text format
-            - For an Image / Video / Pdf project, the content must be hosted on a web server, 
+            - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs
         - status : str (default = None)
             Should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
@@ -129,6 +132,7 @@ class MutationsAssets:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+
         formatted_json_metadata = None
         if json_metadata is None:
             formatted_json_metadata = None
@@ -152,9 +156,9 @@ class MutationsAssets:
             'isUsedForConsensus': is_used_for_consensus,
             'isHoneypot': is_honeypot,
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
         return format_result('data', result)
-
 
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
@@ -170,5 +174,6 @@ class MutationsAssets:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {'assetIDs': asset_ids}
-        result = self.auth.client.execute(GQL_DELETE_MANY_FROM_DATASET, variables)
+        result = self.auth.client.execute(
+            GQL_DELETE_MANY_FROM_DATASET, variables)
         return format_result('data', result)

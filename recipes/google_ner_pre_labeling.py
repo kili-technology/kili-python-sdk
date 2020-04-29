@@ -78,8 +78,8 @@ for filepath in tqdm(only_files[:MAX_NUMBER_OF_ASSET]):
     # Insert asset
     playground.append_to_dataset(
         project_id=project_id, content=escape_content(content), external_id=external_id)
-    asset = playground.get_assets_by_external_id(
-        project_id=project_id, external_id=external_id)
+    asset = playground.get_assets_(
+        project_id=project_id, external_id_contains=[external_id])
     asset_id = asset[0]['id']
 
     # Prioritize assets

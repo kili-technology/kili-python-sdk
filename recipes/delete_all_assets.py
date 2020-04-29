@@ -14,6 +14,6 @@ project_id = input('Enter project id: ')
 kauth = KiliAuth(email=email, password=password)
 playground = Playground(kauth)
 
-assets = playground.get_assets(project_id=project_id)
+assets = playground.assets(project_id=project_id)
 asset_ids = [asset['id'] for asset in assets]
 playground.delete_many_from_dataset(asset_ids=asset_ids)

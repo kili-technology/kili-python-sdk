@@ -240,7 +240,8 @@ playground = Playground(kauth)
 Use:
 
 ```bash
-playground.delete_assets_by_external_id(project_id=project_id, external_id=external_id)
+assets = playground.assets(project_id=project_id, external_id_contains=[external_id])
+playground.delete_many_from_dataset(asset_ids=[a['id] for a in assets])
 ```
 
 ## How to update instructions in project?

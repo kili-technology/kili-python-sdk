@@ -16,7 +16,7 @@ class KiliAuth(object):
     from kili.playground import Playground
     kauth = KiliAuth(email=email, password=password)
     playground = Playground(kauth)
-    assets = playground.get_assets(project_id=project_id)
+    assets = playground.assets(project_id=project_id)
     """
 
     def __init__(self,
