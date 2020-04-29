@@ -21,7 +21,7 @@ query($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{
 
 GQL_GET_NEXT_ASSET_FROM_LABEL = f'''
 query($labelAssetIDs: [ID!]) {{
-  data: getNextAssetFromLabel(labelAssetIDs: $labelAssetIDs, where: {{}}) {{
+  data: getNextAssetFromLabel(labelAssetIDs: $labelAssetIDs) {{
     {ASSET_FRAGMENT}
   }}
 }}
