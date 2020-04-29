@@ -21,7 +21,7 @@ class MutationsAssets:
         self.auth = auth
 
     @deprecate(
-    """
+        """
         This function is deprecated. delete_assets_by_external_id used to delete some assets matchin on external ID. It is now achievable with get_assets and delete_many_from_dataset.
         To fetch ann asset from its ID, use:
             > assets = playground.assets(project_id=project_id, external_id_contains=[external_id])
@@ -45,7 +45,7 @@ class MutationsAssets:
         return None
 
     def append_many_to_dataset(self, project_id: str, content_array: List[str], external_id_array: List[str],
-                            is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
+                               is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
         """
         Append assets to a project
 
@@ -95,9 +95,9 @@ class MutationsAssets:
         return format_result('data', result)
 
     def update_properties_in_asset(self, asset_id: str, external_id: str = None,
-                                priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
-                                honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
-                                status: str = None, is_used_for_consensus: bool = None, is_honeypot: bool = None):
+                                   priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
+                                   honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
+                                   status: str = None, is_used_for_consensus: bool = None, is_honeypot: bool = None):
         """
         Update the properties of one asset
 
@@ -133,8 +133,6 @@ class MutationsAssets:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
 
-
->>>>>> > master
         formatted_json_metadata = None
         if json_metadata is None:
             formatted_json_metadata = None
@@ -162,7 +160,6 @@ class MutationsAssets:
             GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
         return format_result('data', result)
 
-
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
         Delete assets from a project
@@ -177,5 +174,6 @@ class MutationsAssets:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {'assetIDs': asset_ids}
-        result = self.auth.client.execute(GQL_DELETE_MANY_FROM_DATASET, variables)
+        result = self.auth.client.execute(
+            GQL_DELETE_MANY_FROM_DATASET, variables)
         return format_result('data', result)
