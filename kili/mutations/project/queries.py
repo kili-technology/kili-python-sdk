@@ -31,7 +31,10 @@ mutation(
     $title: String
 ) {{
   data: updatePropertiesInProject(
-    where: {{id: $projectID}},
+    where: {{
+      id: $projectID
+      inputType: $inputType
+    }},
     data: {{
       consensusMark: $consensusMark
       consensusTotCoverage: $consensusTotCoverage
