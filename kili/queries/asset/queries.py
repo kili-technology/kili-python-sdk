@@ -11,63 +11,8 @@ query($assetID: ID!) {{
 
 def GQL_ASSETS(fragment):
     return f'''
-query(
-    $assetID: ID
-    $projectID: ID
-    $skip: Int!
-    $first: PageSize!
-    $externalIdIn: [String]
-    $statusIn: [String]
-    $authorIn: [String]
-    $consensusMarkGte: Float
-    $consensusMarkLte: Float
-    $honeypotMarkGte: Float
-    $honeypotMarkLte: Float
-    $skipped: Boolean
-    $labelExternalIdContains: String
-    $labelTypeIn: [String]
-    $labelStatusIn: [String]
-    $labelAuthorIn: [String]
-    $labelConsensusMarkGte: Float
-    $labelConsensusMarkLte: Float
-    $labelHoneypotMarkGte: Float
-    $labelHoneypotMarkLte: Float
-    $labelCreatedAtGte: String
-    $labelCreatedAtLte: String
-    $labelSkipped: Boolean
-
-) {{
-  data: assets(
-    where: {{
-      id: $assetID
-      project: {{
-        id: $projectID
-      }}
-      externalIdIn: $externalIdIn
-      statusIn: $statusIn
-      authorIn: $authorIn
-      consensusMarkGte: $consensusMarkGte
-      consensusMarkLte: $consensusMarkLte
-      honeypotMarkGte: $honeypotMarkGte
-      honeypotMarkLte: $honeypotMarkLte
-      skipped: $skipped
-      label: {{
-        externalIdContains: $labelExternalIdContains
-        typeIn: $labelTypeIn
-        statusIn: $labelStatusIn
-        authorIn: $labelAuthorIn
-        consensusMarkGte: $labelConsensusMarkGte
-        consensusMarkLte: $labelConsensusMarkLte
-        honeypotMarkGte: $labelHoneypotMarkGte
-        honeypotMarkLte: $labelHoneypotMarkLte
-        createdAtGte: $labelCreatedAtGte
-        createdAtLte: $labelCreatedAtLte
-        skipped: $labelSkipped
-      }}
-    }}
-    skip: $skip
-    first: $first
-  ) {{
+query($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{
+  data: assets(where: $where, skip: $skip, first: $first) {{
     {fragment}
   }}
 }}
@@ -91,56 +36,7 @@ query($projectID: ID!) {{
 '''
 
 GQL_ASSETS_COUNT = f'''
-query(
-    $assetID: ID
-    $projectID: ID
-    $externalIdIn: [String]
-    $statusIn: [String]
-    $authorIn: [String]
-    $consensusMarkGte: Float
-    $consensusMarkLte: Float
-    $honeypotMarkGte: Float
-    $honeypotMarkLte: Float
-    $skipped: Boolean
-    $labelExternalIdContains: String
-    $labelTypeIn: [String]
-    $labelStatusIn: [String]
-    $labelAuthorIn: [String]
-    $labelConsensusMarkGte: Float
-    $labelConsensusMarkLte: Float
-    $labelHoneypotMarkGte: Float
-    $labelHoneypotMarkLte: Float
-    $labelCreatedAtGte: String
-    $labelCreatedAtLte: String
-    $labelSkipped: Boolean
-) {{
-  data: countAssets(
-    where: {{
-      id: $assetID
-      project: {{
-        id: $projectID
-      }}
-      externalIdIn: $externalIdIn
-      statusIn: $statusIn
-      authorIn: $authorIn
-      consensusMarkGte: $consensusMarkGte
-      consensusMarkLte: $consensusMarkLte
-      honeypotMarkGte: $honeypotMarkGte
-      honeypotMarkLte: $honeypotMarkLte
-      skipped: $skipped
-      label: {{
-        externalIdContains: $labelExternalIdContains
-        typeIn: $labelTypeIn
-        statusIn: $labelStatusIn
-        authorIn: $labelAuthorIn
-        consensusMarkGte: $labelConsensusMarkGte
-        consensusMarkLte: $labelConsensusMarkLte
-        honeypotMarkGte: $labelHoneypotMarkGte
-        honeypotMarkLte: $labelHoneypotMarkLte
-        createdAtGte: $labelCreatedAtGte
-        createdAtLte: $labelCreatedAtLte
-        skipped: $labelSkipped
-      }}
-    }})
+query($where: AssetWhere!) {{
+  data: countAssets(where: $where)
 }}
 '''

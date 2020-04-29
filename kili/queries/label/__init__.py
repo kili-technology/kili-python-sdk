@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import List
 
 from ...helpers import deprecate, format_result
 from ..asset import assets
@@ -6,15 +7,49 @@ from ..project import get_project
 from .queries import GQL_LABELS
 
 
-def labels(client, asset_id: str = None, label_id: str = None, project_id: str = None, user_id: str = None, skip: int = 0, first: int = None):
+def labels(client,
+           asset_id: str = None,
+           asset_status_in: List[str] = None,
+           asset_external_id_in: List[str] = None,
+           author_in: List[str] = None,
+           created_at: str = None,
+           created_at_gte: str = None,
+           created_at_lte: str = None,
+           first: int = None,
+           honeypot_mark_gte: float = None,
+           honeypot_mark_lte: float = None,
+           label_id: str = None,
+           project_id: str = None,
+           skip: int = 0,
+           skipped: bool = None,
+           type_in: List[str] = None,
+           user_id: str = None):
     formatted_first = first if first else 100
     variables = {
-        'assetID': asset_id,
-        'labelID': label_id,
-        'projectID': project_id,
-        'userID': user_id,
+        'where': {
+            'id': label_id,
+            'asset': {
+                'id': asset_id,
+                'externalIdIn': asset_external_id_in,
+                'statusIn': asset_status_in,
+            },
+            'project': {
+                'id': project_id,
+            },
+            'user': {
+                'id': user_id,
+            },
+            'typeIn': type_in,
+            'authorIn': author_in,
+            'honeypotMarkGte': honeypot_mark_gte,
+            'honeypotMarkLte': honeypot_mark_lte,
+            'createdAt': created_at,
+            'createdAtGte': created_at_gte,
+            'createdAtLte': created_at_lte,
+            'skipped': skipped,
+        },
         'skip': skip,
-        'first': formatted_first
+        'first': formatted_first,
     }
     result = client.execute(GQL_LABELS, variables)
     return format_result('data', result)
