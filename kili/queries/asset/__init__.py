@@ -172,6 +172,10 @@ class QueriesAsset:
         """
         return None
 
+    @deprecate(
+        """
+        This function is deprecated. It will be removed on June 1st.
+        """)
     def get_next_asset_from_label(self, label_asset_ids: List[str]):
         """
         Get next asset to label from previously labeled asset identifiers
@@ -190,6 +194,10 @@ class QueriesAsset:
             GQL_GET_NEXT_ASSET_FROM_LABEL, variables)
         return format_result('data', result)
 
+    @deprecate(
+        """
+        This function is deprecated. It will be removed on June 1st.
+        """)
     def get_next_asset_from_project(self, project_id: str):
         """
         Get next asset to label from project id
