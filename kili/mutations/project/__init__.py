@@ -51,22 +51,22 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
         return format_result('data', result)
 
-
     def update_properties_in_project(self, project_id: str,
-                                    consensus_mark: float = None,
-                                    consensus_tot_coverage: int = None,
-                                    description: str = None,
-                                    honeypot_mark: float = None,
-                                    instructions: str = None,
-                                    interface_category: str = 'IV2',
-                                    json_interface: dict = None,
-                                    min_consensus_size: int = None,
-                                    number_of_assets: int = None,
-                                    number_of_assets_with_empty_labels: int = None,
-                                    number_of_latest_labels: int = None,
-                                    number_of_remaining_assets: int = None,
-                                    number_of_reviewed_assets: int = None,
-                                    title: str = None):
+                                     consensus_mark: float = None,
+                                     consensus_tot_coverage: int = None,
+                                     description: str = None,
+                                     honeypot_mark: float = None,
+                                     instructions: str = None,
+                                     interface_category: str = 'IV2',
+                                     input_type: str = None,
+                                     json_interface: dict = None,
+                                     min_consensus_size: int = None,
+                                     number_of_assets: int = None,
+                                     number_of_assets_with_empty_labels: int = None,
+                                     number_of_latest_labels: int = None,
+                                     number_of_remaining_assets: int = None,
+                                     number_of_reviewed_assets: int = None,
+                                     title: str = None):
         """
         Update properties of a project
 
@@ -85,6 +85,8 @@ class MutationsProject:
         - instructions : str, optional (default = None)
         - interface_category : str, optional (default = 'IV2')
             Always use 'IV2'
+        - input_type : str, optional (default = None)
+            Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
         - json_interface : dict, optional (default = None)
             The json parameters of the project, see Edit your interface.
         - min_consensus_size : int, optional (default = None)
@@ -112,6 +114,7 @@ class MutationsProject:
             'honeypotMark': honeypot_mark,
             'instructions': instructions,
             'interfaceCategory': interface_category,
+            'inputType': input_type,
             'jsonInterface': dumps(json_interface) if json_interface is not None else None,
             'minConsensusSize': min_consensus_size,
             'numberOfAssets': number_of_assets,
@@ -122,9 +125,9 @@ class MutationsProject:
             'projectID': project_id,
             'title': title
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result('data', result)
-
 
     def create_empty_project(self, user_id: str):
         """
@@ -142,18 +145,17 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_CREATE_EMPTY_PROJECT, variables)
         return format_result('data', result)
 
-
     def update_project(self, project_id: str,
-                    title: str,
-                    description: str,
-                    interface_category: str,
-                    input_type: str = 'TEXT',
-                    consensus_tot_coverage: int = 0,
-                    min_consensus_size: int = 1,
-                    max_worker_count: int = 4,
-                    min_agreement: int = 66,
-                    use_honey_pot: bool = False,
-                    instructions: str = None):
+                       title: str,
+                       description: str,
+                       interface_category: str,
+                       input_type: str = 'TEXT',
+                       consensus_tot_coverage: int = 0,
+                       min_consensus_size: int = 1,
+                       max_worker_count: int = 4,
+                       min_agreement: int = 66,
+                       use_honey_pot: bool = False,
+                       instructions: str = None):
         """
         Update a project
 
@@ -205,7 +207,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_UPDATE_PROJECT, variables)
         return format_result('data', result)
 
-
     def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
         """
         Update properties of a role
@@ -234,9 +235,9 @@ class MutationsProject:
             'userID': user_id,
             'role': role
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
         return format_result('data', result)
-
 
     def delete_from_roles(self, role_id: str):
         """
@@ -254,13 +255,12 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
         return format_result('data', result)
 
-
     def update_properties_in_project_user(self, project_user_id: str,
-                                        consensus_mark: float = None,
-                                        honeypot_mark: float = None,
-                                        json_interface: dict = None,
-                                        number_of_labeled_assets: int = None,
-                                        total_duration: int = None):
+                                          consensus_mark: float = None,
+                                          honeypot_mark: float = None,
+                                          json_interface: dict = None,
+                                          number_of_labeled_assets: int = None,
+                                          total_duration: int = None):
         """
         Update properties of a project-user tuple
 
@@ -293,7 +293,6 @@ class MutationsProject:
         result = self.auth.client.execute(
             GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
         return format_result('data', result)
-
 
     def force_project_kpis(self, project_id: str):
         """
