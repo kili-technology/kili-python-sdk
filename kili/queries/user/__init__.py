@@ -40,7 +40,9 @@ class QueriesUser:
             'skip': skip,
             'where': {
                 'email': email,
-                'organizationId': organization_id,
+                'organization': {
+                    'id': organization_id,
+                }
             }
         }
         result = self.auth.client.execute(GQL_USERS, variables)
@@ -52,4 +54,3 @@ class QueriesUser:
             playground.users(email=email, organization_id=organization_id)
         """
         warnings.warn(message, DeprecationWarning)
-
