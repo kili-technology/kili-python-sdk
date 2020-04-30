@@ -43,7 +43,6 @@ class MutationsOrganization:
         result = self.auth.client.execute(GQL_CREATE_ORGANIZATION, variables)
         return format_result('data', result)
 
-
     def update_properties_in_organization(self, organization_id: str, name: str, address: str, zip_code: str, city: str, country: str):
         """
         Modify an organization
@@ -62,12 +61,13 @@ class MutationsOrganization:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'organizationID': organization_id,
+            'id': organization_id,
             'name': name,
             'address': address,
             'zipCode': zip_code,
             'city': city,
             'country': country
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
         return format_result('data', result)
