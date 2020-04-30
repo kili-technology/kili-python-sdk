@@ -23,7 +23,7 @@ def main(api_endpoint):
 
     df = pd.DataFrame(columns=['Project', 'Date', 'Email'])
     for project_id in source_project_id.split(','):
-        project = playground.get_project(project_id=project_id)
+        project = playground.projects(project_id=project_id)[0]
         assets = playground.assets(project_id=project_id)
         title = project['title']
         for asset in assets:

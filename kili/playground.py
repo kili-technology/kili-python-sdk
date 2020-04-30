@@ -14,7 +14,7 @@ from kili.helpers import deprecate
 
 
 class Playground(
-        kili.mutations.asset.MutationsAssets,
+        kili.mutations.asset.MutationsAsset,
         kili.mutations.label.MutationsLabel,
         kili.mutations.organization.MutationsOrganization,
         kili.mutations.project.MutationsProject,

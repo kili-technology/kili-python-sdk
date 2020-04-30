@@ -2,13 +2,14 @@ from json import dumps
 from typing import List
 
 from ...helpers import content_escape, encode_image, format_result, is_url, deprecate
-from ...queries.project import get_project
+from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSET)
+from ...constants import NO_ACCESS_PROJECT
 
 
-class MutationsAssets:
+class MutationsAsset:
 
     def __init__(self, auth):
         """
@@ -79,7 +80,10 @@ class MutationsAssets:
             {}] * len(content_array) if not json_metadata_array else json_metadata_array
         formatted_json_metadata_array = [
             dumps(elem) for elem in json_metadata_array]
-        input_type = get_project(self.auth.client, project_id)['inputType']
+        playground = QueriesProject(self.auth)
+        projects = playground.projects(project_id)
+        assert len(projects) == 1, NO_ACCESS_PROJECT
+        input_type = projects[0]['inputType']
         if input_type == 'IMAGE':
             content_array = [content if is_url(content) else encode_image(
                 content) for content in content_array]
