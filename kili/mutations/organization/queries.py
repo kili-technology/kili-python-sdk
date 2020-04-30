@@ -22,7 +22,7 @@ mutation(
 
 GQL_UPDATE_PROPERTIES_IN_ORGANIZATION = f'''
 mutation(
-    $organizationID: ID!
+    $id: ID!
     $name: String!
     $address: String!
     $zipCode: String!
@@ -30,7 +30,7 @@ mutation(
     $country: String!
 ) {{
   data: updatePropertiesInOrganization(
-    where: {{organizationID: $organizationID}}
+    where: {{id: $id}}
     data: {{
       name: $name
       address: $address

@@ -1,10 +1,10 @@
 import warnings
 
 from ...helpers import format_result
-from .queries import GQL_USERS
+from .queries import GQL_ORGANIZATIONS
 
 
-class QueriesUser:
+class QueriesOrganization:
 
     def __init__(self, auth):
         """
@@ -16,9 +16,9 @@ class QueriesUser:
         """
         self.auth = auth
 
-    def users(self, email: str = None, organization_id: str = None, first: int = 100, skip: int = 0):
+    def organizations(self, email: str = None, organization_id: str = None, first: int = 100, skip: int = 0):
         """
-        Get users
+        Get organizations
 
         Returns users whose email / organization id correspond to the given ones.
 
@@ -27,9 +27,9 @@ class QueriesUser:
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - first : int, optional (default = 100)
-            Maximum number of users to return
+            Maximum number of organizations to return
         - skip : int, optional (default = 0)
-            Number of skipped users (they are ordered by creation date)
+            Number of skipped organizations (they are ordered by creation date)
 
         Returns
         -------
@@ -39,18 +39,11 @@ class QueriesUser:
             'first': first,
             'skip': skip,
             'where': {
-                'email': email,
-                'organization': {
-                    'id': organization_id,
+                'id': organization_id,
+                'user': {
+                    'email': email,
                 }
             }
         }
-        result = self.auth.client.execute(GQL_USERS, variables)
+        result = self.auth.client.execute(GQL_ORGANIZATIONS, variables)
         return format_result('data', result)
-
-    def get_user(self, email: str):
-        message = """This function is deprecated.
-        To get users, use:
-            playground.users(email=email, organization_id=organization_id)
-        """
-        warnings.warn(message, DeprecationWarning)
