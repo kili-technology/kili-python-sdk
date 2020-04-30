@@ -1,5 +1,6 @@
 from ...helpers import deprecate, format_result
 from .queries import GQL_PROJECTS
+from ...constants import NO_ACCESS_RIGHT
 
 
 class QueriesProject:
@@ -44,20 +45,24 @@ class QueriesProject:
 
     @deprecate(
         """
-        This function is deprecated. get_projects used to fetch projects. It is now achievable with projects. It will be removed on June 1st.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_projects used to fetch projects. It is now achievable with projects. It will be removed on June 1st.
         To fetch projects, use:
-            > playground.projects()
+            > playground.projects(search_query=search_query, skip=skip, first=first)
         """)
     def get_projects(self, user_id: str, search_query: str = None, skip: int = 0, first: int = 100):
-        # self.projects(search_query=search_query, skip=skip, first=first)
-        return None
+        return self.projects(search_query=search_query, skip=skip, first=first)
 
     @deprecate(
         """
-        This function is deprecated. get_project used to fetch a project. It is now achievable with projects. It will be removed on June 1st.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_project used to fetch a project. It is now achievable with projects. It will be removed on June 1st.
         To fetch projects, use:
             > playground.projects(project_id=project_id)
         """)
     def get_project(self, project_id: str):
-        return None  # self.projects(project_id=project_id)[0]
-
+        projects = self.projects(project_id=project_id)
+        assert len(projects) == 1, NO_ACCESS_RIGHT
+        return projects[0]

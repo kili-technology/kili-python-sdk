@@ -11,6 +11,7 @@ from .queries import (GQL_ASSETS,
                       GQL_GET_NEXT_ASSET_FROM_LABEL,
                       GQL_GET_NEXT_ASSET_FROM_PROJECT)
 from .fragments import ASSET_FRAGMENT_SIMPLIFIED
+from ...constants import NO_ACCESS_RIGHT
 
 
 class QueriesAsset:
@@ -27,34 +28,27 @@ class QueriesAsset:
 
     @deprecate(
         """
-        This function is deprecated. get_asset used to fetch an asset from its ID. It is now achievable with assets.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_asset used to fetch an asset from its ID. It is now achievable with assets.
         To fetch an asset from its ID, use:
             > playground.assets(asset_id=asset_id)
         """)
     def get_asset(self, asset_id: str):
-        """
-        Get an asset by its id
-
-        Parameters
-        ----------
-        - asset_id : str
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        variables = {'assetID': asset_id}
-        result = self.auth.client.execute(GQL_GET_ASSET, variables)
-        return format_result('data', result)
+        assets = self.assets(asset_id=asset_id)
+        assert len(assets) == 1, NO_ACCESS_RIGHT
+        return assets[0]
 
     @deprecate(
         """
-        This function is deprecated. get_assets used to fetch assets. It is now achievable with assets.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_assets used to fetch assets. It is now achievable with assets.
         To fetch assets, use:
             > playground.assets(project_id=project_id)
         """)
-    def get_assets(self, asset_id: str):
-        return None
+    def get_assets(self, project_id: str):
+        return self.assets(project_id=project_id)
 
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0, first: int = None,
@@ -181,30 +175,20 @@ class QueriesAsset:
 
     @deprecate(
         """
-        This function is deprecated. get_assets_by_external_id used to fetch assets from an external_id. It is now achievable with assets.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_assets_by_external_id used to fetch assets from an external_id. It is now achievable with assets.
         To fetch assets from and external_id, use:
             > playground.assets(project_id=project_id, external_id_contains=[external_id])
         """)
     def get_assets_by_external_id(self, project_id: str, external_id: str):
-        """
-        Get an asset by its external id
-
-        The project id is needed as the external id is not guaranteed to uniquely identify the asset.
-
-        Parameters
-        ----------
-        - project_id : str
-        - external_id : str
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        return None
+        return self.assets(project_id=project_id, external_id_contains=[external_id])
 
     @deprecate(
         """
-        This function is deprecated. It will be removed on June 1st.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        It will be removed on June 1st.
         """)
     def get_next_asset_from_label(self, label_asset_ids: List[str]):
         """
@@ -226,7 +210,9 @@ class QueriesAsset:
 
     @deprecate(
         """
-        This function is deprecated. It will be removed on June 1st.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        It will be removed on June 1st.
         """)
     def get_next_asset_from_project(self, project_id: str):
         """
@@ -249,23 +235,14 @@ class QueriesAsset:
 
     @deprecate(
         """
-        This function is deprecated. export_assets used to fetch assets from a project. It is now achievable with assets.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        export_assets used to fetch assets from a project. It is now achievable with assets.
         To fetch assets from a project, use:
-            > playground.export_assets(project_id=project_id)
+            > playground.assets(project_id=project_id)
         """)
     def export_assets(self, project_id: str):
-        """
-        Export assets from project
-
-        Parameters
-        ----------
-        - project_id : str
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        return None
+        return self.assets(project_id=project_id)
 
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,
