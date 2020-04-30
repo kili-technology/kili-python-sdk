@@ -20,6 +20,7 @@ mutation(
     $honeypotMark: Float
     $instructions: String
     $interfaceCategory: InterfaceCategory
+    $inputType: InputType
     $jsonInterface: String
     $minConsensusSize: Int
     $numberOfAssets: Int
@@ -33,7 +34,6 @@ mutation(
   data: updatePropertiesInProject(
     where: {{
       id: $projectID
-      inputType: $inputType
     }},
     data: {{
       consensusMark: $consensusMark
@@ -42,6 +42,7 @@ mutation(
       honeypotMark: $honeypotMark
       instructions: $instructions
       interfaceCategory: $interfaceCategory
+      inputType: $inputType
       jsonInterface: $jsonInterface
       minConsensusSize: $minConsensusSize
       numberOfAssets: $numberOfAssets
