@@ -5,7 +5,7 @@ from ...helpers import deprecate, format_result
 from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import GQL_LABELS
-from ...constants import NO_ACCESS_PROJECT
+from ...constants import NO_ACCESS_RIGHT
 
 
 class QueriesLabel:
@@ -22,69 +22,38 @@ class QueriesLabel:
 
     @deprecate(
         """
-        This function is deprecated. get_label used to fetch labels from an asset_id and a user_id. It is now achievable with labels.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_label used to fetch labels from an asset_id and a user_id. It is now achievable with labels.
         To fetch labels from an asset_id and a user_id, use:
             > playground.labels(asset_id=asset_id, user_id=user_id)
         """)
     def get_label(self, asset_id: str, user_id: str):
-        """
-        Get labels corresponding to a given asset and user
-
-        Parameters
-        ----------
-        - asset_id : str
-        - user_id : str
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        return None
+        labels = self.labels(asset_id=asset_id, user_id=user_id)
+        assert len(labels) == 1, NO_ACCESS_RIGHT
+        return labels[0]
 
     @deprecate(
         """
-        This function is deprecated. get_latest_labels_for_user used to fetch labels from a project_id and a user_id. It is now achievable with labels.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_latest_labels_for_user used to fetch labels from a project_id and a user_id. It is now achievable with labels.
         To fetch labels from a project_id and a user_id, use:
             > playground.labels(project_id=project_id, user_id=user_id)
         """)
     def get_latest_labels_for_user(self, project_id: str, user_id: str):
-        """
-        Get latest labels corresponding to a given user and project
-
-        Parameters
-        ----------
-        - project_id : str
-        - user_id : str
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        return None
+        return self.labels(project_id=project_id, user_id=user_id)
 
     @deprecate(
         """
-        This function is deprecated. get_latest_labels used to fetch labels from a project_id. It is now achievable with labels.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        get_latest_labels used to fetch labels from a project_id. It is now achievable with labels.
         To fetch labels from a project_id, use:
-            > playground.labels(project_id=project_id)
+            > playground.labels(project_id=project_id, first=first, skip=skip)
         """)
     def get_latest_labels(self, project_id: str, skip: int, first: int):
-        """
-        Get latest labels corresponding to a given project
-
-        Parameters
-        ----------
-        - project_id : str
-        - skip : int
-            Number of labels to skip when returning them.
-        - first : int
-            Maximum number of labels returned.
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        return None
+        return self.labels(project_id=project_id, first=first, skip=skip)
 
     def labels(self,
                asset_id: str = None,
@@ -220,7 +189,7 @@ class QueriesLabel:
         - labels_df : pandas DataFrame containing the labels.
         """
         projects = QueriesProject(self.auth).projects(project_id)
-        assert len(projects) == 1, NO_ACCESS_PROJECT
+        assert len(projects) == 1, NO_ACCESS_RIGHT
         project = projects[0]
         if 'interfaceCategory' not in project:
             return pd.DataFrame()

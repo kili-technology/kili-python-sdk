@@ -1,1 +1,1 @@
-NO_ACCESS_PROJECT = '[noAccessRights] It seems you do not have access to this project. Pease double check your credentials.'
+NO_ACCESS_RIGHT = '[noAccessRights] It seems you do not have access to this object. Please double check your credentials.'

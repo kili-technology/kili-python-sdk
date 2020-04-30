@@ -3,10 +3,11 @@ from typing import List
 
 from ...helpers import content_escape, encode_image, format_result, is_url, deprecate
 from ...queries.project import QueriesProject
+from ...queries.asset import QueriesAsset
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSET)
-from ...constants import NO_ACCESS_PROJECT
+from ...constants import NO_ACCESS_RIGHT
 
 
 class MutationsAsset:
@@ -23,27 +24,18 @@ class MutationsAsset:
 
     @deprecate(
         """
-        This function is deprecated. delete_assets_by_external_id used to delete some assets matchin on external ID. It is now achievable with get_assets and delete_many_from_dataset.
+        This method is deprecated since: 30/04/2020.
+        This method will be removed after: 30/05/2020.
+        delete_assets_by_external_id used to delete some assets matchin on external ID. It is now achievable with get_assets and delete_many_from_dataset.
         To fetch ann asset from its ID, use:
             > assets = playground.assets(project_id=project_id, external_id_contains=[external_id])
-            > playground.delete_many_from_dataset(asset_ids=[a['id] for a in assets])
+            > playground.delete_many_from_dataset(asset_ids=[a['id'] for a in assets])
         """)
     def delete_assets_by_external_id(self, project_id: str, external_id: str):
-        """
-        Delete assets from a project that have the given external id
-
-        Parameters
-        ----------
-        - project_id : str
-            The identifier of the project
-        - external_id : str
-            The external identifier of the asset(s) to delete.
-
-        Returns
-        -------
-        - None
-        """
-        return None
+        assets = QueriesAsset(self.auth).assets(project_id=project_id,
+                                                external_id_contains=[external_id])
+        return self.delete_many_from_dataset(
+            asset_ids=[a['id'] for a in assets])
 
     def append_many_to_dataset(self, project_id: str, content_array: List[str], external_id_array: List[str],
                                is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
@@ -82,7 +74,7 @@ class MutationsAsset:
             dumps(elem) for elem in json_metadata_array]
         playground = QueriesProject(self.auth)
         projects = playground.projects(project_id)
-        assert len(projects) == 1, NO_ACCESS_PROJECT
+        assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
         if input_type == 'IMAGE':
             content_array = [content if is_url(content) else encode_image(

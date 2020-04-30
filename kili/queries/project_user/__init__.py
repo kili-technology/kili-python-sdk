@@ -44,7 +44,9 @@ class QueriesProjectUser:
                 },
                 'user': {
                     'email': email,
-                    'organizationId': organization_id,
+                    'organization': {
+                        'id': organization_id,
+                    }
                 },
             }
         }
