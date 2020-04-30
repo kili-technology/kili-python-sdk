@@ -127,25 +127,57 @@ class QueriesAsset:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        return get_assets(self.auth.client, asset_id, project_id,
-                          skip, first,
-                          external_id_contains,
-                          status_in,
-                          consensus_mark_gt,
-                          consensus_mark_lt,
-                          honeypot_mark_gt,
-                          honeypot_mark_lt,
-                          label_type_in,
-                          label_author_in,
-                          label_consensus_mark_gt,
-                          label_consensus_mark_lt,
-                          label_honeypot_mark_gt,
-                          label_honeypot_mark_lt,
-                          label_created_at_gt,
-                          label_created_at_lt,
-                          label_skipped,
-                          format, disable_tqdm,
-                          fragment)
+        saved_args = locals()
+        count_args = {k: v for (k, v) in saved_args.items()
+                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fragment', 'self']}
+        number_of_assets_with_search = self.count_assets(**count_args)
+        total = min(number_of_assets_with_search,
+                    first) if first is not None else number_of_assets_with_search
+        formatted_first = first if first else 100
+        if total == 0:
+            return []
+        with tqdm(total=total, disable=disable_tqdm) as pbar:
+            paged_assets = []
+            while True:
+                variables = {
+                    'where': {
+                        'id': asset_id,
+                        'project': {
+                            'id': project_id,
+                        },
+                        'externalIdIn': external_id_contains,
+                        'statusIn': status_in,
+                        'consensusMarkGte': consensus_mark_gt,
+                        'consensusMarkLte': consensus_mark_lt,
+                        'honeypotMarkGte': honeypot_mark_gt,
+                        'honeypotMarkLte': honeypot_mark_lt,
+                        'label': {
+                            'typeIn': label_type_in,
+                            'authorIn': label_author_in,
+                            'consensusMarkGte': label_consensus_mark_gt,
+                            'consensusMarkLte': label_consensus_mark_lt,
+                            'honeypotMarkGte': label_honeypot_mark_gt,
+                            'honeypotMarkLte': label_honeypot_mark_lt,
+                            'createdAtGte': label_created_at_gt,
+                            'createdAtLte': label_created_at_lt,
+                            'skipped': label_skipped,
+                        }
+                    },
+                    'skip': skip,
+                    'first': formatted_first,
+                }
+                result = self.auth.client.execute(
+                    GQL_ASSETS(fragment), variables)
+                assets = format_result('data', result)
+                if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
+                    if format == 'pandas':
+                        return pd.DataFrame(paged_assets)
+                    return paged_assets
+                if first is not None:
+                    assets = assets[:max(0, first - len(paged_assets))]
+                paged_assets += assets
+                skip += formatted_first
+                pbar.update(len(assets))
 
     @deprecate(
         """
@@ -299,138 +331,31 @@ class QueriesAsset:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        return get_count_assets(self.auth.client, asset_id,
-                                project_id,
-                                external_id_contains,
-                                status_in,
-                                consensus_mark_gt,
-                                consensus_mark_lt,
-                                honeypot_mark_gt,
-                                honeypot_mark_lt,
-                                label_type_in,
-                                label_author_in,
-                                label_consensus_mark_gt,
-                                label_consensus_mark_lt,
-                                label_honeypot_mark_gt,
-                                label_honeypot_mark_lt,
-                                label_created_at_gt,
-                                label_created_at_lt,
-                                label_skipped)
-
-
-def get_assets(client, asset_id: str, project_id: str,
-               skip: int, first: int,
-               external_id_contains: List[str],
-               status_in: List[str],
-               consensus_mark_gt: float,
-               consensus_mark_lt: float,
-               honeypot_mark_gt: float,
-               honeypot_mark_lt: float,
-               label_type_in: List[str],
-               label_author_in: List[str],
-               label_consensus_mark_gt: float,
-               label_consensus_mark_lt: float,
-               label_honeypot_mark_gt: float,
-               label_honeypot_mark_lt: float,
-               label_created_at_gt: float,
-               label_created_at_lt: float,
-               label_skipped: bool,
-               format: str, disable_tqdm: bool,
-               fragment: str):
-    saved_args = locals()
-    count_args = {k: v for (k, v) in saved_args.items()
-                  if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fragment']}
-    number_of_assets_with_search = get_count_assets(**count_args)
-    total = min(number_of_assets_with_search,
-                first) if first is not None else number_of_assets_with_search
-    formatted_first = first if first else 100
-    if total == 0:
-        return []
-    with tqdm(total=total, disable=disable_tqdm) as pbar:
-        paged_assets = []
-        while True:
-            variables = {
-                'where': {
-                    'id': asset_id,
-                    'project': {
-                        'id': project_id,
-                    },
-                    'externalIdIn': external_id_contains,
-                    'statusIn': status_in,
-                    'consensusMarkGte': consensus_mark_gt,
-                    'consensusMarkLte': consensus_mark_lt,
-                    'honeypotMarkGte': honeypot_mark_gt,
-                    'honeypotMarkLte': honeypot_mark_lt,
-                    'label': {
-                        'typeIn': label_type_in,
-                        'authorIn': label_author_in,
-                        'consensusMarkGte': label_consensus_mark_gt,
-                        'consensusMarkLte': label_consensus_mark_lt,
-                        'honeypotMarkGte': label_honeypot_mark_gt,
-                        'honeypotMarkLte': label_honeypot_mark_lt,
-                        'createdAtGte': label_created_at_gt,
-                        'createdAtLte': label_created_at_lt,
-                        'skipped': label_skipped,
-                    }
+        variables = {
+            'where': {
+                'id': asset_id,
+                'project': {
+                    'id': project_id,
                 },
-                'skip': skip,
-                'first': formatted_first,
-            }
-            result = client.execute(GQL_ASSETS(fragment), variables)
-            assets = format_result('data', result)
-            if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
-                if format == 'pandas':
-                    return pd.DataFrame(paged_assets)
-                return paged_assets
-            if first is not None:
-                assets = assets[:max(0, first - len(paged_assets))]
-            paged_assets += assets
-            skip += formatted_first
-            pbar.update(len(assets))
-
-
-def get_count_assets(client, asset_id: str,
-                     project_id: str,
-                     external_id_contains: List[str],
-                     status_in: List[str],
-                     consensus_mark_gt: float,
-                     consensus_mark_lt: float,
-                     honeypot_mark_gt: float,
-                     honeypot_mark_lt: float,
-                     label_type_in: List[str],
-                     label_author_in: List[str],
-                     label_consensus_mark_gt: float,
-                     label_consensus_mark_lt: float,
-                     label_honeypot_mark_gt: float,
-                     label_honeypot_mark_lt: float,
-                     label_created_at_gt: float,
-                     label_created_at_lt: float,
-                     label_skipped: bool):
-    variables = {
-        'where': {
-            'id': asset_id,
-            'project': {
-                'id': project_id,
-            },
-            'externalIdIn': external_id_contains,
-            'statusIn': status_in,
-            'consensusMarkGte': consensus_mark_gt,
-            'consensusMarkLte': consensus_mark_lt,
-            'honeypotMarkGte': honeypot_mark_gt,
-            'honeypotMarkLte': honeypot_mark_lt,
-            'label': {
-                'typeIn': label_type_in,
-                'authorIn': label_author_in,
-                'consensusMarkGte': label_consensus_mark_gt,
-                'consensusMarkLte': label_consensus_mark_lt,
-                'honeypotMarkGte': label_honeypot_mark_gt,
-                'honeypotMarkLte': label_honeypot_mark_lt,
-                'createdAtGte': label_created_at_gt,
-                'createdAtLte': label_created_at_lt,
-                'skipped': label_skipped,
+                'externalIdIn': external_id_contains,
+                'statusIn': status_in,
+                'consensusMarkGte': consensus_mark_gt,
+                'consensusMarkLte': consensus_mark_lt,
+                'honeypotMarkGte': honeypot_mark_gt,
+                'honeypotMarkLte': honeypot_mark_lt,
+                'label': {
+                    'typeIn': label_type_in,
+                    'authorIn': label_author_in,
+                    'consensusMarkGte': label_consensus_mark_gt,
+                    'consensusMarkLte': label_consensus_mark_lt,
+                    'honeypotMarkGte': label_honeypot_mark_gt,
+                    'honeypotMarkLte': label_honeypot_mark_lt,
+                    'createdAtGte': label_created_at_gt,
+                    'createdAtLte': label_created_at_lt,
+                    'skipped': label_skipped,
+                }
             }
         }
-    }
-    result = client.execute(GQL_ASSETS_COUNT, variables)
-    count = format_result('data', result)
-    return count
+        result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
+        count = format_result('data', result)
+        return count

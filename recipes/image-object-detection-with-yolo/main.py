@@ -295,8 +295,8 @@ def main():
     )
 
     logging.info('Checking project configuration...')
-    project = transfer_learning.playground.get_project(
-        project_id=transfer_learning.project_id)
+    project = transfer_learning.playground.projects(
+        project_id=transfer_learning.project_id)[0]
     try:
         categories = project['jsonInterface']['jobs'][transfer_learning.job_id]['content']['categories']
     except KeyError:

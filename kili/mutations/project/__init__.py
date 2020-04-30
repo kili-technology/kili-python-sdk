@@ -5,9 +5,8 @@ from typing import List
 from tqdm import tqdm
 
 from ...helpers import GraphQLError, format_result
-from ...queries.asset import get_assets
-from ...queries.label import get_labels
-from ...queries.project import get_project
+from ...queries.asset import QueriesAsset
+from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT,
                       GQL_DELETE_FROM_ROLES,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
@@ -302,5 +301,5 @@ class MutationsProject:
         -------
         - None
         """
-        _ = get_assets(self.auth.client, project_id=project_id)
-        _ = get_project(self.auth.client, project_id=project_id)
+        _ = QueriesAsset(self.auth).assets(project_id=project_id)
+        _ = QueriesProject(self.auth).projects(project_id=project_id)

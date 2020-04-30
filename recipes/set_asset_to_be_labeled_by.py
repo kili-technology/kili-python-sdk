@@ -36,7 +36,7 @@ def main(api_endpoint):
     kauth = KiliAuth(email, password, api_endpoint)
     playground = Playground(kauth)
 
-    project = playground.get_project(project_id=project_id)
+    project = playground.projects(project_id=project_id)[0]
     roles = get(project, 'roles')
 
     for asset in tqdm(assets):

@@ -2,9 +2,10 @@ import pandas as pd
 from typing import List
 
 from ...helpers import deprecate, format_result
-from ..asset import get_assets
-from ..project import get_project
+from ..asset import QueriesAsset
+from ..project import QueriesProject
 from .queries import GQL_LABELS
+from ...constants import NO_ACCESS_PROJECT
 
 
 class QueriesLabel:
@@ -147,23 +148,35 @@ class QueriesLabel:
         - a result object which contains the query if it was successful, or an error message else.
         """
 
-        return get_labels(self.auth.client,
-                          asset_id,
-                          asset_status_in,
-                          asset_external_id_in,
-                          author_in,
-                          created_at,
-                          created_at_gte,
-                          created_at_lte,
-                          first,
-                          honeypot_mark_gte,
-                          honeypot_mark_lte,
-                          label_id,
-                          project_id,
-                          skip,
-                          skipped,
-                          type_in,
-                          user_id)
+        formatted_first = first if first else 100
+        variables = {
+            'where': {
+                'id': label_id,
+                'asset': {
+                    'id': asset_id,
+                    'externalIdIn': asset_external_id_in,
+                    'statusIn': asset_status_in,
+                },
+                'project': {
+                    'id': project_id,
+                },
+                'user': {
+                    'id': user_id,
+                },
+                'typeIn': type_in,
+                'authorIn': author_in,
+                'honeypotMarkGte': honeypot_mark_gte,
+                'honeypotMarkLte': honeypot_mark_lte,
+                'createdAt': created_at,
+                'createdAtGte': created_at_gte,
+                'createdAtLte': created_at_lte,
+                'skipped': skipped,
+            },
+            'skip': skip,
+            'first': formatted_first,
+        }
+        result = self.auth.client.execute(GQL_LABELS, variables)
+        return format_result('data', result)
 
     def parse_json_response_for_single_classification(self, json_response):
         """
@@ -206,63 +219,17 @@ class QueriesLabel:
         -------
         - labels_df : pandas DataFrame containing the labels.
         """
-        project = get_project(self.auth.client, project_id)
+        projects = QueriesProject(self.auth).projects(project_id)
+        assert len(projects) == 1, NO_ACCESS_PROJECT
+        project = projects[0]
         if 'interfaceCategory' not in project:
             return pd.DataFrame()
 
         interface_category = project['interfaceCategory']
-        _assets = get_assets(self.auth.client, project_id=project_id)
+        assets = QueriesAsset(self.auth).assets(project_id=project_id)
         labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
-                  for asset in _assets for label in asset['labels']]
+                  for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)
         labels_df['y'] = labels_df['jsonResponse'].apply(
             lambda json_response: self.parse_json_response(json_response, interface_category))
         return labels_df
-
-
-def get_labels(client,
-               asset_id: str,
-               asset_status_in: List[str],
-               asset_external_id_in: List[str],
-               author_in: List[str],
-               created_at: str,
-               created_at_gte: str,
-               created_at_lte: str,
-               first: int,
-               honeypot_mark_gte: float,
-               honeypot_mark_lte: float,
-               label_id: str,
-               project_id: str,
-               skip: int,
-               skipped: bool,
-               type_in: List[str],
-               user_id: str):
-    formatted_first = first if first else 100
-    variables = {
-        'where': {
-            'id': label_id,
-            'asset': {
-                'id': asset_id,
-                'externalIdIn': asset_external_id_in,
-                'statusIn': asset_status_in,
-            },
-            'project': {
-                'id': project_id,
-            },
-            'user': {
-                'id': user_id,
-            },
-            'typeIn': type_in,
-            'authorIn': author_in,
-            'honeypotMarkGte': honeypot_mark_gte,
-            'honeypotMarkLte': honeypot_mark_lte,
-            'createdAt': created_at,
-            'createdAtGte': created_at_gte,
-            'createdAtLte': created_at_lte,
-            'skipped': skipped,
-        },
-        'skip': skip,
-        'first': formatted_first,
-    }
-    result = client.execute(GQL_LABELS, variables)
-    return format_result('data', result)
