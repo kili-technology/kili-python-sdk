@@ -1,27 +1,7 @@
-from ...helpers import deprecate, format_result
-from .queries import GQL_PROJECTS
+from ...helpers import deprecate, format_result, fragment_builder
+from .queries import gql_projects
 from ...constants import NO_ACCESS_RIGHT, POSSIBLE_PROJECT_FIELDS
-from enum import Enum
-
-
-ProjectFields = Enum('ProjectFields', [
-                     'id', 'title', 'consensusTotCoverage', 'role', 'maxWorkerCount'])
-
-
-class Roles(Enum):
-    id = "id"
-    user = "user"
-    role = "role"
-    consensusMark = "consensusMark"
-    honeypotMark = "honeypotMark"
-    lastLabelingAt = "lastLabelingAt"
-    numberOfAnnotations = "numberOfAnnotations"
-    numberOfLabels = "numberOfLabels"
-    numberOfLabeledAssets = "numberOfLabeledAssets"
-    totalDuration = "totalDuration"
-
-
-POSSIBLE_ROLES = "aaa"
+from ...types import Project
 
 
 class QueriesProject:
@@ -36,47 +16,49 @@ class QueriesProject:
         """
         self.auth = auth
 
-    def projects(self, project_id: str = None, search_query: str = None, skip: int = 0, first: int = 100, fields: List[ProjectFields] = ['id', 'title'], roles: list[Roles] = ['id', 'user', 'role']):
+    def projects(self, project_id: str = None, search_query: str = None, skip: int = 0, first: int = 100, fields: list = None):
         """
         Get projects with a search_query
 
         Parameters
         ----------
-        search_query : str, optional (default = None)
+        - search_query : str, optional (default = None)
             Returned projects have a title or a description that matches this string.
-        skip : int, optional (default = 0)
+        - skip : int, optional (default = 0)
             Number of projects to skip (they are ordered by their creation)
-        first : int , optional (default = 100)
+        - fields : list of string, optional (default = None)
+            All the fields to request among the possible fields for the projects, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project
+            - Default fields : `['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']`
+        - first : int , optional (default = 100)
             Maximum number of projects to return
-        fields: list of str
 
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        what = {}
-        for field in fields:
-            if not isinstance(field, ProjectFields):
-                raise TypeError(
-                    f'{field} must be an instance of ProjectFields Enum : Please check that it is one of {POSSIBLE_PROJECT_FIELDS}')
-            what[field] = field
-            if field is ProjectFields.role:
-                what_roles = {}
-                for role in roles:
-                    if not isinstance(roles, Roles):
-                        raise TypeError(
-                            f'{roles} must be an instance of Roles Enum : Please check that it is one of {POSSIBLE_ROLES}')
-                    what_roles[role] = role
-                what["role"] = what_roles
-        print(what)
+        if not fields:
+            print("""
+            **New feature has been added : Query only the fields you want
+            using the field argument, that accept a list of string organized like below.**
+            The former default query with all fields is deprecated since 13/05/2020
+            After 13/06/2020, the default queried fields will be :
+            ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']
+            To fetch more fields, for example the consensus fields, just add those:
+            fields = ['consensusMark', 'consensusTotCoverage', 'id', 'inputType', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles', 'roles.consensusMark', 'roles.id', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']
+            """)
+            # Temporary default value
+            fields = ['id', 'author', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
+                      'roles.id', 'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.lastLabelingAt', 'roles.numberOfAnnotations', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 'roles.totalDuration', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title', 'titleAndDescription', 'updatedAt', 'useHoneyPot']
+
+        GQL_PROJECTS = gql_projects(fragment_builder(fields, Project))
         variables = {
             'where': {
                 'id': project_id,
                 'searchQuery': search_query
             },
             'skip': skip,
-            'first': first,
-            'what': 'id\ntitle'
+            'first': first
         }
         result = self.auth.client.execute(GQL_PROJECTS, variables)
         return format_result('data', result)

@@ -1,7 +1,8 @@
 import warnings
 
-from ...helpers import format_result
-from .queries import GQL_USERS
+from ...helpers import format_result, fragment_builder
+from .queries import gql_user
+from ...types import User
 
 
 class QueriesUser:
@@ -16,7 +17,7 @@ class QueriesUser:
         """
         self.auth = auth
 
-    def users(self, email: str = None, organization_id: str = None, first: int = 100, skip: int = 0):
+    def users(self, email: str = None, organization_id: str = None, fields: list = None, first: int = 100, skip: int = 0):
         """
         Get users
 
@@ -28,6 +29,10 @@ class QueriesUser:
         - organization_id : str, optional (default = None)
         - first : int, optional (default = 100)
             Maximum number of users to return
+        - fields : list of string, optional (default = None)
+            All the fields to request among the possible fields for the users, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user
+            - Default fields : ['id','name','email']
         - skip : int, optional (default = 0)
             Number of skipped users (they are ordered by creation date)
 
@@ -35,6 +40,8 @@ class QueriesUser:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
+        if not fields:
+            fields = ['id', 'name', 'email']
         variables = {
             'first': first,
             'skip': skip,
@@ -45,7 +52,8 @@ class QueriesUser:
                 }
             }
         }
-        result = self.auth.client.execute(GQL_USERS, variables)
+        result = self.auth.client.execute(
+            gql_user(fragment_builder(fields, User)), variables)
         return format_result('data', result)
 
     def get_user(self, email: str):

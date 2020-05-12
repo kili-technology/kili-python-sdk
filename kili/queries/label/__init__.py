@@ -1,11 +1,12 @@
 import pandas as pd
 from typing import List
-
-from ...helpers import deprecate, format_result
+import warnings
+from ...helpers import deprecate, format_result, fragment_builder
 from ..asset import QueriesAsset
 from ..project import QueriesProject
-from .queries import GQL_LABELS
+from .queries import gql_labels
 from ...constants import NO_ACCESS_RIGHT
+from ...types import Label
 
 
 class QueriesLabel:
@@ -63,6 +64,7 @@ class QueriesLabel:
                created_at: str = None,
                created_at_gte: str = None,
                created_at_lte: str = None,
+               fields: list = None,
                first: int = None,
                honeypot_mark_gte: float = None,
                honeypot_mark_lte: float = None,
@@ -92,6 +94,10 @@ class QueriesLabel:
             Returned labels should have a label whose creation date is greater than this date.
         - created_at_lt : float, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
+        - fields : list of string, optional (default = None)
+            All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
+            - Default fields : `['id', 'author.id','author.name', 'author.user.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
         - first : int, optional (default = None)
             Maximum number of labels to return.
         - honeypot_mark_gt : float, optional (default = None)
@@ -116,7 +122,10 @@ class QueriesLabel:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-
+        if not fields:
+            warnings.warn('Custom warning', DeprecationWarning)
+            fields = ['author.user.email', 'author.id', 'id',
+                      'jsonResponse', 'numberOfAnnotations']
         formatted_first = first if first else 100
         variables = {
             'where': {
@@ -144,6 +153,7 @@ class QueriesLabel:
             'skip': skip,
             'first': formatted_first,
         }
+        GQL_LABELS = gql_labels(fragment_builder(fields, Label))
         result = self.auth.client.execute(GQL_LABELS, variables)
         return format_result('data', result)
 

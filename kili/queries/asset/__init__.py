@@ -5,13 +5,14 @@ from typing import List
 import pandas as pd
 from tqdm import tqdm
 
-from ...helpers import deprecate, format_result
-from .queries import (GQL_ASSETS,
+from ...helpers import deprecate, format_result, fragment_builder
+from .queries import (gql_assets,
                       GQL_ASSETS_COUNT,
                       GQL_GET_NEXT_ASSET_FROM_LABEL,
                       GQL_GET_NEXT_ASSET_FROM_PROJECT)
 from .fragments import ASSET_FRAGMENT_SIMPLIFIED
 from ...constants import NO_ACCESS_RIGHT
+from ...types import Asset
 
 
 class QueriesAsset:
@@ -51,7 +52,7 @@ class QueriesAsset:
         return self.assets(project_id=project_id)
 
     def assets(self, asset_id: str = None, project_id: str = None,
-               skip: int = 0, first: int = None,
+               skip: int = 0, fields: list = None, first: int = None,
                external_id_contains: List[str] = None,
                status_in: List[str] = None,
                consensus_mark_gt: float = None,
@@ -78,6 +79,11 @@ class QueriesAsset:
             Identifier of the project.
         - skip : int, optional (default = None)
             Number of assets to skip (they are ordered by their date of creation, first to last).
+        - fields : list of string, optional (default = None)
+            All the fields to request among the possible fields for the assets, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
+            - Default fields : ['id', 'content', 'externalId', 'isHoneypot', 'isUsedForConsensus', 'jsonMetadata', 'labels.author.id', 
+            'labels.author.user.email','labels.jsonResponse', 'labels.skipped', 'priority', 'projects.id', 'projects.title', 'project.jsonInterface']
         - first : int, optional (default = None)
             Maximum number of assets to return.
         - external_id_contains : list of str, optional (default = None)
@@ -121,6 +127,9 @@ class QueriesAsset:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
+        if not fields:
+            fields = ['id', 'content', 'externalId', 'jsonMetadata', 'createdAt', 'updatedAt', 'isHoneypot', 'status', 'labels.id', 'label.author.id',
+                      'label.author.user.email', 'labelType', 'jsonResponse', 'createdAt', 'secondsToLabel', 'totalSecondsToLabel', 'honeypotMark', 'isLatestLabelForUser']
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
                       if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fragment', 'self']}
@@ -160,8 +169,9 @@ class QueriesAsset:
                     'skip': skip,
                     'first': formatted_first,
                 }
+                GQL_ASSETS = gql_assets(fragment)
                 result = self.auth.client.execute(
-                    GQL_ASSETS(fragment), variables)
+                    fragment_builder(GQL_ASSETS, Asset), variables)
                 assets = format_result('data', result)
                 if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
                     if format == 'pandas':

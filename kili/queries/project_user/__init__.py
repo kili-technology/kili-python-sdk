@@ -1,5 +1,7 @@
-from ...helpers import format_result
-from .queries import GQL_PROJECT_USERS, GQL_PROJECT_USERS_WITH_KPIS
+from ...helpers import format_result, fragment_builder
+from .queries import gql_project_users
+from ...types import ProjectUser
+import warnings
 
 
 class QueriesProjectUser:
@@ -14,7 +16,7 @@ class QueriesProjectUser:
         """
         self.auth = auth
 
-    def project_users(self, email=None, id=None, organization_id=None, project_id=None, first=100, skip=0, with_kpis=False):
+    def project_users(self, email=None, id=None, organization_id=None, project_id=None, fields=None, first=100, skip=0, with_kpis=False):
         """
         Return projects and their users (possibly with their KPIs)
 
@@ -23,6 +25,10 @@ class QueriesProjectUser:
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - project_id : str, optional (default = None)
+        - fields : list, optional (default = None)
+            All the fields to request among the possible fields for the projectUsers, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser
+            - Default fields : `['id', 'activated', 'role', 'user.id', 'user.email', 'user.name', 'starred']`
         - first : int, optional (default = 100)
             Maximum number of users to return
         - skip : int, optional (default = 0)
@@ -34,6 +40,10 @@ class QueriesProjectUser:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
+        if not fields:
+            warnings.warn('Custom warning', DeprecationWarning)
+            fields = ['activated', 'id', 'consensusMark', 'honeypotMark', 'lastLabelingAt', 'numberOfAnnotations', 'numberOfLabeledAssets',
+                      'numberOfLabels', 'role', 'starred', 'totalDuration', 'user.id', 'user.email', 'user.name'] if with_kpis else ['id', 'activated', 'role', 'user.id', 'user.email', 'user.name', 'starred']
         variables = {
             'first': first,
             'skip': skip,
@@ -50,6 +60,7 @@ class QueriesProjectUser:
                 },
             }
         }
-        query = GQL_PROJECT_USERS_WITH_KPIS if with_kpis else GQL_PROJECT_USERS
-        result = self.auth.client.execute(query, variables)
+        GQL_PROJECT_USERS = gql_project_users(
+            fragment_builder(fields, ProjectUser))
+        result = self.auth.client.execute(GQL_PROJECT_USERS, variables)
         return format_result('data', result)

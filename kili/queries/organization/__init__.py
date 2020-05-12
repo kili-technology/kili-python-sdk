@@ -1,7 +1,8 @@
 import warnings
 
-from ...helpers import format_result
-from .queries import GQL_ORGANIZATIONS
+from ...helpers import format_result, build_fragment
+from .queries import gql_organization
+from ...types import Organization
 
 
 class QueriesOrganization:
@@ -16,7 +17,7 @@ class QueriesOrganization:
         """
         self.auth = auth
 
-    def organizations(self, email: str = None, organization_id: str = None, first: int = 100, skip: int = 0):
+    def organizations(self, email: str = None, organization_id: str = None, fields: list = None, first: int = 100, skip: int = 0):
         """
         Get organizations
 
@@ -26,6 +27,10 @@ class QueriesOrganization:
         ----------
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
+        - fields : list of string, optional (default = None)
+            All the fields to request among the possible fields for the organizations, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization
+            - Default fields : `['id', 'name']`
         - first : int, optional (default = 100)
             Maximum number of organizations to return
         - skip : int, optional (default = 0)
@@ -35,6 +40,8 @@ class QueriesOrganization:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
+        if not fields:
+            fields = ['id', 'name']
         variables = {
             'first': first,
             'skip': skip,
@@ -45,5 +52,6 @@ class QueriesOrganization:
                 }
             }
         }
-        result = self.auth.client.execute(GQL_ORGANIZATIONS, variables)
+        result = self.auth.client.execute(
+            gql_organization(fields, Organization), variables)
         return format_result('data', result)
