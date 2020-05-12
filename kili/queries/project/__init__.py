@@ -1,6 +1,6 @@
 from ...helpers import deprecate, format_result, fragment_builder
 from .queries import gql_projects
-from ...constants import NO_ACCESS_RIGHT, POSSIBLE_PROJECT_FIELDS
+from ...constants import NO_ACCESS_RIGHT
 from ...types import Project
 
 
