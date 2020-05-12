@@ -48,7 +48,7 @@ class QueriesProject:
             fields = ['consensusMark', 'consensusTotCoverage', 'id', 'inputType', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles', 'roles.consensusMark', 'roles.id', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']
             """)
             # Temporary default value
-            fields = ['id', 'author', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
+            fields = ['id', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
                       'roles.id', 'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.lastLabelingAt', 'roles.numberOfAnnotations', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 'roles.totalDuration', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title', 'titleAndDescription', 'updatedAt', 'useHoneyPot']
 
         GQL_PROJECTS = gql_projects(fragment_builder(fields, Project))

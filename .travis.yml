@@ -59,6 +59,10 @@ jobs:
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
         - NOTEBOOK_PATH=recipes/create_project.ipynb
+    - <<: *test-recipes
+      env:
+        - DOCKER_IMAGE=continuumio/anaconda3:2020.02
+        - NOTEBOOK_PATH=recipes/query_methods.ipynb
     # Declare other tests as follow:
     # - <<: *test-recipes
     #   env:

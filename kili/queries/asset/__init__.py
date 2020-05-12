@@ -10,7 +10,6 @@ from .queries import (gql_assets,
                       GQL_ASSETS_COUNT,
                       GQL_GET_NEXT_ASSET_FROM_LABEL,
                       GQL_GET_NEXT_ASSET_FROM_PROJECT)
-from .fragments import ASSET_FRAGMENT_SIMPLIFIED
 from ...constants import NO_ACCESS_RIGHT
 from ...types import Asset
 
@@ -68,8 +67,7 @@ class QueriesAsset:
                label_created_at_gt: float = None,
                label_created_at_lt: float = None,
                label_skipped: bool = None,
-               format: str = None, disable_tqdm: bool = False,
-               fragment=ASSET_FRAGMENT_SIMPLIFIED):
+               format: str = None, disable_tqdm: bool = False):
         """
         Get an array of assets from a project
 
@@ -83,7 +81,7 @@ class QueriesAsset:
             All the fields to request among the possible fields for the assets, default for None are the non-calculated fields)
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
             - Default fields : ['id', 'content', 'externalId', 'isHoneypot', 'isUsedForConsensus', 'jsonMetadata', 'labels.author.id', 
-            'labels.author.user.email','labels.jsonResponse', 'labels.skipped', 'priority', 'projects.id', 'projects.title', 'project.jsonInterface']
+            'labels.author.email','labels.jsonResponse', 'labels.skipped', 'priority', 'projects.id', 'projects.title', 'project.jsonInterface']
         - first : int, optional (default = None)
             Maximum number of assets to return.
         - external_id_contains : list of str, optional (default = None)
@@ -128,8 +126,8 @@ class QueriesAsset:
         - a result object which contains the query if it was successful, or an error message else.
         """
         if not fields:
-            fields = ['id', 'content', 'externalId', 'jsonMetadata', 'createdAt', 'updatedAt', 'isHoneypot', 'status', 'labels.id', 'label.author.id',
-                      'label.author.user.email', 'labelType', 'jsonResponse', 'createdAt', 'secondsToLabel', 'totalSecondsToLabel', 'honeypotMark', 'isLatestLabelForUser']
+            fields = ['id', 'content', 'externalId', 'jsonMetadata', 'createdAt', 'updatedAt', 'isHoneypot', 'status', 'labels.id', 'labels.author.id', 'labels.author.email',
+                      'labels.labelType', 'labels.jsonResponse', 'labels.createdAt', 'labels.secondsToLabel', 'labels.totalSecondsToLabel', 'labels.honeypotMark', 'labels.isLatestLabelForUser']
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
                       if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fragment', 'self']}
@@ -169,9 +167,8 @@ class QueriesAsset:
                     'skip': skip,
                     'first': formatted_first,
                 }
-                GQL_ASSETS = gql_assets(fragment)
-                result = self.auth.client.execute(
-                    fragment_builder(GQL_ASSETS, Asset), variables)
+                GQL_ASSETS = gql_assets(fragment_builder(fields, Asset))
+                result = self.auth.client.execute(GQL_ASSETS, variables)
                 assets = format_result('data', result)
                 if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
                     if format == 'pandas':
@@ -256,6 +253,7 @@ class QueriesAsset:
 
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,
+                     fields: list = None,
                      external_id_contains: List[str] = None,
                      status_in: List[str] = None,
                      consensus_mark_gt: float = None,

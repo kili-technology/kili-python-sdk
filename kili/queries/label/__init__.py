@@ -97,7 +97,7 @@ class QueriesLabel:
         - fields : list of string, optional (default = None)
             All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
-            - Default fields : `['id', 'author.id','author.name', 'author.user.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
+            - Default fields : `['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
         - first : int, optional (default = None)
             Maximum number of labels to return.
         - honeypot_mark_gt : float, optional (default = None)
@@ -124,7 +124,7 @@ class QueriesLabel:
         """
         if not fields:
             warnings.warn('Custom warning', DeprecationWarning)
-            fields = ['author.user.email', 'author.id', 'id',
+            fields = ['author.email', 'author.id', 'id',
                       'jsonResponse', 'numberOfAnnotations']
         formatted_first = first if first else 100
         variables = {
@@ -186,13 +186,17 @@ class QueriesLabel:
 
         return json_response
 
-    def export_labels_as_df(self, project_id: str):
+    def export_labels_as_df(self, project_id: str, fields: list = None):
         """
         Get the labels of a project as a pandas DataFrame
 
         Parameters
         ----------
         - project_id : str
+        - fields : list of string, optional (default = None)
+            All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
+            - Default fields : `['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
 
         Returns
         -------
@@ -205,7 +209,8 @@ class QueriesLabel:
             return pd.DataFrame()
 
         interface_category = project['interfaceCategory']
-        assets = QueriesAsset(self.auth).assets(project_id=project_id)
+        assets = QueriesAsset(self.auth).assets(
+            project_id=project_id, fields=fields)
         labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
                   for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)

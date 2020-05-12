@@ -65,7 +65,7 @@ class Project(Enum):
 
 class Label(Enum):
     id = 'id'
-    author = ProjectUser
+    author = User
     createdAt = 'createdAt'
     honeypotMark = 'honeypotMark'
     isLatestLabelForUser = 'isLatestLabelForUser'
@@ -99,6 +99,9 @@ class Asset(Enum):
     jsonMetadata = 'jsonMetadata'
     labels = Label
     locks = Lock
+    numberOfValidLocks = 'numberOfValidLocks'
     priority = 'priority'
-    projects = Project
+    project = Project
+    status = 'status'
+    toBeLabeledBy = 'toBeLabeledBy'
     updatedAt = 'updatedAt'

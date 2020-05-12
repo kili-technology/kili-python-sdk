@@ -1,7 +1,7 @@
 import warnings
 
-from ...helpers import format_result, build_fragment
-from .queries import gql_organization
+from ...helpers import format_result, fragment_builder
+from .queries import gql_organizations
 from ...types import Organization
 
 
@@ -52,6 +52,7 @@ class QueriesOrganization:
                 }
             }
         }
-        result = self.auth.client.execute(
-            gql_organization(fields, Organization), variables)
+        GQL_ORGANIZATIONS = gql_organizations(
+            fragment_builder(fields, Organization))
+        result = self.auth.client.execute(GQL_ORGANIZATIONS, variables)
         return format_result('data', result)

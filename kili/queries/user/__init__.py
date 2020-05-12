@@ -1,7 +1,7 @@
 import warnings
 
 from ...helpers import format_result, fragment_builder
-from .queries import gql_user
+from .queries import gql_users
 from ...types import User
 
 
@@ -52,8 +52,8 @@ class QueriesUser:
                 }
             }
         }
-        result = self.auth.client.execute(
-            gql_user(fragment_builder(fields, User)), variables)
+        GQL_USERS = gql_users(fragment_builder(fields, User))
+        result = self.auth.client.execute(GQL_USERS, variables)
         return format_result('data', result)
 
     def get_user(self, email: str):
