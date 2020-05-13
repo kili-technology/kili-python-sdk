@@ -26,7 +26,7 @@ class QueriesProject:
         skip : int, optional (default = 0)
             Number of projects to skip (they are ordered by their creation)
         first : int , optional (default = 100)
-            Maximum number of projects to return
+            Maximum number of projects to return. Can only be between 0 and 100.
 
         Returns
         -------

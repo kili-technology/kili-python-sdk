@@ -27,7 +27,7 @@ class QueriesUser:
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - first : int, optional (default = 100)
-            Maximum number of users to return
+            Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
             Number of skipped users (they are ordered by creation date)
 
