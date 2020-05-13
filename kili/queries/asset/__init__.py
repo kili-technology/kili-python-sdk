@@ -50,6 +50,21 @@ class QueriesAsset:
     def get_assets(self, project_id: str):
         return self.assets(project_id=project_id)
 
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be :
+        ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 
+        'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 
+        'roles.user.name', 'title']
+        To fetch more fields, for example the consensus fields, just add those :
+        fields = ['consensusMark', 'consensusTotCoverage', 'id', 'inputType', 'maxWorkerCount', 'minAgreement', 
+        'title', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 
+        'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles', 'roles.consensusMark', 'roles.id', 
+        'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.user.email']
+        """)
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0, fields: list = None, first: int = None,
                external_id_contains: List[str] = None,

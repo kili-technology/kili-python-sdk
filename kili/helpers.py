@@ -62,19 +62,19 @@ def fragment_builder(fields, type_of_fields):
     if subfields:
         for subquery in set([subfield[0] for subfield in subfields]):
             type_of_fields_subquery = type_of_fields[subquery].value
-            if issubclass(type_of_fields_subquery, Enum):
-                fields_subquery = [subfield[1]
-                                   for subfield in subfields if subfield[0] == subquery]
-                fragment += f' {subquery}{{{fragment_builder(fields_subquery,type_of_fields_subquery)}}}'
-            else:
-                raise TypeError(f'{subquery} must be a valid subquery field')
+            try:
+                if issubclass(type_of_fields_subquery, Enum):
+                    fields_subquery = [subfield[1]
+                                       for subfield in subfields if subfield[0] == subquery]
+                    fragment += f' {subquery}{{{fragment_builder(fields_subquery,type_of_fields_subquery)}}}'
+            except ValueError:
+                print(f'{subquery} must be a valid subquery field')
         fields = [field for field in fields if '.' not in field]
     for field in fields:
         try:
             type_of_fields(field)
         except ValueError:
-            raise TypeError(
-                f'{field} must be an instance of {type_of_fields}')
+            print(f'{field} must be an instance of {type_of_fields}')
         if isinstance(field, str):
             fragment += f' {field}'
         else:

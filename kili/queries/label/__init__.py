@@ -56,6 +56,19 @@ class QueriesLabel:
     def get_latest_labels(self, project_id: str, skip: int, first: int):
         return self.labels(project_id=project_id, first=first, skip=skip)
 
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be :
+        ['id', 'author.id','author.name', 'author.email', 'jsonResponse', 
+        'labelType', 'secondsToLabel', 'skipped']
+        To fetch more fields, for example the consensus fields, just add those :
+        fields = ['id','honeypotMark','numberOfAnnotations','jsonResponse','labelType',
+        'skipped','createdAt', 'author.email', 'author.name', 'author.organization.name', 
+        'author.organization.zipCode']
+        """)
     def labels(self,
                asset_id: str = None,
                asset_status_in: List[str] = None,
@@ -123,7 +136,6 @@ class QueriesLabel:
         - a result object which contains the query if it was successful, or an error message else.
         """
         if not fields:
-            warnings.warn('Custom warning', DeprecationWarning)
             fields = ['author.email', 'author.id', 'id',
                       'jsonResponse', 'numberOfAnnotations']
         formatted_first = first if first else 100

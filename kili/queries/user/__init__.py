@@ -1,6 +1,6 @@
 import warnings
 
-from ...helpers import format_result, fragment_builder
+from ...helpers import deprecate, format_result, fragment_builder
 from .queries import gql_users
 from ...types import User
 
@@ -17,6 +17,15 @@ class QueriesUser:
         """
         self.auth = auth
 
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be : ['id', 'name', 'email']
+        To fetch more fields, for example the organization fields, just add those :
+        fields = ['id', 'name', 'email', 'organization.name', 'organization.city','activated']
+        """)
     def users(self, email: str = None, organization_id: str = None, fields: list = None, first: int = 100, skip: int = 0):
         """
         Get users

@@ -1,7 +1,7 @@
 from ...helpers import deprecate, format_result, fragment_builder
 from .queries import gql_projects
-from ...constants import NO_ACCESS_RIGHT
 from ...types import Project
+from ...constants import NO_ACCESS_RIGHT
 
 
 class QueriesProject:
@@ -16,6 +16,24 @@ class QueriesProject:
         """
         self.auth = auth
 
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be :
+        ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 
+        'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 
+        'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']
+        To fetch more fields, for example the consensus fields, just add those :
+        fields = ['id', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 
+        'honeypotMark', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 
+        'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 
+        'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
+        'roles.id', 'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.lastLabelingAt', 
+        'roles.numberOfAnnotations', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 
+        'roles.totalDuration', 'roles.user.email', 'titleAndDescription', 'useHoneyPot']
+        """)
     def projects(self, project_id: str = None, search_query: str = None, skip: int = 0, first: int = 100, fields: list = None):
         """
         Get projects with a search_query
@@ -38,17 +56,7 @@ class QueriesProject:
         - a result object which contains the query if it was successful, or an error message else.
         """
         if not fields:
-            print("""
-            **New feature has been added : Query only the fields you want
-            using the field argument, that accept a list of string organized like below.**
-            The former default query with all fields is deprecated since 13/05/2020
-            After 13/06/2020, the default queried fields will be :
-            ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']
-            To fetch more fields, for example the consensus fields, just add those:
-            fields = ['consensusMark', 'consensusTotCoverage', 'id', 'inputType', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles', 'roles.consensusMark', 'roles.id', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']
-            """)
-            # Temporary default value
-            fields = ['id', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
+            fields = ['id', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
                       'roles.id', 'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.lastLabelingAt', 'roles.numberOfAnnotations', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 'roles.totalDuration', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title', 'titleAndDescription', 'updatedAt', 'useHoneyPot']
 
         GQL_PROJECTS = gql_projects(fragment_builder(fields, Project))
@@ -67,7 +75,7 @@ class QueriesProject:
         """
         This method is deprecated since: 30/04/2020.
         This method will be removed after: 30/05/2020.
-        get_projects used to fetch projects. It is now achievable with projects. It will be removed on June 1st.
+        get_projects used to fetch projects, it is now achievable with projects. It will be removed on June 1st.
         To fetch projects, use:
             > playground.projects(search_query=search_query, skip=skip, first=first)
         """)
@@ -78,7 +86,7 @@ class QueriesProject:
         """
         This method is deprecated since: 30/04/2020.
         This method will be removed after: 30/05/2020.
-        get_project used to fetch a project. It is now achievable with projects. It will be removed on June 1st.
+        get_project used to fetch a project, it is now achievable with projects. It will be removed on June 1st.
         To fetch projects, use:
             > playground.projects(project_id=project_id)
         """)
