@@ -155,5 +155,3 @@ class MutationsLabel:
         }
         result = self.auth.client.execute(GQL_CREATE_HONEYPOT, variables)
         return format_result('data', result)
-
-__all__ = ['MutationsLabel']
