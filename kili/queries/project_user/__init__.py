@@ -28,7 +28,7 @@ class QueriesProjectUser:
         'numberOfAnnotations', 'numberOfLabeledAssets','numberOfLabels', 'role', 'starred', 
         'totalDuration', 'user.id', 'user.email', 'user.name']
         """)
-    def project_users(self, email=None, id=None, organization_id=None, project_id=None, fields=None, first=100, skip=0, with_kpis=False):
+    def project_users(self, email: str = None, id: str = None, organization_id: str = None, project_id: str = None, fields: list = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'], first: int = 100, skip: int = 0, with_kpis: bool = False):
         """
         Return projects and their users (possibly with their KPIs)
 
@@ -37,10 +37,9 @@ class QueriesProjectUser:
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - project_id : str, optional (default = None)
-        - fields : list, optional (default = None)
+        - fields : list, optional (default = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'])
             All the fields to request among the possible fields for the projectUsers, default for None are the non-calculated fields)
-            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser
-            - Default fields : `['id', 'activated', 'role', 'user.id', 'user.email', 'user.name', 'starred']`
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser
         - first : int, optional (default = 100)
             Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
@@ -52,9 +51,9 @@ class QueriesProjectUser:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        if not fields:
+        if with_kpis:
             fields = ['activated', 'id', 'consensusMark', 'honeypotMark', 'lastLabelingAt', 'numberOfAnnotations', 'numberOfLabeledAssets',
-                      'numberOfLabels', 'role', 'starred', 'totalDuration', 'user.id', 'user.email', 'user.name'] if with_kpis else ['id', 'activated', 'role', 'user.id', 'user.email', 'user.name', 'starred']
+                      'numberOfLabels', 'role', 'starred', 'totalDuration', 'user.id', 'user.email', 'user.name']
         variables = {
             'first': first,
             'skip': skip,

@@ -67,7 +67,7 @@ class QueriesAsset:
         """)
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0,
-               fields: list = ['id', 'content', 'createdAt', 'externalId', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
+               fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
                                'labels.author.email', 'labels.createdAt', 'labels.honeypotMark', 'labels.id', 'labels.isLatestLabelForUser',
                                'labels.jsonResponse', 'labels.labelType', 'labels.secondsToLabel', 'labels.totalSecondsToLabel', 'status', 'updatedAt'],
                first: int = None,

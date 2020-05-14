@@ -26,7 +26,7 @@ class QueriesUser:
         To fetch more fields, for example the organization fields, just add those :
         fields = ['id', 'name', 'email', 'organization.name', 'organization.city','activated']
         """)
-    def users(self, email: str = None, organization_id: str = None, fields: list = None, first: int = 100, skip: int = 0):
+    def users(self, email: str = None, organization_id: str = None, fields: list = ['email', 'id', 'name'], first: int = 100, skip: int = 0):
         """
         Get users
 
@@ -36,10 +36,9 @@ class QueriesUser:
         ----------
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
-        - fields : list of string, optional (default = None)
+        - fields : list of string, optional (default = ['email', 'id', 'name'])
             All the fields to request among the possible fields for the users, default for None are the non-calculated fields)
-            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user
-            - Default fields : ['id','name','email']
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user
         - first : int, optional (default = 100)
             Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
@@ -49,8 +48,6 @@ class QueriesUser:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        if not fields:
-            fields = ['id', 'name', 'email']
         variables = {
             'first': first,
             'skip': skip,

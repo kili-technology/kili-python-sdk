@@ -77,7 +77,8 @@ class QueriesLabel:
                created_at: str = None,
                created_at_gte: str = None,
                created_at_lte: str = None,
-               fields: list = None,
+               fields: list = ['author.email', 'author.id',
+                               'id', 'jsonResponse', 'numberOfAnnotations'],
                first: int = None,
                honeypot_mark_gte: float = None,
                honeypot_mark_lte: float = None,
@@ -107,10 +108,9 @@ class QueriesLabel:
             Returned labels should have a label whose creation date is greater than this date.
         - created_at_lt : float, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
-        - fields : list of string, optional (default = None)
+        - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
-            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
-            - Default fields : `['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
         - first : int, optional (default = None)
             Maximum number of labels to return.  Can only be between 0 and 100.
         - honeypot_mark_gt : float, optional (default = None)
@@ -135,9 +135,6 @@ class QueriesLabel:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        if not fields:
-            fields = ['author.email', 'author.id', 'id',
-                      'jsonResponse', 'numberOfAnnotations']
         formatted_first = first if first else 100
         variables = {
             'where': {

@@ -26,7 +26,7 @@ class QueriesOrganization:
         To fetch more fields, just add those :
         fields = ['id', 'name','address','zipCode','city','country']
         """)
-    def organizations(self, email: str = None, organization_id: str = None, fields: list = None, first: int = 100, skip: int = 0):
+    def organizations(self, email: str = None, organization_id: str = None, fields: list = ['id', 'name'], first: int = 100, skip: int = 0):
         """
         Get organizations
 
@@ -36,10 +36,9 @@ class QueriesOrganization:
         ----------
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
-        - fields : list of string, optional (default = None)
+        - fields : list of string, optional (default = ['id', 'name'])
             All the fields to request among the possible fields for the organizations, default for None are the non-calculated fields)
-            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization
-            - Default fields : `['id', 'name']`
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization
         - first : int, optional (default = 100)
             Maximum number of organizations to return
         - skip : int, optional (default = 0)
@@ -49,8 +48,6 @@ class QueriesOrganization:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        if not fields:
-            fields = ['id', 'name']
         variables = {
             'first': first,
             'skip': skip,
