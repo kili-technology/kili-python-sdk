@@ -93,7 +93,7 @@ class QueriesLabel:
         - created_at_lt : float, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
         - first : int, optional (default = None)
-            Maximum number of labels to return.
+            Maximum number of labels to return.  Can only be between 0 and 100.
         - honeypot_mark_gt : float, optional (default = None)
             Returned labels should have a label whose honeypot is greater than this number.
         - honeypot_mark_lt : float, optional (default = None)
