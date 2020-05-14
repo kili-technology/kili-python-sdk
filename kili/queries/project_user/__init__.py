@@ -42,7 +42,7 @@ class QueriesProjectUser:
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser
             - Default fields : `['id', 'activated', 'role', 'user.id', 'user.email', 'user.name', 'starred']`
         - first : int, optional (default = 100)
-            Maximum number of users to return
+            Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
             Number of project users to skip
         - with_kpis : bool, optional (default = False)

@@ -36,12 +36,12 @@ class QueriesUser:
         ----------
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
-        - first : int, optional (default = 100)
-            Maximum number of users to return
         - fields : list of string, optional (default = None)
             All the fields to request among the possible fields for the users, default for None are the non-calculated fields)
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user
             - Default fields : ['id','name','email']
+        - first : int, optional (default = 100)
+            Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
             Number of skipped users (they are ordered by creation date)
 

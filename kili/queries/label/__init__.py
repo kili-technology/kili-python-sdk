@@ -112,7 +112,7 @@ class QueriesLabel:
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
             - Default fields : `['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
         - first : int, optional (default = None)
-            Maximum number of labels to return.
+            Maximum number of labels to return.  Can only be between 0 and 100.
         - honeypot_mark_gt : float, optional (default = None)
             Returned labels should have a label whose honeypot is greater than this number.
         - honeypot_mark_lt : float, optional (default = None)

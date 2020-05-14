@@ -32,26 +32,27 @@ class MutationsLabel:
             In case you want to precise from which model the label originated
         - json_response_array : list of dict
             The predictions are given here. An example can be found here, for a polygon
-
-                {
-                    "JOB_0": {
-                        "annotations": [
+            ```
+            {
+                "JOB_0": {
+                    "annotations": [
                         {
                             "categories": [{ "name": "OBJECT_B", "confidence": 100 }],
                             "boundingPoly": [
-                            {
-                                "normalizedVertices": [
-                                { "x": 0.06971547197567807, "y": 0.879169908651207 },
-                                { "x": 0.06971547197567807, "y": 0.32371217528660656 },
-                                { "x": 0.9424030107029487, "y": 0.32371217528660656 },
-                                { "x": 0.9424030107029487, "y": 0.879169908651207 }
-                                ]
-                            }
+                                {
+                                    "normalizedVertices": [
+                                        { "x": 0.07, "y": 0.88 },
+                                        { "x": 0.07, "y": 0.32 },
+                                        { "x": 0.94, "y": 0.32 },
+                                        { "x": 0.94, "y": 0.88 }
+                                    ]
+                                }
                             ]
                         }
-                        ]
-                    }
+                    ]
                 }
+            }
+            ```
 
         Returns
         -------

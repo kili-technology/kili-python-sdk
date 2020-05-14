@@ -100,7 +100,7 @@ class QueriesAsset:
             All the fields to request among the possible fields for the assets, default for None are the non-calculated fields)
             Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
         - first : int, optional (default = None)
-            Maximum number of assets to return.
+            Maximum number of assets to return. Can only be between 0 and 100.
         - external_id_contains : list of str, optional (default = None)
             Returned assets should have an external id that belongs to that list, if given.
         - status_in : list of str, optional (default = None)
