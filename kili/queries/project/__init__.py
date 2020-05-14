@@ -48,8 +48,8 @@ class QueriesProject:
             All the fields to request among the possible fields for the projects, default for None are the non-calculated fields)
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project
             - Default fields : `['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']`
-        - first : int , optional (default = 100)
-            Maximum number of projects to return
+        first : int , optional (default = 100)
+            Maximum number of projects to return. Can only be between 0 and 100.
 
         Returns
         -------
