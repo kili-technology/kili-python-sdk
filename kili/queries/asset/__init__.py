@@ -66,7 +66,11 @@ class QueriesAsset:
         'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.user.email']
         """)
     def assets(self, asset_id: str = None, project_id: str = None,
-               skip: int = 0, fields: list = None, first: int = None,
+               skip: int = 0,
+               fields: list = ['id', 'content', 'createdAt', 'externalId', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
+                               'labels.author.email', 'labels.createdAt', 'labels.honeypotMark', 'labels.id', 'labels.isLatestLabelForUser',
+                               'labels.jsonResponse', 'labels.labelType', 'labels.secondsToLabel', 'labels.totalSecondsToLabel', 'status', 'updatedAt'],
+               first: int = None,
                external_id_contains: List[str] = None,
                status_in: List[str] = None,
                consensus_mark_gt: float = None,
@@ -92,11 +96,9 @@ class QueriesAsset:
             Identifier of the project.
         - skip : int, optional (default = None)
             Number of assets to skip (they are ordered by their date of creation, first to last).
-        - fields : list of string, optional (default = None)
+        - fields : list of string, optional (default = ['id', 'content', 'externalId', 'isHoneypot', 'isUsedForConsensus', 'jsonMetadata', 'labels.author.id', 'labels.author.email','labels.jsonResponse', 'labels.skipped', 'priority', 'projects.id', 'projects.title', 'project.jsonInterface'])
             All the fields to request among the possible fields for the assets, default for None are the non-calculated fields)
-            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
-            - Default fields : ['id', 'content', 'externalId', 'isHoneypot', 'isUsedForConsensus', 'jsonMetadata', 'labels.author.id', 
-            'labels.author.email','labels.jsonResponse', 'labels.skipped', 'priority', 'projects.id', 'projects.title', 'project.jsonInterface']
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
         - first : int, optional (default = None)
             Maximum number of assets to return.
         - external_id_contains : list of str, optional (default = None)
@@ -140,9 +142,6 @@ class QueriesAsset:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        if not fields:
-            fields = ['id', 'content', 'externalId', 'jsonMetadata', 'createdAt', 'updatedAt', 'isHoneypot', 'status', 'labels.id', 'labels.author.id', 'labels.author.email',
-                      'labels.labelType', 'labels.jsonResponse', 'labels.createdAt', 'labels.secondsToLabel', 'labels.totalSecondsToLabel', 'labels.honeypotMark', 'labels.isLatestLabelForUser']
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
                       if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fragment', 'self']}
