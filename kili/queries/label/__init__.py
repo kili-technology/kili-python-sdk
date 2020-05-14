@@ -1,11 +1,12 @@
 import pandas as pd
 from typing import List
-
-from ...helpers import deprecate, format_result
+import warnings
+from ...helpers import deprecate, format_result, fragment_builder
 from ..asset import QueriesAsset
 from ..project import QueriesProject
-from .queries import GQL_LABELS
+from .queries import gql_labels
 from ...constants import NO_ACCESS_RIGHT
+from ...types import Label
 
 
 class QueriesLabel:
@@ -55,6 +56,19 @@ class QueriesLabel:
     def get_latest_labels(self, project_id: str, skip: int, first: int):
         return self.labels(project_id=project_id, first=first, skip=skip)
 
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be :
+        ['id', 'author.id','author.name', 'author.email', 'jsonResponse', 
+        'labelType', 'secondsToLabel', 'skipped']
+        To fetch more fields, for example the consensus fields, just add those :
+        fields = ['id','honeypotMark','numberOfAnnotations','jsonResponse','labelType',
+        'skipped','createdAt', 'author.email', 'author.name', 'author.organization.name', 
+        'author.organization.zipCode']
+        """)
     def labels(self,
                asset_id: str = None,
                asset_status_in: List[str] = None,
@@ -63,6 +77,8 @@ class QueriesLabel:
                created_at: str = None,
                created_at_gte: str = None,
                created_at_lte: str = None,
+               fields: list = ['author.email', 'author.id',
+                               'id', 'jsonResponse', 'numberOfAnnotations'],
                first: int = None,
                honeypot_mark_gte: float = None,
                honeypot_mark_lte: float = None,
@@ -92,6 +108,9 @@ class QueriesLabel:
             Returned labels should have a label whose creation date is greater than this date.
         - created_at_lt : float, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
+        - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+            All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
         - first : int, optional (default = None)
             Maximum number of labels to return.  Can only be between 0 and 100.
         - honeypot_mark_gt : float, optional (default = None)
@@ -116,7 +135,6 @@ class QueriesLabel:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-
         formatted_first = first if first else 100
         variables = {
             'where': {
@@ -144,6 +162,7 @@ class QueriesLabel:
             'skip': skip,
             'first': formatted_first,
         }
+        GQL_LABELS = gql_labels(fragment_builder(fields, Label))
         result = self.auth.client.execute(GQL_LABELS, variables)
         return format_result('data', result)
 
@@ -176,13 +195,17 @@ class QueriesLabel:
 
         return json_response
 
-    def export_labels_as_df(self, project_id: str):
+    def export_labels_as_df(self, project_id: str, fields: list = None):
         """
         Get the labels of a project as a pandas DataFrame
 
         Parameters
         ----------
         - project_id : str
+        - fields : list of string, optional (default = None)
+            All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
+            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
+            - Default fields : `['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
 
         Returns
         -------
@@ -195,7 +218,8 @@ class QueriesLabel:
             return pd.DataFrame()
 
         interface_category = project['interfaceCategory']
-        assets = QueriesAsset(self.auth).assets(project_id=project_id)
+        assets = QueriesAsset(self.auth).assets(
+            project_id=project_id, fields=fields)
         labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
                   for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)

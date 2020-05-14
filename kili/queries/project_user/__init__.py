@@ -1,5 +1,7 @@
-from ...helpers import format_result
-from .queries import GQL_PROJECT_USERS, GQL_PROJECT_USERS_WITH_KPIS
+from ...helpers import deprecate, format_result, fragment_builder
+from .queries import gql_project_users
+from ...types import ProjectUser
+import warnings
 
 
 class QueriesProjectUser:
@@ -14,7 +16,19 @@ class QueriesProjectUser:
         """
         self.auth = auth
 
-    def project_users(self, email=None, id=None, organization_id=None, project_id=None, first=100, skip=0, with_kpis=False):
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be :
+        ['id', 'activated', 'role', 'user.id', 'user.email', 'user.name', 'starred']
+        To fetch more fields, for example the kpis fields, just add those :
+        fields = ['activated', 'id', 'consensusMark', 'honeypotMark', 'lastLabelingAt', 
+        'numberOfAnnotations', 'numberOfLabeledAssets','numberOfLabels', 'role', 'starred', 
+        'totalDuration', 'user.id', 'user.email', 'user.name']
+        """)
+    def project_users(self, email: str = None, id: str = None, organization_id: str = None, project_id: str = None, fields: list = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'], first: int = 100, skip: int = 0, with_kpis: bool = False):
         """
         Return projects and their users (possibly with their KPIs)
 
@@ -23,6 +37,9 @@ class QueriesProjectUser:
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - project_id : str, optional (default = None)
+        - fields : list, optional (default = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'])
+            All the fields to request among the possible fields for the projectUsers, default for None are the non-calculated fields)
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser
         - first : int, optional (default = 100)
             Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
@@ -34,6 +51,9 @@ class QueriesProjectUser:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
+        if with_kpis:
+            fields = ['activated', 'id', 'consensusMark', 'honeypotMark', 'lastLabelingAt', 'numberOfAnnotations', 'numberOfLabeledAssets',
+                      'numberOfLabels', 'role', 'starred', 'totalDuration', 'user.id', 'user.email', 'user.name']
         variables = {
             'first': first,
             'skip': skip,
@@ -50,6 +70,7 @@ class QueriesProjectUser:
                 },
             }
         }
-        query = GQL_PROJECT_USERS_WITH_KPIS if with_kpis else GQL_PROJECT_USERS
-        result = self.auth.client.execute(query, variables)
+        GQL_PROJECT_USERS = gql_project_users(
+            fragment_builder(fields, ProjectUser))
+        result = self.auth.client.execute(GQL_PROJECT_USERS, variables)
         return format_result('data', result)
