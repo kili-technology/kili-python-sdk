@@ -1,8 +1,6 @@
-from kili.playground import Playground
 from kili.authentication import KiliAuth
+from kili.playground import Playground
 import os
-
-pip install kili
 
 email = os.getenv('KILI_USER_EMAIL')
 password = os.getenv('KILI_USER_PASSWORD')
