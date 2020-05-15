@@ -1,13 +1,11 @@
-# Authentication
+from kili.playground import Playground
+from kili.authentication import KiliAuth
 import os
 
-# !pip install kili # uncomment if you don't have kili installed already
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+pip install kili
 
 email = os.getenv('KILI_USER_EMAIL')
 password = os.getenv('KILI_USER_PASSWORD')
-# If you use Kili SaaS, use the url 'https://cloud.kili-technology.com/api/label/graphql'
 api_endpoint = os.getenv('KILI_API_ENDPOINT')
 
 kauth = KiliAuth(email=email, password=password, api_endpoint=api_endpoint)
