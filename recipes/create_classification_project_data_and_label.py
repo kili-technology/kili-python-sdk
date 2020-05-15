@@ -1,13 +1,3 @@
-from kili.authentication import KiliAuth
-from kili.playground import Playground
-import os
-
-email = os.getenv('KILI_USER_EMAIL')
-password = os.getenv('KILI_USER_PASSWORD')
-api_endpoint = os.getenv('KILI_API_ENDPOINT')
-
-kauth = KiliAuth(email=email, password=password, api_endpoint=api_endpoint)
-playground = Playground(kauth)
 project_example = {
     'title': 'Car brand recognition',
     'description': 'Identify and locate cars',

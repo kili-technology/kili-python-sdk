@@ -61,9 +61,15 @@ Example based on Enron email dataset. Its downloads the data, get the first 50 e
 python google_ner_pre_labeling.py
 ```
 
-## How to use GraphQL Playground
+## How to use Python functions to query data
 
-For more flexibility, you can directly query GraphQL API without using
+You can query every asset, label, or project-related information through the API.
+A comprehensive example is [our recipe on how to use the query methods](https://github.com/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
+You can also refer to the [documentation](https://cloud.kili-technology.com/docs/python-graphql-api/playground-api/).
+
+## How to use GraphQL Playground to query data
+
+If you prefer, you can directly query GraphQL API without using
 `kili-playground`.
 
 1. Go to http://cloud.kili-technology.com/api/label/playground
