@@ -5,13 +5,13 @@ from typing import List
 import pandas as pd
 from tqdm import tqdm
 
-from ...helpers import deprecate, format_result
-from .queries import (GQL_ASSETS,
+from ...helpers import deprecate, format_result, fragment_builder
+from .queries import (gql_assets,
                       GQL_ASSETS_COUNT,
                       GQL_GET_NEXT_ASSET_FROM_LABEL,
                       GQL_GET_NEXT_ASSET_FROM_PROJECT)
-from .fragments import ASSET_FRAGMENT_SIMPLIFIED
 from ...constants import NO_ACCESS_RIGHT
+from ...types import Asset
 
 
 class QueriesAsset:
@@ -50,8 +50,27 @@ class QueriesAsset:
     def get_assets(self, project_id: str):
         return self.assets(project_id=project_id)
 
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be :
+        ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 
+        'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 
+        'roles.user.name', 'title']
+        To fetch more fields, for example the consensus fields, just add those :
+        fields = ['consensusMark', 'consensusTotCoverage', 'id', 'inputType', 'maxWorkerCount', 'minAgreement', 
+        'title', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 
+        'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles', 'roles.consensusMark', 'roles.id', 
+        'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.user.email']
+        """)
     def assets(self, asset_id: str = None, project_id: str = None,
-               skip: int = 0, first: int = None,
+               skip: int = 0,
+               fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
+                               'labels.author.email', 'labels.createdAt', 'labels.honeypotMark', 'labels.id', 'labels.isLatestLabelForUser',
+                               'labels.jsonResponse', 'labels.labelType', 'labels.secondsToLabel', 'labels.totalSecondsToLabel', 'status', 'updatedAt'],
+               first: int = None,
                external_id_contains: List[str] = None,
                status_in: List[str] = None,
                consensus_mark_gt: float = None,
@@ -67,8 +86,7 @@ class QueriesAsset:
                label_created_at_gt: float = None,
                label_created_at_lt: float = None,
                label_skipped: bool = None,
-               format: str = None, disable_tqdm: bool = False,
-               fragment=ASSET_FRAGMENT_SIMPLIFIED):
+               format: str = None, disable_tqdm: bool = False):
         """
         Get an array of assets from a project
 
@@ -78,6 +96,9 @@ class QueriesAsset:
             Identifier of the project.
         - skip : int, optional (default = None)
             Number of assets to skip (they are ordered by their date of creation, first to last).
+        - fields : list of string, optional (default = ['id', 'content', 'externalId', 'isHoneypot', 'isUsedForConsensus', 'jsonMetadata', 'labels.author.id', 'labels.author.email','labels.jsonResponse', 'labels.skipped', 'priority', 'projects.id', 'projects.title', 'project.jsonInterface'])
+            All the fields to request among the possible fields for the assets, default for None are the non-calculated fields)
+            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
         - first : int, optional (default = None)
             Maximum number of assets to return. Can only be between 0 and 100.
         - external_id_contains : list of str, optional (default = None)
@@ -160,8 +181,8 @@ class QueriesAsset:
                     'skip': skip,
                     'first': formatted_first,
                 }
-                result = self.auth.client.execute(
-                    GQL_ASSETS(fragment), variables)
+                GQL_ASSETS = gql_assets(fragment_builder(fields, Asset))
+                result = self.auth.client.execute(GQL_ASSETS, variables)
                 assets = format_result('data', result)
                 if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
                     if format == 'pandas':
@@ -246,6 +267,7 @@ class QueriesAsset:
 
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,
+                     fields: list = None,
                      external_id_contains: List[str] = None,
                      status_in: List[str] = None,
                      consensus_mark_gt: float = None,

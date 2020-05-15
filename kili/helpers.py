@@ -3,6 +3,8 @@ import warnings
 import base64
 import re
 from json import dumps, loads
+from enum import Enum
+from types import *
 
 
 class GraphQLError(Exception):
@@ -52,6 +54,32 @@ def format_json(result):
                 result[key] = format_json(value)
         return result
     return result
+
+
+def fragment_builder(fields, type_of_fields):
+    fragment = ''
+    subfields = [field.split('.', 1) for field in fields if '.' in field]
+    if subfields:
+        for subquery in set([subfield[0] for subfield in subfields]):
+            type_of_fields_subquery = type_of_fields[subquery].value
+            try:
+                if issubclass(type_of_fields_subquery, Enum):
+                    fields_subquery = [subfield[1]
+                                       for subfield in subfields if subfield[0] == subquery]
+                    fragment += f' {subquery}{{{fragment_builder(fields_subquery,type_of_fields_subquery)}}}'
+            except ValueError:
+                print(f'{subquery} must be a valid subquery field')
+        fields = [field for field in fields if '.' not in field]
+    for field in fields:
+        try:
+            type_of_fields(field)
+        except ValueError:
+            print(f'{field} must be an instance of {type_of_fields}')
+        if isinstance(field, str):
+            fragment += f' {field}'
+        else:
+            raise Exception('Please provide the fields to query as strings')
+    return fragment
 
 
 def deprecate(msg, type=DeprecationWarning):
