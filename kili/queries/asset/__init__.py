@@ -10,7 +10,6 @@ from .queries import (gql_assets,
                       GQL_ASSETS_COUNT,
                       GQL_GET_NEXT_ASSET_FROM_LABEL,
                       GQL_GET_NEXT_ASSET_FROM_PROJECT)
-from .fragments import ASSET_FRAGMENT_SIMPLIFIED
 from ...constants import NO_ACCESS_RIGHT
 from ...types import Asset
 
@@ -56,7 +55,6 @@ class QueriesAsset:
         **New feature has been added : Query only the fields you want
         using the field argument, that accept a list of string organized like below.**
         The former default query with all fields is deprecated since 13/05/2020
-        The argument fragment has also been deprecated, offering far more possibilities now.
         After 13/06/2020, the default queried fields will be :
         ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 
         'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 
@@ -88,7 +86,7 @@ class QueriesAsset:
                label_created_at_gt: float = None,
                label_created_at_lt: float = None,
                label_skipped: bool = None,
-               format: str = None, disable_tqdm: bool = False, fragment=ASSET_FRAGMENT_SIMPLIFIED):
+               format: str = None, disable_tqdm: bool = False):
         """
         Get an array of assets from a project
 
@@ -137,8 +135,6 @@ class QueriesAsset:
         - format : str, optional (default = None)
             If equal to 'pandas', returns a pandas DataFrame
         - disable_tqdm : bool, optional (default = False)
-        - fragment : str, optional (default = ASSET_FRAGMENT_SIMPLIFIED)
-
 
         Returns
         -------
@@ -184,8 +180,6 @@ class QueriesAsset:
                     'first': formatted_first,
                 }
                 GQL_ASSETS = gql_assets(fragment_builder(fields, Asset))
-                if not fields:
-                    GQL_ASSETS = fragment
                 result = self.auth.client.execute(GQL_ASSETS, variables)
                 assets = format_result('data', result)
                 if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
