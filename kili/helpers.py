@@ -49,7 +49,10 @@ def format_json(result):
                 if value == '' or value is None:
                     result[key] = dict()
                 else:
-                    result[key] = loads(value)
+                    try:
+                        result[key] = loads(value)
+                    except:
+                        raise ValueError('Json Metadata / json response / json interface should be valid jsons')
             else:
                 result[key] = format_json(value)
         return result
