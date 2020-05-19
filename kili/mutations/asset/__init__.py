@@ -139,6 +139,8 @@ class MutationsAsset:
         else:
             raise Exception('json_metadata',
                             'Should be either a dict, a list or a string url')
+        should_reset_to_be_labeled_by = to_be_labeled_by is not None and len(
+            to_be_labeled_by) == 0
         variables = {
             'assetID': asset_id,
             'externalID': external_id,
@@ -147,6 +149,7 @@ class MutationsAsset:
             'consensusMark': consensus_mark,
             'honeypotMark': honeypot_mark,
             'toBeLabeledBy': to_be_labeled_by,
+            'shouldResetToBeLabeledBy': should_reset_to_be_labeled_by,
             'content': content,
             'status': status,
             'isUsedForConsensus': is_used_for_consensus,
