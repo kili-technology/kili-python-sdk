@@ -40,7 +40,7 @@ jobs:
             --env KILI_USER_EMAIL=${KILI_USER_EMAIL} \
             --env KILI_USER_PASSWORD=${KILI_USER_PASSWORD} \
             ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
-              apt-get install -y gcc && \
+              apt-get update && apt-get install -y gcc && \
               git clone --branch ${TRAVIS_BRANCH} https://github.com/kili-technology/kili-playground.git && \
               pip install ./kili-playground && \
               jupyter nbconvert \
