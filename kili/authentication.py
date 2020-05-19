@@ -22,6 +22,7 @@ class KiliAuth(object):
     def __init__(self,
                  email=os.getenv('KILI_USER_EMAIL'),
                  password=os.getenv('KILI_USER_PASSWORD'),
+                 api_key=None,
                  api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
         self.session = requests.Session()
 
@@ -31,10 +32,13 @@ class KiliAuth(object):
         self.session.mount('https://', adapter)
         self.session.mount('http://', adapter)
         self.client = GraphQLClient(api_endpoint, self.session)
-        auth_payload = signin(self.client, email, password)
-        api_token = auth_payload['token']
-        self.client.inject_token('Bearer: ' + api_token)
-        self.user_id = auth_payload['user']['id']
+        if api_key is None:
+            auth_payload = signin(self.client, email, password)
+            api_token = auth_payload['token']
+            self.client.inject_token('Bearer: ' + api_token)
+            self.user_id = auth_payload['user']['id']
+        else:
+            self.client.inject_token('X-API-Key: ' + api_key)
 
     def __del__(self):
         self.session.close()
