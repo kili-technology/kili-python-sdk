@@ -75,19 +75,23 @@ def read_arguments():
         return args
 
 
-def convert_from_yolo_to_kili_format(x1, y1, x2, y2, category, score, total_width, total_height):
+def convert_from_yolo_to_kili_format(x, y, w, h, category, score):
     time_hash = datetime.now().strftime('%Y%m%d%H%M%S')
+    x_min = x - w/2
+    y_min = y - h/2
+    x_max = x + w/2
+    y_max = y + h/2
     annotations = {
-        'score': float(score),
+        'score': 100,
         'mid': f'{time_hash}-{random.getrandbits(52)}',
         'categories': [{'name': str(category),
-                        'confidence': int(float(score) * 100)}],
+                        'confidence': 100}],
         'boundingPoly': [
             {'normalizedVertices': [
-                {'x': x1 / total_width, 'y': y1 / total_height},
-                {'x': x2 / total_width, 'y': y1 / total_height},
-                {'x': x1 / total_width, 'y': y2 / total_height},
-                {'x': x2 / total_width, 'y': y2 / total_height},
+                {'x': x_min, 'y': y_max},
+                {'x': x_min, 'y': y_min},
+                {'x': x_max, 'y': y_min},
+                {'x': x_max, 'y': y_max},
             ]}
         ],
         'type': 'rectangle'
@@ -260,18 +264,13 @@ class YoloTransferLearning(TransferLearning):
             with open(os.path.join(output.name, filename), 'rb') as f:
                 if filename.endswith('.txt'):
                     lines = f.readlines()
-                    image_name = filename.replace('.txt', '')
-                    image = Image.open(os.path.join(output.name, image_name))
-                    total_width, total_height = image.size
                     annotations = []
                     for line in lines:
                         annotation = line.decode('utf-8')
-                        [start, end, height, width, category,
-                            score, *_] = annotation.split(' ')
-                        annotations.append(convert_from_yolo_to_kili_format(int(start), int(end), int(height),
-                                                                            int(
-                                                                                width), category, score, total_width,
-                                                                            total_height))
+                        [category, x_center, y_center, height,
+                            width, score, *_] = annotation.split(' ')
+                        annotations.append(convert_from_yolo_to_kili_format(float(x_center), float(y_center), float(height),
+                                                                            float(width), category, float(score)))
                     external_id_array.append(filename_to_ids[image_name])
                     json_response_array.append(
                         {self.job_id: {'annotations': annotations}})
@@ -315,19 +314,19 @@ def main():
             f.write(f'{category_name}\n'.lower().encode())
     with open(COCO_DATA_FILE_TEMPLATE, 'rb') as f_template:
         with open(COCO_DATA_FILE, 'wb') as f:
-            template = f_template.read().decode('utf-8') \
-                .replace('%%NUMBER_OF_CLASSES%%', str(number_of_classes)) \
-                .replace('%%COCO_TRAIN_TXT_FILE%%', COCO_TRAIN_TXT_FILE) \
-                .replace('%%COCO_VALID_TXT_FILE%%', COCO_VALID_TXT_FILE) \
-                .replace('%%COCO_NAMES_FILE%%', COCO_NAMES_FILE)
+            template = f_template.read().decode('utf-8')
+            .replace('%%NUMBER_OF_CLASSES%%', str(number_of_classes))
+            .replace('%%COCO_TRAIN_TXT_FILE%%', COCO_TRAIN_TXT_FILE)
+            .replace('%%COCO_VALID_TXT_FILE%%', COCO_VALID_TXT_FILE)
+            .replace('%%COCO_NAMES_FILE%%', COCO_NAMES_FILE)
             f.write(template.encode())
     if not args.override:
         with open(CONFIG_FILE_TEMPLATE, 'rb') as f_template:
             with open(CONFIG_FILE, 'wb') as f:
                 number_of_filters = (4 + 1 + number_of_classes) * 3
-                template = f_template.read().decode('utf-8') \
-                    .replace('%%NUMBER_OF_CLASSES%%', str(number_of_classes)) \
-                    .replace('%%NUMBER_OF_FILTERS%%', str(number_of_filters))
+                template = f_template.read().decode('utf-8')
+                .replace('%%NUMBER_OF_CLASSES%%', str(number_of_classes))
+                .replace('%%NUMBER_OF_FILTERS%%', str(number_of_filters))
                 f.write(template.encode())
     logging.info('OK\n')
 
