@@ -22,8 +22,8 @@ class KiliAuth(object):
     def __init__(self,
                  email=os.getenv('KILI_USER_EMAIL'),
                  password=os.getenv('KILI_USER_PASSWORD'),
-                 api_key=None,
-                 api_endpoint='https://cloud.kili-technology.com/api/label/graphql'):
+                 api_endpoint='https://cloud.kili-technology.com/api/label/graphql',
+                 api_key=None):
         self.session = requests.Session()
 
         self.check_versions_match(api_endpoint)
