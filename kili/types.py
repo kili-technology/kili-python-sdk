@@ -103,5 +103,5 @@ class Asset(Enum):
     priority = 'priority'
     project = Project
     status = 'status'
-    toBeLabeledBy = 'toBeLabeledBy'
+    toBeLabeledBy = User
     updatedAt = 'updatedAt'

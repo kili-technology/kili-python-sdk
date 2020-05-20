@@ -26,30 +26,32 @@ mutation(
 GQL_UPDATE_PROPERTIES_IN_ASSET = f'''
 mutation(
     $assetID: ID!
-    $externalId: String
-    $priority: Int
-    $jsonMetadata: String
     $consensusMark: Float
-    $honeypotMark: Float
-    $toBeLabeledBy: [String!]
     $content: String
-    $status: Status
-    $isUsedForConsensus: Boolean
+    $externalId: String
+    $honeypotMark: Float
     $isHoneypot: Boolean
+    $isUsedForConsensus: Boolean
+    $jsonMetadata: String
+    $priority: Int
+    $shouldResetToBeLabeledBy: Boolean
+    $status: Status
+    $toBeLabeledBy: [String]
 ) {{
   data: updatePropertiesInAsset(
     where: {{id: $assetID}},
     data: {{
-      externalId: $externalId
-      priority: $priority
-      jsonMetadata: $jsonMetadata
       consensusMark: $consensusMark
-      honeypotMark: $honeypotMark
-      toBeLabeledBy: $toBeLabeledBy
       content: $content
-      status: $status
-      isUsedForConsensus: $isUsedForConsensus
+      externalId: $externalId
+      honeypotMark: $honeypotMark
       isHoneypot: $isHoneypot
+      isUsedForConsensus: $isUsedForConsensus
+      jsonMetadata: $jsonMetadata
+      priority: $priority
+      shouldResetToBeLabeledBy: $shouldResetToBeLabeledBy
+      status: $status
+      toBeLabeledBy: $toBeLabeledBy
     }}
   ) {{
     {ASSET_FRAGMENT}
