@@ -7,6 +7,8 @@ import time
 
 from six.moves import urllib
 
+from . import __version__
+
 
 class GraphQLClient:
     def __init__(self, endpoint, session=None):
@@ -26,7 +28,8 @@ class GraphQLClient:
         data = {'query': query,
                 'variables': variables}
         headers = {'Accept': 'application/json',
-                   'Content-Type': 'application/json'}
+                   'Content-Type': 'application/json',
+                   'X-Powered-By': f'Kili Playground/{__version__}'}
 
         if self.token is not None:
             headers[self.headername] = '{}'.format(self.token)

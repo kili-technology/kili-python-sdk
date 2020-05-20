@@ -4,8 +4,8 @@ services:
 env:
   global:
     - KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql
-    - secure: "l9o1BMB6MFXEeRR3sZ7I3Ti+FVDcX8nHPQK4aDFNGPpfco9ci5BiHnt5ZbgDiQrQK8k2U87hygVFB8zmJ3jupuHJSIBWjfMraYuS0g8W4wJfvFQr/ERkQ50zLuh0Kk9XjPlkSsSOf7YC+QPp/2k9c+fv3mZ0gg4xmWi4FmMmi1/XTxNJqz0HNbgKg1mdqz5wx8+jk62bSMyEKSkbr5nNKKDmhv9p1Cx3LdoEccTIUiOoAap+TPpK1qmlw9hr/evFMGD/3mVcnstpCc+8amasWcHXJ8QjwbnR9oW1IbFvNjj3ku3pXMkJGbmhKLKxm3278jOBlig69e7MaGlMptGnb3PyWR1m2sBCEsfasJS7SdIR/BD82i6EExfCpqpuw/dEjre1e/QkDHQXZHe4QIwGnUeSczaFU7X17btvI2QgF5TmJnxbdhPgcjI2rp8XAC627j03+ZQ9bAOuza/yT4TtLCSMBqfvTyUxCDvGLRk6nBIWdjjORsN3PPdVQpEeJUAE9FvbJAGv7Mp4qN6tn8NjJGHmwRAuODqn+pWrH0JvsOMm+0v7YRf0NvLzWVvkqlQIxy3O2jzr0Sx0UdHFK1fhvunhOyyXfHjhKrIYoP0xtKYKGe4/Nv7ZdxCiFMTjsTt2p/dCiv38ddQtxiNbq1iKMM7teq/gsTI6rdP53VXiiIg="
-    - secure: "QYlnkiOAYcocBEF2RW5NXaRCZVZsUDlbPFlAr1yYrPFFtg/VqFhgbJO9dhgMJ+OFZTbHKm8lVEmf0LyExKZ8KJcbOnax+0YQTBGIPb9TuX2wfuL8/2nDi0SxFnYdg3iWWGRVeeNuh7rBniyCqhValMZ4lVMzPvpRi0K0V71e81Uc7VNsX/vcsdofnS8RqkFAh4VFw4izzJXUSXM64tyIDVKgd0SPH4Q4XOowpfuCIEhJZdmrilc5xjQ8VQsPDwYWkN7XiTIw1ld/aTsPctiNnZDbpH19Kz8l6Tgjos1VjYg516TuxxB0Gtauj/ehyRvO3qLjvM/2Tuia0MlJzu9mfgCAG6aQzA8QY6UOhSqOycu9QF8ezOYhqxQzBWHKKNkQN+zNJop/4C9Axm5l0ppL2w1ZIdVaVG2hBo654S9OTWw1JUj5cUhzo2jtExeQVd29laWeDMiXC+/Mvn1mvqlFEXSNNLEBAXwtpeHyPKh7DZsh33lUVqL6J9JFRkX+9BE1Ui7ntPUf5tq+QixsNfZCGPq1IwHi9Oap4zL2/fjPxueysPxUX1DM6sbAp9R/PLSOZ5GE8Gn0/rv1m7zZvQ99iA/JW4cNqKLyXfWQED0yWhkWmeQ7bsbTKFaNKBROfiHxkl/3B0avhx4E2JwrIsyQU0/Az7xGhdYN3/Rf1XaK2Hw="
+    - secure: "iUAX9lUngEc4nQ43AXVTWWv6OyLXomUhNrhDg6vSzF6Lt0tE3DthGpawW+b7ezRiMAMBBv2aH8/eEvhOFCpWXlmUgNjCR5g5CqMU8XgOhuk9jt/jnK9KLg873T2aQePL91+cWKihh34HcqISDiCTtBouE2cIIaprMLcTOQgngEzZNjskTEMVVRxHl4QnPo2dx4yq0Jc9Ufj+LQxeun3HKnHh3KZo7zA1kU33Wsd0GBGpJo7mgydh/LoEhYhhV0jMcf6V/UFWuuKAgRHD3MSsOiUaHJHxrRwLFYlBtHbMtG1dh7PVU7diFQVvqj5NdFpfOkzV5CWQAK7ce4f4UMyBhaJ1PAP1H5sZT29f4ZNXNSos9+vyd7/LP4YB50rTr0Q7GytdfMxLELeZDHbRnA+Y1aEsewF+m9Ur6MidY+yKFKmFnAHkU65K5SvibsoStoLD8vjTFNF+KjvZ1bgT/fIhzwYY9Wqg1GY+zRMapgEvwsnoUvDghftjrBDhGF1l5SLqf/OBMCjpI30DZGGEEyRbE694bRpjBF2+ZjtytklNX9sZWZcHqT9j9HoeQQ1cyrLQMHo1gHjZDyz53hM6aWq7SWwrl5gS9Zvu3CVCemYas/vqqQ9r9KNZpCvVxOc9gvWeqTsvQhVW+HyU4EvLQ0t9TxEbqL5J3qsXlOsL+lgImdk="
+    - secure: "HmY5WAcDF3NCqq/i3s4WdG2yb1oBt7ur1RbJz8pise8s4jaTC2GQKK8wDT9xpwaForarUMO7SwW0t3DIqsh3mZmkH43KvzHx9cdTs9bUvlyN3QgwQhlSQcTdnAGt7F8j2Moqgo4ISvg6aoBGrok7MzBFJ5tLmDhlwx44NJOwWw7hwpzVz795e8nALYu+CQrpCe5DjRfs5LSsujbtsGKQzCNxYPMuLtQH5/U/fdOFPsMHaUqFIP3PAYnRp/efU4RjDXuCH0fQjVfMWArm4XzigHLypbbknuZ9cJOOKi7H6SqQoAy/coKlYKNdZZfdJOs+LkdsCnUAgWjCzm46aTvbTsGn0ImtaUiTIUPUtR2yUHkHRK/Hw5SyEOyVSbtuZiQWwLs7xy9EBwZnb0XW4eUnAxdYchRR2jCjqo4Z2X1D0/AVypUyj49tj/wNI4hApXRygV59k6oa0tZpN/t9EphjmIq4Wh3E9r4z7fNsCPVs1epCJwp8kr3DLlD63DHOFIeQx5kbY8QbNFIrHFUeV4+3usT3y2Pf454UoBCd2p/UNsJonS6D3cn7T5d4Ziy2DIHX8UzT6HmqK+YY3fZSMpkcXcmlDwqmm1YvR8QUq0U5C2DYIKch8CvcRxvThJQo8j+qWhm/1xMg8OyKoAAjwHoHDyFxZ3TZ+S16helk+DcR+GQ="
 jobs:
   include:
     # To debug a recipe by running it in a Docker locally as it is run in Travis, launch the following lines:
@@ -24,7 +24,7 @@ jobs:
     #   --rm \
     #   -p 10000:8888 \
     #   ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
-    #     apt-get install -y gcc && \
+    #     apt-get update && apt-get install -y gcc && \
     #     git clone --branch ${TRAVIS_BRANCH} https://github.com/kili-technology/kili-playground.git && \
     #     pip install ./kili-playground && \
     #     jupyter notebook --allow-root --ip=0.0.0.0 --port=8888"
@@ -40,7 +40,7 @@ jobs:
             --env KILI_USER_EMAIL=${KILI_USER_EMAIL} \
             --env KILI_USER_PASSWORD=${KILI_USER_PASSWORD} \
             ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
-              apt-get install -y gcc && \
+              apt-get update && apt-get install -y gcc && \
               git clone --branch ${TRAVIS_BRANCH} https://github.com/kili-technology/kili-playground.git && \
               pip install ./kili-playground && \
               jupyter nbconvert \
@@ -59,6 +59,10 @@ jobs:
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
         - NOTEBOOK_PATH=recipes/create_project.ipynb
+    - <<: *test-recipes
+      env:
+        - DOCKER_IMAGE=continuumio/anaconda3:2020.02
+        - NOTEBOOK_PATH=recipes/medical_imaging.ipynb
     # Declare other tests as follow:
     # - <<: *test-recipes
     #   env:
