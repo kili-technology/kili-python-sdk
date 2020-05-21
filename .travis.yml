@@ -50,7 +50,7 @@ jobs:
                 --execute /root/kili-playground/${NOTEBOOK_PATH}"
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
-        - NOTEBOOK_PATH=recipes/transfer_learning_with_yolo.ipynb
+        - NOTEBOOK_PATH=recipes/image-object-detection-with-yolo/main.ipynb
     - <<: *test-recipes
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
