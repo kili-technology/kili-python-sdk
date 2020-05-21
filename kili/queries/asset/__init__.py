@@ -135,8 +135,6 @@ class QueriesAsset:
         - format : str, optional (default = None)
             If equal to 'pandas', returns a pandas DataFrame
         - disable_tqdm : bool, optional (default = False)
-        - fragment : str, optional (default = ASSET_FRAGMENT_SIMPLIFIED)
-
 
         Returns
         -------
