@@ -359,6 +359,7 @@ class QueriesAsset:
                     'consensusMarkLte': label_consensus_mark_lt,
                     'honeypotMarkGte': label_honeypot_mark_gt,
                     'honeypotMarkLte': label_honeypot_mark_lt,
+                    'createdAt': label_created_at,
                     'createdAtGte': label_created_at_gt,
                     'createdAtLte': label_created_at_lt,
                     'skipped': label_skipped,
