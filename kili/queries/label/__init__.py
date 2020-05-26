@@ -102,12 +102,15 @@ class QueriesLabel:
             Returned labels should have an external id that belongs to that list, if given.
         - author_in : list of str, optional (default = None)
             Returned labels should have a label whose status belongs to that list, if given.
-        - created_at : float, optional (default = None)
+        - created_at : string, optional (default = None)
             Returned labels should have a label whose creation date is equal to this date.
-        - created_at_gt : float, optional (default = None)
+            Formatted string should have format : "YYYY-MM-DD"
+        - created_at_gt : string, optional (default = None)
             Returned labels should have a label whose creation date is greater than this date.
+            Formatted string should have format : "YYYY-MM-DD"
         - created_at_lt : float, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
+            Formatted string should have format : "YYYY-MM-DD"
         - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
             Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
@@ -195,18 +198,29 @@ class QueriesLabel:
 
         return json_response
 
-    def export_labels_as_df(self, project_id: str, fields: list = None):
+    @deprecate(
+        """
+        **New feature has been added : Query only the fields you want
+        using the field argument, that accept a list of string organized like below.**
+        The former default query with all fields is deprecated since 13/05/2020
+        After 13/06/2020, the default queried fields will be :
+        ['id', 'author.id','author.name', 'author.email', 'jsonResponse', 
+        'labelType', 'secondsToLabel', 'skipped']
+        To fetch more fields, for example the consensus fields, just add those :
+        fields = ['id','honeypotMark','numberOfAnnotations','jsonResponse','labelType',
+        'skipped','createdAt', 'author.email', 'author.name', 'author.organization.name', 
+        'author.organization.zipCode']
+        """)
+    def export_labels_as_df(self, project_id: str, fields: list = ['id', 'author.id', 'author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']):
         """
         Get the labels of a project as a pandas DataFrame
 
         Parameters
         ----------
         - project_id : str
-        - fields : list of string, optional (default = None)
+        - fields : list of string, optional (default = ['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
-            - Default fields : `['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']`
-
         Returns
         -------
         - labels_df : pandas DataFrame containing the labels.

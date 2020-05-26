@@ -83,8 +83,9 @@ class QueriesAsset:
                label_consensus_mark_lt: float = None,
                label_honeypot_mark_gt: float = None,
                label_honeypot_mark_lt: float = None,
-               label_created_at_gt: float = None,
-               label_created_at_lt: float = None,
+               label_created_at: str = None,
+               label_created_at_gt: str = None,
+               label_created_at_lt: str = None,
                label_skipped: bool = None,
                format: str = None, disable_tqdm: bool = False):
         """
@@ -126,10 +127,15 @@ class QueriesAsset:
             Returned assets should have a label whose honeypot is greater than this number.
         - label_honeypot_mark_lt : float, optional (default = None)
             Returned assets should have a label whose honeypot is lower than this number.
-        - label_created_at_gt : float, optional (default = None)
+        - label_created_at : string, optional (default = None)
+            Returned assets should have a label whose creation date is equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
+        - label_created_at_gt : string, optional (default = None)
             Returned assets should have a label whose creation date is greater than this date.
-        - label_created_at_lt : float, optional (default = None)
+            Formatted string should have format : "YYYY-MM-DD"
+        - label_created_at_lt : string, optional (default = None)
             Returned assets should have a label whose creation date is lower than this date.
+            Formatted string should have format : "YYYY-MM-DD"
         - label_skipped : bool, optional (default = None)
             Returned assets should have a label which is skipped
         - format : str, optional (default = None)
@@ -142,7 +148,7 @@ class QueriesAsset:
         """
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
-                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fragment', 'self']}
+                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self']}
         number_of_assets_with_search = self.count_assets(**count_args)
         total = min(number_of_assets_with_search,
                     first) if first is not None else number_of_assets_with_search
@@ -171,6 +177,7 @@ class QueriesAsset:
                             'consensusMarkLte': label_consensus_mark_lt,
                             'honeypotMarkGte': label_honeypot_mark_gt,
                             'honeypotMarkLte': label_honeypot_mark_lt,
+                            'createdAt': label_created_at,
                             'createdAtGte': label_created_at_gt,
                             'createdAtLte': label_created_at_lt,
                             'skipped': label_skipped,
@@ -265,7 +272,6 @@ class QueriesAsset:
 
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,
-                     fields: list = None,
                      external_id_contains: List[str] = None,
                      status_in: List[str] = None,
                      consensus_mark_gt: float = None,
