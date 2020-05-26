@@ -284,8 +284,9 @@ class QueriesAsset:
                      label_consensus_mark_lt: float = None,
                      label_honeypot_mark_gt: float = None,
                      label_honeypot_mark_lt: float = None,
-                     label_created_at_gt: float = None,
-                     label_created_at_lt: float = None,
+                     label_created_at: str = None,
+                     label_created_at_gt: str = None,
+                     label_created_at_lt: str = None,
                      label_skipped: bool = None):
         """
         Count and return the number of assets with the given parameters
@@ -323,10 +324,15 @@ class QueriesAsset:
             Returned assets should have a label whose honeypot is greater than this number.
         - label_honeypot_mark_lt : float, optional (default = None)
             Returned assets should have a label whose honeypot is lower than this number.
-        - label_created_at_gt : float, optional (default = None)
+        - label_created_at : string, optional (default = None)
+            Returned assets should have a label whose creation date is equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
+        - label_created_at_gt : string, optional (default = None)
             Returned assets should have a label whose creation date is greater than this date.
-        - label_created_at_lt : float, optional (default = None)
+            Formatted string should have format : "YYYY-MM-DD"
+        - label_created_at_lt : string, optional (default = None)
             Returned assets should have a label whose creation date is lower than this date.
+            Formatted string should have format : "YYYY-MM-DD"
         - label_skipped : bool, optional (default = None)
             Returned assets should have a label which is skipped
 

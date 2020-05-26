@@ -62,12 +62,11 @@ class QueriesLabel:
         using the field argument, that accept a list of string organized like below.**
         The former default query with all fields is deprecated since 13/05/2020
         After 13/06/2020, the default queried fields will be :
-        ['id', 'author.id','author.name', 'author.email', 'jsonResponse', 
+        ['author.email','author.id', 'author.name', 'id', 'jsonResponse', 
         'labelType', 'secondsToLabel', 'skipped']
-        To fetch more fields, for example the consensus fields, just add those :
-        fields = ['id','honeypotMark','numberOfAnnotations','jsonResponse','labelType',
-        'skipped','createdAt', 'author.email', 'author.name', 'author.organization.name', 
-        'author.organization.zipCode']
+        To fetch more fields, for example the honeypot fields, just add those :
+        fields = ['author.email', 'author.name', 'author.organization.name', 'author.organization.zipCode',
+        'honeypotMark', 'createdAt','id','jsonResponse','labelType', 'numberOfAnnotations','skipped' ]
         """)
     def labels(self,
                asset_id: str = None,
@@ -108,7 +107,7 @@ class QueriesLabel:
         - created_at_gt : string, optional (default = None)
             Returned labels should have a label whose creation date is greater than this date.
             Formatted string should have format : "YYYY-MM-DD"
-        - created_at_lt : float, optional (default = None)
+        - created_at_lt : string, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
         - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
@@ -204,12 +203,10 @@ class QueriesLabel:
         using the field argument, that accept a list of string organized like below.**
         The former default query with all fields is deprecated since 13/05/2020
         After 13/06/2020, the default queried fields will be :
-        ['id', 'author.id','author.name', 'author.email', 'jsonResponse', 
-        'labelType', 'secondsToLabel', 'skipped']
-        To fetch more fields, for example the consensus fields, just add those :
-        fields = ['id','honeypotMark','numberOfAnnotations','jsonResponse','labelType',
-        'skipped','createdAt', 'author.email', 'author.name', 'author.organization.name', 
-        'author.organization.zipCode']
+        ['author.email','author.id', 'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']
+        To fetch more fields, for example the honeypot fields, just add those :
+        fields = ['author.email', 'author.name', 'author.organization.name', 'author.organization.zipCode',
+        'honeypotMark', 'createdAt','id','jsonResponse','labelType', 'numberOfAnnotations','skipped' ]
         """)
     def export_labels_as_df(self, project_id: str, fields: list = ['id', 'author.id', 'author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']):
         """
@@ -218,8 +215,8 @@ class QueriesLabel:
         Parameters
         ----------
         - project_id : str
-        - fields : list of string, optional (default = ['id', 'author.id','author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
-            All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
+        - fields : list of string, optional (default = [ 'author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+            All the fields to request among the possible fields for the labels, default are the non-calculated fields)
             - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
         Returns
         -------
