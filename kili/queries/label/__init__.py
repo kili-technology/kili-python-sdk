@@ -161,7 +161,7 @@ class QueriesLabel:
                 'authorIn': author_in,
                 'honeypotMarkGte': honeypot_mark_gte,
                 'honeypotMarkLte': honeypot_mark_lte,
-                'jsonResponseContains': json_response_contains
+                'jsonResponseContains': json_response_contains,
                 'skipped': skipped,
                 'typeIn': type_in,
             },
