@@ -71,21 +71,22 @@ class QueriesAsset:
                                'labels.author.email', 'labels.createdAt', 'labels.honeypotMark', 'labels.id', 'labels.isLatestLabelForUser',
                                'labels.jsonResponse', 'labels.labelType', 'labels.secondsToLabel', 'labels.totalSecondsToLabel', 'status', 'updatedAt'],
                first: int = None,
-               external_id_contains: List[str] = None,
-               status_in: List[str] = None,
                consensus_mark_gt: float = None,
                consensus_mark_lt: float = None,
+               external_id_contains: List[str] = None,
                honeypot_mark_gt: float = None,
                honeypot_mark_lt: float = None,
+               status_in: List[str] = None,
                label_type_in: List[str] = None,
                label_author_in: List[str] = None,
                label_consensus_mark_gt: float = None,
                label_consensus_mark_lt: float = None,
-               label_honeypot_mark_gt: float = None,
-               label_honeypot_mark_lt: float = None,
                label_created_at: str = None,
                label_created_at_gt: str = None,
                label_created_at_lt: str = None,
+               label_honeypot_mark_gt: float = None,
+               label_honeypot_mark_lt: float = None,
+               label_json_response_contains: List[str] = None,
                label_skipped: bool = None,
                format: str = None, disable_tqdm: bool = False):
         """
@@ -102,19 +103,19 @@ class QueriesAsset:
             Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
         - first : int, optional (default = None)
             Maximum number of assets to return. Can only be between 0 and 100.
-        - external_id_contains : list of str, optional (default = None)
-            Returned assets should have an external id that belongs to that list, if given.
-        - status_in : list of str, optional (default = None)
-            Returned assets should have a status that belongs to that list, if given.
-            Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
         - consensus_mark_gt : float, optional (default = None)
             Minimum amout of consensus for the asset.
         - consensus_mark_lt : float, optional (default = None)
             Maximum amout of consensus for the asset.
+        - external_id_contains : list of str, optional (default = None)
+            Returned assets should have an external id that belongs to that list, if given.
         - honeypot_mark_gt : float, optional (default = None)
             Minimum amout of honeypot for the asset.
         - honeypot_mark_lt : float, optional (default = None)
             Maximum amout of honeypot for the asset.
+        - status_in : list of str, optional (default = None)
+            Returned assets should have a status that belongs to that list, if given.
+            Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
         - label_type_in : list of str, optional (default = None)
             Returned assets should have a label whose type belongs to that list, if given.
         - label_author_in : list of str, optional (default = None)
@@ -123,10 +124,6 @@ class QueriesAsset:
             Returned assets should have a label whose consensus is greater than this number.
         - label_consensus_mark_lt : float, optional (default = None)
             Returned assets should have a label whose consensus is lower than this number.
-        - label_honeypot_mark_gt : float, optional (default = None)
-            Returned assets should have a label whose honeypot is greater than this number.
-        - label_honeypot_mark_lt : float, optional (default = None)
-            Returned assets should have a label whose honeypot is lower than this number.
         - label_created_at : string, optional (default = None)
             Returned assets should have a label whose creation date is equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -136,6 +133,12 @@ class QueriesAsset:
         - label_created_at_lt : string, optional (default = None)
             Returned assets should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
+        - label_json_response_contains : list of str, optional (default = None)
+            Returned assets should have a substring of the label's jsonResponse that belongs to that list, if given.
+        - label_honeypot_mark_gt : float, optional (default = None)
+            Returned assets should have a label whose honeypot is greater than this number.
+        - label_honeypot_mark_lt : float, optional (default = None)
+            Returned assets should have a label whose honeypot is lower than this number.
         - label_skipped : bool, optional (default = None)
             Returned assets should have a label which is skipped
         - format : str, optional (default = None)
@@ -175,11 +178,12 @@ class QueriesAsset:
                             'authorIn': label_author_in,
                             'consensusMarkGte': label_consensus_mark_gt,
                             'consensusMarkLte': label_consensus_mark_lt,
-                            'honeypotMarkGte': label_honeypot_mark_gt,
-                            'honeypotMarkLte': label_honeypot_mark_lt,
                             'createdAt': label_created_at,
                             'createdAtGte': label_created_at_gt,
                             'createdAtLte': label_created_at_lt,
+                            'honeypotMarkGte': label_honeypot_mark_gt,
+                            'honeypotMarkLte': label_honeypot_mark_lt,
+                            'jsonResponseContains': label_json_response_contains,
                             'skipped': label_skipped,
                         }
                     },
@@ -282,11 +286,12 @@ class QueriesAsset:
                      label_author_in: List[str] = None,
                      label_consensus_mark_gt: float = None,
                      label_consensus_mark_lt: float = None,
-                     label_honeypot_mark_gt: float = None,
-                     label_honeypot_mark_lt: float = None,
                      label_created_at: str = None,
                      label_created_at_gt: str = None,
                      label_created_at_lt: str = None,
+                     label_honeypot_mark_gt: float = None,
+                     label_honeypot_mark_lt: float = None,
+                     label_json_response_contains: List[str] = None,
                      label_skipped: bool = None):
         """
         Count and return the number of assets with the given parameters
@@ -320,10 +325,6 @@ class QueriesAsset:
             Returned assets should have a label whose consensus is greater than this number.
         - label_consensus_mark_lt : float, optional (default = None)
             Returned assets should have a label whose consensus is lower than this number.
-        - label_honeypot_mark_gt : float, optional (default = None)
-            Returned assets should have a label whose honeypot is greater than this number.
-        - label_honeypot_mark_lt : float, optional (default = None)
-            Returned assets should have a label whose honeypot is lower than this number.
         - label_created_at : string, optional (default = None)
             Returned assets should have a label whose creation date is equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -333,6 +334,12 @@ class QueriesAsset:
         - label_created_at_lt : string, optional (default = None)
             Returned assets should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
+        - label_honeypot_mark_gt : float, optional (default = None)
+            Returned assets should have a label whose honeypot is greater than this number.
+        - label_honeypot_mark_lt : float, optional (default = None)
+            Returned assets should have a label whose honeypot is lower than this number.
+        - label_json_response_contains : list of str, optional (default = None)
+            Returned assets should have a substring of the label's jsonResponse that belongs to that list, if given.
         - label_skipped : bool, optional (default = None)
             Returned assets should have a label which is skipped
 
@@ -357,11 +364,12 @@ class QueriesAsset:
                     'authorIn': label_author_in,
                     'consensusMarkGte': label_consensus_mark_gt,
                     'consensusMarkLte': label_consensus_mark_lt,
-                    'honeypotMarkGte': label_honeypot_mark_gt,
-                    'honeypotMarkLte': label_honeypot_mark_lt,
                     'createdAt': label_created_at,
                     'createdAtGte': label_created_at_gt,
                     'createdAtLte': label_created_at_lt,
+                    'honeypotMarkGte': label_honeypot_mark_gt,
+                    'honeypotMarkLte': label_honeypot_mark_lt,
+                    'jsonResponseContains': label_json_response_contains,
                     'skipped': label_skipped,
                 }
             }
