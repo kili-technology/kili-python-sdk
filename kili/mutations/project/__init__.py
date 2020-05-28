@@ -30,13 +30,18 @@ class MutationsProject:
         """
         Add a user to a project
 
+        If the user does not exist in your organization, he is invited and added 
+        both to your organization and project. This function can also be used to change 
+        the role of the user in the project.
+
         Parameters
         ----------
         - project_id : str
+            Id of the project.
         - user_email : str
-            The email of the new user. This email is used as the unique identifier of the user.
+            The email of the user. This email is used as the unique identifier of the user.
         - role : str
-            One of "ADMIN", "REVIEWER", "LABELER", "READER"
+            One of {"ADMIN", "REVIEWER", "LABELER", "READER"}.
 
         Returns
         -------
