@@ -81,6 +81,7 @@ class QueriesLabel:
                first: int = None,
                honeypot_mark_gte: float = None,
                honeypot_mark_lte: float = None,
+               json_response_contains: List[str] = None,
                label_id: str = None,
                project_id: str = None,
                skip: int = 0,
@@ -119,6 +120,8 @@ class QueriesLabel:
             Returned labels should have a label whose honeypot is greater than this number.
         - honeypot_mark_lt : float, optional (default = None)
             Returned labels should have a label whose honeypot is lower than this number.
+        - json_response_contains : list of str, optional (default = None)
+            Returned labels should have a substring of the jsonResponse that belongs to that list, if given.
         - label_id : str
             Identifier of the label.
         - project_id : str
@@ -152,14 +155,15 @@ class QueriesLabel:
                 'user': {
                     'id': user_id,
                 },
-                'typeIn': type_in,
-                'authorIn': author_in,
-                'honeypotMarkGte': honeypot_mark_gte,
-                'honeypotMarkLte': honeypot_mark_lte,
                 'createdAt': created_at,
                 'createdAtGte': created_at_gte,
                 'createdAtLte': created_at_lte,
+                'authorIn': author_in,
+                'honeypotMarkGte': honeypot_mark_gte,
+                'honeypotMarkLte': honeypot_mark_lte,
+                'jsonResponseContains': json_response_contains,
                 'skipped': skipped,
+                'typeIn': type_in,
             },
             'skip': skip,
             'first': formatted_first,
