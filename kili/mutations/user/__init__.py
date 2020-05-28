@@ -37,15 +37,18 @@ class MutationsUser:
 
     def create_user(self, name: str, email: str, password: str, organization_role: str):
         """
-        Create a user
+        Add a user to your organization.
 
         Parameters
         ----------
         - name : str
+            Name of the new user.
         - email : str
+            Email of the new user, used as his unique identifier.
         - password : str
+            On the first sign in, he will use this password and be able to change it.
         - organization_role : str
-            One of "ADMIN", "REVIEWER", "LABELER", "READER"
+            One of "ADMIN", "USER".
 
         Returns
         -------
