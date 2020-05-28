@@ -82,7 +82,7 @@ class QueriesProject:
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        - a positive integer corresponding to the number of results of the query if it was successful, or an error message else.
         """
         variables = {
             'where': {
