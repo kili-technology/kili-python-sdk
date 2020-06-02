@@ -23,41 +23,6 @@ class QueriesLabel:
 
     @deprecate(
         """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_label used to fetch labels from an asset_id and a user_id. It is now achievable with labels.
-        To fetch labels from an asset_id and a user_id, use:
-            > playground.labels(asset_id=asset_id, user_id=user_id)
-        """)
-    def get_label(self, asset_id: str, user_id: str):
-        labels = self.labels(asset_id=asset_id, user_id=user_id)
-        assert len(labels) == 1, NO_ACCESS_RIGHT
-        return labels[0]
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_latest_labels_for_user used to fetch labels from a project_id and a user_id. It is now achievable with labels.
-        To fetch labels from a project_id and a user_id, use:
-            > playground.labels(project_id=project_id, user_id=user_id)
-        """)
-    def get_latest_labels_for_user(self, project_id: str, user_id: str):
-        return self.labels(project_id=project_id, user_id=user_id)
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_latest_labels used to fetch labels from a project_id. It is now achievable with labels.
-        To fetch labels from a project_id, use:
-            > playground.labels(project_id=project_id, first=first, skip=skip)
-        """)
-    def get_latest_labels(self, project_id: str, skip: int, first: int):
-        return self.labels(project_id=project_id, first=first, skip=skip)
-
-    @deprecate(
-        """
         **New feature has been added : Query only the fields you want
         using the field argument, that accept a list of string organized like below.**
         The former default query with all fields is deprecated since 13/05/2020

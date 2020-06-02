@@ -93,27 +93,3 @@ class QueriesProject:
         result = self.auth.client.execute(GQL_PROJECTS_COUNT, variables)
         count = format_result('data', result)
         return count
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_projects used to fetch projects, it is now achievable with projects. It will be removed on June 1st.
-        To fetch projects, use:
-            > playground.projects(search_query=search_query, skip=skip, first=first)
-        """)
-    def get_projects(self, user_id: str, search_query: str = None, skip: int = 0, first: int = 100):
-        return self.projects(search_query=search_query, skip=skip, first=first)
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_project used to fetch a project, it is now achievable with projects. It will be removed on June 1st.
-        To fetch projects, use:
-            > playground.projects(project_id=project_id)
-        """)
-    def get_project(self, project_id: str):
-        projects = self.projects(project_id=project_id)
-        assert len(projects) == 1, NO_ACCESS_RIGHT
-        return projects[0]
