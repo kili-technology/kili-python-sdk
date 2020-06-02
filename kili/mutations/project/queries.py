@@ -25,7 +25,6 @@ mutation(
     $minConsensusSize: Int
     $numberOfAssets: Int
     $numberOfAssetsWithSkippedLabels: Int
-    $numberOfLatestLabels: Int
     $numberOfRemainingAssets: Int
     $numberOfReviewedAssets: Int
     $projectID: ID!
@@ -47,7 +46,6 @@ mutation(
       minConsensusSize: $minConsensusSize
       numberOfAssets: $numberOfAssets
       numberOfAssetsWithSkippedLabels: $numberOfAssetsWithSkippedLabels
-      numberOfLatestLabels: $numberOfLatestLabels
       numberOfRemainingAssets: $numberOfRemainingAssets
       numberOfReviewedAssets: $numberOfReviewedAssets
       title: $title

@@ -54,7 +54,6 @@ class Project(Enum):
     numberOfAssets = 'numberOfAssets'
     numberOfAssetsWithSkippedLabels = 'numberOfAssetsWithSkippedLabels'
     numberOfReviewedAssets = 'numberOfReviewedAssets'
-    numberOfLatestLabels = 'numberOfLatestLabels'
     numberOfRoles = 'numberOfRoles'
     roles = ProjectUser
     title = 'title'
