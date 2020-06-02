@@ -67,7 +67,6 @@ class MutationsProject:
                                      min_consensus_size: int = None,
                                      number_of_assets: int = None,
                                      number_of_assets_with_empty_labels: int = None,
-                                     number_of_latest_labels: int = None,
                                      number_of_remaining_assets: int = None,
                                      number_of_reviewed_assets: int = None,
                                      title: str = None):
@@ -99,8 +98,6 @@ class MutationsProject:
             Defaults to 0
         - number_of_assets_with_empty_labels : int, optional (default = None)
             Defaults to 0
-        - number_of_latest_labels : int, optional (default = None)
-            Defaults to 0
         - number_of_remaining_assets : int, optional (default = None)
             Defaults to 0
         - number_of_reviewed_assets : int, optional (default = None)
@@ -123,7 +120,6 @@ class MutationsProject:
             'minConsensusSize': min_consensus_size,
             'numberOfAssets': number_of_assets,
             'numberOfAssetsWithSkippedLabels': number_of_assets_with_empty_labels,
-            'numberOfLatestLabels': number_of_latest_labels,
             'numberOfRemainingAssets': number_of_remaining_assets,
             'numberOfReviewedAssets': number_of_reviewed_assets,
             'projectID': project_id,

@@ -29,12 +29,12 @@ class QueriesProject:
         fields = ['id', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 
         'honeypotMark', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 
         'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 
-        'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
+        'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
         'roles.id', 'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.lastLabelingAt', 
         'roles.numberOfAnnotations', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 
         'roles.totalDuration', 'roles.user.email', 'titleAndDescription', 'useHoneyPot']
         """)
-    def projects(self, project_id: str = None, search_query: str = None, skip: int = 0, fields: list = ['consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfLatestLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
+    def projects(self, project_id: str = None, search_query: str = None, skip: int = 0, fields: list = ['consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
                                                                                                         'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.id', 'roles.lastLabelingAt', 'roles.numberOfAnnotations', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 'roles.totalDuration', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title', 'titleAndDescription', 'updatedAt', 'useHoneyPot'], first: int = 100):
         """
         Get projects with a search_query
