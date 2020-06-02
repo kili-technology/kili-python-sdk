@@ -7,3 +7,10 @@ query($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
   }}
 }}
 ''')
+
+
+GQL_PROJECTS_COUNT = f'''
+query($where: ProjectWhere!) {{
+  data: countProjects(where: $where)
+}}
+'''

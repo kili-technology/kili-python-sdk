@@ -1,5 +1,5 @@
 from ...helpers import deprecate, format_result, fragment_builder
-from .queries import gql_projects
+from .queries import gql_projects, GQL_PROJECTS_COUNT
 from ...types import Project
 from ...constants import NO_ACCESS_RIGHT
 
@@ -41,6 +41,8 @@ class QueriesProject:
 
         Parameters
         ----------
+        - project_id : str, optional (default = None)
+            Select a specific project through its project_id
         - search_query : str, optional (default = None)
             Returned projects have a title or a description that matches this string.
         - skip : int, optional (default = 0)
@@ -66,6 +68,31 @@ class QueriesProject:
         }
         result = self.auth.client.execute(GQL_PROJECTS, variables)
         return format_result('data', result)
+
+    def count_projects(self, project_id: str = None, search_query: str = None):
+        """
+        Counts the number of projects with a search_query
+
+        Parameters
+        ----------
+        - project_id : str, optional (default = None)
+            Select a specific project through its project_id
+        - search_query : str, optional (default = None)
+            Returned projects have a title or a description that matches this string.
+
+        Returns
+        -------
+        - a positive integer corresponding to the number of results of the query if it was successful, or an error message else.
+        """
+        variables = {
+            'where': {
+                'id': project_id,
+                'searchQuery': search_query
+            }
+        }
+        result = self.auth.client.execute(GQL_PROJECTS_COUNT, variables)
+        count = format_result('data', result)
+        return count
 
     @deprecate(
         """
