@@ -28,30 +28,6 @@ class QueriesAsset:
 
     @deprecate(
         """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_asset used to fetch an asset from its ID. It is now achievable with assets.
-        To fetch an asset from its ID, use:
-            > playground.assets(asset_id=asset_id)
-        """)
-    def get_asset(self, asset_id: str):
-        assets = self.assets(asset_id=asset_id)
-        assert len(assets) == 1, NO_ACCESS_RIGHT
-        return assets[0]
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_assets used to fetch assets. It is now achievable with assets.
-        To fetch assets, use:
-            > playground.assets(project_id=project_id)
-        """)
-    def get_assets(self, project_id: str):
-        return self.assets(project_id=project_id)
-
-    @deprecate(
-        """
         **New feature has been added : Query only the fields you want
         using the field argument, that accept a list of string organized like below.**
         The former default query with all fields is deprecated since 13/05/2020
@@ -202,77 +178,6 @@ class QueriesAsset:
                 paged_assets += assets
                 skip += formatted_first
                 pbar.update(len(assets))
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        get_assets_by_external_id used to fetch assets from an external_id. It is now achievable with assets.
-        To fetch assets from and external_id, use:
-            > playground.assets(project_id=project_id, external_id_contains=[external_id])
-        """)
-    def get_assets_by_external_id(self, project_id: str, external_id: str):
-        return self.assets(project_id=project_id, external_id_contains=[external_id])
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        It will be removed on June 1st.
-        """)
-    def get_next_asset_from_label(self, label_asset_ids: List[str]):
-        """
-        Get next asset to label from previously labeled asset identifiers
-
-        Parameters
-        ----------
-        - label_asset_ids : list of str
-            The identifiers of the assets that have been labeled
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        variables = {'labelAssetIDs': label_asset_ids}
-        result = self.auth.client.execute(
-            GQL_GET_NEXT_ASSET_FROM_LABEL, variables)
-        return format_result('data', result)
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        It will be removed on June 1st.
-        """)
-    def get_next_asset_from_project(self, project_id: str):
-        """
-        Get next asset to label from project id
-
-        Returns the next asset to label to the current user for the current project.
-
-        Parameters
-        ----------
-        - project_id : str
-
-        Returns
-        -------
-        - a result object which contains the query if it was successful, or an error message else.
-        """
-        variables = {'projectID': project_id}
-        result = self.auth.client.execute(
-            GQL_GET_NEXT_ASSET_FROM_PROJECT, variables)
-        return format_result('data', result)
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        export_assets used to fetch assets from a project. It is now achievable with assets.
-        To fetch assets from a project, use:
-            > playground.assets(project_id=project_id)
-        """)
-    def export_assets(self, project_id: str):
-        return self.assets(project_id=project_id)
 
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,

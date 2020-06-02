@@ -22,21 +22,6 @@ class MutationsAsset:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        delete_assets_by_external_id used to delete some assets matchin on external ID. It is now achievable with get_assets and delete_many_from_dataset.
-        To fetch ann asset from its ID, use:
-            > assets = playground.assets(project_id=project_id, external_id_contains=[external_id])
-            > playground.delete_many_from_dataset(asset_ids=[a['id'] for a in assets])
-        """)
-    def delete_assets_by_external_id(self, project_id: str, external_id: str):
-        assets = QueriesAsset(self.auth).assets(project_id=project_id,
-                                                external_id_contains=[external_id])
-        return self.delete_many_from_dataset(
-            asset_ids=[a['id'] for a in assets])
-
     def append_many_to_dataset(self, project_id: str, content_array: List[str], external_id_array: List[str],
                                is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
         """

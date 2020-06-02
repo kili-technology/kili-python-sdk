@@ -34,48 +34,6 @@ class Playground(
         self.auth = auth
         super().__init__(auth)
 
-    # Mutations Tool
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        Tools used to describe an interface. They are now called jsonInterface.
-        To update jsonInterface, use:
-            > playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
-        """)
-    def update_tool(self, project_id, json_settings):
-        return self.update_properties_in_project(project_id, json_interface=json_settings)
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        Tools used to describe an interface. They are now called jsonInterface.
-        To update jsonInterface, use:
-            > playground.update_properties_in_project(project_id=project_id, json_interface=json_interface)
-        """)
-    def append_to_tools(self, project_id, json_settings):
-        return self.update_properties_in_project(project_id, json_interface=json_settings)
-
-    # Queries Tool
-
-    @deprecate(
-        """
-        This method is deprecated since: 30/04/2020.
-        This method will be removed after: 30/05/2020.
-        Tools used to describe an interface. They are now called jsonInterface.
-        To query a jsonInterface, use:
-            > playground.projects(project_id=project_id)
-        """)
-    def get_tools(self, project_id):
-        projects = self.projects(project_id)
-        assert len(projects) == 1, NO_ACCESS_RIGHT
-        tool = {
-            'jsonSettings': projects[0]['jsonInterface']
-        }
-        return [tool]
-
 
 if __name__ == '__main__':
     """ Example of usage """
