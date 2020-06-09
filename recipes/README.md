@@ -150,7 +150,6 @@ docker run -it --network="host" kili-playground online-learning
 
 ```
 {
-  "filetype": "IMAGE",
   "jobs": {
     "OBJECT_DETECTION": {
       "mlTask": "OBJECT_DETECTION",
