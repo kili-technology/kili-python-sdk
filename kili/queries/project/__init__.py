@@ -34,8 +34,8 @@ class QueriesProject:
         'roles.numberOfAnnotations', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 
         'roles.totalDuration', 'roles.user.email', 'titleAndDescription', 'useHoneyPot']
         """)
-    def projects(self, project_id: str = None, search_query: str = None, skip: int = 0, fields: list = ['consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
-                                                                                                        'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.id', 'roles.lastLabelingAt', 'roles.numberOfAnnotations', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 'roles.totalDuration', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title', 'titleAndDescription', 'updatedAt', 'useHoneyPot'], first: int = 100):
+    def projects(self, project_id: str = None, search_query: str = None, updated_at_gte: str = None, updated_at_lte: str = None, skip: int = 0, fields: list = ['consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
+                                                                                                                                                                'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.id', 'roles.lastLabelingAt', 'roles.numberOfAnnotations', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 'roles.totalDuration', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title', 'titleAndDescription', 'updatedAt', 'useHoneyPot'], first: int = 100):
         """
         Get projects with a search_query
 
@@ -45,6 +45,12 @@ class QueriesProject:
             Select a specific project through its project_id
         - search_query : str, optional (default = None)
             Returned projects have a title or a description that matches this string.
+        - updated_at_gte : string, optional (default = None)
+            Returned projects should have a label whose update date is greated or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
+        - updated_at_lte : string, optional (default = None)
+            Returned projects should have a label whose update date is lower or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
         - skip : int, optional (default = 0)
             Number of projects to skip (they are ordered by their creation)
         - fields : list of string, optional (default = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'])
@@ -61,7 +67,9 @@ class QueriesProject:
         variables = {
             'where': {
                 'id': project_id,
-                'searchQuery': search_query
+                'searchQuery': search_query,
+                'updatedAtGte': updated_at_gte,
+                'updatedAtLte': updated_at_lte,
             },
             'skip': skip,
             'first': first
@@ -69,7 +77,7 @@ class QueriesProject:
         result = self.auth.client.execute(GQL_PROJECTS, variables)
         return format_result('data', result)
 
-    def count_projects(self, project_id: str = None, search_query: str = None):
+    def count_projects(self, project_id: str = None, search_query: str = None, updated_at_gte: str = None, updated_at_lte: str = None):
         """
         Counts the number of projects with a search_query
 
@@ -79,6 +87,12 @@ class QueriesProject:
             Select a specific project through its project_id
         - search_query : str, optional (default = None)
             Returned projects have a title or a description that matches this string.
+        - updated_at_gte : string, optional (default = None)
+            Returned projects should have a label whose update date is greated or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
+        - updated_at_lte : string, optional (default = None)
+            Returned projects should have a label whose update date is lower or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
 
         Returns
         -------
@@ -87,7 +101,9 @@ class QueriesProject:
         variables = {
             'where': {
                 'id': project_id,
-                'searchQuery': search_query
+                'searchQuery': search_query,
+                'updatedAtGte': updated_at_gte,
+                'updatedAtLte': updated_at_lte,
             }
         }
         result = self.auth.client.execute(GQL_PROJECTS_COUNT, variables)
