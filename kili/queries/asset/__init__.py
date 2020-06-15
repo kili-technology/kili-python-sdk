@@ -25,9 +25,8 @@ class QueriesAsset:
 
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0,
-               fields: list = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 
-               'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email',
-                'roles.user.id', 'roles.user.name', 'title'],
+               fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
+                'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'status'],
                first: int = None,
                consensus_mark_gt: float = None,
                consensus_mark_lt: float = None,
