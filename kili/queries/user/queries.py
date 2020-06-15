@@ -1,4 +1,3 @@
-
 def gql_users(fragment):
     return(f'''
 query($where: UserWhere!, $first: PageSize!, $skip: Int!) {{

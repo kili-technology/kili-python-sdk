@@ -1,4 +1,3 @@
-
 def gql_projects(fragment: str):
     return(f'''
 query($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
@@ -7,7 +6,6 @@ query($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
   }}
 }}
 ''')
-
 
 GQL_PROJECTS_COUNT = f'''
 query($where: ProjectWhere!) {{

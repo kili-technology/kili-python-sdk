@@ -21,18 +21,6 @@ class QueriesLabel:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        **New feature has been added : Query only the fields you want
-        using the field argument, that accept a list of string organized like below.**
-        The former default query with all fields is deprecated since 13/05/2020
-        After 13/06/2020, the default queried fields will be :
-        ['author.email','author.id', 'author.name', 'id', 'jsonResponse', 
-        'labelType', 'secondsToLabel', 'skipped']
-        To fetch more fields, for example the honeypot fields, just add those :
-        fields = ['author.email', 'author.name', 'author.organization.name', 'author.organization.zipCode',
-        'honeypotMark', 'createdAt','id','jsonResponse','labelType', 'numberOfAnnotations','skipped' ]
-        """)
     def labels(self,
                asset_id: str = None,
                asset_status_in: List[str] = None,
@@ -41,8 +29,8 @@ class QueriesLabel:
                created_at: str = None,
                created_at_gte: str = None,
                created_at_lte: str = None,
-               fields: list = ['author.email', 'author.id',
-                               'id', 'jsonResponse', 'numberOfAnnotations'],
+               fields: list = ['author.email','author.id', 'author.name', 'id', 
+               'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
                first: int = None,
                honeypot_mark_gte: float = None,
                honeypot_mark_lte: float = None,
@@ -166,18 +154,9 @@ class QueriesLabel:
 
         return json_response
 
-    @deprecate(
-        """
-        **New feature has been added : Query only the fields you want
-        using the field argument, that accept a list of string organized like below.**
-        The former default query with all fields is deprecated since 13/05/2020
-        After 13/06/2020, the default queried fields will be :
-        ['author.email','author.id', 'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']
-        To fetch more fields, for example the honeypot fields, just add those :
-        fields = ['author.email', 'author.name', 'author.organization.name', 'author.organization.zipCode',
-        'honeypotMark', 'createdAt','id','jsonResponse','labelType', 'numberOfAnnotations','skipped' ]
-        """)
-    def export_labels_as_df(self, project_id: str, fields: list = ['id', 'author.id', 'author.name', 'author.email', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped']):
+    def export_labels_as_df(self, 
+        project_id: str, 
+        fields: list = ['author.email','author.id', 'author.name', 'createdAt', 'id', 'labelType', 'skipped']):
         """
         Get the labels of a project as a pandas DataFrame
 

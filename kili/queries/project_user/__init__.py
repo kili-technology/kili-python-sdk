@@ -16,19 +16,15 @@ class QueriesProjectUser:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        **New feature has been added : Query only the fields you want
-        using the field argument, that accept a list of string organized like below.**
-        The former default query with all fields is deprecated since 13/05/2020
-        After 13/06/2020, the default queried fields will be :
-        ['id', 'activated', 'role', 'user.id', 'user.email', 'user.name', 'starred']
-        To fetch more fields, for example the kpis fields, just add those :
-        fields = ['activated', 'id', 'consensusMark', 'honeypotMark', 'lastLabelingAt', 
-        'numberOfAnnotations', 'numberOfLabeledAssets','numberOfLabels', 'role', 'starred', 
-        'totalDuration', 'user.id', 'user.email', 'user.name']
-        """)
-    def project_users(self, email: str = None, id: str = None, organization_id: str = None, project_id: str = None, fields: list = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'], first: int = 100, skip: int = 0, with_kpis: bool = False):
+    def project_users(self, 
+                      email: str = None, 
+                      id: str = None, 
+                      organization_id: str = None, 
+                      project_id: str = None, 
+                      fields: list = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'], 
+                      first: int = 100, 
+                      skip: int = 0, 
+                      with_kpis: bool = False):
         """
         Return projects and their users (possibly with their KPIs)
 

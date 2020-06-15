@@ -17,15 +17,6 @@ class QueriesOrganization:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        **New feature has been added : Query only the fields you want
-        using the field argument, that accept a list of string organized like below.**
-        The former default query with all fields is deprecated since 13/05/2020
-        After 13/06/2020, the default queried fields will be : ['id', 'name']
-        To fetch more fields, just add those :
-        fields = ['id', 'name','address','zipCode','city','country']
-        """)
     def organizations(self, email: str = None, organization_id: str = None, fields: list = ['id', 'name'], first: int = 100, skip: int = 0):
         """
         Get organizations

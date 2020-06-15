@@ -16,26 +16,16 @@ class QueriesProject:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        **New feature has been added : Query only the fields you want
-        using the field argument, that accept a list of string organized like below.**
-        The former default query with all fields is deprecated since 13/05/2020
-        After 13/06/2020, the default queried fields will be :
-        ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 
-        'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 
-        'roles.user.email', 'roles.user.id', 'roles.user.name', 'title']
-        To fetch more fields, for example the consensus fields, just add those :
-        fields = ['id', 'consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 
-        'honeypotMark', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 
-        'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 
-        'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
-        'roles.id', 'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.lastLabelingAt', 
-        'roles.numberOfAnnotations', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 
-        'roles.totalDuration', 'roles.user.email', 'titleAndDescription', 'useHoneyPot']
-        """)
-    def projects(self, project_id: str = None, search_query: str = None, updated_at_gte: str = None, updated_at_lte: str = None, skip: int = 0, fields: list = ['consensusMark', 'consensusTotCoverage', 'createdAt', 'description', 'honeypotMark', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles',
-                                                                                                                                                                'roles.activated', 'roles.consensusMark', 'roles.honeypotMark', 'roles.id', 'roles.lastLabelingAt', 'roles.numberOfAnnotations', 'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.role', 'roles.starred', 'roles.totalDuration', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title', 'titleAndDescription', 'updatedAt', 'useHoneyPot'], first: int = 100):
+    def projects(self, 
+                 project_id: str = None, 
+                 search_query: str = None, 
+                 updated_at_gte: str = None, 
+                 updated_at_lte: str = None, 
+                 skip: int = 0, 
+                 fields: list = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 
+                'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 
+                'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'],
+                first: int = 100) :
         """
         Get projects with a search_query
 

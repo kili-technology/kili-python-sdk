@@ -1,5 +1,3 @@
-
-
 def gql_labels(fragment):
     return(f'''
 query ($where: LabelWhere!, $first: PageSize!, $skip: Int!) {{

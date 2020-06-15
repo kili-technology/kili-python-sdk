@@ -6,10 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from ...helpers import deprecate, format_result, fragment_builder
-from .queries import (gql_assets,
-                      GQL_ASSETS_COUNT,
-                      GQL_GET_NEXT_ASSET_FROM_LABEL,
-                      GQL_GET_NEXT_ASSET_FROM_PROJECT)
+from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...constants import NO_ACCESS_RIGHT
 from ...types import Asset
 
@@ -26,26 +23,11 @@ class QueriesAsset:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        **New feature has been added : Query only the fields you want
-        using the field argument, that accept a list of string organized like below.**
-        The former default query with all fields is deprecated since 13/05/2020
-        After 13/06/2020, the default queried fields will be :
-        ['id', 'consensusTotCoverage', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 
-        'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 
-        'roles.user.name', 'title']
-        To fetch more fields, for example the consensus fields, just add those :
-        fields = ['consensusMark', 'consensusTotCoverage', 'id', 'inputType', 'maxWorkerCount', 'minAgreement', 
-        'title', 'minConsensusSize', 'numberOfAssets', 'numberOfAssetsWithSkippedLabels', 
-        'numberOfRemainingAssets', 'numberOfReviewedAssets', 'numberOfRoles', 'roles.consensusMark', 'roles.id', 
-        'roles.numberOfLabeledAssets', 'roles.numberOfLabels', 'roles.user.email']
-        """)
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0,
-               fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
-                               'labels.author.email', 'labels.createdAt', 'labels.honeypotMark', 'labels.id', 'labels.isLatestLabelForUser',
-                               'labels.jsonResponse', 'labels.labelType', 'labels.secondsToLabel', 'labels.totalSecondsToLabel', 'status', 'updatedAt'],
+               fields: list = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 
+               'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email',
+                'roles.user.id', 'roles.user.name', 'title'],
                first: int = None,
                consensus_mark_gt: float = None,
                consensus_mark_lt: float = None,

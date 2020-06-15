@@ -17,16 +17,12 @@ class QueriesUser:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        **New feature has been added : Query only the fields you want
-        using the field argument, that accept a list of string organized like below.**
-        The former default query with all fields is deprecated since 13/05/2020
-        After 13/06/2020, the default queried fields will be : ['id', 'name', 'email']
-        To fetch more fields, for example the organization fields, just add those :
-        fields = ['id', 'name', 'email', 'organization.name', 'organization.city','activated']
-        """)
-    def users(self, email: str = None, organization_id: str = None, fields: list = ['email', 'id', 'name'], first: int = 100, skip: int = 0):
+    def users(self, 
+              email: str = None,
+              organization_id: str = None,
+              fields: list = ['email', 'id', 'name'],
+              first: int = 100,
+              skip: int = 0):
         """
         Get users
 
@@ -61,10 +57,3 @@ class QueriesUser:
         GQL_USERS = gql_users(fragment_builder(fields, User))
         result = self.auth.client.execute(GQL_USERS, variables)
         return format_result('data', result)
-
-    def get_user(self, email: str):
-        message = """This function is deprecated.
-        To get users, use:
-            playground.users(email=email, organization_id=organization_id)
-        """
-        warnings.warn(message, DeprecationWarning)
