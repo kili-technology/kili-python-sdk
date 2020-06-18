@@ -1,11 +1,9 @@
-TYPES_ALLOWED = '["DEFAULT", "AUTOSAVE", "REVIEW"]'
-
-def gql_assets(fragment, fragment_label, where_label):
+def gql_assets(fragment, fragment_label):
     return f'''
-query($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{
+query($where: AssetWhere!, $first: PageSize!, $skip: Int!, $labelWhere: LabelWhere!) {{
   data: assets(where: $where, skip: $skip, first: $first) {{
     {fragment}
-    labelsWhere(where: {{ typeIn: {TYPES_ALLOWED} }}, skip: 0, first: 100) {{
+    labels: labelsWhere(where: $labelWhere, skip: 0, first: 100) {{
         {fragment_label}
     }}
   }}
