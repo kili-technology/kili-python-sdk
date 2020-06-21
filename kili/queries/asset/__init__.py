@@ -131,7 +131,7 @@ class QueriesAsset:
                             'jsonResponseContains': label_json_response_contains,
                             'skipped': label_skipped,
                         }
-                labelWhereLabels = labelWhere.copy()
+                labelWhereLabels = {}
                 if label_type_in is None:
                     default_authorized = ['DEFAULT', 'PREDICTION', 'REVIEW']
                     labelWhereLabels['typeIn'] = default_authorized
