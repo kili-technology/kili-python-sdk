@@ -66,6 +66,7 @@ class Label(Enum):
     author = User
     createdAt = 'createdAt'
     honeypotMark = 'honeypotMark'
+    honeypotMarkCompute = 'honeypotMarkCompute'
     isLatestLabelForUser = 'isLatestLabelForUser'
     isLatestDefaultLabelForUser = 'isLatestDefaultLabelForUser'
     jsonResponse = 'jsonResponse'
@@ -87,11 +88,13 @@ class Lock(Enum):
 class Asset(Enum):
     id = 'id'
     consensusMark = 'consensusMark'
+    consensusMarkCompute = 'consensusMarkCompute'
     content = 'content'
     createdAt = 'createdAt'
     duration = 'duration'
     externalId = 'externalId'
     honeypotMark = 'honeypotMark'
+    honeypotMarkCompute = 'honeypotMarkCompute'
     isHoneypot = 'isHoneypot'
     isUsedForConsensus = 'isUsedForConsensus'
     jsonMetadata = 'jsonMetadata'
