@@ -54,6 +54,7 @@ class Project(Enum):
     numberOfAssets = 'numberOfAssets'
     numberOfAssetsWithSkippedLabels = 'numberOfAssetsWithSkippedLabels'
     numberOfReviewedAssets = 'numberOfReviewedAssets'
+    readPermissionsForAssets = 'readPermissionsForAssets'
     roles = ProjectUser
     title = 'title'
     titleAndDescription = 'titleAndDescription'
@@ -103,7 +104,7 @@ class Asset(Enum):
     numberOfValidLocks = 'numberOfValidLocks'
     priority = 'priority'
     project = Project
-    readPermissions = 'readPermissions'
+    readPermissionsFromLabels = 'readPermissionsFromLabels'
     status = 'status'
     toBeLabeledBy = User
     updatedAt = 'updatedAt'
