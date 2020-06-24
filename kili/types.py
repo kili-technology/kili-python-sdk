@@ -100,6 +100,7 @@ class Asset(Enum):
     numberOfValidLocks = 'numberOfValidLocks'
     priority = 'priority'
     project = Project
+    readPermissions = 'readPermissions'
     status = 'status'
     toBeLabeledBy = User
     updatedAt = 'updatedAt'
