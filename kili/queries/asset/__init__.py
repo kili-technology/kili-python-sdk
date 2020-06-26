@@ -8,7 +8,7 @@ from tqdm import tqdm
 from ...helpers import deprecate, format_result, fragment_builder
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...constants import NO_ACCESS_RIGHT
-from ...types import Asset, Label
+from ...types import Asset
 
 
 class QueriesAsset:
@@ -118,23 +118,6 @@ class QueriesAsset:
         with tqdm(total=total, disable=disable_tqdm) as pbar:
             paged_assets = []
             while True:
-                labelWhere = {
-                            'typeIn': label_type_in,
-                            'authorIn': label_author_in,
-                            'consensusMarkGte': label_consensus_mark_gt,
-                            'consensusMarkLte': label_consensus_mark_lt,
-                            'createdAt': label_created_at,
-                            'createdAtGte': label_created_at_gt,
-                            'createdAtLte': label_created_at_lt,
-                            'honeypotMarkGte': label_honeypot_mark_gt,
-                            'honeypotMarkLte': label_honeypot_mark_lt,
-                            'jsonResponseContains': label_json_response_contains,
-                            'skipped': label_skipped,
-                        }
-                labelWhereLabels = {}
-                if label_type_in is None:
-                    default_authorized = ['DEFAULT', 'PREDICTION', 'REVIEW']
-                    labelWhereLabels['typeIn'] = default_authorized
                 variables = {
                     'where': {
                         'id': asset_id,
@@ -147,20 +130,24 @@ class QueriesAsset:
                         'consensusMarkLte': consensus_mark_lt,
                         'honeypotMarkGte': honeypot_mark_gt,
                         'honeypotMarkLte': honeypot_mark_lt,
-                        'label': labelWhere
+                        'label': {
+                            'typeIn': label_type_in,
+                            'authorIn': label_author_in,
+                            'consensusMarkGte': label_consensus_mark_gt,
+                            'consensusMarkLte': label_consensus_mark_lt,
+                            'createdAt': label_created_at,
+                            'createdAtGte': label_created_at_gt,
+                            'createdAtLte': label_created_at_lt,
+                            'honeypotMarkGte': label_honeypot_mark_gt,
+                            'honeypotMarkLte': label_honeypot_mark_lt,
+                            'jsonResponseContains': label_json_response_contains,
+                            'skipped': label_skipped,
+                        }
                     },
                     'skip': skip,
                     'first': formatted_first,
-                    'labelWhere': labelWhereLabels,
                 }
-                fields_label = []
-                fields_nolabel = []
-                for field in fields:
-                    if field.split('.')[0] == 'labels':
-                        fields_label.append('.'.join(field.split('.')[1:]))
-                    else:
-                        fields_nolabel.append(field)
-                GQL_ASSETS = gql_assets(fragment_builder(fields_nolabel, Asset), fragment_builder(fields_label, Label))
+                GQL_ASSETS = gql_assets(fragment_builder(fields, Asset))
                 result = self.auth.client.execute(GQL_ASSETS, variables)
                 assets = format_result('data', result)
                 if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
