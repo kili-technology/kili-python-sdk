@@ -69,14 +69,18 @@ class Label(Enum):
     honeypotMark = 'honeypotMark'
     honeypotMarkCompute = 'honeypotMarkCompute'
     isLatestLabelForUser = 'isLatestLabelForUser'
+    isLatestLabelForUserCompute = 'isLatestLabelForUserCompute'
     isLatestDefaultLabelForUser = 'isLatestDefaultLabelForUser'
+    isLatestDefaultLabelForUserCompute = 'isLatestDefaultLabelForUserCompute'
     jsonResponse = 'jsonResponse'
     labelType = 'labelType'
     modelName = 'modelName'
     numberOfAnnotations = 'numberOfAnnotations'
+    numberOfAnnotationsCompute = 'numberOfAnnotationsCompute'
     secondsToLabel = 'secondsToLabel'
     skipped = 'skipped'
     totalSecondsToLabel = 'totalSecondsToLabel'
+    totalSecondsToLabelCompute = 'totalSecondsToLabelCompute'
 
 
 class Lock(Enum):
@@ -93,6 +97,7 @@ class Asset(Enum):
     content = 'content'
     createdAt = 'createdAt'
     duration = 'duration'
+    durationCompute = 'durationCompute'
     externalId = 'externalId'
     honeypotMark = 'honeypotMark'
     honeypotMarkCompute = 'honeypotMarkCompute'
@@ -102,9 +107,11 @@ class Asset(Enum):
     labels = Label
     locks = Lock
     numberOfValidLocks = 'numberOfValidLocks'
+    numberOfValidLocksCompute = 'numberOfValidLocksCompute'
     priority = 'priority'
     project = Project
     readPermissionsFromLabels = 'readPermissionsFromLabels'
     status = 'status'
+    statusCompute = 'statusCompute'
     toBeLabeledBy = User
     updatedAt = 'updatedAt'
