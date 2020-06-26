@@ -10,6 +10,10 @@ from .mutations.user import signin
 MAX_RETRIES = 20
 
 
+def get_version_without_minor(version):
+    return '.'.join(version.split('.')[:-1])
+
+
 class KiliAuth(object):
     """
     from kili.authentication import KiliAuth
@@ -48,7 +52,7 @@ class KiliAuth(object):
         url = api_endpoint.replace('/graphql', '/version')
         response = requests.get(url).json()
         version = response['version']
-        if version != __version__:
+        if get_version_without_minor(version) != get_version_without_minor(__version__):
             message = 'Kili Playground version should match with Kili API version.\n' + \
                       f'Please install version: "pip install kili=={version}"'
             warnings.warn(message, UserWarning)
