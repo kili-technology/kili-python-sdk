@@ -64,6 +64,7 @@ class Project(Enum):
 
 class Label(Enum):
     id = 'id'
+    assetIdCompute = 'assetIdCompute'
     author = User
     createdAt = 'createdAt'
     honeypotMark = 'honeypotMark'
