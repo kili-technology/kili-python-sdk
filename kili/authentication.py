@@ -27,15 +27,18 @@ class KiliAuth(object):
                  email=os.getenv('KILI_USER_EMAIL'),
                  password=os.getenv('KILI_USER_PASSWORD'),
                  api_endpoint='https://cloud.kili-technology.com/api/label/graphql',
-                 api_key=None):
+                 api_key=None,
+                 verify=True):
         self.session = requests.Session()
+
+        self.verify = verify
 
         self.check_versions_match(api_endpoint)
 
         adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
         self.session.mount('https://', adapter)
         self.session.mount('http://', adapter)
-        self.client = GraphQLClient(api_endpoint, self.session)
+        self.client = GraphQLClient(api_endpoint, self.session, verify=self.verify)
         if api_key is None:
             auth_payload = signin(self.client, email, password)
             api_token = auth_payload['token']
@@ -47,10 +50,9 @@ class KiliAuth(object):
     def __del__(self):
         self.session.close()
 
-    @staticmethod
-    def check_versions_match(api_endpoint):
+    def check_versions_match(self, api_endpoint):
         url = api_endpoint.replace('/graphql', '/version')
-        response = requests.get(url).json()
+        response = requests.get(url, verify=self.verify).json()
         version = response['version']
         if get_version_without_patch(version) != get_version_without_patch(__version__):
             message = 'Kili Playground version should match with Kili API version.\n' + \
