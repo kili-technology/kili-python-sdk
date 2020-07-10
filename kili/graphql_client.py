@@ -11,11 +11,12 @@ from . import __version__
 
 
 class GraphQLClient:
-    def __init__(self, endpoint, session=None):
+    def __init__(self, endpoint, session=None, verify=True):
         self.endpoint = endpoint
+        self.headername = None
         self.session = session
         self.token = None
-        self.headername = None
+        self.verify = verify
 
     def execute(self, query, variables=None):
         return self._send(query, variables)
@@ -38,6 +39,7 @@ class GraphQLClient:
             try:
                 number_of_trials = 3
                 for n in range(number_of_trials):
+                    self.session.verify = self.verify
                     req = self.session.post(self.endpoint, json.dumps(
                         data).encode('utf-8'), headers=headers)
                     if req.status_code == 200:
