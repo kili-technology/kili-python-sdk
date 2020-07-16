@@ -66,6 +66,7 @@ class Label(Enum):
     id = 'id'
     assetIdCompute = 'assetIdCompute'
     author = User
+    authorIdCompute = 'authorIdCompute'
     createdAt = 'createdAt'
     honeypotMark = 'honeypotMark'
     honeypotMarkCompute = 'honeypotMarkCompute'
@@ -103,6 +104,7 @@ class Asset(Enum):
     honeypotMark = 'honeypotMark'
     honeypotMarkCompute = 'honeypotMarkCompute'
     isHoneypot = 'isHoneypot'
+    isToBeLabeledByCompute = 'isToBeLabeledByCompute'
     isUsedForConsensus = 'isUsedForConsensus'
     jsonMetadata = 'jsonMetadata'
     labels = Label
@@ -111,6 +113,7 @@ class Asset(Enum):
     numberOfValidLocksCompute = 'numberOfValidLocksCompute'
     priority = 'priority'
     project = Project
+    projectIdCompute = 'projectIdCompute'
     readPermissionsFromLabels = 'readPermissionsFromLabels'
     status = 'status'
     statusCompute = 'statusCompute'

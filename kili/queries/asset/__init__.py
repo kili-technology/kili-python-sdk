@@ -133,8 +133,7 @@ class QueriesAsset:
                         }
                 labelWhereLabels = {}
                 if label_type_in is None:
-                    default_authorized = ['DEFAULT', 'PREDICTION', 'REVIEW']
-                    labelWhereLabels['typeIn'] = default_authorized
+                    labelWhereLabels['typeIn'] = ['DEFAULT', 'PREDICTION', 'REVIEW']
                 variables = {
                     'where': {
                         'id': asset_id,
