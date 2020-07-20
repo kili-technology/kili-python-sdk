@@ -15,7 +15,7 @@ mutation(
 GQL_UPDATE_PROPERTIES_IN_NOTIFICATION = f'''
 mutation(
     $id: ID!
-    $status: String!
+    $status: NotificationStatus!
 ) {{
   data: updatePropertiesInNotification(
     where: {{id: $id}}
