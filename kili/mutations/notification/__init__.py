@@ -3,7 +3,7 @@ from .queries import (GQL_CREATE_NOTIFICATION,
                       GQL_UPDATE_PROPERTIES_IN_NOTIFICATION)
 
 
-class MutationsOrganization:
+class MutationsNotification:
 
     def __init__(self, auth):
         """
