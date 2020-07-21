@@ -3,7 +3,6 @@ import warnings
 import base64
 import re
 from json import dumps, loads
-from enum import Enum
 from types import *
 
 
@@ -52,7 +51,8 @@ def format_json(result):
                     try:
                         result[key] = loads(value)
                     except:
-                        raise ValueError('Json Metadata / json response / json interface should be valid jsons')
+                        raise ValueError(
+                            'Json Metadata / json response / json interface should be valid jsons')
             else:
                 result[key] = format_json(value)
         return result
@@ -64,9 +64,9 @@ def fragment_builder(fields, type_of_fields):
     subfields = [field.split('.', 1) for field in fields if '.' in field]
     if subfields:
         for subquery in set([subfield[0] for subfield in subfields]):
-            type_of_fields_subquery = type_of_fields[subquery].value
+            type_of_fields_subquery = getattr(type_of_fields, subquery)
             try:
-                if issubclass(type_of_fields_subquery, Enum):
+                if issubclass(type_of_fields_subquery, object):
                     fields_subquery = [subfield[1]
                                        for subfield in subfields if subfield[0] == subquery]
                     fragment += f' {subquery}{{{fragment_builder(fields_subquery,type_of_fields_subquery)}}}'
@@ -75,7 +75,7 @@ def fragment_builder(fields, type_of_fields):
         fields = [field for field in fields if '.' not in field]
     for field in fields:
         try:
-            type_of_fields(field)
+            getattr(type_of_fields, field)
         except ValueError:
             print(f'{field} must be an instance of {type_of_fields}')
         if isinstance(field, str):

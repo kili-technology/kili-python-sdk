@@ -16,15 +16,14 @@ class QueriesProjectUser:
         """
         self.auth = auth
 
-    def project_users(self, 
-                      email: str = None, 
-                      id: str = None, 
-                      organization_id: str = None, 
-                      project_id: str = None, 
-                      fields: list = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'], 
-                      first: int = 100, 
-                      skip: int = 0, 
-                      with_kpis: bool = False):
+    def project_users(self,
+                      email: str = None,
+                      id: str = None,
+                      organization_id: str = None,
+                      project_id: str = None,
+                      fields: list = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'],
+                      first: int = 100,
+                      skip: int = 0):
         """
         Return projects and their users (possibly with their KPIs)
 
@@ -40,16 +39,11 @@ class QueriesProjectUser:
             Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
             Number of project users to skip
-        - with_kpis : bool, optional (default = False)
-            Whether or not to compute kpis
 
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        if with_kpis:
-            fields = ['activated', 'id', 'consensusMark', 'honeypotMark', 'lastLabelingAt', 'numberOfAnnotations', 'numberOfLabeledAssets',
-                      'numberOfLabels', 'role', 'starred', 'totalDuration', 'user.id', 'user.email', 'user.name']
         variables = {
             'first': first,
             'skip': skip,
