@@ -7,7 +7,7 @@ from . import __version__
 from .graphql_client import GraphQLClient
 from .mutations.user import signin
 
-warnings.simplefilter('always')
+warnings.filterwarnings("default", module='kili', category=DeprecationWarning)
 
 MAX_RETRIES = 20
 
