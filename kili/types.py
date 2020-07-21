@@ -1,7 +1,4 @@
-from enum import Enum
-
-
-class Organization(Enum):
+class Organization(object):
     id = 'id'
     address = 'address'
     city = 'city'
@@ -10,7 +7,7 @@ class Organization(Enum):
     zipCode = 'zipCode'
 
 
-class User(Enum):
+class User(object):
     id = 'id'
     activated = 'activated'
     createdAt = 'createdAt'
@@ -21,7 +18,7 @@ class User(Enum):
     updatedAt = 'updatedAt'
 
 
-class ProjectUser(Enum):
+class ProjectUserWithoutProject(object):
     id = 'id'
     activated = 'activated'
     consensusMark = 'consensusMark'
@@ -36,7 +33,7 @@ class ProjectUser(Enum):
     user = User
 
 
-class Project(Enum):
+class Project(object):
     id = 'id'
     author = User
     consensusMark = 'consensusMark'
@@ -55,16 +52,21 @@ class Project(Enum):
     numberOfAssetsWithSkippedLabels = 'numberOfAssetsWithSkippedLabels'
     numberOfReviewedAssets = 'numberOfReviewedAssets'
     readPermissionsForAssetsAndLabels = 'readPermissionsForAssetsAndLabels'
-    roles = ProjectUser
+    roles = ProjectUserWithoutProject
     title = 'title'
     titleAndDescription = 'titleAndDescription'
     updatedAt = 'updatedAt'
     useHoneyPot = 'useHoneyPot'
 
 
-class Label(Enum):
+class ProjectUser(ProjectUserWithoutProject):
+    project = Project
+
+
+class Label(object):
     id = 'id'
     assetIdCompute = 'assetIdCompute'
+    authorIdCompute = 'authorIdCompute'
     author = User
     createdAt = 'createdAt'
     honeypotMark = 'honeypotMark'
@@ -78,20 +80,21 @@ class Label(Enum):
     modelName = 'modelName'
     numberOfAnnotations = 'numberOfAnnotations'
     numberOfAnnotationsCompute = 'numberOfAnnotationsCompute'
+    projectIdCompute = 'projectIdCompute'
     secondsToLabel = 'secondsToLabel'
     skipped = 'skipped'
     totalSecondsToLabel = 'totalSecondsToLabel'
     totalSecondsToLabelCompute = 'totalSecondsToLabelCompute'
 
 
-class Lock(Enum):
+class Lock(object):
     id = 'id'
     author = ProjectUser
     createdAt = 'createdAt'
     lockype = 'lockType'
 
 
-class Asset(Enum):
+class Asset(object):
     id = 'id'
     consensusMark = 'consensusMark'
     consensusMarkCompute = 'consensusMarkCompute'
@@ -103,6 +106,7 @@ class Asset(Enum):
     honeypotMark = 'honeypotMark'
     honeypotMarkCompute = 'honeypotMarkCompute'
     isHoneypot = 'isHoneypot'
+    isToBeLabeledByCompute = 'isToBeLabeledByCompute'
     isUsedForConsensus = 'isUsedForConsensus'
     jsonMetadata = 'jsonMetadata'
     labels = Label
@@ -111,6 +115,7 @@ class Asset(Enum):
     numberOfValidLocksCompute = 'numberOfValidLocksCompute'
     priority = 'priority'
     project = Project
+    projectIdCompute = 'projectIdCompute'
     readPermissionsFromLabels = 'readPermissionsFromLabels'
     status = 'status'
     statusCompute = 'statusCompute'
