@@ -37,7 +37,7 @@ class MutationsNotification:
                 'message': message,
                 'status': status,
                 'url': url,
-                'user_id': user_id,
+                'userID': user_id
             }
         }
         result = self.auth.client.execute(GQL_CREATE_NOTIFICATION, variables)
