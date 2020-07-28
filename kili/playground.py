@@ -1,5 +1,6 @@
 import kili.mutations.asset
 import kili.mutations.label
+import kili.mutations.notification
 import kili.mutations.organization
 import kili.mutations.project
 import kili.mutations.user
@@ -18,6 +19,7 @@ from kili.helpers import deprecate
 class Playground(
         kili.mutations.asset.MutationsAsset,
         kili.mutations.label.MutationsLabel,
+        kili.mutations.notification.MutationsNotification,
         kili.mutations.organization.MutationsOrganization,
         kili.mutations.project.MutationsProject,
         kili.mutations.user.MutationsUser,
