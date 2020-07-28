@@ -136,7 +136,10 @@ class MutationsLabel:
 
     def create_honeypot(self, asset_id: str, json_response: dict):
         """
-        Create honeypot for a label
+        Create honeypot for an asset. 
+        
+        Uses the json_response given to create a "REVIEW" label. This allows to compute a `honeypotMark`,
+        which measures how similar are other labels compared to this one.
 
         Parameters
         ----------

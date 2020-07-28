@@ -64,6 +64,10 @@ class MutationsAsset:
         if input_type == 'IMAGE':
             content_array = [content if is_url(content) else encode_image(
                 content) for content in content_array]
+        elif input_type == 'FRAME':
+            for content in content_array:
+                if not is_url(content):
+                    raise ValueError(f"Content {content} isn't a link to a video")
         variables = {
             'projectID': project_id,
             'contentArray': content_array,
