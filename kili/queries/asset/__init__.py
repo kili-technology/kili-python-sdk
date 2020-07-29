@@ -26,7 +26,7 @@ class QueriesAsset:
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0,
                fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
-                'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'status'],
+                               'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'status'],
                first: int = None,
                consensus_mark_gt: float = None,
                consensus_mark_lt: float = None,
@@ -45,6 +45,8 @@ class QueriesAsset:
                label_honeypot_mark_lt: float = None,
                label_json_response_contains: List[str] = None,
                label_skipped: bool = None,
+               updated_at_gte: str = None,
+               updated_at_lte: str = None,
                format: str = None, disable_tqdm: bool = False):
         """
         Get an array of assets from a project
@@ -98,6 +100,12 @@ class QueriesAsset:
             Returned assets should have a label whose honeypot is lower than this number.
         - label_skipped : bool, optional (default = None)
             Returned assets should have a label which is skipped
+        - updated_at_gte : string, optional (default = None)
+            Returned assets should have a label whose update date is greated or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
+        - updated_at_lte : string, optional (default = None)
+            Returned assets should have a label whose update date is lower or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
         - format : str, optional (default = None)
             If equal to 'pandas', returns a pandas DataFrame
         - disable_tqdm : bool, optional (default = False)
@@ -142,7 +150,9 @@ class QueriesAsset:
                             'honeypotMarkLte': label_honeypot_mark_lt,
                             'jsonResponseContains': label_json_response_contains,
                             'skipped': label_skipped,
-                        }
+                        },
+                        'updatedAtGte': updated_at_gte,
+                        'updatedAtLte': updated_at_lte,
                     },
                     'skip': skip,
                     'first': formatted_first,
@@ -178,7 +188,9 @@ class QueriesAsset:
                      label_honeypot_mark_gt: float = None,
                      label_honeypot_mark_lt: float = None,
                      label_json_response_contains: List[str] = None,
-                     label_skipped: bool = None):
+                     label_skipped: bool = None,
+                     updated_at_gte: str = None,
+                     updated_at_lte: str = None):
         """
         Count and return the number of assets with the given parameters
 
@@ -228,6 +240,12 @@ class QueriesAsset:
             Returned assets should have a substring of the label's jsonResponse that belongs to that list, if given.
         - label_skipped : bool, optional (default = None)
             Returned assets should have a label which is skipped
+        - updated_at_gte : string, optional (default = None)
+            Returned assets should have a label whose update date is greated or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
+        - updated_at_lte : string, optional (default = None)
+            Returned assets should have a label whose update date is lower or equal to this date.
+            Formatted string should have format : "YYYY-MM-DD"
 
         Returns
         -------
@@ -257,7 +275,9 @@ class QueriesAsset:
                     'honeypotMarkLte': label_honeypot_mark_lt,
                     'jsonResponseContains': label_json_response_contains,
                     'skipped': label_skipped,
-                }
+                },
+                'updatedAtGte': updated_at_gte,
+                'updatedAtLte': updated_at_lte,
             }
         }
         result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
