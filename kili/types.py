@@ -7,7 +7,7 @@ class Organization(object):
     zipCode = 'zipCode'
 
 
-class User(object):
+class UserWithoutProjectUsers(object):
     id = 'id'
     activated = 'activated'
     createdAt = 'createdAt'
@@ -30,12 +30,12 @@ class ProjectUserWithoutProject(object):
     role = 'role'
     starred = 'starred'
     totalDuration = "totalDuration"
-    user = User
+    user = UserWithoutProjectUsers
 
 
-class Project(object):
+class ProjectWithoutDataset(object):
     id = 'id'
-    author = User
+    author = UserWithoutProjectUsers
     consensusMark = 'consensusMark'
     consensusTotCoverage = 'consensusTotCoverage'
     createdAt = 'createdAt'
@@ -60,10 +60,14 @@ class Project(object):
 
 
 class ProjectUser(ProjectUserWithoutProject):
-    project = Project
+    project = ProjectWithoutDataset
 
 
-class Label(object):
+class User(UserWithoutProjectUsers):
+    projectUsers = ProjectUser
+
+
+class LabelWithoutLabelOf(object):
     id = 'id'
     assetIdCompute = 'assetIdCompute'
     authorIdCompute = 'authorIdCompute'
@@ -89,7 +93,7 @@ class Label(object):
 
 class Lock(object):
     id = 'id'
-    author = ProjectUser
+    author = User
     createdAt = 'createdAt'
     lockype = 'lockType'
 
@@ -109,15 +113,23 @@ class Asset(object):
     isToBeLabeledByCompute = 'isToBeLabeledByCompute'
     isUsedForConsensus = 'isUsedForConsensus'
     jsonMetadata = 'jsonMetadata'
-    labels = Label
+    labels = LabelWithoutLabelOf
     locks = Lock
     numberOfValidLocks = 'numberOfValidLocks'
     numberOfValidLocksCompute = 'numberOfValidLocksCompute'
     priority = 'priority'
-    project = Project
+    project = ProjectWithoutDataset
     projectIdCompute = 'projectIdCompute'
     readPermissionsFromLabels = 'readPermissionsFromLabels'
     status = 'status'
     statusCompute = 'statusCompute'
-    toBeLabeledBy = User
+    toBeLabeledBy = ProjectUser
     updatedAt = 'updatedAt'
+
+
+class Label(LabelWithoutLabelOf):
+    labelOf = Asset
+
+
+class Project(ProjectWithoutDataset):
+    dataset = Asset
