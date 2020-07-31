@@ -43,7 +43,7 @@ class MutationsNotification:
         result = self.auth.client.execute(GQL_CREATE_NOTIFICATION, variables)
         return format_result('data', result)
 
-    def update_properties_in_notification(self, notification_id: str, hasBeenSeen: bool, status: str, url: str):
+    def update_properties_in_notification(self, notification_id: str, has_been_seen: bool, status: str, url: str):
         """
         Modify a notification
 
@@ -62,7 +62,7 @@ class MutationsNotification:
         """
         variables = {
             'id': notification_id,
-            'hasBeenSeen': hasBeenSeen,
+            'hasBeenSeen': has_been_seen,
             'status': status,
             'url': url
         }
