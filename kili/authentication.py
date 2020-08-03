@@ -40,18 +40,9 @@ class KiliAuth(object):
         adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
         self.session.mount('https://', adapter)
         self.session.mount('http://', adapter)
-        self.client = GraphQLClient(api_endpoint, self.session, verify=self.verify)
-        if api_key is None:
-            message = 'Authentication with a password is deprecated from 03/07/2020\n' + \
-                      'It will be removed on 03/08/2020. Please generate an API key\n' + \
-                      ' on the App in `My Account` and use `KiliAuth(api_key=...)` to connect'
-            warnings.warn(message, DeprecationWarning)
-            auth_payload = signin(self.client, email, password)
-            api_token = auth_payload['token']
-            self.client.inject_token('Bearer: ' + api_token)
-            self.user_id = auth_payload['user']['id']
-        else:
-            self.client.inject_token('X-API-Key: ' + api_key)
+        self.client = GraphQLClient(
+            api_endpoint, self.session, verify=self.verify)
+        self.client.inject_token('X-API-Key: ' + api_key)
 
     def __del__(self):
         self.session.close()
