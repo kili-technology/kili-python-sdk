@@ -67,7 +67,8 @@ class MutationsAsset:
         elif input_type == 'FRAME':
             for content in content_array:
                 if not is_url(content):
-                    raise ValueError(f"Content {content} isn't a link to a video")
+                    raise ValueError(
+                        f"Content {content} isn't a link to a video")
         variables = {
             'projectID': project_id,
             'contentArray': content_array,
