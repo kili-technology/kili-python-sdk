@@ -112,6 +112,7 @@ class Asset(object):
     isHoneypot = 'isHoneypot'
     isToBeLabeledByCompute = 'isToBeLabeledByCompute'
     isUsedForConsensus = 'isUsedForConsensus'
+    jsonContent = 'jsonContent'
     jsonMetadata = 'jsonMetadata'
     labels = LabelWithoutLabelOf
     locks = Lock
