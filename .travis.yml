@@ -4,23 +4,23 @@ services:
 env:
   global:
     - KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql
-    - secure: "F7VOvF5UMcpDiPh8+ZUA5M8oZBUHd801pIYGIc2Gucbc024jrRc7Z3hek5XSxFKlFpNiFGKxDUXtPRgghx0SSKIi0ZRU4ZnGV9GAlYN1lHUdwqsszSVHyNcr6gkk1/fzwmaTv/+N5Yy4wxgccZrGsYi0FamCF+dOsViXp6Xqj+TBYwVsW77IxALuwqoO7rhMAlhEGCxHyqHhV6aoJ64p2vCHB3aAEsyinyY8OjXBXjLGIBUZ13qhPEvWt+IwpMG3qxKQnMDioP33afaCaTh+ildg9UOoW3tfJOXcXHRWljgmPeEKngExvutbJdxoex7EClJ9FWzeljqy/8sGbkNPpIxV2NXMSJjwnXAFV5bEQs3cnumH7S+M8aFCh4QMloVdGaJRHf3/OEZnSeR1abP0ocUY1Ujxo9k+xBFDyModsOy0y437chre0vsJvfkYrWN7aPETDDyeivJfQRFkPGlypr31N8E1+sU+x2qcJ8AF6Hfjd2WJNvCh3953tN3BxdqAZP2YneOCMqblLRLiNs1XKoJbP8giT8IMFP6nliRaZaZ/0vjmOYq/HXqsWS8b6f3l9csZ2agfoyzGJuSWd9yiOgHciaYaMBBk4+mrBDrwoENAXXJ5U5IAgfL+ubg4gnTh92ZE13mLE56vysnpmf6Y+TOOTNvJGClA3ygFYjWyEvY="
-    - secure: "NyPSkllxolBKWZuHjcgzy7QCxepsYJu09FnA7FwgI8kV2Vrg4tsMY8inR8hiCGMvS3Xg1sLLJKIta0bwY957yVk8j+kEDg9wL4e9oUhIUlG08DBgAQxbKvbB3w6Bgs7J/o5xJ4WITspWXH8XSafcCJdgxch0lYmrBBjvwV+Lb9P5sksfxtlAAAyQgaHFAb4QUBQCXvTuWnnTlRhTrJeUA+T2yu50lASkluz+J+zXGXkCGKnSYjJQNUYdkQJMJUPY7pr+qVIiZ86DE1FYNwYohAaSZxClPB22HJ5uPbp1z0w9kBv6M55DhheFhNiDS48eHDw/OnuF2om48ZYesKzFz7dxn9AG/vFqGwojTwlSXFLB/NUc0jKYKR+o474NvzUqxvcNKLuywQUASJbN6UxyhUPC6sxmStNw048Fytyt7H+dUyJTmBhfj8cPv1jwEdPvGuUSd64wDDud/lTbvyMnvREjc/laIRzmscIpNrEkgVFBA6Rs6sYiQ5k/GeAvsaHT+fXWvU3MgJlUnOwU5WpmdziooCndRdxh3l55xSSk0Xt3ViOJPngnWu9+c6Fh0L1CxG9ny4Vd72DbywwFj18FsDWX3AgYMigCEh3nsmgTrozxBHDP6aJovD4fo9WsZbwFqR0C+QOA1byi48jBOU6QjLVzMm41gr5RGuNHSf7XsSg="
+    - secure: "g4esVmaWw9TKBQDk5T5ec9sYU5Tj/vF4b4SrF7zPOMbydzX03nTYBThvAStLgMhNKnqiUV7krDXLs3Jq7s+X7TcycuQpGLUf9qzcfRL3IspLmYTNHeIEtd5OSJOpQWBJeyDGKe+wg6jh8EFggmhQPj+sUEARvdL2I3ECaMEUI9day7cZZjs9D+fMrTfqUfriizCnT3xDH7HFr7ypejhyO7ys0dLAQZUuR24NkPZMS7Vfz6hYMqeZO0RCj6NjdjoiluO/vq7GHTylvBVDsn0RCi9/8ZTPRjec+Q+CneXLyf6YQoWoKigSIcagHz9fRChpGAcLx+GTN7c4ojij0BCmdDba8qxWAHyUE8B7jZGkf8vXzxYTsuQ73XuE+WqcPhtMZK9YtIPfNtZuOnRy9y7KkcFxdSkLiqJ0RkgEp8qIrFarirdAGLttbT9ONl8s7L5c9dm+JMLFypXYI6y3IBgMQsKpPT6jbSSlzxhAok1y6PH7xFgluyukRqzJZxxxd38u6/VFTfe2kCMBDmrPflQN9eQuhQxQSdFtp31lyAocSVkeh7oPfPxIdGH93GWUmdKgNhWoyvDgU1iz7/AY/+cLM0xNaTah9ap9zBO67smZSXSYlh1WWTW3gwzwAG9dN7A8LREqiv5Bk1Au9SoCQAzBRCLnTH8bswp3soERnmKzjmg="
+    - secure: "tMhONKOePnsq4lvjTJYYoFHT+A282V/emKxOC9WzPc60PloQUZvI18RUW+7kNZzSeALRam2FkfPCrnxTOojj2CZap23btLgVIN6j/nhc+m5EdQD8EY7TQ/8oe583J4vClI0jXpktca2UKZAYrAJ+k/JTCmC6br3QF8YkgU6Ly8XYZnFD4m4KzOstsTkY61qo2yug6rXVPUGuOpeReJT3DT17DhhYS0UfExd1E/jBkjwVyolzjX66wGKzznBy3ZCcrNQTnmUDRYVTHk/wc808cTgeXcaSTUIZXWPkOUi3V7W0vL6ziJmst4h8tRQwv2m7P2lj1A3kvQ99YeOWlZoFLqv6YxewVvPyzm180PtfsI0leFs1pCyhy0qijFzJHN+z+W+fO7Ze4JKCidWRha1cP2uwxeCPwNRXZwwMrtbEBtoCnGfyogl5yLNmNqMRoijElaCdxpRwRtzWgyRXCLy5U2VgGqkC/4ivcjWiivy3tke7V5KPDDwnkFGkgCQszDQBL3ETD9KTQvVaM9zfSlngxtRhy6Avc3zlgDAGm/g0oZ8cym8V+roZ03qDefpbODF4kExqBunHhbKv2SwdYeBHMeH8NTDnkTdD7nuF3xsXQz9vwot3VygJFCnR59vOGj0TzQ5CZbZpwVXI3cLlWjFHyBJQFmx1gVB4MsbyD3duf8o="
 jobs:
   include:
     # To debug a recipe by running it in a Docker locally as it is run in Travis, launch the following lines:
     #
-    # DOCKER_IMAGE=...
-    # KILI_USER_EMAIL=...
-    # KILI_USER_PASSWORD=...
+    # DOCKER_IMAGE=continuumio/anaconda3:2020.02
+    # KILI_USER_API_KEY=...
+    # KILI_USER_ID=...
     # TRAVIS_BRANCH=...
     #
     # docker pull ${DOCKER_IMAGE}
     #
     # docker run \
     #   --env KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql \
-    #   --env KILI_USER_EMAIL=${KILI_USER_EMAIL} \
-    #   --env KILI_USER_PASSWORD=${KILI_USER_PASSWORD} \
+    #   --env KILI_USER_API_KEY=${KILI_USER_API_KEY} \
+    #   --env KILI_USER_ID=${KILI_USER_ID} \
     #   --rm \
     #   -p 10000:8888 \
     #   ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
