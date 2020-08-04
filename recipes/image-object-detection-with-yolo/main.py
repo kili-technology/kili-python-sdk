@@ -34,12 +34,9 @@ LAST_WEIGHTS_FILE = 'weights/last.pt'
 
 def read_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--email", type=str,
-                        default=os.environ.get('EMAIL', None),
-                        help="your email, part of your kili credentials")
-    parser.add_argument("-p", "--password", type=str,
-                        default=os.environ.get('PASSWORD', None),
-                        help="your password, part of your kili credentials")
+    parser.add_argument("-e", "--api_key", type=str,
+                        default=os.environ.get('KILI_USER_API_KEY', None),
+                        help="your api_key, for your kili credentials")
     parser.add_argument("-i", "--project_id", type=str,
                         default=os.environ.get('PROJECT_ID', None),
                         help="your kili project id")
@@ -65,8 +62,7 @@ def read_arguments():
                         help="maximal number of inferences")
     args = parser.parse_args()
     if any([
-            not args.email,
-            not args.password,
+            not args.api_key,
             not args.project_id,
             not args.yolo_path]):
         logging.error("Some required arguments are empty")
@@ -126,9 +122,9 @@ def convert_from_kili_to_yolo_format(job_id, label):
 
 
 class YoloTransferLearning(TransferLearning):
-    def __init__(self, email, password, api_endpoint, project_id, transfer, weights, override_cfg, cfg, job_id, number_of_inferences):
+    def __init__(self, api_key, api_endpoint, project_id, transfer, weights, override_cfg, cfg, job_id, number_of_inferences):
         TransferLearning.__init__(
-            self, email, password, api_endpoint, project_id, number_of_inferences)
+            self, api_key, api_endpoint, project_id, number_of_inferences)
         self.transfer = transfer
         self.weights = weights
         self.override_cfg = override_cfg
@@ -289,7 +285,7 @@ def main():
     os.chdir(args.yolo_path)
 
     transfer_learning = YoloTransferLearning(
-        email=args.email, password=args.password, api_endpoint=args.api_endpoint, project_id=args.project_id,
+        api_key=args.api_key, api_endpoint=args.api_endpoint, project_id=args.project_id,
         transfer=args.no_transfer, weights=args.weights, override_cfg=args.override, cfg=args.cfg, job_id=args.job_id,
         number_of_inferences=args.number_of_inferences
     )
