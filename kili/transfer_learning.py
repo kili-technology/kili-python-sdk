@@ -14,8 +14,8 @@ def get_labels_of_types(asset, label_types):
 
 
 class TransferLearning:
-    def __init__(self, email, password, api_endpoint, project_id, number_of_inferences, minimum_number_of_assets_to_launch_training=100):
-        kauth = KiliAuth(email, password, api_endpoint=api_endpoint)
+    def __init__(self, api_key, api_endpoint, project_id, number_of_inferences, minimum_number_of_assets_to_launch_training=100):
+        kauth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint)
 
         self.playground = Playground(kauth)
         self.project_id = project_id

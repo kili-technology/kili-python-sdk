@@ -29,7 +29,7 @@ class KiliAuth(object):
                  email=os.getenv('KILI_USER_EMAIL'),
                  password=os.getenv('KILI_USER_PASSWORD'),
                  api_endpoint='https://cloud.kili-technology.com/api/label/graphql',
-                 api_key=None,
+                 api_key=os.getenv('KILI_USER_API_KEY'),
                  verify=True):
         self.session = requests.Session()
 
