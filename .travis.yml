@@ -51,7 +51,7 @@ jobs:
               jupyter nbconvert \
                 --to notebook \
                 --ExecutePreprocessor.kernel_name=python3 \
-                --ExecutePreprocessor.timeout=500 \
+                --ExecutePreprocessor.timeout=1000 \
                 --execute /root/kili-playground/${NOTEBOOK_PATH}"
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
