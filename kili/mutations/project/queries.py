@@ -145,3 +145,15 @@ mutation(
   }}
 }}
 '''
+
+GQL_DELETE_PROJECT = f'''
+mutation($projectID: ID!) {{
+  data: deleteProject(where: {{
+      id: $projectID
+    }}
+    ) {{
+    {PROJECT_FRAGMENT_ID}
+  }}
+}}
+'''
+

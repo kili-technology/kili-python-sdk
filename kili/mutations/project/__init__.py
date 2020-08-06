@@ -9,6 +9,7 @@ from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT,
                       GQL_DELETE_FROM_ROLES,
+                      GQL_DELETE_PROJECT,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
                       GQL_UPDATE_PROJECT, GQL_UPDATE_PROPERTIES_IN_PROJECT,
                       GQL_UPDATE_PROPERTIES_IN_ROLE)
@@ -308,3 +309,20 @@ class MutationsProject:
         """
         _ = QueriesAsset(self.auth).assets(project_id=project_id)
         _ = QueriesProject(self.auth).projects(project_id=project_id)
+
+    def delete_project(self, project_id: str):
+        """
+        Delete project permanently 
+
+        Parameters
+        ----------
+        - project_id : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {'projectID': project_id}
+        result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
+        return format_result('data', result)
+
