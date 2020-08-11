@@ -17,7 +17,8 @@ class QueriesUser:
         """
         self.auth = auth
 
-    def users(self, 
+    def users(self,
+              api_key: str = None,
               email: str = None,
               organization_id: str = None,
               fields: list = ['email', 'id', 'name'],
@@ -30,6 +31,7 @@ class QueriesUser:
 
         Parameters
         ----------
+        - api_key : str, optional (default = None) Query an user by its API KEY
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - fields : list of string, optional (default = ['email', 'id', 'name'])
@@ -48,6 +50,7 @@ class QueriesUser:
             'first': first,
             'skip': skip,
             'where': {
+                'apiKey':api_key,
                 'email': email,
                 'organization': {
                     'id': organization_id,
