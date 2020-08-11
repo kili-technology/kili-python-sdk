@@ -17,24 +17,6 @@ class MutationsUser:
         """
         self.auth = auth
 
-    def signin(self, email: str, password: str):
-        """
-        Sign in
-
-        Parameters
-        ----------
-        - email : str
-        - password : str
-
-        Returns
-        -------
-        - a result object which indicates if the mutation was successful, or an error message else.
-        """
-        variables = {'email': email, 'password': password}
-        result = self.auth.client.execute(GQL_SIGN_IN, variables)
-        return format_result('data', result)
-
-
     def create_user(self, name: str, email: str, password: str, organization_role: str):
         """
         Add a user to your organization.
@@ -162,22 +144,3 @@ class MutationsUser:
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
         return format_result('data', result)
-
-
-def signin(client, email: str, password: str):
-    """
-    Sign in
-
-    Parameters
-    ----------
-    - client : GraphQLClient object
-    - email : str
-    - password : str
-
-    Returns
-    -------
-    - a result object which indicates if the mutation was successful, or an error message else.
-    """
-    variables = {'email': email, 'password': password}
-    result = client.execute(GQL_SIGN_IN, variables)
-    return format_result('data', result)
