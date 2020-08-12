@@ -55,9 +55,7 @@ def add_id_to_entities(entities):
     return entities
 
 
-email = input('Enter email: ')
-password = getpass.getpass()
-project_id = input('Enter project id: ')
+api_key = input('Enter API KEY: ')
 
 MAX_NUMBER_OF_ASSET = 50
 
@@ -68,7 +66,7 @@ only_files = [os.path.join(path, name) for path,
               subdirs, files in os.walk(path_dir) for name in files]
 
 
-kauth = KiliAuth(email=email, password=password)
+kauth = KiliAuth(api_key=api_key)
 playground = Playground(kauth)
 
 for filepath in tqdm(only_files[:MAX_NUMBER_OF_ASSET]):

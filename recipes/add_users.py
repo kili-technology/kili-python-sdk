@@ -15,7 +15,7 @@ def get(dic, key):
 
 
 email = input('Enter email: ')
-password = getpass.getpass()
+api_key = input('Enter API KEY: ')
 project_id = input('Enter project id: ')
 
 
@@ -28,7 +28,7 @@ users = configuration['users']
 DEFAULT_ORGANIZATION_ROLE = 'USER'
 
 
-kauth = KiliAuth(email, password)
+kauth = KiliAuth(api_key=api_key)
 playground = Playground(kauth)
 
 organization_id = playground.get_user(email=email)['organization']['id']
