@@ -221,13 +221,15 @@ python set_asset_to_be_labeled_by.py
 
 ## How to authenticate to the API ?
 
-Use:
+1. Generate an API key in Kili interface in [My account](https://cloud.kili-technology.com/label/my-account), under the tab API KEY. Store it in some place secured.
+
+2. Start automating your tasks :
 
 ```bash
 from kili.authentication import KiliAuth
 from kili.playground import Playground
 
-kauth = KiliAuth(email=email, password=password)
+kauth = KiliAuth(api_key=api_key)
 playground = Playground(kauth)
 ```
 

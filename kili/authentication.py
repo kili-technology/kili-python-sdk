@@ -20,7 +20,7 @@ class KiliAuth(object):
     """
     from kili.authentication import KiliAuth
     from kili.playground import Playground
-    kauth = KiliAuth(email=email, password=password)
+    kauth = KiliAuth(api_key=api_key)
     playground = Playground(kauth)
     assets = playground.assets(project_id=project_id)
     """

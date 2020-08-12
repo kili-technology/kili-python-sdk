@@ -7,11 +7,9 @@ from tqdm import tqdm
 from kili.authentication import KiliAuth
 from kili.playground import Playground
 
-email = input('Enter email: ')
-password = getpass.getpass()
-project_id = input('Enter project id: ')
+api_key = input('Enter API KEY: ')
 
-kauth = KiliAuth(email=email, password=password)
+kauth = KiliAuth(api_key=api_key)
 playground = Playground(kauth)
 
 assets = playground.assets(project_id=project_id)

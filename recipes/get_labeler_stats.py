@@ -11,13 +11,11 @@ from kili.playground import Playground
 @click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/graphql',
               help='Endpoint of GraphQL client')
 def main(api_endpoint):
-    email = input('Enter email: ')
-    password = getpass.getpass()
+    api_key = input('Enter API KEY: ')
     source_project_id = input(
         'Enter project IDs (separate them by "," if you want to provide several): ')
 
-    kauth = KiliAuth(email=email,
-                     password=password,
+    kauth = KiliAuth(api_key=api_key,
                      api_endpoint=api_endpoint)
     playground = Playground(kauth)
 
