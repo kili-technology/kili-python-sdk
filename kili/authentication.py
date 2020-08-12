@@ -5,7 +5,7 @@ import requests
 
 from . import __version__
 from .graphql_client import GraphQLClient
-from .mutations.user import signin
+from .playground import Playground
 
 warnings.filterwarnings("default", module='kili', category=DeprecationWarning)
 
@@ -26,8 +26,6 @@ class KiliAuth(object):
     """
 
     def __init__(self,
-                 email=os.getenv('KILI_USER_EMAIL'),
-                 password=os.getenv('KILI_USER_PASSWORD'),
                  api_endpoint='https://cloud.kili-technology.com/api/label/graphql',
                  api_key=os.getenv('KILI_USER_API_KEY'),
                  verify=True):
@@ -43,6 +41,8 @@ class KiliAuth(object):
         self.client = GraphQLClient(
             api_endpoint, self.session, verify=self.verify)
         self.client.inject_token('X-API-Key: ' + api_key)
+        playground = Playground(self)
+        self.user_id = playground.users(api_key=api_key, fields=['id'])[0]['id']
 
     def __del__(self):
         self.session.close()
