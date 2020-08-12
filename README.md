@@ -9,7 +9,7 @@ Kili Technology is an image, text and voice data annotation tool designed to hel
 
 Kili Technology allows you to:
 
-- Quickly annotate **text**, **images**, **video**, **audio** and **frames**(3D images, DICOM Images and scans) thanks to simple and intuitive interfaces
+- Quickly annotate **text**, **images**, **video**, **audio** and **frames** (3D images, DICOM Images and scans) thanks to simple and intuitive interfaces
 - Easily ingest data, in drag & drop, from your cloud provider, or while keeping your data On Premise, when necessary.
 - Manage participants, roles and responsibilities
 - Monitor production quality using leading indicators and workflows for production monitoring and data quality validation
