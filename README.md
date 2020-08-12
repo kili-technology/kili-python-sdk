@@ -9,7 +9,7 @@ Kili Technology is an image, text and voice data annotation tool designed to hel
 
 Kili Technology allows you to:
 
-- Quickly annotate **text**, **images**, **video**, **audio** thanks to simple and intuitive interfaces
+- Quickly annotate **text**, **images**, **video**, **audio** and **frames**(3D images, DICOM Images and scans) thanks to simple and intuitive interfaces
 - Easily ingest data, in drag & drop, from your cloud provider, or while keeping your data On Premise, when necessary.
 - Manage participants, roles and responsibilities
 - Monitor production quality using leading indicators and workflows for production monitoring and data quality validation
@@ -40,14 +40,16 @@ It allows data scientists and developers to control Kili Technology from an IDE.
 pip install kili
 ```
 
-- **Note**: If you're on Windows, install Shapely by following [this tutorial](https://towardsdatascience.com/install-shapely-on-windows-72b6581bb46c).
-
 ## Get started
+
+- Export an API KEY In `My Account` -> `API KEY`
+
+- In your favourite IDE :
 
 ```python
 from kili.authentication import KiliAuth
 from kili.playground import Playground
-kauth = KiliAuth(email, password)
+kauth = KiliAuth(api_key)
 playground = Playground(kauth)
 ```
 
@@ -56,7 +58,8 @@ Here are [some recipes](/recipes/). Among them:
 - [How to import assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
 - [How to export labels](https://github.com/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb))
 - [How to import predictions](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
-- [How to query data through the API](https://github.com/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb) (run in [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
-- [How to use AutoML for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb) (run in [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
+- [How to query data through the API](https://github.com/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
+- [How to use AutoML for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
+- [How to use Transfer Learning for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/transfer_learning_with_yolo.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/transfer_learning_with_yolo.ipynb))
 
 If you want more details on what you can do with the API, follow the [technical documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api).
