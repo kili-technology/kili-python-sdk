@@ -72,27 +72,16 @@ You can also refer to the [documentation](https://cloud.kili-technology.com/docs
 If you prefer, you can directly query GraphQL API without using
 `kili-playground`.
 
-1. Go to http://cloud.kili-technology.com/api/label/playground
+1. Generate an API key in Kili interface in [My account](https://cloud.kili-technology.com/label/my-account), under the tab API KEY. Store it in some place secured.
 
-2. Login using the following mutation in order to retrieve the authentication token:
-
-```graphql
-mutation {
-  signIn(email: "YOUR_EMAIL", password: "YOUR_PASSWORD") {
-    user {
-      id
-    }
-    token
-  }
-}
-```
+2. Go to http://cloud.kili-technology.com/api/label/playground
 
 3. In the bottom left corner of the screen, click on `HTTP headers` and write
    the retrieved token in the authorization headers:
 
 ```json
 {
-  "Authorization": "Bearer: YOUR_TOKEN"
+  "Authorization": "X-API-Key: YOUR_API_KEY"
 }
 ```
 
@@ -100,8 +89,10 @@ mutation {
 
 ```graphql
 query {
-  getUser(email: "YOUR_EMAIL") {
+  users(where: { email: "YOUR_EMAIL" }, first: 10, skip: 0) {
     id
+    activated
+    email
   }
 }
 ```
