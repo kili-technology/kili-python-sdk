@@ -94,8 +94,10 @@ class LabelWithoutLabelOf(object):
 class Lock(object):
     id = 'id'
     author = User
+    authorIdCompute = 'authorIdCompute'
     createdAt = 'createdAt'
-    lockype = 'lockType'
+    lockType = 'lockType'
+    lockOfIdCompute = 'lockOfIdCompute'
 
 
 class Asset(object):

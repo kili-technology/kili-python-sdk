@@ -205,7 +205,7 @@ class QueriesLabel:
                      type_in: List[str] = None,
                      user_id: str = None):
         """
-        Get an array of labels from a project
+        Get the number of labels for the given parameters
 
         Parameters
         ----------
@@ -250,7 +250,7 @@ class QueriesLabel:
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        - the number of labels with the parameters provided
         """
         variables = {
             'where': {
