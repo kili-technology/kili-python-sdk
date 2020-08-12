@@ -18,9 +18,7 @@ class QueriesLock:
         self.auth = auth
 
     def locks(self, 
-              author_id : str = None,
               lock_id: str = None,
-              lock_of_id : str = None,
               fields: list = ['id', 'lockType'],
               first: int = 100,
               skip: int = 0):
@@ -32,10 +30,7 @@ class QueriesLock:
         Parameters
         ----------
         - lock_id : str, optional (default = None)
-        - lock_of_id : str, optional (default = None)
-            The id of the asset whose locks are requested
-        - author_id : str, optional (default = None)
-            The id of the user whose locks are requested
+            The id of the lock to request. If None, all locks are returned
         - fields : list of string, optional (default = ['id', 'lock_type'])
             All the fields to request among the possible fields for the locks, default for None are the non-calculated fields)
             Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks
@@ -52,14 +47,8 @@ class QueriesLock:
             'first': first,
             'skip': skip,
             'where': {
-                'id': lock_id,
-                'author' :{
-                    'id': author_id
+                'id': lock_id
                 }
-                'lockOf' {
-                    'id' : lock_of_id
-                }
-            }
         }
         GQL_LOCKS = gql_locks(fragment_builder(fields, Lock))
         result = self.auth.client.execute(GQL_LOCKS, variables)
