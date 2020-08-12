@@ -6,6 +6,7 @@ import kili.mutations.project
 import kili.mutations.user
 import kili.queries.asset
 import kili.queries.label
+import kili.queries.lock
 import kili.queries.organization
 import kili.queries.project
 import kili.queries.project_user
