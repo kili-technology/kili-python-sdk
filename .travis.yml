@@ -25,6 +25,7 @@ jobs:
     #   --env KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql \
     #   --env KILI_USER_API_KEY=${KILI_USER_API_KEY} \
     #   --env KILI_USER_ID=${KILI_USER_ID} \
+    #   --env KILI_USER_EMAIL=${KILI_USER_EMAIL} \
     #   --rm \
     #   -p 10000:8888 \
     #   ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
@@ -33,7 +34,7 @@ jobs:
     #     pip install ./kili-playground && \
     #     jupyter notebook --allow-root --ip=0.0.0.0 --port=8888"
     #
-    # Then start https://localhost:10000/?token=TOKEN_OUTPUTED_IN_CONSOLE
+    # Then start http://localhost:10000/?token=TOKEN_OUTPUTED_IN_CONSOLE
     - &test-recipes
       stage: Test *.ipynb in recipes
       script:
