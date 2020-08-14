@@ -42,9 +42,10 @@ class MutationsAsset:
         - status_array : list of str, optional (default = None)
             By default, all imported assets are set to 'TODO'. It can also be set to
             'ONGOING', 'LABELED', 'REVIEWED'
-        - json_metadata_array : list of dict , optional (default = None)
-            The metadata given to each asset should be stored in a json like dict.
-
+        - json_metadata_array : list of dicts , optional (default = None)
+            The metadata given to each asset should be stored in a json like dict with keys 
+            "imageUrl", "text", "url".
+            json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
@@ -95,8 +96,10 @@ class MutationsAsset:
             If given, the asset identified by this external identifier will be modified.
         - priority : int, optional (default = None)
             By default, all assets have a priority of 0
-        - json_metadata : dict (default = None)
-            Update the metadata of the asset with a json like dict.
+        - json_metadata : dict , optional (default = None)
+            The metadata given to an asset should be stored in a json like dict with keys 
+            "imageUrl", "text", "url".
+            json_metadata = {'imageUrl': '','text': '','url': ''}
         - consensus_mark : float (default = None)
             Should be between 0 and 1
         - honeypot_mark : float (default = None)
