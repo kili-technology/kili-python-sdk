@@ -7,8 +7,6 @@ from . import __version__
 from .graphql_client import GraphQLClient
 from .playground import Playground
 
-warnings.filterwarnings("default", module='kili', category=DeprecationWarning)
-
 MAX_RETRIES = 20
 
 
@@ -26,8 +24,8 @@ class KiliAuth(object):
     """
 
     def __init__(self,
-                 api_endpoint='https://cloud.kili-technology.com/api/label/graphql',
                  api_key=os.getenv('KILI_USER_API_KEY'),
+                 api_endpoint='https://cloud.kili-technology.com/api/label/graphql',
                  verify=True):
         self.session = requests.Session()
 
@@ -40,9 +38,13 @@ class KiliAuth(object):
         self.session.mount('http://', adapter)
         self.client = GraphQLClient(
             api_endpoint, self.session, verify=self.verify)
+        if api_key is None:
+            message = 'You need to provide an API KEY to connect. Visit https://cloud.kili-technology.com/docs/python-graphql-api/authentication/#generate-an-api-key'
+            warnings.warn(message, UserWarning)
         self.client.inject_token('X-API-Key: ' + api_key)
         playground = Playground(self)
-        self.user_id = playground.users(api_key=api_key, fields=['id'])[0]['id']
+        self.user_id = playground.users(
+            api_key=api_key, fields=['id'])[0]['id']
 
     def __del__(self):
         self.session.close()

@@ -49,7 +49,7 @@ pip install kili
 ```python
 from kili.authentication import KiliAuth
 from kili.playground import Playground
-kauth = KiliAuth(api_key)
+kauth = KiliAuth(api_key='MY API KEY')
 playground = Playground(kauth)
 ```
 
