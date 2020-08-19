@@ -6,3 +6,13 @@ query($where: UserWhere!, $first: PageSize!, $skip: Int!) {{
   }}
 }}
 ''')
+
+
+def gql_users_count(fragment):
+    return(f'''
+query($where: LockWhere!) {{
+  data: countUsers(where: $where){{
+    {fragment}
+  }}
+}}
+''')

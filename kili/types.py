@@ -14,6 +14,8 @@ class UserWithoutProjectUsers(object):
     email = 'email'
     name = 'name'
     organization = Organization
+    organizationId = 'organizationId'
+    organizationIdCompute = 'organizationIdCompute'
     organizationRole = 'organizationRole'
     updatedAt = 'updatedAt'
 
