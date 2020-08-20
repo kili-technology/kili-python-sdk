@@ -1,7 +1,7 @@
 import warnings
 
 from ...helpers import deprecate, format_result, fragment_builder
-from .queries import gql_users
+from .queries import gql_users, GQL_USERS_COUNT
 from ...types import User
 
 
@@ -50,7 +50,7 @@ class QueriesUser:
             'first': first,
             'skip': skip,
             'where': {
-                'apiKey':api_key,
+                'apiKey': api_key,
                 'email': email,
                 'organization': {
                     'id': organization_id,
@@ -59,4 +59,29 @@ class QueriesUser:
         }
         GQL_USERS = gql_users(fragment_builder(fields, User))
         result = self.auth.client.execute(GQL_USERS, variables)
+        return format_result('data', result)
+
+    def count_users(self,
+                    organization_id: str = None):
+        """
+        Get users count
+
+        Returns the count of users whose organization id correspond to the given one
+
+        Parameters
+        ----------
+        - organization_id : str, optional (default = None)
+
+        Returns
+        -------
+        - a number
+        """
+        variables = {
+            'where': {
+                'organization': {
+                    'id': organization_id,
+                }
+            }
+        }
+        result = self.auth.client.execute(GQL_USERS_COUNT, variables)
         return format_result('data', result)
