@@ -1,5 +1,3 @@
-import getpass
-
 import click
 import yaml
 from tqdm import tqdm
@@ -24,8 +22,7 @@ def get_asset_by_external_id(playground, project_id, external_id):
 @click.command()
 @click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/graphql', help='Endpoint of GraphQL client')
 def main(api_endpoint):
-    email = input('Enter email: ')
-    password = getpass.getpass()
+    api_key = input('Enter API KEY: ')
     project_id = input('Enter project id: ')
 
     with open('./conf/new_assets.yml', 'r') as f:
@@ -33,7 +30,7 @@ def main(api_endpoint):
 
     assets = configuration['assets']
 
-    kauth = KiliAuth(email, password, api_endpoint)
+    kauth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint)
     playground = Playground(kauth)
 
     project = playground.projects(project_id=project_id)[0]
