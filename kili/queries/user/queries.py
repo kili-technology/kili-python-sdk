@@ -8,11 +8,8 @@ query($where: UserWhere!, $first: PageSize!, $skip: Int!) {{
 ''')
 
 
-def gql_users_count(fragment):
-    return(f'''
-query($where: LockWhere!) {{
-  data: countUsers(where: $where){{
-    {fragment}
-  }}
+GQL_USERS_COUNT = f'''
+query($where: UserWhere!) {{
+  data: countUsers(where: $where)
 }}
-''')
+'''

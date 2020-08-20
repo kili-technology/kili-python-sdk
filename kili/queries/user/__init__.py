@@ -1,7 +1,7 @@
 import warnings
 
 from ...helpers import deprecate, format_result, fragment_builder
-from .queries import gql_users, gql_users_count
+from .queries import gql_users, GQL_USERS_COUNT
 from ...types import User
 
 
@@ -83,6 +83,5 @@ class QueriesUser:
                 }
             }
         }
-        GQL_USERS_COUNT = gql_users_count(fragment_builder(fields, User))
         result = self.auth.client.execute(GQL_USERS_COUNT, variables)
         return format_result('data', result)
