@@ -26,7 +26,7 @@ class KiliAuth(object):
     def __init__(self,
                  api_key=os.getenv('KILI_USER_API_KEY'),
                  api_endpoint='https://cloud.kili-technology.com/api/label/v1/graphql',
-                 verify=True): https: // cloud.kili-technology.com/api/label/v1/graphql
+                 verify=True):
     self.session = requests.Session()
 
     self.verify = verify
