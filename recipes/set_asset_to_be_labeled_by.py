@@ -20,9 +20,9 @@ def get_asset_by_external_id(playground, project_id, external_id):
 
 
 @click.command()
-@click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/graphql', help='Endpoint of GraphQL client')
+@click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/v1/graphql', help='Endpoint of GraphQL client')
 def main(api_endpoint):
-    api_key = input('Enter API KEY: ')
+    api_key = input('Enter API KEY: ')https: // cloud.kili-technology.com/api/label/v1/graphql
     project_id = input('Enter project id: ')
 
     with open('./conf/new_assets.yml', 'r') as f:

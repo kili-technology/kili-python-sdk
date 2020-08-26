@@ -3,7 +3,7 @@ services:
   - docker
 env:
   global:
-    - KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql
+    - KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v1/graphql
     # USER_ID
     - secure: "g4esVmaWw9TKBQDk5T5ec9sYU5Tj/vF4b4SrF7zPOMbydzX03nTYBThvAStLgMhNKnqiUV7krDXLs3Jq7s+X7TcycuQpGLUf9qzcfRL3IspLmYTNHeIEtd5OSJOpQWBJeyDGKe+wg6jh8EFggmhQPj+sUEARvdL2I3ECaMEUI9day7cZZjs9D+fMrTfqUfriizCnT3xDH7HFr7ypejhyO7ys0dLAQZUuR24NkPZMS7Vfz6hYMqeZO0RCj6NjdjoiluO/vq7GHTylvBVDsn0RCi9/8ZTPRjec+Q+CneXLyf6YQoWoKigSIcagHz9fRChpGAcLx+GTN7c4ojij0BCmdDba8qxWAHyUE8B7jZGkf8vXzxYTsuQ73XuE+WqcPhtMZK9YtIPfNtZuOnRy9y7KkcFxdSkLiqJ0RkgEp8qIrFarirdAGLttbT9ONl8s7L5c9dm+JMLFypXYI6y3IBgMQsKpPT6jbSSlzxhAok1y6PH7xFgluyukRqzJZxxxd38u6/VFTfe2kCMBDmrPflQN9eQuhQxQSdFtp31lyAocSVkeh7oPfPxIdGH93GWUmdKgNhWoyvDgU1iz7/AY/+cLM0xNaTah9ap9zBO67smZSXSYlh1WWTW3gwzwAG9dN7A8LREqiv5Bk1Au9SoCQAzBRCLnTH8bswp3soERnmKzjmg="
     # API_KEY
@@ -22,7 +22,7 @@ jobs:
     # docker pull ${DOCKER_IMAGE}
     #
     # docker run \
-    #   --env KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/graphql \
+    #   --env KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v1/graphql \
     #   --env KILI_USER_API_KEY=${KILI_USER_API_KEY} \
     #   --env KILI_USER_ID=${KILI_USER_ID} \
     #   --env KILI_USER_EMAIL=${KILI_USER_EMAIL} \
