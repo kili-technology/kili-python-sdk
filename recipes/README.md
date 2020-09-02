@@ -74,7 +74,7 @@ If you prefer, you can directly query GraphQL API without using
 
 1. Generate an API key in Kili interface in [My account](https://cloud.kili-technology.com/label/my-account), under the tab API KEY. Store it in some place secured.
 
-2. Go to http://cloud.kili-technology.com/api/label/playground
+2. Go to http://cloud.kili-technology.com/api/label/v1/playground
 
 3. In the bottom left corner of the screen, click on `HTTP headers` and write
    the retrieved token in the authorization headers:
@@ -104,7 +104,7 @@ query {
 - Then execute:
 
 ```bash
-python online_learning_text_classification.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/graphql)
+python online_learning_text_classification.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/v1/graphql)
 ```
 
 - Enter your personnal information : Mail, Password, ProjectID
@@ -180,7 +180,7 @@ docker run -it -e "EMAIL=myemail@kili-technology.com" \
   -e "PASSWORD=my_password" \
   -e "PROJECT_ID=1234567890" \
   -e "JOB_ID=job_12345" \
-  -e "API_ENDPOINT=https://cloud.kili-technology.com/api/label/graphql" \
+  -e "API_ENDPOINT=https://cloud.kili-technology.com/api/label/v1/graphql" \
   --network="host" kili-playground-yolo
 ```
 
@@ -193,7 +193,7 @@ python main.py --weights /path/to/weights/yolov3.pt \
   --password=mypassword \
   --project_id=1234567890 \
   --job_id=job_12345 \
-  --api_endpoint=https://cloud.kili-technology.com/api/label/graphql \
+  --api_endpoint=https://cloud.kili-technology.com/api/label/v1/graphql \
   --yolo_path=/path/to/yolov3
 ```
 
