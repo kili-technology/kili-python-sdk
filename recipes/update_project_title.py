@@ -15,7 +15,7 @@ def main(api_endpoint):
     description = input(
         'Enter a new description (leave blank and press [Enter] to leave description as is): ').strip()
 
-    kauth = KiliAuth(api_key=api_key api_endpoint=api_endpoint)
+    kauth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint)
     playground = Playground(kauth)
     playground.update_properties_in_project(
         project_id=project_id, title=title, description=description)
