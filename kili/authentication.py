@@ -33,15 +33,19 @@ class KiliAuth(object):
 
         self.verify = verify
 
-        self.check_versions_match(api_endpoint)
+        if api_endpoint == "https://cloud.kili-technology.com/api/label/graphql":
+            message = 'We are migrating the API to enhance our service, please use the new endpoint https://cloud.kili-technology.com/api/label/v1/graphql (or None), the former endpoint call will be deprecated on october 1st 2020'
+            warnings.warn(message, DeprecationWarning)
+        try:
+            self.check_versions_match(api_endpoint)
+        except:
+            message = 'We could not check the version, there might be a version mismatch or the app might be in deployment'
+            warnings.warn(message, UserWarning)
+            pass
 
         adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
         self.session.mount('https://', adapter)
         self.session.mount('http://', adapter)
-        if api_endpoint == "https://cloud.kili-technology.com/api/label/graphql":
-            message = 'We are migrating the API to enhance our service, please use the new endpoint api_endpoint=https://cloud.kili-technology.com/api/label/v1/graphql (or None), the former endpoint call will be deprecated on october 1st 2020'
-            warnings.warn(message, DeprecationWarning)
-            api_endpoint = 'https://cloud.kili-technology.com/api/label/v1/graphql'
         self.client = GraphQLClient(
             api_endpoint, self.session, verify=self.verify)
         if api_key is None:
