@@ -8,6 +8,7 @@ mutation(
     $externalIDArray: [String!],
     $isHoneypotArray: [Boolean!],
     $statusArray: [Status!],
+    $jsonContentArray: [String!],
     $jsonMetadataArray: [String!]) {{
   data: appendManyToDataset(
     projectID: $projectID,
@@ -15,6 +16,7 @@ mutation(
     externalIDArray: $externalIDArray,
     isHoneypotArray: $isHoneypotArray,
     statusArray: $statusArray,
+    jsonContentArray: $jsonContentArray,
     jsonMetadataArray: $jsonMetadataArray
   ) {{
     {ASSET_FRAGMENT}

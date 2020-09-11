@@ -22,8 +22,9 @@ class MutationsAsset:
         """
         self.auth = auth
 
-    def append_many_to_dataset(self, project_id: str, content_array: List[str], external_id_array: List[str],
-                               is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_metadata_array: List[dict] = None):
+    def append_many_to_dataset(self, project_id: str, external_id_array: List[str], content_array: List[str] = None,
+                               is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_content_array: List[List[str]] = None,
+                               json_metadata_array: List[dict] = None):
         """
         Append assets to a project
 
@@ -31,29 +32,40 @@ class MutationsAsset:
         ----------
         - project_id : str
             Identifier of the project
-        - content_array : list of str
+        - external_id_array : List[str]
+            List of external ids given to identify the assets
+        - content_array : List[str], optional (default = None)
             List of elements added to the assets of the project
             - For a NLP project, the content is directly in text format
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
-            and you point Kili to your data by giving the URLs
-        - external_id_array : list of str
-            List of external ids given to identify the assets
-        - is_honeypot_array : list of bool, optional (default = None)
-        - status_array : list of str, optional (default = None)
+            and you point Kili to your data by giving the URLs.
+            Should not be None except if you provide json_content_array.
+        - is_honeypot_array : List[bool], optional (default = None)
+        - status_array : List[str], optional (default = None)
             By default, all imported assets are set to 'TODO'. It can also be set to
             'ONGOING', 'LABELED', 'REVIEWED'
-        - json_metadata_array : list of dicts , optional (default = None)
+        - json_content_array : List[List[str]], optional (default = None)
+            Each element is a list of links to images. Useful for 'FRAME' projects. 
+        - json_metadata_array : List[Dict] , optional (default = None)
             The metadata given to each asset should be stored in a json like dict with keys 
             "imageUrl", "text", "url".
             json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
+
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        if content_array is None and json_content_array is None:
+            raise ValueError(
+                f"Variables content_array and json_content_array cannot be both None.")
+        if content_array is None:
+            content_array = [''] * len(json_content_array)
         is_honeypot_array = [
             False] * len(content_array) if not is_honeypot_array else is_honeypot_array
         status_array = ['TODO'] * \
             len(content_array) if not status_array else status_array
+        formatted_json_content_array = [''] * len(content_array) if not json_content_array else list(map(lambda json_content: dumps(dict(
+            zip(range(len(json_content)), json_content))), json_content_array))
         json_metadata_array = [
             {}] * len(content_array) if not json_metadata_array else json_metadata_array
         formatted_json_metadata_array = [
@@ -65,7 +77,7 @@ class MutationsAsset:
         if input_type == 'IMAGE':
             content_array = [content if is_url(content) else encode_image(
                 content) for content in content_array]
-        elif input_type == 'FRAME':
+        elif input_type == 'FRAME' and json_content_array is None:
             for content in content_array:
                 if not is_url(content):
                     raise ValueError(
@@ -76,6 +88,7 @@ class MutationsAsset:
             'externalIDArray': external_id_array,
             'isHoneypotArray': is_honeypot_array,
             'statusArray': status_array,
+            'jsonContentArray': formatted_json_content_array,
             'jsonMetadataArray': formatted_json_metadata_array}
         result = self.auth.client.execute(
             GQL_APPEND_MANY_TO_DATASET, variables)
