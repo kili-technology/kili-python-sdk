@@ -1,4 +1,5 @@
 from json import dumps
+from uuid import uuid4
 from typing import List
 
 from ...helpers import content_escape, encode_image, format_result, is_url, deprecate
@@ -22,7 +23,7 @@ class MutationsAsset:
         """
         self.auth = auth
 
-    def append_many_to_dataset(self, project_id: str, external_id_array: List[str], content_array: List[str] = None,
+    def append_many_to_dataset(self, project_id: str, content_array: List[str] = None, external_id_array: List[str] = None,
                                is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_content_array: List[List[str]] = None,
                                json_metadata_array: List[dict] = None):
         """
@@ -32,14 +33,14 @@ class MutationsAsset:
         ----------
         - project_id : str
             Identifier of the project
-        - external_id_array : List[str]
-            List of external ids given to identify the assets
         - content_array : List[str], optional (default = None)
             List of elements added to the assets of the project
             - For a NLP project, the content is directly in text format
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs.
             Should not be None except if you provide json_content_array.
+        - external_id_array : List[str], optional (default = None)
+            List of external ids given to identify the assets. If None, random identifiers are created.
         - is_honeypot_array : List[bool], optional (default = None)
         - status_array : List[str], optional (default = None)
             By default, all imported assets are set to 'TODO'. It can also be set to
@@ -60,6 +61,9 @@ class MutationsAsset:
                 f"Variables content_array and json_content_array cannot be both None.")
         if content_array is None:
             content_array = [''] * len(json_content_array)
+        if external_id_array is None:
+            external_id_array = [
+                uuid4().hex for _ in range(len(content_array))]
         is_honeypot_array = [
             False] * len(content_array) if not is_honeypot_array else is_honeypot_array
         status_array = ['TODO'] * \
