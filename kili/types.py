@@ -55,6 +55,7 @@ class ProjectWithoutDataset(object):
     numberOfReviewedAssets = 'numberOfReviewedAssets'
     readPermissionsForAssetsAndLabels = 'readPermissionsForAssetsAndLabels'
     roles = ProjectUserWithoutProject
+    shouldRelaunchKpiComputation = 'shouldRelaunchKpiComputation'
     title = 'title'
     titleAndDescription = 'titleAndDescription'
     updatedAt = 'updatedAt'

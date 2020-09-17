@@ -70,6 +70,7 @@ class MutationsProject:
                                      number_of_assets_with_empty_labels: int = None,
                                      number_of_remaining_assets: int = None,
                                      number_of_reviewed_assets: int = None,
+                                     should_relaunch_kpi_computation: bool = None,
                                      title: str = None):
         """
         Update properties of a project
@@ -103,6 +104,8 @@ class MutationsProject:
             Defaults to 0
         - number_of_reviewed_assets : int, optional (default = None)
             Defaults to 0
+        - should_relaunch_kpi_computation : bool, optional (default = None)
+            Technical field, added to indicate changes in honeypot or consensus settings
         - title : str, optional (default = None)
 
         Returns
@@ -124,6 +127,7 @@ class MutationsProject:
             'numberOfRemainingAssets': number_of_remaining_assets,
             'numberOfReviewedAssets': number_of_reviewed_assets,
             'projectID': project_id,
+            'shouldRelaunchKpiComputation': should_relaunch_kpi_computation,
             'title': title
         }
         result = self.auth.client.execute(
@@ -325,4 +329,3 @@ class MutationsProject:
         variables = {'projectID': project_id}
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
         return format_result('data', result)
-

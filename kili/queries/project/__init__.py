@@ -16,16 +16,17 @@ class QueriesProject:
         """
         self.auth = auth
 
-    def projects(self, 
-                 project_id: str = None, 
-                 search_query: str = None, 
-                 updated_at_gte: str = None, 
-                 updated_at_lte: str = None, 
-                 skip: int = 0, 
-                 fields: list = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 
-                'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 
-                'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'],
-                first: int = 100) :
+    def projects(self,
+                 project_id: str = None,
+                 search_query: str = None,
+                 should_relaunch_kpi_computation: bool = None,
+                 updated_at_gte: str = None,
+                 updated_at_lte: str = None,
+                 skip: int = 0,
+                 fields: list = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface',
+                                 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role',
+                                 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'],
+                 first: int = 100):
         """
         Get projects with a search_query
 
@@ -35,6 +36,8 @@ class QueriesProject:
             Select a specific project through its project_id
         - search_query : str, optional (default = None)
             Returned projects have a title or a description that matches this string.
+        - should_relaunch_kpi_computation : bool, optional (default = None)
+            Technical field, added to indicate changes in honeypot or consensus settings
         - updated_at_gte : string, optional (default = None)
             Returned projects should have a label whose update date is greated or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -58,6 +61,7 @@ class QueriesProject:
             'where': {
                 'id': project_id,
                 'searchQuery': search_query,
+                'shouldRelaunchKpiComputation': should_relaunch_kpi_computation,
                 'updatedAtGte': updated_at_gte,
                 'updatedAtLte': updated_at_lte,
             },
@@ -67,7 +71,7 @@ class QueriesProject:
         result = self.auth.client.execute(GQL_PROJECTS, variables)
         return format_result('data', result)
 
-    def count_projects(self, project_id: str = None, search_query: str = None, updated_at_gte: str = None, updated_at_lte: str = None):
+    def count_projects(self, project_id: str = None, search_query: str = None, should_relaunch_kpi_computation: bool = None, updated_at_gte: str = None, updated_at_lte: str = None):
         """
         Counts the number of projects with a search_query
 
@@ -77,6 +81,8 @@ class QueriesProject:
             Select a specific project through its project_id
         - search_query : str, optional (default = None)
             Returned projects have a title or a description that matches this string.
+        - should_relaunch_kpi_computation : bool, optional (default = None)
+            Technical field, added to indicate changes in honeypot or consensus settings
         - updated_at_gte : string, optional (default = None)
             Returned projects should have a label whose update date is greated or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -92,6 +98,7 @@ class QueriesProject:
             'where': {
                 'id': project_id,
                 'searchQuery': search_query,
+                'shouldRelaunchKpiComputation': should_relaunch_kpi_computation,
                 'updatedAtGte': updated_at_gte,
                 'updatedAtLte': updated_at_lte,
             }
