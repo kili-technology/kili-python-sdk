@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import List
 import warnings
-from ...helpers import deprecate, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import gql_labels, GQL_LABELS_COUNT
@@ -21,6 +21,7 @@ class QueriesLabel:
         """
         self.auth = auth
 
+    @Compatible()
     def labels(self,
                asset_id: str = None,
                asset_status_in: List[str] = None,
@@ -190,6 +191,7 @@ class QueriesLabel:
             lambda json_response: self.parse_json_response(json_response, interface_category))
         return labels_df
 
+    @Compatible()
     def count_labels(self,
                      asset_id: str = None,
                      asset_status_in: List[str] = None,

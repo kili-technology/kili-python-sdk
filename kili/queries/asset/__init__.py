@@ -5,7 +5,7 @@ from typing import List
 import pandas as pd
 from tqdm import tqdm
 
-from ...helpers import deprecate, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...constants import NO_ACCESS_RIGHT
 from ...types import Asset
@@ -23,6 +23,7 @@ class QueriesAsset:
         """
         self.auth = auth
 
+    @Compatible()
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0,
                fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
@@ -170,6 +171,7 @@ class QueriesAsset:
                 skip += formatted_first
                 pbar.update(len(assets))
 
+    @Compatible()
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,
                      external_id_contains: List[str] = None,

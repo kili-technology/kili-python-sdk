@@ -1,4 +1,4 @@
-from ...helpers import deprecate, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_project_users
 from ...types import ProjectUser
 import warnings
@@ -16,6 +16,7 @@ class QueriesProjectUser:
         """
         self.auth = auth
 
+    @Compatible(['v1', 'v2'])
     def project_users(self,
                       email: str = None,
                       id: str = None,

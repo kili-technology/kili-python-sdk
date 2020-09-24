@@ -1,6 +1,6 @@
 import warnings
 
-from ...helpers import deprecate, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_locks, GQL_LOCKS_COUNT
 from ...types import Lock
 
@@ -17,7 +17,8 @@ class QueriesLock:
         """
         self.auth = auth
 
-    def locks(self, 
+    @Compatible()
+    def locks(self,
               lock_id: str = None,
               fields: list = ['id', 'lockType'],
               first: int = 100,
@@ -48,14 +49,14 @@ class QueriesLock:
             'skip': skip,
             'where': {
                 'id': lock_id
-                }
+            }
         }
         GQL_LOCKS = gql_locks(fragment_builder(fields, Lock))
         result = self.auth.client.execute(GQL_LOCKS, variables)
         return format_result('data', result)
 
-
-    def count_locks(self) :
+    @Compatible()
+    def count_locks(self):
         """
         Get the number of locks
 
@@ -67,10 +68,10 @@ class QueriesLock:
         - the number of locks
         """
         variables = {
-            'where': { 
-                'id' : None
-                }
+            'where': {
+                'id': None
             }
+        }
         result = self.auth.client.execute(GQL_LOCKS_COUNT, variables)
         count = format_result('data', result)
         return count
