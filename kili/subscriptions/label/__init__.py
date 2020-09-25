@@ -31,8 +31,6 @@ class SubscriptionsLabel:
         - None
         """
         ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
-        # if 'v1' in ws_endpoint:
-        #     raise Exception('Kili API V1 is not supported anymore for subscriptions')
         ws = SubscriptionGraphQLClient(ws_endpoint)
         headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
