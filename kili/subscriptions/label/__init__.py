@@ -31,10 +31,13 @@ class SubscriptionsLabel:
         - None
         """
         ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
+        # if 'v1' in ws_endpoint:
+        #     raise Exception('Kili API V1 is not supported anymore for subscriptions')
         ws = SubscriptionGraphQLClient(ws_endpoint)
         headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
-        headers['Authorization'] = f'{self.auth.client.token}'
+        authorization = f'{self.auth.client.token}'
+        headers['Authorization'] = authorization
         variables = {'projectID': project_id}
         ws.subscribe(GQL_LABEL_CREATED_OR_UPDATED, variables=variables,
-                    callback=callback, headers=headers)
+                    callback=callback, headers=headers, authorization=authorization)
