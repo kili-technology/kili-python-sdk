@@ -35,10 +35,11 @@ class MutationsAsset:
             Identifier of the project
         - content_array : List[str], optional (default = None)
             List of elements added to the assets of the project
-            - For a NLP project, the content is directly in text format
+            - For a Text project, the content is directly in text format.
+            - For an Image project, the content can be paths to existing images on your computer.
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs.
-            Should not be None except if you provide json_content_array.
+            Must not be None except if you provide json_content_array.
         - external_id_array : List[str], optional (default = None)
             List of external ids given to identify the assets. If None, random identifiers are created.
         - is_honeypot_array : List[bool], optional (default = None)
@@ -46,7 +47,8 @@ class MutationsAsset:
             By default, all imported assets are set to 'TODO'. It can also be set to
             'ONGOING', 'LABELED', 'REVIEWED'
         - json_content_array : List[List[str]], optional (default = None)
-            Each element is a list of links to images. Useful for 'FRAME' projects. 
+            Useful for 'FRAME' projects only. Each element is a sequence of frames,
+            i.e. a list of URLs to images.
         - json_metadata_array : List[Dict] , optional (default = None)
             The metadata given to each asset should be stored in a json like dict with keys 
             "imageUrl", "text", "url".
