@@ -53,8 +53,10 @@ class KiliAuth(object):
             warnings.warn(message, UserWarning)
         self.client.inject_token('X-API-Key: ' + api_key)
         playground = Playground(self)
-        self.user_id = playground.users(
-            api_key=api_key, fields=['id'])[0]['id']
+        users = playground.users(api_key=api_key, fields=['id'])
+        if len(users) == 0:
+            raise Exception('No user attached to the API key was found')
+        self.user_id = users[0]['id']
 
     def __del__(self):
         self.session.close()
