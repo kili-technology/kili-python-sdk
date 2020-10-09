@@ -133,3 +133,33 @@ def deprecate(msg, type=DeprecationWarning):
             return func(*args, **kwargs)
         return wrapper
     return decorator
+
+
+def format_metadata(metadata):
+    if metadata is None:
+        return metadata
+    elif isinstance(metadata, str):
+        return metadata
+    elif isinstance(metadata, dict) or isinstance(metadata, list):
+        return dumps(metadata)
+    else:
+        raise Exception(
+            f"Metadata {metadata} of type {type(metadata)} must either be None, a string a list or a dict.")
+
+
+def convert_to_list_of_none(array, length):
+    if isinstance(array, list):
+        if len(array) != length:
+            raise Exception(f'array should have length {length}')
+        else:
+            return array
+    else:
+        return [None] * length
+
+
+def is_not_none_or_empty(object):
+    if object is None:
+        return False
+    if isinstance(object, list) and len(object) == 0:
+        return False
+    return True

@@ -59,6 +59,21 @@ mutation(
     {ASSET_FRAGMENT}
   }}
 }}
+
+
+'''
+GQL_UPDATE_PROPERTIES_IN_ASSETS = f'''
+mutation(
+    $whereArray: [AssetWhere!]!
+    $dataArray: [AssetData!]!
+) {{
+  data: updatePropertiesInAssets(
+    where: $whereArray,
+    data: $dataArray
+  ) {{
+    {ASSET_FRAGMENT}
+  }}
+}}
 '''
 
 GQL_DELETE_MANY_FROM_DATASET = f'''
