@@ -288,7 +288,6 @@ class MutationsAsset:
             'whereArray': where_array,
             'dataArray': data_array
         }
-        print(where_array, data_array)
         result = self.auth.client.execute(
             GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
         return format_result('data', result)
