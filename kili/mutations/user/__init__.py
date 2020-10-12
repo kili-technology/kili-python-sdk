@@ -1,4 +1,4 @@
-from ...helpers import format_result
+from ...helpers import Compatible, format_result
 from .queries import (GQL_CREATE_USER,
                       GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS,
                       GQL_RESET_PASSWORD, GQL_SIGN_IN, GQL_UPDATE_PASSWORD,
@@ -17,6 +17,7 @@ class MutationsUser:
         """
         self.auth = auth
 
+    @Compatible()
     def create_user(self, name: str, email: str, password: str, organization_role: str):
         """
         Add a user to your organization.
@@ -45,7 +46,7 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
         return format_result('data', result)
 
-
+    @Compatible()
     def create_user_from_email_if_not_exists(self, name: str, email: str, organization_role: str, project_id: str):
         """
         Create a user for a given project
@@ -72,7 +73,7 @@ class MutationsUser:
             GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS, variables)
         return format_result('data', result)
 
-
+    @Compatible(['v1', 'v2'])
     def update_password(self, email: str, old_password: str, new_password_1: str, new_password_2: str):
         """
         Update password
@@ -97,7 +98,7 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
         return format_result('data', result)
 
-
+    @Compatible()
     def reset_password(self, email: str):
         """
         Reset password
@@ -114,7 +115,7 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
         return format_result('data', result)
 
-
+    @Compatible()
     def update_properties_in_user(self, email: str, name: str = None, organization_id: str = None, organization_role: str = None, activated: bool = None):
         """
         Update the properties of a user
@@ -142,5 +143,6 @@ class MutationsUser:
             'organizationRole': organization_role,
             'activated': activated
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_USER, variables)
         return format_result('data', result)

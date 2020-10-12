@@ -2,7 +2,7 @@ from json import dumps
 from uuid import uuid4
 from typing import List
 
-from ...helpers import content_escape, encode_image, format_result, is_url, deprecate
+from ...helpers import Compatible, content_escape, encode_image, format_result, is_url, deprecate
 from ...queries.project import QueriesProject
 from ...queries.asset import QueriesAsset
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
@@ -23,6 +23,7 @@ class MutationsAsset:
         """
         self.auth = auth
 
+    @Compatible()
     def append_many_to_dataset(self, project_id: str, content_array: List[str] = None, external_id_array: List[str] = None,
                                is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_content_array: List[List[str]] = None,
                                json_metadata_array: List[dict] = None):
@@ -100,6 +101,7 @@ class MutationsAsset:
             GQL_APPEND_MANY_TO_DATASET, variables)
         return format_result('data', result)
 
+    @Compatible()
     def update_properties_in_asset(self, asset_id: str, external_id: str = None,
                                    priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
                                    honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
@@ -171,6 +173,7 @@ class MutationsAsset:
             GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
         return format_result('data', result)
 
+    @Compatible()
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
         Delete assets from a project

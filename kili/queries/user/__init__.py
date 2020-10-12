@@ -1,6 +1,6 @@
 import warnings
 
-from ...helpers import deprecate, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_users, GQL_USERS_COUNT
 from ...types import User
 
@@ -17,6 +17,7 @@ class QueriesUser:
         """
         self.auth = auth
 
+    @Compatible(['v1', 'v2'])
     def users(self,
               api_key: str = None,
               email: str = None,
@@ -61,6 +62,7 @@ class QueriesUser:
         result = self.auth.client.execute(GQL_USERS, variables)
         return format_result('data', result)
 
+    @Compatible(['v1', 'v2'])
     def count_users(self,
                     organization_id: str = None):
         """

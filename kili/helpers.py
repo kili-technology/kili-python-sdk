@@ -6,6 +6,46 @@ from json import dumps, loads
 from types import *
 
 
+class Compatible():
+
+    def __init__(self, endpoints=['v1']):
+        self.endpoints = endpoints
+        self.version_extractor = re.compile(r'\/v\d+/')
+        self.address_extractor = re.compile(r':400\d+/')
+
+    def client_is_compatible(self, endpoint):
+        version_matched = self.version_extractor.search(endpoint)
+        address_matched = self.address_extractor.search(endpoint)
+        if not version_matched and not address_matched:
+            return False
+        if address_matched:
+            version = 'v1' if address_matched.group() == ':4000/' else 'v2'
+        if version_matched:
+            version = 'v1' if version_matched.group() == '/v1/' else 'v2'
+        return version in self.endpoints
+
+    def __call__(self, resolver, *args, **kwargs):
+        @functools.wraps(resolver)
+        def checked_resolver(*args, **kwargs):
+            try:
+                client_endpoint = args[0].auth.client.endpoint
+            except:
+                raise ValueError(
+                    f'Cannot find client endpoint from resolver {resolver.__name__} with arguments {args}')
+            if self.client_is_compatible(client_endpoint):
+                return resolver(*args, **kwargs)
+            else:
+                raise EndpointCompatibilityError(
+                    resolver.__name__, client_endpoint)
+        return checked_resolver
+
+
+class EndpointCompatibilityError(Exception):
+    def __init__(self, resolver, endpoint):
+        super().__init__(
+            f'Resolver {resolver} is not compatible with the following endpoint : {endpoint}')
+
+
 class GraphQLError(Exception):
     def __init__(self, mutation, error):
         super().__init__(f'Mutation "{mutation}" failed with error: "{error}"')

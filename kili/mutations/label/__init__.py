@@ -1,7 +1,7 @@
 from json import dumps
 from typing import List
 
-from ...helpers import format_result
+from ...helpers import Compatible, format_result
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
                       GQL_CREATE_PREDICTIONS,
                       GQL_UPDATE_PROPERTIES_IN_LABEL)
@@ -19,6 +19,7 @@ class MutationsLabel:
         """
         self.auth = auth
 
+    @Compatible()
     def create_predictions(self, project_id: str, external_id_array: List[str], model_name_array: List[str], json_response_array: List[dict]):
         """
         Create predictions for some assets
@@ -71,7 +72,7 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_CREATE_PREDICTIONS, variables)
         return format_result('data', result)
 
-
+    @Compatible(['v1', 'v2'])
     def append_to_labels(self, author_id: str, json_response: dict, label_asset_id: str, label_type: str, seconds_to_label: int, skipped: bool = False):
         """
         Append a label to labels
@@ -104,7 +105,7 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result('data', result)
 
-
+    @Compatible()
     def update_properties_in_label(self, label_id: str, seconds_to_label: int = None, model_name: str = None, json_response: dict = None):
         """
         Update properties of a label
@@ -130,14 +131,15 @@ class MutationsLabel:
             'modelName': model_name,
             'jsonResponse': formatted_json_response
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
         return format_result('data', result)
 
-
+    @Compatible()
     def create_honeypot(self, asset_id: str, json_response: dict):
         """
         Create honeypot for an asset. 
-        
+
         Uses the json_response given to create a "REVIEW" label. This allows to compute a `honeypotMark`,
         which measures how similar are other labels compared to this one.
 

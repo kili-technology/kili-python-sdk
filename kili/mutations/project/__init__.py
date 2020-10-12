@@ -4,7 +4,7 @@ from typing import List
 
 from tqdm import tqdm
 
-from ...helpers import GraphQLError, format_result
+from ...helpers import Compatible, GraphQLError, format_result
 from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT,
@@ -27,6 +27,7 @@ class MutationsProject:
         """
         self.auth = auth
 
+    @Compatible()
     def append_to_roles(self, project_id: str, user_email: str, role: str):
         """
         Add a user to a project
@@ -56,6 +57,7 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
         return format_result('data', result)
 
+    @Compatible()
     def update_properties_in_project(self, project_id: str,
                                      consensus_mark: float = None,
                                      consensus_tot_coverage: int = None,
@@ -134,6 +136,7 @@ class MutationsProject:
             GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result('data', result)
 
+    @Compatible()
     def create_empty_project(self, user_id: str):
         """
         Create an empty project
@@ -150,6 +153,7 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_CREATE_EMPTY_PROJECT, variables)
         return format_result('data', result)
 
+    @Compatible()
     def update_project(self, project_id: str,
                        title: str,
                        description: str,
@@ -212,6 +216,7 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_UPDATE_PROJECT, variables)
         return format_result('data', result)
 
+    @Compatible()
     def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
         """
         Update properties of a role
@@ -244,6 +249,7 @@ class MutationsProject:
             GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
         return format_result('data', result)
 
+    @Compatible()
     def delete_from_roles(self, role_id: str):
         """
         Delete users by their role_id
@@ -260,6 +266,7 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
         return format_result('data', result)
 
+    @Compatible()
     def update_properties_in_project_user(self, project_user_id: str,
                                           consensus_mark: float = None,
                                           honeypot_mark: float = None,
@@ -299,6 +306,7 @@ class MutationsProject:
             GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
         return format_result('data', result)
 
+    @Compatible()
     def force_project_kpis(self, project_id: str):
         """
         Compute KPIs for a project
@@ -314,6 +322,7 @@ class MutationsProject:
         _ = QueriesAsset(self.auth).assets(project_id=project_id)
         _ = QueriesProject(self.auth).projects(project_id=project_id)
 
+    @Compatible()
     def delete_project(self, project_id: str):
         """
         Delete project permanently 

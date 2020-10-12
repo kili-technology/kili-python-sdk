@@ -1,6 +1,6 @@
 import warnings
 
-from ...helpers import deprecate, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_organizations
 from ...types import Organization
 
@@ -17,6 +17,7 @@ class QueriesOrganization:
         """
         self.auth = auth
 
+    @Compatible(['v1', 'v2'])
     def organizations(self, email: str = None, organization_id: str = None, fields: list = ['id', 'name'], first: int = 100, skip: int = 0):
         """
         Get organizations

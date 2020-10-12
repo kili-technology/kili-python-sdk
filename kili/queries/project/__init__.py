@@ -1,4 +1,4 @@
-from ...helpers import deprecate, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_projects, GQL_PROJECTS_COUNT
 from ...types import Project
 from ...constants import NO_ACCESS_RIGHT
@@ -16,6 +16,7 @@ class QueriesProject:
         """
         self.auth = auth
 
+    @Compatible(['v1', 'v2'])
     def projects(self,
                  project_id: str = None,
                  search_query: str = None,
@@ -71,6 +72,7 @@ class QueriesProject:
         result = self.auth.client.execute(GQL_PROJECTS, variables)
         return format_result('data', result)
 
+    @Compatible(['v1', 'v2'])
     def count_projects(self, project_id: str = None, search_query: str = None, should_relaunch_kpi_computation: bool = None, updated_at_gte: str = None, updated_at_lte: str = None):
         """
         Counts the number of projects with a search_query
