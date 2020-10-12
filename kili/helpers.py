@@ -25,7 +25,6 @@ class Compatible():
         return version in self.endpoints
 
     def __call__(self, resolver, *args, **kwargs):
-        # mettre dans un try catch si jamais auth client existe pas
         @functools.wraps(resolver)
         def checked_resolver(*args, **kwargs):
             try:
