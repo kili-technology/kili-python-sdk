@@ -1,13 +1,23 @@
 from json import dumps
 from uuid import uuid4
 from typing import List
+from functools import partial
 
-from ...helpers import Compatible, content_escape, encode_image, format_result, is_url, deprecate
+from ...helpers import (Compatible,
+                        content_escape,
+                        convert_to_list_of_none,
+                        deprecate,
+                        encode_image,
+                        format_metadata,
+                        format_result,
+                        is_not_none_or_empty,
+                        is_url)
 from ...queries.project import QueriesProject
 from ...queries.asset import QueriesAsset
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_DELETE_MANY_FROM_DATASET,
-                      GQL_UPDATE_PROPERTIES_IN_ASSET)
+                      GQL_UPDATE_PROPERTIES_IN_ASSET,
+                      GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from ...constants import NO_ACCESS_RIGHT
 
 
@@ -112,9 +122,9 @@ class MutationsAsset:
         Parameters
         ----------
         - asset_id : str
-            The id of the asset to delete
+            The id of the asset to modify
         - external_id : str, optional (default = None)
-            If given, the asset identified by this external identifier will be modified.
+            Change the external id of the asset
         - priority : int, optional (default = None)
             By default, all assets have a priority of 0
         - json_metadata : dict , optional (default = None)
@@ -173,7 +183,115 @@ class MutationsAsset:
             GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v2'])
+    def update_properties_in_assets(self, asset_ids: List[str], external_ids: List[str] = None,
+                                    priorities: List[int] = None, json_metadatas: List[dict] = None, consensus_marks: List[float] = None,
+                                    honeypot_marks: List[float] = None, to_be_labeled_by_array: List[List[str]] = None, contents: List[str] = None,
+                                    status_array: List[str] = None, is_used_for_consensus_array: List[bool] = None, is_honeypot_array: List[bool] = None):
+        """
+        Update the properties of one or more assets.
+
+        This function is only available with the new endpoint : https://cloud.kili-technology.com/api/label/v2/graphql
+        Example usage : 
+        ```
+        playground.update_properties_in_assets(
+            asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+            priorities=[None, 2],
+            external_ids=['op', 'truc'],
+            consensus_marks=[1, 0.7],
+            honeypot_marks=[0.8, 0.5],
+            to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
+            contents=[None, 'https://drive.google.com/uc?export=download&id=1mM7ASFB4pGEk5rcr7pcw6qB8WVybTPmo'],
+            status_array=['LABELED', 'REVIEWED'],
+            is_used_for_consensus_array=[True, False],
+            is_honeypot_array=[True, True]
+        )
+        ```
+
+        Parameters
+        ----------
+        - asset_ids : List[str]
+            The asset ids to modify
+        - external_ids : List[str], optional (default = None)
+            Change the external id of the assets
+        - priorities : List[int], optional (default = None)
+            You can change the priority of the assets
+            By default, all assets have a priority of 0.
+        - json_metadatas : List[dict] , optional (default = None)
+            The metadata given to an asset should be stored in a json like dict with keys 
+            "imageUrl", "text", "url".
+            json_metadata = {'imageUrl': '','text': '','url': ''}
+        - consensus_marks : List[float] (default = None)
+            Should be between 0 and 1
+        - honeypot_marks : List[float] (default = None)
+            Should be between 0 and 1
+        - to_be_labeled_by_array : List[List[str]] (default = None)
+            If given, each element of the list should contain the emails of the labelers authorized to label the asset.
+        - contents : List[str] (default = None)
+            - For a NLP project, the content can be directly in text format
+            - For an Image / Video / Pdf project, the content must be hosted on a web server,
+            and you point Kili to your data by giving the URLs
+        - status_array : List[str] (default = None)
+            Each element should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+        - is_used_for_consensus_array : List[bool] (default = None)
+            Whether to use the asset to compute consensus kpis or not
+        - is_honeypot_array : List[bool] (default = None)
+            Whether to use the asset for honeypot
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+
+        formatted_json_metadatas = None
+        if json_metadatas is None:
+            formatted_json_metadatas = None
+        else:
+            if isinstance(json_metadatas, list):
+                formatted_json_metadatas = list(
+                    map(format_metadata, json_metadatas))
+            else:
+                raise Exception('json_metadatas',
+                                'Should be either a None or a list of None, string, list or dict')
+
+        where_array = [{'id': asset_id} for asset_id in asset_ids]
+        nb_assets_to_modify = len(where_array)
+        if nb_assets_to_modify > 100:
+            raise Exception(
+                f'Too many assets ({nb_assets_to_modify}) updated at a time')
+        data_array = [{} for i in range(len(where_array))]
+        list_of_properties = [external_ids, priorities, formatted_json_metadatas, consensus_marks, honeypot_marks, to_be_labeled_by_array,
+                              contents, status_array, is_used_for_consensus_array, is_honeypot_array]
+        data = list(map(partial(convert_to_list_of_none,
+                                length=nb_assets_to_modify), list_of_properties))
+        property_names = [
+            'externalId',
+            'priority',
+            'jsonMetadata',
+            'consensusMark',
+            'honeypotMark',
+            'toBeLabeledBy',
+            'content',
+            'status',
+            'isUsedForConsensus',
+            'isHoneypot'
+        ]
+        to_be_labeled_by_array = data[5]
+        should_reset_to_be_labeled_by_array = list(
+            map(is_not_none_or_empty, to_be_labeled_by_array))
+        for i, properties in enumerate(zip(*data)):
+            for property, property_value in zip(property_names, properties):
+                data_array[i][property] = property_value
+        for i in range(nb_assets_to_modify):
+            data_array[i]['shouldResetToBeLabeledBy'] = should_reset_to_be_labeled_by_array[i]
+        variables = {
+            'whereArray': where_array,
+            'dataArray': data_array
+        }
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
+        return format_result('data', result)
+
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
         Delete assets from a project
