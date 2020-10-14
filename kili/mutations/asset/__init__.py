@@ -292,6 +292,7 @@ class MutationsAsset:
             GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
         return format_result('data', result)
 
+    @Compatible()
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
         Delete assets from a project
