@@ -89,10 +89,18 @@ class SubscriptionGraphQLClient:
         if data['type'] != 'ka':
             print(message)
 
-    def _conn_init(self, headers=None):
+    def _conn_init(self, headers=None, authorization=None):
+        """
+        Initializes the websocket connection
+
+        Parameters
+        ----------
+        - headers : Headers are necessary for Kili API v1
+        - authorization : Headers are necessary for Kili API v2
+        """
         payload = {
             'type': 'connection_init',
-            'payload': {'headers': headers}
+            'payload': {'headers': headers, 'Authorization': authorization}
         }
         self._conn.send(json.dumps(payload))
         self._conn.recv()
@@ -116,8 +124,8 @@ class SubscriptionGraphQLClient:
         self._stop(_id)
         return res
 
-    def subscribe(self, query, variables=None, headers=None, callback=None):
-        self._conn_init(headers)
+    def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
+        self._conn_init(headers, authorization)
         payload = {'headers': headers, 'query': query, 'variables': variables}
         _cc = self._on_message if not callback else callback
         _id = self._start(payload)

@@ -34,7 +34,8 @@ class SubscriptionsLabel:
         ws = SubscriptionGraphQLClient(ws_endpoint)
         headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
-        headers['Authorization'] = f'{self.auth.client.token}'
+        authorization = f'{self.auth.client.token}'
+        headers['Authorization'] = authorization
         variables = {'projectID': project_id}
         ws.subscribe(GQL_LABEL_CREATED_OR_UPDATED, variables=variables,
-                    callback=callback, headers=headers)
+                    callback=callback, headers=headers, authorization=authorization)
