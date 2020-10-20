@@ -21,7 +21,7 @@ class QueriesLabel:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def labels(self,
                asset_id: str = None,
                asset_status_in: List[str] = None,
@@ -191,7 +191,7 @@ class QueriesLabel:
             lambda json_response: self.parse_json_response(json_response, interface_category))
         return labels_df
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def count_labels(self,
                      asset_id: str = None,
                      asset_status_in: List[str] = None,

@@ -23,7 +23,7 @@ class QueriesAsset:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0,
                fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
@@ -171,7 +171,7 @@ class QueriesAsset:
                 skip += formatted_first
                 pbar.update(len(assets))
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,
                      external_id_contains: List[str] = None,
