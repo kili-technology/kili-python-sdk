@@ -33,7 +33,7 @@ mutation(
 ) {{
   data: createUserFromEmailIfNotExists(name: $name
       email: $email
-      organizationRole: $sorganizationRole
+      organizationRole: $organizationRole
       projectID: $projectID) {{
     {USER_FRAGMENT}
   }}
