@@ -56,7 +56,7 @@ class MutationsUser:
         - name : str
         - email : str
         - organization_role : str
-            One of "ADMIN", "REVIEWER", "LABELER", "READER"
+            One of "ADMIN", "USER"
         - project_id : str
 
         Returns
