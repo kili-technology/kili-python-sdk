@@ -33,7 +33,7 @@ mutation(
 ) {{
   data: createUserFromEmailIfNotExists(name: $name
       email: $email
-      organizationRole: $sorganizationRole
+      organizationRole: $organizationRole
       projectID: $projectID) {{
     {USER_FRAGMENT}
   }}
@@ -69,7 +69,7 @@ mutation(
     $email: String!
     $name: String
     $organizationId: String
-    $organizationRole: String
+    $organizationRole: OrganizationRole
     $activated: Boolean
 ) {{
   data: updatePropertiesInUser(
