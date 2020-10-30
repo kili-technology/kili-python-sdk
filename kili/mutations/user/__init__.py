@@ -105,7 +105,7 @@ class MutationsUser:
         """
         Reset password
 
-        This only works if your organization allows Kili to send emails.
+        This only works on premise without Auth0, if your organization allows Kili to send emails.
 
         Parameters
         ----------
