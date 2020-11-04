@@ -52,6 +52,8 @@ class ProjectWithoutDataset(object):
     numberOfRemainingAssets = 'numberOfRemainingAssets'
     numberOfAssets = 'numberOfAssets'
     numberOfAssetsWithSkippedLabels = 'numberOfAssetsWithSkippedLabels'
+    numberOfOpenIssues = 'numberOfOpenIssues'
+    numberOfSolvedIssues = 'numberOfSolvedIssues'
     numberOfReviewedAssets = 'numberOfReviewedAssets'
     readPermissionsForAssetsAndLabels = 'readPermissionsForAssetsAndLabels'
     roles = ProjectUserWithoutProject
