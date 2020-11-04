@@ -69,7 +69,7 @@ mutation(
     $email: String!
     $name: String
     $organizationId: String
-    $organizationRole: String
+    $organizationRole: OrganizationRole
     $activated: Boolean
 ) {{
   data: updatePropertiesInUser(

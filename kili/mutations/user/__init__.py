@@ -17,7 +17,7 @@ class MutationsUser:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def create_user(self, name: str, email: str, password: str, organization_role: str):
         """
         Add a user to your organization.
@@ -46,10 +46,10 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def create_user_from_email_if_not_exists(self, name: str, email: str, organization_role: str, project_id: str):
         """
-        Create a user for a given project
+        Create a user for a given project, and adds him to my organization.
 
         Parameters
         ----------
@@ -78,6 +78,8 @@ class MutationsUser:
         """
         Update password
 
+        Allows you to modify the password you use to connect to Kili, if you are not using Auth0 SSO.
+
         Parameters
         ----------
         - email : str
@@ -98,10 +100,12 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def reset_password(self, email: str):
         """
         Reset password
+
+        This only works on premise without Auth0, if your organization allows Kili to send emails.
 
         Parameters
         ----------
@@ -115,7 +119,7 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def update_properties_in_user(self, email: str, name: str = None, organization_id: str = None, organization_role: str = None, activated: bool = None):
         """
         Update the properties of a user
