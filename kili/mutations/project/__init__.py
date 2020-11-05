@@ -176,6 +176,7 @@ class MutationsProject:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
+            'description': description, 
             'inputType': input_type, 
             'jsonInterface': dumps(json_interface), 
             'projectType': project_type, 

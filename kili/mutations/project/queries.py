@@ -74,7 +74,7 @@ mutation(
     $title: String!
     $userID: ID!
   ) {{
-  data: createEmptyProject(
+  data: createProject(
     description: $description
     inputType: $inputType
     jsonInterface: $jsonInterface
