@@ -65,6 +65,27 @@ mutation($userID: ID!) {{
 }}
 '''
 
+GQL_CREATE_PROJECT = f'''
+mutation(
+    $description: String!
+    $inputType: InputType!
+    $jsonInterface: String!
+    $projectType: ProjectType
+    $title: String!
+    $userID: ID!
+  ) {{
+  data: createEmptyProject(
+    description: $description
+    inputType: $inputType
+    jsonInterface: $jsonInterface
+    projectType: $projectType
+    title: $title
+    userID: $userID) {{
+      {PROJECT_FRAGMENT_ID}
+  }}
+}}
+'''
+
 GQL_UPDATE_PROJECT = f'''
 mutation(
     $projectID: ID!

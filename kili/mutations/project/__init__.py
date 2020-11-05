@@ -7,7 +7,7 @@ from tqdm import tqdm
 from ...helpers import Compatible, GraphQLError, format_result
 from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
-from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT,
+from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT, GQL_CREATE_PROJECT,
                       GQL_DELETE_FROM_ROLES,
                       GQL_DELETE_PROJECT,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
@@ -136,7 +136,7 @@ class MutationsProject:
             GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(endpoints=['v1'])
     def create_empty_project(self, user_id: str):
         """
         Create an empty project
@@ -152,6 +152,39 @@ class MutationsProject:
         variables = {'userID': user_id}
         result = self.auth.client.execute(GQL_CREATE_EMPTY_PROJECT, variables)
         return format_result('data', result)
+    
+
+    @Compatible(endpoints=['v2'])
+    def create_project(self, description: str, input_type: str, json_interface: dict, title: str, user_id: str, project_type: str=None):
+        """
+        Create an project
+
+        Parameters
+        ----------
+        - description : str
+        - input_type : str
+            Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
+        - json_interface: dict
+            The json parameters of the project, see Edit your interface.
+        - project_type: str, optional (default = None)
+            Currently, one of {IMAGE_CLASSIFICATION_SINGLE, IMAGE_CLASSIFICATION_MULTI, IMAGE_OBJECT_DETECTION_RECTANGLE, IMAGE_OBJECT_DETECTION_POLYGON, IMAGE_OBJECT_DETECTION_SEMANTIC, OCR, PDF_CLASSIFICATION_SINGLE, PDF_CLASSIFICATION_MULTI, TEXT_CLASSIFICATION_SINGLE, TEXT_CLASSIFICATION_MULTI, TEXT_TRANSCRIPTION, TEXT_NER, VIDEO_CLASSIFICATION_SINGLE, VIDEO_FRAME_CLASSIFICATION, VIDEO_FRAME_OBJECT_TRACKING, SPEECH_TO_TEXT}
+        - title : str
+        - user_id : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {
+            'inputType': input_type, 
+            'jsonInterface': dumps(json_interface), 
+            'projectType': project_type, 
+            'title': title, 
+            'userID': user_id
+        }
+        result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
+        return format_result('data', result)
+
 
     @Compatible()
     def update_project(self, project_id: str,
