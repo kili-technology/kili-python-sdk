@@ -47,22 +47,11 @@ class MutationsUser:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def create_user_from_email_if_not_exists(self, name: str, email: str, organization_role: str, project_id: str):
+    def create_user_from_email_if_not_exists(self, name: str, email: str, organization_role: str, project_id: str):        
         """
-        Create a user for a given project, and adds him to my organization.
-
-        Parameters
-        ----------
-        - name : str
-        - email : str
-        - organization_role : str
-            One of "ADMIN", "USER"
-        - project_id : str
-
-        Returns
-        -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+       Function is now deprecated, please use append_to_roles() instead.
         """
+        warnings.warn('Method create_user_from_email_if_not_exist is now deprecated, please use append_to_roles instead', DeprecationWarning)
         variables = {
             'name': name,
             'email': email,
