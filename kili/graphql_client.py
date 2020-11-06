@@ -83,6 +83,13 @@ class SubscriptionGraphQLClient:
         self._subscription_running = False
         self._st_id = None
 
+    def _reconnect(self):
+        self._conn = websocket.create_connection(self.ws_url,
+                                                 on_message=self._on_message,
+                                                 subprotocols=[GQL_WS_SUBPROTOCOL])
+        self._conn.on_message = self._on_message
+        self._subscription_running = True
+
     def _on_message(self, message):
         data = json.loads(message)
         # skip keepalive messages
@@ -124,23 +131,38 @@ class SubscriptionGraphQLClient:
         self._stop(_id)
         return res
 
-    def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
+    def prepare_subscribe(self, query, variables, headers, callback, authorization):
         self._conn_init(headers, authorization)
         payload = {'headers': headers, 'query': query, 'variables': variables}
         _cc = self._on_message if not callback else callback
         _id = self._start(payload)
+        return _cc, _id
+
+    def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
+        _cc, _id = self.prepare_subscribe(query, variables, headers, callback, authorization)
 
         def subs(_cc):
+            total_reconnections = 0
+            max_reconnections = 10
             self._subscription_running = True
-            while self._subscription_running:
-                r = json.loads(self._conn.recv())
-                if r['type'] == 'error' or r['type'] == 'complete':
-                    print(r)
-                    self.stop_subscribe(_id)
-                    break
-                elif r['type'] != 'ka':
-                    _cc(_id, r)
-                time.sleep(1)
+            while self._subscription_running and total_reconnections < max_reconnections:
+                try:
+                    r = json.loads(self._conn.recv())
+                    if r['type'] == 'error' or r['type'] == 'complete':
+                        print(r)
+                        self.stop_subscribe(_id)
+                        break
+                    elif r['type'] != 'ka':
+                        _cc(_id, r)
+                    time.sleep(1)
+                except websocket._exceptions.WebSocketConnectionClosedException as e:
+                    print('Connection closed error : {}'.format(str(e)))
+                    print(f'Will try to reconnect {max_reconnections - total_reconnections} times...')
+                    self._reconnect()
+                    total_reconnections += 1
+                    _cc, _id = self.prepare_subscribe(query, variables, headers, callback, authorization)
+                    continue
+            print('Did not reconnect successfully...')
 
         self._st_id = threading.Thread(target=subs, args=(_cc,))
         self._st_id.start()
