@@ -147,17 +147,19 @@ mutation($roleID: ID!) {{
 
 GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER = f'''
 mutation(
-    $projectID: ID!
+    $projectUserID: ID!
     $totalDuration: Int
     $numberOfLabeledAssets: Int
+    $starred: Boolean
     $consensusMark: Float
     $honeypotMark: Float
 ) {{
   data: updatePropertiesInProjectUser(
-    where: {{id: $projectID}},
+    where: {{id: $projectUserID}},
     data: {{
       totalDuration: $totalDuration
       numberOfLabeledAssets: $numberOfLabeledAssets
+      starred: $starred
       consensusMark: $consensusMark
       honeypotMark: $honeypotMark
     }}
