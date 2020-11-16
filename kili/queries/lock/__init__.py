@@ -17,7 +17,7 @@ class QueriesLock:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def locks(self,
               lock_id: str = None,
               fields: list = ['id', 'lockType'],
@@ -55,7 +55,7 @@ class QueriesLock:
         result = self.auth.client.execute(GQL_LOCKS, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def count_locks(self):
         """
         Get the number of locks
