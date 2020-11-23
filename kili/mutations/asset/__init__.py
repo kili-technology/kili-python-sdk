@@ -33,7 +33,7 @@ class MutationsAsset:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def append_many_to_dataset(self, project_id: str, content_array: List[str] = None, external_id_array: List[str] = None,
                                is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_content_array: List[List[str]] = None,
                                json_metadata_array: List[dict] = None):
@@ -69,6 +69,11 @@ class MutationsAsset:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        playground = QueriesProject(self.auth)
+        projects = playground.projects(project_id)
+        assert len(projects) == 1, NO_ACCESS_RIGHT
+        input_type = projects[0]['inputType']
+
         if content_array is None and json_content_array is None:
             raise ValueError(
                 f"Variables content_array and json_content_array cannot be both None.")
@@ -81,16 +86,18 @@ class MutationsAsset:
             False] * len(content_array) if not is_honeypot_array else is_honeypot_array
         status_array = ['TODO'] * \
             len(content_array) if not status_array else status_array
-        formatted_json_content_array = [''] * len(content_array) if not json_content_array else list(map(lambda json_content: dumps(dict(
-            zip(range(len(json_content)), json_content))), json_content_array))
+        if not json_content_array:
+            formatted_json_content_array = [''] * len(content_array)
+        elif input_type == 'FRAME':
+            formatted_json_content_array = list(map(lambda json_content: dumps(
+                dict(zip(range(len(json_content)), json_content))), json_content_array))
+        else:
+            formatted_json_content_array = [
+                dumps(element) for element in json_content_array]
         json_metadata_array = [
             {}] * len(content_array) if not json_metadata_array else json_metadata_array
         formatted_json_metadata_array = [
             dumps(elem) for elem in json_metadata_array]
-        playground = QueriesProject(self.auth)
-        projects = playground.projects(project_id)
-        assert len(projects) == 1, NO_ACCESS_RIGHT
-        input_type = projects[0]['inputType']
         if input_type == 'IMAGE':
             content_array = [content if is_url(content) else encode_image(
                 content) for content in content_array]
@@ -292,7 +299,7 @@ class MutationsAsset:
             GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
         Delete assets from a project
