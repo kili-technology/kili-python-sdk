@@ -19,7 +19,7 @@ class MutationsLabel:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def create_predictions(self, project_id: str, external_id_array: List[str], model_name_array: List[str], json_response_array: List[dict]):
         """
         Create predictions for some assets
@@ -105,7 +105,7 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def update_properties_in_label(self, label_id: str, seconds_to_label: int = None, model_name: str = None, json_response: dict = None):
         """
         Update properties of a label
@@ -135,7 +135,7 @@ class MutationsLabel:
             GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def create_honeypot(self, asset_id: str, json_response: dict):
         """
         Create honeypot for an asset. 
