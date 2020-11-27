@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<annotation>
+   <folder/>
+   <filename>file_001.png</filename>
+   <path/>
+   <source>
+      <database>Kili Technology</database>
+   </source>
+   <size>
+      <width>1920</width>
+      <height>1080</height>
+      <depth>3</depth>
+   </size>
+   <segmented/>
+   <object>
+      <name>OBJECT_A</name>
+      <pose>Unspecified</pose>
+      <truncated>0</truncated>
+      <difficult>0</difficult>
+      <occluded>0</occluded>
+      <bndbox>
+         <xmin>1067</xmin>
+         <xmax>1537</xmax>
+         <ymin>182</ymin>
+         <ymax>494</ymax>
+      </bndbox>
+   </object>
+   <object>
+      <name>OBJECT_A</name>
+      <pose>Unspecified</pose>
+      <truncated>0</truncated>
+      <difficult>0</difficult>
+      <occluded>0</occluded>
+      <bndbox>
+         <xmin>617</xmin>
+         <xmax>1191</xmax>
+         <ymin>376</ymin>
+         <ymax>723</ymax>
+      </bndbox>
+   </object>
+   <object>
+      <name>OBJECT_B</name>
+      <pose>Unspecified</pose>
+      <truncated>0</truncated>
+      <difficult>0</difficult>
+      <occluded>0</occluded>
+      <bndbox>
+         <xmin>328</xmin>
+         <xmax>633</xmax>
+         <ymin>123</ymin>
+         <ymax>177</ymax>
+      </bndbox>
+   </object>
+</annotation>
