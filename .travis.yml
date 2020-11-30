@@ -85,3 +85,7 @@ jobs:
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
         - NOTEBOOK_PATH=recipes/pixel_level_masks.ipynb
+    - <<: *test-recipes
+      env:
+        - DOCKER_IMAGE=continuumio/anaconda3:2020.02
+        - NOTEBOOK_PATH=recipes/import_text_assets.ipynb
