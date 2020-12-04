@@ -15,7 +15,7 @@ class MutationsNotification:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def create_notification(self, message: str, status: str, url: str, user_id: str):
         """
         Create a notification
@@ -44,7 +44,7 @@ class MutationsNotification:
         result = self.auth.client.execute(GQL_CREATE_NOTIFICATION, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def update_properties_in_notification(self, notification_id: str, has_been_seen: bool, status: str, url: str):
         """
         Modify a notification
