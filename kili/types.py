@@ -44,6 +44,7 @@ class ProjectWithoutDataset(object):
     description = 'description'
     honeypotMark = 'honeypotMark'
     inputType = 'inputType'
+    instructions = 'instructions'
     interfaceCategory = 'interfaceCategory'
     jsonInterface = 'jsonInterface'
     maxWorkerCount = 'maxWorkerCount'

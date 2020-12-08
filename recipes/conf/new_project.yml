@@ -30,6 +30,5 @@ mutations:
   - createOrganization
   - createUser
   - createEmptyProject
-  - updateProject
   - appendToTools
   - appendToRoles
