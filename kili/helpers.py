@@ -74,7 +74,7 @@ def encode_image(path):
 
 
 def is_url(path):
-    return re.match(r'^(http://|https://)', path.lower())
+    return isinstance(path, str) and re.match(r'^(http://|https://)', path.lower())
 
 
 def format_json(result):
