@@ -93,7 +93,8 @@ class MutationsAsset:
                 dict(zip(range(len(json_content)), json_content))), json_content_array))
         else:
             formatted_json_content_array = [
-                element if is_url(element) else dumps(element) for element in json_content_array]
+                element if is_url(element) else dumps(element)
+                for element in json_content_array]
         json_metadata_array = [
             {}] * len(content_array) if not json_metadata_array else json_metadata_array
         formatted_json_metadata_array = [
