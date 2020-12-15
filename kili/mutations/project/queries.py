@@ -86,37 +86,6 @@ mutation(
 }}
 '''
 
-GQL_UPDATE_PROJECT = f'''
-mutation(
-    $projectID: ID!
-    $title: String!
-    $description: String
-    $interfaceCategory: InterfaceCategory
-    $inputType: InputType
-    $consensusTotCoverage: Int
-    $minConsensusSize: Int
-    $maxWorkerCount: Int
-    $minAgreement: Int
-    $useHoneyPot: Boolean
-    $instructions: String
-) {{
-  data: updateProject(
-    projectID: $projectID
-    title: $title
-    description: $description
-    interfaceCategory: $interfaceCategory
-    inputType: $inputType
-    consensusTotCoverage: $consensusTotCoverage
-    minConsensusSize: $minConsensusSize
-    maxWorkerCount: $maxWorkerCount
-    minAgreement: $minAgreement
-    useHoneyPot: $useHoneyPot
-    instructions: $instructions) {{
-      {PROJECT_FRAGMENT_ID}
-  }}
-}}
-'''
-
 GQL_UPDATE_PROPERTIES_IN_ROLE = f'''
 mutation(
     $roleID: ID!
@@ -179,4 +148,3 @@ mutation($projectID: ID!) {{
   }}
 }}
 '''
-

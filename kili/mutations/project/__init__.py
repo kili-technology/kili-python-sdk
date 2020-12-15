@@ -11,7 +11,7 @@ from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT, GQL_CREATE_
                       GQL_DELETE_FROM_ROLES,
                       GQL_DELETE_PROJECT,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
-                      GQL_UPDATE_PROJECT, GQL_UPDATE_PROPERTIES_IN_PROJECT,
+                      GQL_UPDATE_PROPERTIES_IN_PROJECT,
                       GQL_UPDATE_PROPERTIES_IN_ROLE)
 
 
@@ -57,7 +57,7 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def update_properties_in_project(self, project_id: str,
                                      consensus_mark: float = None,
                                      consensus_tot_coverage: int = None,
@@ -136,7 +136,7 @@ class MutationsProject:
             GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result('data', result)
 
-    @Compatible(endpoints=['v1'])
+    @Compatible(endpoints=['v1', 'v2'])
     def create_empty_project(self, user_id: str):
         """
         Create an empty project
@@ -152,10 +152,9 @@ class MutationsProject:
         variables = {'userID': user_id}
         result = self.auth.client.execute(GQL_CREATE_EMPTY_PROJECT, variables)
         return format_result('data', result)
-    
 
     @Compatible(endpoints=['v2'])
-    def create_project(self, description: str, input_type: str, json_interface: dict, title: str, user_id: str, project_type: str=None):
+    def create_project(self, description: str, input_type: str, json_interface: dict, title: str, user_id: str, project_type: str = None):
         """
         Create an project
 
@@ -176,78 +175,14 @@ class MutationsProject:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'description': description, 
-            'inputType': input_type, 
-            'jsonInterface': dumps(json_interface), 
-            'projectType': project_type, 
-            'title': title, 
+            'description': description,
+            'inputType': input_type,
+            'jsonInterface': dumps(json_interface),
+            'projectType': project_type,
+            'title': title,
             'userID': user_id
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
-        return format_result('data', result)
-
-
-    @Compatible()
-    def update_project(self, project_id: str,
-                       title: str,
-                       description: str,
-                       interface_category: str,
-                       input_type: str = 'TEXT',
-                       consensus_tot_coverage: int = 0,
-                       min_consensus_size: int = 1,
-                       max_worker_count: int = 4,
-                       min_agreement: int = 66,
-                       use_honey_pot: bool = False,
-                       instructions: str = None):
-        """
-        Update a project
-
-        Parameters
-        ----------
-        - project_id : str
-        - title : str
-        - description : str
-        - interface_category : str
-            Currently, one of
-            {IV2, ALL, CLASSIFICATION, SENTIMENT, NER, NER_WITH_RELATIONS,
-            RELATION_EXTRACTION, ENTITY_GROUPING, COREFERENCE_RESOLUTION,
-            TRANSLATION, TRANSCRIPTION, IMAGE, MULTICLASS_IMAGE, CUSTOM,
-            IMAGE_TO_GRAPH, IMAGE_WITH_SEARCH, IMAGE_TO_TEXT, MULTICLASS_TEXT_CLASSIFICATION,
-            SINGLECLASS_TEXT_CLASSIFICATION, MULTICLASS_IMAGE_CLASSIFICATION,
-            SINGLECLASS_IMAGE_CLASSIFICATION, VIDEO_CLASSIFICATION, NA}
-        - input_type : str, optional (default = 'TEXT')
-            Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
-        - consensus_tot_coverage : int, optional (default = 0)
-            Should be between 0 and 100. It is the percentage of the dataset
-            that will be annotated several times.
-        - min_consensus_size : int, optional (default = 1)
-            Number of people that will annotate the same asset, for consensus computation.
-        - max_worker_count : int, optional (default = 4)
-            Maximum number of workers in the project
-        - min_agreement : int, optional (default = 66)
-            Should be a percentage (between 0 and 100)
-        - use_honey_pot : bool, optional (default = False)
-            Whether to compute honeypot in the project
-        - instructions : str, optional (default = None)
-            You can give instructions, they will be available to the annotators during the labeling process.
-        Returns
-        -------
-        - a result object which indicates if the mutation was successful, or an error message else.
-        """
-        variables = {
-            'projectID': project_id,
-            'title': title,
-            'description': description,
-            'interfaceCategory': interface_category,
-            'inputType': input_type,
-            'consensusTotCoverage': consensus_tot_coverage,
-            'minConsensusSize': min_consensus_size,
-            'maxWorkerCount': max_worker_count,
-            'minAgreement': min_agreement,
-            'useHoneyPot': use_honey_pot,
-            'instructions': instructions
-        }
-        result = self.auth.client.execute(GQL_UPDATE_PROJECT, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
@@ -358,7 +293,7 @@ class MutationsProject:
         _ = QueriesAsset(self.auth).assets(project_id=project_id)
         _ = QueriesProject(self.auth).projects(project_id=project_id)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def delete_project(self, project_id: str):
         """
         Delete project permanently 
