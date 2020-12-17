@@ -46,22 +46,6 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
         return format_result('data', result)
 
-    @deprecate(msg="Method create_user_from_email_if_not_exist is now deprecated, please use append_to_roles instead")
-    @Compatible(['v1', 'v2'])
-    def create_user_from_email_if_not_exists(self, name: str, email: str, organization_role: str, project_id: str):        
-        """
-       Function is now deprecated, please use append_to_roles() instead.
-        """
-        variables = {
-            'name': name,
-            'email': email,
-            'organizationRole': organization_role,
-            'projectID': project_id
-        }
-        result = self.auth.client.execute(
-            GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS, variables)
-        return format_result('data', result)
-
     @Compatible(['v1', 'v2'])
     def update_password(self, email: str, old_password: str, new_password_1: str, new_password_2: str):
         """
