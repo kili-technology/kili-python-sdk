@@ -139,9 +139,10 @@ class SubscriptionGraphQLClient:
         return _cc, _id
 
     def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
-        _cc, _id = self.prepare_subscribe(query, variables, headers, callback, authorization)
+        _cc, _id = self.prepare_subscribe(
+            query, variables, headers, callback, authorization)
 
-        def subs(_cc):
+        def subs(_cc, _id):
             total_reconnections = 0
             max_reconnections = 10
             self._subscription_running = True
@@ -157,14 +158,16 @@ class SubscriptionGraphQLClient:
                     time.sleep(1)
                 except websocket._exceptions.WebSocketConnectionClosedException as e:
                     print('Connection closed error : {}'.format(str(e)))
-                    print(f'Will try to reconnect {max_reconnections - total_reconnections} times...')
+                    print(
+                        f'Will try to reconnect {max_reconnections - total_reconnections} times...')
                     self._reconnect()
                     total_reconnections += 1
-                    _cc, _id = self.prepare_subscribe(query, variables, headers, callback, authorization)
+                    _cc, _id = self.prepare_subscribe(
+                        query, variables, headers, callback, authorization)
                     continue
             print('Did not reconnect successfully...')
 
-        self._st_id = threading.Thread(target=subs, args=(_cc,))
+        self._st_id = threading.Thread(target=subs, args=(_cc, _id))
         self._st_id.start()
         return _id
 
