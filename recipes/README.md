@@ -74,7 +74,7 @@ If you prefer, you can directly query GraphQL API without using
 
 1. Generate an API key in Kili interface in [My account](https://cloud.kili-technology.com/label/my-account), under the tab API KEY. Store it in some place secured.
 
-2. Go to http://cloud.kili-technology.com/api/label/v1/playground
+2. Go to http://cloud.kili-technology.com/api/label/v2/graphql
 
 3. In the bottom left corner of the screen, click on `HTTP headers` and write
    the retrieved token in the authorization headers:
@@ -97,46 +97,11 @@ query {
 }
 ```
 
-## How to do online learning with AutoML (Text Classification Single-class)
-
-- Create Project for TextClassification Single-class
-
-- Then execute:
-
-```bash
-python online_learning_text_classification.py (OPTIONAL --api_endpoint https://cloud.kili-technology.com/api/label/v1/graphql)
-```
-
-- Enter your personnal information : Mail, Password, ProjectID
-
-- Annotate
-
-- See predictions
-
-### In docker
-
-1. Create a `.env` file in this folder containing your settings:
-
-```bash
-EMAIL=
-PASSWORD=
-PROJECT_ID=
-API_ENDPOINT=
-```
-
-2. Build the docker and launch it:
-
-```bash
-docker build -t kili-playground .
-
-docker run -it --network="host" kili-playground online-learning
-```
-
 ## How to do online learning with YOLOv3 (for object detection)
 
 1. Create a project for single-class object detection
 
-2. Update settings to respect YOLOv3's way of dealing with classes
+2. Update settings to respect YOLOv3's handling of classes
    (key is an integer starting from zero and value is in lower case)
 
 ```
@@ -163,7 +128,7 @@ docker run -it --network="host" kili-playground online-learning
 }
 ```
 
-You can use Kili Playground's recipe `update_interface_settings` to programmatically update interface.
+You can use Kili Playground's recipe `update_interface_settings` to programmatically update the interface.
 
 3. Build the docker in the folder:
 
