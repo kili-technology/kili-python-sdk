@@ -5,7 +5,7 @@ from kili.playground import Playground
 
 
 @click.command()
-@click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/v1/graphql',
+@click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/v2/graphql',
               help='Endpoint of GraphQL client')
 def main(api_endpoint):
     api_key = input('Enter API KEY: ')

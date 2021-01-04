@@ -145,7 +145,7 @@ docker run -it -e "EMAIL=myemail@kili-technology.com" \
   -e "PASSWORD=my_password" \
   -e "PROJECT_ID=1234567890" \
   -e "JOB_ID=job_12345" \
-  -e "API_ENDPOINT=https://cloud.kili-technology.com/api/label/v1/graphql" \
+  -e "API_ENDPOINT=https://cloud.kili-technology.com/api/label/v2/graphql" \
   --network="host" kili-playground-yolo
 ```
 
@@ -158,7 +158,7 @@ python main.py --weights /path/to/weights/yolov3.pt \
   --password=mypassword \
   --project_id=1234567890 \
   --job_id=job_12345 \
-  --api_endpoint=https://cloud.kili-technology.com/api/label/v1/graphql \
+  --api_endpoint=https://cloud.kili-technology.com/api/label/v2/graphql \
   --yolo_path=/path/to/yolov3
 ```
 
