@@ -15,7 +15,7 @@ class MutationsOrganization:
         """
         self.auth = auth
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str):
         """
         Create an organization
@@ -44,7 +44,7 @@ class MutationsOrganization:
         result = self.auth.client.execute(GQL_CREATE_ORGANIZATION, variables)
         return format_result('data', result)
 
-    @Compatible()
+    @Compatible(['v1', 'v2'])
     def update_properties_in_organization(self, organization_id: str, name: str, address: str, zip_code: str, city: str, country: str):
         """
         Modify an organization
