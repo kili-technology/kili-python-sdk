@@ -8,6 +8,7 @@ import kili.queries.asset
 import kili.queries.label
 import kili.queries.lock
 import kili.queries.organization
+import kili.queries.notification
 import kili.queries.project
 import kili.queries.project_user
 import kili.queries.user
@@ -28,6 +29,7 @@ class Playground(
         kili.queries.label.QueriesLabel,
         kili.queries.lock.QueriesLock,
         kili.queries.organization.QueriesOrganization,
+        kili.queries.notification.QueriesNotification,
         kili.queries.project.QueriesProject,
         kili.queries.project_user.QueriesProjectUser,
         kili.queries.user.QueriesUser,
