@@ -142,3 +142,13 @@ class Label(LabelWithoutLabelOf):
 
 class Project(ProjectWithoutDataset):
     dataset = Asset
+
+
+class Notification(object):
+    id = 'id'
+    createdAt = 'createdAt'
+    hasBeenSeen = 'hasBeenSeen'
+    message = 'message'
+    status = 'status'
+    url = 'url'
+    userID = 'userID'
