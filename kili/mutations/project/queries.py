@@ -86,6 +86,19 @@ mutation(
 }}
 '''
 
+GQL_MAKE_PROJECT_PUBLIC = f'''
+mutation(
+    $projectID: ID!
+  ) {{
+  data: makeProjectPublic(
+    where: {{
+      id: $projectID
+  }}) {{
+      publicToken
+  }}
+}}
+'''
+
 GQL_UPDATE_PROPERTIES_IN_ROLE = f'''
 mutation(
     $roleID: ID!
