@@ -7,9 +7,12 @@ from tqdm import tqdm
 from ...helpers import Compatible, GraphQLError, format_result
 from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
-from .queries import (GQL_APPEND_TO_ROLES, GQL_CREATE_EMPTY_PROJECT, GQL_CREATE_PROJECT,
+from .queries import (GQL_APPEND_TO_ROLES,
+                      GQL_CREATE_EMPTY_PROJECT,
+                      GQL_CREATE_PROJECT,
                       GQL_DELETE_FROM_ROLES,
                       GQL_DELETE_PROJECT,
+                      GQL_MAKE_PROJECT_PUBLIC,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
                       GQL_UPDATE_PROPERTIES_IN_PROJECT,
                       GQL_UPDATE_PROPERTIES_IN_ROLE)
@@ -184,6 +187,26 @@ class MutationsProject:
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
         return format_result('data', result)
+
+    @Compatible(['v2'])
+    def make_project_public(self, project_id: str):
+        """
+        Make a project public. Warning: This action is permanent and irreversible.
+
+        Parameters
+        ----------
+        - project_id : str
+
+        Returns
+        -------
+        - the public token to provide in the public URL
+        """
+        variables = {
+            'projectID': project_id
+        }
+        result = self.auth.client.execute(GQL_MAKE_PROJECT_PUBLIC, variables)
+        project = format_result('data', result)
+        return project['publicToken']
 
     @Compatible(['v1', 'v2'])
     def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
