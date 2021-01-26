@@ -77,10 +77,10 @@ jobs:
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
         - NOTEBOOK_PATH=recipes/import_assets.ipynb
-    - <<: *test-recipes
-      env:
-        - DOCKER_IMAGE=continuumio/anaconda3:2020.02
-        - NOTEBOOK_PATH=recipes/frame_dicom_data.ipynb
+    # - <<: *test-recipes
+    #   env:
+    #     - DOCKER_IMAGE=continuumio/anaconda3:2020.02
+    #     - NOTEBOOK_PATH=recipes/frame_dicom_data.ipynb
     - <<: *test-recipes
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
