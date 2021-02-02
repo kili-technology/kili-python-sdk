@@ -1,3 +1,5 @@
+import json
+
 from ...helpers import Compatible, format_result
 from .queries import (GQL_CREATE_ORGANIZATION,
                       GQL_UPDATE_PROPERTIES_IN_ORGANIZATION)
@@ -45,7 +47,7 @@ class MutationsOrganization:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def update_properties_in_organization(self, organization_id: str, name: str, address: str, zip_code: str, city: str, country: str):
+    def update_properties_in_organization(self, organization_id: str, name: str, address: str, license: dict, zip_code: str, city: str, country: str):
         """
         Modify an organization
 
@@ -54,6 +56,7 @@ class MutationsOrganization:
         - organization_id : str
         - name : str
         - address : str
+        - license : dict
         - zip_code : str
         - city : str
         - country : str
@@ -62,10 +65,12 @@ class MutationsOrganization:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        license_str = None if not license else json.dumps(license)
         variables = {
             'id': organization_id,
             'name': name,
             'address': address,
+            'license': license_str,
             'zipCode': zip_code,
             'city': city,
             'country': country

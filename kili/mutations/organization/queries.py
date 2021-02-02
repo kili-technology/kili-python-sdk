@@ -25,6 +25,7 @@ mutation(
     $id: ID!
     $name: String!
     $address: String!
+    $license: String!
     $zipCode: String!
     $city: String!
     $country: String!
@@ -34,6 +35,7 @@ mutation(
     data: {{
       name: $name
       address: $address
+      license: $license
       zipCode: $zipCode
       city: $city
       country: $country
