@@ -7,3 +7,9 @@ query($where: OrganizationWhere!, $first: PageSize!, $skip: Int!) {{
   }}
 }}
 ''')
+
+GQL_ORGANIZATIONS_COUNT = f'''
+query($where: OrganizationWhere!) {{
+  data: countOrganizations(where: $where)
+}}
+'''

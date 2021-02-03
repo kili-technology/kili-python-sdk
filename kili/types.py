@@ -1,9 +1,10 @@
-class Organization(object):
+class OrganizationWithoutUser(object):
     id = 'id'
     address = 'address'
     city = 'city'
     country = 'country'
     name = 'name'
+    numberOfLabeledAssets = 'numberOfLabeledAssets'
     zipCode = 'zipCode'
 
 
@@ -13,11 +14,15 @@ class UserWithoutProjectUsers(object):
     createdAt = 'createdAt'
     email = 'email'
     name = 'name'
-    organization = Organization
+    organization = OrganizationWithoutUser
     organizationId = 'organizationId'
     organizationIdCompute = 'organizationIdCompute'
     organizationRole = 'organizationRole'
     updatedAt = 'updatedAt'
+
+
+class Organization(OrganizationWithoutUser):
+    users = UserWithoutProjectUsers
 
 
 class ProjectUserWithoutProject(object):
