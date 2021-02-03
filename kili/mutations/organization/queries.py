@@ -23,12 +23,12 @@ mutation(
 GQL_UPDATE_PROPERTIES_IN_ORGANIZATION = f'''
 mutation(
     $id: ID!
-    $name: String!
-    $address: String!
-    $license: String!
-    $zipCode: String!
-    $city: String!
-    $country: String!
+    $name: String
+    $address: String
+    $license: String
+    $zipCode: String
+    $city: String
+    $country: String
 ) {{
   data: updatePropertiesInOrganization(
     where: {{id: $id}}

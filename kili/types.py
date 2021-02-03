@@ -3,6 +3,7 @@ class Organization(object):
     address = 'address'
     city = 'city'
     country = 'country'
+    license = 'license'
     name = 'name'
     zipCode = 'zipCode'
 
