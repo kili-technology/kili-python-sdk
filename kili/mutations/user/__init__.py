@@ -115,11 +115,15 @@ class MutationsUser:
         """
         variables = {
             'email': email,
-            'name': name,
-            'organizationId': organization_id,
-            'organizationRole': organization_role,
-            'activated': activated
         }
+        if name is not None:
+            variables['name'] = name
+        if organization_id is not None:
+            variables['organizationId'] = organization_id
+        if organization_role is not None:
+            variables['organizationRole'] = organization_role
+        if activated is not None:
+            variables['activated'] = activated
         result = self.auth.client.execute(
             GQL_UPDATE_PROPERTIES_IN_USER, variables)
         return format_result('data', result)

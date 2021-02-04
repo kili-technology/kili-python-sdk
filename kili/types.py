@@ -3,6 +3,7 @@ class OrganizationWithoutUser(object):
     address = 'address'
     city = 'city'
     country = 'country'
+    license = 'license'
     name = 'name'
     numberOfLabeledAssets = 'numberOfLabeledAssets'
     zipCode = 'zipCode'
