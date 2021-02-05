@@ -27,14 +27,14 @@ class KiliAuth(object):
 
     def __init__(self,
                  api_key=os.getenv('KILI_USER_API_KEY'),
-                 api_endpoint='https://cloud.kili-technology.com/api/label/v1/graphql',
+                 api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
                  verify=True):
         self.session = requests.Session()
 
         self.verify = verify
 
-        if api_endpoint == "https://cloud.kili-technology.com/api/label/graphql":
-            message = 'We are migrating the API to enhance our service, please use the new endpoint https://cloud.kili-technology.com/api/label/v1/graphql (or None), the former endpoint call will be deprecated on october 1st 2020'
+        if api_endpoint and  'v1/graphql' in api_endpoint :
+            message = 'We are migrating the API to enhance our service, please use the new endpoint https://cloud.kili-technology.com/api/label/v2/graphql (or None), the former endpoint call will be deprecated on February 15th 2021'
             warnings.warn(message, DeprecationWarning)
         try:
             self.check_versions_match(api_endpoint)
