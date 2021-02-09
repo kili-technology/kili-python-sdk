@@ -1,8 +1,8 @@
 from ...helpers import Compatible, deprecate, format_result
 from .queries import (GQL_CREATE_USER,
                       GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS,
-                      GQL_RESET_PASSWORD, GQL_SIGN_IN, GQL_UPDATE_PASSWORD,
-                      GQL_UPDATE_PROPERTIES_IN_USER)
+                      GQL_RESET_PASSWORD, GQL_SIGN_IN, GQL_UPDATE_API_KEY, 
+                      GQL_UPDATE_PASSWORD, GQL_UPDATE_PROPERTIES_IN_USER)
 
 
 class MutationsUser:
@@ -44,6 +44,29 @@ class MutationsUser:
             'organizationRole': organization_role
         }
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
+        return format_result('data', result)
+    
+    @Compatible(['v1', 'v2'])
+    def update_api_key(self, email: str, new_api_key: str):
+        """
+        Update API key
+
+        Allows you to modify the API key you use to connect to Kili.
+
+        Parameters
+        ----------
+        - email : str
+        - new_api_key : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {
+            'email': email,
+            'newApiKey': new_api_key,
+        }
+        result = self.auth.client.execute(GQL_UPDATE_API_KEY, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])

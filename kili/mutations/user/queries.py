@@ -40,6 +40,18 @@ mutation(
 }}
 '''
 
+GQL_UPDATE_API_KEY = f'''
+mutation(
+    $email: String!
+    $newApiKey: String!
+) {{
+  data: updateApiKey(email: $email
+      newApiKey: $newApiKey) {{
+    {USER_FRAGMENT}
+  }}
+}}
+'''
+
 GQL_UPDATE_PASSWORD = f'''
 mutation(
     $email: String!
