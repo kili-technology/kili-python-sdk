@@ -5,7 +5,9 @@ class OrganizationWithoutUser(object):
     country = 'country'
     license = 'license'
     name = 'name'
+    numberOfAnnotations = 'numberOfAnnotations'
     numberOfLabeledAssets = 'numberOfLabeledAssets'
+    numberOfHours = 'numberOfHours'
     zipCode = 'zipCode'
 
 
