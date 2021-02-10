@@ -32,14 +32,22 @@ class ProjectUserWithoutProject(object):
     id = 'id'
     activated = 'activated'
     consensusMark = 'consensusMark'
+    consensusMarkCompute = 'consensusMarkCompute'
     honeypotMark = "honeypotMark"
+    honeypotMarkCompute = 'honeypotMarkCompute'
     lastLabelingAt = "lastLabelingAt"
+    lastLabelingAtCompute = 'lastLabelingAtCompute'
     numberOfAnnotations = "numberOfAnnotations"
+    numberOfAnnotationsCompute = 'numberOfAnnotationsCompute'
     numberOfLabeledAssets = "numberOfLabeledAssets"
     numberOfLabels = "numberOfLabels"
+    numberOfLabelsCompute = 'numberOfLabelsCompute'
+    numberOfLabeledAssets = 'numberOfLabeledAssets'
+    numberOfLabeledAssetsCompute = 'numberOfLabeledAssetsCompute'
     role = 'role'
     starred = 'starred'
     totalDuration = "totalDuration"
+    totalDurationCompute = 'totalDurationCompute'
     user = UserWithoutProjectUsers
 
 
