@@ -160,3 +160,7 @@ def convert_to_list_of_none(array, length):
 def is_none_or_empty(object):
     object_is_empty = isinstance(object, list) and len(object) == 0
     return object is None or object_is_empty
+
+
+def list_is_not_none_else_none(object):
+    return [object] if object is not None else None
