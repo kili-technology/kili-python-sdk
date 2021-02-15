@@ -1,5 +1,5 @@
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
-from .queries import gql_project_users
+from .queries import gql_project_users, GQL_PROJECT_USERS_COUNT
 from ...types import ProjectUser
 import warnings
 
@@ -65,3 +65,36 @@ class QueriesProjectUser:
             fragment_builder(fields, ProjectUser))
         result = self.auth.client.execute(GQL_PROJECT_USERS, variables)
         return format_result('data', result)
+    
+
+    def count_project_users(self, email: str = None, id: str = None, organization_id: str = None, project_id: str = None,):
+        """
+        Counts the number of projects and their users with a search_query
+
+        Parameters
+        ----------
+        - email : str, optional (default = None)
+        - organization_id : str, optional (default = None)
+        - project_id : str, optional (default = None)
+
+        Returns
+        -------
+        - a positive integer corresponding to the number of results of the query if it was successful, or an error message else.
+        """
+        variables = {
+            'where': {
+                'id': id,
+                'project': {
+                    'id': project_id,
+                },
+                'user': {
+                    'email': email,
+                    'organization': {
+                        'id': organization_id,
+                    }
+                },
+            }
+        }
+        result = self.auth.client.execute(GQL_PROJECT_USERS_COUNT, variables)
+        count = format_result('data', result)
+        return count
