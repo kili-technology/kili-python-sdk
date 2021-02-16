@@ -120,6 +120,14 @@ class MutationsAsset:
             GQL_APPEND_MANY_TO_DATASET, variables)
         return format_result('data', result)
 
+    @deprecate(
+        """
+        This method is deprecated since: 16/02/2021.
+        This method will be removed after: 16/03/2021.
+        update_properties_in_asset is used to update a property of one asset. Use "update_properties_in_assets" instead.
+            > playground.update_properties_in_assets(asset_ids=['asset_id_1', 'asset_id_2'], contents=['https://content1.com', 'https://content2.com'])
+        """)
+    @Compatible(['v1', 'v2'])
     def update_properties_in_asset(self, asset_id: str, external_id: str = None,
                                    priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
                                    honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
@@ -163,14 +171,16 @@ class MutationsAsset:
 
         assets = self.update_properties_in_assets(
             asset_ids=[asset_id],
-            priorities=list_is_not_none_else_none(priority), 
-            json_metadatas=list_is_not_none_else_none(json_metadata), 
+            priorities=list_is_not_none_else_none(priority),
+            json_metadatas=list_is_not_none_else_none(json_metadata),
             consensus_marks=list_is_not_none_else_none(consensus_mark),
-            honeypot_marks=list_is_not_none_else_none(honeypot_mark), 
-            to_be_labeled_by_array=list_is_not_none_else_none(to_be_labeled_by), 
+            honeypot_marks=list_is_not_none_else_none(honeypot_mark),
+            to_be_labeled_by_array=list_is_not_none_else_none(
+                to_be_labeled_by),
             contents=list_is_not_none_else_none(content),
-            status_array=list_is_not_none_else_none(status), 
-            is_used_for_consensus_array=list_is_not_none_else_none(is_used_for_consensus), 
+            status_array=list_is_not_none_else_none(status),
+            is_used_for_consensus_array=list_is_not_none_else_none(
+                is_used_for_consensus),
             is_honeypot_array=list_is_not_none_else_none(is_honeypot)
         )
         assert len(assets) == 1
