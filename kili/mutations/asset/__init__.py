@@ -10,8 +10,9 @@ from ...helpers import (Compatible,
                         encode_image,
                         format_metadata,
                         format_result,
-                        is_not_none_or_empty,
-                        is_url)
+                        is_none_or_empty,
+                        is_url,
+                        list_is_not_none_else_none)
 from ...queries.project import QueriesProject
 from ...queries.asset import QueriesAsset
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
@@ -119,7 +120,6 @@ class MutationsAsset:
             GQL_APPEND_MANY_TO_DATASET, variables)
         return format_result('data', result)
 
-    @Compatible()
     def update_properties_in_asset(self, asset_id: str, external_id: str = None,
                                    priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
                                    honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
@@ -161,35 +161,20 @@ class MutationsAsset:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
 
-        formatted_json_metadata = None
-        if json_metadata is None:
-            formatted_json_metadata = None
-        elif isinstance(json_metadata, str):
-            formatted_json_metadata = json_metadata
-        elif isinstance(json_metadata, dict) or isinstance(json_metadata, list):
-            formatted_json_metadata = dumps(json_metadata)
-        else:
-            raise Exception('json_metadata',
-                            'Should be either a dict, a list or a string url')
-        should_reset_to_be_labeled_by = to_be_labeled_by is not None and len(
-            to_be_labeled_by) == 0
-        variables = {
-            'assetID': asset_id,
-            'externalID': external_id,
-            'priority': priority,
-            'jsonMetadata': formatted_json_metadata,
-            'consensusMark': consensus_mark,
-            'honeypotMark': honeypot_mark,
-            'toBeLabeledBy': to_be_labeled_by,
-            'shouldResetToBeLabeledBy': should_reset_to_be_labeled_by,
-            'content': content,
-            'status': status,
-            'isUsedForConsensus': is_used_for_consensus,
-            'isHoneypot': is_honeypot,
-        }
-        result = self.auth.client.execute(
-            GQL_UPDATE_PROPERTIES_IN_ASSET, variables)
-        return format_result('data', result)
+        assets = self.update_properties_in_assets(
+            asset_ids=[asset_id],
+            priorities=list_is_not_none_else_none(priority), 
+            json_metadatas=list_is_not_none_else_none(json_metadata), 
+            consensus_marks=list_is_not_none_else_none(consensus_mark),
+            honeypot_marks=list_is_not_none_else_none(honeypot_mark), 
+            to_be_labeled_by_array=list_is_not_none_else_none(to_be_labeled_by), 
+            contents=list_is_not_none_else_none(content),
+            status_array=list_is_not_none_else_none(status), 
+            is_used_for_consensus_array=list_is_not_none_else_none(is_used_for_consensus), 
+            is_honeypot_array=list_is_not_none_else_none(is_honeypot)
+        )
+        assert len(assets) == 1
+        return assets[0]
 
     @Compatible(['v2'])
     def update_properties_in_assets(self, asset_ids: List[str], external_ids: List[str] = None,
@@ -212,7 +197,7 @@ class MutationsAsset:
             contents=[None, 'https://drive.google.com/uc?export=download&id=1mM7ASFB4pGEk5rcr7pcw6qB8WVybTPmo'],
             status_array=['LABELED', 'REVIEWED'],
             is_used_for_consensus_array=[True, False],
-            is_honeypot_array=[True, True]
+            is_honeypot_array=[True, True],
         )
         ```
 
@@ -286,7 +271,7 @@ class MutationsAsset:
         ]
         to_be_labeled_by_array = data[5]
         should_reset_to_be_labeled_by_array = list(
-            map(is_not_none_or_empty, to_be_labeled_by_array))
+            map(is_none_or_empty, to_be_labeled_by_array))
         for i, properties in enumerate(zip(*data)):
             for property, property_value in zip(property_names, properties):
                 data_array[i][property] = property_value
