@@ -47,8 +47,8 @@ class MutationsAsset:
             Identifier of the project
         - content_array : List[str], optional (default = None)
             List of elements added to the assets of the project
-            - For a Text project, the content is directly in text format.
-            - For an Image project, the content can be paths to existing images on your computer.
+            - For a Text project, the content can be either raw text, or URLs.
+            - For an Image project, the content can be either URLs or paths to existing images on your computer.
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs.
             Must not be None except if you provide json_content_array.
@@ -69,6 +69,10 @@ class MutationsAsset:
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
+
+        Examples
+        -------
+        >>> playground.append_many_to_dataset(project_id=project_id, content_array=[['https://link/to/asset]])
         """
         playground = QueriesProject(self.auth)
         projects = playground.projects(project_id)
@@ -194,27 +198,10 @@ class MutationsAsset:
         """
         Update the properties of one or more assets.
 
-        This function is only available with the new endpoint : https://cloud.kili-technology.com/api/label/v2/graphql
-        Example usage : 
-        ```
-        playground.update_properties_in_assets(
-            asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
-            priorities=[None, 2],
-            external_ids=['op', 'truc'],
-            consensus_marks=[1, 0.7],
-            honeypot_marks=[0.8, 0.5],
-            to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
-            contents=[None, 'https://drive.google.com/uc?export=download&id=1mM7ASFB4pGEk5rcr7pcw6qB8WVybTPmo'],
-            status_array=['LABELED', 'REVIEWED'],
-            is_used_for_consensus_array=[True, False],
-            is_honeypot_array=[True, True],
-        )
-        ```
-
         Parameters
         ----------
         - asset_ids : List[str]
-            The asset ids to modify
+            The asset IDs to modify
         - external_ids : List[str], optional (default = None)
             Change the external id of the assets
         - priorities : List[int], optional (default = None)
@@ -244,6 +231,21 @@ class MutationsAsset:
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
+
+        Examples
+        -------
+        playground.update_properties_in_assets(
+                asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                consensus_marks=[1, 0.7],
+                contents=[None, 'https://to/second/asset.png'],
+                external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
+                honeypot_marks=[0.8, 0.5],
+                is_honeypot_array=[True, True],
+                is_used_for_consensus_array=[True, False],
+                priorities=[None, 2],
+                status_array=['LABELED', 'REVIEWED'],
+                to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
+        )
         """
 
         formatted_json_metadatas = None

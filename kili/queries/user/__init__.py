@@ -26,9 +26,7 @@ class QueriesUser:
               first: int = 100,
               skip: int = 0):
         """
-        Get users
-
-        Returns users whose email / organization id correspond to the given ones.
+        Get users given a set of constraints
 
         Parameters
         ----------
@@ -36,8 +34,8 @@ class QueriesUser:
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - fields : list of string, optional (default = ['email', 'id', 'name'])
-            All the fields to request among the possible fields for the users, default for None are the non-calculated fields)
-            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user
+            All the fields to request among the possible fields for the users.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
         - first : int, optional (default = 100)
             Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
@@ -46,6 +44,13 @@ class QueriesUser:
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
+
+        Examples
+        -------
+        >>> # List all users in my organization
+        >>> organization = playground.organizations()
+        >>> organization_id = organizations[0]['id]
+        >>> playground.users(organization_id=organization_id)
         """
         variables = {
             'first': first,
@@ -66,9 +71,7 @@ class QueriesUser:
     def count_users(self,
                     organization_id: str = None):
         """
-        Get users count
-
-        Returns the count of users whose organization id correspond to the given one
+        Get users count given a set of constraints
 
         Parameters
         ----------
@@ -76,7 +79,7 @@ class QueriesUser:
 
         Returns
         -------
-        - a number
+        - the count of users whose organization id correspond to the given one
         """
         variables = {
             'where': {

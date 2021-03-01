@@ -22,11 +22,12 @@ class QueriesProjectUser:
                       id: str = None,
                       organization_id: str = None,
                       project_id: str = None,
-                      fields: list = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'],
+                      fields: list = ['activated', 'id', 'role',
+                                      'starred', 'user.email', 'user.id', 'user.name'],
                       first: int = 100,
                       skip: int = 0):
         """
-        Return projects and their users (possibly with their KPIs)
+        Return projects and their users (possibly with their KPIs) respecting a set of criteria
 
         Parameters
         ----------
@@ -34,8 +35,8 @@ class QueriesProjectUser:
         - organization_id : str, optional (default = None)
         - project_id : str, optional (default = None)
         - fields : list, optional (default = ['activated', 'id', 'role', 'starred', 'user.email', 'user.id', 'user.name'])
-            All the fields to request among the possible fields for the projectUsers, default for None are the non-calculated fields)
-            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser
+            All the fields to request among the possible fields for the projectUsers.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
         - first : int, optional (default = 100)
             Maximum number of users to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)
@@ -44,6 +45,11 @@ class QueriesProjectUser:
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
+
+        Examples
+        -------
+        >>> # Retrieve consensus marks of all users in project
+        >>> playground.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
         """
         variables = {
             'first': first,
@@ -65,11 +71,10 @@ class QueriesProjectUser:
             fragment_builder(fields, ProjectUser))
         result = self.auth.client.execute(GQL_PROJECT_USERS, variables)
         return format_result('data', result)
-    
 
     def count_project_users(self, email: str = None, id: str = None, organization_id: str = None, project_id: str = None,):
         """
-        Counts the number of projects and their users with a search_query
+        Counts the number of projects and their users respecting a set of criteria
 
         Parameters
         ----------

@@ -32,7 +32,8 @@ class MutationsLabel:
         - model_name_array : list of str
             In case you want to precise from which model the label originated
         - json_response_array : list of dict
-            The predictions are given here. An example can be found here, for a polygon
+            The predictions are given here. An example can be found here, for a polygon.
+            For other examples, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
             ```
             {
                 "JOB_0": {
@@ -73,27 +74,33 @@ class MutationsLabel:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def append_to_labels(self, author_id: str, json_response: dict, label_asset_id: str, label_type: str, seconds_to_label: int, skipped: bool = False):
+    def append_to_labels(self, json_response: dict, label_asset_id: str, author_id: str, label_type: str, seconds_to_label: int, skipped: bool = False):
         """
-        Append a label to labels
+        Append a label to an asset
 
         Parameters
         ----------
-        - author_id : str
-            Email of the author of the label
         - json_response : dict
             Label is given here
         - label_asset_id : str
             Identifier of the asset
-        - label_type : str
+        - author_id : str, optional (default = auth.user_id)
+            ID of the author of the label
+        - label_type : str, optional (default = 'DEFAULT')
             Can be one of {'AUTOSAVE', 'DEFAULT', 'PREDICTION', 'REVIEW'}
-        - seconds_to_label : int
+        - seconds_to_label : int, optional (default = 0)
         - skipped : bool, optional (default = False)
 
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
+
+        Examples
+        -------
+        >>> playground.append_to_labels(label_asset_id=asset_id, json_response={...})
         """
+        if author_id is None:
+            author_id = self.auth.user_id
         variables = {
             'authorID': author_id,
             'jsonResponse': dumps(json_response),
@@ -122,6 +129,10 @@ class MutationsLabel:
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
+
+        Examples
+        -------
+        >>> playground.update_properties_in_label(label_id=label_id, json_response={...})
         """
         formatted_json_response = None if json_response is None else dumps(
             json_response)
