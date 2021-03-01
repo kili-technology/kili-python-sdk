@@ -72,7 +72,7 @@ class MutationsAsset:
 
         Examples
         -------
-        >>> playground.append_many_to_dataset(project_id=project_id, content_array=[['https://link/to/asset]])
+        >>> playground.append_many_to_dataset(project_id=project_id, content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
         """
         playground = QueriesProject(self.auth)
         projects = playground.projects(project_id)

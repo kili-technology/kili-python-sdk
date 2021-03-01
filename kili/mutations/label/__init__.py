@@ -74,7 +74,7 @@ class MutationsLabel:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def append_to_labels(self, json_response: dict, label_asset_id: str, author_id: str, label_type: str, seconds_to_label: int, skipped: bool = False):
+    def append_to_labels(self, json_response: dict, label_asset_id: str, author_id: str = None, label_type: str = 'DEFAULT', seconds_to_label: int = 0, skipped: bool = False):
         """
         Append a label to an asset
 

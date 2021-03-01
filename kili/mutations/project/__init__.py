@@ -148,7 +148,7 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible(endpoints=['v1', 'v2'])
-    def create_empty_project(self, user_id: str):
+    def create_empty_project(self, user_id: str = None):
         """
         Create an empty project
 
@@ -172,7 +172,7 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible(endpoints=['v2'])
-    def create_project(self, description: str, input_type: str, json_interface: dict, title: str, user_id: str, project_type: str = None):
+    def create_project(self, input_type: str, json_interface: dict, title: str, description: str = '', project_type: str = None, user_id: str = None):
         """
         Create a project
 
@@ -185,7 +185,7 @@ class MutationsProject:
         - json_interface: dict
             The json parameters of the project, see Edit your interface.
         - title : str
-        - description : str, optional (default = None)
+        - description : str, optional (default = '')
         - project_type: str, optional (default = None)
             Currently, one of {IMAGE_CLASSIFICATION_SINGLE, IMAGE_CLASSIFICATION_MULTI, IMAGE_OBJECT_DETECTION_RECTANGLE, IMAGE_OBJECT_DETECTION_POLYGON, IMAGE_OBJECT_DETECTION_SEMANTIC, OCR, PDF_CLASSIFICATION_SINGLE, PDF_CLASSIFICATION_MULTI, TEXT_CLASSIFICATION_SINGLE, TEXT_CLASSIFICATION_MULTI, TEXT_TRANSCRIPTION, TEXT_NER, VIDEO_CLASSIFICATION_SINGLE, VIDEO_FRAME_CLASSIFICATION, VIDEO_FRAME_OBJECT_TRACKING, SPEECH_TO_TEXT}
         - user_id : str, optional (default = None)
@@ -198,6 +198,8 @@ class MutationsProject:
         -------
         >>> playground.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
         """
+        if user_id is None:
+            user_id = self.auth.user_id
         variables = {
             'description': description,
             'inputType': input_type,
