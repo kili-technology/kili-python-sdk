@@ -1,7 +1,7 @@
 from ...helpers import Compatible, deprecate, format_result
 from .queries import (GQL_CREATE_USER,
                       GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS,
-                      GQL_RESET_PASSWORD, GQL_SIGN_IN, GQL_UPDATE_API_KEY, 
+                      GQL_RESET_PASSWORD, GQL_SIGN_IN, GQL_UPDATE_API_KEY,
                       GQL_UPDATE_PASSWORD, GQL_UPDATE_PROPERTIES_IN_USER)
 
 
@@ -45,13 +45,13 @@ class MutationsUser:
         }
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
         return format_result('data', result)
-    
+
     @Compatible(['v1', 'v2'])
     def update_api_key(self, email: str, new_api_key: str):
         """
         Update API key
 
-        Allows you to modify the API key you use to connect to Kili.
+        Allows you to modify the API key you use to connect to Kili. This method is currently only active for Kili administrators.
 
         Parameters
         ----------
@@ -72,16 +72,16 @@ class MutationsUser:
     @Compatible(['v1', 'v2'])
     def update_password(self, email: str, old_password: str, new_password_1: str, new_password_2: str):
         """
-        Update password
-
-        Allows you to modify the password you use to connect to Kili, if you are not using Auth0 SSO.
+        Allows you to modify the password you use to connect to Kili. This resolver only works for on-premise installations without Auth0.
 
         Parameters
         ----------
         - email : str
         - old_password : str
         - new_password_1 : str
+            The new password.
         - new_password_2 : str
+            A confirmation field for the new password.
 
         Returns
         -------
@@ -101,11 +101,12 @@ class MutationsUser:
         """
         Reset password
 
-        This only works on premise without Auth0, if your organization allows Kili to send emails.
+        This resolver only works for on-premise installations without Auth0, if your organization allows Kili to send emails.
 
         Parameters
         ----------
         - email : str
+            Email of the person whose password has to be reset.
 
         Returns
         -------

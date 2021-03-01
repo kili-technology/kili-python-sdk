@@ -33,8 +33,8 @@ class QueriesLock:
         - lock_id : str, optional (default = None)
             The id of the lock to request. If None, all locks are returned
         - fields : list of string, optional (default = ['id', 'lock_type'])
-            All the fields to request among the possible fields for the locks, default for None are the non-calculated fields)
-            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks
+            All the fields to request among the possible fields for the locks.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks) for all possible fields.
         - first : int, optional (default = 100)
             Maximum number of locks to return. Can only be between 0 and 100.
         - skip : int, optional (default = 0)

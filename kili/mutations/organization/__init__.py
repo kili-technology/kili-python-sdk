@@ -47,7 +47,7 @@ class MutationsOrganization:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def update_properties_in_organization(self, organization_id: str, name: str=None, address: str=None, zip_code: str=None, city: str=None, country: str=None, license: dict=None):
+    def update_properties_in_organization(self, organization_id: str, name: str = None, address: str = None, zip_code: str = None, city: str = None, country: str = None, license: dict = None):
         """
         Modify an organization
 

@@ -19,20 +19,21 @@ class QueriesNotification:
 
     @Compatible(['v2'])
     def notifications(self,
-                      fields: List[str] = ['createdAt', 'hasBeenSeen', 'id', 'message', 'status', 'userID'],
+                      fields: List[str] = ['createdAt', 'hasBeenSeen',
+                                           'id', 'message', 'status', 'userID'],
                       first: int = 100,
                       has_been_seen: bool = None,
                       notification_id: str = None,
                       skip: int = 0,
                       user_id: str = None):
         """
-        Get an array of notifications
+        Get an array of notifications given a set of constraints
 
         Parameters
         ----------
         - fields : list of string, optional (default = ['createdAt', 'hasBeenSeen', 'id', 'message', 'status', 'userID'])
             All the fields to request among the possible fields for the notifications
-            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.
         - first : int (default = 100)
             Number of notifications to query
         - has_been_seen : bool, optional (default = None)

@@ -18,7 +18,8 @@ class SubscriptionsLabel:
 
     def label_created_or_updated(self, project_id: str, callback: Callable[[str, str], None]):
         """
-        Subscribe a callback to a project, which is executed when a label is created or updated
+        Subscribe a callback to a project, which is executed when a label is created or updated.
+        See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb) for more explanation on how to use it.
 
         Parameters
         ----------
@@ -33,9 +34,9 @@ class SubscriptionsLabel:
         ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
         ws = SubscriptionGraphQLClient(ws_endpoint)
         headers = {'Accept': 'application/json',
-                'Content-Type': 'application/json'}
+                   'Content-Type': 'application/json'}
         authorization = f'{self.auth.client.token}'
         headers['Authorization'] = authorization
         variables = {'projectID': project_id}
         ws.subscribe(GQL_LABEL_CREATED_OR_UPDATED, variables=variables,
-                    callback=callback, headers=headers, authorization=authorization)
+                     callback=callback, headers=headers, authorization=authorization)

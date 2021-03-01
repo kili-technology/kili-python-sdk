@@ -44,11 +44,11 @@ class QueriesLabel:
                type_in: List[str] = None,
                user_id: str = None):
         """
-        Get an array of labels from a project
+        Get an array of labels from a project given a set of criteria
 
         Parameters
         ----------
-        - asset_id : str
+        - asset_id : str, optional (default = None)
             Identifier of the asset.
         - asset_status_in : list of str, optional (default = None)
             Returned labels should have a status that belongs to that list, if given.
@@ -67,8 +67,8 @@ class QueriesLabel:
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
         - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
-            All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
-            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
+            All the fields to request among the possible fields for the labels.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
         - first : int, optional (default = None)
             Maximum number of labels to return.  Can only be between 0 and 100.
         - honeypot_mark_gt : float, optional (default = None)
@@ -96,6 +96,11 @@ class QueriesLabel:
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
+
+        Examples
+        -------
+        >>> # List all labels of a project and their assets external ID
+        >>> playground.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId'])
         """
         formatted_first = first if first else 100
         variables = {
@@ -132,7 +137,14 @@ class QueriesLabel:
 
     def parse_json_response_for_single_classification(self, json_response):
         """
-        Get the names of categories from a json_response, for a single class - classification task
+        Parameters
+        -------
+        json_response : dict
+            A valid JSON response
+
+        Returns
+        -------
+        The names of categories from a json_response, for a single-class classification task
         """
         categories = self.parse_json_response_for_multi_classification(
             json_response)
@@ -143,7 +155,14 @@ class QueriesLabel:
 
     def parse_json_response_for_multi_classification(self, json_response):
         """
-        Get the names of categories from a json_response, for a multi class - classification task
+        Parameters
+        -------
+        json_response : dict
+            A valid JSON response
+
+        Returns
+        -------
+        The names of categories from a json_response, for a multi-class classification task
         """
         formatted_json_response = eval(json_response)
         if 'categories' not in formatted_json_response:
@@ -169,8 +188,9 @@ class QueriesLabel:
         ----------
         - project_id : str
         - fields : list of string, optional (default = [ 'author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
-            All the fields to request among the possible fields for the labels, default are the non-calculated fields)
-            - Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
+            All the fields to request among the possible fields for the labels.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
+
         Returns
         -------
         - labels_df : pandas DataFrame containing the labels.
@@ -234,8 +254,8 @@ class QueriesLabel:
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
         - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
-            All the fields to request among the possible fields for the labels, default for None are the non-calculated fields)
-            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label
+            All the fields to request among the possible fields for the labels.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
         - honeypot_mark_gt : float, optional (default = None)
             Returned labels should have a label whose honeypot is greater than this number.
         - honeypot_mark_lt : float, optional (default = None)

@@ -50,7 +50,7 @@ class QueriesAsset:
                updated_at_lte: str = None,
                format: str = None, disable_tqdm: bool = False):
         """
-        Get an array of assets from a project
+        Get an array of assets respecting a set of constraints
 
         Parameters
         ----------
@@ -59,8 +59,8 @@ class QueriesAsset:
         - skip : int, optional (default = None)
             Number of assets to skip (they are ordered by their date of creation, first to last).
         - fields : list of string, optional (default = ['id', 'content', 'externalId', 'isHoneypot', 'isUsedForConsensus', 'jsonMetadata', 'labels.author.id', 'labels.author.email','labels.jsonResponse', 'labels.skipped', 'priority', 'projects.id', 'projects.title', 'project.jsonInterface'])
-            All the fields to request among the possible fields for the assets, default for None are the non-calculated fields)
-            Possible fields : see https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset
+            All the fields to request among the possible fields for the assets.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
         - first : int, optional (default = None)
             Maximum number of assets to return. Can only be between 0 and 100.
         - consensus_mark_gt : float, optional (default = None)
@@ -114,6 +114,11 @@ class QueriesAsset:
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
+
+        Examples
+        -------
+        >>> playground.assets(project_id=project_id)
+        >>> playground.assets(asset_id=asset_id)
         """
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
@@ -194,7 +199,7 @@ class QueriesAsset:
                      updated_at_gte: str = None,
                      updated_at_lte: str = None):
         """
-        Count and return the number of assets with the given parameters
+        Count and return the number of assets with the given constraints
 
         Parameters beginning with 'label_' apply to labels, others apply to assets.
 
@@ -202,7 +207,7 @@ class QueriesAsset:
         ----------
         - asset_id : str
             Identifier of the asset
-        - project_id : str
+        - project_id : str, optional (default = None)
             Identifier of the project
         - external_id_contains : list of str, optional (default = None)
             Returned assets should have an external id that belongs to that list, if given.
@@ -252,6 +257,13 @@ class QueriesAsset:
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
+
+        Examples
+        -------
+        >>> playground.count_assets(project_id=project_id)
+        250
+        >>> playground.count_assets(asset_id=asset_id)
+        1
         """
         variables = {
             'where': {
