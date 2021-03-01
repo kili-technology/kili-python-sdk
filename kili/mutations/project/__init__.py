@@ -152,6 +152,8 @@ class MutationsProject:
         """
         Create an empty project
 
+        For more detailed examples on how to create projects, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb).
+
         Parameters
         ----------
         - user_id : str, optional (default = auth.user_id)

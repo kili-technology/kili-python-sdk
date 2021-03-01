@@ -41,6 +41,9 @@ class MutationsAsset:
         """
         Append assets to a project
 
+        For more detailed examples on how to import assets, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb).
+        For more detailed examples on how to import specifically text assets, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).
+
         Parameters
         ----------
         - project_id : str

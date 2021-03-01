@@ -24,6 +24,8 @@ class MutationsLabel:
         """
         Create predictions for some assets
 
+        For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
+
         Parameters
         ----------
         - project_id : str
