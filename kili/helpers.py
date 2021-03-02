@@ -173,11 +173,11 @@ def infer_id_from_external_id(playground, asset_id: str, external_id: str, proje
     if asset_id is not None:
         return asset_id
     assets = playground.assets(
-        external_id=external_id, project_id=project_id, fields=['id'], disable_tqdm=True)
+        external_id_contains=[external_id], project_id=project_id, fields=['id'], disable_tqdm=True)
     if len(assets) == 0:
         raise Exception(
             f'No asset found with external ID "{external_id}"')
     if len(assets) > 1:
         raise Exception(
-            f'Several assets found with external ID "{external_id}": {assets}')
+            f'Several assets found containing external ID "{external_id}": {assets}. Please, use asset ID instead.')
     return assets[0]['id']

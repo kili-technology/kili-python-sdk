@@ -111,7 +111,7 @@ class MutationsLabel:
         if author_id is None:
             author_id = self.auth.user_id
         label_asset_id = infer_id_from_external_id(
-            self.auth.playground, label_asset_id, label_asset_external_id, project_id)
+            self, label_asset_id, label_asset_external_id, project_id)
         variables = {
             'authorID': author_id,
             'jsonResponse': dumps(json_response),
@@ -184,7 +184,7 @@ class MutationsLabel:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         asset_id = infer_id_from_external_id(
-            self.auth.playground, asset_id, asset_external_id, project_id)
+            self, asset_id, asset_external_id, project_id)
         variables = {
             'assetID': asset_id,
             'jsonResponse': dumps(json_response)

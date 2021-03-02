@@ -35,7 +35,7 @@ class Playground(
         kili.queries.user.QueriesUser,
         kili.subscriptions.label.SubscriptionsLabel):
 
-    def __init__(self, auth=None):
+    def __init__(self, auth=None, playground=None):
         """Create an instance of KiliPlayground."""
         self.auth = auth
         super().__init__(auth)
