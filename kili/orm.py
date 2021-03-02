@@ -63,6 +63,9 @@ class Label(DictClass):
                 return {'error': 'Simple format is not adapted when there is more than one job. Please choose another annotation format.'}
             for job_name in job_names:
                 job_response = self.jsonResponse[job_name]
+                category = get_category(job_response)
+                if category is not None:
+                    return category
                 if 'annotations' not in job_response:
                     return None
                 return [format_image_annotation(annotation) for annotation in job_response['annotations']]
