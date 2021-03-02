@@ -164,3 +164,20 @@ def is_none_or_empty(object):
 
 def list_is_not_none_else_none(object):
     return [object] if object is not None else None
+
+
+def infer_id_from_external_id(playground, asset_id: str, external_id: str, project_id: str):
+    if asset_id is None and external_id is None:
+        raise Exception(
+            'Either provide asset_id or external_id and project_id')
+    if asset_id is not None:
+        return asset_id
+    assets = playground.assets(
+        external_id=external_id, project_id=project_id, fields=['id'], disable_tqdm=True)
+    if len(assets) == 0:
+        raise Exception(
+            f'No asset found with external ID "{external_id}"')
+    if len(assets) > 1:
+        raise Exception(
+            f'Several assets found with external ID "{external_id}": {assets}')
+    return assets[0]['id']

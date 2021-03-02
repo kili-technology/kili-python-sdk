@@ -1,7 +1,7 @@
 from json import dumps
 from typing import List
 
-from ...helpers import Compatible, format_result
+from ...helpers import Compatible, format_result, infer_id_from_external_id
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
                       GQL_CREATE_PREDICTIONS,
                       GQL_UPDATE_PROPERTIES_IN_LABEL)
@@ -76,7 +76,7 @@ class MutationsLabel:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def append_to_labels(self, json_response: dict, label_asset_id: str, author_id: str = None, label_type: str = 'DEFAULT', seconds_to_label: int = 0, skipped: bool = False):
+    def append_to_labels(self, json_response: dict, author_id: str = None, label_asset_external_id: str = None, label_asset_id: str = None, label_type: str = 'DEFAULT', project_id: str = None, seconds_to_label: int = 0, skipped: bool = False):
         """
         Append a label to an asset
 
@@ -84,10 +84,17 @@ class MutationsLabel:
         ----------
         - json_response : dict
             Label is given here
-        - label_asset_id : str
-            Identifier of the asset
         - author_id : str, optional (default = auth.user_id)
             ID of the author of the label
+        - label_asset_external_id : str, optional (default = None)
+            External identifier of the asset
+            Either provide label_asset_id or label_asset_external_id and project_id
+        - label_asset_id : str, optional (default = None)
+            Identifier of the asset
+            Either provide label_asset_id or label_asset_external_id and project_id
+        - project_id : str, optional (default = None)
+            Project ID of the asset
+            Either provide label_asset_id or label_asset_external_id and project_id
         - label_type : str, optional (default = 'DEFAULT')
             Can be one of {'AUTOSAVE', 'DEFAULT', 'PREDICTION', 'REVIEW'}
         - seconds_to_label : int, optional (default = 0)
@@ -103,6 +110,8 @@ class MutationsLabel:
         """
         if author_id is None:
             author_id = self.auth.user_id
+        label_asset_id = infer_id_from_external_id(
+            self.auth.playground, label_asset_id, label_asset_external_id, project_id)
         variables = {
             'authorID': author_id,
             'jsonResponse': dumps(json_response),
@@ -149,7 +158,7 @@ class MutationsLabel:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def create_honeypot(self, asset_id: str, json_response: dict):
+    def create_honeypot(self, json_response: dict, asset_external_id: str = None, asset_id: str = None, project_id: str = None):
         """
         Create honeypot for an asset. 
 
@@ -158,15 +167,24 @@ class MutationsLabel:
 
         Parameters
         ----------
-        - asset_id : str
-            Identifier of the asset
         - json_response : dict
-            The honeypot label of the asset
+            The JSON response of the honeypot label of the asset
+        - asset_id : str, optional (default = None)
+            Identifier of the asset
+            Either provide asset_id or asset_external_id and project_id
+        - asset_external_id : str, optional (default = None)
+            External identifier of the asset
+            Either provide asset_id or asset_external_id and project_id
+        - project_id : str, optional (default = None)
+            External identifier of the asset
+            Either provide asset_id or asset_external_id and project_id
 
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        asset_id = infer_id_from_external_id(
+            self.auth.playground, asset_id, asset_external_id, project_id)
         variables = {
             'assetID': asset_id,
             'jsonResponse': dumps(json_response)
