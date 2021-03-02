@@ -6,7 +6,8 @@ from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import gql_labels, GQL_LABELS_COUNT
 from ...constants import NO_ACCESS_RIGHT
-from ...types import Label
+from ...types import Label as LabelType
+from ...orm import Label
 
 
 class QueriesLabel:
@@ -131,9 +132,9 @@ class QueriesLabel:
             'skip': skip,
             'first': formatted_first,
         }
-        GQL_LABELS = gql_labels(fragment_builder(fields, Label))
+        GQL_LABELS = gql_labels(fragment_builder(fields, LabelType))
         result = self.auth.client.execute(GQL_LABELS, variables)
-        return format_result('data', result)
+        return format_result('data', result, Label)
 
     def parse_json_response_for_single_classification(self, json_response):
         """
