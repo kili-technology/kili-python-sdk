@@ -5,6 +5,7 @@ from ...helpers import Compatible, format_result, infer_id_from_external_id
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
                       GQL_CREATE_PREDICTIONS,
                       GQL_UPDATE_PROPERTIES_IN_LABEL)
+from ...orm import Label
 
 
 class MutationsLabel:
@@ -73,7 +74,7 @@ class MutationsLabel:
             'jsonResponseArray': [dumps(elem) for elem in json_response_array]
         }
         result = self.auth.client.execute(GQL_CREATE_PREDICTIONS, variables)
-        return format_result('data', result)
+        return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])
     def append_to_labels(self, json_response: dict, author_id: str = None, label_asset_external_id: str = None, label_asset_id: str = None, label_type: str = 'DEFAULT', project_id: str = None, seconds_to_label: int = 0, skipped: bool = False):
@@ -121,7 +122,7 @@ class MutationsLabel:
             'skipped': skipped
         }
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
-        return format_result('data', result)
+        return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])
     def update_properties_in_label(self, label_id: str, seconds_to_label: int = None, model_name: str = None, json_response: dict = None):
@@ -155,7 +156,7 @@ class MutationsLabel:
         }
         result = self.auth.client.execute(
             GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
-        return format_result('data', result)
+        return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])
     def create_honeypot(self, json_response: dict, asset_external_id: str = None, asset_id: str = None, project_id: str = None):
@@ -190,4 +191,4 @@ class MutationsLabel:
             'jsonResponse': dumps(json_response)
         }
         result = self.auth.client.execute(GQL_CREATE_HONEYPOT, variables)
-        return format_result('data', result)
+        return format_result('data', result, Label)

@@ -51,10 +51,15 @@ class GraphQLError(Exception):
         super().__init__(f'Mutation "{mutation}" failed with error: "{error}"')
 
 
-def format_result(name, result):
+def format_result(name, result, Object=None):
     if 'errors' in result:
         raise GraphQLError(name, result['errors'])
-    return format_json(result['data'][name])
+    formatted_json = format_json(result['data'][name])
+    if Object is None:
+        return formatted_json
+    if isinstance(formatted_json, list):
+        return [Object(element) for element in formatted_json]
+    return Object(formatted_json)
 
 
 def content_escape(content):

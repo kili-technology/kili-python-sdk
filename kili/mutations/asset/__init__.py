@@ -20,6 +20,7 @@ from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from ...constants import NO_ACCESS_RIGHT
+from ...orm import Asset
 
 
 class MutationsAsset:
@@ -125,7 +126,7 @@ class MutationsAsset:
             'jsonMetadataArray': formatted_json_metadata_array}
         result = self.auth.client.execute(
             GQL_APPEND_MANY_TO_DATASET, variables)
-        return format_result('data', result)
+        return format_result('data', result, Asset)
 
     @deprecate(
         """
@@ -298,7 +299,7 @@ class MutationsAsset:
         }
         result = self.auth.client.execute(
             GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
-        return format_result('data', result)
+        return format_result('data', result, Asset)
 
     @Compatible(['v1', 'v2'])
     def delete_many_from_dataset(self, asset_ids: List[str]):
@@ -317,4 +318,4 @@ class MutationsAsset:
         variables = {'assetIDs': asset_ids}
         result = self.auth.client.execute(
             GQL_DELETE_MANY_FROM_DATASET, variables)
-        return format_result('data', result)
+        return format_result('data', result, Asset)

@@ -8,7 +8,8 @@ from tqdm import tqdm
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...constants import NO_ACCESS_RIGHT
-from ...types import Asset
+from ...types import Asset as AssetType
+from ...orm import Asset
 
 
 class QueriesAsset:
@@ -163,9 +164,9 @@ class QueriesAsset:
                     'skip': skip,
                     'first': formatted_first,
                 }
-                GQL_ASSETS = gql_assets(fragment_builder(fields, Asset))
+                GQL_ASSETS = gql_assets(fragment_builder(fields, AssetType))
                 result = self.auth.client.execute(GQL_ASSETS, variables)
-                assets = format_result('data', result)
+                assets = format_result('data', result, Asset)
                 if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
                     if format == 'pandas':
                         return pd.DataFrame(paged_assets)
