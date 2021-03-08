@@ -17,15 +17,29 @@ Kili Technology allows you to:
 
 ### Text annotation example
 
-![](./recipes/img/relations-extraction.png)
+Named Entities Extraction and Relation | Rich format support
+:--------:|:-------------:
+![](./recipes/img/relations-extraction.png) | ![](./recipes/img/rich_text_4.png)
 
 ### Image annotation example
 
-![](./recipes/img/classification_nested.png)
+Classification | Object detection (bounding-box here)
+:--------:|:-------------:
+![](./recipes/img/classification_nested.png) | ![](./recipes/img/bounding-box.png)
 
 ### Video annotation example
 
-![](./recipes/img/video_nested.png)
+Video annotation | Video classification
+:--------:|:-------------:
+![](./recipes/img/video_multi-frames_bbox.png) | ![](./recipes/img/video_nested.png)
+
+### Other interfaces
+
+Pdf | Speech to Text
+:--------:|:-------------:
+![](./recipes/img/pdf_ner.png) | ![](./recipes/img/speech_to_text_interface.png)
+
+
 
 ## What is Kili Playground ?
 
@@ -42,18 +56,28 @@ pip install kili
 
 ## Get started
 
-- Export an API KEY In `My Account` -> `API KEY`
+- Export an API KEY In `My Account` -> `API KEY` :
 
-- In your favourite IDE :
+![](./recipes/img/api_key.gif)
+
+- In your favourite IDE : 
 
 ```python
 from kili.authentication import KiliAuth
 from kili.playground import Playground
 kauth = KiliAuth(api_key='MY API KEY')
 playground = Playground(kauth)
+# You can now play with the playground
 ```
 
-Here are [some recipes](/recipes/). Among them:
+You can follow those tutorials to get started :
+
+- [Getting started on Kili Classification task]()
+<!-- - Getting started on Kili Object Detection task
+- Getting started on Kili Named Entities Recognition task
+- Getting started on Kili Speech to Text task -->
+
+You can find all of recipes [here](/recipes/). Among them:
 
 - [How to import assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
 - [How to export labels](https://github.com/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb))
