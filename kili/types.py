@@ -21,6 +21,7 @@ class UserWithoutProjectUsers(object):
     organizationId = 'organizationId'
     organizationIdCompute = 'organizationIdCompute'
     organizationRole = 'organizationRole'
+    rights = 'rights'
     updatedAt = 'updatedAt'
 
 
@@ -73,6 +74,7 @@ class ProjectWithoutDataset(object):
     numberOfSolvedIssues = 'numberOfSolvedIssues'
     numberOfReviewedAssets = 'numberOfReviewedAssets'
     readPermissionsForAssetsAndLabels = 'readPermissionsForAssetsAndLabels'
+    rights = 'rights'
     roles = ProjectUserWithoutProject
     shouldRelaunchKpiComputation = 'shouldRelaunchKpiComputation'
     title = 'title'
