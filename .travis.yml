@@ -89,3 +89,7 @@ jobs:
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
         - NOTEBOOK_PATH=recipes/export_labels.ipynb
+    - <<: *test-recipes
+      env:
+        - DOCKER_IMAGE=continuumio/anaconda3:2020.02
+        - NOTEBOOK_PATH=recipes/getting-started/getting_started-classification.ipynb
