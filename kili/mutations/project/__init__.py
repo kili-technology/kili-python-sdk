@@ -1,10 +1,6 @@
-import time
-from json import dumps, loads
-from typing import List
+from json import dumps
 
-from tqdm import tqdm
-
-from ...helpers import Compatible, GraphQLError, format_result
+from ...helpers import Compatible, format_result, deprecate
 from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_TO_ROLES,
@@ -147,6 +143,14 @@ class MutationsProject:
             GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result('data', result)
 
+    @deprecate(
+        """
+        This method is deprecated since: 11/03/2021.
+        This method will be removed after: 11/04/2021.
+        create_empty_project is used to create a project without an input type, an interface or a title. Use "create_project" instead.
+            > interface = {'jobRendererWidth': 0.17, 'jobs': {'JOB_0': {'mlTask': 'CLASSIFICATION', 'instruction': 'Categories', 'required': 1, 'isChild': False, 'isVisible': True, 'content': {'categories': {'OBJECT_A': {'name': 'Object A', 'children': []}}, 'input': 'radio'}}}}
+            > playground.create_project(input_type='IMAGE', json_interface=interface, title='Project title', description='Project description', user_id=kauth.user_id)
+        """)
     @Compatible(endpoints=['v1', 'v2'])
     def create_empty_project(self, user_id: str = None):
         """
