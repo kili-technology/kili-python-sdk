@@ -125,6 +125,25 @@ class Lock(object):
     lockType = 'lockType'
     lockOfIdCompute = 'lockOfIdCompute'
 
+class CommentsWithoutCommentsOf(object):
+    id = 'id'
+    author = ProjectUser
+    createdAt = 'createdAt'
+    text = 'text'
+    updatedAt = 'updatedAt'
+    
+class Issues(object):
+    id = 'id'
+    assignee = ProjectUser
+    author = ProjectUser
+    comments = CommentsWithoutCommentsOf
+    createdAt = 'createdAt'
+    hasBeenSeen = 'hasBeenSeen'
+    issueNumber = 'issueNumber'
+    project = ProjectWithoutDataset
+    status = 'status'
+    type = 'type'
+    updatedAt = 'updatedAt'
 
 class Asset(object):
     id = 'id'
@@ -139,6 +158,7 @@ class Asset(object):
     honeypotMarkCompute = 'honeypotMarkCompute'
     isHoneypot = 'isHoneypot'
     isToBeLabeledByCompute = 'isToBeLabeledByCompute'
+    issues = Issues
     isUsedForConsensus = 'isUsedForConsensus'
     jsonContent = 'jsonContent'
     jsonMetadata = 'jsonMetadata'
