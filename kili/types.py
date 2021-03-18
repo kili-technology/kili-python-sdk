@@ -131,6 +131,7 @@ class CommentsWithoutCommentsOf(object):
     createdAt = 'createdAt'
     text = 'text'
     updatedAt = 'updatedAt'
+    
 class Issues(object):
     id = 'id'
     assignee = ProjectUser
@@ -143,6 +144,7 @@ class Issues(object):
     status = 'status'
     type = 'type'
     updatedAt = 'updatedAt'
+
 class Asset(object):
     id = 'id'
     consensusMark = 'consensusMark'
