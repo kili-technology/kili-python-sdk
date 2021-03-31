@@ -90,16 +90,12 @@ def format_json(result):
     if isinstance(result, dict):
         for key, value in result.items():
             if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse']:
-                if key == 'jsonMetadata' and is_url(result[key]):
-                    print('escape')
-                    result[key] = result[key]
-                elif value == '' or value is None:
+                if (value == '' or value is None) and not (is_url(value) and key == 'jsonInterface'):
                     result[key] = dict()
                 else:
                     try:
                         result[key] = loads(value)
                     except:
-                        print(key, value)
                         raise ValueError(
                             'Json Metadata / json response / json interface should be valid jsons')
             else:
