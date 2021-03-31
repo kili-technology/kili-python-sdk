@@ -67,11 +67,13 @@ def content_escape(content):
 
 
 def get_data_type(path):
-    if re.match(r'(jpg|jpeg)$', path.lower()):
+    if re.match(r'.*(jpg|jpeg)$', path.lower()):
         return 'image/png'
+    if re.match(r'.*pdf$', path.lower()):
+        return 'application/pdf'
 
 
-def encode_image(path):
+def encode_base64(path):
     data_type = get_data_type(path)
     with open(path, 'rb') as image_file:
         return f'data:{data_type};base64,' + \
