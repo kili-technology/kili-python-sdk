@@ -7,7 +7,7 @@ from ...helpers import (Compatible,
                         content_escape,
                         convert_to_list_of_none,
                         deprecate,
-                        encode_image,
+                        encode_base64,
                         format_metadata,
                         format_result,
                         is_none_or_empty,
@@ -98,7 +98,7 @@ class MutationsAsset:
         if not json_content_array:
             formatted_json_content_array = [''] * len(content_array)
         elif input_type == 'FRAME':
-            formatted_json_content_array = list(map(lambda json_content: dumps(
+            formatted_json_content_array = list(map(lambda json_content: json_content if is_url(json_content) else dumps(
                 dict(zip(range(len(json_content)), json_content))), json_content_array))
         else:
             formatted_json_content_array = [
@@ -108,8 +108,8 @@ class MutationsAsset:
             {}] * len(content_array) if not json_metadata_array else json_metadata_array
         formatted_json_metadata_array = [
             dumps(elem) for elem in json_metadata_array]
-        if input_type == 'IMAGE':
-            content_array = [content if is_url(content) else encode_image(
+        if input_type == 'IMAGE' or input_type == 'PDF':
+            content_array = [content if is_url(content) else encode_base64(
                 content) for content in content_array]
         elif input_type == 'FRAME' and json_content_array is None:
             for content in content_array:
