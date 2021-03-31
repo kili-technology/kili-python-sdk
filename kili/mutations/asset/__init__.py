@@ -98,7 +98,7 @@ class MutationsAsset:
         if not json_content_array:
             formatted_json_content_array = [''] * len(content_array)
         elif input_type == 'FRAME':
-            formatted_json_content_array = list(map(lambda json_content: dumps(
+            formatted_json_content_array = list(map(lambda json_content: json_content if is_url(json_content) else dumps(
                 dict(zip(range(len(json_content)), json_content))), json_content_array))
         else:
             formatted_json_content_array = [
