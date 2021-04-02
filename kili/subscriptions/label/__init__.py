@@ -40,3 +40,4 @@ class SubscriptionsLabel:
         variables = {'projectID': project_id}
         ws.subscribe(GQL_LABEL_CREATED_OR_UPDATED, variables=variables,
                      callback=callback, headers=headers, authorization=authorization)
+        return ws

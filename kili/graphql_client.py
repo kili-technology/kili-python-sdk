@@ -4,6 +4,7 @@ import random
 import string
 import json
 import time
+from datetime import datetime
 
 from six.moves import urllib
 
@@ -76,18 +77,20 @@ class SubscriptionGraphQLClient:
 
     def __init__(self, url):
         self.ws_url = url
-        self._conn = websocket.create_connection(self.ws_url,
-                                                 on_message=self._on_message,
-                                                 subprotocols=[GQL_WS_SUBPROTOCOL])
-        self._conn.on_message = self._on_message
+        self._paused = False
+        self._connect()
         self._subscription_running = False
         self._st_id = None
 
-    def _reconnect(self):
+    def _connect(self):
         self._conn = websocket.create_connection(self.ws_url,
                                                  on_message=self._on_message,
                                                  subprotocols=[GQL_WS_SUBPROTOCOL])
+        self._created_at = datetime.now()
         self._conn.on_message = self._on_message
+
+    def _reconnect(self):
+        self._connect()
         self._subscription_running = True
 
     def _on_message(self, message):
@@ -153,7 +156,7 @@ class SubscriptionGraphQLClient:
                         print(r)
                         self.stop_subscribe(_id)
                         break
-                    elif r['type'] != 'ka':
+                    elif r['type'] != 'ka' and not self._paused:
                         _cc(_id, r)
                     time.sleep(1)
                 except websocket._exceptions.WebSocketConnectionClosedException as e:
@@ -173,13 +176,25 @@ class SubscriptionGraphQLClient:
 
     def stop_subscribe(self, _id):
         self._subscription_running = False
-        self._st_id.join()
         self._stop(_id)
 
     def close(self):
         self._conn.close()
 
+    def pause(self):
+        self._paused = True
+
+    def unpause(self):
+        self._paused = False
+
+    def get_lifetime(self):
+        return (datetime.now() - self._created_at).seconds
+
+    def reset_timeout(self):
+        self._reconnect()
+
 
 # generate random alphanumeric id
+
 def gen_id(size=6, chars=string.ascii_letters + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
