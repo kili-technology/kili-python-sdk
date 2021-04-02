@@ -92,7 +92,7 @@ def format_json(result):
     if isinstance(result, dict):
         for key, value in result.items():
             if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse']:
-                if value == '' or value is None:
+                if (value == '' or value is None) and not (is_url(value) and key == 'jsonInterface'):
                     result[key] = dict()
                 else:
                     try:
