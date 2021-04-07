@@ -139,6 +139,7 @@ class SubscriptionGraphQLClient:
         payload = {'headers': headers, 'query': query, 'variables': variables}
         _cc = self._on_message if not callback else callback
         _id = self._start(payload)
+        self._id = _id
         return _cc, _id
 
     def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
@@ -154,7 +155,7 @@ class SubscriptionGraphQLClient:
                     r = json.loads(self._conn.recv())
                     if r['type'] == 'error' or r['type'] == 'complete':
                         print(r)
-                        self.stop_subscribe(_id)
+                        self._stop_subscribe(_id)
                         break
                     elif r['type'] != 'ka' and not self._paused:
                         _cc(_id, r)
@@ -174,7 +175,7 @@ class SubscriptionGraphQLClient:
         self._st_id.start()
         return _id
 
-    def stop_subscribe(self, _id):
+    def _stop_subscribe(self, _id):
         self._subscription_running = False
         self._stop(_id)
 

@@ -29,7 +29,7 @@ class SubscriptionsLabel:
 
         Returns
         -------
-        - None
+        - subscription client
         """
         ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
         ws = SubscriptionGraphQLClient(ws_endpoint)
