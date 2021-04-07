@@ -51,9 +51,9 @@ class MutationsAsset:
             Identifier of the project
         - content_array : List[str], optional (default = None)
             List of elements added to the assets of the project
-            - For a Text project, the content can be either raw text, or URLs.
-            - For an Image project, the content can be either URLs or paths to existing images on your computer.
-            - For an Image / Video / Pdf project, the content must be hosted on a web server,
+            - For a Text project, the content can be either raw text, or URLs to TEXT assets.
+            - For an Image / PDF project, the content can be either URLs or paths to existing images/pdf on your computer.
+            - For a Video  project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs.
             Must not be None except if you provide json_content_array.
         - external_id_array : List[str], optional (default = None)
@@ -63,8 +63,9 @@ class MutationsAsset:
             By default, all imported assets are set to 'TODO'. It can also be set to
             'ONGOING', 'LABELED', 'REVIEWED'
         - json_content_array : List[List[str]], optional (default = None)
-            Useful for 'FRAME' projects only. Each element is a sequence of frames,
-            i.e. a list of URLs to images.
+            Useful for 'FRAME' or 'TEXT' projects only. 
+            For FRAME projects, each element is a sequence of frames, i.e. a list of URLs to images or a list of paths to images 
+            For TEXT projects, each element is a json_content dict, formatted according to documentation on how to import rich-text assets: https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb
         - json_metadata_array : List[Dict] , optional (default = None)
             The metadata given to each asset should be stored in a json like dict with keys 
             "imageUrl", "text", "url".
@@ -99,7 +100,7 @@ class MutationsAsset:
             formatted_json_content_array = [''] * len(content_array)
         elif input_type == 'FRAME':
             formatted_json_content_array = list(map(lambda json_content: json_content if is_url(json_content) else dumps(
-                dict(zip(range(len(json_content)), json_content))), json_content_array))
+                dict(zip(range(len(json_content)), list(map(lambda frame_content: frame_content if is_url(frame_content) else encode_base64(frame_content),json_content))))), json_content_array))
         else:
             formatted_json_content_array = [
                 element if is_url(element) else dumps(element)
