@@ -2,6 +2,7 @@ import functools
 import warnings
 import base64
 import re
+import requests
 from json import dumps, loads
 from types import *
 
@@ -96,7 +97,10 @@ def format_json(result):
                     result[key] = dict()
                 else:
                     try:
-                        result[key] = loads(value)
+                        if is_url(value):
+                            result[key] = requests.get(value).json()
+                        else:
+                            result[key] = loads(value)
                     except:
                         raise ValueError(
                             'Json Metadata / json response / json interface should be valid jsons')
