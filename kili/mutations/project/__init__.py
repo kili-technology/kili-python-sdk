@@ -75,7 +75,6 @@ class MutationsProject:
                                      number_of_assets_with_empty_labels: int = None,
                                      number_of_remaining_assets: int = None,
                                      number_of_reviewed_assets: int = None,
-                                     review_coverage: int = None,
                                      should_relaunch_kpi_computation: bool = None,
                                      title: str = None):
         """
@@ -137,7 +136,6 @@ class MutationsProject:
             'numberOfRemainingAssets': number_of_remaining_assets,
             'numberOfReviewedAssets': number_of_reviewed_assets,
             'projectID': project_id,
-            'reviewCoverage': review_coverage,
             'shouldRelaunchKpiComputation': should_relaunch_kpi_computation,
             'title': title
         }
