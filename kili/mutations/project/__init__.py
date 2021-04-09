@@ -110,6 +110,8 @@ class MutationsProject:
             Defaults to 0
         - number_of_reviewed_assets : int, optional (default = None)
             Defaults to 0
+        - review_coverage : int, optional (default = None)
+            Allow to set the percentage of assets that will be queued in the review interface
         - should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings
         - title : str, optional (default = None)
