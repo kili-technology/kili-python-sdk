@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Optional
 import warnings
 
-from enforce_typing import enforce_types
+from typeguard import typechecked
 import pandas as pd
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
@@ -26,28 +26,28 @@ class QueriesLabel:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def labels(self,
-               asset_id: str = None,
-               asset_status_in: List[str] = None,
-               asset_external_id_in: List[str] = None,
-               author_in: List[str] = None,
-               created_at: str = None,
-               created_at_gte: str = None,
-               created_at_lte: str = None,
+               asset_id: Optional[str] = None,
+               asset_status_in: Optional[List[str]] = None,
+               asset_external_id_in: Optional[List[str]] = None,
+               author_in: Optional[List[str]] = None,
+               created_at: Optional[str] = None,
+               created_at_gte: Optional[str] = None,
+               created_at_lte: Optional[str] = None,
                fields: list = ['author.email', 'author.id', 'author.name', 'id',
                                'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
-               first: int = None,
-               honeypot_mark_gte: float = None,
-               honeypot_mark_lte: float = None,
-               id_contains: List[str] = None,
-               json_response_contains: List[str] = None,
-               label_id: str = None,
-               project_id: str = None,
+               first: Optional[int] = None,
+               honeypot_mark_gte: Optional[float] = None,
+               honeypot_mark_lte: Optional[float] = None,
+               id_contains: Optional[List[str]] = None,
+               json_response_contains: Optional[List[str]] = None,
+               label_id: Optional[str] = None,
+               project_id: Optional[str] = None,
                skip: int = 0,
-               skipped: bool = None,
-               type_in: List[str] = None,
-               user_id: str = None):
+               skipped: Optional[bool] = None,
+               type_in: Optional[List[str]] = None,
+               user_id: Optional[str] = None):
         """
         Get an array of labels from a project given a set of criteria
 
@@ -183,7 +183,7 @@ class QueriesLabel:
 
         return json_response
 
-    @enforce_types
+    @typechecked
     def export_labels_as_df(self,
                             project_id: str,
                             fields: list = ['author.email', 'author.id', 'author.name', 'createdAt', 'id', 'labelType', 'skipped']):
@@ -218,25 +218,25 @@ class QueriesLabel:
         return labels_df
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def count_labels(self,
-                     asset_id: str = None,
-                     asset_status_in: List[str] = None,
-                     asset_external_id_in: List[str] = None,
-                     author_in: List[str] = None,
-                     created_at: str = None,
-                     created_at_gte: str = None,
-                     created_at_lte: str = None,
+                     asset_id: Optional[str] = None,
+                     asset_status_in: Optional[List[str]] = None,
+                     asset_external_id_in: Optional[List[str]] = None,
+                     author_in: Optional[List[str]] = None,
+                     created_at: Optional[str] = None,
+                     created_at_gte: Optional[str] = None,
+                     created_at_lte: Optional[str] = None,
                      fields: list = ['author.email', 'author.id', 'author.name', 'id',
                                      'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
-                     honeypot_mark_gte: float = None,
-                     honeypot_mark_lte: float = None,
-                     json_response_contains: List[str] = None,
-                     label_id: str = None,
-                     project_id: str = None,
-                     skipped: bool = None,
-                     type_in: List[str] = None,
-                     user_id: str = None):
+                     honeypot_mark_gte: Optional[float] = None,
+                     honeypot_mark_lte: Optional[float] = None,
+                     json_response_contains: Optional[List[str]] = None,
+                     label_id: Optional[str] = None,
+                     project_id: Optional[str] = None,
+                     skipped: Optional[bool] = None,
+                     type_in: Optional[List[str]] = None,
+                     user_id: Optional[str] = None):
         """
         Get the number of labels for the given parameters
 

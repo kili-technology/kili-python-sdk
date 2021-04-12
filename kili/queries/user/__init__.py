@@ -1,6 +1,7 @@
+from typing import Optional
 import warnings
 
-from enforce_typing import enforce_types
+from typeguard import typechecked
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_users, GQL_USERS_COUNT
@@ -20,11 +21,11 @@ class QueriesUser:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def users(self,
-              api_key: str = None,
-              email: str = None,
-              organization_id: str = None,
+              api_key: Optional[str] = None,
+              email: Optional[str] = None,
+              organization_id: Optional[str] = None,
               fields: list = ['email', 'id', 'name'],
               first: int = 100,
               skip: int = 0):
@@ -71,9 +72,9 @@ class QueriesUser:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def count_users(self,
-                    organization_id: str = None):
+                    organization_id: Optional[str] = None):
         """
         Get users count given a set of constraints
 

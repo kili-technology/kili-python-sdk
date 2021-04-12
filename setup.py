@@ -25,11 +25,11 @@ setup(
 
     long_description_content_type="text/markdown",
 
-    install_requires=["enforce-typing", 
-                      "pandas",
+    install_requires=["pandas",
                       "requests",
                       "six",
                       "tqdm",
+                      "typeguard",
                       "websocket-client"],
 
     # Taking into account MANIFEST.in

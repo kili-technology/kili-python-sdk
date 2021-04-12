@@ -1,6 +1,6 @@
 from typing import Any, Callable
 
-from enforce_typing import enforce_types
+from typeguard import typechecked
 
 from ...helpers import format_result
 from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
@@ -18,7 +18,7 @@ class SubscriptionsLabel:
         """
         self.auth = auth
 
-    @enforce_types
+    @typechecked
     def label_created_or_updated(self, project_id: str, callback: Callable[[str, str], None]):
         """
         Subscribe a callback to a project, which is executed when a label is created or updated.

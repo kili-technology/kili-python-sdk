@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Optional
 
-from enforce_typing import enforce_types
+from typeguard import typechecked
 
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_notifications, GQL_NOTIFICATIONS_COUNT
@@ -20,15 +20,15 @@ class QueriesNotification:
         self.auth = auth
 
     @Compatible(['v2'])
-    @enforce_types
+    @typechecked
     def notifications(self,
                       fields: List[str] = ['createdAt', 'hasBeenSeen',
                                            'id', 'message', 'status', 'userID'],
                       first: int = 100,
-                      has_been_seen: bool = None,
-                      notification_id: str = None,
+                      has_been_seen: Optional[bool] = None,
+                      notification_id: Optional[str] = None,
                       skip: int = 0,
-                      user_id: str = None):
+                      user_id: Optional[str] = None):
         """
         Get an array of notifications given a set of constraints
 
@@ -70,10 +70,10 @@ class QueriesNotification:
         return format_result('data', result)
 
     @Compatible(['v2'])
-    @enforce_types
+    @typechecked
     def count_notifications(self,
-                            has_been_seen: bool = None,
-                            user_id: str = None):
+                            has_been_seen: Optional[bool] = None,
+                            user_id: Optional[str] = None):
         """
         Count the number of notifications
 

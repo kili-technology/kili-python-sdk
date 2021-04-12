@@ -1,6 +1,7 @@
 from json import dumps
+from typing import Optional
 
-from enforce_typing import enforce_types
+from typeguard import typechecked
 
 from ...helpers import Compatible, format_result, deprecate
 from ...queries.asset import QueriesAsset
@@ -29,7 +30,7 @@ class MutationsProject:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def append_to_roles(self, project_id: str, user_email: str, role: str = 'LABELER'):
         """
         Add a user to a project
@@ -64,23 +65,23 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def update_properties_in_project(self, project_id: str,
-                                     consensus_mark: float = None,
-                                     consensus_tot_coverage: int = None,
-                                     description: str = None,
-                                     honeypot_mark: float = None,
-                                     instructions: str = None,
+                                     consensus_mark: Optional[float] = None,
+                                     consensus_tot_coverage: Optional[int] = None,
+                                     description: Optional[str] = None,
+                                     honeypot_mark: Optional[float] = None,
+                                     instructions: Optional[str] = None,
                                      interface_category: str = 'IV2',
-                                     input_type: str = None,
-                                     json_interface: dict = None,
-                                     min_consensus_size: int = None,
-                                     number_of_assets: int = None,
-                                     number_of_assets_with_empty_labels: int = None,
-                                     number_of_remaining_assets: int = None,
-                                     number_of_reviewed_assets: int = None,
-                                     should_relaunch_kpi_computation: bool = None,
-                                     title: str = None):
+                                     input_type: Optional[str] = None,
+                                     json_interface: Optional[dict] = None,
+                                     min_consensus_size: Optional[int] = None,
+                                     number_of_assets: Optional[int] = None,
+                                     number_of_assets_with_empty_labels: Optional[int] = None,
+                                     number_of_remaining_assets: Optional[int] = None,
+                                     number_of_reviewed_assets: Optional[int] = None,
+                                     should_relaunch_kpi_computation: Optional[bool] = None,
+                                     title: Optional[str] = None):
         """
         Update properties of a project
 
@@ -156,8 +157,8 @@ class MutationsProject:
             > playground.create_project(input_type='IMAGE', json_interface=interface, title='Project title', description='Project description', user_id=kauth.user_id)
         """)
     @Compatible(endpoints=['v1', 'v2'])
-    @enforce_types
-    def create_empty_project(self, user_id: str = None):
+    @typechecked
+    def create_empty_project(self, user_id: Optional[str] = None):
         """
         Create an empty project
 
@@ -183,8 +184,10 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible(endpoints=['v2'])
-    @enforce_types
-    def create_project(self, input_type: str, json_interface: dict, title: str, description: str = '', project_type: str = None, user_id: str = None):
+    @typechecked
+    def create_project(self, input_type: str, json_interface: dict, 
+            title: str, description: str = '', project_type: Optional[str] = None, 
+            user_id: Optional[str] = None):
         """
         Create a project
 
@@ -224,7 +227,7 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible(['v2'])
-    @enforce_types
+    @typechecked
     def make_project_public(self, project_id: str):
         """
         Make a project public. Warning: This action is permanent and irreversible.
@@ -245,7 +248,7 @@ class MutationsProject:
         return project['publicToken']
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
         """
         Update properties of a role
@@ -279,7 +282,7 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def delete_from_roles(self, role_id: str):
         """
         Delete users by their role_id
@@ -297,13 +300,13 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible(['v2'])
-    @enforce_types
+    @typechecked
     def update_properties_in_project_user(self, project_user_id: str,
-                                          consensus_mark: float = None,
-                                          honeypot_mark: float = None,
-                                          number_of_labeled_assets: int = None,
-                                          starred: bool = None,
-                                          total_duration: int = None):
+                                          consensus_mark: Optional[float] = None,
+                                          honeypot_mark: Optional[float] = None,
+                                          number_of_labeled_assets: Optional[int] = None,
+                                          starred: Optional[bool] = None,
+                                          total_duration: Optional[int] = None):
         """
         Update properties of a project-user tuple
 
@@ -343,7 +346,7 @@ class MutationsProject:
         return format_result('data', result)
 
     @Compatible()
-    @enforce_types
+    @typechecked
     def force_project_kpis(self, project_id: str):
         """
         Compute KPIs for a project
@@ -360,7 +363,7 @@ class MutationsProject:
         _ = QueriesProject(self.auth).projects(project_id=project_id)
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def delete_project(self, project_id: str):
         """
         Delete project permanently 

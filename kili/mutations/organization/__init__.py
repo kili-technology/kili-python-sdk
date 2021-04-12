@@ -1,6 +1,7 @@
 import json
+from typing import Optional
 
-from enforce_typing import enforce_types
+from typeguard import typechecked
 
 from ...helpers import Compatible, format_result
 from .queries import (GQL_CREATE_ORGANIZATION,
@@ -20,7 +21,7 @@ class MutationsOrganization:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
+    @typechecked
     def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str):
         """
         Create an organization
@@ -50,8 +51,11 @@ class MutationsOrganization:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    @enforce_types
-    def update_properties_in_organization(self, organization_id: str, name: str = None, address: str = None, zip_code: str = None, city: str = None, country: str = None, license: dict = None):
+    @typechecked
+    def update_properties_in_organization(self, organization_id: str, 
+            name: Optional[str] = None, address: Optional[str] = None, 
+            zip_code: Optional[str] = None, city: Optional[str] = None, 
+            country: Optional[str] = None, license: Optional[dict] = None):
         """
         Modify an organization
 
