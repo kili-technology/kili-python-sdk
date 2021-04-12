@@ -4,8 +4,7 @@ import os
 import logging
 from tqdm import tqdm
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili import Kili
 
 logging.basicConfig(
     format='%(levelname)s:%(asctime)s %(message)s', level=logging.INFO)
@@ -38,12 +37,11 @@ def read_arguments():
 
 class ActiveLearner:
     def __init__(self, email, password, api_endpoint, project_id):
-        kauth = KiliAuth(email, password, api_endpoint=api_endpoint)
-        self.playground = Playground(kauth)
+        self.kili = Kili(email, password, api_endpoint=api_endpoint)
         self.project_id = project_id
 
     def get_assets_to_evaluate(self):
-        assets = self.playground.assets(project_id=self.project_id)
+        assets = self.kili.assets(project_id=self.project_id)
         assets_to_evaluate = []
         for asset in assets:
             if len(asset['labels']) == 0:
@@ -62,7 +60,7 @@ class ActiveLearner:
     def update_assets_priority(self, assets):
         for i, asset in enumerate(tqdm(assets)):
             asset_id = asset['id']
-            self.playground.update_properties_in_asset(
+            self.kili.update_properties_in_asset(
                 asset_id=asset_id, priority=i)
         return True
 

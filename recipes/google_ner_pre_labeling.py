@@ -10,8 +10,7 @@ from google.cloud.language import enums as language_enums
 from google.protobuf.json_format import MessageToDict
 from tqdm import tqdm
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili import Kili
 
 
 def download_dataset():
@@ -66,27 +65,26 @@ only_files = [os.path.join(path, name) for path,
               subdirs, files in os.walk(path_dir) for name in files]
 
 
-kauth = KiliAuth(api_key=api_key)
-playground = Playground(kauth)
+kili = Kili(api_key=api_key)
 
 for filepath in tqdm(only_files[:MAX_NUMBER_OF_ASSET]):
     with open(filepath, 'r') as f:
         content = f.read()
     external_id = filepath
     # Insert asset
-    playground.append_to_dataset(
+    kili.append_to_dataset(
         project_id=project_id, content=escape_content(content), external_id=external_id)
-    asset = playground.get_assets_(
+    asset = kili.get_assets_(
         project_id=project_id, external_id_contains=[external_id])
     asset_id = asset[0]['id']
 
     # Prioritize assets
-    playground.update_properties_in_asset(asset_id=asset_id, priority=1)
+    kili.update_properties_in_asset(asset_id=asset_id, priority=1)
 
     # Insert pre-annotations
     response = analyze_entities(content)
     entities = [e for e in response['entities']
                 if isinstance(e['type'], str) and e['type'] != 'OTHER']
     json_response = {'entities': add_id_to_entities(entities)}
-    playground.create_prediction(
+    kili.create_prediction(
         asset_id=asset_id, json_response=json_response)

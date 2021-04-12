@@ -4,20 +4,16 @@ import os
 import yaml
 import json
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili import Kili
 
 logging.basicConfig(format='%(levelname)s:%(asctime)s %(message)s', level=logging.INFO)
 
 
 def read_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--email", type=str,
+    parser.add_argument("-e", "--api_key", type=str,
                         default=os.environ.get('EMAIL', None),
                         help="your email, part of your kili credentials")
-    parser.add_argument("-p", "--password", type=str,
-                        default=os.environ.get('PASSWORD', None),
-                        help="your password, part of your kili credentials")
     parser.add_argument("-i", "--project_id", type=str,
                         default=os.environ.get('PROJECT_ID', None),
                         help="your kili project id")
@@ -29,8 +25,7 @@ def read_arguments():
                         help="the path to your prediction yml file")
     args = parser.parse_args()
     if any([
-        not args.email, 
-        not args.password, 
+        not args.api_key, 
         not args.project_id]):
         logging.error("Some required arguments are empty")
         exit(parser.print_usage())
@@ -48,8 +43,7 @@ def main():
     predictions = configuration['predictions']
 
     logging.info("Connecting to Kili")
-    kauth = KiliAuth(email=args.email, password=args.password, api_endpoint=args.api_endpoint)
-    playground = Playground(kauth)
+    kili = Kili(api_key=args.api_key, api_endpoint=args.api_endpoint)
 
     logging.info("Getting predictions")
     external_id_array = [
@@ -60,7 +54,7 @@ def main():
     ]
 
     logging.info("Uploading to Kili")
-    playground.create_predictions(
+    kili.create_predictions(
         project_id=args.project_id,
         external_id_array=external_id_array, json_response_array=json_response_array
     )

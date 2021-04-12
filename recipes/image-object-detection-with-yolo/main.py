@@ -273,7 +273,7 @@ class YoloTransferLearning(TransferLearning):
                         {self.job_id: {'annotations': annotations}})
         logging.info('Create predictions in Kili Technology...')
         model_name = datetime.now().strftime('model-yolo-%Y%m%d-%H%M%S')
-        self.playground.create_predictions(project_id=self.project_id,
+        self.kili.create_predictions(project_id=self.project_id,
                                            external_id_array=external_id_array,
                                            model_name_array=[
                                                model_name] * len(external_id_array),
@@ -291,7 +291,7 @@ def main():
     )
 
     logging.info('Checking project configuration...')
-    project = transfer_learning.playground.projects(
+    project = transfer_learning.kili.projects(
         project_id=transfer_learning.project_id)[0]
     try:
         categories = project['jsonInterface']['jobs'][transfer_learning.job_id]['content']['categories']

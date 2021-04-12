@@ -1,8 +1,7 @@
 import subprocess
 import time
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili import Kili
 
 SECONDS_TO_WAIT = 10
 
@@ -15,9 +14,7 @@ def get_labels_of_types(asset, label_types):
 
 class TransferLearning:
     def __init__(self, api_key, api_endpoint, project_id, number_of_inferences, minimum_number_of_assets_to_launch_training=100):
-        kauth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint)
-
-        self.playground = Playground(kauth)
+        self.kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
         self.project_id = project_id
         self.current_inference_number = 0
         self.current_training_number = 0
@@ -30,7 +27,7 @@ class TransferLearning:
         return self.current_training_number
 
     def get_assets_to_train(self):
-        assets = self.playground.assets(project_id=self.project_id)
+        assets = self.kili.assets(project_id=self.project_id)
         assets_to_train = []
         for asset in assets:
             default_labels = get_labels_of_types(asset, ['DEFAULT'])
@@ -70,7 +67,7 @@ class TransferLearning:
                 [asset['id'] for asset in filtered_assets_to_train])
 
     def get_assets_to_predict(self):
-        assets = self.playground.assets(project_id=self.project_id)
+        assets = self.kili.assets(project_id=self.project_id)
         assets_to_predict = []
         for asset in assets:
             labels = get_labels_of_types(asset, ['DEFAULT', 'REVIEWED'])

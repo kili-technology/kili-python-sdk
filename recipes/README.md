@@ -191,11 +191,9 @@ python set_asset_to_be_labeled_by.py
 2. Start automating your tasks :
 
 ```bash
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili import Kili
 
-kauth = KiliAuth(api_key=api_key)
-playground = Playground(kauth)
+kili = Kili(api_key=api_key)
 ```
 
 ## How to delete one asset identified by its external id ?
@@ -203,8 +201,8 @@ playground = Playground(kauth)
 Use:
 
 ```bash
-assets = playground.assets(project_id=project_id, external_id_contains=[external_id])
-playground.delete_many_from_dataset(asset_ids=[a['id] for a in assets])
+assets = kili.assets(project_id=project_id, external_id_contains=[external_id])
+kili.delete_many_from_dataset(asset_ids=[a['id] for a in assets])
 ```
 
 ## How to update instructions in project?

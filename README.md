@@ -17,29 +17,27 @@ Kili Technology allows you to:
 
 ### Text annotation example
 
-Named Entities Extraction and Relation | Rich format support
-:--------:|:-------------:
-![](./recipes/img/relations-extraction.png) | ![](./recipes/img/rich_text_4.png)
+|   Named Entities Extraction and Relation    |        Rich format support         |
+| :-----------------------------------------: | :--------------------------------: |
+| ![](./recipes/img/relations-extraction.png) | ![](./recipes/img/rich_text_4.png) |
 
 ### Image annotation example
 
-Classification | Object detection (bounding-box here)
-:--------:|:-------------:
-![](./recipes/img/classification_nested.png) | ![](./recipes/img/bounding-box.png)
+|                Classification                | Object detection (bounding-box here) |
+| :------------------------------------------: | :----------------------------------: |
+| ![](./recipes/img/classification_nested.png) | ![](./recipes/img/bounding-box.png)  |
 
 ### Video annotation example
 
-Video annotation | Video classification
-:--------:|:-------------:
-![](./recipes/img/video_multi-frames_bbox.png) | ![](./recipes/img/video_nested.png)
+|                Video annotation                |        Video classification         |
+| :--------------------------------------------: | :---------------------------------: |
+| ![](./recipes/img/video_multi-frames_bbox.png) | ![](./recipes/img/video_nested.png) |
 
 ### Other interfaces
 
-Pdf | Speech to Text
-:--------:|:-------------:
-![](./recipes/img/pdf_ner.png) | ![](./recipes/img/speech_to_text_interface.png)
-
-
+|              Pdf               |                 Speech to Text                  |
+| :----------------------------: | :---------------------------------------------: |
+| ![](./recipes/img/pdf_ner.png) | ![](./recipes/img/speech_to_text_interface.png) |
 
 ## What is Kili Playground ?
 
@@ -60,13 +58,11 @@ pip install kili
 
 ![](./recipes/img/api_key.gif)
 
-- In your favourite IDE : 
+- In your favourite IDE :
 
 ```python
-from kili.authentication import KiliAuth
-from kili.playground import Playground
-kauth = KiliAuth(api_key='MY API KEY')
-playground = Playground(kauth)
+from kili import Kili
+kili = Kili(api_key='MY API KEY')
 # You can now play with the playground
 ```
 
