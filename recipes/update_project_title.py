@@ -1,6 +1,6 @@
 import click
 
-from kili import Kili
+from kili.client import Kili
 
 
 @click.command()

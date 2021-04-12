@@ -2,7 +2,7 @@ import getpass
 from tqdm import tqdm
 import yaml
 
-from kili import Kili
+from kili.client import Kili
 
 from tqdm import tqdm
 

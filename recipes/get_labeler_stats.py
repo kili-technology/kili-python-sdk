@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 import getpass
 
-from kili import Kili
+from kili.client import Kili
 
 
 @click.command()

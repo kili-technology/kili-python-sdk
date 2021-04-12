@@ -1,7 +1,7 @@
 import subprocess
 import time
 
-from kili import Kili
+from kili.client import Kili
 
 SECONDS_TO_WAIT = 10
 

@@ -4,7 +4,7 @@ import os
 import yaml
 import json
 
-from kili import Kili
+from kili.client import Kili
 
 logging.basicConfig(format='%(levelname)s:%(asctime)s %(message)s', level=logging.INFO)
 

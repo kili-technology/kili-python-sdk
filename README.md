@@ -61,7 +61,7 @@ pip install kili
 - In your favourite IDE :
 
 ```python
-from kili import Kili
+from kili.client import Kili
 kili = Kili(api_key='MY API KEY')
 # You can now play with the playground
 ```

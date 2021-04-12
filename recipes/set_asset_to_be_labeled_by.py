@@ -2,7 +2,7 @@ import click
 import yaml
 from tqdm import tqdm
 
-from kili import Kili
+from kili.client import Kili
 
 
 def get(dic, key):

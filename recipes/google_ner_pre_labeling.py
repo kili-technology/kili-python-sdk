@@ -10,7 +10,7 @@ from google.cloud.language import enums as language_enums
 from google.protobuf.json_format import MessageToDict
 from tqdm import tqdm
 
-from kili import Kili
+from kili.client import Kili
 
 
 def download_dataset():

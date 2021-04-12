@@ -191,7 +191,7 @@ python set_asset_to_be_labeled_by.py
 2. Start automating your tasks :
 
 ```bash
-from kili import Kili
+from kili.client import Kili
 
 kili = Kili(api_key=api_key)
 ```

@@ -4,7 +4,7 @@ import json
 import yaml
 from tqdm import tqdm
 
-from kili import Kili
+from kili.client import Kili
 
 api_key = input('Enter API KEY: ')
 
