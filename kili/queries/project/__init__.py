@@ -25,8 +25,8 @@ class QueriesProject:
                  updated_at_lte: str = None,
                  skip: int = 0,
                  fields: list = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface',
-                                 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role',
-                                 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'],
+                                 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'reviewCoverage', 'roles.id',
+                                 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'],
                  first: int = 100):
         """
         Get projects given a set of criteria

@@ -49,6 +49,7 @@ mutation(
       numberOfAssetsWithSkippedLabels: $numberOfAssetsWithSkippedLabels
       numberOfRemainingAssets: $numberOfRemainingAssets
       numberOfReviewedAssets: $numberOfReviewedAssets
+      reviewCoverage: $reviewCoverage
       title: $title
     }}
   ) {{
