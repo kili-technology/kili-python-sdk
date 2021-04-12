@@ -1,5 +1,7 @@
 from typing import List
 
+from enforce_typing import enforce_types
+
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_notifications, GQL_NOTIFICATIONS_COUNT
 from ...types import Notification
@@ -18,6 +20,7 @@ class QueriesNotification:
         self.auth = auth
 
     @Compatible(['v2'])
+    @enforce_types
     def notifications(self,
                       fields: List[str] = ['createdAt', 'hasBeenSeen',
                                            'id', 'message', 'status', 'userID'],
@@ -67,6 +70,7 @@ class QueriesNotification:
         return format_result('data', result)
 
     @Compatible(['v2'])
+    @enforce_types
     def count_notifications(self,
                             has_been_seen: bool = None,
                             user_id: str = None):

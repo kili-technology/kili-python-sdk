@@ -1,6 +1,8 @@
 from json import dumps
 from typing import List
 
+from enforce_typing import enforce_types
+
 from ...helpers import Compatible, format_result, infer_id_from_external_id
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
                       GQL_CREATE_PREDICTIONS,
@@ -21,6 +23,7 @@ class MutationsLabel:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def create_predictions(self, project_id: str, external_id_array: List[str], model_name_array: List[str], json_response_array: List[dict]):
         """
         Create predictions for some assets
@@ -77,6 +80,7 @@ class MutationsLabel:
         return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def append_to_labels(self, json_response: dict, author_id: str = None, label_asset_external_id: str = None, label_asset_id: str = None, label_type: str = 'DEFAULT', project_id: str = None, seconds_to_label: int = 0, skipped: bool = False):
         """
         Append a label to an asset
@@ -125,6 +129,7 @@ class MutationsLabel:
         return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def update_properties_in_label(self, label_id: str, seconds_to_label: int = None, model_name: str = None, json_response: dict = None):
         """
         Update properties of a label
@@ -159,6 +164,7 @@ class MutationsLabel:
         return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def create_honeypot(self, json_response: dict, asset_external_id: str = None, asset_id: str = None, project_id: str = None):
         """
         Create honeypot for an asset. 

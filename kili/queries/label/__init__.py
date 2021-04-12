@@ -1,6 +1,9 @@
-import pandas as pd
 from typing import List
 import warnings
+
+from enforce_typing import enforce_types
+import pandas as pd
+
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from ..asset import QueriesAsset
 from ..project import QueriesProject
@@ -23,6 +26,7 @@ class QueriesLabel:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def labels(self,
                asset_id: str = None,
                asset_status_in: List[str] = None,
@@ -179,6 +183,7 @@ class QueriesLabel:
 
         return json_response
 
+    @enforce_types
     def export_labels_as_df(self,
                             project_id: str,
                             fields: list = ['author.email', 'author.id', 'author.name', 'createdAt', 'id', 'labelType', 'skipped']):
@@ -213,6 +218,7 @@ class QueriesLabel:
         return labels_df
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def count_labels(self,
                      asset_id: str = None,
                      asset_status_in: List[str] = None,

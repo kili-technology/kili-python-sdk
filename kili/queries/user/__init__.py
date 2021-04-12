@@ -1,5 +1,7 @@
 import warnings
 
+from enforce_typing import enforce_types
+
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_users, GQL_USERS_COUNT
 from ...types import User
@@ -18,6 +20,7 @@ class QueriesUser:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def users(self,
               api_key: str = None,
               email: str = None,
@@ -68,6 +71,7 @@ class QueriesUser:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def count_users(self,
                     organization_id: str = None):
         """

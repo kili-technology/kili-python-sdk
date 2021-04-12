@@ -1,7 +1,10 @@
+import warnings
+
+from enforce_typing import enforce_types
+
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_project_users, GQL_PROJECT_USERS_COUNT
 from ...types import ProjectUser
-import warnings
 
 
 class QueriesProjectUser:
@@ -17,6 +20,7 @@ class QueriesProjectUser:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def project_users(self,
                       email: str = None,
                       id: str = None,
@@ -72,6 +76,7 @@ class QueriesProjectUser:
         result = self.auth.client.execute(GQL_PROJECT_USERS, variables)
         return format_result('data', result)
 
+    @enforce_types
     def count_project_users(self, email: str = None, id: str = None, organization_id: str = None, project_id: str = None,):
         """
         Counts the number of projects and their users respecting a set of criteria

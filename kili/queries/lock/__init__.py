@@ -1,5 +1,7 @@
 import warnings
 
+from enforce_typing import enforce_types
+
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_locks, GQL_LOCKS_COUNT
 from ...types import Lock
@@ -18,6 +20,7 @@ class QueriesLock:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def locks(self,
               lock_id: str = None,
               fields: list = ['id', 'lockType'],
@@ -56,6 +59,7 @@ class QueriesLock:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def count_locks(self):
         """
         Get the number of locks

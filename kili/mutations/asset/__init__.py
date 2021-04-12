@@ -3,6 +3,8 @@ from uuid import uuid4
 from typing import List
 from functools import partial
 
+from enforce_typing import enforce_types
+
 from ...helpers import (Compatible,
                         content_escape,
                         convert_to_list_of_none,
@@ -36,6 +38,7 @@ class MutationsAsset:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def append_many_to_dataset(self, project_id: str, content_array: List[str] = None, external_id_array: List[str] = None,
                                is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_content_array: List[List[str]] = None,
                                json_metadata_array: List[dict] = None):
@@ -137,6 +140,7 @@ class MutationsAsset:
             > playground.update_properties_in_assets(asset_ids=['asset_id_1', 'asset_id_2'], contents=['https://content1.com', 'https://content2.com'])
         """)
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def update_properties_in_asset(self, asset_id: str, external_id: str = None,
                                    priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
                                    honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
@@ -196,6 +200,7 @@ class MutationsAsset:
         return assets[0]
 
     @Compatible(['v2'])
+    @enforce_types
     def update_properties_in_assets(self, asset_ids: List[str], external_ids: List[str] = None,
                                     priorities: List[int] = None, json_metadatas: List[dict] = None, consensus_marks: List[float] = None,
                                     honeypot_marks: List[float] = None, to_be_labeled_by_array: List[List[str]] = None, contents: List[str] = None,
@@ -303,6 +308,7 @@ class MutationsAsset:
         return format_result('data', result, Asset)
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
         Delete assets from a project

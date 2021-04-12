@@ -25,7 +25,8 @@ setup(
 
     long_description_content_type="text/markdown",
 
-    install_requires=["pandas",
+    install_requires=["enforce-typing", 
+                      "pandas",
                       "requests",
                       "six",
                       "tqdm",

@@ -2,6 +2,7 @@ import time
 from json import dumps
 from typing import List
 
+from enforce_typing import enforce_types
 import pandas as pd
 from tqdm import tqdm
 
@@ -25,6 +26,7 @@ class QueriesAsset:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def assets(self, asset_id: str = None, project_id: str = None,
                skip: int = 0,
                fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
@@ -178,6 +180,7 @@ class QueriesAsset:
                 pbar.update(len(assets))
 
     @Compatible(['v1', 'v2'])
+    @enforce_types
     def count_assets(self, asset_id: str = None,
                      project_id: str = None,
                      external_id_contains: List[str] = None,
