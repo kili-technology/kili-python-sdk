@@ -29,6 +29,7 @@ setup(
                       "requests",
                       "six",
                       "tqdm",
+                      "typeguard",
                       "websocket-client"],
 
     # Taking into account MANIFEST.in

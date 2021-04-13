@@ -1,3 +1,7 @@
+from typing import Optional
+
+from typeguard import typechecked
+
 from ...helpers import Compatible, deprecate, format_result
 from .queries import (GQL_CREATE_USER,
                       GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS,
@@ -18,6 +22,7 @@ class MutationsUser:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
+    @typechecked
     def create_user(self, name: str, email: str, password: str, organization_role: str):
         """
         Add a user to your organization.
@@ -47,6 +52,7 @@ class MutationsUser:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
+    @typechecked
     def update_api_key(self, email: str, new_api_key: str):
         """
         Update API key
@@ -70,7 +76,9 @@ class MutationsUser:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def update_password(self, email: str, old_password: str, new_password_1: str, new_password_2: str):
+    @typechecked
+    def update_password(self, email: str, old_password: str, new_password_1: str, 
+            new_password_2: str):
         """
         Allows you to modify the password you use to connect to Kili. This resolver only works for on-premise installations without Auth0.
 
@@ -97,6 +105,7 @@ class MutationsUser:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
+    @typechecked
     def reset_password(self, email: str):
         """
         Reset password
@@ -117,7 +126,10 @@ class MutationsUser:
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
-    def update_properties_in_user(self, email: str, name: str = None, organization_id: str = None, organization_role: str = None, activated: bool = None):
+    @typechecked
+    def update_properties_in_user(self, email: str, name: Optional[str] = None, 
+            organization_id: Optional[str] = None, organization_role: Optional[str] = None, 
+            activated: Optional[bool] = None):
         """
         Update the properties of a user
 

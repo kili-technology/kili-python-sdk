@@ -1,4 +1,7 @@
+from typing import Optional
 import warnings
+
+from typeguard import typechecked
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_organizations, GQL_ORGANIZATIONS_COUNT
@@ -18,7 +21,10 @@ class QueriesOrganization:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
-    def organizations(self, email: str = None, organization_id: str = None, fields: list = ['id', 'name'], first: int = 100, skip: int = 0):
+    @typechecked
+    def organizations(self, email: Optional[str] = None, 
+            organization_id: Optional[str] = None, fields: list = ['id', 'name'], 
+            first: int = 100, skip: int = 0):
         """
         Get organizations respecting a set of criteria
 
@@ -63,7 +69,9 @@ class QueriesOrganization:
         return format_result('data', result)
 
     @Compatible(['v2'])
-    def count_organizations(self, email: str = None, organization_id: str = None):
+    @typechecked
+    def count_organizations(self, email: Optional[str] = None, 
+            organization_id: Optional[str] = None):
         """
         Count organizations respecting a set of criteria
 
