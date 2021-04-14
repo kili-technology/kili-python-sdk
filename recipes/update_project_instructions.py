@@ -2,8 +2,7 @@ import getpass
 
 import click
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili.client import Kili
 
 
 @click.command()
@@ -19,9 +18,8 @@ def main(api_endpoint):
         raise Exception(
             'The link to instructions should be an URL beginning in http:// or https://')
 
-    kauth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint)
-    playground = Playground(kauth)
-    playground.update_properties_in_project(
+    kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
+    kili.update_properties_in_project(
         project_id=project_id, instructions=instructions)
 
 

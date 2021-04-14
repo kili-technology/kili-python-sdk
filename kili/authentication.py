@@ -5,7 +5,9 @@ import requests
 
 from . import __version__
 from .graphql_client import GraphQLClient
+from .helpers import deprecate
 from .playground import Playground
+from .queries.user import QueriesUser
 
 MAX_RETRIES = 20
 
@@ -14,6 +16,7 @@ warnings.filterwarnings("default", module='kili', category=DeprecationWarning)
 
 def get_version_without_patch(version):
     return '.'.join(version.split('.')[:-1])
+
 
 
 class KiliAuth(object):
@@ -52,8 +55,8 @@ class KiliAuth(object):
             message = 'You need to provide an API KEY to connect. Visit https://cloud.kili-technology.com/docs/python-graphql-api/authentication/#generate-an-api-key'
             warnings.warn(message, UserWarning)
         self.client.inject_token('X-API-Key: ' + api_key)
-        playground = Playground(self)
-        users = playground.users(api_key=api_key, fields=['id'])
+        queries = QueriesUser(self)
+        users = queries.users(api_key=api_key, fields=['id'])
         if len(users) == 0:
             raise Exception('No user attached to the API key was found')
         self.user_id = users[0]['id']

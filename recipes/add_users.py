@@ -2,8 +2,7 @@ import getpass
 from tqdm import tqdm
 import yaml
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili.client import Kili
 
 from tqdm import tqdm
 
@@ -28,17 +27,16 @@ users = configuration['users']
 DEFAULT_ORGANIZATION_ROLE = 'USER'
 
 
-kauth = KiliAuth(api_key=api_key)
-playground = Playground(kauth)
+kili = Kili(api_key=api_key)
 
-organization_id = playground.get_user(email=email)['organization']['id']
+organization_id = kili.get_user(email=email)['organization']['id']
 
 for user in tqdm(users):
     user_name = get(user, 'name')
     user_email = get(user, 'email')
     user_password = get(user, 'password')
-    playground.create_user(name=user_name, email=user_email, password=user_password,
+    kili.create_user(name=user_name, email=user_email, password=user_password,
                            organization_id=organization_id, organization_role=DEFAULT_ORGANIZATION_ROLE)
     user_role = get(user, 'role')
-    playground.append_to_roles(
+    kili.append_to_roles(
         project_id=project_id, user_email=user_email, role=user_role)

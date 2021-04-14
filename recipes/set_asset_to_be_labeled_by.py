@@ -2,8 +2,7 @@ import click
 import yaml
 from tqdm import tqdm
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili.client import Kili
 
 
 def get(dic, key):
@@ -12,8 +11,8 @@ def get(dic, key):
     return dic[key]
 
 
-def get_asset_by_external_id(playground, project_id, external_id):
-    assets = playground.assets(
+def get_asset_by_external_id(kili, project_id, external_id):
+    assets = kili.assets(
         project_id=project_id, external_id_contains=[external_id])
     assert len(assets) == 1
     return assets[0]
@@ -30,19 +29,18 @@ def main(api_endpoint):
 
     assets = configuration['assets']
 
-    kauth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint)
-    playground = Playground(kauth)
+    kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
 
-    project = playground.projects(project_id=project_id)[0]
+    project = kili.projects(project_id=project_id)[0]
     roles = get(project, 'roles')
 
     for asset in tqdm(assets):
         external_id = get(asset, 'externalId')
         to_be_labeled_by = [get(user, 'email')
                             for user in get(asset, 'toBeLabeledBy')]
-        asset = get_asset_by_external_id(playground, project_id, external_id)
+        asset = get_asset_by_external_id(kili, project_id, external_id)
         asset_id = get(asset, 'id')
-        playground.update_properties_in_asset(
+        kili.update_properties_in_asset(
             asset_id=asset_id, to_be_labeled_by=to_be_labeled_by)
 
 

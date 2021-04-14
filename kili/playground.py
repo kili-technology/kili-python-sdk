@@ -18,6 +18,15 @@ from kili.constants import NO_ACCESS_RIGHT
 from kili.helpers import deprecate
 
 
+@deprecate(
+    """
+        This method is deprecated since: 12/04/2021.
+        This method will be removed after: 12/05/2021.
+        Use instead:
+            > from kili import Kili
+            > kili = Kili(api_key=api_key)
+            > kili.assets()
+        """)
 class Playground(
         kili.mutations.asset.MutationsAsset,
         kili.mutations.label.MutationsLabel,

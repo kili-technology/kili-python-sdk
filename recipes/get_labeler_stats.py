@@ -3,8 +3,7 @@ from datetime import datetime
 import pandas as pd
 import getpass
 
-from kili.authentication import KiliAuth
-from kili.playground import Playground
+from kili.client import Kili
 
 
 @click.command()
@@ -15,14 +14,13 @@ def main(api_endpoint):
     source_project_id = input(
         'Enter project IDs (separate them by "," if you want to provide several): ')
 
-    kauth = KiliAuth(api_key=api_key,
+    kili = Kili(api_key=api_key,
                      api_endpoint=api_endpoint)
-    playground = Playground(kauth)
 
     df = pd.DataFrame(columns=['Project', 'Date', 'Email'])
     for project_id in source_project_id.split(','):
-        project = playground.projects(project_id=project_id)[0]
-        assets = playground.assets(project_id=project_id)
+        project = kili.projects(project_id=project_id)[0]
+        assets = kili.assets(project_id=project_id)
         title = project['title']
         for asset in assets:
             for label in asset['labels']:
