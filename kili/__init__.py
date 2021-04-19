@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
-__version__ = "2.49.0"
-
 from kili import mutations, queries, subscriptions
+
+
+__version__ = "2.51.0"
+

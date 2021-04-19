@@ -3,7 +3,7 @@
 
 from setuptools import find_packages, setup
 
-import kili
+from kili import __version__
 
 setup(
 
@@ -11,7 +11,7 @@ setup(
     name='kili',
 
     # code version
-    version=kili.__version__,
+    version=__version__,
 
     # List packages
     packages=find_packages(),
@@ -29,6 +29,7 @@ setup(
                       "requests",
                       "six",
                       "tqdm",
+                      "typeguard",
                       "websocket-client"],
 
     # Taking into account MANIFEST.in

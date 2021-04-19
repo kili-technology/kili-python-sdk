@@ -1,7 +1,8 @@
 import time
 from json import dumps
-from typing import List
+from typing import List, Optional
 
+from typeguard import typechecked
 import pandas as pd
 from tqdm import tqdm
 
@@ -25,31 +26,32 @@ class QueriesAsset:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
-    def assets(self, asset_id: str = None, project_id: str = None,
+    @typechecked
+    def assets(self, asset_id: Optional[str] = None, project_id: Optional[str] = None,
                skip: int = 0,
                fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
                                'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'status'],
-               first: int = None,
-               consensus_mark_gt: float = None,
-               consensus_mark_lt: float = None,
-               external_id_contains: List[str] = None,
-               honeypot_mark_gt: float = None,
-               honeypot_mark_lt: float = None,
-               status_in: List[str] = None,
-               label_type_in: List[str] = None,
-               label_author_in: List[str] = None,
-               label_consensus_mark_gt: float = None,
-               label_consensus_mark_lt: float = None,
-               label_created_at: str = None,
-               label_created_at_gt: str = None,
-               label_created_at_lt: str = None,
-               label_honeypot_mark_gt: float = None,
-               label_honeypot_mark_lt: float = None,
-               label_json_response_contains: List[str] = None,
-               label_skipped: bool = None,
-               updated_at_gte: str = None,
-               updated_at_lte: str = None,
-               format: str = None, disable_tqdm: bool = False):
+               first: Optional[int] = None,
+               consensus_mark_gt: Optional[float] = None,
+               consensus_mark_lt: Optional[float] = None,
+               external_id_contains: Optional[List[str]] = None,
+               honeypot_mark_gt: Optional[float] = None,
+               honeypot_mark_lt: Optional[float] = None,
+               status_in: Optional[List[str]] = None,
+               label_type_in: Optional[List[str]] = None,
+               label_author_in: Optional[List[str]] = None,
+               label_consensus_mark_gt: Optional[float] = None,
+               label_consensus_mark_lt: Optional[float] = None,
+               label_created_at: Optional[str] = None,
+               label_created_at_gt: Optional[str] = None,
+               label_created_at_lt: Optional[str] = None,
+               label_honeypot_mark_gt: Optional[float] = None,
+               label_honeypot_mark_lt: Optional[float] = None,
+               label_json_response_contains: Optional[List[str]] = None,
+               label_skipped: Optional[bool] = None,
+               updated_at_gte: Optional[str] = None,
+               updated_at_lte: Optional[str] = None,
+               format: Optional[str] = None, disable_tqdm: bool = False):
         """
         Get an array of assets respecting a set of constraints
 
@@ -178,27 +180,28 @@ class QueriesAsset:
                 pbar.update(len(assets))
 
     @Compatible(['v1', 'v2'])
-    def count_assets(self, asset_id: str = None,
-                     project_id: str = None,
-                     external_id_contains: List[str] = None,
-                     status_in: List[str] = None,
-                     consensus_mark_gt: float = None,
-                     consensus_mark_lt: float = None,
-                     honeypot_mark_gt: float = None,
-                     honeypot_mark_lt: float = None,
-                     label_type_in: List[str] = None,
-                     label_author_in: List[str] = None,
-                     label_consensus_mark_gt: float = None,
-                     label_consensus_mark_lt: float = None,
-                     label_created_at: str = None,
-                     label_created_at_gt: str = None,
-                     label_created_at_lt: str = None,
-                     label_honeypot_mark_gt: float = None,
-                     label_honeypot_mark_lt: float = None,
-                     label_json_response_contains: List[str] = None,
-                     label_skipped: bool = None,
-                     updated_at_gte: str = None,
-                     updated_at_lte: str = None):
+    @typechecked
+    def count_assets(self, asset_id: Optional[str] = None,
+                     project_id: Optional[str] = None,
+                     external_id_contains: Optional[List[str]] = None,
+                     status_in: Optional[List[str]] = None,
+                     consensus_mark_gt: Optional[float] = None,
+                     consensus_mark_lt: Optional[float] = None,
+                     honeypot_mark_gt: Optional[float] = None,
+                     honeypot_mark_lt: Optional[float] = None,
+                     label_type_in: Optional[List[str]] = None,
+                     label_author_in: Optional[List[str]] = None,
+                     label_consensus_mark_gt: Optional[float] = None,
+                     label_consensus_mark_lt: Optional[float] = None,
+                     label_created_at: Optional[str] = None,
+                     label_created_at_gt: Optional[str] = None,
+                     label_created_at_lt: Optional[str] = None,
+                     label_honeypot_mark_gt: Optional[float] = None,
+                     label_honeypot_mark_lt: Optional[float] = None,
+                     label_json_response_contains: Optional[List[str]] = None,
+                     label_skipped: Optional[bool] = None,
+                     updated_at_gte: Optional[str] = None,
+                     updated_at_lte: Optional[str] = None):
         """
         Count and return the number of assets with the given constraints
 

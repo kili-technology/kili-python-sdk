@@ -1,7 +1,9 @@
 from json import dumps
 from uuid import uuid4
-from typing import List
+from typing import List, Optional, Union
 from functools import partial
+
+from typeguard import typechecked
 
 from ...helpers import (Compatible,
                         content_escape,
@@ -36,9 +38,10 @@ class MutationsAsset:
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
-    def append_many_to_dataset(self, project_id: str, content_array: List[str] = None, external_id_array: List[str] = None,
-                               is_honeypot_array: List[bool] = None, status_array: List[str] = None, json_content_array: List[List[str]] = None,
-                               json_metadata_array: List[dict] = None):
+    @typechecked
+    def append_many_to_dataset(self, project_id: str, content_array: Optional[List[str]] = None, external_id_array: Optional[List[str]] = None,
+                               is_honeypot_array: Optional[List[bool]] = None, status_array: Optional[List[str]] = None, json_content_array: Optional[List[List[Union[dict, str]]]] = None,
+                               json_metadata_array: Optional[List[dict]] = None):
         """
         Append assets to a project
 
@@ -137,10 +140,17 @@ class MutationsAsset:
             > playground.update_properties_in_assets(asset_ids=['asset_id_1', 'asset_id_2'], contents=['https://content1.com', 'https://content2.com'])
         """)
     @Compatible(['v1', 'v2'])
-    def update_properties_in_asset(self, asset_id: str, external_id: str = None,
-                                   priority: int = None, json_metadata: dict = None, consensus_mark: float = None,
-                                   honeypot_mark: float = None, to_be_labeled_by: List[str] = None, content: str = None,
-                                   status: str = None, is_used_for_consensus: bool = None, is_honeypot: bool = None):
+    @typechecked
+    def update_properties_in_asset(self, asset_id: str, external_id: Optional[str] = None,
+                                   priority: int = Optional[None], 
+                                   json_metadata: Optional[dict] = None, 
+                                   consensus_mark: Optional[float] = None,
+                                   honeypot_mark: Optional[float] = None, 
+                                   to_be_labeled_by: Optional[List[str]] = None, 
+                                   content: Optional[str] = None,
+                                   status: Optional[str] = None, 
+                                   is_used_for_consensus: Optional[bool] = None, 
+                                   is_honeypot: Optional[bool] = None):
         """
         Update the properties of one asset
 
@@ -196,10 +206,12 @@ class MutationsAsset:
         return assets[0]
 
     @Compatible(['v2'])
-    def update_properties_in_assets(self, asset_ids: List[str], external_ids: List[str] = None,
-                                    priorities: List[int] = None, json_metadatas: List[dict] = None, consensus_marks: List[float] = None,
-                                    honeypot_marks: List[float] = None, to_be_labeled_by_array: List[List[str]] = None, contents: List[str] = None,
-                                    status_array: List[str] = None, is_used_for_consensus_array: List[bool] = None, is_honeypot_array: List[bool] = None):
+    @typechecked
+    def update_properties_in_assets(self, asset_ids: List[str], 
+                                    external_ids: Optional[List[str]] = None,
+                                    priorities: Optional[List[int]] = None, json_metadatas: Optional[List[dict]] = None, consensus_marks: Optional[List[float]] = None,
+                                    honeypot_marks: Optional[List[float]] = None, to_be_labeled_by_array: Optional[List[List[str]]] = None, contents: Optional[List[str]] = None,
+                                    status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None, is_honeypot_array: Optional[List[bool]] = None):
         """
         Update the properties of one or more assets.
 
@@ -303,6 +315,7 @@ class MutationsAsset:
         return format_result('data', result, Asset)
 
     @Compatible(['v1', 'v2'])
+    @typechecked
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """
         Delete assets from a project
