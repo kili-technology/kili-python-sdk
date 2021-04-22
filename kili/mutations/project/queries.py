@@ -56,15 +56,6 @@ mutation(
 }}
 '''
 
-
-GQL_CREATE_EMPTY_PROJECT = f'''
-mutation($userID: ID!) {{
-  data: createEmptyProject(userID: $userID) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
-'''
-
 GQL_CREATE_PROJECT = f'''
 mutation(
     $description: String!

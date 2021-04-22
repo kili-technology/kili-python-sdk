@@ -7,7 +7,6 @@ from ...helpers import Compatible, format_result, deprecate
 from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_TO_ROLES,
-                      GQL_CREATE_EMPTY_PROJECT,
                       GQL_CREATE_PROJECT,
                       GQL_DELETE_FROM_ROLES,
                       GQL_DELETE_PROJECT,
@@ -148,46 +147,11 @@ class MutationsProject:
             GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result('data', result)
 
-    @deprecate(
-        """
-        This method is deprecated since: 11/03/2021.
-        This method will be removed after: 11/04/2021.
-        create_empty_project is used to create a project without an input type, an interface or a title. Use "create_project" instead.
-            > interface = {'jobRendererWidth': 0.17, 'jobs': {'JOB_0': {'mlTask': 'CLASSIFICATION', 'instruction': 'Categories', 'required': 1, 'isChild': False, 'isVisible': True, 'content': {'categories': {'OBJECT_A': {'name': 'Object A', 'children': []}}, 'input': 'radio'}}}}
-            > playground.create_project(input_type='IMAGE', json_interface=interface, title='Project title', description='Project description', user_id=kauth.user_id)
-        """)
-    @Compatible(endpoints=['v1', 'v2'])
-    @typechecked
-    def create_empty_project(self, user_id: Optional[str] = None):
-        """
-        Create an empty project
-
-        For more detailed examples on how to create projects, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb).
-
-        Parameters
-        ----------
-        - user_id : str, optional (default = auth.user_id)
-
-        Returns
-        -------
-        - a result object which indicates if the mutation was successful, or an error message else.
-
-        Examples
-        -------
-        >>> project = playground.create_empty_project()
-        >>> project_id = project['id']
-        """
-        if user_id is None:
-            user_id = self.auth.user_id
-        variables = {'userID': user_id}
-        result = self.auth.client.execute(GQL_CREATE_EMPTY_PROJECT, variables)
-        return format_result('data', result)
-
     @Compatible(endpoints=['v2'])
     @typechecked
-    def create_project(self, input_type: str, json_interface: dict, 
-            title: str, description: str = '', project_type: Optional[str] = None, 
-            user_id: Optional[str] = None):
+    def create_project(self, input_type: str, json_interface: dict,
+                       title: str, description: str = '', project_type: Optional[str] = None,
+                       user_id: Optional[str] = None):
         """
         Create a project
 
