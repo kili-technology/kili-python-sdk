@@ -19,7 +19,6 @@ from ...queries.project import QueriesProject
 from ...queries.asset import QueriesAsset
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_DELETE_MANY_FROM_DATASET,
-                      GQL_UPDATE_PROPERTIES_IN_ASSET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from ...constants import NO_ACCESS_RIGHT
 from ...orm import Asset
@@ -103,7 +102,7 @@ class MutationsAsset:
             formatted_json_content_array = [''] * len(content_array)
         elif input_type == 'FRAME':
             formatted_json_content_array = list(map(lambda json_content: json_content if is_url(json_content) else dumps(
-                dict(zip(range(len(json_content)), list(map(lambda frame_content: frame_content if is_url(frame_content) else encode_base64(frame_content),json_content))))), json_content_array))
+                dict(zip(range(len(json_content)), list(map(lambda frame_content: frame_content if is_url(frame_content) else encode_base64(frame_content), json_content))))), json_content_array))
         else:
             formatted_json_content_array = [
                 element if is_url(element) else dumps(element)
@@ -132,82 +131,9 @@ class MutationsAsset:
             GQL_APPEND_MANY_TO_DATASET, variables)
         return format_result('data', result, Asset)
 
-    @deprecate(
-        """
-        This method is deprecated since: 16/02/2021.
-        This method will be removed after: 16/03/2021.
-        update_properties_in_asset is used to update a property of one asset. Use "update_properties_in_assets" instead.
-            > playground.update_properties_in_assets(asset_ids=['asset_id_1', 'asset_id_2'], contents=['https://content1.com', 'https://content2.com'])
-        """)
-    @Compatible(['v1', 'v2'])
-    @typechecked
-    def update_properties_in_asset(self, asset_id: str, external_id: Optional[str] = None,
-                                   priority: int = Optional[None], 
-                                   json_metadata: Optional[dict] = None, 
-                                   consensus_mark: Optional[float] = None,
-                                   honeypot_mark: Optional[float] = None, 
-                                   to_be_labeled_by: Optional[List[str]] = None, 
-                                   content: Optional[str] = None,
-                                   status: Optional[str] = None, 
-                                   is_used_for_consensus: Optional[bool] = None, 
-                                   is_honeypot: Optional[bool] = None):
-        """
-        Update the properties of one asset
-
-        Parameters
-        ----------
-        - asset_id : str
-            The id of the asset to modify
-        - external_id : str, optional (default = None)
-            Change the external id of the asset
-        - priority : int, optional (default = None)
-            By default, all assets have a priority of 0
-        - json_metadata : dict , optional (default = None)
-            The metadata given to an asset should be stored in a json like dict with keys 
-            "imageUrl", "text", "url".
-            json_metadata = {'imageUrl': '','text': '','url': ''}
-        - consensus_mark : float (default = None)
-            Should be between 0 and 1
-        - honeypot_mark : float (default = None)
-            Should be between 0 and 1
-        - to_be_labeled_by : list of str (default = None)
-            If given, should contain the emails of the labelers authorized to label the asset
-        - content : str (default = None)
-            - For a NLP project, the content is directly in text format
-            - For an Image / Video / Pdf project, the content must be hosted on a web server,
-            and you point Kili to your data by giving the URLs
-        - status : str (default = None)
-            Should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
-        - is_used_for_consensus : bool (default = None)
-            Whether to use the asset to compute consensus kpis or not
-        - is_honeypot : bool (default = None)
-            Whether to use the asset for honeypot
-
-        Returns
-        -------
-        - a result object which indicates if the mutation was successful, or an error message else.
-        """
-
-        assets = self.update_properties_in_assets(
-            asset_ids=[asset_id],
-            priorities=list_is_not_none_else_none(priority),
-            json_metadatas=list_is_not_none_else_none(json_metadata),
-            consensus_marks=list_is_not_none_else_none(consensus_mark),
-            honeypot_marks=list_is_not_none_else_none(honeypot_mark),
-            to_be_labeled_by_array=list_is_not_none_else_none(
-                to_be_labeled_by),
-            contents=list_is_not_none_else_none(content),
-            status_array=list_is_not_none_else_none(status),
-            is_used_for_consensus_array=list_is_not_none_else_none(
-                is_used_for_consensus),
-            is_honeypot_array=list_is_not_none_else_none(is_honeypot)
-        )
-        assert len(assets) == 1
-        return assets[0]
-
     @Compatible(['v2'])
     @typechecked
-    def update_properties_in_assets(self, asset_ids: List[str], 
+    def update_properties_in_assets(self, asset_ids: List[str],
                                     external_ids: Optional[List[str]] = None,
                                     priorities: Optional[List[int]] = None, json_metadatas: Optional[List[dict]] = None, consensus_marks: Optional[List[float]] = None,
                                     honeypot_marks: Optional[List[float]] = None, to_be_labeled_by_array: Optional[List[List[str]]] = None, contents: Optional[List[str]] = None,

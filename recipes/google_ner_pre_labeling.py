@@ -79,7 +79,7 @@ for filepath in tqdm(only_files[:MAX_NUMBER_OF_ASSET]):
     asset_id = asset[0]['id']
 
     # Prioritize assets
-    kili.update_properties_in_asset(asset_id=asset_id, priority=1)
+    kili.update_properties_in_assets(asset_ids=[asset_id], priorities=[1])
 
     # Insert pre-annotations
     response = analyze_entities(content)
