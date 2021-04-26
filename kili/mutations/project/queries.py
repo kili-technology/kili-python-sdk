@@ -28,6 +28,7 @@ mutation(
     $numberOfRemainingAssets: Int
     $numberOfReviewedAssets: Int
     $projectID: ID!
+    $reviewCoverage: Int
     $title: String
 ) {{
   data: updatePropertiesInProject(
@@ -48,6 +49,7 @@ mutation(
       numberOfAssetsWithSkippedLabels: $numberOfAssetsWithSkippedLabels
       numberOfRemainingAssets: $numberOfRemainingAssets
       numberOfReviewedAssets: $numberOfReviewedAssets
+      reviewCoverage: $reviewCoverage
       title: $title
     }}
   ) {{
