@@ -60,8 +60,8 @@ class ActiveLearner:
     def update_assets_priority(self, assets):
         for i, asset in enumerate(tqdm(assets)):
             asset_id = asset['id']
-            self.kili.update_properties_in_asset(
-                asset_id=asset_id, priority=i)
+            self.kili.update_properties_in_assets(
+                asset_id=[asset_id], priorities=[i])
         return True
 
 

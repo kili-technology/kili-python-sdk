@@ -40,8 +40,8 @@ def main(api_endpoint):
                             for user in get(asset, 'toBeLabeledBy')]
         asset = get_asset_by_external_id(kili, project_id, external_id)
         asset_id = get(asset, 'id')
-        kili.update_properties_in_asset(
-            asset_id=asset_id, to_be_labeled_by=to_be_labeled_by)
+        kili.update_properties_in_assets(
+            asset_ids=[asset_id], to_be_labeled_by_array=[to_be_labeled_by])
 
 
 if __name__ == '__main__':
