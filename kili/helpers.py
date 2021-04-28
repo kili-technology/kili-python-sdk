@@ -95,7 +95,7 @@ def format_json(result):
             if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse']:
                 if (value == '' or value is None) and not (is_url(value) and key == 'jsonInterface'):
                     result[key] = dict()
-                else:
+                elif isinstance(value, str):
                     try:
                         if is_url(value):
                             result[key] = requests.get(value).json()
