@@ -62,7 +62,9 @@ class ProjectWithoutDataset(object):
     honeypotMark = 'honeypotMark'
     inputType = 'inputType'
     instructions = 'instructions'
+    interface = 'interface'
     interfaceCategory = 'interfaceCategory'
+    interfaceCompute = 'interfaceCompute'
     jsonInterface = 'jsonInterface'
     maxWorkerCount = 'maxWorkerCount'
     minAgreement = 'minAgreement'
@@ -151,6 +153,8 @@ class Asset(object):
     consensusMark = 'consensusMark'
     consensusMarkCompute = 'consensusMarkCompute'
     content = 'content'
+    contentJson = 'contentJson'
+    contentJsonCompute = 'contentJsonCompute'
     createdAt = 'createdAt'
     duration = 'duration'
     durationCompute = 'durationCompute'
@@ -165,6 +169,8 @@ class Asset(object):
     jsonMetadata = 'jsonMetadata'
     labels = LabelWithoutLabelOf
     locks = Lock
+    metadataCompute = 'metadataCompute'
+    metadata = 'metadata'
     numberOfValidLocks = 'numberOfValidLocks'
     numberOfValidLocksCompute = 'numberOfValidLocksCompute'
     priority = 'priority'
