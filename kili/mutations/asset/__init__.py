@@ -137,7 +137,8 @@ class MutationsAsset:
                                     external_ids: Optional[List[str]] = None,
                                     priorities: Optional[List[int]] = None, json_metadatas: Optional[List[dict]] = None, consensus_marks: Optional[List[float]] = None,
                                     honeypot_marks: Optional[List[float]] = None, to_be_labeled_by_array: Optional[List[List[str]]] = None, contents: Optional[List[str]] = None,
-                                    status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None, is_honeypot_array: Optional[List[bool]] = None):
+                                    jsonContents: Optional[List[str]] = None, status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None, 
+                                    is_honeypot_array: Optional[List[bool]] = None):
         """
         Update the properties of one or more assets.
 
@@ -161,6 +162,10 @@ class MutationsAsset:
         - to_be_labeled_by_array : List[List[str]] (default = None)
             If given, each element of the list should contain the emails of the labelers authorized to label the asset.
         - contents : List[str] (default = None)
+            - For a NLP project, the content can be directly in text format
+            - For an Image / Video / Pdf project, the content must be hosted on a web server,
+            and you point Kili to your data by giving the URLs
+        - jsonContents : List[str] (default = None)
             - For a NLP project, the content can be directly in text format
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs
@@ -209,7 +214,7 @@ class MutationsAsset:
                 f'Too many assets ({nb_assets_to_modify}) updated at a time')
         data_array = [{} for i in range(len(where_array))]
         list_of_properties = [external_ids, priorities, formatted_json_metadatas, consensus_marks, honeypot_marks, to_be_labeled_by_array,
-                              contents, status_array, is_used_for_consensus_array, is_honeypot_array]
+                              contents, jsonContents, status_array, is_used_for_consensus_array, is_honeypot_array]
         data = list(map(partial(convert_to_list_of_none,
                                 length=nb_assets_to_modify), list_of_properties))
         property_names = [
@@ -220,6 +225,7 @@ class MutationsAsset:
             'honeypotMark',
             'toBeLabeledBy',
             'content',
+            'jsonContent',
             'status',
             'isUsedForConsensus',
             'isHoneypot'
@@ -230,14 +236,16 @@ class MutationsAsset:
         for i, properties in enumerate(zip(*data)):
             for property, property_value in zip(property_names, properties):
                 data_array[i][property] = property_value
-        for i in range(nb_assets_to_modify):
+        for i in range(nb_assets_to_modify):            
             data_array[i]['shouldResetToBeLabeledBy'] = should_reset_to_be_labeled_by_array[i]
+            print(data_array)
         variables = {
             'whereArray': where_array,
             'dataArray': data_array
         }
         result = self.auth.client.execute(
             GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
+        print(result)
         return format_result('data', result, Asset)
 
     @Compatible(['v1', 'v2'])
