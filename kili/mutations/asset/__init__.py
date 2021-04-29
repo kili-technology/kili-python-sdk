@@ -166,9 +166,8 @@ class MutationsAsset:
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs
         - jsonContents : List[str] (default = None)
-            - For a NLP project, the content can be directly in text format
-            - For an Image / Video / Pdf project, the content must be hosted on a web server,
-            and you point Kili to your data by giving the URLs
+            - For a NLP project, the jsonContent is a a text formatted using RichText
+            - For a Video project, the jsonContent is a json containg urls pointing to each frame of the video.
         - status_array : List[str] (default = None)
             Each element should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
         - is_used_for_consensus_array : List[bool] (default = None)
