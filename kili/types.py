@@ -54,6 +54,8 @@ class ProjectUserWithoutProject(object):
 
 class ProjectWithoutDataset(object):
     id = 'id'
+    assetMetadata = 'assetMetadata'
+    assetMetadataCompute = 'assetMetadataCompute'
     author = UserWithoutProjectUsers
     consensusMark = 'consensusMark'
     consensusTotCoverage = 'consensusTotCoverage'
@@ -128,13 +130,15 @@ class Lock(object):
     lockType = 'lockType'
     lockOfIdCompute = 'lockOfIdCompute'
 
+
 class CommentsWithoutCommentsOf(object):
     id = 'id'
     author = ProjectUser
     createdAt = 'createdAt'
     text = 'text'
     updatedAt = 'updatedAt'
-    
+
+
 class Issues(object):
     id = 'id'
     assignee = ProjectUser
@@ -147,6 +151,7 @@ class Issues(object):
     status = 'status'
     type = 'type'
     updatedAt = 'updatedAt'
+
 
 class Asset(object):
     id = 'id'

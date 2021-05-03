@@ -35,6 +35,7 @@ class QueriesAsset:
                consensus_mark_gt: Optional[float] = None,
                consensus_mark_lt: Optional[float] = None,
                external_id_contains: Optional[List[str]] = None,
+               metadata_where: Optional[dict] = None,
                honeypot_mark_gt: Optional[float] = None,
                honeypot_mark_lt: Optional[float] = None,
                status_in: Optional[List[str]] = None,
@@ -71,7 +72,12 @@ class QueriesAsset:
         - consensus_mark_lt : float, optional (default = None)
             Maximum amout of consensus for the asset.
         - external_id_contains : list of str, optional (default = None)
-            Returned assets should have an external id that belongs to that list, if given.
+            Returned assets have an external id that belongs to that list, if given.
+        - metadata_where : dict, optional (default = None)
+            Filters by the values of the metadata of the asset.
+            metadata_where = {key1: "value1"} to filter on assets whose metadata have key "key1" with value "value1"
+            metadata_where = {key1: ["value1", "value2"]} to filter on assets whose metadata have key "key1" with value "value1" or value "value2
+            metadata_where = {key2: [2, 10]} to filter on assets whose metadata have key "key2" with a value between 2 and 10.
         - honeypot_mark_gt : float, optional (default = None)
             Minimum amout of honeypot for the asset.
         - honeypot_mark_lt : float, optional (default = None)
@@ -147,6 +153,7 @@ class QueriesAsset:
                         'consensusMarkLte': consensus_mark_lt,
                         'honeypotMarkGte': honeypot_mark_gt,
                         'honeypotMarkLte': honeypot_mark_lt,
+                        'metadata': metadata_where,
                         'label': {
                             'typeIn': label_type_in,
                             'authorIn': label_author_in,
@@ -184,6 +191,7 @@ class QueriesAsset:
     def count_assets(self, asset_id: Optional[str] = None,
                      project_id: Optional[str] = None,
                      external_id_contains: Optional[List[str]] = None,
+                     metadata_where: Optional[dict] = None,
                      status_in: Optional[List[str]] = None,
                      consensus_mark_gt: Optional[float] = None,
                      consensus_mark_lt: Optional[float] = None,
@@ -215,6 +223,11 @@ class QueriesAsset:
             Identifier of the project
         - external_id_contains : list of str, optional (default = None)
             Returned assets should have an external id that belongs to that list, if given.
+        - metadata_where : dict, optional (default = None)
+            Filters by the values of the metadata of the asset.
+            metadata_where = {key1: "value1"} to filter on assets whose metadata have key "key1" with value "value1"
+            metadata_where = {key1: ["value1", "value2"]} to filter on assets whose metadata have key "key1" with value "value1" or value "value2
+            metadata_where = {key2: [2, 10]} to filter on assets whose metadata have key "key2" with a value between 2 and 10.
         - status_in : list of str, optional (default = None)
             Returned assets should have a status that belongs to that list, if given.
             Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
@@ -281,6 +294,7 @@ class QueriesAsset:
                 'consensusMarkLte': consensus_mark_lt,
                 'honeypotMarkGte': honeypot_mark_gt,
                 'honeypotMarkLte': honeypot_mark_lt,
+                'metadata': metadata_where,
                 'label': {
                     'typeIn': label_type_in,
                     'authorIn': label_author_in,
