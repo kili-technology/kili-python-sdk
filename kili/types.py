@@ -104,6 +104,8 @@ class LabelWithoutLabelOf(object):
     createdAt = 'createdAt'
     honeypotMark = 'honeypotMark'
     honeypotMarkCompute = 'honeypotMarkCompute'
+    inferenceMark = 'inferenceMark'
+    inferenceMarkCompute = 'inferenceMarkCompute'
     isLatestLabelForUser = 'isLatestLabelForUser'
     isLatestLabelForUserCompute = 'isLatestLabelForUserCompute'
     isLatestDefaultLabelForUser = 'isLatestDefaultLabelForUser'
