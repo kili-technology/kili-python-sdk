@@ -184,6 +184,8 @@ class Asset(object):
     readPermissionsFromLabels = 'readPermissionsFromLabels'
     status = 'status'
     statusCompute = 'statusCompute'
+    thumbnail = 'thumbnail'
+    thumbnailCompute = 'thumbnailCompute'
     toBeLabeledBy = ProjectUser
     updatedAt = 'updatedAt'
 
