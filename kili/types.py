@@ -168,6 +168,8 @@ class Asset(object):
     externalId = 'externalId'
     honeypotMark = 'honeypotMark'
     honeypotMarkCompute = 'honeypotMarkCompute'
+    inferenceMark = 'inferenceMark'
+    inferenceMarkCompute = 'inferenceMarkCompute'
     isHoneypot = 'isHoneypot'
     isToBeLabeledByCompute = 'isToBeLabeledByCompute'
     issues = Issues
