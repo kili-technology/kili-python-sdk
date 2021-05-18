@@ -33,6 +33,7 @@ class ProjectUserWithoutProject(object):
     id = 'id'
     activated = 'activated'
     consensusMark = 'consensusMark'
+    consensusMarkPerCategory = 'consensusMarkPerCategory'
     consensusMarkCompute = 'consensusMarkCompute'
     honeypotMark = "honeypotMark"
     honeypotMarkCompute = 'honeypotMarkCompute'
@@ -58,6 +59,7 @@ class ProjectWithoutDataset(object):
     assetMetadataCompute = 'assetMetadataCompute'
     author = UserWithoutProjectUsers
     consensusMark = 'consensusMark'
+    consensusMarkPerCategory = 'consensusMarkPerCategory'
     consensusTotCoverage = 'consensusTotCoverage'
     createdAt = 'createdAt'
     description = 'description'
@@ -159,6 +161,7 @@ class Asset(object):
     id = 'id'
     consensusMark = 'consensusMark'
     consensusMarkCompute = 'consensusMarkCompute'
+    consensusMarkPerCategory = 'consensusMarkPerCategory'
     content = 'content'
     contentJson = 'contentJson'
     contentJsonCompute = 'contentJsonCompute'
