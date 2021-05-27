@@ -27,19 +27,19 @@ class QueriesAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def assets(self, asset_id: Optional[str] = None, project_id: Optional[str] = None,
-               skip: int = 0,
+    def assets(self,
+               asset_id: Optional[str] = None,
+               consensus_mark_gt: Optional[float] = None,
+               consensus_mark_lt: Optional[float] = None,
+               disable_tqdm: bool = False,
+               external_id_contains: Optional[List[str]] = None,
                fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
                                'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'status'],
                first: Optional[int] = None,
-               consensus_mark_gt: Optional[float] = None,
-               consensus_mark_lt: Optional[float] = None,
-               external_id_contains: Optional[List[str]] = None,
-               metadata_where: Optional[dict] = None,
+               format: Optional[str] = None, 
                honeypot_mark_gt: Optional[float] = None,
                honeypot_mark_lt: Optional[float] = None,
-               status_in: Optional[List[str]] = None,
-               label_type_in: Optional[List[str]] = None,
+               asset_id_in: Optional[str] = None,
                label_author_in: Optional[List[str]] = None,
                label_consensus_mark_gt: Optional[float] = None,
                label_consensus_mark_lt: Optional[float] = None,
@@ -50,9 +50,14 @@ class QueriesAsset:
                label_honeypot_mark_lt: Optional[float] = None,
                label_json_response_contains: Optional[List[str]] = None,
                label_skipped: Optional[bool] = None,
+               label_type_in: Optional[List[str]] = None,
+               metadata_where: Optional[dict] = None,
+               project_id: Optional[str] = None,
+               skip: int = 0,
+               status_in: Optional[List[str]] = None,
                updated_at_gte: Optional[str] = None,
-               updated_at_lte: Optional[str] = None,
-               format: Optional[str] = None, disable_tqdm: bool = False):
+               updated_at_lte: Optional[str] = None
+            ):
         """
         Get an array of assets respecting a set of constraints
 
@@ -82,6 +87,8 @@ class QueriesAsset:
             Minimum amout of honeypot for the asset.
         - honeypot_mark_lt : float, optional (default = None)
             Maximum amout of honeypot for the asset.
+        - asset_id_in : list of str, optional (default = None)
+            A list of the ids of the assets to retrieve.
         - status_in : list of str, optional (default = None)
             Returned assets should have a status that belongs to that list, if given.
             Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
@@ -153,6 +160,7 @@ class QueriesAsset:
                         'consensusMarkLte': consensus_mark_lt,
                         'honeypotMarkGte': honeypot_mark_gt,
                         'honeypotMarkLte': honeypot_mark_lt,
+                        'idIn' : asset_id_in,
                         'metadata': metadata_where,
                         'label': {
                             'typeIn': label_type_in,
