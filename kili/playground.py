@@ -50,11 +50,4 @@ class Playground(
         super().__init__(auth)
 
 
-if __name__ == '__main__':
-    """ Example of usage """
-    from kili.authentication import KiliAuth
-    from kili.playground import Playground
-    kauth = KiliAuth()
-    playground = Playground(kauth)
-    assets = playground.assets(project_id="first-project")
-    print(assets)
+

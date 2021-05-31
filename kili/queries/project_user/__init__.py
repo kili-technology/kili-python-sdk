@@ -54,7 +54,7 @@ class QueriesProjectUser:
         Examples
         -------
         >>> # Retrieve consensus marks of all users in project
-        >>> playground.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
+        >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
         """
         variables = {
             'first': first,

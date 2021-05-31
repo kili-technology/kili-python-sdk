@@ -133,8 +133,8 @@ class QueriesAsset:
 
         Examples
         -------
-        >>> playground.assets(project_id=project_id)
-        >>> playground.assets(asset_id=asset_id)
+        >>> kili.assets(project_id=project_id)
+        >>> kili.assets(asset_id=asset_id)
         """
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
@@ -288,9 +288,9 @@ class QueriesAsset:
 
         Examples
         -------
-        >>> playground.count_assets(project_id=project_id)
+        >>> kili.count_assets(project_id=project_id)
         250
-        >>> playground.count_assets(asset_id=asset_id)
+        >>> kili.count_assets(asset_id=asset_id)
         1
         """
         variables = {

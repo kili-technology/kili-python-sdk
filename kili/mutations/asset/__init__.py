@@ -79,7 +79,7 @@ class MutationsAsset:
 
         Examples
         -------
-        >>> playground.append_many_to_dataset(project_id=project_id, content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
+        >>> kili.append_many_to_dataset(project_id=project_id, content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
         """
         playground = QueriesProject(self.auth)
         projects = playground.projects(project_id)
@@ -181,7 +181,7 @@ class MutationsAsset:
 
         Examples
         -------
-        playground.update_properties_in_assets(
+        kili.update_properties_in_assets(
                 asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 consensus_marks=[1, 0.7],
                 contents=[None, 'https://to/second/asset.png'],
