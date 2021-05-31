@@ -50,7 +50,7 @@ class QueriesOrganization:
 
         Examples
         -------
-        >>> playground.organizations(organization_id=organization_id, fields=['users.email'])
+        >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
         [{'users': [{'email': 'john@doe.com'}]}]
         """
         variables = {

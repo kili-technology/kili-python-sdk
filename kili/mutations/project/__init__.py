@@ -53,7 +53,7 @@ class MutationsProject:
 
         Examples
         -------
-        >>> playground.append_to_roles(project_id=project_id, user_email='john@doe.com')
+        >>> kili.append_to_roles(project_id=project_id, user_email='john@doe.com')
         """
         variables = {
             'projectID': project_id,
@@ -126,7 +126,7 @@ class MutationsProject:
 
         Examples
         -------
-        >>> playground.update_properties_in_project(project_id=project_id, title='New title')
+        >>> kili.update_properties_in_project(project_id=project_id, title='New title')
         """
         variables = {
             'consensusMark': consensus_mark,
@@ -179,7 +179,7 @@ class MutationsProject:
 
         Examples
         -------
-        >>> playground.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
+        >>> kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
         """
         if user_id is None:
             user_id = self.auth.user_id
@@ -299,7 +299,7 @@ class MutationsProject:
         Examples
         -------
         >>> for project_user in project_users:
-        ...     playground.update_properties_in_project_user(project_user_id=project_user['id'], honeypot_mark=0)
+        ...     kili.update_properties_in_project_user(project_user_id=project_user['id'], honeypot_mark=0)
         """
         variables = {
             'consensusMark': consensus_mark,

@@ -21,11 +21,9 @@ def get_version_without_patch(version):
 
 class KiliAuth(object):
     """
-    from kili.authentication import KiliAuth
-    from kili.playground import Playground
-    kauth = KiliAuth(api_key=api_key)
-    playground = Playground(kauth)
-    assets = playground.assets(project_id=project_id)
+    from kili.client import Kili
+    kili = Kili(api_key=api_key)
+    assets = kili.assets(project_id=project_id)
     """
 
     def __init__(self,
