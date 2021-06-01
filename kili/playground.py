@@ -11,6 +11,7 @@ import kili.queries.organization
 import kili.queries.notification
 import kili.queries.project
 import kili.queries.project_user
+import kili.queries.project_version
 import kili.queries.user
 import kili.subscriptions.label
 from kili.constants import NO_ACCESS_RIGHT
@@ -41,6 +42,7 @@ class Playground(
         kili.queries.notification.QueriesNotification,
         kili.queries.project.QueriesProject,
         kili.queries.project_user.QueriesProjectUser,
+        kili.queries.project_version.QueriesProjectVersion,
         kili.queries.user.QueriesUser,
         kili.subscriptions.label.SubscriptionsLabel):
 

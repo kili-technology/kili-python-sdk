@@ -21,6 +21,7 @@ class Kili(
         queries.notification.QueriesNotification,
         queries.project.QueriesProject,
         queries.project_user.QueriesProjectUser,
+        queries.project_version.QueriesProjectVersion,
         queries.user.QueriesUser,
         subscriptions.label.SubscriptionsLabel):
 
