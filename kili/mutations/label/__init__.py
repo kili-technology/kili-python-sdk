@@ -115,7 +115,7 @@ class MutationsLabel:
 
         Examples
         -------
-        >>> playground.append_to_labels(label_asset_id=asset_id, json_response={...})
+        >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
         """
         if author_id is None:
             author_id = self.auth.user_id
@@ -155,7 +155,7 @@ class MutationsLabel:
 
         Examples
         -------
-        >>> playground.update_properties_in_label(label_id=label_id, json_response={...})
+        >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
         """
         formatted_json_response = None if json_response is None else dumps(
             json_response)

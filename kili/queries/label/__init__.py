@@ -105,7 +105,7 @@ class QueriesLabel:
         Examples
         -------
         >>> # List all labels of a project and their assets external ID
-        >>> playground.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId'])
+        >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId'])
         """
         formatted_first = first if first else 100
         variables = {

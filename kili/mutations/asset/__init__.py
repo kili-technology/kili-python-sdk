@@ -79,7 +79,7 @@ class MutationsAsset:
 
         Examples
         -------
-        >>> playground.append_many_to_dataset(project_id=project_id, content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
+        >>> kili.append_many_to_dataset(project_id=project_id, content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
         """
         playground = QueriesProject(self.auth)
         projects = playground.projects(project_id)
@@ -137,7 +137,8 @@ class MutationsAsset:
                                     external_ids: Optional[List[str]] = None,
                                     priorities: Optional[List[int]] = None, json_metadatas: Optional[List[dict]] = None, consensus_marks: Optional[List[float]] = None,
                                     honeypot_marks: Optional[List[float]] = None, to_be_labeled_by_array: Optional[List[List[str]]] = None, contents: Optional[List[str]] = None,
-                                    status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None, is_honeypot_array: Optional[List[bool]] = None):
+                                    json_contents: Optional[List[str]] = None, status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None, 
+                                    is_honeypot_array: Optional[List[bool]] = None):
         """
         Update the properties of one or more assets.
 
@@ -164,6 +165,9 @@ class MutationsAsset:
             - For a NLP project, the content can be directly in text format
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs
+        - json_contents : List[str] (default = None)
+            - For a NLP project, the json_content is a a text formatted using RichText
+            - For a Video project, the json_content is a json containg urls pointing to each frame of the video.
         - status_array : List[str] (default = None)
             Each element should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
         - is_used_for_consensus_array : List[bool] (default = None)
@@ -177,7 +181,7 @@ class MutationsAsset:
 
         Examples
         -------
-        playground.update_properties_in_assets(
+        kili.update_properties_in_assets(
                 asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 consensus_marks=[1, 0.7],
                 contents=[None, 'https://to/second/asset.png'],
@@ -209,7 +213,7 @@ class MutationsAsset:
                 f'Too many assets ({nb_assets_to_modify}) updated at a time')
         data_array = [{} for i in range(len(where_array))]
         list_of_properties = [external_ids, priorities, formatted_json_metadatas, consensus_marks, honeypot_marks, to_be_labeled_by_array,
-                              contents, status_array, is_used_for_consensus_array, is_honeypot_array]
+                              contents, json_contents, status_array, is_used_for_consensus_array, is_honeypot_array]
         data = list(map(partial(convert_to_list_of_none,
                                 length=nb_assets_to_modify), list_of_properties))
         property_names = [
@@ -220,6 +224,7 @@ class MutationsAsset:
             'honeypotMark',
             'toBeLabeledBy',
             'content',
+            'jsonContent',
             'status',
             'isUsedForConsensus',
             'isHoneypot'

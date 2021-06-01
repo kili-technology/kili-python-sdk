@@ -64,7 +64,7 @@ class QueriesProject:
         Examples
         -------
         >>> # List all my projects
-        >>> playground.projects()
+        >>> kili.projects()
         """
         GQL_PROJECTS = gql_projects(fragment_builder(fields, Project))
         variables = {

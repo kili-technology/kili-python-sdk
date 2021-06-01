@@ -52,9 +52,9 @@ class QueriesUser:
         Examples
         -------
         >>> # List all users in my organization
-        >>> organization = playground.organizations()
+        >>> organization = kili.organizations()
         >>> organization_id = organizations[0]['id]
-        >>> playground.users(organization_id=organization_id)
+        >>> kili.users(organization_id=organization_id)
         """
         variables = {
             'first': first,
