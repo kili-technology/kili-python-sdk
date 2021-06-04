@@ -13,6 +13,7 @@ class Kili(
         mutations.notification.MutationsNotification,
         mutations.organization.MutationsOrganization,
         mutations.project.MutationsProject,
+        mutations.project_version.MutationsProjectVersion,
         mutations.user.MutationsUser,
         queries.asset.QueriesAsset,
         queries.label.QueriesLabel,

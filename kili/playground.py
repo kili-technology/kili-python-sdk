@@ -3,6 +3,7 @@ import kili.mutations.label
 import kili.mutations.notification
 import kili.mutations.organization
 import kili.mutations.project
+import kili.mutations.project_version
 import kili.mutations.user
 import kili.queries.asset
 import kili.queries.label
@@ -34,6 +35,7 @@ class Playground(
         kili.mutations.notification.MutationsNotification,
         kili.mutations.organization.MutationsOrganization,
         kili.mutations.project.MutationsProject,
+        kili.mutations.project_version.MutationsProjectVersion,
         kili.mutations.user.MutationsUser,
         kili.queries.asset.QueriesAsset,
         kili.queries.label.QueriesLabel,
