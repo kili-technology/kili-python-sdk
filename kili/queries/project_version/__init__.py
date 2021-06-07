@@ -31,7 +31,7 @@ class QueriesProjectVersion:
 
         Parameters
         ----------
-        - fields : list of string, optional (default = ['createdAt', 'id', 'content', 'name', 'project', 'projectId'])
+        - fields : list of string, optional (default = ['createdAt', 'id', 'content', 'name', 'project'])
             All the fields to request among the possible fields for the project versions
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectVersions) for all possible fields.
         - first : int (default = 100)
