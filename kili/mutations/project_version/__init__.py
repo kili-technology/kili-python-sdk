@@ -40,8 +40,8 @@ class MutationsProjectVersion:
         >>> kili.update_properties_in_project_version(project_version_id=project_version_id, content='test')
         """
         variables = {
-            'id': project_version_id,
             'content': content,
+            'id': project_version_id,
         }
         result = self.auth.client.execute(
             GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION, variables)

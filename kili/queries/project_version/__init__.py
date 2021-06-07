@@ -21,10 +21,11 @@ class QueriesProjectVersion:
     @Compatible(['v2'])
     @typechecked
     def project_version(self,
-                      fields: List[str] = ['createdAt', 'id', 'content', 'name', 'project', 'projectId'],
                       first: Optional[int] = 100,
-                      project_id: str = '',
-                      skip: Optional[int] = 0):
+                      skip: Optional[int] = 0,
+                      fields: List[str] = ['createdAt', 'id', 'content', 'name', 'project', 'projectId'],
+                      project_id: str = None,
+                      ):
         """
         Get an array of project version given a set of constraints
 
@@ -60,13 +61,13 @@ class QueriesProjectVersion:
     @Compatible(['v2'])
     @typechecked
     def count_project_versions(self,
-                            project_id: str = ''):
+                            project_id: str):
         """
         Count the number of project versions
 
         Parameters
         ----------
-        - projectId :
+        - project_id :
             Filter on ID of project
 
         Returns
