@@ -143,7 +143,7 @@ class CommentsWithoutCommentsOf(object):
     updatedAt = 'updatedAt'
 
 
-class Issues(object):
+class Issue(object):
     id = 'id'
     assignee = ProjectUser
     author = ProjectUser
@@ -175,7 +175,7 @@ class Asset(object):
     inferenceMarkCompute = 'inferenceMarkCompute'
     isHoneypot = 'isHoneypot'
     isToBeLabeledByCompute = 'isToBeLabeledByCompute'
-    issues = Issues
+    issues = Issue
     isUsedForConsensus = 'isUsedForConsensus'
     jsonContent = 'jsonContent'
     jsonMetadata = 'jsonMetadata'

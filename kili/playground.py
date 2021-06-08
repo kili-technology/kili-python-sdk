@@ -5,6 +5,7 @@ import kili.mutations.organization
 import kili.mutations.project
 import kili.mutations.user
 import kili.queries.asset
+import kili.queries.issue
 import kili.queries.label
 import kili.queries.lock
 import kili.queries.organization
@@ -35,6 +36,7 @@ class Playground(
         kili.mutations.project.MutationsProject,
         kili.mutations.user.MutationsUser,
         kili.queries.asset.QueriesAsset,
+        kili.queries.issue.QueriesIssue,
         kili.queries.label.QueriesLabel,
         kili.queries.lock.QueriesLock,
         kili.queries.organization.QueriesOrganization,
