@@ -15,6 +15,7 @@ class Kili(
         mutations.project.MutationsProject,
         mutations.user.MutationsUser,
         queries.asset.QueriesAsset,
+        queries.issue.QueriesIssue,
         queries.label.QueriesLabel,
         queries.lock.QueriesLock,
         queries.organization.QueriesOrganization,
