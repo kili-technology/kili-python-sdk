@@ -213,3 +213,11 @@ class Notification(object):
     status = 'status'
     url = 'url'
     userID = 'userID'
+
+class ProjectVersion(object):
+  id = 'id'
+  createdAt = 'createdAt'
+  content = 'content'
+  name = 'name'
+  project = Project
+  projectId = 'projectId'

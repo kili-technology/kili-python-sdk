@@ -3,6 +3,7 @@ import kili.mutations.label
 import kili.mutations.notification
 import kili.mutations.organization
 import kili.mutations.project
+import kili.mutations.project_version
 import kili.mutations.user
 import kili.queries.asset
 import kili.queries.issue
@@ -12,6 +13,7 @@ import kili.queries.organization
 import kili.queries.notification
 import kili.queries.project
 import kili.queries.project_user
+import kili.queries.project_version
 import kili.queries.user
 import kili.subscriptions.label
 from kili.constants import NO_ACCESS_RIGHT
@@ -34,6 +36,7 @@ class Playground(
         kili.mutations.notification.MutationsNotification,
         kili.mutations.organization.MutationsOrganization,
         kili.mutations.project.MutationsProject,
+        kili.mutations.project_version.MutationsProjectVersion,
         kili.mutations.user.MutationsUser,
         kili.queries.asset.QueriesAsset,
         kili.queries.issue.QueriesIssue,
@@ -43,6 +46,7 @@ class Playground(
         kili.queries.notification.QueriesNotification,
         kili.queries.project.QueriesProject,
         kili.queries.project_user.QueriesProjectUser,
+        kili.queries.project_version.QueriesProjectVersion,
         kili.queries.user.QueriesUser,
         kili.subscriptions.label.SubscriptionsLabel):
 
