@@ -45,7 +45,7 @@ class MutationsProject:
         - user_email : str
             The email of the user. This email is used as the unique identifier of the user.
         - role : str, optional (default = 'LABELER')
-            One of {"ADMIN", "REVIEWER", "LABELER", "READER"}.
+            One of {"ADMIN", "REVIEWER", "LABELER"}.
 
         Returns
         -------
@@ -233,7 +233,7 @@ class MutationsProject:
         - user_id : str
             The email or identifier of the user with updated role
         - role : str
-            The new role. One of "ADMIN", "REVIEWER", "LABELER", "READER"
+            The new role. One of "ADMIN", "REVIEWER", "LABELER"
 
         Returns
         -------

@@ -141,7 +141,7 @@ class MutationsUser:
         - organization_id : str, optional (default = None)
             Change the organization the user is related to.
         - organization_role : str, optional (default = None)
-            Change the role of the user. One of "ADMIN", "REVIEWER", "LABELER", "READER".
+            Change the role of the user. One of "ADMIN", "REVIEWER", "LABELER".
         - activated : bool, optional (default = None)
             In case we want to deactivate a user, but keep it.
 
