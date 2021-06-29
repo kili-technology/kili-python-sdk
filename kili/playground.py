@@ -1,4 +1,5 @@
 import kili.mutations.asset
+import kili.mutations.dataset_asset
 import kili.mutations.label
 import kili.mutations.notification
 import kili.mutations.organization
@@ -6,6 +7,7 @@ import kili.mutations.project
 import kili.mutations.project_version
 import kili.mutations.user
 import kili.queries.asset
+import kili.queries.dataset_asset
 import kili.queries.issue
 import kili.queries.label
 import kili.queries.lock
@@ -32,6 +34,7 @@ from kili.helpers import deprecate
         """)
 class Playground(
         kili.mutations.asset.MutationsAsset,
+        kili.mutations.dataset_asset.MutationsDatasetAsset,
         kili.mutations.label.MutationsLabel,
         kili.mutations.notification.MutationsNotification,
         kili.mutations.organization.MutationsOrganization,
@@ -39,6 +42,7 @@ class Playground(
         kili.mutations.project_version.MutationsProjectVersion,
         kili.mutations.user.MutationsUser,
         kili.queries.asset.QueriesAsset,
+        kili.queries.dataset_asset.QueriesDatasetAsset,
         kili.queries.issue.QueriesIssue,
         kili.queries.label.QueriesLabel,
         kili.queries.lock.QueriesLock,
@@ -54,6 +58,3 @@ class Playground(
         """Create an instance of KiliPlayground."""
         self.auth = auth
         super().__init__(auth)
-
-
-
