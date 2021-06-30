@@ -97,6 +97,10 @@ jobs:
     - <<: *test-recipes
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
+        - NOTEBOOK_PATH=recipes/inference_labels.ipynb
+    - <<: *test-recipes
+      env:
+        - DOCKER_IMAGE=continuumio/anaconda3:2020.02
         - NOTEBOOK_PATH=recipes/getting-started/getting_started-image_bounding_box_detection.ipynb
     - <<: *test-recipes
       env:
