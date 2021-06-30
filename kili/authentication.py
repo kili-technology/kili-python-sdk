@@ -53,6 +53,9 @@ class KiliAuth(object):
             message = 'You need to provide an API KEY to connect. Visit https://cloud.kili-technology.com/docs/python-graphql-api/authentication/#generate-an-api-key'
             warnings.warn(message, UserWarning)
         self.client.inject_token('X-API-Key: ' + api_key)
+        is_airflow = bool(os.getenv('AIRFLOW__CORE__EXECUTOR'))
+        if is_airflow:
+            self.client.inject_token('Airflow: True')
         queries = QueriesUser(self)
         users = queries.users(api_key=api_key, fields=['id'])
         if len(users) == 0:
