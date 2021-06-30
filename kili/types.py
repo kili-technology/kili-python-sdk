@@ -174,7 +174,7 @@ class Asset(object):
     inferenceMark = 'inferenceMark'
     inferenceMarkCompute = 'inferenceMarkCompute'
     isHoneypot = 'isHoneypot'
-    isToBeLabeledByCompute = 'isToBeLabeledByCompute'
+    isToBeLabeledBy = 'isToBeLabeledBy'
     issues = Issue
     isUsedForConsensus = 'isUsedForConsensus'
     jsonContent = 'jsonContent'
@@ -214,10 +214,11 @@ class Notification(object):
     url = 'url'
     userID = 'userID'
 
+
 class ProjectVersion(object):
-  id = 'id'
-  createdAt = 'createdAt'
-  content = 'content'
-  name = 'name'
-  project = Project
-  projectId = 'projectId'
+    id = 'id'
+    createdAt = 'createdAt'
+    content = 'content'
+    name = 'name'
+    project = Project
+    projectId = 'projectId'
