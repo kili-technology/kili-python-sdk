@@ -45,7 +45,7 @@ class MutationsProject:
         - user_email : str
             The email of the user. This email is used as the unique identifier of the user.
         - role : str, optional (default = 'LABELER')
-            One of {"ADMIN", "REVIEWER", "LABELER"}.
+            One of {"ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"}.
 
         Returns
         -------
@@ -221,7 +221,7 @@ class MutationsProject:
         """
         Update properties of a role
 
-        You should be either an admin or a reviewer of the project, or an admin of the
+        You should be either an admin or a team manager of the project, or an admin of the
         organization to be able to change the role of somebody.
 
         Parameters
@@ -233,7 +233,7 @@ class MutationsProject:
         - user_id : str
             The email or identifier of the user with updated role
         - role : str
-            The new role. One of "ADMIN", "REVIEWER", "LABELER"
+            The new role. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"
 
         Returns
         -------
