@@ -9,6 +9,7 @@ from kili.authentication import KiliAuth
 
 class Kili(
         mutations.asset.MutationsAsset,
+        mutations.dataset_asset.MutationsDatasetAsset,
         mutations.label.MutationsLabel,
         mutations.notification.MutationsNotification,
         mutations.organization.MutationsOrganization,
@@ -16,6 +17,7 @@ class Kili(
         mutations.project_version.MutationsProjectVersion,
         mutations.user.MutationsUser,
         queries.asset.QueriesAsset,
+        queries.dataset_asset.QueriesDatasetAsset,
         queries.issue.QueriesIssue,
         queries.label.QueriesLabel,
         queries.lock.QueriesLock,
@@ -31,7 +33,7 @@ class Kili(
                  api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
                  verify=True):
         """Kili Client
-        
+
         Parameters
         ----------
         api_key: 
@@ -39,10 +41,10 @@ class Kili(
 
         api_endpoint : str
             Recipient of the HTTP operation
-        
+
         verify : bool
             Verify certificate. Set to False on local deployment without SSL.
-        
+
         Returns
         -------
         Kili object
@@ -52,5 +54,6 @@ class Kili(
         - your labels with: kili.labels()
         - your projects with: kili.projects()
         """
-        self.auth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint, verify=verify)
+        self.auth = KiliAuth(
+            api_key=api_key, api_endpoint=api_endpoint, verify=verify)
         super().__init__(self.auth)

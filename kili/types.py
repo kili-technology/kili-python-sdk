@@ -197,6 +197,22 @@ class Asset(object):
     updatedAt = 'updatedAt'
 
 
+class DatasetAsset(object):
+    id = 'id'
+    content = 'content'
+    contentJson = 'contentJson'
+    contentJsonCompute = 'contentJsonCompute'
+    createdAt = 'createdAt'
+    externalId = 'externalId'
+    jsonContent = 'jsonContent'
+    jsonMetadata = 'jsonMetadata'
+    metadataCompute = 'metadataCompute'
+    metadata = 'metadata'
+    thumbnail = 'thumbnail'
+    thumbnailCompute = 'thumbnailCompute'
+    updatedAt = 'updatedAt'
+
+
 class Label(LabelWithoutLabelOf):
     labelOf = Asset
 
@@ -214,10 +230,11 @@ class Notification(object):
     url = 'url'
     userID = 'userID'
 
+
 class ProjectVersion(object):
-  id = 'id'
-  createdAt = 'createdAt'
-  content = 'content'
-  name = 'name'
-  project = Project
-  projectId = 'projectId'
+    id = 'id'
+    createdAt = 'createdAt'
+    content = 'content'
+    name = 'name'
+    project = Project
+    projectId = 'projectId'

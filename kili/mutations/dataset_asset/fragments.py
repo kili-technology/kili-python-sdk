@@ -1,0 +1,3 @@
+ASSET_FRAGMENT = '''
+id
+'''
