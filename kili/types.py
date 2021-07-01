@@ -174,7 +174,7 @@ class Asset(object):
     inferenceMark = 'inferenceMark'
     inferenceMarkCompute = 'inferenceMarkCompute'
     isHoneypot = 'isHoneypot'
-    isToBeLabeledByCompute = 'isToBeLabeledByCompute'
+    isToBeLabeledBy = 'isToBeLabeledBy'
     issues = Issue
     isUsedForConsensus = 'isUsedForConsensus'
     jsonContent = 'jsonContent'
