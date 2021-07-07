@@ -1,9 +1,7 @@
 # coding: utf-8
 
 # Examples of execution : 
-# python3 Train_Resnet50_with_noise.py --epochs 200 --noise 20 --percentage 80
-# To save log : 
-# python3 Train_Resnet50_with_noise.py --epochs 200 --noise 20 --percentage 80 > noise20_percentage80.log
+# python3 Resnet50_noise_and_reduced_dataset.py --epochs 200 --noise 20 --percentage 80
 
 # tensorflow 2.3.0
 # cuda 10.1
@@ -18,7 +16,7 @@ session = tf.compat.v1.Session(config=config)
 
 import argparse
 from argparse import Namespace
-import numpy as np 
+import numpy as np
 from tensorflow.keras import applications
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Dropout,GlobalAveragePooling2D
@@ -39,8 +37,7 @@ def load_dataset(percentage=50.0, noisy_percentage = 0.0):
     (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
     
     number_classes = 10
-    
-    ### Reduce size of dataset
+
     X_train_classes = []
     for i in range(number_classes):
         X_train_classes.append(train_images[np.where(train_labels == [i])[0]])  
@@ -73,8 +70,6 @@ def load_dataset(percentage=50.0, noisy_percentage = 0.0):
     np.random.shuffle(y_train_subset)
     y_train = np.reshape(y_train_subset, (len(y_train_subset),1))
     
-    ### Add noise to labels
-
     (train_images, train_labels), (test_images, test_labels) = (X_train_subset, y_train), (test_images, test_labels)
     number_classes = 10
     
@@ -108,15 +103,24 @@ def convert_to_one_hot(Y, C):
     Y = np.eye(C)[Y.reshape(-1)].T
     return Y
 
+def save_model_and_results(model, results, args):
+    if not os.path.exists("Models"):
+        os.makedirs('Models')
+    modelFilename = 'model__noise_' + str(args.noise) + '__percentageReduced_' + str(args.percentage) + '__epochs_' + str(args.epochs)
+    model.save('./Models/' + modelFilename)
+    
+    if not os.path.exists("HistoryResults"):
+        os.makedirs('HistoryResults')
+    historyFilename = 'history__noise_' + str(args.noise) + '__percentageReduced_' + str(args.percentage) + '__epochs_' + str(args.epochs) + '.npy'
+    np.save('./HistoryResults/' + historyFilename, results.history, allow_pickle=True)
+    
 def main(args):
     classes = [0,1,2,3,4,5,6,7,8,9]
     (X_train_orig, Y_train_orig), (X_test_orig, Y_test_orig)  = load_dataset(noisy_percentage = args.noise, percentage = args.percentage)
 
-    # Normalize image vectors
     X_train = X_train_orig/255.
     X_test = X_test_orig/255.
 
-    # Convert training and test labels to one hot matrices
     Y_train_orig = np.reshape(Y_train_orig, (len(Y_train_orig)))
     Y_test_orig = np.reshape(Y_test_orig, (len(Y_test_orig)))
     Y_train = convert_to_one_hot(Y_train_orig, len(classes)).T
@@ -133,8 +137,6 @@ def main(args):
 
     img_height,img_width = 32,32
     num_classes = len(classes)
-    #If imagenet weights are being loaded, 
-    #input must have a static square shape (one of (128, 128), (160, 160), (192, 192), or (224, 224))
     base_model = applications.resnet50.ResNet50(weights= None, include_top=False, input_shape= (img_height,img_width,3))
 
     x = base_model.output
@@ -143,21 +145,15 @@ def main(args):
     predictions = Dense(num_classes, activation= 'softmax')(x)
     model = Model(inputs = base_model.input, outputs = predictions)
 
-    # sgd = SGD(lr=lrate, momentum=0.9, decay=decay, nesterov=False)
     adam = Adam(lr=0.0001)
     model.compile(optimizer= adam, loss='categorical_crossentropy', metrics=['accuracy'])
 
-    model.fit(X_train, Y_train, epochs = args.epochs, batch_size = 64, validation_data=(X_test,Y_test))
+    results = model.fit(X_train, Y_train, epochs = args.epochs, batch_size = 64, validation_data=(X_test,Y_test))
 
-    if not os.path.exists("Models"):
-        os.makedirs('Models')
-    filename = 'noise_' + str(args.noise) + '__percentageReduced_' + str(args.percentage) + '__epochs_' + str(args.epochs)
-    model.save('./Models/' + filename)
+    save_model_and_results(model, results, args)
 
-    accuracy = model.history.history['val_accuracy']
-    print('Filename:' + filename)
     print('Test accuracy by epochs:')
-    print(accuracy)
+    print(model.history.history['val_accuracy'])
     print('Train accuracy by epochs:')
     print(model.history.history['accuracy'])
     print ("####################################\n\n")
