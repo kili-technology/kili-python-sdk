@@ -199,6 +199,7 @@ class MutationsLabel:
         """
         asset_id = infer_id_from_external_id(
             self, asset_id, asset_external_id, project_id)
+
         variables = {
             'assetID': asset_id,
             'jsonResponse': dumps(json_response)
