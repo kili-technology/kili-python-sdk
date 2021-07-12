@@ -30,6 +30,7 @@ mutation(
     $projectID: ID!
     $reviewCoverage: Int
     $title: String
+    $useHoneyPot: Boolean
 ) {{
   data: updatePropertiesInProject(
     where: {{
@@ -51,6 +52,7 @@ mutation(
       numberOfReviewedAssets: $numberOfReviewedAssets
       reviewCoverage: $reviewCoverage
       title: $title
+      useHoneyPot: $useHoneyPot
     }}
   ) {{
     {PROJECT_FRAGMENT_ID}

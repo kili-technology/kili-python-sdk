@@ -81,7 +81,8 @@ class MutationsProject:
                                      number_of_reviewed_assets: Optional[int] = None,
                                      review_coverage: Optional[int] = None,
                                      should_relaunch_kpi_computation: Optional[bool] = None,
-                                     title: Optional[str] = None):
+                                     title: Optional[str] = None,
+                                     use_honeypot: Optional[bool] = None):
         """
         Update properties of a project
 
@@ -119,6 +120,9 @@ class MutationsProject:
         - should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings
         - title : str, optional (default = None)
+            Title of the project
+        - use_honeypot : bool, optional (default = None)
+            Activate / Desactivate the use of honeypot in the project
 
         Returns
         -------
@@ -145,7 +149,8 @@ class MutationsProject:
             'projectID': project_id,
             'reviewCoverage': review_coverage,
             'shouldRelaunchKpiComputation': should_relaunch_kpi_computation,
-            'title': title
+            'title': title,
+            'useHoneyPot': use_honeypot
         }
         result = self.auth.client.execute(
             GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
