@@ -5,8 +5,8 @@ class DictClass(dict):
 
 
 class AnnotationFormat:
-    Simple = 'simple'
     Latest = 'latest'
+    Simple = 'simple'
 
 
 def get_polygon(annotation):
