@@ -180,6 +180,7 @@ class Asset(object):
     jsonContent = 'jsonContent'
     jsonMetadata = 'jsonMetadata'
     labels = LabelWithoutLabelOf
+    latestLabel = LabelWithoutLabelOf
     locks = Lock
     metadataCompute = 'metadataCompute'
     metadata = 'metadata'

@@ -5,6 +5,7 @@ class DictClass(dict):
 
 
 class AnnotationFormat:
+    Latest = 'latest'
     Simple = 'simple'
 
 
