@@ -5,6 +5,26 @@ import os
 
 from kili import mutations, queries, subscriptions
 from kili.authentication import KiliAuth
+import kili.mutations.asset
+import kili.mutations.dataset_asset
+import kili.mutations.label
+import kili.mutations.notification
+import kili.mutations.organization
+import kili.mutations.project
+import kili.mutations.project_version
+import kili.mutations.user
+import kili.queries.asset
+import kili.queries.dataset_asset
+import kili.queries.issue
+import kili.queries.label
+import kili.queries.lock
+import kili.queries.organization
+import kili.queries.notification
+import kili.queries.project
+import kili.queries.project_user
+import kili.queries.project_version
+import kili.queries.user
+import kili.subscriptions.label
 
 
 class Kili(
