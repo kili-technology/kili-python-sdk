@@ -6,6 +6,7 @@ class DictClass(dict):
 
 class AnnotationFormat:
     Latest = 'latest'
+    Raw = 'raw'
     Simple = 'simple'
 
 
@@ -52,11 +53,11 @@ def format_image_annotation(annotation):
 class Label(DictClass):
     jsonResponse = {}
 
-    def json_response(self, format=None):
+    def json_response(self, format=AnnotationFormat.Raw):
         if 'jsonResponse' not in self:
             raise Exception(
                 f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"')
-        if format is None:
+        if format == AnnotationFormat.Raw:
             return self.jsonResponse
         if format == AnnotationFormat.Simple:
             job_names = self.jsonResponse.keys()
