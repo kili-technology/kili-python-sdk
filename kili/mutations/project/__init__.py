@@ -338,7 +338,7 @@ class MutationsProject:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def __delete_project(self, project_id: str):
+    def internal_delete_project(self, project_id: str):
         """
         Delete project permanently. WARNING: This resolver is for internal use by Kili Technology only.
 
