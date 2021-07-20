@@ -9,6 +9,7 @@ from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_TO_ROLES,
                       GQL_CREATE_PROJECT,
                       GQL_DELETE_FROM_ROLES,
+                      GQL_DELETE_PROJECT,
                       GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
                       GQL_MAKE_PROJECT_PUBLIC,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
@@ -337,9 +338,27 @@ class MutationsProject:
 
     @Compatible(['v1', 'v2'])
     @typechecked
+    def internal_delete_project(self, project_id: str):
+        """
+        Delete project permanently. WARNING: This resolver is for internal use by Kili Technology only.
+
+        Parameters
+        ----------
+        - project_id : str
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+        """
+        variables = {'projectID': project_id}
+        result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
+        return format_result('data', result)
+
+    @Compatible(['v1', 'v2'])
+    @typechecked
     def delete_project(self, project_id: str):
         """
-        Delete project permanently 
+        Delete project permanently.
 
         Parameters
         ----------
