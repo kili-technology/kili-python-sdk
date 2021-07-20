@@ -5,8 +5,6 @@ import requests
 
 from . import __version__
 from .graphql_client import GraphQLClient
-from .helpers import deprecate
-from .playground import Playground
 from .queries.user import QueriesUser
 
 MAX_RETRIES = 20
