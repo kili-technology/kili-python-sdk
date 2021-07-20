@@ -61,7 +61,7 @@ class QueriesLock:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def count_locks(self:any):
+    def count_locks(self):
         """
         Get the number of locks
 

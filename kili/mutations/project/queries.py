@@ -146,11 +146,13 @@ mutation(
 }}
 '''
 
-GQL_PROJECT_DELETE_ASYNCHRONOUSLY = f'''
+GQL_DELETE_PROJECT = f'''
 mutation($projectID: ID!) {{
-  data: deleteProjectAsynchronously(where: {{
+  data: deleteProject(where: {{
       id: $projectID
     }}
-    )
+    ) {{
+    {PROJECT_FRAGMENT_ID}
+  }}
 }}
 '''

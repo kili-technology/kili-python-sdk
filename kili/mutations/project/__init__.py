@@ -9,7 +9,7 @@ from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_TO_ROLES,
                       GQL_CREATE_PROJECT,
                       GQL_DELETE_FROM_ROLES,
-                      GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
+                      GQL_DELETE_PROJECT,
                       GQL_MAKE_PROJECT_PUBLIC,
                       GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
                       GQL_UPDATE_PROPERTIES_IN_PROJECT,
@@ -350,5 +350,5 @@ class MutationsProject:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {'projectID': project_id}
-        result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
+        result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
         return format_result('data', result)
