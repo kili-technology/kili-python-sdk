@@ -25,7 +25,7 @@ setup(
 
     long_description_content_type="text/markdown",
 
-    install_requires=["pandas",
+    install_requires=["pandas==1.2.5",
                       "requests",
                       "six",
                       "tqdm",
