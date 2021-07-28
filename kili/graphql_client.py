@@ -81,6 +81,7 @@ class SubscriptionGraphQLClient:
         self._connect()
         self._subscription_running = False
         self._st_id = None
+        self.failed_connection_attempts = 0
 
     def _connect(self):
         self._conn = websocket.create_connection(self.ws_url,
@@ -92,6 +93,9 @@ class SubscriptionGraphQLClient:
     def _reconnect(self):
         self._connect()
         self._subscription_running = True
+        dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        print(f'{dt_string} reconnected')
+        self.failed_connection_attempts = 0
 
     def _on_message(self, message):
         data = json.loads(message)
@@ -147,10 +151,9 @@ class SubscriptionGraphQLClient:
             query, variables, headers, callback, authorization)
 
         def subs(_cc, _id):
-            total_reconnections = 0
             max_reconnections = 10
             self._subscription_running = True
-            while self._subscription_running and total_reconnections < max_reconnections:
+            while self._subscription_running and self.failed_connection_attempts < max_reconnections:
                 try:
                     r = json.loads(self._conn.recv())
                     if r['type'] == 'error' or r['type'] == 'complete':
@@ -161,15 +164,17 @@ class SubscriptionGraphQLClient:
                         _cc(_id, r)
                     time.sleep(1)
                 except websocket._exceptions.WebSocketConnectionClosedException as e:
-                    print('Connection closed error : {}'.format(str(e)))
+                    self.failed_connection_attempts += 1
+                    dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    error=str(e)
+                    print(f'{dt_string} Connection closed error : {error}')
                     print(
-                        f'Will try to reconnect {max_reconnections - total_reconnections} times...')
+                        f'Will try to reconnect {max_reconnections - self.failed_connection_attempts} times...')
                     self._reconnect()
-                    total_reconnections += 1
                     _cc, _id = self.prepare_subscribe(
                         query, variables, headers, callback, authorization)
                     continue
-            print('Did not reconnect successfully...')
+            print(f'Did not reconnect successfully after {max_reconnections} attempts')
 
         self._st_id = threading.Thread(target=subs, args=(_cc, _id))
         self._st_id.start()
