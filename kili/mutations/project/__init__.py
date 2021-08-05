@@ -81,7 +81,7 @@ class MutationsProject:
                                      number_of_remaining_assets: Optional[int] = None,
                                      number_of_reviewed_assets: Optional[int] = None,
                                      review_coverage: Optional[int] = None,
-                                     rules: Optional[list[dict]] = None,
+                                     rules: Optional[list] = None,
                                      should_relaunch_kpi_computation: Optional[bool] = None,
                                      title: Optional[str] = None,
                                      use_honeypot: Optional[bool] = None):
