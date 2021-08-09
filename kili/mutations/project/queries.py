@@ -29,6 +29,7 @@ mutation(
     $numberOfReviewedAssets: Int
     $projectID: ID!
     $reviewCoverage: Int
+    $rules: String
     $title: String
     $useHoneyPot: Boolean
 ) {{
@@ -51,6 +52,7 @@ mutation(
       numberOfRemainingAssets: $numberOfRemainingAssets
       numberOfReviewedAssets: $numberOfReviewedAssets
       reviewCoverage: $reviewCoverage
+      rules: $rules
       title: $title
       useHoneyPot: $useHoneyPot
     }}

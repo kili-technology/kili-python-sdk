@@ -92,7 +92,7 @@ def format_json(result):
         return [format_json(elem) for elem in result]
     if isinstance(result, dict):
         for key, value in result.items():
-            if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse']:
+            if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse', 'rules']:
                 if (value == '' or value is None) and not (is_url(value) and key == 'jsonInterface'):
                     result[key] = dict()
                 elif isinstance(value, str):
@@ -103,7 +103,7 @@ def format_json(result):
                             result[key] = loads(value)
                     except:
                         raise ValueError(
-                            'Json Metadata / json response / json interface should be valid jsons')
+                            'Json Metadata / json response / json interface / rules should be valid jsons')
             else:
                 result[key] = format_json(value)
         return result
