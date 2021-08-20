@@ -1,4 +1,11 @@
+"""
+Queries of project version queries
+"""
+
 def gql_project_version(fragment):
+    """
+    Return the GraphQL projectVersion query
+    """
     return f'''
 query ($where: ProjectVersionWhere!, $first: PageSize!, $skip: Int!) {{
   data: projectVersions(where: $where, first: $first, skip: $skip) {{

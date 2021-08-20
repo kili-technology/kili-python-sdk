@@ -1,3 +1,7 @@
+"""
+Project queries
+"""
+
 from typing import Optional
 from typeguard import typechecked
 
@@ -8,6 +12,10 @@ from ...constants import NO_ACCESS_RIGHT
 
 
 class QueriesProject:
+    """
+    Set of Project queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -19,6 +27,7 @@ class QueriesProject:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
     def projects(self,
@@ -28,10 +37,24 @@ class QueriesProject:
                  updated_at_gte: Optional[str] = None,
                  updated_at_lte: Optional[str] = None,
                  skip: int = 0,
-                 fields: list = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface',
-                                 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'reviewCoverage', 'roles.id',
-                                 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'],
+                 fields: list = [
+                     'consensusTotCoverage',
+                     'id',
+                     'inputType',
+                     'interfaceCategory',
+                     'jsonInterface',
+                     'maxWorkerCount',
+                     'minAgreement',
+                     'minConsensusSize',
+                     'reviewCoverage',
+                     'roles.id',
+                     'roles.role',
+                     'roles.user.email',
+                     'roles.user.id',
+                     'roles.user.name',
+                     'title'],
                  first: int = 100):
+        # pylint: disable=line-too-long
         """
         Get projects given a set of criteria
 
@@ -44,14 +67,18 @@ class QueriesProject:
         - should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings.
         - updated_at_gte : string, optional (default = None)
-            Returned projects should have a label whose update date is greated or equal to this date.
+            Returned projects should have a label whose update date is greated or equal
+            to this date.
             Formatted string should have format : "YYYY-MM-DD"
         - updated_at_lte : string, optional (default = None)
             Returned projects should have a label whose update date is lower or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
         - skip : int, optional (default = 0)
             Number of projects to skip (they are ordered by their creation).
-        - fields : list of string, optional (default = ['consensusTotCoverage', 'id', 'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement', 'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id', 'roles.user.name', 'title'])
+        - fields : list of string, optional (default = ['consensusTotCoverage', 'id',
+            'inputType', 'interfaceCategory', 'jsonInterface', 'maxWorkerCount', 'minAgreement',
+            'minConsensusSize', 'roles.id', 'roles.role', 'roles.user.email', 'roles.user.id',
+            'roles.user.name', 'title'])
             All the fields to request among the possible fields for the projects.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project) for all possible fields.
         - first : int , optional (default = 100)
@@ -66,7 +93,7 @@ class QueriesProject:
         >>> # List all my projects
         >>> kili.projects()
         """
-        GQL_PROJECTS = gql_projects(fragment_builder(fields, Project))
+        _gql_projects = gql_projects(fragment_builder(fields, Project))
         variables = {
             'where': {
                 'id': project_id,
@@ -78,12 +105,18 @@ class QueriesProject:
             'skip': skip,
             'first': first
         }
-        result = self.auth.client.execute(GQL_PROJECTS, variables)
+        result = self.auth.client.execute(_gql_projects, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def count_projects(self, project_id: Optional[str] = None, search_query: Optional[str] = None, should_relaunch_kpi_computation: Optional[bool] = None, updated_at_gte: Optional[str] = None, updated_at_lte: Optional[str] = None):
+    def count_projects(
+            self,
+            project_id: Optional[str] = None,
+            search_query: Optional[str] = None,
+            should_relaunch_kpi_computation: Optional[bool] = None,
+            updated_at_gte: Optional[str] = None,
+            updated_at_lte: Optional[str] = None):
         """
         Counts the number of projects with a search_query
 
@@ -96,7 +129,8 @@ class QueriesProject:
         - should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings
         - updated_at_gte : string, optional (default = None)
-            Returned projects should have a label whose update date is greated or equal to this date.
+            Returned projects should have a label whose update date is greated
+            or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
         - updated_at_lte : string, optional (default = None)
             Returned projects should have a label whose update date is lower or equal to this date.
@@ -104,7 +138,8 @@ class QueriesProject:
 
         Returns
         -------
-        - a positive integer corresponding to the number of results of the query if it was successful, or an error message else.
+        - a positive integer corresponding to the number of results of the query
+            if it was successful, or an error message else.
         """
         variables = {
             'where': {

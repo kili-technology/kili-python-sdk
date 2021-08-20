@@ -1,3 +1,7 @@
+"""
+Queries of label mutations
+"""
+
 from .fragments import LABEL_FRAGMENT, LABEL_FRAGMENT_ID
 
 GQL_CREATE_PREDICTIONS = f'''

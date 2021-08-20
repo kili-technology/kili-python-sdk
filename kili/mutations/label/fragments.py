@@ -1,3 +1,7 @@
+"""
+Fragments of label mutations
+"""
+
 LABEL_FRAGMENT = '''
 id
 author {

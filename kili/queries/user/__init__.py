@@ -1,5 +1,8 @@
+"""
+User queries
+"""
+
 from typing import Optional
-import warnings
 
 from typeguard import typechecked
 
@@ -9,6 +12,10 @@ from ...types import User
 
 
 class QueriesUser:
+    """
+    Set of User queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -20,6 +27,7 @@ class QueriesUser:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
     def users(self,
@@ -29,6 +37,7 @@ class QueriesUser:
               fields: list = ['email', 'id', 'name'],
               first: int = 100,
               skip: int = 0):
+        # pylint: disable=line-too-long
         """
         Get users given a set of constraints
 
@@ -67,8 +76,8 @@ class QueriesUser:
                 }
             }
         }
-        GQL_USERS = gql_users(fragment_builder(fields, User))
-        result = self.auth.client.execute(GQL_USERS, variables)
+        _gql_users = gql_users(fragment_builder(fields, User))
+        result = self.auth.client.execute(_gql_users, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])

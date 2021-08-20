@@ -1,3 +1,7 @@
+"""
+Queries of dataset asset mutations
+"""
+
 from .fragments import ASSET_FRAGMENT
 
 

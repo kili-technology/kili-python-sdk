@@ -1,16 +1,39 @@
+"""
+This script defines object-relational mapping helpers to ease
+ the manipulation of Kili data structures.
+"""
+from dataclasses import dataclass
+
 class DictClass(dict):
+    """
+    A python class that acts like dict
+    """
+
     def __init__(self, *args, **kwargs):
         super(DictClass, self).__init__(*args, **kwargs)
         self.__dict__ = self
 
-
+@dataclass
 class AnnotationFormat:
+    # pylint: disable=invalid-name
+    """
+    List of annotation formats
+    """
+
     Latest = 'latest'
     Raw = 'raw'
     Simple = 'simple'
 
 
+
 def get_polygon(annotation):
+    """
+    Extracts a polygon from an annotation
+
+    Parameters
+    ----------
+    - annotation : Kili annotation
+    """
     try:
         return annotation['boundingPoly'][0]['normalizedVertices']
     except KeyError:
@@ -18,6 +41,13 @@ def get_polygon(annotation):
 
 
 def get_category(annotation):
+    """
+    Extracts a category from an annotation
+
+    Parameters
+    ----------
+    - annotation : Kili annotation
+    """
     try:
         return annotation['categories'][0]['name']
     except KeyError:
@@ -25,6 +55,13 @@ def get_category(annotation):
 
 
 def get_named_entity(annotation):
+    """
+    Extracts a named entity from an annotation
+
+    Parameters
+    ----------
+    - annotation : Kili annotation
+    """
     try:
         return {
             'beginId': annotation['beginId'],
@@ -38,6 +75,14 @@ def get_named_entity(annotation):
 
 
 def format_image_annotation(annotation):
+    """
+    Extracts a category, polygon, named entity from an annotation
+    depending of the annotation type
+
+    Parameters
+    ----------
+    - annotation : Kili annotation
+    """
     category = get_category(annotation)
     polygon = get_polygon(annotation)
     named_entity = get_named_entity(annotation)
@@ -51,18 +96,33 @@ def format_image_annotation(annotation):
 
 
 class Label(DictClass):
+    """
+    Label class
+    """
+
     jsonResponse = {}
 
-    def json_response(self, format=AnnotationFormat.Raw):
+    def json_response(self, _format=AnnotationFormat.Raw):
+        """
+        Format a json response
+
+        Parameters
+        ----------
+        - _format: expected format
+        """
         if 'jsonResponse' not in self:
             raise Exception(
-                f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"')
-        if format == AnnotationFormat.Raw:
+                'You did not fetch jsonResponse for' \
+                f' label "{self["id"] if "id" in self else self}"')
+        if _format == AnnotationFormat.Raw:
             return self.jsonResponse
-        if format == AnnotationFormat.Simple:
+        if _format == AnnotationFormat.Simple:
             job_names = self.jsonResponse.keys()
             if len(job_names) > 1:
-                return {'error': 'Simple format is not adapted when there is more than one job. Please choose another annotation format.'}
+                return {
+                    'error': 'Simple format is not adapted' \
+                    ' when there is more than one job.' \
+                    ' Please choose another annotation format.'}
             for job_name in job_names:
                 job_response = self.jsonResponse[job_name]
                 category = get_category(job_response)
@@ -70,12 +130,17 @@ class Label(DictClass):
                     return category
                 if 'annotations' not in job_response:
                     return None
-                return [format_image_annotation(annotation) for annotation in job_response['annotations']]
+                return [format_image_annotation(annotation) \
+                    for annotation in job_response['annotations']]
             return None
-        raise Exception(f'format "{format}" is not a valid annotation format.')
+        raise Exception(f'format "{_format}" is not a valid annotation format.')
 
 
 class Asset(DictClass):
+    """
+    Asset class
+    """
+
     def __init__(self, *args, **kwargs):
         super(Asset, self).__init__(*args, **kwargs)
         if 'labels' in self:

@@ -1,3 +1,7 @@
+"""
+Project version queries
+"""
+
 from typing import List, Optional
 
 from typeguard import typechecked
@@ -7,6 +11,10 @@ from .queries import gql_project_version, GQL_PROJECT_VERSION_COUNT
 from ...types import ProjectVersion as ProjectVersionType
 
 class QueriesProjectVersion:
+    """
+    Set of ProjectVersion queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -18,20 +26,29 @@ class QueriesProjectVersion:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v2'])
     @typechecked
-    def project_version(self,
-                      first: Optional[int] = 100,
-                      skip: Optional[int] = 0,
-                      fields: List[str] = ['createdAt', 'id', 'content', 'name', 'project', 'projectId'],
-                      project_id: str = None,
-                      ):
+    def project_version(
+            self,
+            first: Optional[int] = 100,
+            skip: Optional[int] = 0,
+            fields: List[str] = [
+                'createdAt',
+                'id',
+                'content',
+                'name',
+                'project',
+                'projectId'],
+            project_id: str = None):
+        # pylint: disable=line-too-long
         """
         Get an array of project version given a set of constraints
 
         Parameters
         ----------
-        - fields : list of string, optional (default = ['createdAt', 'id', 'content', 'name', 'project'])
+        - fields : list of string, optional (default = ['createdAt', 'id', 'content',
+            'name', 'project'])
             All the fields to request among the possible fields for the project versions
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectVersions) for all possible fields.
         - first : int (default = 100)
@@ -39,7 +56,8 @@ class QueriesProjectVersion:
         - project_id : string (default = '')
             Filter on Id of project
         - skip : int (default = 0)
-            Optional, number of project versions to skip (they are ordered by their date of creation, first to last).
+            Optional, number of project versions to skip (they are ordered by their date
+            of creation, first to last).
 
         Returns
         -------
@@ -53,15 +71,14 @@ class QueriesProjectVersion:
             'skip': skip,
             'first': formatted_first,
         }
-        GQL_PROJECT_VERSION = gql_project_version(
+        _gql_project_version = gql_project_version(
             fragment_builder(fields, ProjectVersionType))
-        result = self.auth.client.execute(GQL_PROJECT_VERSION, variables)
+        result = self.auth.client.execute(_gql_project_version, variables)
         return format_result('data', result)
 
     @Compatible(['v2'])
     @typechecked
-    def count_project_versions(self,
-                            project_id: str):
+    def count_project_versions(self, project_id: str):
         """
         Count the number of project versions
 
@@ -75,8 +92,7 @@ class QueriesProjectVersion:
         - the number of project versions with the parameters provided
         """
         variables = {
-            'where': { 'projectId' : project_id
-            },
+            'where': {'projectId': project_id},
         }
         result = self.auth.client.execute(GQL_PROJECT_VERSION_COUNT, variables)
         count = format_result('data', result)

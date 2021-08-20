@@ -1,3 +1,7 @@
+"""
+Queries of project mutations
+"""
+
 from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID, ROLE_FRAGMENT
 
 

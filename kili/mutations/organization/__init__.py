@@ -1,3 +1,7 @@
+"""
+Organization mutations
+"""
+
 import json
 from typing import Optional
 
@@ -9,6 +13,10 @@ from .queries import (GQL_CREATE_ORGANIZATION,
 
 
 class MutationsOrganization:
+    """
+    Set of Organization mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """

@@ -1,3 +1,7 @@
+"""
+Queries of notification mutations
+"""
+
 from .fragments import NOTIFICATION_FRAGMENT
 
 GQL_CREATE_NOTIFICATION = f'''

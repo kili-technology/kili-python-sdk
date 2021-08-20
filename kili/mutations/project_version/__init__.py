@@ -1,3 +1,8 @@
+"""
+Project version mutations
+"""
+
+from dataclasses import dataclass
 from typing import Optional
 
 from typeguard import typechecked
@@ -5,7 +10,12 @@ from typeguard import typechecked
 from ...helpers import Compatible, format_result
 from .queries import (GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION)
 
+@dataclass
 class MutationsProjectVersion:
+    """
+    Set of ProjectVersion mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -19,7 +29,9 @@ class MutationsProjectVersion:
 
     @Compatible(['v2'])
     @typechecked
-    def update_properties_in_project_version(self, project_version_id: str, 
+    def update_properties_in_project_version(
+            self,
+            project_version_id: str,
             content: Optional[str]):
         """
         Update properties of a project version
@@ -37,7 +49,9 @@ class MutationsProjectVersion:
 
         Examples
         -------
-        >>> kili.update_properties_in_project_version(project_version_id=project_version_id, content='test')
+        >>> kili.update_properties_in_project_version(
+                project_version_id=project_version_id,
+                content='test')
         """
         variables = {
             'content': content,

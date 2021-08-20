@@ -1,3 +1,7 @@
+"""
+User mutations
+"""
+
 from typing import Optional
 
 from typeguard import typechecked
@@ -9,6 +13,10 @@ from .queries import (GQL_CREATE_USER,
 
 
 class MutationsUser:
+    """
+    Set of User mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -56,7 +64,8 @@ class MutationsUser:
         """
         Update API key
 
-        Allows you to modify the API key you use to connect to Kili. This method is currently only active for Kili administrators.
+        Allows you to modify the API key you use to connect to Kili.
+        This method is currently only active for Kili administrators.
 
         Parameters
         ----------
@@ -79,7 +88,8 @@ class MutationsUser:
     def update_password(self, email: str, old_password: str, new_password_1: str,
                         new_password_2: str):
         """
-        Allows you to modify the password you use to connect to Kili. This resolver only works for on-premise installations without Auth0.
+        Allows you to modify the password you use to connect to Kili.
+        This resolver only works for on-premise installations without Auth0.
 
         Parameters
         ----------
@@ -109,7 +119,8 @@ class MutationsUser:
         """
         Reset password
 
-        This resolver only works for on-premise installations without Auth0, if your organization allows Kili to send emails.
+        This resolver only works for on-premise installations without Auth0,
+        if your organization allows Kili to send emails.
 
         Parameters
         ----------
@@ -126,39 +137,39 @@ class MutationsUser:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_properties_in_user(self, email: str, name: Optional[str] = None,
-                                  organization_id: Optional[str] = None, organization_role: Optional[str] = None,
-                                  activated: Optional[bool] = None):
-        """
-        Update the properties of a user
+ def update_properties_in_user(self, email: str, name: Optional[str] = None,
+                                organization_id: Optional[str] = None, organization_role: Optional[str] = None,
+                                activated: Optional[bool] = None):
+    """
+    Update the properties of a user
 
-        Parameters
-        ----------
-        - email : str
-            The email is the identifier of the user
-        - name : str, optional (default = None)
-        - organization_id : str, optional (default = None)
-            Change the organization the user is related to.
-        - organization_role : str, optional (default = None)
-            Change the role of the user. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".
-        - activated : bool, optional (default = None)
-            In case we want to deactivate a user, but keep it.
+    Parameters
+    ----------
+    - email : str
+        The email is the identifier of the user
+    - name : str, optional (default = None)
+    - organization_id : str, optional (default = None)
+        Change the organization the user is related to.
+    - organization_role : str, optional (default = None)
+        Change the role of the user. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".
+    - activated : bool, optional (default = None)
+        In case we want to deactivate a user, but keep it.
 
-        Returns
-        -------
-        - a result object which indicates if the mutation was successful, or an error message else.
-        """
-        variables = {
-            'email': email,
-        }
-        if name is not None:
-            variables['name'] = name
-        if organization_id is not None:
-            variables['organizationId'] = organization_id
-        if organization_role is not None:
-            variables['organizationRole'] = organization_role
-        if activated is not None:
-            variables['activated'] = activated
-        result = self.auth.client.execute(
-            GQL_UPDATE_PROPERTIES_IN_USER, variables)
-        return format_result('data', result)
+    Returns
+    -------
+    - a result object which indicates if the mutation was successful, or an error message else.
+    """
+  variables = {
+       'email': email,
+       }
+   if name is not None:
+        variables['name'] = name
+    if organization_id is not None:
+        variables['organizationId'] = organization_id
+    if organization_role is not None:
+        variables['organizationRole'] = organization_role
+    if activated is not None:
+        variables['activated'] = activated
+    result = self.auth.client.execute(
+        GQL_UPDATE_PROPERTIES_IN_USER, variables)
+    return format_result('data', result)

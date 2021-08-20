@@ -1,3 +1,7 @@
+"""
+Queries of label subscription
+"""
+
 from .fragments import LABEL_FRAGMENT
 
 GQL_LABEL_CREATED_OR_UPDATED = f'''
