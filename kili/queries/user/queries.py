@@ -15,7 +15,7 @@ query($where: UserWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_USERS_COUNT = f'''
+GQL_USERS_COUNT = '''
 query($where: UserWhere!) {{
   data: countUsers(where: $where)
 }}

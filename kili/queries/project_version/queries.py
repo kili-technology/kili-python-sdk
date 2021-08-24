@@ -15,7 +15,7 @@ query ($where: ProjectVersionWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_PROJECT_VERSION_COUNT = f'''
+GQL_PROJECT_VERSION_COUNT = '''
 query($where: ProjectVersionWhere!) {{
   data: countProjectVersions(where: $where)
 }}

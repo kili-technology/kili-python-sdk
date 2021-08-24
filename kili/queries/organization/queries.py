@@ -14,7 +14,7 @@ query($where: OrganizationWhere!, $first: PageSize!, $skip: Int!) {{
 }}
 '''
 
-GQL_ORGANIZATIONS_COUNT = f'''
+GQL_ORGANIZATIONS_COUNT = '''
 query($where: OrganizationWhere!) {{
   data: countOrganizations(where: $where)
 }}

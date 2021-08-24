@@ -88,9 +88,10 @@ class TransferLearning:
         if len(self.assets_seen_in_training) == 0:
             filtered_assets_to_train = assets_to_train
         else:
-            filtered_assets_to_train = [asset for asset in assets_to_train
-                                        if all([asset['id'] not in training
-                                                for training in self.assets_seen_in_training])]
+            filtered_assets_to_train = [
+                asset for asset in assets_to_train
+                    if all([asset['id'] not in training # pylint: disable=use-a-generator
+                        for training in self.assets_seen_in_training])]
         if len(filtered_assets_to_train) >= self.minimum_number_of_assets_to_launch_training:
             TransferLearning.train(filtered_assets_to_train)
             self.current_training_number += 1
@@ -139,8 +140,8 @@ class TransferLearning:
         Launches the tensorboard
         """
         print('Starting Tensorboard...')
-        subprocess.Popen(['tensorboard', '--logdir=runs'])
-        print('You can access Tensorboard at http://localhost:6006\n')
+        with subprocess.Popen(['tensorboard', '--logdir=runs']):
+            print('You can access Tensorboard at http://localhost:6006\n')
 
     def launch(self):
         """

@@ -112,7 +112,7 @@ class MutationsAsset:
 
         if content_array is None and json_content_array is None:
             raise ValueError(
-                f"Variables content_array and json_content_array cannot be both None.")
+                "Variables content_array and json_content_array cannot be both None.")
         if content_array is None:
             content_array = [''] * len(json_content_array)
         if external_id_array is None:

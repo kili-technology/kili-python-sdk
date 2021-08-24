@@ -15,7 +15,7 @@ query ($where: NotificationWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_NOTIFICATIONS_COUNT = f'''
+GQL_NOTIFICATIONS_COUNT = '''
 query($where: NotificationWhere!) {{
   data: countNotifications(where: $where)
 }}

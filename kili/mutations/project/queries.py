@@ -78,7 +78,7 @@ mutation(
 }}
 '''
 
-GQL_MAKE_PROJECT_PUBLIC = f'''
+GQL_MAKE_PROJECT_PUBLIC = '''
 mutation(
     $projectID: ID!
   ) {{
@@ -153,7 +153,7 @@ mutation($projectID: ID!) {{
 }}
 '''
 
-GQL_PROJECT_DELETE_ASYNCHRONOUSLY = f'''
+GQL_PROJECT_DELETE_ASYNCHRONOUSLY = '''
 mutation($projectID: ID!) {{
   data: deleteProjectAsynchronously(where: {{
       id: $projectID

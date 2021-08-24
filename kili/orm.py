@@ -10,7 +10,7 @@ class DictClass(dict):
     """
 
     def __init__(self, *args, **kwargs):
-        super(DictClass, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__dict__ = self
 
 @dataclass
@@ -142,7 +142,7 @@ class Asset(DictClass):
     """
 
     def __init__(self, *args, **kwargs):
-        super(Asset, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if 'labels' in self:
             labels = []
             for label in self['labels']:

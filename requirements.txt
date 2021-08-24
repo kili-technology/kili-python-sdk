@@ -1,0 +1,6 @@
+pandas==1.2.5
+requests
+six
+tqdm
+typeguard
+websocket-client

@@ -15,7 +15,7 @@ query ($where: LabelWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_LABELS_COUNT = f'''
+GQL_LABELS_COUNT = '''
 query($where: LabelWhere!) {{
   data: countLabels(where: $where)
 }}

@@ -15,7 +15,7 @@ query($where: DatasetAssetWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_DATASET_ASSETS_COUNT = f'''
+GQL_DATASET_ASSETS_COUNT = '''
 query($where: DatasetAssetWhere!) {{
   data: countDatasetAssets(where: $where)
 }}

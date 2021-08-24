@@ -44,10 +44,10 @@ class Compatible():
         def checked_resolver(*args, **kwargs):
             try:
                 client_endpoint = args[0].auth.client.endpoint
-            except:
+            except Exception as exception:
                 raise ValueError(
                     'Cannot find client endpoint from resolver' \
-                    f' {resolver.__name__} with arguments {args}')
+                    f' {resolver.__name__} with arguments {args}') from exception
             if self.client_is_compatible(client_endpoint):
                 return resolver(*args, **kwargs)
             raise EndpointCompatibilityError(
@@ -154,17 +154,17 @@ def format_json_dict(result):
         if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse', 'rules']:
             if (value == '' or value is None) \
                     and not (is_url(value) and key == 'jsonInterface'):
-                result[key] = dict()
+                result[key] = {}
             elif isinstance(value, str):
                 try:
                     if is_url(value):
                         result[key] = requests.get(value).json()
                     else:
                         result[key] = loads(value)
-                except:
+                except Exception as exception:
                     raise ValueError(
                         'Json Metadata / json response /' \
-                        ' json interface / rules should be valid jsons')
+                        ' json interface / rules should be valid jsons') from exception
         else:
             result[key] = format_json(value)
     return result

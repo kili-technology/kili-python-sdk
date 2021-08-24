@@ -14,7 +14,7 @@ query($where: LockWhere!, $first: PageSize!, $skip: Int!) {{
 }}
 '''
 
-GQL_LOCKS_COUNT = f'''
+GQL_LOCKS_COUNT = '''
 query($where: LockWhere!) {{
   data: countLocks(where: $where)
 }}

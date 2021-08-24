@@ -80,15 +80,15 @@ class GraphQLClient:
                 return req.json()
             except Exception as exception:
                 if req is not None:
-                    raise Exception(req.content)
+                    raise Exception(req.content) from exception
                 raise exception
 
         req = urllib.request.Request(
             self.endpoint, json.dumps(data).encode('utf-8'), headers)
         try:
-            response = urllib.request.urlopen(req)
-            str_json = response.read().decode('utf-8')
-            return json.loads(str_json)
+            with urllib.request.urlopen(req) as response:
+                str_json = response.read().decode('utf-8')
+                return json.loads(str_json)
         except urllib.error.HTTPError as error:
             print((error.read()))
             print('')
