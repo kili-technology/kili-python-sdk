@@ -8,6 +8,7 @@ from kili.authentication import KiliAuth
 import kili.mutations.asset
 import kili.mutations.dataset_asset
 import kili.mutations.label
+import kili.mutations.label_history
 import kili.mutations.notification
 import kili.mutations.organization
 import kili.mutations.project
@@ -31,6 +32,7 @@ class Kili(
         mutations.asset.MutationsAsset,
         mutations.dataset_asset.MutationsDatasetAsset,
         mutations.label.MutationsLabel,
+        mutations.label_history.MutationsLabelHistory,
         mutations.notification.MutationsNotification,
         mutations.organization.MutationsOrganization,
         mutations.project.MutationsProject,
