@@ -7,7 +7,7 @@ from ...helpers import (Compatible,
                         convert_to_list_of_none,
                         format_metadata,
                         format_result)
-from .queries import GQL_UPDATE_PROPERTIES_IN_DATASET_ASSETS
+from .queries import GQL_DELETE_DATASET_ASSETS, GQL_UPDATE_PROPERTIES_IN_DATASET_ASSETS
 from ...orm import Asset
 
 
@@ -22,6 +22,35 @@ class MutationsDatasetAsset:
         - auth : KiliAuth object
         """
         self.auth = auth
+
+
+    @Compatible(['v2'])
+    @typechecked
+    def delete_dataset_assets(self, asset_ids: List[str]):
+        """
+        Deletes assets of a dataset.
+
+        Parameters
+        ----------
+        - asset_ids : List[str]
+            Ids of the assets to delete
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+
+        Examples
+        -------
+        kili.delete_dataset_assets(
+            asset_ids=['ckg22d81r0jrg0885unmuswj8'])
+        """
+
+        variables = {
+            'assetIds': asset_ids,
+        }
+        result = self.auth.client.execute(GQL_DELETE_DATASET_ASSETS, variables)
+        return format_result('data', result)
+
 
     @Compatible(['v2'])
     @typechecked
