@@ -32,7 +32,7 @@ class MutationsDatasetAsset:
 
         Parameters
         ----------
-        - asset_ids : str
+        - asset_ids : List[str]
             Ids of the assets to delete
 
         Returns
