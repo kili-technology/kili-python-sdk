@@ -6,6 +6,7 @@ import os
 from kili import mutations, queries, subscriptions
 from kili.authentication import KiliAuth
 import kili.mutations.asset
+import kili.mutations.dataset
 import kili.mutations.dataset_asset
 import kili.mutations.label
 import kili.mutations.notification
@@ -29,6 +30,7 @@ import kili.subscriptions.label
 
 class Kili(
         mutations.asset.MutationsAsset,
+        mutations.dataset.MutationsDataset,
         mutations.dataset_asset.MutationsDatasetAsset,
         mutations.label.MutationsLabel,
         mutations.notification.MutationsNotification,
