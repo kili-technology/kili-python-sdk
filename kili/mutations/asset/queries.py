@@ -3,7 +3,7 @@ from .fragments import ASSET_FRAGMENT
 
 GQL_APPEND_MANY_TO_DATASET = f'''
 mutation(
-    $projectID: ID!,
+    $where: ProjectWhere!,
     $contentArray: [String!],
     $externalIDArray: [String!],
     $isHoneypotArray: [Boolean!],
@@ -11,7 +11,7 @@ mutation(
     $jsonContentArray: [String!],
     $jsonMetadataArray: [String!]) {{
   data: appendManyToDataset(
-    projectID: $projectID,
+    where: $where,
     contentArray: $contentArray,
     externalIDArray: $externalIDArray,
     isHoneypotArray: $isHoneypotArray,

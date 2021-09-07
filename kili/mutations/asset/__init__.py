@@ -120,7 +120,7 @@ class MutationsAsset:
                     raise ValueError(
                         f"Content {content} isn't a link to a video")
         variables = {
-            'projectID': project_id,
+            'where': {'id': project_id},
             'contentArray': content_array,
             'externalIDArray': external_id_array,
             'isHoneypotArray': is_honeypot_array,
