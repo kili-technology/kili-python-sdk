@@ -260,7 +260,7 @@ class MutationsAsset:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
-        variables = {'assetIDs': asset_ids}
+        variables = {'where': {'idIn': asset_ids}}
         result = self.auth.client.execute(
             GQL_DELETE_MANY_FROM_DATASET, variables)
         return format_result('data', result, Asset)
