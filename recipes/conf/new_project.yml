@@ -29,6 +29,6 @@ mutations:
   - signIn
   - createOrganization
   - createUser
-  - createEmptyProject
+  - createProject
   - appendToTools
   - appendToRoles

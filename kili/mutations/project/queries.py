@@ -69,15 +69,13 @@ mutation(
     $jsonInterface: String!
     $projectType: ProjectType
     $title: String!
-    $userID: ID!
   ) {{
   data: createProject(
     description: $description
     inputType: $inputType
     jsonInterface: $jsonInterface
     projectType: $projectType
-    title: $title
-    userID: $userID) {{
+    title: $title) {{
       {PROJECT_FRAGMENT_ID}
   }}
 }}
