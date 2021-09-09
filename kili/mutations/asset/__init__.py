@@ -120,7 +120,7 @@ class MutationsAsset:
                     raise ValueError(
                         f"Content {content} isn't a link to a video")
         variables = {
-            'projectID': project_id,
+            'where': {'id': project_id},
             'contentArray': content_array,
             'externalIDArray': external_id_array,
             'isHoneypotArray': is_honeypot_array,
@@ -260,7 +260,7 @@ class MutationsAsset:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
-        variables = {'assetIDs': asset_ids}
+        variables = {'where': {'idIn': asset_ids}}
         result = self.auth.client.execute(
             GQL_DELETE_MANY_FROM_DATASET, variables)
         return format_result('data', result, Asset)
