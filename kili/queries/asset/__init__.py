@@ -37,7 +37,7 @@ class QueriesAsset:
                disable_tqdm: bool = False,
                external_id_contains: Optional[List[str]] = None,
                first: Optional[int] = None,
-               format: Optional[str] = None, 
+               format: Optional[str] = None,
                honeypot_mark_gt: Optional[float] = None,
                honeypot_mark_lt: Optional[float] = None,
                label_author_in: Optional[List[str]] = None,
@@ -54,8 +54,9 @@ class QueriesAsset:
                metadata_where: Optional[dict] = None,
                status_in: Optional[List[str]] = None,
                updated_at_gte: Optional[str] = None,
-               updated_at_lte: Optional[str] = None
-            ):
+               updated_at_lte: Optional[str] = None,
+               dataset_asset_id: Optional[str] = None
+               ):
         """
         Get an array of assets respecting a set of constraints
 
@@ -160,7 +161,7 @@ class QueriesAsset:
                         'consensusMarkLte': consensus_mark_lt,
                         'honeypotMarkGte': honeypot_mark_gt,
                         'honeypotMarkLte': honeypot_mark_lt,
-                        'idIn' : asset_id_in,
+                        'idIn': asset_id_in,
                         'metadata': metadata_where,
                         'label': {
                             'typeIn': label_type_in,
@@ -177,6 +178,9 @@ class QueriesAsset:
                         },
                         'updatedAtGte': updated_at_gte,
                         'updatedAtLte': updated_at_lte,
+                        'datasetAsset': {
+                            'id': dataset_asset_id
+                        },
                     },
                     'skip': skip,
                     'first': formatted_first,
@@ -218,7 +222,8 @@ class QueriesAsset:
                      label_json_response_contains: Optional[List[str]] = None,
                      label_skipped: Optional[bool] = None,
                      updated_at_gte: Optional[str] = None,
-                     updated_at_lte: Optional[str] = None):
+                     updated_at_lte: Optional[str] = None,
+                     dataset_asset_id: Optional[str] = None):
         """
         Count and return the number of assets with the given constraints
 
@@ -305,7 +310,7 @@ class QueriesAsset:
                 'consensusMarkLte': consensus_mark_lt,
                 'honeypotMarkGte': honeypot_mark_gt,
                 'honeypotMarkLte': honeypot_mark_lt,
-                'idIn' : asset_id_in,
+                'idIn': asset_id_in,
                 'metadata': metadata_where,
                 'label': {
                     'typeIn': label_type_in,
@@ -322,6 +327,9 @@ class QueriesAsset:
                 },
                 'updatedAtGte': updated_at_gte,
                 'updatedAtLte': updated_at_lte,
+                'datasetAsset': {
+                    'id': dataset_asset_id
+                },
             }
         }
         result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
