@@ -2,11 +2,12 @@ from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID, ROLE_FRAGMENT
 
 
 GQL_APPEND_TO_ROLES = f'''
-mutation($projectID: ID!, $userEmail: String!, $role: ProjectRole!) {{
+mutation($userEmail: String!, $role: ProjectRole!, $where: ProjectWhere!) {{
   data: appendToRoles(
-    projectID: $projectID
     userEmail: $userEmail
-    role: $role) {{
+    role: $role
+    where: $where
+  ) {{
       {PROJECT_FRAGMENT}
   }}
 }}
@@ -101,9 +102,8 @@ mutation(
     $userID: ID!
     $role: ProjectRole!
 ) {{
-  
   data: updatePropertiesInRole(
-    where: {{roleID: $roleID}}
+    where: {{id: $roleID}}
     data: {{
       projectID: $projectID
       userID: $userID
@@ -115,8 +115,8 @@ mutation(
 '''
 
 GQL_DELETE_FROM_ROLES = f'''
-mutation($roleID: ID!) {{
-  data: deleteFromRoles(roleID: $roleID) {{
+mutation($where: ProjectUserWhere!) {{
+  data: deleteFromRoles(where: $where) {{
     {PROJECT_FRAGMENT_ID}
   }}
 }}

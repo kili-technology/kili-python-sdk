@@ -52,18 +52,17 @@ class MutationsDataset:
 
         variables = {
             'contentArray': content_array,
-            'datasetId': dataset_id,
             'externalIdArray': external_id_array,
+            'where': {'id': dataset_id}
         }
         result = self.auth.client.execute(GQL_APPEND_TO_DATASET, variables)
         return format_result('data', result)
-    
 
     @Compatible(['v2'])
     @typechecked
     def append_datasets_to_project(self, project_id: str,
-                          dataset_ids: List[str],
-                          dataset_asset_ids: List[str]):
+                                   dataset_ids: List[str],
+                                   dataset_asset_ids: List[str]):
         """
         Appends dataset assets to a project.
 
@@ -89,13 +88,13 @@ class MutationsDataset:
         """
 
         variables = {
-            'projectId': project_id,
             'datasetIds': dataset_ids,
             'datasetAssetIds': dataset_asset_ids,
+            'where': {'id': project_id}
         }
-        result = self.auth.client.execute(GQL_APPEND_DATASETS_TO_PROJECT, variables)
+        result = self.auth.client.execute(
+            GQL_APPEND_DATASETS_TO_PROJECT, variables)
         return format_result('data', result)
-    
 
     @Compatible(['v2'])
     @typechecked
@@ -127,7 +126,6 @@ class MutationsDataset:
         }
         result = self.auth.client.execute(GQL_CREATE_DATASET, variables)
         return format_result('data', result)
-    
 
     @Compatible(['v2'])
     @typechecked
@@ -151,11 +149,10 @@ class MutationsDataset:
         """
 
         variables = {
-            'datasetId': dataset_id,
+            'where': {'id': dataset_id},
         }
         result = self.auth.client.execute(GQL_DELETE_DATASET, variables)
         return format_result('data', result)
-    
 
     @Compatible(['v2'])
     @typechecked
@@ -189,6 +186,6 @@ class MutationsDataset:
             'datasetId': dataset_id,
             'name': name,
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_DATASET, variables)
+        result = self.auth.client.execute(
+            GQL_UPDATE_PROPERTIES_IN_DATASET, variables)
         return format_result('data', result)
- 

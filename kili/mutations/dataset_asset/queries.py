@@ -3,10 +3,10 @@ from .fragments import ASSET_FRAGMENT
 
 GQL_DELETE_DATASET_ASSETS = f'''
 mutation(
-    $assetIds: [ID!]
+    $where: DatasetAssetWhere!
 ) {{
   data: deleteDatasetAssets(
-    assetIds: $assetIds
+    where: $where
   )
 }}
 '''

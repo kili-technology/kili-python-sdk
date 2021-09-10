@@ -57,9 +57,9 @@ class MutationsProject:
         >>> kili.append_to_roles(project_id=project_id, user_email='john@doe.com')
         """
         variables = {
-            'projectID': project_id,
+            'role': role,
             'userEmail': user_email,
-            'role': role
+            'where': {'id': project_id}
         }
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
         return format_result('data', result)
@@ -273,7 +273,7 @@ class MutationsProject:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
-        variables = {'roleID': role_id}
+        variables = {'where': {'id': role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
         return format_result('data', result)
 
@@ -373,5 +373,6 @@ class MutationsProject:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {'projectID': project_id}
-        result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
+        result = self.auth.client.execute(
+            GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
         return format_result('data', result)

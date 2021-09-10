@@ -42,11 +42,13 @@ mutation(
 
 GQL_UPDATE_API_KEY = f'''
 mutation(
-    $email: String!
     $newApiKey: String!
+    $where: UserWhere!
 ) {{
-  data: updateApiKey(email: $email
-      newApiKey: $newApiKey) {{
+  data: updateApiKey(
+    newApiKey: $newApiKey
+    where: $where
+  ) {{
     {USER_FRAGMENT}
   }}
 }}
@@ -54,23 +56,25 @@ mutation(
 
 GQL_UPDATE_PASSWORD = f'''
 mutation(
-    $email: String!
     $oldPassword: String!
     $newPassword1: String!
     $newPassword2: String!
+    $where: UserWhere!
 ) {{
-  data: updatePassword(email: $email
-      oldPassword: $oldPassword
-      newPassword1: $newPassword1
-      newPassword2: $newPassword2) {{
+  data: updatePassword(
+    oldPassword: $oldPassword
+    newPassword1: $newPassword1
+    newPassword2: $newPassword2
+    where: $where
+  ) {{
     {USER_FRAGMENT}
   }}
 }}
 '''
 
 GQL_RESET_PASSWORD = f'''
-mutation($email: String!) {{
-  data: resetPassword(email: $email) {{
+mutation($where: UserWhere!) {{
+  data: resetPassword(where: $where) {{
     {USER_FRAGMENT}
   }}
 }}

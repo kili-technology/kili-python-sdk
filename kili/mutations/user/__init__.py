@@ -69,16 +69,16 @@ class MutationsUser:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'email': email,
             'newApiKey': new_api_key,
+            'where': {'email': email}
         }
         result = self.auth.client.execute(GQL_UPDATE_API_KEY, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_password(self, email: str, old_password: str, new_password_1: str, 
-            new_password_2: str):
+    def update_password(self, email: str, old_password: str, new_password_1: str,
+                        new_password_2: str):
         """
         Allows you to modify the password you use to connect to Kili. This resolver only works for on-premise installations without Auth0.
 
@@ -96,10 +96,10 @@ class MutationsUser:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'email': email,
             'oldPassword': old_password,
             'newPassword1': new_password_1,
-            'newPassword2': new_password_2
+            'newPassword2': new_password_2,
+            'where': {'email': email}
         }
         result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
         return format_result('data', result)
@@ -121,15 +121,15 @@ class MutationsUser:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
-        variables = {'email': email}
+        variables = {'where': {'email': email}}
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_properties_in_user(self, email: str, name: Optional[str] = None, 
-            organization_id: Optional[str] = None, organization_role: Optional[str] = None, 
-            activated: Optional[bool] = None):
+    def update_properties_in_user(self, email: str, name: Optional[str] = None,
+                                  organization_id: Optional[str] = None, organization_role: Optional[str] = None,
+                                  activated: Optional[bool] = None):
         """
         Update the properties of a user
 

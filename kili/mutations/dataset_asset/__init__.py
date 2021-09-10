@@ -23,7 +23,6 @@ class MutationsDatasetAsset:
         """
         self.auth = auth
 
-
     @Compatible(['v2'])
     @typechecked
     def delete_dataset_assets(self, asset_ids: List[str]):
@@ -46,18 +45,18 @@ class MutationsDatasetAsset:
         """
 
         variables = {
-            'assetIds': asset_ids,
+            'where': {'idIn': asset_ids},
         }
         result = self.auth.client.execute(GQL_DELETE_DATASET_ASSETS, variables)
         return format_result('data', result)
-
 
     @Compatible(['v2'])
     @typechecked
     def update_properties_in_dataset_assets(self, asset_ids: List[str],
                                             external_ids: Optional[List[str]] = None,
                                             json_metadatas: Optional[List[dict]] = None,
-                                            contents: Optional[List[str]] = None,
+                                            contents: Optional[List[str]
+                                                               ] = None,
                                             json_contents: Optional[List[str]] = None):
         """
         Update the properties of one or more assets of datasets.
