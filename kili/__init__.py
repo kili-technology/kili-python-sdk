@@ -4,4 +4,4 @@
 from kili import mutations, queries, subscriptions
 
 
-__version__ = "2.85.0"
+__version__ = "2.86.1"
