@@ -201,7 +201,6 @@ class Asset(object):
 
 class DatasetAsset(object):
     id = 'id'
-    assets = Asset
     content = 'content'
     contentJson = 'contentJson'
     contentJsonCompute = 'contentJsonCompute'
