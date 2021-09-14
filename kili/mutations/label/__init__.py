@@ -70,22 +70,22 @@ class MutationsLabel:
             json_response_array), "IDs list and predictions list should have the same length"
         assert len(external_id_array) == len(
             model_name_array), "IDs list and model names list should have the same length"
+        where = {}
         variables = {
-            'projectID': project_id,
-            'externalIDArray': external_id_array,
             'modelNameArray': model_name_array,
-            'jsonResponseArray': [dumps(elem) for elem in json_response_array]
+            'jsonResponseArray': [dumps(elem) for elem in json_response_array],
+            'where': {'externalIdIn': external_id_array, 'project': {'id': project_id}}
         }
         result = self.auth.client.execute(GQL_CREATE_PREDICTIONS, variables)
         return format_result('data', result, Label)
 
-    @Compatible(['v1', 'v2'])
-    @typechecked
-    def append_to_labels(self, json_response: dict, author_id: Optional[str] = None, 
-            label_asset_external_id: Optional[str] = None, 
-            label_asset_id: Optional[str] = None, label_type: str = 'DEFAULT', 
-            project_id: Optional[str] = None, seconds_to_label: Optional[int] = 0, 
-            skipped: Optional[bool] = False):
+    @ Compatible(['v1', 'v2'])
+    @ typechecked
+    def append_to_labels(self, json_response: dict, author_id: Optional[str] = None,
+                         label_asset_external_id: Optional[str] = None,
+                         label_asset_id: Optional[str] = None, label_type: str = 'DEFAULT',
+                         project_id: Optional[str] = None, seconds_to_label: Optional[int] = 0,
+                         skipped: Optional[bool] = False):
         """
         Append a label to an asset
 
@@ -124,19 +124,19 @@ class MutationsLabel:
         variables = {
             'authorID': author_id,
             'jsonResponse': dumps(json_response),
-            'labelAssetID': label_asset_id,
             'labelType': label_type,
             'secondsToLabel': seconds_to_label,
-            'skipped': skipped
+            'skipped': skipped,
+            'where': {'id': label_asset_id}
         }
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result('data', result, Label)
 
-    @Compatible(['v1', 'v2'])
-    @typechecked
-    def update_properties_in_label(self, label_id: str, 
-            seconds_to_label: Optional[int] = None, model_name: Optional[str] = None, 
-            json_response: Optional[dict] = None):
+    @ Compatible(['v1', 'v2'])
+    @ typechecked
+    def update_properties_in_label(self, label_id: str,
+                                   seconds_to_label: Optional[int] = None, model_name: Optional[str] = None,
+                                   json_response: Optional[dict] = None):
         """
         Update properties of a label
 
@@ -171,8 +171,8 @@ class MutationsLabel:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def create_honeypot(self, json_response: dict, asset_external_id: Optional[str] = None, 
-            asset_id: Optional[str] = None, project_id: Optional[str] = None):
+    def create_honeypot(self, json_response: dict, asset_external_id: Optional[str] = None,
+                        asset_id: Optional[str] = None, project_id: Optional[str] = None):
         """
         Create honeypot for an asset. 
 
@@ -201,8 +201,8 @@ class MutationsLabel:
             self, asset_id, asset_external_id, project_id)
 
         variables = {
-            'assetID': asset_id,
-            'jsonResponse': dumps(json_response)
+            'jsonResponse': dumps(json_response),
+            'where': {'id': asset_id}
         }
         result = self.auth.client.execute(GQL_CREATE_HONEYPOT, variables)
         return format_result('data', result, Label)

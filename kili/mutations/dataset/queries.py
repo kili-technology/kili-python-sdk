@@ -3,13 +3,13 @@ from .fragments import DATASET_FRAGMENT
 GQL_APPEND_TO_DATASET = f'''
 mutation(
     $contentArray: [String!]
-    $datasetId: String!
     $externalIdArray: [String!]
+    $where: DatasetWhere!
 ) {{
   data: appendToDataset(
     contentArray: $contentArray,
-    datasetId: $datasetId,
-    externalIdArray: $externalIdArray
+    externalIdArray: $externalIdArray,
+    where: $where
   ) {{
     {DATASET_FRAGMENT}
   }}
@@ -18,14 +18,14 @@ mutation(
 
 GQL_APPEND_DATASETS_TO_PROJECT = f'''
 mutation(
-    $projectId: String!
     $datasetIds: [String!]
     $datasetAssetIds: [String!]
+    $where: ProjectWhere!
 ) {{
   data: appendDatasetsToProject(
-    projectId: $projectId,
     datasetIds: $datasetIds,
-    datasetAssetIds: $datasetAssetIds
+    datasetAssetIds: $datasetAssetIds,
+    where: $where
   )
 }}
 '''
@@ -46,12 +46,11 @@ mutation(
 
 GQL_DELETE_DATASET = f'''
 mutation(
-    $datasetId: ID!
+    $where: DatasetWhere!
 ) {{
   data: deleteDataset(
-    where: {{
-      id: $datasetId
-    }}) {{
+    where: $where
+  ) {{
     {DATASET_FRAGMENT}
   }}
 }}
