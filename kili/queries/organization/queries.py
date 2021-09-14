@@ -13,13 +13,3 @@ query($where: OrganizationWhere!) {{
   data: countOrganizations(where: $where)
 }}
 '''
-
-GQL_ORGANIZATION_METRICS = f'''
-query($where: OrganizationMetricsWhere!) {{
-  data: organizationMetrics(where: $where) {{
-    numberOfAnnotations
-    numberOfHours
-    numberOfLabeledAssets
-  }}
-}}
-'''
