@@ -30,7 +30,7 @@ class QueriesAsset:
     def assets(self, asset_id: Optional[str] = None, project_id: Optional[str] = None,
                skip: int = 0,
                fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
-                               'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'status'],
+                               'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'skipped', 'status'],
                asset_id_in: Optional[List[str]] = None,
                consensus_mark_gt: Optional[float] = None,
                consensus_mark_lt: Optional[float] = None,
