@@ -49,9 +49,9 @@ class QueriesAsset:
                label_honeypot_mark_gt: Optional[float] = None,
                label_honeypot_mark_lt: Optional[float] = None,
                label_json_response_contains: Optional[List[str]] = None,
-               label_skipped: Optional[bool] = None,
                label_type_in: Optional[List[str]] = None,
                metadata_where: Optional[dict] = None,
+               skipped: Optional[bool] = None,
                status_in: Optional[List[str]] = None,
                updated_at_gte: Optional[str] = None,
                updated_at_lte: Optional[str] = None
@@ -115,8 +115,8 @@ class QueriesAsset:
             Returned assets should have a label whose honeypot is greater than this number.
         - label_honeypot_mark_lt : float, optional (default = None)
             Returned assets should have a label whose honeypot is lower than this number.
-        - label_skipped : bool, optional (default = None)
-            Returned assets should have a label which is skipped
+        - skipped : bool, optional (default = None)
+            Returned assets must be skipped
         - updated_at_gte : string, optional (default = None)
             Returned assets should have a label whose update date is greated or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -173,8 +173,8 @@ class QueriesAsset:
                             'honeypotMarkGte': label_honeypot_mark_gt,
                             'honeypotMarkLte': label_honeypot_mark_lt,
                             'jsonResponseContains': label_json_response_contains,
-                            'skipped': label_skipped,
                         },
+                        'skipped': skipped,
                         'updatedAtGte': updated_at_gte,
                         'updatedAtLte': updated_at_lte,
                     },
@@ -216,7 +216,7 @@ class QueriesAsset:
                      label_honeypot_mark_gt: Optional[float] = None,
                      label_honeypot_mark_lt: Optional[float] = None,
                      label_json_response_contains: Optional[List[str]] = None,
-                     label_skipped: Optional[bool] = None,
+                     skipped: Optional[bool] = None,
                      updated_at_gte: Optional[str] = None,
                      updated_at_lte: Optional[str] = None):
         """
@@ -273,8 +273,8 @@ class QueriesAsset:
             Returned assets should have a label whose honeypot is lower than this number.
         - label_json_response_contains : list of str, optional (default = None)
             Returned assets should have a substring of the label's jsonResponse that belongs to that list, if given.
-        - label_skipped : bool, optional (default = None)
-            Returned assets should have a label which is skipped
+        - skipped : bool, optional (default = None)
+            Returned assets should be skipped
         - updated_at_gte : string, optional (default = None)
             Returned assets should have a label whose update date is greated or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -318,8 +318,8 @@ class QueriesAsset:
                     'honeypotMarkGte': label_honeypot_mark_gt,
                     'honeypotMarkLte': label_honeypot_mark_lt,
                     'jsonResponseContains': label_json_response_contains,
-                    'skipped': label_skipped,
                 },
+                'skipped': skipped,
                 'updatedAtGte': updated_at_gte,
                 'updatedAtLte': updated_at_lte,
             }
