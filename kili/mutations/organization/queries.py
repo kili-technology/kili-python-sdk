@@ -2,18 +2,10 @@ from .fragments import ORGANIZATION_FRAGMENT
 
 GQL_CREATE_ORGANIZATION = f'''
 mutation(
-    $name: String!
-    $address: String!
-    $zipCode: String!
-    $city: String!
-    $country: String!
+    $data: CreateOrganizationData!
 ) {{
   data: createOrganization(
-    name: $name
-    address: $address
-    zipCode: $zipCode
-    city: $city
-    country: $country
+    data: $data
   ) {{
     {ORGANIZATION_FRAGMENT}
   }}

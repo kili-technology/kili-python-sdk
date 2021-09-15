@@ -3,21 +3,11 @@ from .fragments import ASSET_FRAGMENT
 
 GQL_APPEND_MANY_TO_DATASET = f'''
 mutation(
-    $contentArray: [String!],
-    $externalIDArray: [String!],
-    $isHoneypotArray: [Boolean!],
-    $statusArray: [Status!],
-    $jsonContentArray: [String!],
-    $jsonMetadataArray: [String!],
+    $data: AppendManyToDatasetData!,
     $where: ProjectWhere!
   ) {{
   data: appendManyToDataset(
-    contentArray: $contentArray,
-    externalIDArray: $externalIDArray,
-    isHoneypotArray: $isHoneypotArray,
-    statusArray: $statusArray,
-    jsonContentArray: $jsonContentArray,
-    jsonMetadataArray: $jsonMetadataArray,
+    data: $data,
     where: $where
   ) {{
     {ASSET_FRAGMENT}

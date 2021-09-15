@@ -51,8 +51,8 @@ class MutationsDataset:
         """
 
         variables = {
-            'contentArray': content_array,
-            'externalIdArray': external_id_array,
+            'data': {'contentArray': content_array,
+                     'externalIdArray': external_id_array},
             'where': {'id': dataset_id}
         }
         result = self.auth.client.execute(GQL_APPEND_TO_DATASET, variables)
@@ -88,8 +88,8 @@ class MutationsDataset:
         """
 
         variables = {
-            'datasetIds': dataset_ids,
-            'datasetAssetIds': dataset_asset_ids,
+            'data': {'datasetIds': dataset_ids,
+                     'datasetAssetIds': dataset_asset_ids},
             'where': {'id': project_id}
         }
         result = self.auth.client.execute(
@@ -121,8 +121,8 @@ class MutationsDataset:
         """
 
         variables = {
-            'name': name,
-            'assetType': asset_type,
+            'data': {'name': name,
+                     'assetType': asset_type},
         }
         result = self.auth.client.execute(GQL_CREATE_DATASET, variables)
         return format_result('data', result)
