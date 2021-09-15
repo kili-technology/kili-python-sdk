@@ -120,13 +120,14 @@ class MutationsAsset:
                     raise ValueError(
                         f"Content {content} isn't a link to a video")
         variables = {
-            'where': {'id': project_id},
-            'contentArray': content_array,
-            'externalIDArray': external_id_array,
-            'isHoneypotArray': is_honeypot_array,
-            'statusArray': status_array,
-            'jsonContentArray': formatted_json_content_array,
-            'jsonMetadataArray': formatted_json_metadata_array}
+            'data': {'contentArray': content_array,
+                     'externalIDArray': external_id_array,
+                     'isHoneypotArray': is_honeypot_array,
+                     'statusArray': status_array,
+                     'jsonContentArray': formatted_json_content_array,
+                     'jsonMetadataArray': formatted_json_metadata_array},
+            'where': {'id': project_id}
+        }
         result = self.auth.client.execute(
             GQL_APPEND_MANY_TO_DATASET, variables)
         return format_result('data', result, Asset)
@@ -137,7 +138,7 @@ class MutationsAsset:
                                     external_ids: Optional[List[str]] = None,
                                     priorities: Optional[List[int]] = None, json_metadatas: Optional[List[dict]] = None, consensus_marks: Optional[List[float]] = None,
                                     honeypot_marks: Optional[List[float]] = None, to_be_labeled_by_array: Optional[List[List[str]]] = None, contents: Optional[List[str]] = None,
-                                    json_contents: Optional[List[str]] = None, status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None, 
+                                    json_contents: Optional[List[str]] = None, status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None,
                                     is_honeypot_array: Optional[List[bool]] = None):
         """
         Update the properties of one or more assets.

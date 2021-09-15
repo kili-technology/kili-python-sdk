@@ -41,21 +41,21 @@ class MutationsOrganization:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'name': name,
-            'address': address,
-            'zipCode': zip_code,
-            'city': city,
-            'country': country
+            'data': {'name': name,
+                     'address': address,
+                     'zipCode': zip_code,
+                     'city': city,
+                     'country': country}
         }
         result = self.auth.client.execute(GQL_CREATE_ORGANIZATION, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_properties_in_organization(self, organization_id: str, 
-            name: Optional[str] = None, address: Optional[str] = None, 
-            zip_code: Optional[str] = None, city: Optional[str] = None, 
-            country: Optional[str] = None, license: Optional[dict] = None):
+    def update_properties_in_organization(self, organization_id: str,
+                                          name: Optional[str] = None, address: Optional[str] = None,
+                                          zip_code: Optional[str] = None, city: Optional[str] = None,
+                                          country: Optional[str] = None, license: Optional[dict] = None):
         """
         Modify an organization
 

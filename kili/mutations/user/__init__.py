@@ -4,8 +4,7 @@ from typeguard import typechecked
 
 from ...helpers import Compatible, deprecate, format_result
 from .queries import (GQL_CREATE_USER,
-                      GQL_CREATE_USER_FROM_EMAIL_IF_NOT_EXISTS,
-                      GQL_RESET_PASSWORD, GQL_SIGN_IN, GQL_UPDATE_API_KEY,
+                      GQL_RESET_PASSWORD, GQL_UPDATE_API_KEY,
                       GQL_UPDATE_PASSWORD, GQL_UPDATE_PROPERTIES_IN_USER)
 
 
@@ -43,10 +42,10 @@ class MutationsUser:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'name': name,
-            'email': email,
-            'password': password,
-            'organizationRole': organization_role
+            'data': {'name': name,
+                     'email': email,
+                     'password': password,
+                     'organizationRole': organization_role}
         }
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
         return format_result('data', result)
@@ -69,7 +68,7 @@ class MutationsUser:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'newApiKey': new_api_key,
+            'data': {'newApiKey': new_api_key},
             'where': {'email': email}
         }
         result = self.auth.client.execute(GQL_UPDATE_API_KEY, variables)
@@ -96,9 +95,9 @@ class MutationsUser:
         - a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
-            'oldPassword': old_password,
-            'newPassword1': new_password_1,
-            'newPassword2': new_password_2,
+            'data': {'oldPassword': old_password,
+                     'newPassword1': new_password_1,
+                     'newPassword2': new_password_2},
             'where': {'email': email}
         }
         result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)

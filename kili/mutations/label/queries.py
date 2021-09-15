@@ -2,13 +2,11 @@ from .fragments import LABEL_FRAGMENT, LABEL_FRAGMENT_ID
 
 GQL_CREATE_PREDICTIONS = f'''
 mutation(
-    $modelNameArray: [String!]!
-    $jsonResponseArray: [String!]!
+    $data: CreatePredictionsData!
     $where: AssetWhere!
 ) {{
   data: createPredictions(
-    modelNameArray: $modelNameArray
-    jsonResponseArray: $jsonResponseArray
+    data: $data
     where: $where
   ) {{
       {LABEL_FRAGMENT_ID}
@@ -18,19 +16,11 @@ mutation(
 
 GQL_APPEND_TO_LABELS = f'''
 mutation(
-    $authorID: ID!
-    $jsonResponse: String!
-    $labelType: LabelType!
-    $secondsToLabel: Float
-    $skipped: Boolean!
+    $data: AppendToLabelsData!
     $where: AssetWhere!
 ) {{
   data: appendToLabels(
-    authorID: $authorID
-    jsonResponse: $jsonResponse
-    labelType: $labelType
-    secondsToLabel: $secondsToLabel
-    skipped: $skipped
+    data: $data
     where: $where
   ) {{
       {LABEL_FRAGMENT_ID}
@@ -61,11 +51,11 @@ mutation(
 
 GQL_CREATE_HONEYPOT = f'''
 mutation(
-    $jsonResponse: String!
+    $data: CreateHoneypotData!
     $where: AssetWhere!
 ) {{
   data: createHoneypot(
-    jsonResponse: $jsonResponse
+    data: $data
     where: $where
   ) {{
       {LABEL_FRAGMENT}

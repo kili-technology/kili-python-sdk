@@ -57,8 +57,8 @@ class MutationsProject:
         >>> kili.append_to_roles(project_id=project_id, user_email='john@doe.com')
         """
         variables = {
-            'role': role,
-            'userEmail': user_email,
+            'data': {'role': role,
+                     'userEmail': user_email},
             'where': {'id': project_id}
         }
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
@@ -194,12 +194,11 @@ class MutationsProject:
         if user_id is None:
             user_id = self.auth.user_id
         variables = {
-            'description': description,
-            'inputType': input_type,
-            'jsonInterface': dumps(json_interface),
-            'projectType': project_type,
-            'title': title,
-            'userID': user_id
+            'data': {'description': description,
+                     'inputType': input_type,
+                     'jsonInterface': dumps(json_interface),
+                     'projectType': project_type,
+                     'title': title}
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
         return format_result('data', result)

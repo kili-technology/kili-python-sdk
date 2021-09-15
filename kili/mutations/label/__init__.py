@@ -72,8 +72,8 @@ class MutationsLabel:
             model_name_array), "IDs list and model names list should have the same length"
         where = {}
         variables = {
-            'modelNameArray': model_name_array,
-            'jsonResponseArray': [dumps(elem) for elem in json_response_array],
+            'data': {'modelNameArray': model_name_array,
+                     'jsonResponseArray': [dumps(elem) for elem in json_response_array]},
             'where': {'externalIdIn': external_id_array, 'project': {'id': project_id}}
         }
         result = self.auth.client.execute(GQL_CREATE_PREDICTIONS, variables)
@@ -122,11 +122,11 @@ class MutationsLabel:
         label_asset_id = infer_id_from_external_id(
             self, label_asset_id, label_asset_external_id, project_id)
         variables = {
-            'authorID': author_id,
-            'jsonResponse': dumps(json_response),
-            'labelType': label_type,
-            'secondsToLabel': seconds_to_label,
-            'skipped': skipped,
+            'data': {'authorID': author_id,
+                     'jsonResponse': dumps(json_response),
+                     'labelType': label_type,
+                     'secondsToLabel': seconds_to_label,
+                     'skipped': skipped},
             'where': {'id': label_asset_id}
         }
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
@@ -201,7 +201,7 @@ class MutationsLabel:
             self, asset_id, asset_external_id, project_id)
 
         variables = {
-            'jsonResponse': dumps(json_response),
+            'data': {'jsonResponse': dumps(json_response)},
             'where': {'id': asset_id}
         }
         result = self.auth.client.execute(GQL_CREATE_HONEYPOT, variables)

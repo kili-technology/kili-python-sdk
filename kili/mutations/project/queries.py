@@ -2,10 +2,9 @@ from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID, ROLE_FRAGMENT
 
 
 GQL_APPEND_TO_ROLES = f'''
-mutation($userEmail: String!, $role: ProjectRole!, $where: ProjectWhere!) {{
+mutation($data: AppendToRolesData!, $where: ProjectWhere!) {{
   data: appendToRoles(
-    userEmail: $userEmail
-    role: $role
+    data: $data
     where: $where
   ) {{
       {PROJECT_FRAGMENT}
@@ -65,18 +64,11 @@ mutation(
 
 GQL_CREATE_PROJECT = f'''
 mutation(
-    $description: String!
-    $inputType: InputType!
-    $jsonInterface: String!
-    $projectType: ProjectType
-    $title: String!
+    $data: CreateProjectData!
   ) {{
   data: createProject(
-    description: $description
-    inputType: $inputType
-    jsonInterface: $jsonInterface
-    projectType: $projectType
-    title: $title) {{
+    data: $data
+  ) {{
       {PROJECT_FRAGMENT_ID}
   }}
 }}
