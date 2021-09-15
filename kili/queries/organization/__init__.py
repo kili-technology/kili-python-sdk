@@ -1,10 +1,10 @@
+from datetime import datetime
 from typing import Optional
-import warnings
 
 from typeguard import typechecked
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
-from .queries import gql_organizations, GQL_ORGANIZATIONS_COUNT
+from .queries import gql_organizations, GQL_ORGANIZATIONS_COUNT, GQL_ORGANIZATION_METRICS
 from ...types import Organization
 
 
@@ -93,4 +93,32 @@ class QueriesOrganization:
             }
         }
         result = self.auth.client.execute(GQL_ORGANIZATIONS_COUNT, variables)
+        return format_result('data', result)
+    
+    @Compatible(['v2'])
+    @typechecked
+    def organization_metrics(self, organization_id: str = None, 
+            start_date: datetime = datetime.now(),
+            end_date: datetime = datetime.now()):
+        """
+        Get organization metrics
+
+        Parameters
+        ----------
+        - organization_id : str
+        - start_date : datetime
+        - end_date : datetime
+
+        Returns
+        -------
+        - a result object which contains the query if it was successful, or an error message else.
+        """
+        variables = {
+            'where': {
+                'organizationId': organization_id,
+                'startDate': start_date.isoformat(sep='T', timespec='milliseconds') + 'Z',
+                'endDate': end_date.isoformat(sep='T', timespec='milliseconds') + 'Z',
+            }
+        }
+        result = self.auth.client.execute(GQL_ORGANIZATION_METRICS, variables)
         return format_result('data', result)
