@@ -41,8 +41,8 @@ mutation(
 '''
 
 GQL_DELETE_MANY_FROM_DATASET = f'''
-mutation($assetIDs: [ID!]) {{
-  data: deleteManyFromDataset(assetIDs: $assetIDs) {{
+mutation($where: AssetWhere!) {{
+  data: deleteManyFromDataset(where: $where) {{
     {ASSET_FRAGMENT}
   }}
 }}
