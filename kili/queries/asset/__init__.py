@@ -116,7 +116,7 @@ class QueriesAsset:
         - label_honeypot_mark_lt : float, optional (default = None)
             Returned assets should have a label whose honeypot is lower than this number.
         - skipped : bool, optional (default = None)
-            Returned assets must be skipped
+            Returned assets should be skipped
         - updated_at_gte : string, optional (default = None)
             Returned assets should have a label whose update date is greated or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
