@@ -1,3 +1,7 @@
+"""
+Queries of dataset mutations
+"""
+
 from .fragments import DATASET_FRAGMENT
 
 GQL_APPEND_TO_DATASET = f'''
@@ -14,16 +18,16 @@ mutation(
 }}
 '''
 
-GQL_APPEND_DATASETS_TO_PROJECT = f'''
+GQL_APPEND_DATASETS_TO_PROJECT = '''
 mutation(
     $data: AppendDatasetsToProjectData!
     $where: ProjectWhere!
-) {{
+) {
   data: appendDatasetsToProject(
     data: $data,
     where: $where
   )
-}}
+}
 '''
 
 GQL_CREATE_DATASET = f'''

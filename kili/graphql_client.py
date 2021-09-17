@@ -1,10 +1,14 @@
-import websocket
-import threading
+"""
+GraphQL Client
+"""
+
+from datetime import datetime
+import json
 import random
 import string
-import json
+import threading
 import time
-from datetime import datetime
+import websocket
 
 from six.moves import urllib
 
@@ -12,6 +16,10 @@ from . import __version__
 
 
 class GraphQLClient:
+    """
+    A simple GraphQL client
+    """
+
     def __init__(self, endpoint, session=None, verify=True):
         self.endpoint = endpoint
         self.headername = None
@@ -20,13 +28,37 @@ class GraphQLClient:
         self.verify = verify
 
     def execute(self, query, variables=None):
+        """
+        Execute a query
+
+        Parameters
+        ----------
+        - query
+        - variables
+        """
         return self._send(query, variables)
 
     def inject_token(self, token, headername='Authorization'):
+        """
+        Inject a token
+
+        Parameters
+        ----------
+        - token
+        - headername: by default "Authorization"
+        """
         self.token = token
         self.headername = headername
 
     def _send(self, query, variables):
+        """
+        Send the query
+
+        Parameters
+        ----------
+        - query
+        - variables
+        """
         data = {'query': query,
                 'variables': variables}
         headers = {'Accept': 'application/json',
@@ -34,7 +66,7 @@ class GraphQLClient:
                    'X-Powered-By': f'Kili Playground/{__version__}'}
 
         if self.token is not None:
-            headers[self.headername] = '{}'.format(self.token)
+            headers[self.headername] = f'{self.token}'
 
         if self.session is not None:
             try:
@@ -49,19 +81,19 @@ class GraphQLClient:
                 return req.json()
             except Exception as exception:
                 if req is not None:
-                    raise Exception(req.content)
+                    raise Exception(req.content) from exception
                 raise exception
 
         req = urllib.request.Request(
             self.endpoint, json.dumps(data).encode('utf-8'), headers)
         try:
-            response = urllib.request.urlopen(req)
-            str_json = response.read().decode('utf-8')
-            return json.loads(str_json)
-        except urllib.error.HTTPError as e:
-            print((e.read()))
+            with urllib.request.urlopen(req) as response:
+                str_json = response.read().decode('utf-8')
+                return json.loads(str_json)
+        except urllib.error.HTTPError as error:
+            print((error.read()))
             print('')
-            raise e
+            raise error
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
@@ -74,9 +106,11 @@ class SubscriptionGraphQLClient:
     This follows the Apollo protocol.
     https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md
     """
+    # pylint: disable=too-many-instance-attributes, too-many-arguments
 
     def __init__(self, url):
         self.ws_url = url
+        self._id = None
         self._paused = False
         self._connect()
         self._subscription_running = False
@@ -84,6 +118,10 @@ class SubscriptionGraphQLClient:
         self.failed_connection_attempts = 0
 
     def _connect(self):
+        """
+        Handles the connection
+        """
+        # pylint: disable=no-member
         self._conn = websocket.create_connection(self.ws_url,
                                                  on_message=self._on_message,
                                                  subprotocols=[GQL_WS_SUBPROTOCOL])
@@ -91,6 +129,9 @@ class SubscriptionGraphQLClient:
         self._conn.on_message = self._on_message
 
     def _reconnect(self):
+        """
+        Handles the reconnection
+        """
         self._connect()
         self._subscription_running = True
         dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -98,6 +139,14 @@ class SubscriptionGraphQLClient:
         self.failed_connection_attempts = 0
 
     def _on_message(self, message):
+        """
+        Handles messages
+
+        Parameters
+        ----------
+        - message : the message
+        """
+        # pylint: disable=no-self-use
         data = json.loads(message)
         # skip keepalive messages
         if data['type'] != 'ka':
@@ -120,17 +169,40 @@ class SubscriptionGraphQLClient:
         self._conn.recv()
 
     def _start(self, payload):
+        """
+        Handles start
+
+        Parameters
+        ----------
+        - payload
+        """
         _id = gen_id()
         frame = {'id': _id, 'type': 'start', 'payload': payload}
         self._conn.send(json.dumps(frame))
         return _id
 
     def _stop(self, _id):
+        """
+        Handles stop
+
+        Parameters
+        ----------
+        - _id: connection id
+        """
         payload = {'id': _id, 'type': 'stop'}
         self._conn.send(json.dumps(payload))
         return self._conn.recv()
 
     def query(self, query, variables=None, headers=None):
+        """
+        Sends a query
+
+        Parameters
+        ----------
+        - query
+        - variables
+        - headers
+        """
         self._conn_init(headers)
         payload = {'headers': headers, 'query': query, 'variables': variables}
         _id = self._start(payload)
@@ -139,6 +211,17 @@ class SubscriptionGraphQLClient:
         return res
 
     def prepare_subscribe(self, query, variables, headers, callback, authorization):
+        """
+        Prepares a subscription
+
+        Parameters
+        ----------
+        - query
+        - variables
+        - headers
+        - callback: function executed after the subscription
+        - authorization: authorization header
+        """
         self._conn_init(headers, authorization)
         payload = {'headers': headers, 'query': query, 'variables': variables}
         _cc = self._on_message if not callback else callback
@@ -147,34 +230,48 @@ class SubscriptionGraphQLClient:
         return _cc, _id
 
     def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
+        """
+        Subscribes
+
+        Parameters
+        ----------
+        - query
+        - variables
+        - headers
+        - callback: function executed after the subscription
+        - authorization: authorization header
+        """
         _cc, _id = self.prepare_subscribe(
             query, variables, headers, callback, authorization)
 
         def subs(_cc, _id):
             max_reconnections = 10
             self._subscription_running = True
-            while self._subscription_running and self.failed_connection_attempts < max_reconnections:
+            while self._subscription_running \
+                    and self.failed_connection_attempts < max_reconnections:
                 try:
-                    r = json.loads(self._conn.recv())
-                    if r['type'] == 'error' or r['type'] == 'complete':
-                        print(r)
+                    response = json.loads(self._conn.recv())
+                    if response['type'] == 'error' or response['type'] == 'complete':
+                        print(response)
                         self._stop_subscribe(_id)
                         break
-                    elif r['type'] != 'ka' and not self._paused:
-                        _cc(_id, r)
+                    if response['type'] != 'ka' and not self._paused:
+                        _cc(_id, response)
                     time.sleep(1)
-                except websocket._exceptions.WebSocketConnectionClosedException as e:
+                except websocket._exceptions.WebSocketConnectionClosedException as error:  # pylint: disable=no-member,protected-access
                     self.failed_connection_attempts += 1
                     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-                    error=str(e)
-                    print(f'{dt_string} Connection closed error : {error}')
+                    error_message = str(error)
+                    print(f'{dt_string} Connection closed error : {error_message}')
                     print(
-                        f'Will try to reconnect {max_reconnections - self.failed_connection_attempts} times...')
+                        'Will try to reconnect'
+                        f' {max_reconnections - self.failed_connection_attempts} times...')
                     self._reconnect()
                     _cc, _id = self.prepare_subscribe(
                         query, variables, headers, callback, authorization)
                     continue
-            print(f'Did not reconnect successfully after {max_reconnections} attempts')
+            print(
+                f'Did not reconnect successfully after {max_reconnections} attempts')
 
         self._st_id = threading.Thread(target=subs, args=(_cc, _id))
         self._st_id.start()
@@ -185,22 +282,43 @@ class SubscriptionGraphQLClient:
         self._stop(_id)
 
     def close(self):
+        """
+        Handles close
+        """
         self._conn.close()
 
     def pause(self):
+        """
+        Handles pause
+        """
         self._paused = True
 
     def unpause(self):
+        """
+        Handles unpause
+        """
         self._paused = False
 
     def get_lifetime(self):
+        """
+        Return the lifetime
+        """
         return (datetime.now() - self._created_at).seconds
 
     def reset_timeout(self):
+        """
+        Resets the timeout
+        """
         self._reconnect()
 
 
-# generate random alphanumeric id
-
 def gen_id(size=6, chars=string.ascii_letters + string.digits):
+    """
+    Generate random alphanumeric id
+
+    Parameters
+    ----------
+    - size: length of the id
+    - chars: chars used to generate the id
+    """
     return ''.join(random.choice(chars) for _ in range(size))

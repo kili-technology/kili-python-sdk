@@ -1,3 +1,7 @@
+"""
+Label mutations
+"""
+
 from json import dumps
 from typing import List, Optional
 
@@ -11,6 +15,10 @@ from ...orm import Label
 
 
 class MutationsLabel:
+    """
+    Set of Label mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -24,7 +32,13 @@ class MutationsLabel:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def create_predictions(self, project_id: str, external_id_array: List[str], model_name_array: List[str], json_response_array: List[dict]):
+    def create_predictions(
+            self,
+            project_id: str,
+            external_id_array: List[str],
+            model_name_array: List[str],
+            json_response_array: List[dict]):
+        # pylint: disable=line-too-long
         """
         Create predictions for some assets
 
@@ -39,7 +53,8 @@ class MutationsLabel:
             In case you want to precise from which model the label originated
         - json_response_array : list of dict
             The predictions are given here. An example can be found here, for a polygon.
-            For other examples, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
+            For other examples,
+                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
             ```
             {
                 "JOB_0": {
@@ -70,7 +85,6 @@ class MutationsLabel:
             json_response_array), "IDs list and predictions list should have the same length"
         assert len(external_id_array) == len(
             model_name_array), "IDs list and model names list should have the same length"
-        where = {}
         variables = {
             'data': {'modelNameArray': model_name_array,
                      'jsonResponseArray': [dumps(elem) for elem in json_response_array]},
@@ -134,8 +148,10 @@ class MutationsLabel:
 
     @ Compatible(['v1', 'v2'])
     @ typechecked
-    def update_properties_in_label(self, label_id: str,
-                                   seconds_to_label: Optional[int] = None, model_name: Optional[str] = None,
+    def update_properties_in_label(self,
+                                   label_id: str,
+                                   seconds_to_label: Optional[int] = None,
+                                   model_name: Optional[str] = None,
                                    json_response: Optional[dict] = None):
         """
         Update properties of a label
@@ -174,10 +190,10 @@ class MutationsLabel:
     def create_honeypot(self, json_response: dict, asset_external_id: Optional[str] = None,
                         asset_id: Optional[str] = None, project_id: Optional[str] = None):
         """
-        Create honeypot for an asset. 
+        Create honeypot for an asset.
 
-        Uses the json_response given to create a "REVIEW" label. This allows to compute a `honeypotMark`,
-        which measures how similar are other labels compared to this one.
+        Uses the json_response given to create a "REVIEW" label. This allows to compute a
+        `honeypotMark`, which measures how similar are other labels compared to this one.
 
         Parameters
         ----------

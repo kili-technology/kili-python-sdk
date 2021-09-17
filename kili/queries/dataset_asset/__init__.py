@@ -1,5 +1,8 @@
-import time
-from json import dumps
+"""
+Dataset asset queries
+"""
+
+
 from typing import List, Optional
 
 from typeguard import typechecked
@@ -13,6 +16,10 @@ from ...orm import Asset
 
 
 class QueriesDatasetAsset:
+    """
+    Set of DatasetAsset queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -24,14 +31,15 @@ class QueriesDatasetAsset:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v2'])
     @typechecked
     def dataset_assets(self, asset_id: Optional[str] = None, dataset_id: Optional[str] = None,
                        skip: int = 0,
                        fields: list = ['content', 'createdAt', 'externalId', 'id', 'jsonMetadata'],
                        disable_tqdm: bool = False,
-                       first: Optional[int] = None,
-                       ):
+                       first: Optional[int] = None):
+        # pylint: disable=line-too-long
         """
         Get an array of dataset assets respecting a set of constraints
 
@@ -43,7 +51,8 @@ class QueriesDatasetAsset:
             Identifier of the dataset.
         - skip : int, optional (default = None)
             Number of assets to skip (they are ordered by their date of creation, first to last).
-        - fields : list of string, optional (default = ['content', 'createdAt', 'externalId', 'id', 'jsonMetadata'])
+        - fields : list of string, optional (default = ['content', 'createdAt',
+            'externalId', 'id', 'jsonMetadata'])
             All the fields to request among the possible fields for the assets.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#datasetasset) for all possible fields.
         - first : int, optional (default = None)
@@ -81,13 +90,12 @@ class QueriesDatasetAsset:
                     'skip': skip,
                     'first': formatted_first,
                 }
-                GQL_ASSETS = gql_assets(
+                _gql_assets = gql_assets(
                     fragment_builder(fields, DatasetAssetType))
-                result = self.auth.client.execute(GQL_ASSETS, variables)
+                result = self.auth.client.execute(_gql_assets, variables)
                 assets = format_result('data', result, Asset)
-                if assets is None or len(assets) == 0 or (first is not None and len(paged_assets) == first):
-                    if format == 'pandas':
-                        return pd.DataFrame(paged_assets)
+                if assets is None or len(assets) == 0 \
+                        or (first is not None and len(paged_assets) == first):
                     return paged_assets
                 if first is not None:
                     assets = assets[:max(0, first - len(paged_assets))]
@@ -97,7 +105,10 @@ class QueriesDatasetAsset:
 
     @Compatible(['v2'])
     @typechecked
-    def count_dataset_assets(self, asset_id: Optional[str] = None, dataset_id: Optional[str] = None):
+    def count_dataset_assets(
+            self,
+            asset_id: Optional[str] = None,
+            dataset_id: Optional[str] = None):
         """
         Count and return the number of assets with the given constraints
 

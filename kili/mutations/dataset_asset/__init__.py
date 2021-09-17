@@ -1,3 +1,8 @@
+"""
+Dataset asset mutations
+"""
+
+from dataclasses import dataclass
 from typing import List, Optional
 from functools import partial
 
@@ -10,8 +15,12 @@ from ...helpers import (Compatible,
 from .queries import GQL_DELETE_DATASET_ASSETS, GQL_UPDATE_PROPERTIES_IN_DATASET_ASSETS
 from ...orm import Asset
 
-
+@dataclass
 class MutationsDatasetAsset:
+    """
+    Set of DatasetAsset mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -68,7 +77,7 @@ class MutationsDatasetAsset:
         - external_ids : List[str], optional (default = None)
             Change the external id of the assets
         - json_metadatas : List[dict] , optional (default = None)
-            The metadata given to an asset should be stored in a json like dict with keys 
+            The metadata given to an asset should be stored in a json like dict with keys
             "imageUrl", "text", "url".
             json_metadata = {'imageUrl': '','text': '','url': ''}
         - contents : List[str] (default = None)
@@ -77,7 +86,8 @@ class MutationsDatasetAsset:
             and you point Kili to your data by giving the URLs
         - json_contents : List[str] (default = None)
             - For a NLP project, the json_content is a a text formatted using RichText
-            - For a Video project, the json_content is a json containg urls pointing to each frame of the video.
+            - For a Video project, the json_content is a json containg urls pointing to
+                each frame of the video.
 
         Returns
         -------
@@ -121,8 +131,8 @@ class MutationsDatasetAsset:
             'status'
         ]
         for i, properties in enumerate(zip(*data)):
-            for property, property_value in zip(property_names, properties):
-                data_array[i][property] = property_value
+            for _property, property_value in zip(property_names, properties):
+                data_array[i][_property] = property_value
         variables = {
             'whereArray': where_array,
             'dataArray': data_array

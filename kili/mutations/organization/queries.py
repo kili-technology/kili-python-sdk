@@ -1,3 +1,7 @@
+"""
+Queries of organization mutations
+"""
+
 from .fragments import ORGANIZATION_FRAGMENT
 
 GQL_CREATE_ORGANIZATION = f'''

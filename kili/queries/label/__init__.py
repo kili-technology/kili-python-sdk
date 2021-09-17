@@ -1,10 +1,13 @@
+"""
+Label queries
+"""
+
 from typing import List, Optional
-import warnings
 
 from typeguard import typechecked
 import pandas as pd
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import gql_labels, GQL_LABELS_COUNT
@@ -14,6 +17,10 @@ from ...orm import Label
 
 
 class QueriesLabel:
+    """
+    Set of Label queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -25,6 +32,7 @@ class QueriesLabel:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
     def labels(self,
@@ -48,6 +56,7 @@ class QueriesLabel:
                skipped: Optional[bool] = None,
                type_in: Optional[List[str]] = None,
                user_id: Optional[str] = None):
+        # pylint: disable=line-too-long
         """
         Get an array of labels from a project given a set of criteria
 
@@ -71,7 +80,8 @@ class QueriesLabel:
         - created_at_lt : string, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
-        - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+        - fields : list of string, optional (default = ['author.email', 'author.id',
+            'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
         - first : int, optional (default = None)
@@ -83,7 +93,8 @@ class QueriesLabel:
         - id_contains : list of str, optional (default = None)
             Filters out labels not belonging to that list. If empty, no filtering is applied.
         - json_response_contains : list of str, optional (default = None)
-            Returned labels should have a substring of the jsonResponse that belongs to that list, if given.
+            Returned labels should have a substring of the jsonResponse that belongs
+            to that list, if given.
         - label_id : str
             Identifier of the label.
         - project_id : str
@@ -136,11 +147,12 @@ class QueriesLabel:
             'skip': skip,
             'first': formatted_first,
         }
-        GQL_LABELS = gql_labels(fragment_builder(fields, LabelType))
-        result = self.auth.client.execute(GQL_LABELS, variables)
+        _gql_labels = gql_labels(fragment_builder(fields, LabelType))
+        result = self.auth.client.execute(_gql_labels, variables)
         return format_result('data', result, Label)
 
-    def parse_json_response_for_single_classification(self, json_response):
+    @staticmethod
+    def parse_json_response_for_single_classification(json_response):
         """
         Parameters
         -------
@@ -151,14 +163,15 @@ class QueriesLabel:
         -------
         The names of categories from a json_response, for a single-class classification task
         """
-        categories = self.parse_json_response_for_multi_classification(
+        categories = QueriesLabel.parse_json_response_for_multi_classification(
             json_response)
         if len(categories) == 0:
             return []
 
         return categories[0]
 
-    def parse_json_response_for_multi_classification(self, json_response):
+    @staticmethod
+    def parse_json_response_for_multi_classification(json_response):
         """
         Parameters
         -------
@@ -169,31 +182,55 @@ class QueriesLabel:
         -------
         The names of categories from a json_response, for a multi-class classification task
         """
-        formatted_json_response = eval(json_response)
+        formatted_json_response = eval(json_response) # pylint: disable=eval-used
         if 'categories' not in formatted_json_response:
             return []
         categories = formatted_json_response['categories']
         return list(map(lambda category: category['name'], categories))
 
-    def parse_json_response(self, json_response, interface_category):
+    @staticmethod
+    def parse_json_response(json_response, interface_category):
+        """
+        Parameters
+        -------
+        json_response : dict
+            A valid JSON response
+        interface_category: str
+            A valid interface category
+
+        Returns
+        -------
+        The names of categories from a json_response
+        """
         if interface_category == 'SINGLECLASS_TEXT_CLASSIFICATION':
-            return self.parse_json_response_for_single_classification(json_response)
+            return QueriesLabel.parse_json_response_for_single_classification(json_response)
         if interface_category == 'MULTICLASS_TEXT_CLASSIFICATION':
-            return self.parse_json_response_for_multi_classification(json_response)
+            return QueriesLabel.parse_json_response_for_multi_classification(json_response)
 
         return json_response
 
+    # pylint: disable=dangerous-default-value
     @typechecked
     def export_labels_as_df(self,
                             project_id: str,
-                            fields: list = ['author.email', 'author.id', 'author.name', 'createdAt', 'id', 'labelType', 'skipped']):
+                            fields: list = [
+                                'author.email',
+                                'author.id',
+                                'author.name',
+                                'createdAt',
+                                'id',
+                                'labelType',
+                                'skipped'
+                            ]):
+        # pylint: disable=line-too-long
         """
         Get the labels of a project as a pandas DataFrame
 
         Parameters
         ----------
         - project_id : str
-        - fields : list of string, optional (default = [ 'author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+        - fields : list of string, optional (default = ['author.email', 'author.id',
+            'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
 
@@ -214,7 +251,7 @@ class QueriesLabel:
                   for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)
         labels_df['y'] = labels_df['jsonResponse'].apply(
-            lambda json_response: self.parse_json_response(json_response, interface_category))
+            lambda json_response: QueriesLabel.parse_json_response(json_response, interface_category))
         return labels_df
 
     @Compatible(['v1', 'v2'])
@@ -227,8 +264,6 @@ class QueriesLabel:
                      created_at: Optional[str] = None,
                      created_at_gte: Optional[str] = None,
                      created_at_lte: Optional[str] = None,
-                     fields: list = ['author.email', 'author.id', 'author.name', 'id',
-                                     'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
                      honeypot_mark_gte: Optional[float] = None,
                      honeypot_mark_lte: Optional[float] = None,
                      json_response_contains: Optional[List[str]] = None,
@@ -237,6 +272,7 @@ class QueriesLabel:
                      skipped: Optional[bool] = None,
                      type_in: Optional[List[str]] = None,
                      user_id: Optional[str] = None):
+        # pylint: disable=line-too-long
         """
         Get the number of labels for the given parameters
 
@@ -260,7 +296,8 @@ class QueriesLabel:
         - created_at_lt : string, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
-        - fields : list of string, optional (default = ['author.email', 'author.id','author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+        - fields : list of string, optional (default = ['author.email', 'author.id',
+            'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
         - honeypot_mark_gt : float, optional (default = None)
@@ -268,7 +305,8 @@ class QueriesLabel:
         - honeypot_mark_lt : float, optional (default = None)
             Returned labels should have a label whose honeypot is lower than this number.
         - json_response_contains : list of str, optional (default = None)
-            Returned labels should have a substring of the jsonResponse that belongs to that list, if given.
+            Returned labels should have a substring of the jsonResponse that
+            belongs to that list, if given.
         - label_id : str
             Identifier of the label.
         - project_id : str

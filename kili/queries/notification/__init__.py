@@ -1,3 +1,7 @@
+"""
+Notification queries
+"""
+
 from typing import List, Optional
 
 from typeguard import typechecked
@@ -8,6 +12,10 @@ from ...types import Notification
 
 
 class QueriesNotification:
+    """
+    Set of Notification queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -19,6 +27,7 @@ class QueriesNotification:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v2'])
     @typechecked
     def notifications(self,
@@ -29,12 +38,14 @@ class QueriesNotification:
                       notification_id: Optional[str] = None,
                       skip: int = 0,
                       user_id: Optional[str] = None):
+        # pylint: disable=line-too-long
         """
         Get an array of notifications given a set of constraints
 
         Parameters
         ----------
-        - fields : list of string, optional (default = ['createdAt', 'hasBeenSeen', 'id', 'message', 'status', 'userID'])
+        - fields : list of string, optional (default = ['createdAt', 'hasBeenSeen',
+                'id', 'message', 'status', 'userID'])
             All the fields to request among the possible fields for the notifications
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.
         - first : int (default = 100)
@@ -44,7 +55,8 @@ class QueriesNotification:
         - notification_id : str, optional (default = None)
             If given, will return the notification which has this id
         - skip : int (default = 0)
-            Number of notifications to skip (they are ordered by their date of creation, first to last).
+            Number of notifications to skip (they are ordered by their date of creation,
+            first to last).
         - user_id : string, optional (default = None)
             If given, returns the notifications of a specific user
 
@@ -64,9 +76,9 @@ class QueriesNotification:
             'skip': skip,
             'first': formatted_first,
         }
-        GQL_NOTIFICATIONS = gql_notifications(
+        _gql_notifications = gql_notifications(
             fragment_builder(fields, Notification))
-        result = self.auth.client.execute(GQL_NOTIFICATIONS, variables)
+        result = self.auth.client.execute(_gql_notifications, variables)
         return format_result('data', result)
 
     @Compatible(['v2'])

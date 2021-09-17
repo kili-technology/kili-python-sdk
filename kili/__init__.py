@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from kili import mutations, queries, subscriptions
-
+"""
+Kili Playground
+"""
 
 __version__ = "2.87.0"

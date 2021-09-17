@@ -1,3 +1,7 @@
+"""
+Queries of project version mutations
+"""
+
 from .fragments import PROJECT_VERSION_FRAGMENT
 
 GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION = f'''

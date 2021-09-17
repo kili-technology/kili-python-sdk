@@ -106,3 +106,19 @@ jobs:
       env:
         - DOCKER_IMAGE=continuumio/anaconda3:2020.02
         - NOTEBOOK_PATH=recipes/getting-started/getting_started-image_classification.ipynb
+    - &test-pylint
+      stage: Test *.py with pylint
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker pull ${DOCKER_IMAGE}
+        - |
+          docker run \
+            ${DOCKER_IMAGE} /bin/sh -c "cd /root && \
+              apt-get update && apt-get install -y gcc && \
+              git clone --branch ${TRAVIS_BRANCH} https://github.com/kili-technology/kili-playground.git && \
+              pip install pylint && \
+              cd kili-playground && \
+              pip install -r requirements.txt && \
+              pylint kili"
+      env:
+        - DOCKER_IMAGE=continuumio/anaconda3:2020.02

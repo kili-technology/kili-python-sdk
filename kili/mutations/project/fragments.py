@@ -1,3 +1,7 @@
+"""
+Fragments of project mutations
+"""
+
 PROJECT_FRAGMENT = '''
 id
 jsonInterface

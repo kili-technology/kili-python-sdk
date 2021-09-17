@@ -1,13 +1,22 @@
+"""
+Issue queries
+"""
+
+from dataclasses import dataclass
 from typing import List, Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_issues
 from ...types import Issue as IssueType
 
-
+@dataclass
 class QueriesIssue:
+    """
+    Set of Issue queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -19,16 +28,17 @@ class QueriesIssue:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
     def issues(self,
                fields: Optional[list] = [
-                       'id',
-                       'createdAt',
-                       'hasBeenSeen',
-                       'issueNumber',
-                       'status',
-                       'type'],
+                   'id',
+                   'createdAt',
+                   'hasBeenSeen',
+                   'issueNumber',
+                   'status',
+                   'type'],
                first: Optional[int] = 100,
                project_id: Optional[str] = None,
                skip: Optional[int] = 0):
@@ -58,6 +68,6 @@ class QueriesIssue:
             'skip': skip,
             'first': first,
         }
-        GQL_ISSUES = gql_issues(fragment_builder(fields, IssueType))
-        result = self.auth.client.execute(GQL_ISSUES, variables)
+        _gql_issues = gql_issues(fragment_builder(fields, IssueType))
+        result = self.auth.client.execute(_gql_issues, variables)
         return format_result('data', result)

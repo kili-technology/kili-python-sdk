@@ -1,3 +1,7 @@
+"""
+Organization mutations
+"""
+
 import json
 from typing import Optional
 
@@ -9,6 +13,10 @@ from .queries import (GQL_CREATE_ORGANIZATION,
 
 
 class MutationsOrganization:
+    """
+    Set of Organization mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -52,10 +60,14 @@ class MutationsOrganization:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_properties_in_organization(self, organization_id: str,
-                                          name: Optional[str] = None, address: Optional[str] = None,
-                                          zip_code: Optional[str] = None, city: Optional[str] = None,
-                                          country: Optional[str] = None, license: Optional[dict] = None):
+    def update_properties_in_organization(self,
+                                          organization_id: str,
+                                          name: Optional[str] = None,
+                                          address: Optional[str] = None,
+                                          zip_code: Optional[str] = None,
+                                          city: Optional[str] = None,
+                                          country: Optional[str] = None,
+                                          license: Optional[dict] = None):  # pylint: disable=redefined-builtin
         """
         Modify an organization
 

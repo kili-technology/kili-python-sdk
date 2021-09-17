@@ -1,5 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+This script permits to setup the python package.
+"""
 
 from setuptools import find_packages, setup
 

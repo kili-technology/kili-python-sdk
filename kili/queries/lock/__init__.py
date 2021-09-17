@@ -1,6 +1,8 @@
-from typing import Optional
-import warnings
+"""
+Lock queries
+"""
 
+from typing import Optional
 from typeguard import typechecked
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
@@ -9,6 +11,10 @@ from ...types import Lock
 
 
 class QueriesLock:
+    """
+    Set of Lock queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -20,6 +26,7 @@ class QueriesLock:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
     def locks(self,
@@ -27,6 +34,7 @@ class QueriesLock:
               fields: list = ['id', 'lockType'],
               first: int = 100,
               skip: int = 0):
+        # pylint: disable=line-too-long
         """
         Get locks
 
@@ -55,13 +63,13 @@ class QueriesLock:
                 'id': lock_id
             }
         }
-        GQL_LOCKS = gql_locks(fragment_builder(fields, Lock))
-        result = self.auth.client.execute(GQL_LOCKS, variables)
+        _gql_locks = gql_locks(fragment_builder(fields, Lock))
+        result = self.auth.client.execute(_gql_locks, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def count_locks(self:any):
+    def count_locks(self: any):
         """
         Get the number of locks
 

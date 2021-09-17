@@ -1,3 +1,7 @@
+"""
+User mutations
+"""
+
 from typing import Optional
 
 from typeguard import typechecked
@@ -9,6 +13,10 @@ from .queries import (GQL_CREATE_USER,
 
 
 class MutationsUser:
+    """
+    Set of User mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -56,7 +64,8 @@ class MutationsUser:
         """
         Update API key
 
-        Allows you to modify the API key you use to connect to Kili. This method is currently only active for Kili administrators.
+        Allows you to modify the API key you use to connect to Kili.
+        This method is currently only active for Kili administrators.
 
         Parameters
         ----------
@@ -79,7 +88,8 @@ class MutationsUser:
     def update_password(self, email: str, old_password: str, new_password_1: str,
                         new_password_2: str):
         """
-        Allows you to modify the password you use to connect to Kili. This resolver only works for on-premise installations without Auth0.
+        Allows you to modify the password you use to connect to Kili.
+        This resolver only works for on-premise installations without Auth0.
 
         Parameters
         ----------
@@ -109,7 +119,8 @@ class MutationsUser:
         """
         Reset password
 
-        This resolver only works for on-premise installations without Auth0, if your organization allows Kili to send emails.
+        This resolver only works for on-premise installations without Auth0,
+        if your organization allows Kili to send emails.
 
         Parameters
         ----------
@@ -126,8 +137,11 @@ class MutationsUser:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_properties_in_user(self, email: str, name: Optional[str] = None,
-                                  organization_id: Optional[str] = None, organization_role: Optional[str] = None,
+    def update_properties_in_user(self,
+                                  email: str,
+                                  name: Optional[str] = None,
+                                  organization_id: Optional[str] = None,
+                                  organization_role: Optional[str] = None,
                                   activated: Optional[bool] = None):
         """
         Update the properties of a user

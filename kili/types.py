@@ -1,4 +1,17 @@
-class OrganizationWithoutUser(object):
+# pylint: disable=invalid-name,too-many-instance-attributes
+
+"""
+GraphQL types
+"""
+
+from dataclasses import dataclass
+
+@dataclass
+class OrganizationWithoutUser:
+    """
+    A wrapper for Organization GraphQL object.
+    Defined in two steps to avoid cyclical dependencies.
+    """
     id = 'id'
     address = 'address'
     city = 'city'
@@ -10,8 +23,11 @@ class OrganizationWithoutUser(object):
     numberOfHours = 'numberOfHours'
     zipCode = 'zipCode'
 
-
-class UserWithoutProjectUsers(object):
+@dataclass
+class UserWithoutProjectUsers:
+    """
+    A wrapper for User GraphQL object.
+    """
     id = 'id'
     activated = 'activated'
     createdAt = 'createdAt'
@@ -24,12 +40,19 @@ class UserWithoutProjectUsers(object):
     rights = 'rights'
     updatedAt = 'updatedAt'
 
-
+@dataclass
 class Organization(OrganizationWithoutUser):
+    """
+    A wrapper for Organization GraphQL object.
+    """
     users = UserWithoutProjectUsers
 
-
-class ProjectUserWithoutProject(object):
+@dataclass
+class ProjectUserWithoutProject:
+    """
+    A wrapper for ProjectUser GraphQL object.
+    Defined in two steps to avoid cyclical dependencies.
+    """
     id = 'id'
     activated = 'activated'
     consensusMark = 'consensusMark'
@@ -52,8 +75,12 @@ class ProjectUserWithoutProject(object):
     totalDurationCompute = 'totalDurationCompute'
     user = UserWithoutProjectUsers
 
-
-class ProjectWithoutDataset(object):
+@dataclass
+class ProjectWithoutDataset:
+    """
+    A wrapper for Project GraphQL object.
+    Defined in two steps to avoid cyclical dependencies.
+    """
     id = 'id'
     assetMetadata = 'assetMetadata'
     assetMetadataCompute = 'assetMetadataCompute'
@@ -90,16 +117,26 @@ class ProjectWithoutDataset(object):
     updatedAt = 'updatedAt'
     useHoneyPot = 'useHoneyPot'
 
-
+@dataclass
 class ProjectUser(ProjectUserWithoutProject):
+    """
+    A wrapper for ProjectUser GraphQL object.
+    """
     project = ProjectWithoutDataset
 
-
+@dataclass
 class User(UserWithoutProjectUsers):
+    """
+    A wrapper for User GraphQL object.
+    """
     projectUsers = ProjectUser
 
-
-class LabelWithoutLabelOf(object):
+@dataclass
+class LabelWithoutLabelOf:
+    """
+    A wrapper for Label GraphQL object.
+    Defined in two steps to avoid cyclical dependencies.
+    """
     id = 'id'
     assetIdCompute = 'assetIdCompute'
     authorIdCompute = 'authorIdCompute'
@@ -126,8 +163,11 @@ class LabelWithoutLabelOf(object):
     totalSecondsToLabel = 'totalSecondsToLabel'
     totalSecondsToLabelCompute = 'totalSecondsToLabelCompute'
 
-
-class Lock(object):
+@dataclass
+class Lock:
+    """
+    A wrapper for Lock GraphQL object.
+    """
     id = 'id'
     author = User
     authorIdCompute = 'authorIdCompute'
@@ -135,16 +175,23 @@ class Lock(object):
     lockType = 'lockType'
     lockOfIdCompute = 'lockOfIdCompute'
 
-
-class CommentsWithoutCommentsOf(object):
+@dataclass
+class CommentsWithoutCommentsOf:
+    """
+    A wrapper for Comment GraphQL object.
+    Defined in two steps to avoid cyclical dependencies.
+    """
     id = 'id'
     author = ProjectUser
     createdAt = 'createdAt'
     text = 'text'
     updatedAt = 'updatedAt'
 
-
-class Issue(object):
+@dataclass
+class Issue:
+    """
+    A wrapper for Issue GraphQL object.
+    """
     id = 'id'
     assignee = ProjectUser
     author = ProjectUser
@@ -157,8 +204,11 @@ class Issue(object):
     type = 'type'
     updatedAt = 'updatedAt'
 
-
-class Asset(object):
+@dataclass
+class Asset:
+    """
+    A wrapper for Asset GraphQL object.
+    """
     id = 'id'
     consensusMark = 'consensusMark'
     consensusMarkCompute = 'consensusMarkCompute'
@@ -199,8 +249,11 @@ class Asset(object):
     toBeLabeledBy = ProjectUser
     updatedAt = 'updatedAt'
 
-
-class DatasetAsset(object):
+@dataclass
+class DatasetAsset:
+    """
+    A wrapper for DatasetAsset GraphQL object.
+    """
     id = 'id'
     assets = Asset
     content = 'content'
@@ -216,16 +269,25 @@ class DatasetAsset(object):
     thumbnailCompute = 'thumbnailCompute'
     updatedAt = 'updatedAt'
 
-
+@dataclass
 class Label(LabelWithoutLabelOf):
+    """
+    A wrapper for Label GraphQL object.
+    """
     labelOf = Asset
 
-
+@dataclass
 class Project(ProjectWithoutDataset):
+    """
+    A wrapper for Project GraphQL object.
+    """
     dataset = Asset
 
-
-class Notification(object):
+@dataclass
+class Notification:
+    """
+    A wrapper for Notification GraphQL object.
+    """
     id = 'id'
     createdAt = 'createdAt'
     hasBeenSeen = 'hasBeenSeen'
@@ -234,11 +296,16 @@ class Notification(object):
     url = 'url'
     userID = 'userID'
 
-
-class ProjectVersion(object):
+@dataclass
+class ProjectVersion:
+    """
+    A wrapper for ProjectVersion GraphQL object.
+    """
     id = 'id'
     createdAt = 'createdAt'
     content = 'content'
     name = 'name'
     project = Project
     projectId = 'projectId'
+
+# pylint: enable=invalid-name

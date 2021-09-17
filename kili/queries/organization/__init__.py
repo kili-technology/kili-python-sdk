@@ -1,3 +1,7 @@
+"""
+Organization queries
+"""
+
 from datetime import datetime
 from typing import Optional
 
@@ -9,6 +13,10 @@ from ...types import Organization
 
 
 class QueriesOrganization:
+    """
+    Set of Organization queries
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -20,11 +28,17 @@ class QueriesOrganization:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    def organizations(self, email: Optional[str] = None, 
-            organization_id: Optional[str] = None, fields: list = ['id', 'name'], 
-            first: int = 100, skip: int = 0):
+    def organizations(
+            self,
+            email: Optional[str] = None,
+            organization_id: Optional[str] = None,
+            fields: list = ['id', 'name'],
+            first: int = 100,
+            skip: int = 0):
+        # pylint: disable=line-too-long
         """
         Get organizations respecting a set of criteria
 
@@ -38,7 +52,8 @@ class QueriesOrganization:
         - organization_id : str, optional (default = None)
         - fields : list of string, optional (default = ['id', 'name'])
             All the fields to request among the possible fields for the organizations.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization) for all possible fields.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization)
+                for all possible fields.
         - first : int, optional (default = 100)
             Maximum number of organizations to return
         - skip : int, optional (default = 0)
@@ -63,14 +78,16 @@ class QueriesOrganization:
                 }
             }
         }
-        GQL_ORGANIZATIONS = gql_organizations(
+        _gql_organizations = gql_organizations(
             fragment_builder(fields, Organization))
-        result = self.auth.client.execute(GQL_ORGANIZATIONS, variables)
+        result = self.auth.client.execute(_gql_organizations, variables)
         return format_result('data', result)
 
     @Compatible(['v2'])
     @typechecked
-    def count_organizations(self, email: Optional[str] = None, 
+    def count_organizations(
+            self,
+            email: Optional[str] = None,
             organization_id: Optional[str] = None):
         """
         Count organizations respecting a set of criteria
@@ -94,12 +111,12 @@ class QueriesOrganization:
         }
         result = self.auth.client.execute(GQL_ORGANIZATIONS_COUNT, variables)
         return format_result('data', result)
-    
+
     @Compatible(['v2'])
     @typechecked
-    def organization_metrics(self, organization_id: str = None, 
-            start_date: datetime = datetime.now(),
-            end_date: datetime = datetime.now()):
+    def organization_metrics(self, organization_id: str = None,
+                             start_date: datetime = datetime.now(),
+                             end_date: datetime = datetime.now()):
         """
         Get organization metrics
 

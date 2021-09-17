@@ -1,3 +1,7 @@
+"""
+Project mutations
+"""
+
 from json import dumps
 from typing import Optional
 
@@ -19,6 +23,11 @@ from .queries import (GQL_APPEND_TO_ROLES,
 
 class MutationsProject:
 
+    """
+    Set of Project mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
+
     def __init__(self, auth):
         """
         Initializes the subclass
@@ -35,8 +44,8 @@ class MutationsProject:
         """
         Add a user to a project
 
-        If the user does not exist in your organization, he is invited and added 
-        both to your organization and project. This function can also be used to change 
+        If the user does not exist in your organization, he is invited and added
+        both to your organization and project. This function can also be used to change
         the role of the user in the project.
 
         Parameters
@@ -166,10 +175,12 @@ class MutationsProject:
     def create_project(self, input_type: str, json_interface: dict,
                        title: str, description: str = '', project_type: Optional[str] = None,
                        user_id: Optional[str] = None):
+        # pylint: disable=line-too-long
         """
         Create a project
 
-        For more detailed examples on how to create projects, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb).
+        For more detailed examples on how to create projects,
+        see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb).
 
         Parameters
         ----------
@@ -180,7 +191,22 @@ class MutationsProject:
         - title : str
         - description : str, optional (default = '')
         - project_type: str, optional (default = None)
-            Currently, one of {IMAGE_CLASSIFICATION_SINGLE, IMAGE_CLASSIFICATION_MULTI, IMAGE_OBJECT_DETECTION_RECTANGLE, IMAGE_OBJECT_DETECTION_POLYGON, IMAGE_OBJECT_DETECTION_SEMANTIC, OCR, PDF_CLASSIFICATION_SINGLE, PDF_CLASSIFICATION_MULTI, TEXT_CLASSIFICATION_SINGLE, TEXT_CLASSIFICATION_MULTI, TEXT_TRANSCRIPTION, TEXT_NER, VIDEO_CLASSIFICATION_SINGLE, VIDEO_FRAME_CLASSIFICATION, VIDEO_FRAME_OBJECT_TRACKING, SPEECH_TO_TEXT}
+            Currently, one of {
+                IMAGE_CLASSIFICATION_SINGLE,
+                IMAGE_CLASSIFICATION_MULTI,
+                IMAGE_OBJECT_DETECTION_RECTANGLE,
+                IMAGE_OBJECT_DETECTION_POLYGON,
+                IMAGE_OBJECT_DETECTION_SEMANTIC,
+                OCR, PDF_CLASSIFICATION_SINGLE,
+                PDF_CLASSIFICATION_MULTI,
+                TEXT_CLASSIFICATION_SINGLE,
+                TEXT_CLASSIFICATION_MULTI,
+                TEXT_TRANSCRIPTION, TEXT_NER,
+                VIDEO_CLASSIFICATION_SINGLE,
+                VIDEO_FRAME_CLASSIFICATION,
+                VIDEO_FRAME_OBJECT_TRACKING,
+                SPEECH_TO_TEXT
+            }
         - user_id : str, optional (default = None)
 
         Returns
@@ -308,7 +334,9 @@ class MutationsProject:
         Examples
         -------
         >>> for project_user in project_users:
-        ...     kili.update_properties_in_project_user(project_user_id=project_user['id'], honeypot_mark=0)
+        ...     kili.update_properties_in_project_user(
+                    project_user_id=project_user['id'],
+                    honeypot_mark=0)
         """
         variables = {
             'consensusMark': consensus_mark,
@@ -343,7 +371,8 @@ class MutationsProject:
     @typechecked
     def internal_delete_project(self, project_id: str):
         """
-        Delete project permanently. WARNING: This resolver is for internal use by Kili Technology only.
+        Delete project permanently.
+        WARNING: This resolver is for internal use by Kili Technology only.
 
         Parameters
         ----------

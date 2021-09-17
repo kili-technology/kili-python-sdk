@@ -1,3 +1,7 @@
+"""
+Notification mutations
+"""
+
 from typeguard import typechecked
 
 from ...helpers import Compatible, format_result
@@ -6,6 +10,10 @@ from .queries import (GQL_CREATE_NOTIFICATION,
 
 
 class MutationsNotification:
+    """
+    Set of Notification mutations
+    """
+    # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """
@@ -49,8 +57,12 @@ class MutationsNotification:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_properties_in_notification(self, notification_id: str, 
-            has_been_seen: bool, status: str, url: str):
+    def update_properties_in_notification(
+            self,
+            notification_id: str,
+            has_been_seen: bool,
+            status: str,
+            url: str):
         """
         Modify a notification
 
