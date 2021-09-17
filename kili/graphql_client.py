@@ -19,6 +19,7 @@ class GraphQLClient:
     """
     A simple GraphQL client
     """
+
     def __init__(self, endpoint, session=None, verify=True):
         self.endpoint = endpoint
         self.headername = None
@@ -65,7 +66,7 @@ class GraphQLClient:
                    'X-Powered-By': f'Kili Playground/{__version__}'}
 
         if self.token is not None:
-            headers[self.headername] = '{}'.format(self.token)
+            headers[self.headername] = f'{self.token}'
 
         if self.session is not None:
             try:
@@ -257,19 +258,20 @@ class SubscriptionGraphQLClient:
                     if response['type'] != 'ka' and not self._paused:
                         _cc(_id, response)
                     time.sleep(1)
-                except websocket._exceptions.WebSocketConnectionClosedException as error: # pylint: disable=no-member,protected-access
+                except websocket._exceptions.WebSocketConnectionClosedException as error:  # pylint: disable=no-member,protected-access
                     self.failed_connection_attempts += 1
                     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                     error_message = str(error)
                     print(f'{dt_string} Connection closed error : {error_message}')
                     print(
-                        'Will try to reconnect' \
+                        'Will try to reconnect'
                         f' {max_reconnections - self.failed_connection_attempts} times...')
                     self._reconnect()
                     _cc, _id = self.prepare_subscribe(
                         query, variables, headers, callback, authorization)
                     continue
-            print(f'Did not reconnect successfully after {max_reconnections} attempts')
+            print(
+                f'Did not reconnect successfully after {max_reconnections} attempts')
 
         self._st_id = threading.Thread(target=subs, args=(_cc, _id))
         self._st_id.start()

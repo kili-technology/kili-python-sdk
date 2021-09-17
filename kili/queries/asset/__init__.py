@@ -38,24 +38,19 @@ class QueriesAsset:
     @typechecked
     def assets(self, asset_id: Optional[str] = None, project_id: Optional[str] = None,
                skip: int = 0,
-               << << << < HEAD
-               fields: list = ['content', 'createdAt', 'externalId', 'id', 'isHoneypot', 'jsonMetadata', 'labels.author.id',
-                               'labels.author.email', 'labels.createdAt', 'labels.id', 'labels.jsonResponse', 'skipped', 'status'],
-               == == == =
-               fields: list = [
-                   'content',
-                   'createdAt',
-                   'externalId',
-                   'id',
-                   'isHoneypot',
-                   'jsonMetadata',
-                   'labels.author.id',
-                   'labels.author.email',
-                   'labels.createdAt',
-                   'labels.id',
-                   'labels.jsonResponse',
-                   'status'],
-               >>>>>> > AAKD, on playground, when I look at ci pylint tests, I see no warnings
+               fields: list = ['content',
+                               'createdAt',
+                               'externalId',
+                               'id',
+                               'isHoneypot',
+                               'jsonMetadata',
+                               'labels.author.id',
+                               'labels.author.email',
+                               'labels.createdAt',
+                               'labels.id',
+                               'labels.jsonResponse',
+                               'skipped',
+                               'status'],
                asset_id_in: Optional[List[str]] = None,
                consensus_mark_gt: Optional[float] = None,
                consensus_mark_lt: Optional[float] = None,
@@ -313,7 +308,8 @@ class QueriesAsset:
         - label_honeypot_mark_lt : float, optional (default = None)
             Returned assets should have a label whose honeypot is lower than this number.
         - label_json_response_contains : list of str, optional (default = None)
-            Returned assets should have a substring of the label's jsonResponse that belongs to that list, if given.
+            Returned assets should have a substring of the label's jsonResponse that belongs
+            to that list, if given.
         - skipped : bool, optional (default = None)
             Returned assets should be skipped
         - updated_at_gte : string, optional (default = None)
