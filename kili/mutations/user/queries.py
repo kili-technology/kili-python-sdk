@@ -2,7 +2,7 @@
 Queries of user mutations
 """
 
-from .fragments import AUTH_PAYLOAD_FRAGMENT, USER_FRAGMENT
+from .fragments import USER_FRAGMENT
 
 GQL_CREATE_USER = f'''
 mutation(

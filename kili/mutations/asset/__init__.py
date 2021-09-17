@@ -165,11 +165,18 @@ class MutationsAsset:
 
     @Compatible(['v2'])
     @typechecked
-    def update_properties_in_assets(self, asset_ids: List[str],
+    def update_properties_in_assets(self,
+                                    asset_ids: List[str],
                                     external_ids: Optional[List[str]] = None,
-                                    priorities: Optional[List[int]] = None, json_metadatas: Optional[List[dict]] = None, consensus_marks: Optional[List[float]] = None,
-                                    honeypot_marks: Optional[List[float]] = None, to_be_labeled_by_array: Optional[List[List[str]]] = None, contents: Optional[List[str]] = None,
-                                    json_contents: Optional[List[str]] = None, status_array: Optional[List[str]] = None, is_used_for_consensus_array: Optional[List[bool]] = None,
+                                    priorities: Optional[List[int]] = None,
+                                    json_metadatas: Optional[List[dict]] = None,
+                                    consensus_marks: Optional[List[float]] = None,
+                                    honeypot_marks: Optional[List[float]] = None,
+                                    to_be_labeled_by_array: Optional[List[List[str]]] = None,
+                                    contents: Optional[List[str]] = None,
+                                    json_contents: Optional[List[str]] = None,
+                                    status_array: Optional[List[str]] = None,
+                                    is_used_for_consensus_array: Optional[List[bool]] = None,
                                     is_honeypot_array: Optional[List[bool]] = None):
         """
         Update the properties of one or more assets.

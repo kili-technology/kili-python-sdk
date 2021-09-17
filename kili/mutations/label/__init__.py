@@ -85,7 +85,6 @@ class MutationsLabel:
             json_response_array), "IDs list and predictions list should have the same length"
         assert len(external_id_array) == len(
             model_name_array), "IDs list and model names list should have the same length"
-        where = {}
         variables = {
             'data': {'modelNameArray': model_name_array,
                      'jsonResponseArray': [dumps(elem) for elem in json_response_array]},
@@ -147,23 +146,13 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result('data', result, Label)
 
-
-<< << << < HEAD
     @ Compatible(['v1', 'v2'])
     @ typechecked
-    def update_properties_in_label(self, label_id: str,
-                                   seconds_to_label: Optional[int] = None, model_name: Optional[str] = None,
+    def update_properties_in_label(self,
+                                   label_id: str,
+                                   seconds_to_label: Optional[int] = None,
+                                   model_name: Optional[str] = None,
                                    json_response: Optional[dict] = None):
-== == == =
-    @Compatible(['v1', 'v2'])
-    @typechecked
-    def update_properties_in_label(
-            self,
-            label_id: str,
-            seconds_to_label: Optional[int] = None,
-            model_name: Optional[str] = None,
-            json_response: Optional[dict] = None):
->>>>>> > AAKD, on playground, when I look at ci pylint tests, I see no warnings
         """
         Update properties of a label
 

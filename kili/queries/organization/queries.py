@@ -2,6 +2,7 @@
 Queries and organization queries
 """
 
+
 def gql_organizations(fragment):
     """
     Return the GraphQL organizations query
@@ -14,18 +15,19 @@ query($where: OrganizationWhere!, $first: PageSize!, $skip: Int!) {{
 }}
 '''
 
+
 GQL_ORGANIZATIONS_COUNT = '''
-query($where: OrganizationWhere!) {{
+query($where: OrganizationWhere!) {
   data: countOrganizations(where: $where)
-}}
+}
 '''
 
-GQL_ORGANIZATION_METRICS = f'''
-query($where: OrganizationMetricsWhere!) {{
-  data: organizationMetrics(where: $where) {{
+GQL_ORGANIZATION_METRICS = '''
+query($where: OrganizationMetricsWhere!) {
+  data: organizationMetrics(where: $where) {
     numberOfAnnotations
     numberOfHours
     numberOfLabeledAssets
-  }}
-}}
+  }
+}
 '''

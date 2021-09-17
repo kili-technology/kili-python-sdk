@@ -1,3 +1,7 @@
+"""
+Dataset mutations
+"""
+
 from typing import List, Optional
 from functools import partial
 
@@ -10,6 +14,9 @@ from .queries import GQL_APPEND_DATASETS_TO_PROJECT, GQL_APPEND_TO_DATASET, \
 
 
 class MutationsDataset:
+    """
+    Set of Dataset mutations
+    """
 
     def __init__(self, auth):
         """
