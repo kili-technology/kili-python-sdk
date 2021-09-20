@@ -2,6 +2,7 @@
 Queries of issue queries
 """
 
+
 def gql_issues(fragment):
     """
     Return the GraphQL issues query
@@ -15,8 +16,8 @@ query ($where: IssueWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_LABELS_COUNT = '''
-query($where: IssueWhere!) {{
+GQL_ISSUES_COUNT = '''
+query($where: IssueWhere!) {
   data: countIssues(where: $where)
-}}
+}
 '''

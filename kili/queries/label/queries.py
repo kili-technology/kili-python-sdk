@@ -2,6 +2,7 @@
 Queries of label queries
 """
 
+
 def gql_labels(fragment):
     """
     Return the GraphQL labels query
@@ -16,7 +17,7 @@ query ($where: LabelWhere!, $first: PageSize!, $skip: Int!) {{
 
 
 GQL_LABELS_COUNT = '''
-query($where: LabelWhere!) {{
+query($where: LabelWhere!) {
   data: countLabels(where: $where)
-}}
+}
 '''

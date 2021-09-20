@@ -88,13 +88,13 @@ class MutationsLabel:
         variables = {
             'data': {'modelNameArray': model_name_array,
                      'jsonResponseArray': [dumps(elem) for elem in json_response_array]},
-            'where': {'externalIdIn': external_id_array, 'project': {'id': project_id}}
+            'where': {'externalIdStrictlyIn': external_id_array, 'project': {'id': project_id}}
         }
         result = self.auth.client.execute(GQL_CREATE_PREDICTIONS, variables)
         return format_result('data', result, Label)
 
-    @ Compatible(['v1', 'v2'])
-    @ typechecked
+    @Compatible(['v1', 'v2'])
+    @typechecked
     def append_to_labels(self, json_response: dict, author_id: Optional[str] = None,
                          label_asset_external_id: Optional[str] = None,
                          label_asset_id: Optional[str] = None, label_type: str = 'DEFAULT',
@@ -146,8 +146,8 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result('data', result, Label)
 
-    @ Compatible(['v1', 'v2'])
-    @ typechecked
+    @Compatible(['v1', 'v2'])
+    @typechecked
     def update_properties_in_label(self,
                                    label_id: str,
                                    seconds_to_label: Optional[int] = None,
