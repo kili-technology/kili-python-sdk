@@ -2,7 +2,6 @@
 Queries of project queries
 """
 
-
 def gql_projects(fragment: str):
     """
     Return the GraphQL projects query
@@ -15,8 +14,7 @@ query($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
 }}
 '''
 
-
-GQL_PROJECTS_COUNT = f'''
+GQL_PROJECTS_COUNT = '''
 query($where: ProjectWhere!) {{
   data: countProjects(where: $where)
 }}

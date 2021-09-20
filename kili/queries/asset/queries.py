@@ -2,7 +2,6 @@
 Queries of asset queries
 """
 
-
 def gql_assets(fragment):
     """
     Return the GraphQL assets query
@@ -15,8 +14,7 @@ query($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{
 }}
 '''
 
-
-GQL_ASSETS_COUNT = f'''
+GQL_ASSETS_COUNT = '''
 query($where: AssetWhere!) {{
   data: countAssets(where: $where)
 }}
