@@ -2,6 +2,7 @@
 Queries of lock queries
 """
 
+
 def gql_locks(fragment):
     """
     Return the GraphQL locks query
@@ -14,8 +15,9 @@ query($where: LockWhere!, $first: PageSize!, $skip: Int!) {{
 }}
 '''
 
+
 GQL_LOCKS_COUNT = '''
-query($where: LockWhere!) {{
+query($where: LockWhere!) {
   data: countLocks(where: $where)
-}}
+}
 '''
