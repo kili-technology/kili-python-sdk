@@ -2,6 +2,7 @@
 Queries of project version queries
 """
 
+
 def gql_project_version(fragment):
     """
     Return the GraphQL projectVersion query
@@ -15,7 +16,7 @@ query ($where: ProjectVersionWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_PROJECT_VERSION_COUNT = '''
+GQL_PROJECT_VERSION_COUNT = f'''
 query($where: ProjectVersionWhere!) {{
   data: countProjectVersions(where: $where)
 }}

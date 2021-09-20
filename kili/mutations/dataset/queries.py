@@ -18,16 +18,16 @@ mutation(
 }}
 '''
 
-GQL_APPEND_DATASETS_TO_PROJECT = '''
+GQL_APPEND_DATASETS_TO_PROJECT = f'''
 mutation(
     $data: AppendDatasetsToProjectData!
     $where: ProjectWhere!
-) {
+) {{
   data: appendDatasetsToProject(
     data: $data,
     where: $where
   )
-}
+}}
 '''
 
 GQL_CREATE_DATASET = f'''

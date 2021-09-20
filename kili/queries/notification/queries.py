@@ -2,6 +2,7 @@
 Queries of notification queries
 """
 
+
 def gql_notifications(fragment):
     """
     Return the GraphQL notifications query
@@ -15,7 +16,7 @@ query ($where: NotificationWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_NOTIFICATIONS_COUNT = '''
+GQL_NOTIFICATIONS_COUNT = f'''
 query($where: NotificationWhere!) {{
   data: countNotifications(where: $where)
 }}

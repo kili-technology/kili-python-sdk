@@ -16,18 +16,18 @@ query($where: OrganizationWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_ORGANIZATIONS_COUNT = '''
-query($where: OrganizationWhere!) {
+GQL_ORGANIZATIONS_COUNT = f'''
+query($where: OrganizationWhere!) {{
   data: countOrganizations(where: $where)
-}
+}}
 '''
 
-GQL_ORGANIZATION_METRICS = '''
-query($where: OrganizationMetricsWhere!) {
-  data: organizationMetrics(where: $where) {
+GQL_ORGANIZATION_METRICS = f'''
+query($where: OrganizationMetricsWhere!) {{
+  data: organizationMetrics(where: $where) {{
     numberOfAnnotations
     numberOfHours
     numberOfLabeledAssets
-  }
-}
+  }}
+}}
 '''

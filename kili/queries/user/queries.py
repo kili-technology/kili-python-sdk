@@ -2,6 +2,7 @@
 Queries of user queries
 """
 
+
 def gql_users(fragment):
     """
     Return the GraphQL users query
@@ -15,7 +16,7 @@ query($where: UserWhere!, $first: PageSize!, $skip: Int!) {{
 '''
 
 
-GQL_USERS_COUNT = '''
+GQL_USERS_COUNT = f'''
 query($where: UserWhere!) {{
   data: countUsers(where: $where)
 }}

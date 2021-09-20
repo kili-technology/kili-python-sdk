@@ -5,14 +5,14 @@ Queries of dataset asset mutations
 from .fragments import ASSET_FRAGMENT
 
 
-GQL_DELETE_DATASET_ASSETS = '''
+GQL_DELETE_DATASET_ASSETS = f'''
 mutation(
     $where: DatasetAssetWhere!
-) {
+) {{
   data: deleteDatasetAssets(
     where: $where
   )
-}
+}}
 '''
 
 GQL_UPDATE_PROPERTIES_IN_DATASET_ASSETS = f'''
