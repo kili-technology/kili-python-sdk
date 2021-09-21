@@ -69,14 +69,14 @@ class MutationsDataset:
     @typechecked
     def append_to_dataset_users(self, dataset_id: str, user_email: str):
         """
-        Appends assets to a dataset.
+        Adds users to a dataset.
 
         Parameters
         ----------
-        - user_email : str
-            Email of the user to add to the dataset
         - dataset_id : str
             Id of the target dataset
+        - user_email : str
+            Email of the user to add to the dataset
 
         Returns
         -------
