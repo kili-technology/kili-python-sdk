@@ -18,6 +18,20 @@ mutation(
 }}
 '''
 
+GQL_APPEND_TO_DATASET_USERS = f'''
+mutation(
+    $data: AppendToDatasetUsersData!
+    $where: DatasetWhere!
+) {{
+  data: appendToDatasetUsers(
+    data: $data,
+    where: $where
+  ) {{
+    {DATASET_FRAGMENT}
+  }}
+}}
+'''
+
 GQL_APPEND_DATASETS_TO_PROJECT = '''
 mutation(
     $data: AppendDatasetsToProjectData!
