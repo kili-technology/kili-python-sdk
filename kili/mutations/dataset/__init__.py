@@ -10,7 +10,8 @@ from typeguard import typechecked
 from ...helpers import (Compatible,
                         format_result)
 from .queries import GQL_APPEND_DATASETS_TO_PROJECT, GQL_APPEND_TO_DATASET, \
-    GQL_CREATE_DATASET, GQL_DELETE_DATASET, GQL_UPDATE_PROPERTIES_IN_DATASET
+    GQL_APPEND_TO_DATASET_USERS, GQL_CREATE_DATASET, GQL_DELETE_DATASET, \
+    GQL_UPDATE_PROPERTIES_IN_DATASET
 
 
 class MutationsDataset:
@@ -63,6 +64,39 @@ class MutationsDataset:
             'where': {'id': dataset_id}
         }
         result = self.auth.client.execute(GQL_APPEND_TO_DATASET, variables)
+        return format_result('data', result)
+
+    @Compatible(['v2'])
+    @typechecked
+    def append_to_dataset_users(self, dataset_id: str, user_email: str):
+        """
+        Adds users to a dataset.
+
+        Parameters
+        ----------
+        - dataset_id : str
+            Id of the target dataset
+        - user_email : str
+            Email of the user to add to the dataset
+
+        Returns
+        -------
+        - a result object which indicates if the mutation was successful, or an error message else.
+
+        Examples
+        -------
+        kili.append_to_dataset_users(
+            user_email='colleague@company.com',
+            dataset_id='ckg22d81r0jrg0885unmuswj8',
+        )
+        """
+
+        variables = {
+            'data': {'userEmail': user_email},
+            'where': {'id': dataset_id}
+        }
+        result = self.auth.client.execute(
+            GQL_APPEND_TO_DATASET_USERS, variables)
         return format_result('data', result)
 
     @Compatible(['v2'])
