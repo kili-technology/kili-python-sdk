@@ -6,6 +6,7 @@ GraphQL types
 
 from dataclasses import dataclass
 
+
 @dataclass
 class OrganizationWithoutUser:
     """
@@ -22,6 +23,7 @@ class OrganizationWithoutUser:
     numberOfLabeledAssets = 'numberOfLabeledAssets'
     numberOfHours = 'numberOfHours'
     zipCode = 'zipCode'
+
 
 @dataclass
 class UserWithoutProjectUsers:
@@ -40,12 +42,14 @@ class UserWithoutProjectUsers:
     rights = 'rights'
     updatedAt = 'updatedAt'
 
+
 @dataclass
 class Organization(OrganizationWithoutUser):
     """
     A wrapper for Organization GraphQL object.
     """
     users = UserWithoutProjectUsers
+
 
 @dataclass
 class ProjectUserWithoutProject:
@@ -75,6 +79,7 @@ class ProjectUserWithoutProject:
     totalDurationCompute = 'totalDurationCompute'
     user = UserWithoutProjectUsers
 
+
 @dataclass
 class ProjectWithoutDataset:
     """
@@ -100,6 +105,8 @@ class ProjectWithoutDataset:
     maxWorkerCount = 'maxWorkerCount'
     minAgreement = 'minAgreement'
     minConsensusSize = 'minConsensusSize'
+    mlTasks = 'mlTasks'
+    mlTasksCompute = 'mlTasksCompute'
     numberOfRemainingAssets = 'numberOfRemainingAssets'
     numberOfAssets = 'numberOfAssets'
     numberOfAssetsWithSkippedLabels = 'numberOfAssetsWithSkippedLabels'
@@ -117,6 +124,7 @@ class ProjectWithoutDataset:
     updatedAt = 'updatedAt'
     useHoneyPot = 'useHoneyPot'
 
+
 @dataclass
 class ProjectUser(ProjectUserWithoutProject):
     """
@@ -124,12 +132,14 @@ class ProjectUser(ProjectUserWithoutProject):
     """
     project = ProjectWithoutDataset
 
+
 @dataclass
 class User(UserWithoutProjectUsers):
     """
     A wrapper for User GraphQL object.
     """
     projectUsers = ProjectUser
+
 
 @dataclass
 class LabelWithoutLabelOf:
@@ -163,6 +173,7 @@ class LabelWithoutLabelOf:
     totalSecondsToLabel = 'totalSecondsToLabel'
     totalSecondsToLabelCompute = 'totalSecondsToLabelCompute'
 
+
 @dataclass
 class Lock:
     """
@@ -175,6 +186,7 @@ class Lock:
     lockType = 'lockType'
     lockOfIdCompute = 'lockOfIdCompute'
 
+
 @dataclass
 class CommentsWithoutCommentsOf:
     """
@@ -186,6 +198,7 @@ class CommentsWithoutCommentsOf:
     createdAt = 'createdAt'
     text = 'text'
     updatedAt = 'updatedAt'
+
 
 @dataclass
 class Issue:
@@ -203,6 +216,7 @@ class Issue:
     status = 'status'
     type = 'type'
     updatedAt = 'updatedAt'
+
 
 @dataclass
 class Asset:
@@ -249,6 +263,7 @@ class Asset:
     toBeLabeledBy = ProjectUser
     updatedAt = 'updatedAt'
 
+
 @dataclass
 class DatasetAsset:
     """
@@ -269,6 +284,7 @@ class DatasetAsset:
     thumbnailCompute = 'thumbnailCompute'
     updatedAt = 'updatedAt'
 
+
 @dataclass
 class Label(LabelWithoutLabelOf):
     """
@@ -276,12 +292,14 @@ class Label(LabelWithoutLabelOf):
     """
     labelOf = Asset
 
+
 @dataclass
 class Project(ProjectWithoutDataset):
     """
     A wrapper for Project GraphQL object.
     """
     dataset = Asset
+
 
 @dataclass
 class Notification:
@@ -295,6 +313,7 @@ class Notification:
     status = 'status'
     url = 'url'
     userID = 'userID'
+
 
 @dataclass
 class ProjectVersion:
