@@ -10,7 +10,8 @@ from typeguard import typechecked
 from ...helpers import (Compatible,
                         format_result)
 from .queries import GQL_APPEND_DATASETS_TO_PROJECT, GQL_APPEND_TO_DATASET, \
-    GQL_APPEND_TO_DATASET_USERS, GQL_CREATE_DATASET, GQL_DELETE_DATASET, GQL_UPDATE_PROPERTIES_IN_DATASET
+    GQL_APPEND_TO_DATASET_USERS, GQL_CREATE_DATASET, GQL_DELETE_DATASET, \
+    GQL_UPDATE_PROPERTIES_IN_DATASET
 
 
 class MutationsDataset:
