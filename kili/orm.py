@@ -149,6 +149,6 @@ class Asset(DictClass):
                 labels.append(Label(label))
             self.labels = labels
         if 'latestLabel' in self:
-            latestLabel = self['latestLabel']
-            if latestLabel is not None:
-                self.latestLabel = Label(latestLabel)
+            latest_label = self['latestLabel']
+            if latest_label is not None:
+                self.latestLabel = Label(latest_label) # pylint: disable=invalid-name
