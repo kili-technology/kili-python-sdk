@@ -149,4 +149,6 @@ class Asset(DictClass):
                 labels.append(Label(label))
             self.labels = labels
         if 'latestLabel' in self:
-            self.latestLabel = Label(self['latestLabel'])
+            latestLabel = self['latestLabel']
+            if latestLabel is not None:
+                self.latestLabel = Label(latestLabel)
