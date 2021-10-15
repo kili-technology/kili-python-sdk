@@ -6,9 +6,9 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result
+from ...helpers import Compatible, format_result
 from .queries import (GQL_CREATE_USER,
-                      GQL_RESET_PASSWORD, GQL_UPDATE_API_KEY,
+                      GQL_RESET_PASSWORD,
                       GQL_UPDATE_PASSWORD, GQL_UPDATE_PROPERTIES_IN_USER)
 
 
@@ -56,31 +56,6 @@ class MutationsUser:
                      'organizationRole': organization_role}
         }
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
-        return format_result('data', result)
-
-    @Compatible(['v1', 'v2'])
-    @typechecked
-    def update_api_key(self, email: str, new_api_key: str):
-        """
-        Update API key
-
-        Allows you to modify the API key you use to connect to Kili.
-        This method is currently only active for Kili administrators.
-
-        Parameters
-        ----------
-        - email : str
-        - new_api_key : str
-
-        Returns
-        -------
-        - a result object which indicates if the mutation was successful, or an error message else.
-        """
-        variables = {
-            'data': {'newApiKey': new_api_key},
-            'where': {'email': email}
-        }
-        result = self.auth.client.execute(GQL_UPDATE_API_KEY, variables)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])

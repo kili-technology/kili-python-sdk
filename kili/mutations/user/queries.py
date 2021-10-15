@@ -16,20 +16,6 @@ mutation(
 }}
 '''
 
-GQL_UPDATE_API_KEY = f'''
-mutation(
-    $data: UpdateApiKeyData!
-    $where: UserWhere!
-) {{
-  data: updateApiKey(
-    data: $data
-    where: $where
-  ) {{
-    {USER_FRAGMENT}
-  }}
-}}
-'''
-
 GQL_UPDATE_PASSWORD = f'''
 mutation(
     $data: UpdatePasswordData!
