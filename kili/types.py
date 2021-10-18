@@ -255,6 +255,7 @@ class Asset:
     project = ProjectWithoutDataset
     projectIdCompute = 'projectIdCompute'
     readPermissionsFromLabels = 'readPermissionsFromLabels'
+    skippedCompute = 'skippedCompute'
     skipped = 'skipped'
     status = 'status'
     statusCompute = 'statusCompute'
