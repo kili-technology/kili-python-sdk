@@ -7,7 +7,7 @@ from ...helpers import Compatible, deprecate, format_result
 
 from .queries import GQL_APPEND_TO_API_KEYS
 
-class MutationsApiKey:
+class MutationsApiKey: # pylint: disable=too-few-public-methods
     """
     Set of User mutations
     """
@@ -26,6 +26,14 @@ class MutationsApiKey:
     @Compatible(['v1', 'v2'])
     @typechecked
     def append_to_api_keys(self, api_key: str, name: str):
+        """
+        Create an api key to connect to the API
+
+        Parameters
+        ----------
+        - api_key : str, a new api key to connect with
+        - name : str, a name used to describe the api key.
+        """
         variables = {
             'data': {'key': api_key,
                      'name': name},

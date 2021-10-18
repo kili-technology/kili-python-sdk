@@ -3,7 +3,7 @@ This script permits to initialize the Kili Playground client.
 """
 import os
 
-from kili.mutations.apiKey import MutationsApiKey
+from kili.mutations.api_key import MutationsApiKey
 from kili.mutations.asset import MutationsAsset
 from kili.mutations.dataset import MutationsDataset
 from kili.mutations.dataset_asset import MutationsDatasetAsset
