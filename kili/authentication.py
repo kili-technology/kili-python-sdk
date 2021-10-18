@@ -68,10 +68,11 @@ class KiliAuth:
             warnings.warn(message, UserWarning)
         self.client.inject_token('X-API-Key: ' + api_key)
         queries = QueriesUser(self)
-        users = queries.users(api_key=api_key, fields=['id'])
+        users = queries.users(api_key=api_key, fields=['id', 'email'])
         if len(users) == 0:
             raise Exception('No user attached to the API key was found')
         self.user_id = users[0]['id']
+        self.user_email = users[0]['email']
 
     def __del__(self):
         self.session.close()
