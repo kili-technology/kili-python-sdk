@@ -173,8 +173,7 @@ class MutationsProject:
     @Compatible(endpoints=['v2'])
     @typechecked
     def create_project(self, input_type: str, json_interface: dict,
-                       title: str, description: str = '', project_type: Optional[str] = None,
-                       user_id: Optional[str] = None):
+                       title: str, description: str = '', project_type: Optional[str] = None):
         # pylint: disable=line-too-long
         """
         Create a project
@@ -207,7 +206,6 @@ class MutationsProject:
                 VIDEO_FRAME_OBJECT_TRACKING,
                 SPEECH_TO_TEXT
             }
-        - user_id : str, optional (default = None)
 
         Returns
         -------
@@ -217,8 +215,6 @@ class MutationsProject:
         -------
         >>> kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
         """
-        if user_id is None:
-            user_id = self.auth.user_id
         variables = {
             'data': {'description': description,
                      'inputType': input_type,
