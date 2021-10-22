@@ -23,7 +23,39 @@ class AnnotationFormat:
     Latest = 'latest'
     Raw = 'raw'
     Simple = 'simple'
+    YoloV4Pytorch = 'yolo_v4_pytorch'
 
+
+@dataclass
+class JobMLTask:
+    # pylint: disable=invalid-name
+    """
+    List of ML Tasks
+    """
+    AssetAnnotation = 'ASSET_ANNOTATION'
+    Classification = 'CLASSIFICATION'
+    NamedEntitiesRecognition = 'NAMED_ENTITIES_RECOGNITION'
+    NamedEntitiesRelation = 'NAMED_ENTITIES_RELATION'
+    ObjectRelation = 'OBJECT_RELATION'
+    ObjectDetection = 'OBJECT_DETECTION'
+    PoseEstimation = 'POSE_ESTIMATION'
+    RegionDetection = 'REGION_DETECTION'
+    SpeechToText = 'SPEECH_TO_TEXT'
+    Transcription = 'TRANSCRIPTION'
+
+@dataclass
+class JobTool:
+    # pylint: disable=invalid-name
+    """
+    List of tools
+    """
+    Marker = 'marker'
+    Polygon = 'polygon'
+    Polyline = 'polyline'
+    Range = 'range'
+    Rectangle = 'rectangle'
+    Semantic = 'semantic'
+    Vector = 'vector'
 
 
 def get_polygon(annotation):
