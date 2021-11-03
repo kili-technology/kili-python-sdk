@@ -4,12 +4,14 @@ API authentication module
 
 import os
 import warnings
+from datetime import datetime, timedelta
 
 import requests
 
 from . import __version__
 from .graphql_client import GraphQLClient
 from .queries.user import QueriesUser
+from .queries.api_key import QueriesApiKey
 
 MAX_RETRIES = 20
 
@@ -73,6 +75,7 @@ class KiliAuth:
             raise Exception('No user attached to the API key was found')
         self.user_id = users[0]['id']
         self.user_email = users[0]['email']
+        self.check_expiry_of_key_is_close(api_key)
 
     def __del__(self):
         self.session.close()
@@ -91,4 +94,19 @@ class KiliAuth:
         if get_version_without_patch(version) != get_version_without_patch(__version__):
             message = 'Kili Playground version should match with Kili API version.\n' + \
                       f'Please install version: "pip install kili=={version}"'
+            warnings.warn(message, UserWarning)
+
+    def check_expiry_of_key_is_close(self, api_key):
+        duration_days = 365
+        warn_days = 30
+        queries = QueriesApiKey(self)
+        key_object = queries.api_keys(api_key=api_key, fields=['createdAt'])
+        key_creation = datetime.strptime(key_object[0]['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        key_expiry = key_creation + timedelta(days=duration_days)
+        key_remaining_time = key_expiry - datetime.now()
+        key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
+        if (key_soon_deprecated):
+            message = f"""
+Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
+You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning)
