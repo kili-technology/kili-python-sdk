@@ -27,10 +27,11 @@ class QueriesApiKey:
         """
         self.auth = auth
 
+    # pylint: disable=dangerous-default-value
     @Compatible(['v2'])
     @typechecked
-    def api_keys(self, id: Optional[str] = None, user_id: Optional[str] = None, api_key: Optional[str] = None,
-                 skip: int = 0,
+    def api_keys(self, api_key_id: Optional[str] = None, user_id: Optional[str] = None,
+                 api_key: Optional[str] = None, skip: int = 0,
                  fields: list = ['id', 'name', 'createdAt', 'revoked'],
                  first: Optional[int] = 100):
         # pylint: disable=line-too-long
@@ -39,7 +40,7 @@ class QueriesApiKey:
 
         Parameters
         ----------
-        - id : str, optional (default = None)
+        - api_key_id : str, optional (default = None)
             The unique id of the api key to retrieve.
         - user_id : str
             Identifier of the user (you can only query your own api keys).
@@ -68,7 +69,7 @@ class QueriesApiKey:
                     'id': user_id,
                     'apiKey': api_key
                 },
-                'id': id,
+                'id': api_key_id,
             },
             'skip': skip,
             'first': first,
@@ -79,15 +80,14 @@ class QueriesApiKey:
 
     @Compatible(['v2'])
     @typechecked
-    def count_api_keys(
-            self,
-            id: Optional[str] = None, user_id: Optional[str] = None, api_key: Optional[str] = None):
+    def count_api_keys(self, api_key_id: Optional[str] = None, user_id: Optional[str] = None,
+                       api_key: Optional[str] = None):
         """
         Count and return the number of api keys with the given constraints
 
         Parameters
         ----------
-        - id : str, optional (default = None)
+        - api_key_id : str, optional (default = None)
             The unique id of the api key to retrieve.
         - user_id : str
             Identifier of the user (you can only query your own api keys).
@@ -111,7 +111,7 @@ class QueriesApiKey:
                     'id': user_id,
                     'apiKey': api_key
                 },
-                'id': id,
+                'id': api_key_id,
             },
         }
         result = self.auth.client.execute(GQL_API_KEYS_COUNT, variables)

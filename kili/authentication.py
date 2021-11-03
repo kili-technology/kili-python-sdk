@@ -97,6 +97,13 @@ class KiliAuth:
             warnings.warn(message, UserWarning)
 
     def check_expiry_of_key_is_close(self, api_key):
+        """
+        Checks that the expiration date of the api_key is not too close
+
+        Parameters
+        ----------
+        - api_key: key used to connect to the Kili API
+        """
         duration_days = 365
         warn_days = 30
         queries = QueriesApiKey(self)
@@ -105,7 +112,7 @@ class KiliAuth:
         key_expiry = key_creation + timedelta(days=duration_days)
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
-        if (key_soon_deprecated):
+        if key_soon_deprecated:
             message = f"""
 Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
 You should generate a new one on My account > API KEY."""
