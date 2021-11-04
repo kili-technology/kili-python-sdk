@@ -231,6 +231,7 @@ class Asset:
     contentJson = 'contentJson'
     contentJsonCompute = 'contentJsonCompute'
     createdAt = 'createdAt'
+    datasetAssetId = 'datasetAssetId'
     duration = 'duration'
     durationCompute = 'durationCompute'
     externalId = 'externalId'
@@ -253,6 +254,7 @@ class Asset:
     numberOfValidLocksCompute = 'numberOfValidLocksCompute'
     priority = 'priority'
     project = ProjectWithoutDataset
+    projectId = 'projectId'
     projectIdCompute = 'projectIdCompute'
     readPermissionsFromLabels = 'readPermissionsFromLabels'
     skippedCompute = 'skippedCompute'
@@ -263,6 +265,9 @@ class Asset:
     thumbnailCompute = 'thumbnailCompute'
     toBeLabeledBy = ProjectUser
     updatedAt = 'updatedAt'
+
+
+
 
 
 @dataclass
@@ -285,6 +290,18 @@ class DatasetAsset:
     thumbnailCompute = 'thumbnailCompute'
     updatedAt = 'updatedAt'
 
+
+@dataclass
+class Dataset:
+    id = 'id'
+    createdAt = 'createdAt'
+    updatedAt = 'updatedAt'
+    assets = DatasetAsset
+    name = 'name'
+    numberOfAssets = 'numberOfAssets'
+    projectId = 'projectId'
+    type = 'type'
+    users = User
 
 @dataclass
 class Label(LabelWithoutLabelOf):
