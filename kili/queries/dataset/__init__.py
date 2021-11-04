@@ -8,7 +8,6 @@ from typeguard import typechecked
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_datasets, GQL_DATASETS_COUNT
 from ...types import Dataset
-from ...constants import NO_ACCESS_RIGHT
 
 
 class QueriesDataset:
