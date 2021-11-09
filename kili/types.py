@@ -15,6 +15,7 @@ class OrganizationWithoutUser:
     """
     id = 'id'
     address = 'address'
+    canSeeDataset = 'canSeeDataset'
     city = 'city'
     country = 'country'
     license = 'license'
