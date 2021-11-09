@@ -294,13 +294,13 @@ class DatasetAsset:
 @dataclass
 class Dataset:
     id = 'id'
-    createdAt = 'createdAt'
-    updatedAt = 'updatedAt'
     assets = DatasetAsset
+    createdAt = 'createdAt'
     name = 'name'
     numberOfAssets = 'numberOfAssets'
     projectId = 'projectId'
     type = 'type'
+    updatedAt = 'updatedAt'
     users = User
 
 @dataclass
