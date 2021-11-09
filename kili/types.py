@@ -134,12 +134,31 @@ class ProjectUser(ProjectUserWithoutProject):
 
 
 @dataclass
-class User(UserWithoutProjectUsers):
+class UserWithoutApiKey(UserWithoutProjectUsers):
     """
     A wrapper for User GraphQL object.
     """
     projectUsers = ProjectUser
 
+@dataclass
+class ApiKey:
+    """
+    A wrapper for DatasetAsset GraphQL object.
+    """
+    createdAt = 'createdAt'
+    id = 'id'
+    key = 'key'
+    name = 'name'
+    revoked = 'revoked'
+    user = UserWithoutApiKey
+    userId = 'userId'
+
+@dataclass
+class User(UserWithoutApiKey):
+    """
+    A wrapper for User GraphQL object.
+    """
+    apiKeys = ApiKey
 
 @dataclass
 class LabelWithoutLabelOf:
