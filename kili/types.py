@@ -293,6 +293,9 @@ class DatasetAsset:
 
 @dataclass
 class Dataset:
+    """
+    A wrapper for Dataset GraphQL object.
+    """
     id = 'id'
     assets = DatasetAsset
     createdAt = 'createdAt'
