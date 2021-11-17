@@ -5,4 +5,4 @@
 Kili Playground
 """
 
-__version__ = "2.98.0"
+__version__ = "2.99.0"
