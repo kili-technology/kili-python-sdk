@@ -26,7 +26,7 @@ COCO_TRAIN_TXT_FILE = 'data/custom_train.txt'
 COCO_VALID_TXT_FILE = 'data/custom_valid.txt'
 COCO_DATA_FILE = 'data/custom_train.data'
 COCO_DATA_FILE_TEMPLATE = os.path.join(MAIN_PATH, 'coco.template.data')
-CONFIG_FILE = 'cfg/yolov3-custom_train.cfg'
+CONFIG_FILE = 'cfg/yolov3-spp.yaml'
 CONFIG_FILE_TEMPLATE = os.path.join(MAIN_PATH, 'yolov3.template.cfg')
 BEST_WEIGHTS_FILE = 'weights/best.pt'
 LAST_WEIGHTS_FILE = 'weights/last.pt'
@@ -132,7 +132,7 @@ class YoloTransferLearning(TransferLearning):
         self.job_id = job_id
 
     def train(self, assets_to_train):
-        logging.info(f'Launch training for {len(assets_to_train)} assets.')
+        logging.info(f'Launch training for {len(assets_to_train)} assets in yolo subclass.')
 
         # Prepare folders for YOLO v3 framework
         folder = TemporaryDirectory()
@@ -161,7 +161,7 @@ class YoloTransferLearning(TransferLearning):
 
             with open(full_image_name, 'wb') as f:
                 content = asset['content']
-                response = requests.get(content, stream=True)
+                response = requests.get(content, stream=True, headers={'authorization': f'X-API-Key: {self.api_key}'})
                 if not response.ok:
                     logging.warn('Error while downloading image %s' %
                                  asset['id'])
@@ -191,8 +191,8 @@ class YoloTransferLearning(TransferLearning):
 
         # Train with YOLO v3 framework
         train_parameters = ['python3', 'train.py',
-                            '--data', f'{COCO_DATA_FILE}',
-                            '--cache-images']
+                            # '--data', f'{COCO_DATA_FILE}']
+                            '--data', '/Users/maximeduval/Documents/kili-playground/recipes/image-object-detection-with-yolo/yolov3/data/export-ckw4sc6z804680lxffzxt6x6b-20211118-124742211369.zip']
         if not self.override_cfg:
             train_parameters.extend(['--cfg', f'{CONFIG_FILE}'])
         else:
@@ -204,7 +204,7 @@ class YoloTransferLearning(TransferLearning):
             logging.info('Launching new training...')
             train_parameters.extend(['--weights', self.weights])
             if self.transfer:
-                train_parameters.append('--transfer')
+                assert self.weights.endswith('.pt'), 'Weights provided need to be a .pt file'
         logging.info(
             f'Running training with parameters: {" ".join(train_parameters)}')
         subprocess.run(train_parameters)
@@ -228,7 +228,7 @@ class YoloTransferLearning(TransferLearning):
                     f.write(base64.b64decode(content))
                 continue
             with open(os.path.join(input.name, image_name), 'wb') as f:
-                response = requests.get(content, stream=True)
+                response = requests.get(content, stream=True, headers={'authorization': f'X-API-Key: {self.api_key}'})
                 if not response.ok:
                     continue
                 for block in response.iter_content(1024):
