@@ -25,6 +25,7 @@ mutation(
     $zipCode: String
     $city: String
     $country: String
+    $canSeeDataset: Boolean
 ) {{
   data: updatePropertiesInOrganization(
     where: {{id: $id}}
@@ -35,6 +36,7 @@ mutation(
       zipCode: $zipCode
       city: $city
       country: $country
+      canSeeDataset: $canSeeDataset
     }}
   ) {{
     {ORGANIZATION_FRAGMENT}
