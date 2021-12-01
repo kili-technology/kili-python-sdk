@@ -1,4 +1,0 @@
-# pip install -U -r requirements.txt
-tb-nightly
-future
-torchvision
