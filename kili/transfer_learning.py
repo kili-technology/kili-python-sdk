@@ -94,7 +94,7 @@ class TransferLearning:
         else:
             filtered_assets_to_train = [
                 asset for asset in assets_to_train
-                if all([asset['id'] not in training for training in self.assets_seen_in_training])]
+                if all(asset['id'] not in training for training in self.assets_seen_in_training)]
         if len(filtered_assets_to_train) >= self.minimum_number_of_assets_to_launch_training:
             print('Starting training')
             TransferLearning.train(filtered_assets_to_train)
