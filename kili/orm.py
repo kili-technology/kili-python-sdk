@@ -29,6 +29,7 @@ class AnnotationFormat:
 @dataclass
 class JobMLTask:
     # pylint: disable=invalid-name
+    # pylint: disable=too-many-instance-attributes
     """
     List of ML Tasks
     """

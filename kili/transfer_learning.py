@@ -73,7 +73,8 @@ class TransferLearning:
                 continue
         return assets_to_train
 
-    def train(self, assets_to_train):
+    @staticmethod
+    def train(assets_to_train):
         """
         Prints that training is ongoing
         """
@@ -93,11 +94,10 @@ class TransferLearning:
         else:
             filtered_assets_to_train = [
                 asset for asset in assets_to_train
-                    if all([asset['id'] not in training # pylint: disable=use-a-generator
-                        for training in self.assets_seen_in_training])]
+                if all([asset['id'] not in training for training in self.assets_seen_in_training])]
         if len(filtered_assets_to_train) >= self.minimum_number_of_assets_to_launch_training:
             print('Starting training')
-            self.train(filtered_assets_to_train)
+            TransferLearning.train(filtered_assets_to_train)
             self.current_training_number += 1
             self.assets_seen_in_training.append(
                 [asset['id'] for asset in filtered_assets_to_train])
@@ -116,7 +116,8 @@ class TransferLearning:
                 assets_to_predict.append(asset)
         return assets_to_predict
 
-    def predict(self, assets_to_predict):
+    @staticmethod
+    def predict(assets_to_predict):
         """
         Prints that prediction is ongoing
         """
@@ -136,7 +137,7 @@ class TransferLearning:
         assets_to_predict = self.get_assets_to_predict()
         if len(assets_to_predict) > 0:
             current_training_number = self.current_training_number
-            self.predict(assets_to_predict)
+            TransferLearning.predict(assets_to_predict)
             self.last_training_number = current_training_number
             self.current_inference_number += 1
 
@@ -146,7 +147,8 @@ class TransferLearning:
         Launches the tensorboard
         """
         print('Starting Tensorboard...')
-        subprocess.Popen(['tensorboard', '--logdir=runs'])
+        with subprocess.Popen(['tensorboard', '--logdir=runs']) as proc:
+            print(proc.stdout.read())
 
     def launch(self):
         """
