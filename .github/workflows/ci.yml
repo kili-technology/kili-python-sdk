@@ -25,10 +25,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Download docker image
-        run: docker pull continuumio/anaconda3:2020.02
+        run: docker pull continuumio/anaconda3:latest
       - name: Run in docker image
         run: >-
-          docker run continuumio/anaconda3:2020.02 /bin/sh -c \
+          docker run continuumio/anaconda3:latest /bin/sh -c \
             "cd /root && \
               apt-get update && apt-get install -y gcc && \
               git clone --branch ${GITHUB_REF} https://github.com/kili-technology/kili-playground.git"
