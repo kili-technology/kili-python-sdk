@@ -24,21 +24,21 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Download docker image
-        run: docker pull continuumio/anaconda3:latest
-      - name: Run in docker image
-        run: >-
-          docker run continuumio/anaconda3:latest /bin/sh -c \
-            "cd /root && \
-              apt-get update && apt-get install -y gcc && \
-              git clone --branch ${GITHUB_REF#refs/heads/} https://github.com/kili-technology/kili-playground.git && \
-              pip install ./kili-playground && \
-              echo user && echo $KILI_USER_EMAIL && \
-              jupyter nbconvert \
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nbconvert
+      - name: Run notebooks
+        run: |
+          jupyter nbconvert \
                 --to notebook \
                 --ExecutePreprocessor.kernel_name=python3 \
                 --ExecutePreprocessor.timeout=1000 \
-                --execute /root/kili-playground/${NOTEBOOK_PATH}"
+                --execute recipes/import_predictions.ipynb
         env:
-          NOTEBOOK_PATH: recipes/import_predictions.ipynb
           KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
