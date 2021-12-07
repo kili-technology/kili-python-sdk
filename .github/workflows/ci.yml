@@ -31,4 +31,12 @@ jobs:
           docker run continuumio/anaconda3:latest /bin/sh -c \
             "cd /root && \
               apt-get update && apt-get install -y gcc && \
-              git clone --branch ${GITHUB_REF} https://github.com/kili-technology/kili-playground.git"
+              git clone --branch ${GITHUB_REF##*/} https://github.com/kili-technology/kili-playground.git && \
+              pip install ./kili-playground && \
+              jupyter nbconvert \
+                --to notebook \
+                --ExecutePreprocessor.kernel_name=python3 \
+                --ExecutePreprocessor.timeout=1000 \
+                --execute /root/kili-playground/${NOTEBOOK_PATH}"
+        env:
+          NOTEBOOK_PATH: recipes/import_predictions.ipynb
