@@ -7,7 +7,9 @@ import time
 
 from kili.client import Kili
 
-SECONDS_TO_WAIT = 10
+SECONDS_TO_WAIT = 1
+LABEL_FIELDS = ['isLatestLabelForUser', 'labelType', 'jsonResponse', 'createdAt']
+FIELDS = ['id', 'content', 'externalId'] + [f'labels.{x}' for x in LABEL_FIELDS]
 
 
 def get_labels_of_types(asset, label_types):
@@ -36,8 +38,9 @@ class TransferLearning:
             api_endpoint,
             project_id,
             number_of_inferences,
-            minimum_number_of_assets_to_launch_training=100):
+            minimum_number_of_assets_to_launch_training=10):
         self.kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
+        self.api_key = api_key
         self.project_id = project_id
         self.current_inference_number = 0
         self.current_training_number = 0
@@ -52,7 +55,7 @@ class TransferLearning:
         """
         Collects the assets to train on
         """
-        assets = self.kili.assets(project_id=self.project_id)
+        assets = self.kili.assets(project_id=self.project_id, fields=FIELDS)
         assets_to_train = []
         for asset in assets:
             default_labels = get_labels_of_types(asset, ['DEFAULT'])
@@ -83,6 +86,7 @@ class TransferLearning:
         """
         Launches the training
         """
+        print('Launching train')
         time.sleep(SECONDS_TO_WAIT)
         assets_to_train = self.get_assets_to_train()
         if len(self.assets_seen_in_training) == 0:
@@ -90,19 +94,21 @@ class TransferLearning:
         else:
             filtered_assets_to_train = [
                 asset for asset in assets_to_train
-                    if all([asset['id'] not in training # pylint: disable=use-a-generator
-                        for training in self.assets_seen_in_training])]
+                if all(asset['id'] not in training for training in self.assets_seen_in_training)]
         if len(filtered_assets_to_train) >= self.minimum_number_of_assets_to_launch_training:
+            print('Starting training')
             TransferLearning.train(filtered_assets_to_train)
             self.current_training_number += 1
             self.assets_seen_in_training.append(
                 [asset['id'] for asset in filtered_assets_to_train])
+        else:
+            print('Not enough labeled assets to start training')
 
     def get_assets_to_predict(self):
         """
         Collects the assets to predict
         """
-        assets = self.kili.assets(project_id=self.project_id)
+        assets = self.kili.assets(project_id=self.project_id, fields=FIELDS)
         assets_to_predict = []
         for asset in assets:
             labels = get_labels_of_types(asset, ['DEFAULT', 'REVIEWED'])
@@ -117,12 +123,13 @@ class TransferLearning:
         """
         print(
             f'Launch inference for {len(assets_to_predict)} assets:' \
-            ' {[asset["id"] for asset in assets_to_predict]}')
+            f' {[asset["id"] for asset in assets_to_predict]}')
 
     def launch_predict(self):
         """
         Launches the prediction
         """
+        print('Launching prediction')
         time.sleep(SECONDS_TO_WAIT)
         if self.current_training_number == self.last_training_number:
             print('Inference will not be launched for now...')
@@ -140,8 +147,8 @@ class TransferLearning:
         Launches the tensorboard
         """
         print('Starting Tensorboard...')
-        with subprocess.Popen(['tensorboard', '--logdir=runs']):
-            print('You can access Tensorboard at http://localhost:6006\n')
+        with subprocess.Popen(['tensorboard', '--logdir=runs']) as proc:
+            print(proc.stdout.read())
 
     def launch(self):
         """
@@ -149,5 +156,6 @@ class TransferLearning:
         """
         TransferLearning.launch_tensorboard()
         while self.current_inference_number < self.number_of_inferences:
+            print(f'Iteration inference {self.current_inference_number}')
             self.launch_train()
             self.launch_predict()
