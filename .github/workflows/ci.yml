@@ -24,22 +24,20 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install jupyter nbconvert nbformat kili
-      - name: Run notebooks
-        run: |
-          jupyter nbconvert \
-                --to notebook \
-                --ExecutePreprocessor.kernel_name=python3 \
-                --ExecutePreprocessor.timeout=1000 \
-                --execute recipes/import_predictions.ipynb
+          pip install jupyter nbconvert nbformat kili pytest
+
+      - name: Run all notebooks
+        run: pytest
         env:
           KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
           KILI_USER_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
