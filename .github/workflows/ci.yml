@@ -32,7 +32,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install jupyter nbconvert nbformat
+          pip install jupyter nbconvert nbformat kili
       - name: Run notebooks
         run: |
           jupyter nbconvert \
@@ -41,4 +41,6 @@ jobs:
                 --ExecutePreprocessor.timeout=1000 \
                 --execute recipes/import_predictions.ipynb
         env:
+          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
+          KILI_USER_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
           KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
