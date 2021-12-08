@@ -34,7 +34,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install jupyter nbconvert nbformat kili pytest
+          pip install jupyter nbconvert nbformat pytest
 
       - name: Run all notebooks
         run: pytest

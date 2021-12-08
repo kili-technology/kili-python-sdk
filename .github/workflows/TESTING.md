@@ -17,7 +17,7 @@ export KILI_USER_EMAIL=...
 export KILI_USER_ID=...
 
 # Install dependencies
-pip install jupyter nbconvert nbformat kili pytest
+pip install jupyter nbconvert nbformat pytest
 
 # Run pytest
 pytest
