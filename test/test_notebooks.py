@@ -11,22 +11,22 @@ from nbconvert.preprocessors import CellExecutionError
 
 RECIPES_DIR = './recipes'
 RECIPES_TESTED = [
-    # 'create_project.ipynb',
-    # 'export_labels.ipynb',
-    # 'frame_dicom_data.ipynb',
-    # 'import_assets.ipynb',
-    # 'import_predictions.ipynb',
-    # 'import_text_assets.ipynb',
-    # 'inference_labels.ipynb',
-    # 'medical_imaging.ipynb',
-    # 'ocr_pre_annotations.ipynb',
+    'create_project.ipynb',
+    'export_labels.ipynb',
+    'frame_dicom_data.ipynb',
+    'import_assets.ipynb',
+    'import_predictions.ipynb',
+    'import_text_assets.ipynb',
+    'inference_labels.ipynb',
+    'medical_imaging.ipynb',
+    'ocr_pre_annotations.ipynb',
     'pixel_level_masks.ipynb',
-    # 'query_methods.ipynb',
-    # 'webhooks.ipynb',
-    # 'getting-started/getting_started-image_bounding_box_detection.ipynb',
-    # 'getting-started/getting_started-image_classification.ipynb',
-    # 'getting-started/getting_started-image_semantic_segmentation.ipynb',
-    # 'getting-started/getting_started-named-entity-recognition.ipynb',
+    'query_methods.ipynb',
+    'webhooks.ipynb',
+    'getting-started/getting_started-image_bounding_box_detection.ipynb',
+    'getting-started/getting_started-image_classification.ipynb',
+    'getting-started/getting_started-image_semantic_segmentation.ipynb',
+    'getting-started/getting_started-named-entity-recognition.ipynb',
 ]
 
 def process_notebook(notebook_filename):
