@@ -91,19 +91,21 @@ def get_request_to_execute(
     json_metadata_array: Union[List[dict], None]
 ) -> str:
     """
-    Selects the right query to run versus the data given 
+    Selects the right query to run versus the data given
     """
     if input_type != 'FRAME':
         return GQL_APPEND_MANY_TO_DATASET
     if json_metadata_array is None:
         return GQL_APPEND_MANY_TO_DATASET
-    if isinstance(json_metadata_array, list) and len(json_metadata_array) > 0 and not json_metadata_array[0].get('processingParameters', {}).get('shouldUseNativeVideo', True):
+    if (isinstance(json_metadata_array, list) and
+        len(json_metadata_array) > 0 and
+        not json_metadata_array[0].get(
+            'processingParameters', {}).get('shouldUseNativeVideo', True)):
         return GQL_APPEND_MANY_FRAMES_TO_DATASET
     return GQL_APPEND_MANY_TO_DATASET
 
+
 # pylint: disable=too-many-arguments
-
-
 def process_append_many_to_dataset_parameters(
         input_type: str,
         content_array: Union[List[str], None],
