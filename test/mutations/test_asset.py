@@ -3,6 +3,7 @@ Test mutations with pytest
 """
 import os
 import json
+import time
 from unittest import TestCase
 import uuid
 
@@ -41,31 +42,49 @@ class LocalDownloader():
         return path
 
 
-base_test_cases = [
-        {
-            'case': 'uploading a video with a url',
-            'content': ['https://storage.googleapis.com/label-public-staging/presales/Industry%20-%2040054.mp4'],
-            'expected_processing_parameters': {
-                'shouldKeepNativeFrameRate': True,
-                'framesPlayedPerSecond': 25,
-                'shouldUseNativeVideo': True
-            }
-        },
-        {
-            'case': 'uploading a video as a list of image urls',
-            'json_content': [["https://storage.googleapis.com/label-public-staging/video1/video1-img000001.jpg",
-                             "https://storage.googleapis.com/label-public-staging/video1/video1-img000002.jpg"]],
-            'expected_processing_parameters': {
-                'shouldKeepNativeFrameRate': True,
-                'framesPlayedPerSecond': 24,
-                'shouldUseNativeVideo': False
-            }
-        },
-    ]
-custom_value_cases = [
+TIMEOUT = 10
+RETRY = 1
+BASE_TEST_CASES = [
     {
         'case': 'uploading a video with a url',
-        'content': ['https://storage.googleapis.com/label-public-staging/presales/Industry%20-%2040054.mp4'],
+        'content': ['https://storage.googleapis.com/label-public-staging/presales/industry_small.mp4'],
+        'expected_processing_parameters': {
+            'shouldKeepNativeFrameRate': True,
+            'framesPlayedPerSecond': 25,
+            'shouldUseNativeVideo': True
+        }
+    },
+    {
+        'case': 'uploading a video as a list of image urls',
+        'json_content': [["https://storage.googleapis.com/label-public-staging/video1/video1-img000001.jpg",
+                            "https://storage.googleapis.com/label-public-staging/video1/video1-img000002.jpg"]],
+        'expected_processing_parameters': {
+            'shouldKeepNativeFrameRate': True,
+            'framesPlayedPerSecond': 24,
+            'shouldUseNativeVideo': False
+        }
+    },
+    {
+        'case': 'uploading a video into frames from url',
+        'content': ['https://storage.googleapis.com/label-public-staging/presales/industry_small.mp4'],
+        'expected_processing_parameters': {
+            'shouldKeepNativeFrameRate': True,
+            'shouldUseNativeVideo': False,
+            'framesPlayedPerSecond': 25,
+        },
+        'json_metadata': [{
+            'processingParameters': {
+                'shouldKeepNativeFrameRate': True,
+                'shouldUseNativeVideo': False,
+            }
+        }],
+    },
+    
+]
+CUSTOM_VALUE_CASES = [
+    {
+        'case': 'uploading a video with a url',
+        'content': ['https://storage.googleapis.com/label-public-staging/presales/industry_small.mp4'],
         'expected_processing_parameters': {
             'shouldKeepNativeFrameRate': False,
             'framesPlayedPerSecond': 40,
@@ -79,9 +98,9 @@ custom_value_cases = [
         }]
     },
 ]
-test_cases = base_test_cases
-test_cases.extend([{**x, 'local': True} for x in base_test_cases])
-test_cases.extend(custom_value_cases)
+TEST_CASES = BASE_TEST_CASES
+TEST_CASES.extend([{**x, 'local': True} for x in BASE_TEST_CASES])
+TEST_CASES.extend(CUSTOM_VALUE_CASES)
 
 
 def test_upload_video(create_video_project, tmpdir):
@@ -93,7 +112,7 @@ def test_upload_video(create_video_project, tmpdir):
 
     downloader = LocalDownloader(tmpdir)
 
-    for i, test_case in enumerate(test_cases):
+    for i, test_case in enumerate(TEST_CASES):
         external_id = f'video_case_{i+1}'
         content = test_case.get('content', None)
         expected_parameters = test_case.get(
@@ -118,10 +137,14 @@ def test_upload_video(create_video_project, tmpdir):
             external_id_array=[external_id]
         )
 
+        tstart = time.time()
         n_assets = kili.count_assets(project_id=project_id)
+        while not n_assets == i+1 and time.time() - tstart < TIMEOUT:
+            time.sleep(RETRY)
+            n_assets = kili.count_assets(project_id=project_id)
         assert n_assets == i+1, 'Asset upload failed'
 
         asset_uploaded = kili.assets(
             project_id=project_id, external_id_contains=[external_id])
         processed_parameters = asset_uploaded[0]['jsonMetadata']['processingParameters']
-        tester.assertDictEqual(expected_parameters, processed_parameters), case
+        tester.assertDictEqual(expected_parameters, processed_parameters), f'{case}, got {processed_parameters}, expected {expected_parameters}'

@@ -13,8 +13,7 @@ from ...helpers import (Compatible,
                         format_result,
                         is_none_or_empty)
 from ...queries.project import QueriesProject
-from .queries import (GQL_APPEND_MANY_TO_DATASET,
-                      GQL_DELETE_MANY_FROM_DATASET,
+from .queries import (GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from .helpers import process_append_many_to_dataset_parameters
 from ...constants import NO_ACCESS_RIGHT
@@ -104,7 +103,7 @@ class MutationsAsset:
         projects = playground.projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
-        data = process_append_many_to_dataset_parameters(input_type,
+        data, request = process_append_many_to_dataset_parameters(input_type,
                                                          content_array,
                                                          external_id_array,
                                                          is_honeypot_array,
@@ -115,8 +114,7 @@ class MutationsAsset:
             'data': data,
             'where': {'id': project_id}
         }
-        result = self.auth.client.execute(
-            GQL_APPEND_MANY_TO_DATASET, variables)
+        result = self.auth.client.execute(request, variables)
         return format_result('data', result, Asset)
 
     @Compatible(['v2'])

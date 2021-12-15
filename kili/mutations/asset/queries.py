@@ -19,6 +19,20 @@ mutation(
 }}
 '''
 
+GQL_APPEND_MANY_FRAMES_TO_DATASET = f'''
+mutation(
+    $data: AppendManyFramesToDatasetAsynchronouslyData!,
+    $where: ProjectWhere!
+  ) {{
+  data: appendManyFramesToDatasetAsynchronously(
+    data: $data,
+    where: $where
+  ) {{
+    {ASSET_FRAGMENT}
+  }}
+}}
+'''
+
 
 GQL_UPDATE_PROPERTIES_IN_ASSETS = f'''
 mutation(

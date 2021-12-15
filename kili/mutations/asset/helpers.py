@@ -6,6 +6,8 @@ from uuid import uuid4
 from typing import List, Union
 
 from ...helpers import encode_base64, is_url
+from .queries import (GQL_APPEND_MANY_TO_DATASET,
+                      GQL_APPEND_MANY_FRAMES_TO_DATASET)
 
 
 def encode_object_if_not_url(content):
@@ -84,7 +86,24 @@ def process_metadata(input_type: str, content_array: Union[List[str], None],
     return list(map(dumps, json_metadata_array))
 
 
+def get_request_to_execute(
+    input_type: str,
+    json_metadata_array: Union[List[dict], None]
+) -> str:
+    """
+    Selects the right query to run versus the data given 
+    """
+    if input_type != 'FRAME':
+        return GQL_APPEND_MANY_TO_DATASET
+    if json_metadata_array is None:
+        return GQL_APPEND_MANY_TO_DATASET
+    if isinstance(json_metadata_array, list) and len(json_metadata_array) > 0 and not json_metadata_array[0].get('processingParameters', {}).get('shouldUseNativeVideo', True):
+        return GQL_APPEND_MANY_FRAMES_TO_DATASET
+    return GQL_APPEND_MANY_TO_DATASET
+
 # pylint: disable=too-many-arguments
+
+
 def process_append_many_to_dataset_parameters(
         input_type: str,
         content_array: Union[List[str], None],
@@ -116,10 +135,17 @@ def process_append_many_to_dataset_parameters(
     formatted_json_content_array = process_json_content(
         input_type, content_array, json_content_array)
 
-    payload_data = {'contentArray': content_array,
-                    'externalIDArray': external_id_array,
-                    'isHoneypotArray': is_honeypot_array,
-                    'statusArray': status_array,
-                    'jsonContentArray': formatted_json_content_array,
-                    'jsonMetadataArray': formatted_json_metadata_array}
-    return payload_data
+    request = get_request_to_execute(input_type, json_metadata_array)
+    if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
+        payload_data = {'contentArray': content_array,
+                        'externalIDArray': external_id_array,
+                        'jsonMetadataArray': formatted_json_metadata_array}
+    else:
+        payload_data = {'contentArray': content_array,
+                        'externalIDArray': external_id_array,
+                        'isHoneypotArray': is_honeypot_array,
+                        'statusArray': status_array,
+                        'jsonContentArray': formatted_json_content_array,
+                        'jsonMetadataArray': formatted_json_metadata_array}
+
+    return payload_data, request
