@@ -2,28 +2,20 @@
 Asset mutations
 """
 
-from json import dumps
-from uuid import uuid4
 from typing import List, Optional, Union
 from functools import partial
 
 from typeguard import typechecked
 
 from ...helpers import (Compatible,
-                        content_escape,
                         convert_to_list_of_none,
-                        deprecate,
-                        encode_base64,
                         format_metadata,
                         format_result,
-                        is_none_or_empty,
-                        is_url,
-                        list_is_not_none_else_none)
+                        is_none_or_empty)
 from ...queries.project import QueriesProject
-from ...queries.asset import QueriesAsset
-from .queries import (GQL_APPEND_MANY_TO_DATASET,
-                      GQL_DELETE_MANY_FROM_DATASET,
+from .queries import (GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
+from .helpers import process_append_many_to_dataset_parameters
 from ...constants import NO_ACCESS_RIGHT
 from ...orm import Asset
 
@@ -91,9 +83,11 @@ class MutationsAsset:
             formatted according to documentation on how to import
             rich-text assets: https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb
         - json_metadata_array : List[Dict] , optional (default = None)
-            The metadata given to each asset should be stored in a json like dict with keys
-            "imageUrl", "text", "url".
-            json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
+            The metadata given to each asset should be stored in a json like dict with keys.
+            Add metadata visible on the asset with the following keys: "imageUrl", "text", "url".
+                Example: json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
+            For video, you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
+                Example: json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}] to upload one asset.
 
         Returns
         -------
@@ -109,58 +103,18 @@ class MutationsAsset:
         projects = playground.projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
-
-        if content_array is None and json_content_array is None:
-            raise ValueError(
-                "Variables content_array and json_content_array cannot be both None.")
-        if content_array is None:
-            content_array = [''] * len(json_content_array)
-        if external_id_array is None:
-            external_id_array = [
-                uuid4().hex for _ in range(len(content_array))]
-        is_honeypot_array = [
-            False] * len(content_array) if not is_honeypot_array else is_honeypot_array
-        status_array = ['TODO'] * \
-            len(content_array) if not status_array else status_array
-        if not json_content_array:
-            formatted_json_content_array = [''] * len(content_array)
-        elif input_type == 'FRAME':
-            formatted_json_content_array = \
-                list(map(lambda json_content: json_content
-                         if is_url(json_content)
-                         else dumps(dict(zip(
-                             range(len(json_content)),
-                             list(map(lambda frame_content: frame_content
-                                      if is_url(frame_content)
-                                      else encode_base64(frame_content), json_content))
-                         ))), json_content_array))
-        else:
-            formatted_json_content_array = [
-                element if is_url(element) else dumps(element)
-                for element in json_content_array]
-        json_metadata_array = [
-            {}] * len(content_array) if not json_metadata_array else json_metadata_array
-        formatted_json_metadata_array = [
-            dumps(elem) for elem in json_metadata_array]
-        if input_type in ['IMAGE', 'PDF']:
-            content_array = [content if is_url(content) else encode_base64(
-                content) for content in content_array]
-        elif input_type == 'FRAME' and json_content_array is None:
-            for content in content_array:
-                if not is_url(content):
-                    raise ValueError(
-                        f"Content {content} isn't a link to a video")
+        data, request = process_append_many_to_dataset_parameters(input_type,
+                                                         content_array,
+                                                         external_id_array,
+                                                         is_honeypot_array,
+                                                         status_array,
+                                                         json_content_array,
+                                                         json_metadata_array)
         variables = {
-            'data': {'contentArray': content_array,
-                     'externalIDArray': external_id_array,
-                     'isHoneypotArray': is_honeypot_array,
-                     'statusArray': status_array,
-                     'jsonContentArray': formatted_json_content_array,
-                     'jsonMetadataArray': formatted_json_metadata_array},
+            'data': data,
             'where': {'id': project_id}
         }
-        result = self.auth.client.execute(
-            GQL_APPEND_MANY_TO_DATASET, variables)
+        result = self.auth.client.execute(request, variables)
         return format_result('data', result, Asset)
 
     @Compatible(['v2'])

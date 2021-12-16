@@ -36,7 +36,7 @@ jobs:
           pip install -r requirements.txt
           pip install jupyter nbconvert nbformat pytest
 
-      - name: Run all notebooks
+      - name: Run all tests and tested notebooks
         run: pytest
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
