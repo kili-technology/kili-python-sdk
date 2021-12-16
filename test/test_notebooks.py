@@ -19,6 +19,7 @@ RECIPES_TESTED = [
     'import_text_assets.ipynb',
     'inference_labels.ipynb',
     'medical_imaging.ipynb',
+    'ocr_pre_annotations.ipynb',
     'pixel_level_masks.ipynb',
     'query_methods.ipynb',
     'webhooks.ipynb',
