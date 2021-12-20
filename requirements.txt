@@ -1,4 +1,4 @@
-pandas==1.2.5
+pandas
 requests
 six
 tqdm

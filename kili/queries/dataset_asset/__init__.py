@@ -6,7 +6,6 @@ Dataset asset queries
 from typing import List, Optional
 
 from typeguard import typechecked
-import pandas as pd
 from tqdm import tqdm
 
 from ...helpers import Compatible, format_result, fragment_builder
