@@ -59,8 +59,8 @@ BASE_TEST_CASES = [
         'json_content': [["https://storage.googleapis.com/label-public-staging/video1/video1-img000001.jpg",
                             "https://storage.googleapis.com/label-public-staging/video1/video1-img000002.jpg"]],
         'expected_processing_parameters': {
-            'shouldKeepNativeFrameRate': True,
-            'framesPlayedPerSecond': 24,
+            'shouldKeepNativeFrameRate': False,
+            'framesPlayedPerSecond': 30,
             'shouldUseNativeVideo': False
         }
     },
