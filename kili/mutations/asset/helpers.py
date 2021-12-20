@@ -63,7 +63,7 @@ def add_video_parameters(json_metadata, should_use_native_video):
     Add necessary video parameters to the metadata of the video
     """
     processing_parameters = json_metadata.get('processingParameters', {})
-    video_parameters = [('shouldKeepNativeFrameRate', True), (
+    video_parameters = [('shouldKeepNativeFrameRate', should_use_native_video), (
         'framesPlayedPerSecond', 30), ('shouldUseNativeVideo', should_use_native_video)]
     for (key, default_value) in video_parameters:
         processing_parameters[key] = processing_parameters.get(
