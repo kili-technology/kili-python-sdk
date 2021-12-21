@@ -88,12 +88,13 @@ def process_metadata(input_type: str, content_array: Union[List[str], None],
 
 def get_request_to_execute(
     input_type: str,
-    json_metadata_array: Union[List[dict], None]
+    json_metadata_array: Union[List[dict], None],
+    json_content_array: Union[List[List[Union[dict, str]]], None]
 ) -> str:
     """
     Selects the right query to run versus the data given
     """
-    if input_type != 'FRAME':
+    if input_type != 'FRAME' or json_content_array is not None:
         return GQL_APPEND_MANY_TO_DATASET
     if json_metadata_array is None:
         return GQL_APPEND_MANY_TO_DATASET
@@ -137,7 +138,8 @@ def process_append_many_to_dataset_parameters(
     formatted_json_content_array = process_json_content(
         input_type, content_array, json_content_array)
 
-    request = get_request_to_execute(input_type, json_metadata_array)
+    request = get_request_to_execute(
+        input_type, json_metadata_array, json_content_array)
     if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
         payload_data = {'contentArray': content_array,
                         'externalIDArray': external_id_array,
