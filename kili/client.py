@@ -5,8 +5,6 @@ import os
 
 from kili.mutations.api_key import MutationsApiKey
 from kili.mutations.asset import MutationsAsset
-from kili.mutations.dataset import MutationsDataset
-from kili.mutations.dataset_asset import MutationsDatasetAsset
 from kili.mutations.label import MutationsLabel
 from kili.mutations.notification import MutationsNotification
 from kili.mutations.organization import MutationsOrganization
@@ -15,8 +13,6 @@ from kili.mutations.project_version import MutationsProjectVersion
 from kili.mutations.user import MutationsUser
 from kili.queries.api_key import QueriesApiKey
 from kili.queries.asset import QueriesAsset
-from kili.queries.dataset import QueriesDataset
-from kili.queries.dataset_asset import QueriesDatasetAsset
 from kili.queries.issue import QueriesIssue
 from kili.queries.label import QueriesLabel
 from kili.queries.lock import QueriesLock
@@ -35,8 +31,6 @@ from kili.authentication import KiliAuth
 class Kili(  # pylint: disable=too-many-ancestors
         MutationsApiKey,
         MutationsAsset,
-        MutationsDataset,
-        MutationsDatasetAsset,
         MutationsLabel,
         MutationsNotification,
         MutationsOrganization,
@@ -45,8 +39,6 @@ class Kili(  # pylint: disable=too-many-ancestors
         MutationsUser,
         QueriesApiKey,
         QueriesAsset,
-        QueriesDataset,
-        QueriesDatasetAsset,
         QueriesIssue,
         QueriesLabel,
         QueriesLock,

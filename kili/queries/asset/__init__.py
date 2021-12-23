@@ -74,8 +74,7 @@ class QueriesAsset:
                skipped: Optional[bool] = None,
                status_in: Optional[List[str]] = None,
                updated_at_gte: Optional[str] = None,
-               updated_at_lte: Optional[str] = None,
-               dataset_asset_id: Optional[str] = None):
+               updated_at_lte: Optional[str] = None):
         # pylint: disable=line-too-long
         """
         Get an array of assets respecting a set of constraints
@@ -205,9 +204,6 @@ class QueriesAsset:
                         'skipped': skipped,
                         'updatedAtGte': updated_at_gte,
                         'updatedAtLte': updated_at_lte,
-                        'datasetAsset': {
-                            'id': dataset_asset_id
-                        },
                     },
                     'skip': skip,
                     'first': formatted_first,
@@ -250,8 +246,7 @@ class QueriesAsset:
                      label_json_response_contains: Optional[List[str]] = None,
                      skipped: Optional[bool] = None,
                      updated_at_gte: Optional[str] = None,
-                     updated_at_lte: Optional[str] = None,
-                     dataset_asset_id: Optional[str] = None):
+                     updated_at_lte: Optional[str] = None):
         """
         Count and return the number of assets with the given constraints
 
@@ -359,9 +354,6 @@ class QueriesAsset:
                 'skipped': skipped,
                 'updatedAtGte': updated_at_gte,
                 'updatedAtLte': updated_at_lte,
-                'datasetAsset': {
-                    'id': dataset_asset_id
-                },
             }
         }
         result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
