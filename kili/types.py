@@ -103,8 +103,6 @@ class ProjectWithoutDataset:
     interfaceCategory = 'interfaceCategory'
     interfaceCompute = 'interfaceCompute'
     jsonInterface = 'jsonInterface'
-    maxWorkerCount = 'maxWorkerCount'
-    minAgreement = 'minAgreement'
     minConsensusSize = 'minConsensusSize'
     mlTasks = 'mlTasks'
     mlTasksCompute = 'mlTasksCompute'
