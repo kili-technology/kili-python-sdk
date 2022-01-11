@@ -7,9 +7,10 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, deprecate
+from ...helpers import Compatible, format_result
 from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
+from .helpers import verify_argument_ranges
 from .queries import (GQL_APPEND_TO_ROLES,
                       GQL_CREATE_PROJECT,
                       GQL_DELETE_FROM_ROLES,
@@ -117,6 +118,7 @@ class MutationsProject:
         - json_interface : dict, optional (default = None)
             The json parameters of the project, see Edit your interface.
         - min_consensus_size : int, optional (default = None)
+            Should be between 1 and 10
             Number of people that will annotate the same asset, for consensus computation.
         - number_of_assets : int, optional (default = None)
             Defaults to 0
@@ -127,6 +129,7 @@ class MutationsProject:
         - number_of_reviewed_assets : int, optional (default = None)
             Defaults to 0
         - review_coverage : int, optional (default = None)
+            Should be between 0 and 100
             Allow to set the percentage of assets that will be queued in the review interface
         - rules : list, optional (default = None)
             Set basic rules to display a job in the label interface.
@@ -145,15 +148,9 @@ class MutationsProject:
         -------
         >>> kili.update_properties_in_project(project_id=project_id, title='New title')
         """
-        if consensus_tot_coverage is not None and (consensus_tot_coverage < 0 or consensus_tot_coverage > 100):
-            raise ValueError(
-                'argument "consensus_tot_coverage" must be comprised between 0 and 100')
-        if min_consensus_size is not None and (min_consensus_size < 1 or min_consensus_size > 10):
-            raise ValueError(
-                'argument "min_consensus_size" must be comprised between 1 and 10')
-        if review_coverage is not None and (review_coverage < 0 or review_coverage > 100):
-            raise ValueError(
-                'argument "review_coverage" must be comprised between 0 and 100')
+        verify_argument_ranges(consensus_tot_coverage,
+                               min_consensus_size,
+                               review_coverage)
 
         variables = {
             'consensusMark': consensus_mark,
