@@ -145,6 +145,16 @@ class MutationsProject:
         -------
         >>> kili.update_properties_in_project(project_id=project_id, title='New title')
         """
+        if consensus_tot_coverage is not None and (consensus_tot_coverage < 0 or consensus_tot_coverage > 100):
+            raise ValueError(
+                'argument "consensus_tot_coverage" must be comprised between 0 and 100')
+        if min_consensus_size is not None and (min_consensus_size < 1 or min_consensus_size > 10):
+            raise ValueError(
+                'argument "min_consensus_size" must be comprised between 1 and 10')
+        if review_coverage is not None and (review_coverage < 0 or review_coverage > 100):
+            raise ValueError(
+                'argument "review_coverage" must be comprised between 0 and 100')
+
         variables = {
             'consensusMark': consensus_mark,
             'consensusTotCoverage': consensus_tot_coverage,
