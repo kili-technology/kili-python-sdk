@@ -239,12 +239,9 @@ class MutationsProject:
         -------
         - the public token to provide in the public URL
         """
-        variables = {
-            'projectID': project_id
-        }
+        variables = {'where': {'id': project_id}}
         result = self.auth.client.execute(GQL_MAKE_PROJECT_PUBLIC, variables)
-        project = format_result('data', result)
-        return project['publicToken']
+        return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
     @typechecked
@@ -396,7 +393,7 @@ class MutationsProject:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
-        variables = {'projectID': project_id}
+        variables = {'where': {'id': project_id}}
         result = self.auth.client.execute(
             GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
         return format_result('data', result)
