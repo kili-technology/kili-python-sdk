@@ -2,7 +2,8 @@
 Queries of project mutations
 """
 
-from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID,  PROJECT_FRAGMENT_PUBLIC_TOKEN, ROLE_FRAGMENT
+from .fragments import (PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID,
+                        PROJECT_FRAGMENT_PUBLIC_TOKEN, ROLE_FRAGMENT)
 
 
 GQL_APPEND_TO_ROLES = f'''
