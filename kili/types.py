@@ -142,7 +142,7 @@ class UserWithoutApiKey(UserWithoutProjectUsers):
 @dataclass
 class ApiKey:
     """
-    A wrapper for DatasetAsset GraphQL object.
+    A wrapper for ApiKey GraphQL object.
     """
     createdAt = 'createdAt'
     id = 'id'
@@ -249,7 +249,6 @@ class Asset:
     contentJson = 'contentJson'
     contentJsonCompute = 'contentJsonCompute'
     createdAt = 'createdAt'
-    datasetAssetId = 'datasetAssetId'
     duration = 'duration'
     durationCompute = 'durationCompute'
     externalId = 'externalId'
@@ -283,46 +282,6 @@ class Asset:
     thumbnailCompute = 'thumbnailCompute'
     toBeLabeledBy = ProjectUser
     updatedAt = 'updatedAt'
-
-
-
-
-
-@dataclass
-class DatasetAsset:
-    """
-    A wrapper for DatasetAsset GraphQL object.
-    """
-    id = 'id'
-    assets = Asset
-    content = 'content'
-    contentJson = 'contentJson'
-    contentJsonCompute = 'contentJsonCompute'
-    createdAt = 'createdAt'
-    externalId = 'externalId'
-    jsonContent = 'jsonContent'
-    jsonMetadata = 'jsonMetadata'
-    metadataCompute = 'metadataCompute'
-    metadata = 'metadata'
-    thumbnail = 'thumbnail'
-    thumbnailCompute = 'thumbnailCompute'
-    updatedAt = 'updatedAt'
-
-
-@dataclass
-class Dataset:
-    """
-    A wrapper for Dataset GraphQL object.
-    """
-    id = 'id'
-    assets = DatasetAsset
-    createdAt = 'createdAt'
-    name = 'name'
-    numberOfAssets = 'numberOfAssets'
-    projectId = 'projectId'
-    type = 'type'
-    updatedAt = 'updatedAt'
-    users = User
 
 @dataclass
 class Label(LabelWithoutLabelOf):

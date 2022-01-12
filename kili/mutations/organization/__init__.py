@@ -62,7 +62,6 @@ class MutationsOrganization:
     @typechecked
     def update_properties_in_organization(self,
                                           organization_id: str,
-                                          can_see_dataset: Optional[bool] = None,
                                           name: Optional[str] = None,
                                           address: Optional[str] = None,
                                           zip_code: Optional[str] = None,
@@ -75,7 +74,6 @@ class MutationsOrganization:
         Parameters
         ----------
         - organization_id : str
-        - can_see_dataset: bool
         - name : str
         - address : str
         - license : dict
@@ -91,8 +89,6 @@ class MutationsOrganization:
         variables = {
             'id': organization_id
         }
-        if can_see_dataset is not None:
-            variables['canSeeDataset'] = can_see_dataset
         if name is not None:
             variables['name'] = name
         if address is not None:
