@@ -19,6 +19,11 @@ PROJECT_FRAGMENT_ID = '''
 id
 '''
 
+PROJECT_FRAGMENT_PUBLIC_TOKEN = '''
+id
+publicToken
+'''
+
 ROLE_FRAGMENT = '''
 user {
   id

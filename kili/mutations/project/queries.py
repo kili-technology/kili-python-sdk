@@ -2,7 +2,8 @@
 Queries of project mutations
 """
 
-from .fragments import PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID, ROLE_FRAGMENT
+from .fragments import (PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID,
+                        PROJECT_FRAGMENT_PUBLIC_TOKEN, ROLE_FRAGMENT)
 
 
 GQL_APPEND_TO_ROLES = f'''
@@ -78,15 +79,10 @@ mutation(
 }}
 '''
 
-GQL_MAKE_PROJECT_PUBLIC = '''
-mutation(
-    $projectID: ID!
-  ) {{
-  data: makeProjectPublic(
-    where: {{
-      id: $projectID
-  }}) {{
-      publicToken
+GQL_MAKE_PROJECT_PUBLIC = f'''
+mutation($where: ProjectWhere!) {{
+  data: makeProjectPublic(where: $where) {{
+    {PROJECT_FRAGMENT_PUBLIC_TOKEN}
   }}
 }}
 '''
@@ -154,10 +150,7 @@ mutation($projectID: ID!) {{
 '''
 
 GQL_PROJECT_DELETE_ASYNCHRONOUSLY = '''
-mutation($projectID: ID!) {{
-  data: deleteProjectAsynchronously(where: {{
-      id: $projectID
-    }}
-    )
-}}
+mutation($where: ProjectWhere!) {
+  data: deleteProjectAsynchronously(where: $where)
+}
 '''
