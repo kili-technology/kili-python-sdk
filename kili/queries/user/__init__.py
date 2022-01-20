@@ -28,6 +28,12 @@ class QueriesUser:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
+    @deprecate(
+        """
+        The field "name" is deprecated since: 11/01/2022.
+        It will be removed after: 21/02/2022.
+        Fields "firstname" and "lastname" have to be used instead.
+        """)
     @Compatible(['v1', 'v2'])
     @typechecked
     def users(self,
