@@ -35,6 +35,8 @@ class UserWithoutProjectUsers:
     activated = 'activated'
     createdAt = 'createdAt'
     email = 'email'
+    firstname = 'firstname'
+    lastname = 'lastname'
     name = 'name'
     organization = OrganizationWithoutUser
     organizationId = 'organizationId'
@@ -139,6 +141,7 @@ class UserWithoutApiKey(UserWithoutProjectUsers):
     """
     projectUsers = ProjectUser
 
+
 @dataclass
 class ApiKey:
     """
@@ -152,12 +155,14 @@ class ApiKey:
     user = UserWithoutApiKey
     userId = 'userId'
 
+
 @dataclass
 class User(UserWithoutApiKey):
     """
     A wrapper for User GraphQL object.
     """
     apiKeys = ApiKey
+
 
 @dataclass
 class LabelWithoutLabelOf:
@@ -282,6 +287,7 @@ class Asset:
     thumbnailCompute = 'thumbnailCompute'
     toBeLabeledBy = ProjectUser
     updatedAt = 'updatedAt'
+
 
 @dataclass
 class Label(LabelWithoutLabelOf):
