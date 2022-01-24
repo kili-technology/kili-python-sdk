@@ -1,9 +1,11 @@
 users:
-  - name: "Jean Dupont"
+  - firstname: "Jean"
+    lastname: "Dupont"
     email: "jean.dupont@example.com"
     password: "abc123"
     role: "REVIEWER"
-  - name: "Jeanne Doe"
+  - firstname: "Jeanne"
+    lastname: "Doe"
     email: "jeanne.dupont@example.com"
     password: "abc123"
     role: "LABELER"

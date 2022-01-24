@@ -2,11 +2,12 @@
 User mutations
 """
 
+import warnings
 from typing import Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result
+from ...helpers import Compatible, deprecate, format_result
 from .queries import (GQL_CREATE_USER,
                       GQL_RESET_PASSWORD,
                       GQL_UPDATE_PASSWORD, GQL_UPDATE_PROPERTIES_IN_USER)
@@ -30,31 +31,58 @@ class MutationsUser:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def create_user(self, name: str, email: str, password: str, organization_role: str):
+    def create_user(self,
+                    name: Optional[str] = None,
+                    email: str = None,
+                    password: str = None,
+                    organization_role: str = None,
+                    firstname: Optional[str] = None,
+                    lastname: Optional[str] = None):
         """
         Add a user to your organization.
 
         Parameters
         ----------
-        - name : str
-            Name of the new user.
+        - name : str, optional (default = None)
+            Name of the new user (deprecated and removed from the 21/02/22).
         - email : str
             Email of the new user, used as his unique identifier.
         - password : str
             On the first sign in, he will use this password and be able to change it.
         - organization_role : str
             One of "ADMIN", "USER".
+        - firstname : str, optional (default = None)
+            First name of the new user.
+        - lastname : str, optional (default = None)
+            Last name of the new user.
 
         Returns
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        if name is not None:
+            message = """ The parameter "name" is deprecated since: 11/01/2022.
+                It will be removed after: 21/02/2022.
+                Parameters "firstname" and "lastname" have to be used instead.
+                    > kili.create_user(
+                        firstname='John',
+                        lastname='Miller',
+                        email='john.miller@kili-technology.com',
+                        password='Kili123',
+                        organization_role='ADMIN')
+                """
+            warnings.warn(message, DeprecationWarning)
         variables = {
-            'data': {'name': name,
-                     'email': email,
+            'data': {'email': email,
                      'password': password,
                      'organizationRole': organization_role}
         }
+        if name is not None:
+            variables['data']['name'] = name
+        if firstname is not None:
+            variables['data']['firstname'] = firstname
+        if lastname is not None:
+            variables['data']['lastname'] = lastname
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
         return format_result('data', result)
 
@@ -115,6 +143,8 @@ class MutationsUser:
     def update_properties_in_user(self,
                                   email: str,
                                   name: Optional[str] = None,
+                                  firstname: Optional[str] = None,
+                                  lastname: Optional[str] = None,
                                   organization_id: Optional[str] = None,
                                   organization_role: Optional[str] = None,
                                   activated: Optional[bool] = None):
@@ -124,8 +154,13 @@ class MutationsUser:
         Parameters
         ----------
         - email : str
-            The email is the identifier of the user
-        - name : str, optional (default = None)
+            The email is the identifier of the user.
+        - name : str, optional (default = None) (deprecated and removed from the 21/02/22).
+            Change the name of the user.
+        - firstname : str, optional (default = None)
+            Change the first name of the user.
+        - lastname : str, optional (default = None)
+            Change the last name of the user.
         - organization_id : str, optional (default = None)
             Change the organization the user is related to.
         - organization_role : str, optional (default = None)
@@ -137,11 +172,25 @@ class MutationsUser:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        if name is not None:
+            message = """ The parameter "name" is deprecated since: 11/01/2022.
+                It will be removed after: 21/02/2022.
+                Parameters "firstname" and "lastname" have to be used instead.
+                    > kili.update_properties_in_user(
+                        email='john.miller@kili-technology.com',
+                        firstname='John',
+                        lastname='Miller')
+                """
+            warnings.warn(message, DeprecationWarning)
         variables = {
             'email': email,
         }
         if name is not None:
             variables['name'] = name
+        if firstname is not None:
+            variables['firstname'] = firstname
+        if lastname is not None:
+            variables['lastname'] = lastname
         if organization_id is not None:
             variables['organizationId'] = organization_id
         if organization_role is not None:
