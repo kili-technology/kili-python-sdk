@@ -2,11 +2,12 @@
 User queries
 """
 
+import warnings
 from typing import Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_users, GQL_USERS_COUNT
 from ...types import User
 
@@ -28,12 +29,6 @@ class QueriesUser:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @deprecate(
-        """
-        The field "name" is deprecated since: 11/01/2022.
-        It will be removed after: 21/02/2022.
-        Fields "firstname" and "lastname" have to be used instead.
-        """)
     @Compatible(['v1', 'v2'])
     @typechecked
     def users(self,
@@ -53,6 +48,8 @@ class QueriesUser:
         - email : str, optional (default = None)
         - organization_id : str, optional (default = None)
         - fields : list of string, optional (default = ['email', 'id', 'name'])
+            Notice that the field 'name' is deprecated since: 11/01/2022. It will be removed after: 21/02/2022.
+            Fields 'firstname' and 'lastname' have to be used instead.
             All the fields to request among the possible fields for the users.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
         - first : int, optional (default = 100)
@@ -71,6 +68,13 @@ class QueriesUser:
         >>> organization_id = organizations[0]['id]
         >>> kili.users(organization_id=organization_id)
         """
+        if 'name' in fields:
+            message = """
+                The field "name" is deprecated since: 11/01/2022.
+                It will be removed after: 21/02/2022.
+                Fields "firstname" and "lastname" have to be used instead.
+                """
+            warnings.warn(message, DeprecationWarning)
         variables = {
             'first': first,
             'skip': skip,

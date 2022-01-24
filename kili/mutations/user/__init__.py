@@ -2,6 +2,7 @@
 User mutations
 """
 
+import warnings
 from typing import Optional
 
 from typeguard import typechecked
@@ -28,25 +29,13 @@ class MutationsUser:
         """
         self.auth = auth
 
-    @deprecate(
-        """
-        The parameter "name" is deprecated since: 11/01/2022.
-        It will be removed after: 21/02/2022.
-        Parameters "firstname" and "lastname" have to be used instead.
-            > kili.create_user(
-                firstname='John',
-                lastname='Miller',
-                email='john.miller@kili-technology.com',
-                password='Kili123',
-                organization_role='ADMIN')
-        """)
     @Compatible(['v1', 'v2'])
     @typechecked
     def create_user(self,
-                    email: str,
-                    password: str,
-                    organization_role: str,
                     name: Optional[str] = None,
+                    email: str = None,
+                    password: str = None,
+                    organization_role: str = None,
                     firstname: Optional[str] = None,
                     lastname: Optional[str] = None):
         """
@@ -54,14 +43,14 @@ class MutationsUser:
 
         Parameters
         ----------
+        - name : str, optional (default = None)
+            Name of the new user (deprecated and removed from the 21/02/22).
         - email : str
             Email of the new user, used as his unique identifier.
         - password : str
             On the first sign in, he will use this password and be able to change it.
         - organization_role : str
             One of "ADMIN", "USER".
-        - name : str, optional (default = None)
-            Name of the new user (deprecated and removed from the 21/02/22).
         - firstname : str, optional (default = None)
             First name of the new user.
         - lastname : str, optional (default = None)
@@ -71,6 +60,18 @@ class MutationsUser:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        if name is not None:
+            message = """ The parameter "name" is deprecated since: 11/01/2022.
+                It will be removed after: 21/02/2022.
+                Parameters "firstname" and "lastname" have to be used instead.
+                    > kili.create_user(
+                        firstname='John',
+                        lastname='Miller',
+                        email='john.miller@kili-technology.com',
+                        password='Kili123',
+                        organization_role='ADMIN')
+                """
+            warnings.warn(message, DeprecationWarning)
         variables = {
             'data': {'email': email,
                      'password': password,
@@ -137,16 +138,6 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
         return format_result('data', result)
 
-    @deprecate(
-        """
-        The parameter "name" is deprecated since: 11/01/2022.
-        It will be removed after: 21/02/2022.
-        Parameters "firstname" and "lastname" have to be used instead.
-            > kili.update_properties_in_user(
-                email='john.miller@kili-technology.com',
-                firstname='John',
-                lastname='Miller')
-        """)
     @Compatible(['v1', 'v2'])
     @typechecked
     def update_properties_in_user(self,
@@ -181,6 +172,16 @@ class MutationsUser:
         -------
         - a result object which indicates if the mutation was successful, or an error message else.
         """
+        if name is not None:
+            message = """ The parameter "name" is deprecated since: 11/01/2022.
+                It will be removed after: 21/02/2022.
+                Parameters "firstname" and "lastname" have to be used instead.
+                    > kili.update_properties_in_user(
+                        email='john.miller@kili-technology.com',
+                        firstname='John',
+                        lastname='Miller')
+                """
+            warnings.warn(message, DeprecationWarning)
         variables = {
             'email': email,
         }
