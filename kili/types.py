@@ -189,6 +189,8 @@ class LabelWithoutLabelOf:
     numberOfAnnotations = 'numberOfAnnotations'
     numberOfAnnotationsCompute = 'numberOfAnnotationsCompute'
     projectIdCompute = 'projectIdCompute'
+    projectUserId = 'projectUserId'
+    projectUserIdCompute = 'projectUserIdCompute'
     responseCompute = 'responseCompute'
     searchCompute = 'searchCompute'
     secondsToLabel = 'secondsToLabel'
