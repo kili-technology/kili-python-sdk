@@ -68,7 +68,7 @@ kili = Kili(api_key='MY API KEY')
 
 You can follow those tutorials to get started :
 
-- [Getting started on Kili Classification task](https://github.com/kili-technology/kili-playground/blob/master/recipes/getting-started/getting_started-classification.ipynb)
+- [Getting started on Kili Classification task](recipes/getting-started/getting_started-image_classification.ipynb)
 <!-- - Getting started on Kili Object Detection task
 - Getting started on Kili Named Entities Recognition task
 - Getting started on Kili Speech to Text task -->
