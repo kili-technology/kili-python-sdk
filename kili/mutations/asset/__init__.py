@@ -123,7 +123,7 @@ class MutationsAsset:
                                     asset_ids: List[str],
                                     external_ids: Optional[List[str]] = None,
                                     priorities: Optional[List[int]] = None,
-                                    json_metadatas: Optional[List[dict]] = None,
+                                    json_metadatas: Optional[List[Union[dict, str]]] = None,
                                     consensus_marks: Optional[List[float]] = None,
                                     honeypot_marks: Optional[List[float]] = None,
                                     to_be_labeled_by_array: Optional[List[List[str]]] = None,

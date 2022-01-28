@@ -274,6 +274,7 @@ class Asset:
     metadata = 'metadata'
     numberOfValidLocks = 'numberOfValidLocks'
     numberOfValidLocksCompute = 'numberOfValidLocksCompute'
+    ocrMetadata = 'ocrMetadata'
     priority = 'priority'
     project = ProjectWithoutDataset
     projectId = 'projectId'
