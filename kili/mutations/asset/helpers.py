@@ -51,9 +51,10 @@ def process_content(input_type: str,
     Process the array of contents
     """
     if input_type in ['IMAGE', 'PDF']:
-        return [content if is_url(content) else (encode_base64(
-            content) if json_content_array[i] is None
-                else content) for i, content in enumerate(content_array)]
+        return [content if is_url(content) else (content
+            if (json_content_array is not None and json_content_array[i] is None)
+                else encode_base64(content))
+            for i, content in enumerate(content_array)]
     if input_type == 'FRAME' and json_content_array is None:
         content_array = list(map(encode_object_if_not_url, content_array))
     return content_array
