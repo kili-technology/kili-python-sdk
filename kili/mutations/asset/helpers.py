@@ -52,7 +52,7 @@ def process_content(input_type: str,
     """
     if input_type in ['IMAGE', 'PDF']:
         return [content if is_url(content) else (content
-            if (json_content_array is not None and json_content_array[i] is None)
+            if (json_content_array is not None and json_content_array[i] is not None)
                 else encode_base64(content))
             for i, content in enumerate(content_array)]
     if input_type == 'FRAME' and json_content_array is None:
