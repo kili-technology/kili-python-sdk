@@ -112,6 +112,8 @@ def get_data_type(path):
     """
     if re.match(r'.*(jpg|jpeg)$', path.lower()):
         return 'image/png'
+    if re.match(r'.*json$', path.lower()):
+        return 'application/json'
     if re.match(r'.*pdf$', path.lower()):
         return 'application/pdf'
     return ''
