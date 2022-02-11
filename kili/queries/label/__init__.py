@@ -221,6 +221,9 @@ class QueriesLabel:
                                 'id',
                                 'labelType',
                                 'skipped'
+                            ],
+                            asset_fields: list = [
+                                'externalId'
                             ]):
         # pylint: disable=line-too-long
         """
@@ -233,6 +236,9 @@ class QueriesLabel:
             'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
+        - asset_fields : list of string, optional (default = ['external_id'])
+            All the fields to request among the possible fields for the assets.
+            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
 
         Returns
         -------
@@ -246,12 +252,13 @@ class QueriesLabel:
 
         interface_category = project['interfaceCategory']
         assets = QueriesAsset(self.auth).assets(
-            project_id=project_id, fields=fields)
-        labels = [dict(label, **dict((f'asset__{key}', asset[key]) for key in asset))
-                  for asset in assets for label in asset['labels']]
+            project_id=project_id, fields=asset_fields + ['labels.' + field for field in fields])
+        labels = [dict(label, **dict((f'asset_{key}', asset[key]) for key in asset if key!='labels'))
+            for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)
-        labels_df['y'] = labels_df['jsonResponse'].apply(
-            lambda json_response: QueriesLabel.parse_json_response(json_response, interface_category))
+        if 'jsonResponse' in labels_df.columns:
+            labels_df['jsonResponse'] = labels_df['jsonResponse'].apply(
+                lambda json_response: QueriesLabel.parse_json_response(json_response, interface_category))
         return labels_df
 
     @Compatible(['v1', 'v2'])
