@@ -91,7 +91,6 @@ class MutationsProject:
                                      number_of_remaining_assets: Optional[int] = None,
                                      number_of_reviewed_assets: Optional[int] = None,
                                      review_coverage: Optional[int] = None,
-                                     rules: Optional[list] = None,
                                      should_relaunch_kpi_computation: Optional[bool] = None,
                                      title: Optional[str] = None,
                                      use_honeypot: Optional[bool] = None):
@@ -131,8 +130,6 @@ class MutationsProject:
         - review_coverage : int, optional (default = None)
             Should be between 0 and 100
             Allow to set the percentage of assets that will be queued in the review interface
-        - rules : list, optional (default = None)
-            Set basic rules to display a job in the label interface.
         - should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings
         - title : str, optional (default = None)
@@ -168,7 +165,6 @@ class MutationsProject:
             'numberOfReviewedAssets': number_of_reviewed_assets,
             'projectID': project_id,
             'reviewCoverage': review_coverage,
-            'rules': dumps(rules) if rules is not None else None,
             'shouldRelaunchKpiComputation': should_relaunch_kpi_computation,
             'title': title,
             'useHoneyPot': use_honeypot
