@@ -5,7 +5,7 @@
 
 ## What is Kili Technology?
 
-Kili Technology is an image, text and voice data annotation tool designed to help companies deploy machine learning applications faster. In a few minutes you can start annotating your data thanks to a catalogue of intuitive and configurable interfaces. You can easily accelerate the labeling process by connecting one of your models to pre annotate the data. The work of the annotators is 2 to 5 times faster. Kili Technology facilitates collaboration between technical teams and the business, but also with outsourced annotation companies. Data governance is managed, and production quality control is facilitated. Kili Technology meets the needs of small teams as well as those of large companies with massive stakes.
+Kili Technology is an image, text, and voice data annotation tool designed to help companies deploy machine learning applications faster. In a few minutes, you can start annotating your data thanks to a catalog of intuitive and configurable interfaces. You can easily accelerate the labeling process by connecting one of your models to pre-annotate the data. The work of the annotators is 2 to 5 times faster. Kili Technology facilitates collaboration between technical teams and the business, but also with outsourced annotation companies. Data governance is managed, and production quality control is facilitated. Kili Technology meets the needs of small teams as well as those of large companies with massive stakes.
 
 Kili Technology allows you to:
 
@@ -39,7 +39,7 @@ Kili Technology allows you to:
 | :----------------------------: | :---------------------------------------------: |
 | ![](./recipes/img/pdf_ner.png) | ![](./recipes/img/speech_to_text_interface.png) |
 
-## What is Kili Playground ?
+## What is Kili Playground?
 
 Kili Playground is a Python client wrapping the GraphQL API of Kili Technology.
 It allows data scientists and developers to control Kili Technology from an IDE.
