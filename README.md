@@ -58,13 +58,23 @@ pip install kili
 
 ![](./recipes/img/api_key.gif)
 
-- In your favourite IDE :
+- Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE):
+```bash
+export KILI_API_KEY='MY API KEY'
+```
 
+
+- Then instantiate the Kili client:
 ```python
 from kili.client import Kili
-kili = Kili(api_key='MY API KEY')
-# You can now play with the playground
+kili = Kili()
+# You can now use the Kili client!
 ```
+Note that you can also pass the API key as an argument of the `Kili` initialization:
+```python
+kili = Kili(api_key='MY API KEY')
+```
+
 
 You can follow those tutorials to get started :
 
