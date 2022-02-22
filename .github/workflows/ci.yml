@@ -37,7 +37,7 @@ jobs:
           pip install jupyter nbconvert nbformat pytest
 
       - name: Run all tests and tested notebooks
-        run: pytest
+        run: pytest -s
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
