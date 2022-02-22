@@ -37,7 +37,6 @@ class UserWithoutProjectUsers:
     email = 'email'
     firstname = 'firstname'
     lastname = 'lastname'
-    name = 'name'
     organization = OrganizationWithoutUser
     organizationId = 'organizationId'
     organizationIdCompute = 'organizationIdCompute'

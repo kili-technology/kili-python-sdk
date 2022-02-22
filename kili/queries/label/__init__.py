@@ -43,7 +43,7 @@ class QueriesLabel:
                created_at: Optional[str] = None,
                created_at_gte: Optional[str] = None,
                created_at_lte: Optional[str] = None,
-               fields: list = ['author.email', 'author.id', 'author.name', 'id',
+               fields: list = ['author.email', 'author.id', 'id',
                                'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
                first: Optional[int] = None,
                honeypot_mark_gte: Optional[float] = None,
@@ -81,7 +81,7 @@ class QueriesLabel:
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
         - fields : list of string, optional (default = ['author.email', 'author.id',
-            'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+            'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
         - first : int, optional (default = None)
@@ -216,7 +216,6 @@ class QueriesLabel:
                             fields: list = [
                                 'author.email',
                                 'author.id',
-                                'author.name',
                                 'createdAt',
                                 'id',
                                 'labelType',
@@ -233,7 +232,7 @@ class QueriesLabel:
         ----------
         - project_id : str
         - fields : list of string, optional (default = ['author.email', 'author.id',
-            'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+            'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
         - asset_fields : list of string, optional (default = ['external_id'])
@@ -304,7 +303,7 @@ class QueriesLabel:
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
         - fields : list of string, optional (default = ['author.email', 'author.id',
-            'author.name', 'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
+            'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
         - honeypot_mark_gt : float, optional (default = None)
