@@ -41,7 +41,6 @@ mutation($where: UserWhere!) {{
 GQL_UPDATE_PROPERTIES_IN_USER = f'''
 mutation(
     $email: String!
-    $name: String
     $firstname: String
     $lastname: String
     $organizationId: String
@@ -51,7 +50,6 @@ mutation(
   data: updatePropertiesInUser(
     where: {{email: $email}}
     data: {{
-      name: $name
       firstname: $firstname
       lastname: $lastname
       email: $email
