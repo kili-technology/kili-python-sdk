@@ -13,7 +13,6 @@ RECIPES_DIR = './recipes'
 RECIPES_TESTED = [
     'create_project.ipynb',
     'export_labels.ipynb',
-    'frame_dicom_data.ipynb',
     'import_assets.ipynb',
     'import_predictions.ipynb',
     'import_text_assets.ipynb',
