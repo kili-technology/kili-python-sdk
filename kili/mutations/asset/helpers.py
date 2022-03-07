@@ -33,22 +33,22 @@ def process_frame_json_content(json_content):
     return dumps(dict(zip(json_content_index, json_content_urls)))
 
 
-def get_file_mimetype(content_array: Union[List[str], None], json_content_array: Union[List[str], None]) -> Union[str, None]:
+def get_file_mimetype(content_array: Union[List[str], None],
+                      json_content_array: Union[List[str], None]) -> Union[str, None]:
     """
-    Returns the mimetype of the first file of the 
+    Returns the mimetype of the first file of the content array
     """
     if json_content_array is not None:
         return None
     if content_array is None:
         return None
-    else:
-        if len(content_array) > 0:
-            first_asset = content_array[0]
-            if is_url(first_asset):
-                return None
-            if not os.path.exists(first_asset):
-                return None
-            return mimetypes.guess_type(first_asset)[0]
+    if len(content_array) > 0:
+        first_asset = content_array[0]
+        if is_url(first_asset):
+            return None
+        if not os.path.exists(first_asset):
+            return None
+        return mimetypes.guess_type(first_asset)[0]
     return None
 
 
