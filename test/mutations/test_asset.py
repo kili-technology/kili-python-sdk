@@ -4,11 +4,16 @@ Test mutations with pytest
 import os
 import json
 import time
+import shutil
+import tempfile
 from unittest import TestCase
+import unittest
 import uuid
 
 import pytest
 from kili.client import Kili
+from kili.mutations.asset.helpers import get_file_mimetype, process_append_many_to_dataset_parameters
+from kili.mutations.asset.queries import GQL_APPEND_MANY_FRAMES_TO_DATASET
 import requests
 
 api_key = os.getenv('KILI_USER_API_KEY')
@@ -36,7 +41,8 @@ class LocalDownloader():
 
     def __call__(self, url):
         content = requests.get(url)
-        path = os.path.join(self.directory, str(uuid.uuid4()))
+        name = os.path.basename(url)
+        path = os.path.join(self.directory, f'{str(uuid.uuid4())}-{name}')
         with open(path, 'wb') as file:
             file.write(content.content)
         return path
@@ -148,3 +154,83 @@ def test_upload_video(create_video_project, tmpdir):
             project_id=project_id, external_id_contains=[external_id])
         processed_parameters = asset_uploaded[0]['jsonMetadata']['processingParameters']
         tester.assertDictEqual(expected_parameters, processed_parameters), f'{case}, got {processed_parameters}, expected {expected_parameters}'
+
+class TestMimeType():
+    """
+    Tests if the mime type is the correct one
+    """
+
+    def should_have_right_mimetype(self, content_array, json_content_array, expected_mimetype):
+        mimetype = get_file_mimetype(content_array, json_content_array)
+        assert mimetype == expected_mimetype, f'Bad mimetype {mimetype}'
+
+    def test_contents_empty(self):
+        content_array = None
+        json_content_array = None
+        self.should_have_right_mimetype(content_array, json_content_array, None)
+
+    def test_mimetype_url(self, tmpdir):
+        url = 'https://storage.googleapis.com/label-public-staging/car/car_1.jpg'
+        content_array = [url]
+        json_content_array = None
+        self.should_have_right_mimetype(content_array, json_content_array, None)
+
+    def test_mimetype_image(self, tmpdir):
+        url = 'https://storage.googleapis.com/label-public-staging/car/car_1.jpg'
+        downloader = LocalDownloader(tmpdir)
+        path = downloader(url)
+        content_array = [path]
+        json_content_array = None
+        self.should_have_right_mimetype(content_array, json_content_array, 'image/jpeg')
+
+    def test_mimetype_geotiff(self, tmpdir):
+        url = 'https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif'
+        downloader = LocalDownloader(tmpdir)
+        path = downloader(url)
+        content_array = [path]
+        json_content_array = None
+        self.should_have_right_mimetype(content_array, json_content_array, 'image/tiff')
+
+
+class TestUploadTiff(unittest.TestCase):
+    """
+    Test functions for uploading geotiff
+    """
+
+    def setUp(self):
+        # Create a temporary directory
+        self.test_dir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        # Remove the directory after the test
+        shutil.rmtree(self.test_dir)
+
+    def test_geotiff_upload(self):
+        url = 'https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif'
+        downloader = LocalDownloader(self.test_dir)
+        path = downloader(url)
+        input_type = 'IMAGE'
+        content_array = [path]
+        external_id_array = ['bogota']
+        is_honeypot_array = None
+        status_array = None
+        json_content_array = None
+        json_metadata_array = None
+        payload, request = process_append_many_to_dataset_parameters(
+            input_type,
+            content_array,
+            external_id_array,
+            is_honeypot_array,
+            status_array,
+            json_content_array,
+            json_metadata_array,
+        )
+        payload_content = payload['contentArray']
+        del payload['contentArray']
+        expected_payload = {'externalIDArray': external_id_array,
+                        'jsonMetadataArray': ['{}'],
+                        'uploadType': 'GEO_SATELLITE'}
+        expected_request = GQL_APPEND_MANY_FRAMES_TO_DATASET
+        assert expected_request == request, 'Requests do not match'
+        assert payload_content[0].startswith('data:;base64,SUkqAAgABABre')
+        self.assertEqual(expected_payload, payload, 'Payloads do not match')
