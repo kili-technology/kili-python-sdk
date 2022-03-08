@@ -1,9 +1,11 @@
 """
 Helpers for the asset mutations
 """
+import os
 from json import dumps
 from uuid import uuid4
 from typing import List, Union
+import mimetypes
 
 from ...helpers import encode_base64, is_url
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
@@ -29,6 +31,25 @@ def process_frame_json_content(json_content):
     json_content_index = range(len(json_content))
     json_content_urls = list(map(encode_object_if_not_url, json_content))
     return dumps(dict(zip(json_content_index, json_content_urls)))
+
+
+def get_file_mimetype(content_array: Union[List[str], None],
+                      json_content_array: Union[List[str], None]) -> Union[str, None]:
+    """
+    Returns the mimetype of the first file of the content array
+    """
+    if json_content_array is not None:
+        return None
+    if content_array is None:
+        return None
+    if len(content_array) > 0:
+        first_asset = content_array[0]
+        if is_url(first_asset):
+            return None
+        if not os.path.exists(first_asset):
+            return None
+        return mimetypes.guess_type(first_asset)[0]
+    return None
 
 
 def process_json_content(input_type: str,
@@ -91,21 +112,26 @@ def process_metadata(input_type: str, content_array: Union[List[str], None],
 def get_request_to_execute(
     input_type: str,
     json_metadata_array: Union[List[dict], None],
-    json_content_array: Union[List[List[Union[dict, str]]], None]
+    json_content_array: Union[List[List[Union[dict, str]]], None],
+    mime_type: Union[str, None]
 ) -> str:
     """
     Selects the right query to run versus the data given
     """
-    if input_type != 'FRAME' or json_content_array is not None:
-        return GQL_APPEND_MANY_TO_DATASET
+    if json_content_array is not None:
+        return GQL_APPEND_MANY_TO_DATASET, None
+    if input_type != 'FRAME':
+        if input_type == 'IMAGE' and mime_type == 'image/tiff':
+            return GQL_APPEND_MANY_FRAMES_TO_DATASET, 'GEO_SATELLITE'
+        return GQL_APPEND_MANY_TO_DATASET, None
     if json_metadata_array is None:
-        return GQL_APPEND_MANY_TO_DATASET
+        return GQL_APPEND_MANY_TO_DATASET, None
     if (isinstance(json_metadata_array, list) and
         len(json_metadata_array) > 0 and
         not json_metadata_array[0].get(
             'processingParameters', {}).get('shouldUseNativeVideo', True)):
-        return GQL_APPEND_MANY_FRAMES_TO_DATASET
-    return GQL_APPEND_MANY_TO_DATASET
+        return GQL_APPEND_MANY_FRAMES_TO_DATASET, 'VIDEO'
+    return GQL_APPEND_MANY_TO_DATASET, None
 
 
 # pylint: disable=too-many-arguments
@@ -135,17 +161,19 @@ def process_append_many_to_dataset_parameters(
         len(content_array) if not status_array else status_array
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array)
+    mime_type = get_file_mimetype(content_array, json_content_array)
     content_array = process_content(
         input_type, content_array, json_content_array)
     formatted_json_content_array = process_json_content(
         input_type, content_array, json_content_array)
 
-    request = get_request_to_execute(
-        input_type, json_metadata_array, json_content_array)
+    request, upload_type = get_request_to_execute(
+        input_type, json_metadata_array, json_content_array, mime_type)
     if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
         payload_data = {'contentArray': content_array,
                         'externalIDArray': external_id_array,
-                        'jsonMetadataArray': formatted_json_metadata_array}
+                        'jsonMetadataArray': formatted_json_metadata_array,
+                        'uploadType': upload_type}
     else:
         payload_data = {'contentArray': content_array,
                         'externalIDArray': external_id_array,
