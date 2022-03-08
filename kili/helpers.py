@@ -153,7 +153,7 @@ def format_json_dict(result):
     - result: result of a GraphQL query
     """
     for key, value in result.items():
-        if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse', 'rules']:
+        if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse']:
             if (value == '' or value is None) \
                     and not (is_url(value) and key == 'jsonInterface'):
                 result[key] = {}
@@ -166,7 +166,7 @@ def format_json_dict(result):
                 except Exception as exception:
                     raise ValueError(
                         'Json Metadata / json response /' \
-                        ' json interface / rules should be valid jsons') from exception
+                        ' json interface should be valid jsons') from exception
         else:
             result[key] = format_json(value)
     return result

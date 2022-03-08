@@ -36,7 +36,7 @@ class QueriesProjectUser:
                       organization_id: Optional[str] = None,
                       project_id: Optional[str] = None,
                       fields: list = ['activated', 'id', 'role',
-                                      'starred', 'user.email', 'user.id', 'user.name'],
+                                      'starred', 'user.email', 'user.id'],
                       first: int = 100,
                       skip: int = 0):
         # pylint: disable=line-too-long
@@ -49,7 +49,7 @@ class QueriesProjectUser:
         - organization_id : str, optional (default = None)
         - project_id : str, optional (default = None)
         - fields : list, optional (default = ['activated', 'id', 'role', 'starred',
-            'user.email', 'user.id', 'user.name'])
+            'user.email', 'user.id'])
             All the fields to request among the possible fields for the projectUsers.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
         - first : int, optional (default = 100)

@@ -49,16 +49,26 @@ Check out [our recipe on how to export labels](https://github.com/kili-technolog
 
 ## How to do Named-Entity Recognition with Google
 
-Example based on Enron email dataset. Its downloads the data, get the first 50 emails, pre-label them with Google NLP, push both assets and predictions to Kili and prioritize the assets.
+Check out [our recipe on how to import NER predictions into Kili](google_ner_pre_labeling.py). The script performs the following:
+  * downloads the data.
+  * gets the first 50 emails.
+  * creates a project with the appropriate JsonInterface to store the assets.
+  * pre-labels them with Google NLP.
+  * pushes both assets and predictions to Kili.
 
-1. Create a NER project and retrieve its ID.
+To run this example, do the following.
+  1. Make sure that your GCP authentication is set up correctly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)) and that the Google Natural Language API is enabled in your GCP project.
+  2. Requirements:
+  ```
+    pip install -r requirements.txt
+    pip install google-cloud-language==1.1.0
+    pip install kili # unless you have installed the version from this repository
+  ```
 
-2. Make sure that your GCP authentication is set up properly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)).
-
-3. Execute:
+  3. Execute:
 
 ```bash
-python google_ner_pre_labeling.py
+GOOGLE_APPLICATION_CREDENTIALS=path_to_your_google_application_credentials_file python main.py
 ```
 
 ## How to use Python functions to query data

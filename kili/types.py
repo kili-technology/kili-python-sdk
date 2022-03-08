@@ -37,7 +37,6 @@ class UserWithoutProjectUsers:
     email = 'email'
     firstname = 'firstname'
     lastname = 'lastname'
-    name = 'name'
     organization = OrganizationWithoutUser
     organizationId = 'organizationId'
     organizationIdCompute = 'organizationIdCompute'
@@ -117,7 +116,6 @@ class ProjectWithoutDataset:
     readPermissionsForAssetsAndLabels = 'readPermissionsForAssetsAndLabels'
     reviewCoverage = 'reviewCoverage'
     rights = 'rights'
-    rules = 'rules'
     roles = ProjectUserWithoutProject
     shouldRelaunchKpiComputation = 'shouldRelaunchKpiComputation'
     title = 'title'
