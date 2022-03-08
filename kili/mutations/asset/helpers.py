@@ -121,9 +121,8 @@ def get_request_to_execute(
     if json_content_array is not None:
         return GQL_APPEND_MANY_TO_DATASET, None
     if input_type != 'FRAME':
-        if (input_type == 'IMAGE' and mime_type is not None):
-            if mime_type == 'image/tiff':
-                return GQL_APPEND_MANY_FRAMES_TO_DATASET, 'GEO_SATELLITE'
+        if input_type == 'IMAGE' and mime_type == 'image/tiff':
+            return GQL_APPEND_MANY_FRAMES_TO_DATASET, 'GEO_SATELLITE'
         return GQL_APPEND_MANY_TO_DATASET, None
     if json_metadata_array is None:
         return GQL_APPEND_MANY_TO_DATASET, None
