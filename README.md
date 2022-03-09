@@ -90,6 +90,5 @@ You can find all of recipes [here](/recipes/). Among them:
 - [How to import predictions](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
 - [How to query data through the API](https://github.com/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
 - [How to use AutoML for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
-- [How to use Transfer Learning for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/transfer_learning_with_yolo.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/transfer_learning_with_yolo.ipynb))
 
 If you want more details on what you can do with the API, follow the [technical documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api).
