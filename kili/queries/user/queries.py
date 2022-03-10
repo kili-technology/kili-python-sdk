@@ -21,3 +21,12 @@ query($where: UserWhere!) {
   data: countUsers(where: $where)
 }
 '''
+
+GQL_ME = '''
+query Me {
+  data: me {
+    id
+    email
+  }
+}
+'''
