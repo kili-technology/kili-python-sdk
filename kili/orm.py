@@ -23,7 +23,7 @@ class AnnotationFormat:
     Latest = 'latest'
     Raw = 'raw'
     Simple = 'simple'
-    YoloV4Pytorch = 'yolo_v4_pytorch'
+    YoloV4 = 'yolo_v4'
 
 
 @dataclass
