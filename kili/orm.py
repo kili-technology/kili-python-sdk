@@ -24,6 +24,7 @@ class AnnotationFormat:
     Raw = 'raw'
     Simple = 'simple'
     YoloV4 = 'yolo_v4'
+    YoloV5 = 'yolo_v5'
 
 
 @dataclass
