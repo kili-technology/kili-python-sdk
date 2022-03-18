@@ -181,6 +181,8 @@ class LabelWithoutLabelOf:
     isLatestLabelForUserCompute = 'isLatestLabelForUserCompute'
     isLatestDefaultLabelForUser = 'isLatestDefaultLabelForUser'
     isLatestDefaultLabelForUserCompute = 'isLatestDefaultLabelForUserCompute'
+    isLatestReviewLabelForUser = 'isLatestReviewLabelForUser'
+    isLatestReviewLabelForUserCompute = 'isLatestReviewLabelForUserCompute'
     jsonResponse = 'jsonResponse'
     labelType = 'labelType'
     modelName = 'modelName'
