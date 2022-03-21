@@ -83,23 +83,24 @@ def process_content(input_type: str,
         content_array = [encode_object_if_not_url(content, input_type) for content in content_array]
     return content_array
 
-def check_file_mime_type(content: str, input_type: str):
+def check_file_mime_type(content: str, input_type: str) -> bool:
     """
     Returns true if the mime type of the file corresponds to the allowed mime types of the project
     """
-    if input_type in ['IMAGE', 'FRAME', 'PDF']:
-        mime_type = get_data_type(content.lower())
-        if mime_extensions_for_IV2[input_type] and mime_type:
-            correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
-            if not correct_mime_type:
-                print(f'File mime type for {content} is {mime_type} and does not correspond' \
-                    'to the type of the project. '\
-                    f'File mime type should be one of {mime_extensions_for_IV2[input_type]}')
-            return correct_mime_type
-        if not (mime_extensions_for_IV2[input_type] and mime_type):
-            return False
-    return True
+    if input_type not in ['IMAGE', 'FRAME', 'PDF']:
+        return True
 
+    mime_type = get_data_type(content.lower())
+
+    if not (mime_extensions_for_IV2[input_type] and mime_type):
+        return False
+
+    correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
+    if not correct_mime_type:
+        print(f'File mime type for {content} is {mime_type} and does not correspond' \
+            'to the type of the project. '\
+            f'File mime type should be one of {mime_extensions_for_IV2[input_type]}')
+    return correct_mime_type
 
 def add_video_parameters(json_metadata, should_use_native_video):
     """
