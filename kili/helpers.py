@@ -7,6 +7,7 @@ import functools
 from json import dumps, loads
 import re
 import warnings
+import mimetypes
 
 import requests
 
@@ -110,13 +111,8 @@ def get_data_type(path):
     ----------
     - path: path of the file
     """
-    if re.match(r'.*(jpg|jpeg)$', path.lower()):
-        return 'image/png'
-    if re.match(r'.*json$', path.lower()):
-        return 'application/json'
-    if re.match(r'.*pdf$', path.lower()):
-        return 'application/pdf'
-    return ''
+    mime_type, _ = mimetypes.guess_type(path.lower())
+    return mime_type if mime_type else ''
 
 
 def encode_base64(path):
