@@ -7,19 +7,22 @@ from uuid import uuid4
 from typing import List, Union
 import mimetypes
 
-from ...helpers import encode_base64, is_url
+from ...constants import mime_extensions_for_IV2
+from ...helpers import encode_base64, get_data_type, is_url
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_APPEND_MANY_FRAMES_TO_DATASET)
 
 
-def encode_object_if_not_url(content):
+def encode_object_if_not_url(content, input_type):
     """
     Return the object if it is a url, else it should be a path to a file.
     In that case, the file is returned as a base64 string
     """
     if is_url(content):
         return content
-    return encode_base64(content)
+    if check_file_mime_type(content, input_type):
+        return encode_base64(content)
+    return None
 
 
 def process_frame_json_content(json_content):
@@ -29,7 +32,7 @@ def process_frame_json_content(json_content):
     if is_url(json_content):
         return json_content
     json_content_index = range(len(json_content))
-    json_content_urls = list(map(encode_object_if_not_url, json_content))
+    json_content_urls = [encode_object_if_not_url(content, 'IMAGE') for content in json_content]
     return dumps(dict(zip(json_content_index, json_content_urls)))
 
 
@@ -74,12 +77,30 @@ def process_content(input_type: str,
     if input_type in ['IMAGE', 'PDF']:
         return [content if is_url(content) else (content
             if (json_content_array is not None and json_content_array[i] is not None)
-                else encode_base64(content))
+            else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
             for i, content in enumerate(content_array)]
     if input_type == 'FRAME' and json_content_array is None:
-        content_array = list(map(encode_object_if_not_url, content_array))
+        content_array = [encode_object_if_not_url(content, input_type) for content in content_array]
     return content_array
 
+def check_file_mime_type(content: str, input_type: str) -> bool:
+    """
+    Returns true if the mime type of the file corresponds to the allowed mime types of the project
+    """
+    if input_type not in ['IMAGE', 'FRAME', 'PDF']:
+        return True
+
+    mime_type = get_data_type(content.lower())
+
+    if not (mime_extensions_for_IV2[input_type] and mime_type):
+        return False
+
+    correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
+    if not correct_mime_type:
+        print(f'File mime type for {content} is {mime_type} and does not correspond' \
+            'to the type of the project. '\
+            f'File mime type should be one of {mime_extensions_for_IV2[input_type]}')
+    return correct_mime_type
 
 def add_video_parameters(json_metadata, should_use_native_video):
     """

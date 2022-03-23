@@ -12,7 +12,7 @@ import uuid
 
 import pytest
 from kili.client import Kili
-from kili.mutations.asset.helpers import get_file_mimetype, process_append_many_to_dataset_parameters
+from kili.mutations.asset.helpers import get_file_mimetype, process_append_many_to_dataset_parameters, process_content
 from kili.mutations.asset.queries import GQL_APPEND_MANY_FRAMES_TO_DATASET
 import requests
 
@@ -190,6 +190,34 @@ class TestMimeType():
         content_array = [path]
         json_content_array = None
         self.should_have_right_mimetype(content_array, json_content_array, 'image/tiff')
+    
+    def test_cannot_upload_mp4_to_image_project(self):
+        path = './test.mp4'
+        content_array = [path]
+        json_content_array = None
+        processed_content = process_content('IMAGE', content_array, json_content_array)
+        assert(processed_content==[None])
+
+    def test_cannot_upload_png_to_frame_project(self):
+        path = './test.png'
+        content_array = [path]
+        json_content_array = None
+        processed_content = process_content('FRAME', content_array, json_content_array)
+        assert(processed_content==[None])
+
+    def test_cannot_upload_text_to_pdf_project(self):
+        path = 'Hello world'
+        content_array = [path]
+        json_content_array = None
+        processed_content = process_content('PDF', content_array, json_content_array)
+        assert(processed_content==[None])
+
+    @pytest.mark.xfail(raises=FileNotFoundError)
+    def test_can_upload_png_to_image_project(self):
+        path = './test.png'
+        content_array = [path]
+        json_content_array = None
+        process_content('IMAGE', content_array, json_content_array)
 
 
 class TestUploadTiff(unittest.TestCase):
@@ -232,5 +260,5 @@ class TestUploadTiff(unittest.TestCase):
                         'uploadType': 'GEO_SATELLITE'}
         expected_request = GQL_APPEND_MANY_FRAMES_TO_DATASET
         assert expected_request == request, 'Requests do not match'
-        assert payload_content[0].startswith('data:;base64,SUkqAAgABABre')
+        assert payload_content[0].startswith('data:image/tiff;base64,SUkqAAgABABre')
         self.assertEqual(expected_payload, payload, 'Payloads do not match')
