@@ -1,70 +1,45 @@
-# Image and Text Annotation Tool - Kili Playground
+# Kili Playground: Kili's Python SDK
 
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Build Status](https://travis-ci.org/kili-technology/kili-playground.svg?branch=master)](https://travis-ci.org/kili-technology/kili-playground)
 
-## What is Kili Technology?
+[Technical Documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api)
 
-Kili Technology is an image, text, and voice data annotation tool designed to help companies deploy machine learning applications faster. In a few minutes, you can start annotating your data thanks to a catalog of intuitive and configurable interfaces. You can easily accelerate the labeling process by connecting one of your models to pre-annotate the data. The work of the annotators is 2 to 5 times faster. Kili Technology facilitates collaboration between technical teams and the business, but also with outsourced annotation companies. Data governance is managed, and production quality control is facilitated. Kili Technology meets the needs of small teams as well as those of large companies with massive stakes.
+## What is Kili?
 
-Kili Technology allows you to:
+Kili is a platform that empowers a data-centric approach to Machine Learning through quality training data creation. It provides collaborative data **annotation tools** and APIs that enable quick iterations between reliable dataset building and model training. More info [here](https://kili-technology.com/product/label-annotate).
+### Annotation tools examples
 
-- Quickly annotate **text**, **images**, **video**, **audio** and **frames** (3D images, DICOM Images and scans) thanks to simple and intuitive interfaces
-- Easily ingest data, in drag & drop, from your cloud provider, or while keeping your data On Premise, when necessary.
-- Manage participants, roles and responsibilities
-- Monitor production quality using leading indicators and workflows for production monitoring and data quality validation
-- Easily export the produced data
+|   Named Entities Extraction and Relation    | PDF classification and bounding-box |   Object detection (bounding-box)   |
+| :-----------------------------------------: | :---------------------------------: | :---------------------------------: |
+| ![](./recipes/img/relations-extraction.png) | ![](./recipes/img/pdf_classif.png)  | ![](./recipes/img/bounding-box.jpg) |
 
-### Text annotation example
-
-|   Named Entities Extraction and Relation    |        Rich format support         |
-| :-----------------------------------------: | :--------------------------------: |
-| ![](./recipes/img/relations-extraction.png) | ![](./recipes/img/rich_text_4.png) |
-
-### Image annotation example
-
-|                Classification                | Object detection (bounding-box here) |
-| :------------------------------------------: | :----------------------------------: |
-| ![](./recipes/img/classification_nested.png) | ![](./recipes/img/bounding-box.png)  |
-
-### Video annotation example
-
-|                Video annotation                |        Video classification         |
-| :--------------------------------------------: | :---------------------------------: |
-| ![](./recipes/img/video_multi-frames_bbox.png) | ![](./recipes/img/video_nested.png) |
-
-### Other interfaces
-
-|              Pdf               |                 Speech to Text                  |
-| :----------------------------: | :---------------------------------------------: |
-| ![](./recipes/img/pdf_ner.png) | ![](./recipes/img/speech_to_text_interface.png) |
+and [many more](https://cloud.kili-technology.com/docs/labeling/labeling-overview/#available-labeling-job-types-per-asset-type-a-idjob-types-per-asset-typea).
 
 ## What is Kili Playground?
 
-Kili Playground is a Python client wrapping the GraphQL API of Kili Technology.
-It allows data scientists and developers to control Kili Technology from an IDE.
+Kili Playground is the home of the **Kili Python SDK**. It comes with several [recipes](recipes/) that demonstrate its most frequent use cases.
+
+
+## Requirements
+* Python >= 3.7
+* Create and copy a [Kili API key](recipes/api_key.md)
+* Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
+```bash
+export KILI_API_KEY='<you api key value here>'
+```
 
 ## Installation
 
-- Clone the repository and install with pip
+Install the Kili client with pip:
 
 ```bash
 pip install kili
 ```
 
-## Get started
+## Usage
 
-- Export an API KEY In `My Account` -> `API KEY` :
-
-![](./recipes/img/api_key.gif)
-
-- Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE):
-```bash
-export KILI_API_KEY='MY API KEY'
-```
-
-
-- Then instantiate the Kili client:
+Instantiate the Kili client:
 ```python
 from kili.client import Kili
 kili = Kili()
@@ -74,21 +49,114 @@ Note that you can also pass the API key as an argument of the `Kili` initializat
 ```python
 kili = Kili(api_key='MY API KEY')
 ```
+Here is a sample of the operations you can do with the Kili client:
+### Creating an annotation project
+```python
+json_interface = {
+    "jobs": {
+        "CLASSIFICATION_JOB": {
+            "mlTask": "CLASSIFICATION",
+            "content": {
+                "categories": {
+                    "RED": {"name": "Red"},
+                    "BLACK": {"name": "Black"},
+                    "WHITE": {"name": "White"},
+                    "GREY": {"name": "Grey"}},
+                "input": "radio"
+            },
+            "instruction": "Color"
+        }
+    }
+}
+project = kili.create_project(
+        title="Color classification",
+        description="Project ",
+        input_type="IMAGE",
+        json_interface=json_interface
+)["id"]
+```
+### Importing data to annotate
+```python
+assets = [
+    {
+        "externalId": "example 1",
+        "content": "https://images.caradisiac.com/logos/3/8/6/7/253867/S0-tesla-enregistre-d-importantes-pertes-au-premier-trimestre-175948.jpg",
+    },
+    {
+        "externalId": "example 2",
+        "content": "https://img.sportauto.fr/news/2018/11/28/1533574/1920%7C1280%7Cc096243e5460db3e5e70c773.jpg",
+    },
+    {
+        "externalId": "example 3",
+        "content": "./recipes/img/man_on_a_bike.jpeg",
+    },
+]
 
+external_id_array = [a.get("externalId") for a in assets]
+content_array = [a.get("content") for a in assets]
 
-You can follow those tutorials to get started :
+kili.append_many_to_dataset(
+        project_id=project_id,
+        content_array=content_array,
+        external_id_array=external_id_array,
+)
+```
+See the detailled example in this [notebook](recipes/import_assets.ipynb).
 
-- [Getting started on Kili Classification task](recipes/getting-started/getting_started-image_classification.ipynb)
-<!-- - Getting started on Kili Object Detection task
-- Getting started on Kili Named Entities Recognition task
-- Getting started on Kili Speech to Text task -->
+### Importing predictions
+```python
+prediction_examples = [
+    {
+        "external_id": "example 1",
+        "json_response": {
+            "CLASSIFICATION_JOB": {
+                "categories": [{"name": "GREY", "confidence": 46}]
+            }
+    },
+    {
+        "external_id": "example 2",
+        "json_response": {
+            "CLASSIFICATION_JOB": {
+                "categories": [{"name": "WHITE", "confidence": 89}]
+            }
+        },
+    }
+]
 
-You can find all of recipes [here](/recipes/). Among them:
+kili.create_predictions(
+        project_id=project_id,
+        external_id_array=[p["external_id"] for p in prediction_examples],
+        model_name_array=["My SOTA model"] * len(prediction_examples),
+        json_response_array=[p["json_response"] for p in prediction_examples])
 
-- [How to import assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
-- [How to export labels](https://github.com/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb))
-- [How to import predictions](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
-- [How to query data through the API](https://github.com/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
-- [How to use AutoML for faster labeling with Kili](https://github.com/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
+```
+See detailled examples in this [notebook](recipes/import_predictions.ipynb).
 
-If you want more details on what you can do with the API, follow the [technical documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api).
+### Exporting labels
+```python
+assets = kili.assets(project_id=project_id)
+
+with open("labels.json", "w") as label_file:
+    for asset in assets:
+        for label in asset.labels:
+            label_file.write(label.json_response(format='simple'))
+```
+See a detailled example in this [notebook](recipes/export_labels.ipynb).
+
+### Kili AutoML
+With the Kili AutoML toolbox, you can also:
+  * train models directly from a Kili dataset.
+  * load the predictions back into the Kili platform to visualize them and use them as pre-annotations.
+
+See [Kili AutoML](https://github.com/kili-technology/automl) (work in progress).
+## More examples
+
+You can find all several recipes in this [folder](/recipes/). Among them:
+
+- [How to import assets](recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
+- [How to export labels](recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb))
+- [How to import predictions](recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
+- [How to query data through the API](recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
+- [How to use AutoML for faster labeling with Kili](recipes/automl_text_classification.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
+
+For more details, read the [technical documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api).
