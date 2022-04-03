@@ -269,6 +269,7 @@ class Asset:
     jsonMetadata = 'jsonMetadata'
     labels = LabelWithoutLabelOf
     latestLabel = LabelWithoutLabelOf
+    latestLabelCompute = LabelWithoutLabelOf
     locks = Lock
     metadataCompute = 'metadataCompute'
     metadata = 'metadata'
