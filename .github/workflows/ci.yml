@@ -34,7 +34,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install jupyter nbconvert nbformat pytest
+          pip install jupyter nbconvert nbformat pytest mock pytest-mock
 
       - name: Run all tests and tested notebooks
         run: pytest -s

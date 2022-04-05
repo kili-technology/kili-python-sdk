@@ -8,14 +8,12 @@ from typing import List, Optional
 
 from typeguard import typechecked
 import pandas as pd
-from tqdm import tqdm
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_assets, GQL_ASSETS_COUNT
-from ...constants import NO_ACCESS_RIGHT
 from ...types import Asset as AssetType
 from ...orm import Asset
-
+from ...utils import row_generator_from_paginated_calls
 
 class QueriesAsset:
     """
@@ -74,10 +72,12 @@ class QueriesAsset:
                skipped: Optional[bool] = None,
                status_in: Optional[List[str]] = None,
                updated_at_gte: Optional[str] = None,
-               updated_at_lte: Optional[str] = None):
+               updated_at_lte: Optional[str] = None,
+               as_generator: bool = False,
+               ):
         # pylint: disable=line-too-long
         """
-        Get an array of assets respecting a set of constraints
+        Gets an asset list, an asset generator or a pandas DataFrame respecting a set of constraints.
 
         Parameters
         ----------
@@ -96,7 +96,7 @@ class QueriesAsset:
             All the fields to request among the possible fields for the assets.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
         - first : int, optional (default = None)
-            Maximum number of assets to return. Can only be between 0 and 100.
+            Maximum number of assets to return.
         - consensus_mark_gt : float, optional (default = None)
             Minimum amout of consensus for the asset.
         - consensus_mark_lt : float, optional (default = None)
@@ -153,74 +153,87 @@ class QueriesAsset:
         - format : str, optional (default = None)
             If equal to 'pandas', returns a pandas DataFrame
         - disable_tqdm : bool, optional (default = False)
+        - as_generator: bool (default = False)
+            If True, a generator on the assets is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        - a result object which contains the query if it was successful, else an error message.
 
         Examples
         -------
-        >>> kili.assets(project_id=project_id)
+        >>> kili.assets(project_id=project_id) # returns the assets list of the project
         >>> kili.assets(asset_id=asset_id)
+        >>> kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets
         """
+        if format == "pandas" and as_generator:
+            raise ValueError("Argument values as_generator==True and format==\"pandas\" are not compatible.")
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
-                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self']}
-        number_of_assets_with_search = self.count_assets(**count_args)
-        total = min(number_of_assets_with_search,
-                    first) if first is not None else number_of_assets_with_search
-        formatted_first = first if first else 100
-        if total == 0:
-            return []
-        with tqdm(total=total, disable=disable_tqdm) as pbar:
-            paged_assets = []
-            while True:
-                variables = {
-                    'where': {
-                        'id': asset_id,
-                        'project': {
-                            'id': project_id,
-                        },
-                        'externalIdIn': external_id_contains,
-                        'statusIn': status_in,
-                        'consensusMarkGte': consensus_mark_gt,
-                        'consensusMarkLte': consensus_mark_lt,
-                        'honeypotMarkGte': honeypot_mark_gt,
-                        'honeypotMarkLte': honeypot_mark_lt,
-                        'idIn': asset_id_in,
-                        'metadata': metadata_where,
-                        'label': {
-                            'typeIn': label_type_in,
-                            'authorIn': label_author_in,
-                            'consensusMarkGte': label_consensus_mark_gt,
-                            'consensusMarkLte': label_consensus_mark_lt,
-                            'createdAt': label_created_at,
-                            'createdAtGte': label_created_at_gt,
-                            'createdAtLte': label_created_at_lt,
-                            'honeypotMarkGte': label_honeypot_mark_gt,
-                            'honeypotMarkLte': label_honeypot_mark_lt,
-                            'jsonResponseContains': label_json_response_contains,
-                        },
-                        'skipped': skipped,
-                        'updatedAtGte': updated_at_gte,
-                        'updatedAtLte': updated_at_lte,
-                    },
-                    'skip': skip,
-                    'first': formatted_first,
-                }
-                _gql_assets = gql_assets(fragment_builder(fields, AssetType))
-                result = self.auth.client.execute(_gql_assets, variables)
-                assets = format_result('data', result, Asset)
-                if assets is None or len(assets) == 0 \
-                        or (first is not None and len(paged_assets) == first):
-                    if format == 'pandas':
-                        return pd.DataFrame(paged_assets)
-                    return paged_assets
-                if first is not None:
-                    assets = assets[:max(0, first - len(paged_assets))]
-                paged_assets += assets
-                skip += formatted_first
-                pbar.update(len(assets))
+                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self', 'as_generator']}
+
+        disable_tqdm = disable_tqdm or as_generator # using tqdm with a generator is messy, so it is always disabled
+
+        payload_query = {
+            'where': {
+                'id': asset_id,
+                'project': {
+                    'id': project_id,
+                },
+                'externalIdIn': external_id_contains,
+                'statusIn': status_in,
+                'consensusMarkGte': consensus_mark_gt,
+                'consensusMarkLte': consensus_mark_lt,
+                'honeypotMarkGte': honeypot_mark_gt,
+                'honeypotMarkLte': honeypot_mark_lt,
+                'idIn': asset_id_in,
+                'metadata': metadata_where,
+                'label': {
+                    'typeIn': label_type_in,
+                    'authorIn': label_author_in,
+                    'consensusMarkGte': label_consensus_mark_gt,
+                    'consensusMarkLte': label_consensus_mark_lt,
+                    'createdAt': label_created_at,
+                    'createdAtGte': label_created_at_gt,
+                    'createdAtLte': label_created_at_lt,
+                    'honeypotMarkGte': label_honeypot_mark_gt,
+                    'honeypotMarkLte': label_honeypot_mark_lt,
+                    'jsonResponseContains': label_json_response_contains,
+                },
+                'skipped': skipped,
+                'updatedAtGte': updated_at_gte,
+                'updatedAtLte': updated_at_lte,
+            },
+        }
+
+        asset_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_assets,
+            count_args,
+            self._query_assets,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if format == "pandas":
+            return pd.DataFrame(list(asset_generator))
+        if as_generator:
+            return asset_generator
+        return list(asset_generator)
+
+    def _query_assets(self,
+        skip: int,
+        first: int,
+        payload: dict,
+        fields: List[str]):
+
+        payload.update({"skip": skip, "first": first})
+        _gql_assets = gql_assets(fragment_builder(fields, AssetType))
+        result = self.auth.client.execute(_gql_assets, payload)
+        assets = format_result('data', result, Asset)
+        return assets
 
     @Compatible(['v1', 'v2'])
     @typechecked
