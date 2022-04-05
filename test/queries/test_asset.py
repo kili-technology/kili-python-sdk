@@ -3,6 +3,7 @@
 """
 import os
 from kili.client import Kili
+from test.utils import burstthrottle
 
 api_key = os.getenv("KILI_USER_API_KEY")
 api_endpoint = os.getenv("KILI_API_ENDPOINT")
@@ -78,6 +79,7 @@ def test_assets(mocker):
     """
     count_sample_max = 26000
 
+    @burstthrottle(max_hits=250, minutes=1)
     def mocked_query_assets(skip, count_sample, *_):
         """
         Replaces query assets by a list of assets
@@ -86,12 +88,10 @@ def test_assets(mocker):
         res = [{"id": i} for i in range(skip, max_range)]
         return res
 
-    mocker.patch(
-        "kili.queries.asset.QueriesAsset._query_assets", side_effect=mocked_query_assets
-    )
-    mocker.patch(
-        "kili.queries.asset.QueriesAsset.count_assets", return_value=count_sample_max
-    )
+    mocker.patch("kili.queries.asset.QueriesAsset._query_assets",
+                 side_effect=mocked_query_assets)
+    mocker.patch("kili.queries.asset.QueriesAsset.count_assets",
+                 return_value=count_sample_max)
     for test_case in TEST_CASES:
         case_name = test_case["case"]
         expected = test_case["expected_result"]
