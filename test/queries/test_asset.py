@@ -37,9 +37,9 @@ TEST_CASES = [
     },
     {
         "case": "AAU, When I query all assets with as_generator=True, I get a generator"
-        " that yields all 1000 assets",
+        " that yields all 26000 assets",
         "args": {"as_generator": True},
-        "expected_result": [{"id": i} for i in range(1000)],
+        "expected_result": [{"id": i} for i in range(26000)],
         "expected_type": "generator",
     },
     {
@@ -57,13 +57,13 @@ TEST_CASES = [
         "expected_type": "generator",
     },
     {
-        "case": "AAU, When I query assets with first=50 with format=\"pandas\", I get the "
+        "case": 'AAU, When I query assets with first=50 with format="pandas", I get the '
         "first 50 assets as a pandas DataFrame",
         "args": {"format": "pandas", "first": 50, "disable_tqdm": True},
         "expected_result": [{"id": i} for i in range(50)],
         "expected_type": "DataFrame",
     },
-        {
+    {
         "case": "AAU, When I query assets with first=26000, I get the first 26000 assets",
         "args": {"first": 26000, "disable_tqdm": True},
         "expected_result": [{"id": i} for i in range(26000)],
@@ -72,13 +72,11 @@ TEST_CASES = [
 ]
 
 
-
-
 def test_assets(mocker):
     """
-        Tests several queries
+    Tests several queries
     """
-    count_sample_max = 1000
+    count_sample_max = 26000
 
     def mocked_query_assets(skip, count_sample, *_):
         """
@@ -88,16 +86,21 @@ def test_assets(mocker):
         res = [{"id": i} for i in range(skip, max_range)]
         return res
 
-    mocker.patch("kili.queries.asset.QueriesAsset._query_assets", side_effect=mocked_query_assets)
-    mocker.patch("kili.queries.asset.QueriesAsset.count_assets", return_value=count_sample_max)
+    mocker.patch(
+        "kili.queries.asset.QueriesAsset._query_assets", side_effect=mocked_query_assets
+    )
+    mocker.patch(
+        "kili.queries.asset.QueriesAsset.count_assets", return_value=count_sample_max
+    )
     for test_case in TEST_CASES:
         case_name = test_case["case"]
         expected = test_case["expected_result"]
         actual = kili.assets(**test_case["args"])
-        assert type(actual).__name__ == test_case["expected_type"], \
-            f"Test case \"{case_name}\" failed"
+        assert (
+            type(actual).__name__ == test_case["expected_type"]
+        ), f'Test case "{case_name}" failed'
         if type(actual).__name__ == "DataFrame":
-            actual_list = actual.to_dict(orient='records')
+            actual_list = actual.to_dict(orient="records")
         else:
             actual_list = list(actual)
-        assert expected == actual_list, f"Test case \"{case_name}\" failed"
+        assert expected == actual_list, f'Test case "{case_name}" failed'
