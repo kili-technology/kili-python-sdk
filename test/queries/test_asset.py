@@ -63,6 +63,12 @@ TEST_CASES = [
         "expected_result": [{"id": i} for i in range(50)],
         "expected_type": "DataFrame",
     },
+        {
+        "case": "AAU, When I query assets with first=26000, I get the first 26000 assets",
+        "args": {"first": 26000, "disable_tqdm": True},
+        "expected_result": [{"id": i} for i in range(26000)],
+        "expected_type": "list",
+    },
 ]
 
 
