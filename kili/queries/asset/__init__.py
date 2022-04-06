@@ -53,10 +53,10 @@ class QueriesAsset:
                                'skipped',
                                'status'],
                asset_id_in: Optional[List[str]] = None,
-               as_generator: Optional[bool] = False,
+               as_generator: bool = False,
                consensus_mark_gt: Optional[float] = None,
                consensus_mark_lt: Optional[float] = None,
-               disable_tqdm: Optional[bool] = False,
+               disable_tqdm: bool = False,
                external_id_contains: Optional[List[str]] = None,
                first: Optional[int] = None,
                format: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -155,8 +155,8 @@ class QueriesAsset:
             Formatted string should have format : "YYYY-MM-DD"
         - format : str, optional (default = None)
             If equal to 'pandas', returns a pandas DataFrame
-        - disable_tqdm : bool, optional (default = False)
-        - as_generator: bool (default = False)
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
             If True, a generator on the assets is returned.
 
         Returns
