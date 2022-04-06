@@ -7,6 +7,8 @@ from typing import List, Optional
 from typeguard import typechecked
 import pandas as pd
 
+from kili.utils import row_generator_from_paginated_calls
+
 from ...helpers import Compatible, format_result, fragment_builder
 from ..asset import QueriesAsset
 from ..project import QueriesProject
@@ -39,10 +41,12 @@ class QueriesLabel:
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,
                asset_external_id_in: Optional[List[str]] = None,
+               as_generator: Optional[bool] = False,
                author_in: Optional[List[str]] = None,
                created_at: Optional[str] = None,
                created_at_gte: Optional[str] = None,
                created_at_lte: Optional[str] = None,
+               disable_tqdm: Optional[bool] = False,
                fields: list = ['author.email', 'author.id', 'id',
                                'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
                first: Optional[int] = None,
@@ -58,7 +62,7 @@ class QueriesLabel:
                user_id: Optional[str] = None):
         # pylint: disable=line-too-long
         """
-        Get an array of labels from a project given a set of criteria
+        Gets a label list or a label generator from a project given a set of criteria
 
         Parameters
         ----------
@@ -71,6 +75,8 @@ class QueriesLabel:
             Returned labels should have an external id that belongs to that list, if given.
         - author_in : list of str, optional (default = None)
             Returned labels should have a label whose status belongs to that list, if given.
+        - as_generator: bool (default = False)
+            If True, a generator on the assets is returned.
         - created_at : string, optional (default = None)
             Returned labels should have a label whose creation date is equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -80,12 +86,13 @@ class QueriesLabel:
         - created_at_lt : string, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
+        - disable_tqdm : bool, optional (default = False)
         - fields : list of string, optional (default = ['author.email', 'author.id',
             'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
         - first : int, optional (default = None)
-            Maximum number of labels to return.  Can only be between 0 and 100.
+            Maximum number of labels to return.
         - honeypot_mark_gt : float, optional (default = None)
             Returned labels should have a label whose honeypot is greater than this number.
         - honeypot_mark_lt : float, optional (default = None)
@@ -111,15 +118,33 @@ class QueriesLabel:
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        - a result object which contains the query if it was successful, else an error message.
 
         Examples
         -------
-        >>> # List all labels of a project and their assets external ID
-        >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId'])
+        >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
+        >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
         """
-        formatted_first = first if first else 100
-        variables = {
+        saved_args = locals()
+        count_args = {
+            k: v
+            for (k, v) in saved_args.items()
+            if k
+            not in [
+                'as_generator',
+                'disable_tqdm',
+                'fields',
+                'first',
+                'id_contains',
+                'self',
+                'skip',
+            ]
+        }
+
+        # using tqdm with a generator is messy, so it is always disabled
+        disable_tqdm = disable_tqdm or as_generator
+
+        payload_query = {
             'where': {
                 'id': label_id,
                 'asset': {
@@ -144,11 +169,32 @@ class QueriesLabel:
                 'skipped': skipped,
                 'typeIn': type_in,
             },
-            'skip': skip,
-            'first': formatted_first,
         }
+
+        labels_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_labels,
+            count_args,
+            self._query_labels,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return labels_generator
+        return list(labels_generator)
+
+    def _query_labels(self,
+                      skip: int,
+                      first: int,
+                      payload: dict,
+                      fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
         _gql_labels = gql_labels(fragment_builder(fields, LabelType))
-        result = self.auth.client.execute(_gql_labels, variables)
+        result = self.auth.client.execute(_gql_labels, payload)
         return format_result('data', result, Label)
 
     @staticmethod
@@ -182,7 +228,8 @@ class QueriesLabel:
         -------
         The names of categories from a json_response, for a multi-class classification task
         """
-        formatted_json_response = eval(json_response) # pylint: disable=eval-used
+        formatted_json_response = eval(
+            json_response)  # pylint: disable=eval-used
         if 'categories' not in formatted_json_response:
             return []
         categories = formatted_json_response['categories']
@@ -252,8 +299,8 @@ class QueriesLabel:
         interface_category = project['interfaceCategory']
         assets = QueriesAsset(self.auth).assets(
             project_id=project_id, fields=asset_fields + ['labels.' + field for field in fields])
-        labels = [dict(label, **dict((f'asset_{key}', asset[key]) for key in asset if key!='labels'))
-            for asset in assets for label in asset['labels']]
+        labels = [dict(label, **dict((f'asset_{key}', asset[key]) for key in asset if key != 'labels'))
+                  for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)
         if 'jsonResponse' in labels_df.columns:
             labels_df['jsonResponse'] = labels_df['jsonResponse'].apply(

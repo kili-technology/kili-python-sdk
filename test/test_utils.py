@@ -24,11 +24,11 @@ TEST_CASES = [
         "args": {"first": 200, "skip": 20},
         "expected_result": ({"id": i} for i in range(20, 220)),
     },
-    # {
-    #     "case": "AAU, When I query objects with first=25100, I get the first 25100 objects",
-    #     "args": {"first": 25100},
-    #     "expected_result": ({"id": i} for i in range(25100)),
-    # },
+    {
+        "case": "AAU, When I query objects with first=25100, I get the first 25100 objects",
+        "args": {"first": 25100},
+        "expected_result": ({"id": i} for i in range(25100)),
+    },
     {
         "case": "AAU, When I query objects with first=20 and disable_tqdm, I get the first 2O objects",
         "args": {"first": 20, "disable_tqdm": True},
