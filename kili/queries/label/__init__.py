@@ -228,8 +228,9 @@ class QueriesLabel:
         -------
         The names of categories from a json_response, for a multi-class classification task
         """
+        # pylint: disable=eval-used
         formatted_json_response = eval(
-            json_response)  # pylint: disable=eval-used
+            json_response)
         if 'categories' not in formatted_json_response:
             return []
         categories = formatted_json_response['categories']
