@@ -3,18 +3,20 @@ Utils
 """
 from typing import List, Callable
 
+import time
 from tqdm import tqdm
 
 # pylint: disable=too-many-arguments,too-many-locals
 def row_generator_from_paginated_calls(
-        skip: int,
-        first: int,
-        count_method: Callable[..., int],
-        count_kwargs: dict,
-        paged_call_method: Callable[..., List[dict]],
-        paged_call_payload: dict,
-        fields: List[str],
-        disable_tqdm: bool):
+    skip: int,
+    first: int,
+    count_method: Callable[..., int],
+    count_kwargs: dict,
+    paged_call_method: Callable[..., List[dict]],
+    paged_call_payload: dict,
+    fields: List[str],
+    disable_tqdm: bool,
+):
     """
     Builds a row generator from paginated calls.
 
@@ -40,22 +42,32 @@ def row_generator_from_paginated_calls(
     count_rows_retrieved = 0
     count_rows_available = count_method(**count_kwargs)
     if not disable_tqdm:
-        count_rows_queried_total = min(count_rows_available,
-                first) if first is not None else count_rows_available
+        count_rows_queried_total = (
+            min(count_rows_available, first)
+            if first is not None
+            else count_rows_available
+        )
         if count_rows_queried_total == 0:
             yield from ()
     else:
         # dummy value that won't have any impact since tqdm is disabled
         count_rows_queried_total = 1
     count_rows_query_default = min(100, first or 100)
+    throttling_delay = 60 / 250
 
     with tqdm(total=count_rows_queried_total, disable=disable_tqdm) as pbar:
         while True:
+            query_start = time.time()
             rows = paged_call_method(
                 count_rows_retrieved + skip,
                 count_rows_query_default,
                 paged_call_payload,
-                fields)
+                fields,
+            )
+            query_time = time.time() - query_start
+
+            if query_time < throttling_delay:
+                time.sleep(throttling_delay - query_time)
 
             if rows is None or len(rows) == 0:
                 break
