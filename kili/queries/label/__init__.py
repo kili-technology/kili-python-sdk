@@ -45,7 +45,6 @@ class QueriesLabel:
                created_at: Optional[str] = None,
                created_at_gte: Optional[str] = None,
                created_at_lte: Optional[str] = None,
-               disable_tqdm: bool = False,
                fields: list = ['author.email', 'author.id', 'id',
                                'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
                first: Optional[int] = None,
@@ -60,6 +59,7 @@ class QueriesLabel:
                type_in: Optional[List[str]] = None,
                user_id: Optional[str] = None,
                as_generator: bool = False,
+               disable_tqdm: bool = False,
                ):
         # pylint: disable=line-too-long
         """
@@ -85,7 +85,6 @@ class QueriesLabel:
         - created_at_lt : string, optional (default = None)
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
-        - disable_tqdm : bool, (default = False)
         - fields : list of string, optional (default = ['author.email', 'author.id',
             'id', 'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'])
             All the fields to request among the possible fields for the labels.
@@ -114,6 +113,7 @@ class QueriesLabel:
         - user_id : str
             Identifier of the user.
         - as_generator: bool, (default = False)
+        - disable_tqdm : bool, (default = False)
             If True, a generator on the assets is returned.
 
 
