@@ -53,7 +53,6 @@ class QueriesAsset:
                                'skipped',
                                'status'],
                asset_id_in: Optional[List[str]] = None,
-               as_generator: bool = False,
                consensus_mark_gt: Optional[float] = None,
                consensus_mark_lt: Optional[float] = None,
                disable_tqdm: bool = False,
@@ -77,6 +76,7 @@ class QueriesAsset:
                status_in: Optional[List[str]] = None,
                updated_at_gte: Optional[str] = None,
                updated_at_lte: Optional[str] = None,
+               as_generator: bool = False,
                ):
         # pylint: disable=line-too-long
         """

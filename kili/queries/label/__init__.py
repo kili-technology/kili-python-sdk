@@ -41,7 +41,6 @@ class QueriesLabel:
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,
                asset_external_id_in: Optional[List[str]] = None,
-               as_generator: bool = False,
                author_in: Optional[List[str]] = None,
                created_at: Optional[str] = None,
                created_at_gte: Optional[str] = None,
@@ -59,7 +58,9 @@ class QueriesLabel:
                skip: int = 0,
                skipped: Optional[bool] = None,
                type_in: Optional[List[str]] = None,
-               user_id: Optional[str] = None):
+               user_id: Optional[str] = None,
+               as_generator: bool = False,
+               ):
         # pylint: disable=line-too-long
         """
         Gets a label list or a label generator from a project given a set of criteria
@@ -75,8 +76,6 @@ class QueriesLabel:
             Returned labels should have an external id that belongs to that list, if given.
         - author_in : list of str, optional (default = None)
             Returned labels should have a label whose status belongs to that list, if given.
-        - as_generator: bool, (default = False)
-            If True, a generator on the assets is returned.
         - created_at : string, optional (default = None)
             Returned labels should have a label whose creation date is equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
@@ -114,6 +113,8 @@ class QueriesLabel:
             Returned labels should have a label whose type belongs to that list, if given.
         - user_id : str
             Identifier of the user.
+        - as_generator: bool, (default = False)
+            If True, a generator on the assets is returned.
 
 
         Returns

@@ -50,9 +50,9 @@ def test_row_generator_from_paginated_calls():
     for test_case in TEST_CASES:
         case_name = test_case["case"]
         expected = test_case["expected_result"]
-        skip = test_case["args"].get('skip') or 0
+        skip = test_case["args"].get('skip', 0)
         first = test_case["args"].get('first')
-        disable_tqdm = test_case["args"].get('disable_tqdm') or False
+        disable_tqdm = test_case["args"].get('disable_tqdm', False)
 
         actual = row_generator_from_paginated_calls(
             skip,
