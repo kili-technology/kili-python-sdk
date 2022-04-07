@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from functools import wraps
 
+COUNT_SAMPLE_MAX = 26000
+
 
 class burstthrottle(object):
     """
@@ -38,3 +40,21 @@ class burstthrottle(object):
                 return fn(*args, **kwargs)
 
         return wrapper
+
+
+@burstthrottle(max_hits=250, minutes=1)
+def mocked_query_method(skip, first, *_):
+    """
+    Simulates a query result by returning a list of ids
+    """
+    max_range = min(COUNT_SAMPLE_MAX, skip + first)
+    res = [{"id": i} for i in range(skip, max_range)]
+    return res
+
+
+@burstthrottle(max_hits=250, minutes=1)
+def mocked_count_method(*_):
+    """
+    Simulates a count query
+    """
+    return COUNT_SAMPLE_MAX

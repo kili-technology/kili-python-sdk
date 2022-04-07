@@ -15,6 +15,7 @@ from ...types import Asset as AssetType
 from ...orm import Asset
 from ...utils import row_generator_from_paginated_calls
 
+
 class QueriesAsset:
     """
     Set of Asset queries
@@ -34,7 +35,9 @@ class QueriesAsset:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    def assets(self, asset_id: Optional[str] = None, project_id: Optional[str] = None,
+    def assets(self,
+               asset_id: Optional[str] = None,
+               project_id: Optional[str] = None,
                skip: int = 0,
                fields: list = ['content',
                                'createdAt',
@@ -152,8 +155,8 @@ class QueriesAsset:
             Formatted string should have format : "YYYY-MM-DD"
         - format : str, optional (default = None)
             If equal to 'pandas', returns a pandas DataFrame
-        - disable_tqdm : bool, optional (default = False)
-        - as_generator: bool (default = False)
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
             If True, a generator on the assets is returned.
 
         Returns
@@ -167,12 +170,14 @@ class QueriesAsset:
         >>> kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets
         """
         if format == "pandas" and as_generator:
-            raise ValueError("Argument values as_generator==True and format==\"pandas\" are not compatible.")
+            raise ValueError(
+                "Argument values as_generator==True and format==\"pandas\" are not compatible.")
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
                       if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self', 'as_generator']}
 
-        disable_tqdm = disable_tqdm or as_generator # using tqdm with a generator is messy, so it is always disabled
+        # using tqdm with a generator is messy, so it is always disabled
+        disable_tqdm = disable_tqdm or as_generator
 
         payload_query = {
             'where': {
@@ -224,10 +229,10 @@ class QueriesAsset:
         return list(asset_generator)
 
     def _query_assets(self,
-        skip: int,
-        first: int,
-        payload: dict,
-        fields: List[str]):
+                      skip: int,
+                      first: int,
+                      payload: dict,
+                      fields: List[str]):
 
         payload.update({"skip": skip, "first": first})
         _gql_assets = gql_assets(fragment_builder(fields, AssetType))

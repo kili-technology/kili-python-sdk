@@ -7,6 +7,8 @@ import time
 from tqdm import tqdm
 
 # pylint: disable=too-many-arguments,too-many-locals
+
+
 def row_generator_from_paginated_calls(
     skip: int,
     first: int,
@@ -40,13 +42,10 @@ def row_generator_from_paginated_calls(
         If `True`, disables tqdm.
     """
     count_rows_retrieved = 0
-    count_rows_available = count_method(**count_kwargs)
     if not disable_tqdm:
-        count_rows_queried_total = (
-            min(count_rows_available, first)
-            if first is not None
-            else count_rows_available
-        )
+        count_rows_available = count_method(**count_kwargs)
+        count_rows_queried_total = min(count_rows_available,
+                                       first) if first is not None else count_rows_available
         if count_rows_queried_total == 0:
             yield from ()
     else:
