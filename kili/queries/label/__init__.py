@@ -58,8 +58,8 @@ class QueriesLabel:
                skipped: Optional[bool] = None,
                type_in: Optional[List[str]] = None,
                user_id: Optional[str] = None,
-               as_generator: bool = False,
                disable_tqdm: bool = False,
+               as_generator: bool = False,
                ):
         # pylint: disable=line-too-long
         """
@@ -112,9 +112,9 @@ class QueriesLabel:
             Returned labels should have a label whose type belongs to that list, if given.
         - user_id : str
             Identifier of the user.
-        - as_generator: bool, (default = False)
         - disable_tqdm : bool, (default = False)
-            If True, a generator on the assets is returned.
+        - as_generator: bool, (default = False)
+            If True, a generator on the labels is returned.
 
 
         Returns
