@@ -2,9 +2,11 @@
 Api key queries
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from typeguard import typechecked
+
+from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_api_keys, GQL_API_KEYS_COUNT
@@ -33,10 +35,12 @@ class QueriesApiKey:
     def api_keys(self, api_key_id: Optional[str] = None, user_id: Optional[str] = None,
                  api_key: Optional[str] = None, skip: int = 0,
                  fields: list = ['id', 'name', 'createdAt', 'revoked'],
-                 first: Optional[int] = 100):
+                 first: Optional[int] = 100,
+                 disable_tqdm: bool = False,
+                 as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get an array of api keys respecting a set of constraints
+        Get an API key generator or array respecting a set of constraints
 
         Parameters
         ----------
@@ -52,7 +56,10 @@ class QueriesApiKey:
             All the fields to request among the possible fields for the assets.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.
         - first : int, optional (default = None)
-            Maximum number of assets to return. Can only be between 0 and 100.
+            Maximum number of assets to return.
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the API key is returned.
 
         Returns
         -------
@@ -62,8 +69,24 @@ class QueriesApiKey:
         -------
         >>> kili.api_keys(user_id=user_id)
         >>> kili.api_keys(api_key=api_key)
+        >>> kili.api_keys(api_key=api_key, as_generator=False)
         """
-        variables = {
+
+        saved_args = locals()
+        count_args = {
+            k: v
+            for (k, v) in saved_args.items()
+            if k
+            in [
+                'user_id',
+                'api_key_id',
+                'api_key'
+            ]
+        }
+
+        disable_tqdm = disable_tqdm or as_generator
+
+        payload_query = {
             'where': {
                 'user': {
                     'id': user_id,
@@ -74,8 +97,31 @@ class QueriesApiKey:
             'skip': skip,
             'first': first,
         }
-        _gql_issues = gql_api_keys(fragment_builder(fields, ApiKeyType))
-        result = self.auth.client.execute(_gql_issues, variables)
+
+        api_keys_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_api_keys,
+            count_args,
+            self._query_api_keys,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return api_keys_generator
+        return list(api_keys_generator)
+
+    def _query_api_keys(self,
+                        skip: int,
+                        first: int,
+                        payload: dict,
+                        fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
+        _gql_api_keys = gql_api_keys(fragment_builder(fields, ApiKeyType))
+        result = self.auth.client.execute(_gql_api_keys, payload)
         return format_result('data', result)
 
     @Compatible(['v2'])
