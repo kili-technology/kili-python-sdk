@@ -2,8 +2,10 @@
 Lock queries
 """
 
-from typing import Optional
+from typing import List, Optional
 from typeguard import typechecked
+
+from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_locks, GQL_LOCKS_COUNT
@@ -33,12 +35,14 @@ class QueriesLock:
               lock_id: Optional[str] = None,
               fields: list = ['id', 'lockType'],
               first: int = 100,
-              skip: int = 0):
+              skip: int = 0,
+              disable_tqdm: bool = False,
+              as_generator: bool = False):
         # pylint: disable=line-too-long
         """
         Get locks
 
-        Returns locks
+        Returns a generator or an array of locks
 
         Parameters
         ----------
@@ -48,23 +52,50 @@ class QueriesLock:
             All the fields to request among the possible fields for the locks.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks) for all possible fields.
         - first : int, optional (default = 100)
-            Maximum number of locks to return. Can only be between 0 and 100.
+            Maximum number of locks to return.
         - skip : int, optional (default = 0)
             Number of skipped locks (they are ordered by creation date)
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the API key is returned.
 
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        variables = {
-            'first': first,
-            'skip': skip,
+        count_args = {}
+        payload_query = {
             'where': {
                 'id': lock_id
             }
         }
+
+        disable_tqdm = disable_tqdm or as_generator or lock_id is not None
+
+        locks_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_locks,
+            count_args,
+            self._query_locks,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return locks_generator
+        return list(locks_generator)
+
+    def _query_locks(self,
+                     skip: int,
+                     first: int,
+                     payload: dict,
+                     fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
         _gql_locks = gql_locks(fragment_builder(fields, Lock))
-        result = self.auth.client.execute(_gql_locks, variables)
+        result = self.auth.client.execute(_gql_locks, payload)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])
