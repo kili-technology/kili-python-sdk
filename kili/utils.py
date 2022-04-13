@@ -44,7 +44,6 @@ def row_generator_from_paginated_calls(
     count_rows_retrieved = 0
     if not disable_tqdm:
         count_rows_available = count_method(**count_kwargs)
-        print(count_rows_available, first)
         count_rows_queried_total = min(count_rows_available,
                                        first) if first is not None else count_rows_available
         if count_rows_queried_total == 0:
