@@ -91,37 +91,35 @@ def process_time_series(content: str) -> Union[str, None]:
     Process the content for TIME_SERIES projects: if it is a file, read the content
     and also check if the content corresponds to the expected format, else return None
     """
+    delimiter = ','
     if os.path.isfile(content):
         if check_file_mime_type(content, 'TIME_SERIES'):
             with open(content, 'r', encoding='utf8') as csvfile:
-                reader = csv.reader(csvfile, delimiter=',')
-                if check_csv_content(reader, content):
-                    csvfile.seek(0)
-                    return csvfile.read()
-                return None
+                reader = csv.reader(csvfile, delimiter=delimiter)
+                return process_csv_content(reader, file_name=content, delimiter=delimiter)
         return None
 
     reader = csv.reader(content.split('\n'), delimiter=',')
-    if check_csv_content(reader):
-        return content
-    return None
+    return process_csv_content(reader, delimiter=delimiter)
 
-def check_csv_content(reader, file_name = None) -> bool:
+def process_csv_content(reader, file_name = None, delimiter=',') -> bool:
     """
-    Check if the content of the csv for time_series corresponds to the expected format
+    Process the content of csv for time_series and check if it corresponds to the expected format
     """
     first_row = True
+    processed_lines = []
     for row in reader:
-        if not (len(row)==2 and (first_row or
-                                (not first_row and is_float(row[0]) and is_float(row[1]) ))):
-            print(f'The content {file_name if file_name else row} does not correspond to the '\
-                'correct format: it should have only 2 columns, the first one being the timestamp'\
-                ' (an integer or a float) and the second one a numeric value (an integer or a '\
-                'float). The first row should have the names of the 2 columns. The delimiter '\
-                'used should be ",".')
-            return False
+        if not (len(row)==2 and (first_row or (not first_row and is_float(row[0])))):
+            print(f"""The content {file_name if file_name else row} does not correspond to the \
+correct format: it should have only 2 columns, the first one being the timestamp \
+(an integer or a float) and the second one a numeric value (an integer or a float, \
+otherwise it will be considered as missing value). The first row should have the names \
+of the 2 columns. The delimiter used should be ','.""")
+            return None
+        value = row[1] if (is_float(row[1]) or first_row) else ''
+        processed_lines.append(delimiter.join([row[0], value]))
         first_row = False
-    return True
+    return '\n'.join(processed_lines)
 
 def is_float(number: str) -> bool:
     """
