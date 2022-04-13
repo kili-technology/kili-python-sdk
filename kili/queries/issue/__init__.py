@@ -48,6 +48,7 @@ class QueriesIssue:
                skip: Optional[int] = 0,
                disable_tqdm: bool = False,
                as_generator: bool = False):
+        # pylint: disable=line-too-long
         """
         Gets a generator or a list of issues respecting a set of criteria
 
