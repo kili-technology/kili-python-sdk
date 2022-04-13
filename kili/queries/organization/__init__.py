@@ -34,13 +34,13 @@ class QueriesOrganization:
     @Compatible(['v1', 'v2'])
     @typechecked
     def organizations(
-        self,
-        email: Optional[str] = None,
-        organization_id: Optional[str] = None,
-        fields: list = ['id', 'name'],
-        first: int = 100,
-        skip: int = 0,
-        disable_tqdm: bool = False,
+            self,
+            email: Optional[str] = None,
+            organization_id: Optional[str] = None,
+            fields: list = ['id', 'name'],
+            first: int = 100,
+            skip: int = 0,
+            disable_tqdm: bool = False,
             as_generator: bool = False):
         # pylint: disable=line-too-long
         """
