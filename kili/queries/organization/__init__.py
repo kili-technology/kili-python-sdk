@@ -3,9 +3,11 @@ Organization queries
 """
 
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from typeguard import typechecked
+
+from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_organizations, GQL_ORGANIZATIONS_COUNT, GQL_ORGANIZATION_METRICS
@@ -32,19 +34,17 @@ class QueriesOrganization:
     @Compatible(['v1', 'v2'])
     @typechecked
     def organizations(
-            self,
-            email: Optional[str] = None,
-            organization_id: Optional[str] = None,
-            fields: list = ['id', 'name'],
-            first: int = 100,
-            skip: int = 0):
+        self,
+        email: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        fields: list = ['id', 'name'],
+        first: int = 100,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+            as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get organizations respecting a set of criteria
-
-        Returns all organizations:
-        - with a given organization id
-        - containing a user with a given email
+        Get a list or a generator of organizations respecting a set of criteria
 
         Parameters
         ----------
@@ -58,6 +58,9 @@ class QueriesOrganization:
             Maximum number of organizations to return
         - skip : int, optional (default = 0)
             Number of skipped organizations (they are ordered by creation date)
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the organizations is returned.
 
         Returns
         -------
@@ -68,9 +71,10 @@ class QueriesOrganization:
         >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
         [{'users': [{'email': 'john@doe.com'}]}]
         """
-        variables = {
-            'first': first,
-            'skip': skip,
+        count_args = {"email": email, "organization_id": organization_id}
+        disable_tqdm = disable_tqdm or as_generator
+
+        payload_query = {
             'where': {
                 'id': organization_id,
                 'user': {
@@ -78,9 +82,32 @@ class QueriesOrganization:
                 }
             }
         }
+
+        organizations_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_organizations,
+            count_args,
+            self._query_organizations,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return organizations_generator
+        return list(organizations_generator)
+
+    def _query_organizations(self,
+                             skip: int,
+                             first: int,
+                             payload: dict,
+                             fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
         _gql_organizations = gql_organizations(
             fragment_builder(fields, Organization))
-        result = self.auth.client.execute(_gql_organizations, variables)
+        result = self.auth.client.execute(_gql_organizations, payload)
         return format_result('data', result)
 
     @Compatible(['v2'])
