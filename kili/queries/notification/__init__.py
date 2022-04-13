@@ -6,6 +6,8 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
+from kili.utils import row_generator_from_paginated_calls
+
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_notifications, GQL_NOTIFICATIONS_COUNT
 from ...types import Notification
@@ -37,10 +39,12 @@ class QueriesNotification:
                       has_been_seen: Optional[bool] = None,
                       notification_id: Optional[str] = None,
                       skip: int = 0,
-                      user_id: Optional[str] = None):
+                      user_id: Optional[str] = None,
+                      disable_tqdm: bool = False,
+                      as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get an array of notifications given a set of constraints
+        Get a list or a generator of notifications given a set of constraints
 
         Parameters
         ----------
@@ -59,13 +63,17 @@ class QueriesNotification:
             first to last).
         - user_id : string, optional (default = None)
             If given, returns the notifications of a specific user
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the notifications is returned.
 
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        formatted_first = first if first else 100
-        variables = {
+        count_args = {"has_been_seen": has_been_seen, "user_id": user_id}
+        disable_tqdm = disable_tqdm or as_generator
+        payload_query = {
             'where': {
                 'id': notification_id,
                 'user': {
@@ -73,12 +81,32 @@ class QueriesNotification:
                 },
                 'hasBeenSeen': has_been_seen,
             },
-            'skip': skip,
-            'first': formatted_first,
         }
+        notifications_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_notifications,
+            count_args,
+            self._query_notifications,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return notifications_generator
+        return list(notifications_generator)
+
+    def _query_notifications(self,
+                             skip: int,
+                             first: int,
+                             payload: dict,
+                             fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
         _gql_notifications = gql_notifications(
             fragment_builder(fields, Notification))
-        result = self.auth.client.execute(_gql_notifications, variables)
+        result = self.auth.client.execute(_gql_notifications, payload)
         return format_result('data', result)
 
     @Compatible(['v2'])
