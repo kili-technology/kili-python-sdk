@@ -3,6 +3,7 @@ Project queries
 """
 
 from typing import List, Optional
+import warnings
 from typeguard import typechecked
 
 from kili.utils import row_generator_from_paginated_calls
@@ -96,6 +97,12 @@ class QueriesProject:
         >>> # List all my projects
         >>> kili.projects()
         """
+
+        if as_generator is False:
+            warnings.warn("From 2022-05-04, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning, stacklevel=3)
+
         saved_args = locals()
         count_args = {
             k: v
@@ -118,6 +125,7 @@ class QueriesProject:
                 'updatedAtLte': updated_at_lte,
             },
         }
+
         projects_generator = row_generator_from_paginated_calls(
             skip,
             first,

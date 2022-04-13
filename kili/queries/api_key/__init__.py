@@ -3,7 +3,7 @@ Api key queries
 """
 
 from typing import List, Optional
-
+import warnings
 from typeguard import typechecked
 
 from kili.utils import row_generator_from_paginated_calls
@@ -71,6 +71,10 @@ class QueriesApiKey:
         >>> kili.api_keys(api_key=api_key)
         >>> kili.api_keys(api_key=api_key, as_generator=False)
         """
+        if as_generator is False:
+            warnings.warn("From 2022-05-04, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning, stacklevel=3)
 
         saved_args = locals()
         count_args = {
@@ -83,7 +87,6 @@ class QueriesApiKey:
                 'api_key'
             ]
         }
-
         disable_tqdm = disable_tqdm or as_generator
 
         payload_query = {

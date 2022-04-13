@@ -3,6 +3,7 @@ Project version queries
 """
 
 from typing import List, Optional
+import warnings
 
 from typeguard import typechecked
 
@@ -71,6 +72,11 @@ class QueriesProjectVersion:
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
+        if as_generator is False:
+            warnings.warn("From 2022-05-04, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning, stacklevel=3)
+
         count_args = {"project_id": project_id}
         disable_tqdm = disable_tqdm or as_generator
         payload_query = {

@@ -3,6 +3,7 @@ Label queries
 """
 
 from typing import List, Optional
+import warnings
 
 from typeguard import typechecked
 import pandas as pd
@@ -126,6 +127,11 @@ class QueriesLabel:
         >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
         >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
         """
+        if as_generator is False:
+            warnings.warn("From 2022-05-04, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning, stacklevel=3)
+
         saved_args = locals()
         count_args = {
             k: v
