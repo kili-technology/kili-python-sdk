@@ -3,8 +3,8 @@ Lock queries
 """
 
 from typing import List, Optional
-from typeguard import typechecked
 import warnings
+from typeguard import typechecked
 
 from kili.utils import row_generator_from_paginated_calls
 
@@ -63,7 +63,7 @@ class QueriesLock:
         - a result object which contains the query if it was successful, or an error message else.
         """
         if as_generator is False:
-            warnings.warn("From 2022-05-04, the default return type will be a generator. Currently, the default return type is a list. \n"
+            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
                           "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
                           DeprecationWarning, stacklevel=3)
 

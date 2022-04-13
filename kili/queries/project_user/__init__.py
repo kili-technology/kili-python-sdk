@@ -75,7 +75,7 @@ class QueriesProjectUser:
         >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
         """
         if as_generator is False:
-            warnings.warn("From 2022-05-04, the default return type will be a generator. Currently, the default return type is a list. \n"
+            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
                           "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
                           DeprecationWarning, stacklevel=3)
 
