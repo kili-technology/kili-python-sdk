@@ -40,7 +40,7 @@ class QueriesApiKey:
                  as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get an API key generator or array respecting a set of constraints
+        Gets a generator or a list of API keys respecting a set of constraints
 
         Parameters
         ----------
@@ -94,8 +94,6 @@ class QueriesApiKey:
                 },
                 'id': api_key_id,
             },
-            'skip': skip,
-            'first': first,
         }
 
         api_keys_generator = row_generator_from_paginated_calls(

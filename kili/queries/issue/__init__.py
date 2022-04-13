@@ -48,7 +48,7 @@ class QueriesIssue:
                disable_tqdm: bool = False,
                as_generator: bool = False):
         """
-        Get an array of issues given a set of criteria
+        Gets a generator or a list of issues respecting a set of criteria
 
         Parameters
         ----------
@@ -63,7 +63,7 @@ class QueriesIssue:
             Number of issues to skip (they are ordered by their date of creation, first to last).
         - disable_tqdm : bool, (default = False)
         - as_generator: bool, (default = False)
-            If True, a generator on the API key is returned.
+            If True, a generator on the issues is returned.
 
         Returns
         -------
@@ -82,8 +82,6 @@ class QueriesIssue:
                     'id': project_id,
                 },
             },
-            'skip': skip,
-            'first': first,
         }
 
         issues_generator = row_generator_from_paginated_calls(

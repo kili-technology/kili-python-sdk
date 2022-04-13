@@ -63,7 +63,7 @@ class QueriesLabel:
                ):
         # pylint: disable=line-too-long
         """
-        Gets a label list or a label generator from a project given a set of criteria
+        Gets a generator or a list of labels respecting a set of criteria
 
         Parameters
         ----------

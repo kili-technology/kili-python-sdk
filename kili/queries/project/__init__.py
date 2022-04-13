@@ -57,7 +57,7 @@ class QueriesProject:
                  as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get a list or a generator of projects given a set of criteria
+        Gets a generator or a list of projects respecting a set of criteria
 
         Parameters
         ----------
@@ -96,10 +96,17 @@ class QueriesProject:
         >>> # List all my projects
         >>> kili.projects()
         """
-        count_args = {"project_id": project_id, "search_query": search_query,
-                      "should_relaunch_kpi_computation": should_relaunch_kpi_computation,
-                      "updated_at_gte": updated_at_gte,
-                      "updated_at_lte": updated_at_lte}
+        saved_args = locals()
+        count_args = {
+            k: v
+            for (k, v) in saved_args.items() if k in [
+                'project_id',
+                'search_query',
+                'should_relaunch_kpi_computation',
+                'updated_at_gte',
+                'updated_at_lte'
+            ]
+        }
         disable_tqdm = disable_tqdm or as_generator
 
         payload_query = {

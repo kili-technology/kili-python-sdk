@@ -43,7 +43,7 @@ class QueriesUser:
               as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get users given a set of constraints
+        Gets a generator or a list of users given a set of criteria
 
         Parameters
         ----------

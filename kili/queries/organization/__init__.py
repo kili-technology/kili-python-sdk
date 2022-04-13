@@ -44,7 +44,7 @@ class QueriesOrganization:
             as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get a list or a generator of organizations respecting a set of criteria
+        Gets a generator or a list of of organizations respecting a set of criteria
 
         Parameters
         ----------

@@ -40,9 +40,7 @@ class QueriesLock:
               as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get locks
-
-        Returns a generator or an array of locks
+        Gets a generator or a list of locks respecting a set of criteria
 
         Parameters
         ----------

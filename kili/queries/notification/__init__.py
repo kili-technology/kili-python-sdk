@@ -44,7 +44,7 @@ class QueriesNotification:
                       as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get a list or a generator of notifications given a set of constraints
+        Gets a generator or a list of notifications respecting a set of criteria
 
         Parameters
         ----------
@@ -72,7 +72,7 @@ class QueriesNotification:
         - a result object which contains the query if it was successful, or an error message else.
         """
         count_args = {"has_been_seen": has_been_seen, "user_id": user_id}
-        disable_tqdm = disable_tqdm or as_generator
+        disable_tqdm = disable_tqdm or as_generator or notification_id is not None
         payload_query = {
             'where': {
                 'id': notification_id,

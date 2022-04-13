@@ -80,7 +80,7 @@ class QueriesAsset:
                ):
         # pylint: disable=line-too-long
         """
-        Gets an asset list, an asset generator or a pandas DataFrame respecting a set of constraints.
+        Gets a generator, a list or a pandas DataFrame of assets respecting a set of constraints.
 
         Parameters
         ----------

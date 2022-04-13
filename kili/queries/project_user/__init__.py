@@ -45,7 +45,7 @@ class QueriesProjectUser:
                       as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Return a list or a generator of project users respecting a set of criteria
+        Gets a generator or a list of project users respecting a set of criteria
 
         Parameters
         ----------
@@ -74,6 +74,7 @@ class QueriesProjectUser:
         >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
         """
         count_args = {"email": email,
+                      "id": id,
                       "organization_id": organization_id,
                       "project_id": project_id}
         disable_tqdm = disable_tqdm or as_generator

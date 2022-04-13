@@ -48,7 +48,7 @@ class QueriesProjectVersion:
             as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get a list or a generator of project version given a set of constraints
+        Gets a generator or a list of project versions respecting a set of criteria
 
         Parameters
         ----------
