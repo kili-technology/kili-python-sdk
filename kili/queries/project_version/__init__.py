@@ -6,9 +6,12 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
+from kili.utils import row_generator_from_paginated_calls
+
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_project_version, GQL_PROJECT_VERSION_COUNT
 from ...types import ProjectVersion as ProjectVersionType
+
 
 class QueriesProjectVersion:
     """
@@ -40,10 +43,12 @@ class QueriesProjectVersion:
                 'name',
                 'project',
                 'projectId'],
-            project_id: str = None):
+            project_id: str = None,
+            disable_tqdm: bool = False,
+            as_generator: bool = False):
         # pylint: disable=line-too-long
         """
-        Get an array of project version given a set of constraints
+        Get a list or a generator of project version given a set of constraints
 
         Parameters
         ----------
@@ -51,29 +56,53 @@ class QueriesProjectVersion:
             'name', 'project'])
             All the fields to request among the possible fields for the project versions
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectVersions) for all possible fields.
-        - first : int (default = 100)
-            Optional, Number of project versions to query
+        - first : int, optionnal (default = 100)
+            Number of project versions to query
         - project_id : string (default = '')
             Filter on Id of project
-        - skip : int (default = 0)
-            Optional, number of project versions to skip (they are ordered by their date
+        - skip : int, optionnal (default = 0)
+            Number of project versions to skip (they are ordered by their date
             of creation, first to last).
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the project versions is returned.
 
         Returns
         -------
         - a result object which contains the query if it was successful, or an error message else.
         """
-        formatted_first = first if first else 100
-        variables = {
+        count_args = {"project_id": project_id}
+        disable_tqdm = disable_tqdm or as_generator
+        payload_query = {
             'where': {
                 'projectId': project_id,
             },
-            'skip': skip,
-            'first': formatted_first,
         }
+        project_versions_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_project_versions,
+            count_args,
+            self._query_project_versions,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return project_versions_generator
+        return list(project_versions_generator)
+
+    def _query_project_versions(self,
+                                skip: int,
+                                first: int,
+                                payload: dict,
+                                fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
         _gql_project_version = gql_project_version(
             fragment_builder(fields, ProjectVersionType))
-        result = self.auth.client.execute(_gql_project_version, variables)
+        result = self.auth.client.execute(_gql_project_version, payload)
         return format_result('data', result)
 
     @Compatible(['v2'])
