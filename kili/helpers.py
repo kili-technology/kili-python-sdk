@@ -232,7 +232,7 @@ def deprecate(msg, _type=DeprecationWarning):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            warnings.warn(msg, _type, stacklevel=3)
+            warnings.warn(msg, _type, stacklevel=2)
             return func(*args, **kwargs)
         return wrapper
     return decorator
