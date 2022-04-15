@@ -8,7 +8,6 @@ import warnings
 from typeguard import typechecked
 import pandas as pd
 
-from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, format_result, fragment_builder
 from ..asset import QueriesAsset
@@ -17,6 +16,7 @@ from .queries import gql_labels, GQL_LABELS_COUNT
 from ...constants import NO_ACCESS_RIGHT
 from ...types import Label as LabelType
 from ...orm import Label
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesLabel:

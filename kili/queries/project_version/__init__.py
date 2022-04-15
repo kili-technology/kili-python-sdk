@@ -7,11 +7,11 @@ import warnings
 
 from typeguard import typechecked
 
-from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_project_version, GQL_PROJECT_VERSION_COUNT
 from ...types import ProjectVersion as ProjectVersionType
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesProjectVersion:

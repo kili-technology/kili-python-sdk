@@ -7,11 +7,11 @@ import warnings
 
 from typeguard import typechecked
 
-from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_users, GQL_USERS_COUNT
 from ...types import User
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesUser:

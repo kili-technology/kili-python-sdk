@@ -8,11 +8,11 @@ import warnings
 
 from typeguard import typechecked
 
-from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_organizations, GQL_ORGANIZATIONS_COUNT, GQL_ORGANIZATION_METRICS
 from ...types import Organization
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesOrganization:

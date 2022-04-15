@@ -8,11 +8,10 @@ import warnings
 
 from typeguard import typechecked
 
-from kili.utils import row_generator_from_paginated_calls
-
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import GQL_ISSUES_COUNT, gql_issues
 from ...types import Issue as IssueType
+from ...utils import row_generator_from_paginated_calls
 
 
 @dataclass

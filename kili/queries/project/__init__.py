@@ -6,14 +6,12 @@ from typing import List, Optional
 import warnings
 from typeguard import typechecked
 
-from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_projects, GQL_PROJECTS_COUNT
 from ...types import Project
 from ...constants import NO_ACCESS_RIGHT
-
-# warnings.filterwarnings("default", module='kili', category=DeprecationWarning)
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesProject:
