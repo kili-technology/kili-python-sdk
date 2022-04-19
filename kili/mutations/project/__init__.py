@@ -45,7 +45,7 @@ class MutationsProject:
         """
         Add a user to a project
 
-        If the user does not exist in your organization, he is invited and added
+        If the user does not exist in your organization, he/she is invited and added
         both to your organization and project. This function can also be used to change
         the role of the user in the project.
 
@@ -135,7 +135,7 @@ class MutationsProject:
         - title : str, optional (default = None)
             Title of the project
         - use_honeypot : bool, optional (default = None)
-            Activate / Desactivate the use of honeypot in the project
+            Activate / Deactivate the use of honeypot in the project
 
         Returns
         -------
@@ -252,8 +252,10 @@ class MutationsProject:
         """
         Update properties of a role
 
-        You should be either an admin or a team manager of the project, or an admin of the
-        organization to be able to change the role of somebody.
+        To be able to change someone's role, you must be either of:
+        - an admin
+        - a team manager of the project
+        - an admin of the organization
 
         Parameters
         ----------

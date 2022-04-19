@@ -64,7 +64,7 @@ class QueriesLabel:
                ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Gets a generator or a list of labels respecting a set of criteria
+        Gets a label list or a label generator from a project based on a set of criteria
 
         Parameters
         ----------
@@ -209,12 +209,12 @@ class QueriesLabel:
         """
         Parameters
         -------
-        json_response : dict
+        - json_response : dict
             A valid JSON response
 
         Returns
         -------
-        The names of categories from a json_response, for a single-class classification task
+        - the names of categories from a json_response, for a single-class classification task
         """
         categories = QueriesLabel.parse_json_response_for_multi_classification(
             json_response)
@@ -228,12 +228,12 @@ class QueriesLabel:
         """
         Parameters
         -------
-        json_response : dict
+        - json_response : dict
             A valid JSON response
 
         Returns
         -------
-        The names of categories from a json_response, for a multi-class classification task
+        - the names of categories from a json_response, for a multi-class classification task
         """
         # pylint: disable=eval-used
         formatted_json_response = eval(
@@ -248,14 +248,14 @@ class QueriesLabel:
         """
         Parameters
         -------
-        json_response : dict
+        - json_response : dict
             A valid JSON response
-        interface_category: str
+        - interface_category: str
             A valid interface category
 
         Returns
         -------
-        The names of categories from a json_response
+        - the names of categories from a json_response
         """
         if interface_category == 'SINGLECLASS_TEXT_CLASSIFICATION':
             return QueriesLabel.parse_json_response_for_single_classification(json_response)

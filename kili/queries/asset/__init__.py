@@ -81,7 +81,7 @@ class QueriesAsset:
                ) -> Union[List[dict], Generator[dict, None, None], pd.DataFrame]:
         # pylint: disable=line-too-long
         """
-        Gets a generator, a list or a pandas DataFrame of assets respecting a set of constraints.
+        Gets an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
         Parameters
         ----------
@@ -102,9 +102,9 @@ class QueriesAsset:
         - first : int, optional (default = None)
             Maximum number of assets to return.
         - consensus_mark_gt : float, optional (default = None)
-            Minimum amout of consensus for the asset.
+            Minimum amount of consensus for the asset.
         - consensus_mark_lt : float, optional (default = None)
-            Maximum amout of consensus for the asset.
+            Maximum amount of consensus for the asset.
         - external_id_contains : list of str, optional (default = None)
             Returned assets have an external id that belongs to that list, if given.
         - metadata_where : dict, optional (default = None)
@@ -116,9 +116,9 @@ class QueriesAsset:
             - metadata_where = {key2: [2, 10]} to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         - honeypot_mark_gt : float, optional (default = None)
-            Minimum amout of honeypot for the asset.
+            Minimum amount of honeypot for the asset.
         - honeypot_mark_lt : float, optional (default = None)
-            Maximum amout of honeypot for the asset.
+            Maximum amount of honeypot for the asset.
         - status_in : list of str, optional (default = None)
             Returned assets should have a status that belongs to that list, if given.
             Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
@@ -299,13 +299,13 @@ class QueriesAsset:
             Returned assets should have a status that belongs to that list, if given.
             Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
         - consensus_mark_gt : float, optional (default = None)
-            Minimum amout of consensus for the asset.
+            Minimum amount of consensus for the asset.
         - consensus_mark_lt : float, optional (default = None)
-            Maximum amout of consensus for the asset.
+            Maximum amount of consensus for the asset.
         - honeypot_mark_gt : float, optional (default = None)
-            Minimum amout of honeypot for the asset.
+            Minimum amount of honeypot for the asset.
         - honeypot_mark_lt : float, optional (default = None)
-            Maximum amout of consensus for the asset.
+            Maximum amount of consensus for the asset.
         - label_type_in : list of str, optional (default = None)
             Returned assets should have a label whose type belongs to that list, if given.
         - label_author_in : list of str, optional (default = None)
