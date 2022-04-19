@@ -40,6 +40,11 @@ TEST_CASES = [
         "args": {"first": 20, "skip": 20, "disable_tqdm": True},
         "expected_result": ({"id": i} for i in range(20, 40)),
     },
+    {
+        "case": "AAU, When I query objects with first=0, I get no objects",
+        "args": {"first": 0},
+        "expected_result": iter(()),
+    },
 ]
 
 

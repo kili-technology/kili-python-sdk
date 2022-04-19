@@ -2,13 +2,16 @@
 User queries
 """
 
-from typing import Optional
+from typing import Generator, List, Optional, Union
+import warnings
 
 from typeguard import typechecked
+
 
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_users, GQL_USERS_COUNT
 from ...types import User
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesUser:
@@ -36,10 +39,12 @@ class QueriesUser:
               organization_id: Optional[str] = None,
               fields: list = ['email', 'id', 'firstname', 'lastname'],
               first: int = 100,
-              skip: int = 0):
+              skip: int = 0,
+              disable_tqdm: bool = False,
+              as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Get users given a set of constraints
+        Gets a generator or a list of users given a set of criteria
 
         Parameters
         ----------
@@ -50,9 +55,12 @@ class QueriesUser:
             All the fields to request among the possible fields for the users.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
         - first : int, optional (default = 100)
-            Maximum number of users to return. Can only be between 0 and 100.
+            Maximum number of users to return.
         - skip : int, optional (default = 0)
             Number of skipped users (they are ordered by creation date)
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the users is returned.
 
         Returns
         -------
@@ -65,9 +73,15 @@ class QueriesUser:
         >>> organization_id = organizations[0]['id]
         >>> kili.users(organization_id=organization_id)
         """
-        variables = {
-            'first': first,
-            'skip': skip,
+        if as_generator is False:
+            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning)
+
+        count_args = {"organization_id": organization_id}
+        disable_tqdm = disable_tqdm or as_generator or (
+            api_key or email) is not None
+        payload_query = {
             'where': {
                 'apiKey': api_key,
                 'email': email,
@@ -76,8 +90,31 @@ class QueriesUser:
                 }
             }
         }
+
+        users_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_users,
+            count_args,
+            self._query_users,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return users_generator
+        return list(users_generator)
+
+    def _query_users(self,
+                     skip: int,
+                     first: int,
+                     payload: dict,
+                     fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
         _gql_users = gql_users(fragment_builder(fields, User))
-        result = self.auth.client.execute(_gql_users, variables)
+        result = self.auth.client.execute(_gql_users, payload)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])

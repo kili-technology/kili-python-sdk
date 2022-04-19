@@ -2,13 +2,16 @@
 Project queries
 """
 
-from typing import Optional
+from typing import Generator, List, Optional, Union
+import warnings
 from typeguard import typechecked
+
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_projects, GQL_PROJECTS_COUNT
 from ...types import Project
 from ...constants import NO_ACCESS_RIGHT
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesProject:
@@ -50,10 +53,12 @@ class QueriesProject:
                      'roles.user.email',
                      'roles.user.id',
                      'title'],
-                 first: int = 100):
+                 first: int = 100,
+                 disable_tqdm: bool = False,
+                 as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Get projects given a set of criteria
+        Gets a generator or a list of projects respecting a set of criteria
 
         Parameters
         ----------
@@ -78,7 +83,10 @@ class QueriesProject:
             All the fields to request among the possible fields for the projects.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project) for all possible fields.
         - first : int , optional (default = 100)
-            Maximum number of projects to return. Can only be between 0 and 100.
+            Maximum number of projects to return.
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the projects is returned.
 
         Returns
         -------
@@ -89,8 +97,26 @@ class QueriesProject:
         >>> # List all my projects
         >>> kili.projects()
         """
-        _gql_projects = gql_projects(fragment_builder(fields, Project))
-        variables = {
+
+        if as_generator is False:
+            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning)
+
+        saved_args = locals()
+        count_args = {
+            k: v
+            for (k, v) in saved_args.items() if k in [
+                'project_id',
+                'search_query',
+                'should_relaunch_kpi_computation',
+                'updated_at_gte',
+                'updated_at_lte'
+            ]
+        }
+        disable_tqdm = disable_tqdm or as_generator
+
+        payload_query = {
             'where': {
                 'id': project_id,
                 'searchQuery': search_query,
@@ -98,10 +124,32 @@ class QueriesProject:
                 'updatedAtGte': updated_at_gte,
                 'updatedAtLte': updated_at_lte,
             },
-            'skip': skip,
-            'first': first
         }
-        result = self.auth.client.execute(_gql_projects, variables)
+
+        projects_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_projects,
+            count_args,
+            self._query_projects,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return projects_generator
+        return list(projects_generator)
+
+    def _query_projects(self,
+                        skip: int,
+                        first: int,
+                        payload: dict,
+                        fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
+        _gql_projects = gql_projects(fragment_builder(fields, Project))
+        result = self.auth.client.execute(_gql_projects, payload)
         return format_result('data', result)
 
     @Compatible(['v1', 'v2'])

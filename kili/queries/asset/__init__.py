@@ -4,7 +4,8 @@ Asset queries
 """
 
 from json import dumps
-from typing import List, Optional
+from typing import Generator, List, Optional, Union
+import warnings
 
 from typeguard import typechecked
 import pandas as pd
@@ -77,10 +78,10 @@ class QueriesAsset:
                updated_at_gte: Optional[str] = None,
                updated_at_lte: Optional[str] = None,
                as_generator: bool = False,
-               ):
+               ) -> Union[List[dict], Generator[dict, None, None], pd.DataFrame]:
         # pylint: disable=line-too-long
         """
-        Gets an asset list, an asset generator or a pandas DataFrame respecting a set of constraints.
+        Gets a generator, a list or a pandas DataFrame of assets respecting a set of constraints.
 
         Parameters
         ----------
@@ -172,6 +173,12 @@ class QueriesAsset:
         if format == "pandas" and as_generator:
             raise ValueError(
                 "Argument values as_generator==True and format==\"pandas\" are not compatible.")
+
+        if as_generator is False:
+            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning)
+
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
                       if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self', 'as_generator']}

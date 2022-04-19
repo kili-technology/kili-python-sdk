@@ -3,13 +3,16 @@ Organization queries
 """
 
 from datetime import datetime
-from typing import Optional
+from typing import Generator, List, Optional, Union
+import warnings
 
 from typeguard import typechecked
+
 
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_organizations, GQL_ORGANIZATIONS_COUNT, GQL_ORGANIZATION_METRICS
 from ...types import Organization
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesOrganization:
@@ -37,14 +40,12 @@ class QueriesOrganization:
             organization_id: Optional[str] = None,
             fields: list = ['id', 'name'],
             first: int = 100,
-            skip: int = 0):
+            skip: int = 0,
+            disable_tqdm: bool = False,
+            as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Get organizations respecting a set of criteria
-
-        Returns all organizations:
-        - with a given organization id
-        - containing a user with a given email
+        Gets a generator or a list of of organizations respecting a set of criteria
 
         Parameters
         ----------
@@ -58,6 +59,9 @@ class QueriesOrganization:
             Maximum number of organizations to return
         - skip : int, optional (default = 0)
             Number of skipped organizations (they are ordered by creation date)
+        - disable_tqdm : bool, (default = False)
+        - as_generator: bool, (default = False)
+            If True, a generator on the organizations is returned.
 
         Returns
         -------
@@ -68,9 +72,15 @@ class QueriesOrganization:
         >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
         [{'users': [{'email': 'john@doe.com'}]}]
         """
-        variables = {
-            'first': first,
-            'skip': skip,
+        if as_generator is False:
+            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning)
+
+        count_args = {"email": email, "organization_id": organization_id}
+        disable_tqdm = disable_tqdm or as_generator
+
+        payload_query = {
             'where': {
                 'id': organization_id,
                 'user': {
@@ -78,9 +88,32 @@ class QueriesOrganization:
                 }
             }
         }
+
+        organizations_generator = row_generator_from_paginated_calls(
+            skip,
+            first,
+            self.count_organizations,
+            count_args,
+            self._query_organizations,
+            payload_query,
+            fields,
+            disable_tqdm
+        )
+
+        if as_generator:
+            return organizations_generator
+        return list(organizations_generator)
+
+    def _query_organizations(self,
+                             skip: int,
+                             first: int,
+                             payload: dict,
+                             fields: List[str]):
+
+        payload.update({'skip': skip, 'first': first})
         _gql_organizations = gql_organizations(
             fragment_builder(fields, Organization))
-        result = self.auth.client.execute(_gql_organizations, variables)
+        result = self.auth.client.execute(_gql_organizations, payload)
         return format_result('data', result)
 
     @Compatible(['v2'])

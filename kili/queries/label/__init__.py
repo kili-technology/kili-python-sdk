@@ -2,12 +2,12 @@
 Label queries
 """
 
-from typing import List, Optional
+from typing import Generator, List, Optional, Union
+import warnings
 
 from typeguard import typechecked
 import pandas as pd
 
-from kili.utils import row_generator_from_paginated_calls
 
 from ...helpers import Compatible, format_result, fragment_builder
 from ..asset import QueriesAsset
@@ -16,6 +16,7 @@ from .queries import gql_labels, GQL_LABELS_COUNT
 from ...constants import NO_ACCESS_RIGHT
 from ...types import Label as LabelType
 from ...orm import Label
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesLabel:
@@ -58,12 +59,12 @@ class QueriesLabel:
                skipped: Optional[bool] = None,
                type_in: Optional[List[str]] = None,
                user_id: Optional[str] = None,
-               as_generator: bool = False,
                disable_tqdm: bool = False,
-               ):
+               as_generator: bool = False,
+               ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Gets a label list or a label generator from a project given a set of criteria
+        Gets a generator or a list of labels respecting a set of criteria
 
         Parameters
         ----------
@@ -112,9 +113,9 @@ class QueriesLabel:
             Returned labels should have a label whose type belongs to that list, if given.
         - user_id : str
             Identifier of the user.
-        - as_generator: bool, (default = False)
         - disable_tqdm : bool, (default = False)
-            If True, a generator on the assets is returned.
+        - as_generator: bool, (default = False)
+            If True, a generator on the labels is returned.
 
 
         Returns
@@ -126,6 +127,11 @@ class QueriesLabel:
         >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
         >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
         """
+        if as_generator is False:
+            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
+                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
+                          DeprecationWarning)
+
         saved_args = locals()
         count_args = {
             k: v

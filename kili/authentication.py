@@ -109,7 +109,8 @@ class KiliAuth:
         duration_days = 365
         warn_days = 30
         queries = QueriesApiKey(self)
-        key_object = queries.api_keys(api_key=api_key, fields=['createdAt'])
+        key_object = queries.api_keys(api_key=api_key, fields=[
+                                      'createdAt'], disable_tqdm=True)
         key_creation = datetime.strptime(
             key_object[0]['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
         key_expiry = key_creation + timedelta(days=duration_days)
