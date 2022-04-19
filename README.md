@@ -143,12 +143,6 @@ with open("labels.json", "w") as label_file:
 ```
 See a detailled example in this [notebook](recipes/export_labels.ipynb).
 
-### Kili AutoML
-With the Kili AutoML toolbox, you can also:
-  * train models directly from a Kili dataset.
-  * load the predictions back into the Kili platform to visualize them and use them as pre-annotations.
-
-See [Kili AutoML](https://github.com/kili-technology/automl) (work in progress).
 ## More examples
 
 You can find all several recipes in this [folder](/recipes/). Among them:
