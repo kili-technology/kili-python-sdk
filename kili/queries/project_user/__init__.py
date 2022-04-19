@@ -2,7 +2,7 @@
 Project user queries
 """
 
-from typing import List, Optional
+from typing import Generator, List, Optional, Union
 import warnings
 
 from typeguard import typechecked
@@ -43,7 +43,7 @@ class QueriesProjectUser:
                       first: int = 100,
                       skip: int = 0,
                       disable_tqdm: bool = False,
-                      as_generator: bool = False):
+                      as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
         Gets a generator or a list of project users respecting a set of criteria

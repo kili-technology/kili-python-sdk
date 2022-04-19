@@ -4,7 +4,7 @@ Asset queries
 """
 
 from json import dumps
-from typing import List, Optional
+from typing import Generator, List, Optional, Union
 import warnings
 
 from typeguard import typechecked
@@ -78,7 +78,7 @@ class QueriesAsset:
                updated_at_gte: Optional[str] = None,
                updated_at_lte: Optional[str] = None,
                as_generator: bool = False,
-               ):
+               ) -> Union[List[dict], Generator[dict, None, None], pd.DataFrame]:
         # pylint: disable=line-too-long
         """
         Gets a generator, a list or a pandas DataFrame of assets respecting a set of constraints.

@@ -2,7 +2,7 @@
 Api key queries
 """
 
-from typing import List, Optional
+from typing import Generator, List, Optional, Union
 import warnings
 from typeguard import typechecked
 
@@ -37,7 +37,7 @@ class QueriesApiKey:
                  fields: list = ['id', 'name', 'createdAt', 'revoked'],
                  first: Optional[int] = 100,
                  disable_tqdm: bool = False,
-                 as_generator: bool = False):
+                 as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
         Gets a generator or a list of API keys respecting a set of constraints
