@@ -42,7 +42,7 @@ class MutationsUser:
         Parameters
         ----------
         - email : str
-            Email of the new user, used as his unique identifier.
+            Email of the new user, used as user's unique identifier.
         - password : str
             On the first sign in, he will use this password and be able to change it.
         - organization_role : str
@@ -73,7 +73,7 @@ class MutationsUser:
     def update_password(self, email: str, old_password: str, new_password_1: str,
                         new_password_2: str):
         """
-        Allows you to modify the password you use to connect to Kili.
+        Allows you to modify the password that you use to connect to Kili.
         This resolver only works for on-premise installations without Auth0.
 
         Parameters

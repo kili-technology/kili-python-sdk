@@ -49,7 +49,7 @@ class QueriesIssue:
                as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Gets a generator or a list of issues respecting a set of criteria
+        Gets a generator or a list of issues that match a set of criteria
 
         Parameters
         ----------

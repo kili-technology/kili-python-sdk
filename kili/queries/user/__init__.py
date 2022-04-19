@@ -122,7 +122,7 @@ class QueriesUser:
     def count_users(self,
                     organization_id: Optional[str] = None):
         """
-        Get users count given a set of constraints
+        Get user count based on a set of constraints
 
         Parameters
         ----------
@@ -130,7 +130,7 @@ class QueriesUser:
 
         Returns
         -------
-        - the count of users whose organization id correspond to the given one
+        - the count of users whose organization ID matches the given ID
         """
         variables = {
             'where': {

@@ -40,7 +40,8 @@ class QueriesApiKey:
                  as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Gets a generator or a list of API keys respecting a set of constraints
+        Gets a generator or a list of API keys that match a set of constraints
+
 
         Parameters
         ----------

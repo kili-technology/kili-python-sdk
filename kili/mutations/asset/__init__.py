@@ -53,7 +53,7 @@ class MutationsAsset:
 
         For more detailed examples on how to import assets,
             see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb).
-        For more detailed examples on how to import specifically text assets,
+        For more detailed examples on how to import text assets,
             see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).
 
         Parameters
@@ -73,8 +73,8 @@ class MutationsAsset:
             If None, random identifiers are created.
         - is_honeypot_array : List[bool], optional (default = None)
         - status_array : List[str], optional (default = None)
-            By default, all imported assets are set to 'TODO'. It can also be set to
-            'ONGOING', 'LABELED', 'REVIEWED'
+            By default, all imported assets are set to 'TODO'. Other options:
+            'ONGOING', 'LABELED', 'REVIEWED'.
         - json_content_array : List[List[str]], optional (default = None)
             Useful for 'FRAME' or 'TEXT' projects only.
             For FRAME projects, each element is a sequence of frames, i.e. a

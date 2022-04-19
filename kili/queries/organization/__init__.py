@@ -45,7 +45,11 @@ class QueriesOrganization:
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Gets a generator or a list of of organizations respecting a set of criteria
+        Get a generator or a list of organizations that match a set of criteria
+
+        Returns all organizations:
+        - with a given organization id
+        - containing a user with a given email
 
         Parameters
         ----------
@@ -123,7 +127,7 @@ class QueriesOrganization:
             email: Optional[str] = None,
             organization_id: Optional[str] = None):
         """
-        Count organizations respecting a set of criteria
+        Count organizations that match a set of criteria
 
         Parameters
         ----------

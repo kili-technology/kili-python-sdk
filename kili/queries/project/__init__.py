@@ -58,7 +58,7 @@ class QueriesProject:
                  as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Gets a generator or a list of projects respecting a set of criteria
+        Get a generator or a list of projects that match a set of criteria
 
         Parameters
         ----------
@@ -69,7 +69,7 @@ class QueriesProject:
         - should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings.
         - updated_at_gte : string, optional (default = None)
-            Returned projects should have a label whose update date is greated or equal
+            Returned projects should have a label whose update date is greater or equal
             to this date.
             Formatted string should have format : "YYYY-MM-DD"
         - updated_at_lte : string, optional (default = None)
@@ -173,7 +173,7 @@ class QueriesProject:
         - should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings
         - updated_at_gte : string, optional (default = None)
-            Returned projects should have a label whose update date is greated
+            Returned projects should have a label whose update date is greater
             or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
         - updated_at_lte : string, optional (default = None)

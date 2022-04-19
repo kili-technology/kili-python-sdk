@@ -40,7 +40,7 @@ class MutationsLabel:
             json_response_array: List[dict]):
         # pylint: disable=line-too-long
         """
-        Create predictions for some assets
+        Create predictions for specific assets
 
         For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
 
@@ -52,7 +52,7 @@ class MutationsLabel:
         - model_name_array : list of str
             In case you want to precise from which model the label originated
         - json_response_array : list of dict
-            The predictions are given here. An example can be found here, for a polygon.
+            The predictions are given here. An example for a polygon can be found here.
             For other examples,
                 see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
             ```
@@ -192,8 +192,8 @@ class MutationsLabel:
         """
         Create honeypot for an asset.
 
-        Uses the json_response given to create a "REVIEW" label. This allows to compute a
-        `honeypotMark`, which measures how similar are other labels compared to this one.
+        Uses the given `json_response` to create a "REVIEW" label. This enables Kili to compute a
+        `honeypotMark`, which measures the similarity between this label and other labels.
 
         Parameters
         ----------

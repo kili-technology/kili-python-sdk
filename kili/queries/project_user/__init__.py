@@ -46,7 +46,8 @@ class QueriesProjectUser:
                       as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """
-        Gets a generator or a list of project users respecting a set of criteria
+        Return project users (possibly with their KPIs) that match a set of criteria
+
 
         Parameters
         ----------
@@ -135,7 +136,7 @@ class QueriesProjectUser:
             organization_id: Optional[str] = None,
             project_id: Optional[str] = None):
         """
-        Counts the number of projects and their users respecting a set of criteria
+        Counts the number of projects and their users that match a set of criteria
 
         Parameters
         ----------
