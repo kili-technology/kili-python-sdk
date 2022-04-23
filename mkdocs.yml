@@ -1,0 +1,41 @@
+## Project information
+site_name: Python SDK
+site_description: Kili Python SDK
+site_url: https://kili-technology.github.io/kili-playground/
+
+theme:
+  name: 'material'
+  palette:
+    primary: black
+    accent: deep purple
+  logo: assets/kili_logo.png
+  favicon: assets/kili_favicon.ico
+  language: en
+  font:
+    text: Archia
+
+nav:
+  - Asset: asset.md
+  - Issue: issue.md
+
+repo_url: https://github.com/kili-technology/kili-playground
+repo_name: SDK on GitHub
+edit_uri: '' #disables edit button
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          rendering:
+            show_root_heading: false
+            show_source: true
+            show_category_heading: false
+            show_root_toc_entry: false
+          selection:
+            docstring_style: numpy
+            filters:
+              - '!^__' # exclude all members starting with _
+      watch:
+        - kili

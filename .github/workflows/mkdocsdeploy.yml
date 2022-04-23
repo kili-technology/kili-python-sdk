@@ -1,0 +1,27 @@
+name: Publish docs on GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Deploy docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install dependencies
+        run: |
+          python -m pip install mkdocs-material mkdocstrings
+          python -m pip install -e .
+
+      - name: Deploy docs
+        run: mkdocs gh-deploy --force -m "update gh-pages [ci skip]"

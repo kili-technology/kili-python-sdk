@@ -27,7 +27,7 @@ class QueriesIssue:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -53,27 +53,30 @@ class QueriesIssue:
 
         Parameters
         ----------
-        - fields : list of string, optional (default = ['id', 'createdAt', 'hasBeenSeen', 'status', 'type'])
-            All the fields to request among the possible fields for the assets.
+        fields : All the fields to request among the possible fields for the assets.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.
-        - first : int, optional (default = None)
+        first :
             Maximum number of issues to return.
-        - project_id : str, optional (default = None)
+        project_id :
             Project ID the issue belongs to.
-        - skip : int, optional (default = None)
+        skip :
             Number of issues to skip (they are ordered by their date of creation, first to last).
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the issues is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        result
+            a result object which contains the query if it was successful, or an error message else.
 
         Examples
-        -------
-        >>> # List all issues of a project and their authors
+        --------
+        ```
+        # List all issues of a project and their authors
         >>> kili.issues(project_id=project_id, fields=['author.email'])
+        ```
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -117,18 +120,19 @@ class QueriesIssue:
 
     @Compatible(['v2'])
     @typechecked
-    def count_issues(self, project_id: Optional[str] = None):
+    def count_issues(self, project_id: Optional[str] = None) -> int:
         """
         Count and return the number of api keys with the given constraints
 
         Parameters
         ----------
-        - project_id : str, optional (default = None)
+        project_id :
             Project ID the issue belongs to.
 
         Returns
         -------
-        - the number of issues with the parameters provided
+        result
+            the number of issues with the parameters provided
 
         """
         variables = {
