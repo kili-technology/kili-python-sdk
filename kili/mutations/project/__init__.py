@@ -82,7 +82,6 @@ class MutationsProject:
                                      description: Optional[str] = None,
                                      honeypot_mark: Optional[float] = None,
                                      instructions: Optional[str] = None,
-                                     interface_category: str = 'IV2',
                                      input_type: Optional[str] = None,
                                      json_interface: Optional[dict] = None,
                                      min_consensus_size: Optional[int] = None,
