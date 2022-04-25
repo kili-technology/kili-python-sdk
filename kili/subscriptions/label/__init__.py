@@ -24,7 +24,7 @@ class SubscriptionsLabel:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -37,13 +37,15 @@ class SubscriptionsLabel:
 
         Parameters
         ----------
-        - project_id : str
-        - callback : function of (str, str) -> None
+        project_id :
+            Identifier of the project
+        callback :
             This function takes as input the id of the asset and its content.
 
         Returns
         -------
-        - subscription client
+        return
+            subscription client
         """
         ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
         websocket = SubscriptionGraphQLClient(ws_endpoint)

@@ -29,7 +29,7 @@ class QueriesAsset:
 
         Parameters
         ----------
-        auth: KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -40,19 +40,19 @@ class QueriesAsset:
                asset_id: Optional[str] = None,
                project_id: Optional[str] = None,
                skip: int = 0,
-               fields: list = ['content',
-                               'createdAt',
-                               'externalId',
-                               'id',
-                               'isHoneypot',
-                               'jsonMetadata',
-                               'labels.author.id',
-                               'labels.author.email',
-                               'labels.createdAt',
-                               'labels.id',
-                               'labels.jsonResponse',
-                               'skipped',
-                               'status'],
+               fields: List[str] = ['content',
+                                    'createdAt',
+                                    'externalId',
+                                    'id',
+                                    'isHoneypot',
+                                    'jsonMetadata',
+                                    'labels.author.id',
+                                    'labels.author.email',
+                                    'labels.createdAt',
+                                    'labels.id',
+                                    'labels.jsonResponse',
+                                    'skipped',
+                                    'status'],
                asset_id_in: Optional[List[str]] = None,
                consensus_mark_gt: Optional[float] = None,
                consensus_mark_lt: Optional[float] = None,
@@ -85,26 +85,26 @@ class QueriesAsset:
 
         Parameters
         ----------
-        asset_id:
+        asset_id :
             The unique id of the asset to retrieve.
-        asset_id_in:
+        asset_id_in :
             A list of the ids of the assets to retrieve.
-        project_id:
+        project_id :
             Identifier of the project.
-        skip:
+        skip :
             Number of assets to skip (they are ordered by their date of creation, first to last).
-        fields:
+        fields :
             All the fields to request among the possible fields for the assets.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
-        first:
+        first :
             Maximum number of assets to return.
-        consensus_mark_gt:
+        consensus_mark_gt :
             Minimum amount of consensus for the asset.
-        consensus_mark_lt:
+        consensus_mark_lt :
             Maximum amount of consensus for the asset.
-        external_id_contains:
+        external_id_contains :
             Returned assets have an external id that belongs to that list, if given.
-        metadata_where:
+        metadata_where :
             Filters by the values of the metadata of the asset.
             - metadata_where = {key1: "value1"} to filter on assets whose metadata
                 have key "key1" with value "value1"
@@ -112,55 +112,55 @@ class QueriesAsset:
                 have key "key1" with value "value1" or value "value2
             - metadata_where = {key2: [2, 10]} to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
-        honeypot_mark_gt:
+        honeypot_mark_gt :
             Minimum amount of honeypot for the asset.
-        honeypot_mark_lt:
+        honeypot_mark_lt :
             Maximum amount of honeypot for the asset.
-        status_in:
+        status_in :
             Returned assets should have a status that belongs to that list, if given.
             Possible choices: {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
-        label_type_in:
+        label_type_in :
             Returned assets should have a label whose type belongs to that list, if given.
-        label_author_in:
+        label_author_in :
             Returned assets should have a label whose status belongs to that list, if given.
-        label_consensus_mark_gt:
+        label_consensus_mark_gt :
             Returned assets should have a label whose consensus is greater than this number.
-        label_consensus_mark_lt:
+        label_consensus_mark_lt :
             Returned assets should have a label whose consensus is lower than this number.
-        label_created_at:
+        label_created_at :
             Returned assets should have a label whose creation date is equal to this date.
             Formatted string should have format: "YYYY-MM-DD"
-        label_created_at_gt:
+        label_created_at_gt :
             Returned assets should have a label whose creation date is greater than this date.
             Formatted string should have format: "YYYY-MM-DD"
-        label_created_at_lt:
+        label_created_at_lt :
             Returned assets should have a label whose creation date is lower than this date.
             Formatted string should have format: "YYYY-MM-DD"
-        label_json_response_contains:
+        label_json_response_contains :
             Returned assets should have a substring of the label's jsonResponse
                 that belongs to that list, if given.
-        label_honeypot_mark_gt:
+        label_honeypot_mark_gt :
             Returned assets should have a label whose honeypot is greater than this number.
-        label_honeypot_mark_lt:
+        label_honeypot_mark_lt :
             Returned assets should have a label whose honeypot is lower than this number.
-        skipped:
+        skipped :
             Returned assets should be skipped
-        updated_at_gte:
+        updated_at_gte :
             Returned assets should have a label whose update date is greated or equal to this date.
             Formatted string should have format: "YYYY-MM-DD"
-        updated_at_lte:
+        updated_at_lte :
             Returned assets should have a label whose update date is lower or equal to this date.
             Formatted string should have format: "YYYY-MM-DD"
         format:
             If equal to 'pandas', returns a pandas DataFrame
-        disable_tqdm:
+        disable_tqdm :
             If True, the progress bar will be disabled
-        as_generator:
+        as_generator :
             If True, a generator on the assets is returned.
 
         Returns
         -------
-        result
+        dict
             a result object which contains the query if it was successful, else an error message.
 
         Examples
@@ -278,15 +278,15 @@ class QueriesAsset:
 
         Parameters
         ----------
-        asset_id:
+        asset_id :
             The unique id of the asset to retrieve.
-        asset_id_in:
+        asset_id_in :
             A list of the ids of the assets to retrieve.
-        project_id:
+        project_id :
             Identifier of the project
-        external_id_contains:
+        external_id_contains :
             Returned assets should have an external id that belongs to that list, if given.
-        metadata_where:
+        metadata_where :
             Filters by the values of the metadata of the asset.
             - metadata_where = {key1: "value1"} to filter on assets whose metadata have key "key1"
                 with value "value1"
@@ -294,53 +294,57 @@ class QueriesAsset:
                 have key "key1" with value "value1" or value "value2
             - metadata_where = {key2: [2, 10]} to filter on assets whose metadata have key "key2"
                 with a value between 2 and 10.
-        status_in:
+        status_in :
             Returned assets should have a status that belongs to that list, if given.
-            Possible choices: {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
-        consensus_mark_gt:
+            Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+        consensus_mark_gt :
             Minimum amount of consensus for the asset.
-        consensus_mark_lt:
+        consensus_mark_lt :
             Maximum amount of consensus for the asset.
-        honeypot_mark_gt:
+        honeypot_mark_gt :
             Minimum amount of honeypot for the asset.
-        honeypot_mark_lt:
+        honeypot_mark_lt :
             Maximum amount of consensus for the asset.
-        label_type_in:
+        label_type_in :
             Returned assets should have a label whose type belongs to that list, if given.
-        label_author_in:
+        label_author_in :
             Returned assets should have a label whose status belongs to that list, if given.
-        label_consensus_mark_gt:
+        label_consensus_mark_gt :
             Returned assets should have a label whose consensus is greater than this number.
-        label_consensus_mark_lt:
+        label_consensus_mark_lt :
             Returned assets should have a label whose consensus is lower than this number.
-        label_created_at:
+        label_created_at :
             Returned assets should have a label whose creation date is equal to this date.
             Formatted string should have format: "YYYY-MM-DD"
-        label_created_at_gt:
+        label_created_at_gt :
             Returned assets should have a label whose creation date is greater than this date.
             Formatted string should have format: "YYYY-MM-DD"
-        label_created_at_lt:
+        label_created_at_lt :
             Returned assets should have a label whose creation date is lower than this date.
             Formatted string should have format: "YYYY-MM-DD"
-        label_honeypot_mark_gt:
+        label_honeypot_mark_gt :
             Returned assets should have a label whose honeypot is greater than this number.
-        label_honeypot_mark_lt:
+        label_honeypot_mark_lt :
             Returned assets should have a label whose honeypot is lower than this number.
-        label_json_response_contains:
+        label_json_response_contains :
             Returned assets should have a substring of the label's jsonResponse that belongs
             to that list, if given.
-        skipped:
+        skipped :
             Returned assets should be skipped
-        updated_at_gte:
+        updated_at_gte :
             Returned assets should have a label whose update date is greated or equal to this date.
             Formatted string should have format: "YYYY-MM-DD"
-        updated_at_lte:
+        updated_at_lte :
             Returned assets should have a label whose update date is lower or equal to this date.
             Formatted string should have format: "YYYY-MM-DD"
 
+        Note
+        ----
+        test note
+
         Returns
         -------
-        result
+        dict
             a result object which contains the query if it was successful, or an error message else.
 
         Example

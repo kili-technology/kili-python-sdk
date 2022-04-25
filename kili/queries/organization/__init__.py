@@ -27,7 +27,7 @@ class QueriesOrganization:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -38,7 +38,7 @@ class QueriesOrganization:
             self,
             email: Optional[str] = None,
             organization_id: Optional[str] = None,
-            fields: list = ['id', 'name'],
+            fields: List[str] = ['id', 'name'],
             first: int = 100,
             skip: int = 0,
             disable_tqdm: bool = False,
@@ -48,28 +48,30 @@ class QueriesOrganization:
         Get a generator or a list of organizations that match a set of criteria
 
         Returns all organizations:
-        - with a given organization id
-        - containing a user with a given email
+        with a given organization id
+        containing a user with a given email
 
         Parameters
         ----------
-        - email : str, optional (default = None)
-        - organization_id : str, optional (default = None)
-        - fields : list of string, optional (default = ['id', 'name'])
+        email :
+        organization_id :
+        fields :
             All the fields to request among the possible fields for the organizations.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization)
                 for all possible fields.
-        - first : int, optional (default = 100)
+        first :
             Maximum number of organizations to return
-        - skip : int, optional (default = 0)
+        skip :
             Number of skipped organizations (they are ordered by creation date)
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the organizations is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        dict
+            a result object which contains the query if it was successful, or an error message else.
 
         Examples
         -------
@@ -125,18 +127,19 @@ class QueriesOrganization:
     def count_organizations(
             self,
             email: Optional[str] = None,
-            organization_id: Optional[str] = None):
+            organization_id: Optional[str] = None) -> int:
         """
         Count organizations that match a set of criteria
 
         Parameters
         ----------
-        - email : str, optional (default = None)
-        - organization_id : str, optional (default = None)
+        email :
+        organization_id :
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        dict
+            a result object which contains the query if it was successful, or an error message else.
         """
         variables = {
             'where': {
@@ -159,13 +162,14 @@ class QueriesOrganization:
 
         Parameters
         ----------
-        - organization_id : str
-        - start_date : datetime
-        - end_date : datetime
+        organization_id :
+        start_date :
+        end_date :
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        dict
+            a result object which contains the query if it was successful, or an error message else.
         """
         variables = {
             'where': {

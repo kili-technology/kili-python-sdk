@@ -10,6 +10,7 @@ from typeguard import typechecked
 from ...helpers import Compatible, format_result
 from .queries import (GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION)
 
+
 @dataclass
 class MutationsProjectVersion:
     """
@@ -23,7 +24,7 @@ class MutationsProjectVersion:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -38,14 +39,15 @@ class MutationsProjectVersion:
 
         Parameters
         ----------
-        - project_version_id : str
+        project_version_id :
             Identifier of the project version
-        - content : Optional[str]
+        content :
             Link to download the project version
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful.
+        dict
+            A result object which indicates if the mutation was successful.
 
         Examples
         -------

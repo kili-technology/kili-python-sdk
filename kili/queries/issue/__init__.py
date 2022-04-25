@@ -35,7 +35,7 @@ class QueriesIssue:
     @Compatible(['v1', 'v2'])
     @typechecked
     def issues(self,
-               fields: Optional[list] = [
+               fields: Optional[List[str]] = [
                    'id',
                    'createdAt',
                    'hasBeenSeen',
@@ -53,7 +53,8 @@ class QueriesIssue:
 
         Parameters
         ----------
-        fields : All the fields to request among the possible fields for the assets.
+        fields :
+            All the fields to request among the possible fields for the assets.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.
         first :
             Maximum number of issues to return.
@@ -68,7 +69,7 @@ class QueriesIssue:
 
         Returns
         -------
-        result
+        dict
             a result object which contains the query if it was successful, or an error message else.
 
         Examples
@@ -126,12 +127,11 @@ class QueriesIssue:
 
         Parameters
         ----------
-        project_id :
-            Project ID the issue belongs to.
+        project_id : Project ID the issue belongs to.
 
         Returns
         -------
-        result
+        dict
             the number of issues with the parameters provided
 
         """

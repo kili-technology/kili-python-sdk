@@ -9,10 +9,18 @@ cd docs
 make serve
 ```
 
+## Build website
+
+Builds to webiste. has to be done before to publish it.
+
+```
+make mkdocs build
+```
+
 ## Publish
 
 ```
-make gh-deploy
+make mkdocs gh-deploy --force
 ```
 
 Pushes to the `gh-deploy` branch and republishes as github pages.

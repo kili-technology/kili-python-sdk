@@ -26,7 +26,7 @@ class QueriesProject:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -40,7 +40,7 @@ class QueriesProject:
                  updated_at_gte: Optional[str] = None,
                  updated_at_lte: Optional[str] = None,
                  skip: int = 0,
-                 fields: list = [
+                 fields: List[str] = [
                      'consensusTotCoverage',
                      'id',
                      'inputType',
@@ -61,35 +61,34 @@ class QueriesProject:
 
         Parameters
         ----------
-        - project_id : str, optional (default = None)
+        project_id :
             Select a specific project through its project_id.
-        - search_query : str, optional (default = None)
+        search_query :
             Returned projects with a title or a description matching this string.
-        - should_relaunch_kpi_computation : bool, optional (default = None)
+        should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings.
-        - updated_at_gte : string, optional (default = None)
+        updated_at_gte :
             Returned projects should have a label whose update date is greater or equal
             to this date.
             Formatted string should have format : "YYYY-MM-DD"
-        - updated_at_lte : string, optional (default = None)
+        updated_at_lte :
             Returned projects should have a label whose update date is lower or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
-        - skip : int, optional (default = 0)
+        skip :
             Number of projects to skip (they are ordered by their creation).
-        - fields : list of string, optional (default = ['consensusTotCoverage', 'id',
-            'inputType', 'jsonInterface', 'minConsensusSize', 'roles.id', 'roles.role',
-            'roles.user.email', 'roles.user.id', 'title'])
+        fields :
             All the fields to request among the possible fields for the projects.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project) for all possible fields.
-        - first : int , optional (default = 100)
+        first :
             Maximum number of projects to return.
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the projects is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        a result object which contains the query if it was successful, or an error message else.
 
         Examples
         -------
@@ -159,30 +158,31 @@ class QueriesProject:
             search_query: Optional[str] = None,
             should_relaunch_kpi_computation: Optional[bool] = None,
             updated_at_gte: Optional[str] = None,
-            updated_at_lte: Optional[str] = None):
+            updated_at_lte: Optional[str] = None) -> int:
         """
         Counts the number of projects with a search_query
 
         Parameters
         ----------
-        - project_id : str, optional (default = None)
+        project_id :
             Select a specific project through its project_id
-        - search_query : str, optional (default = None)
+        search_query :
             Returned projects have a title or a description that matches this string.
-        - should_relaunch_kpi_computation : bool, optional (default = None)
+        should_relaunch_kpi_computation : bool, optional (default = None)
             Technical field, added to indicate changes in honeypot or consensus settings
-        - updated_at_gte : string, optional (default = None)
+        updated_at_gte :
             Returned projects should have a label whose update date is greater
             or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
-        - updated_at_lte : string, optional (default = None)
+        updated_at_lte :
             Returned projects should have a label whose update date is lower or equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
 
         Returns
         -------
-        - a positive integer corresponding to the number of results of the query
-            if it was successful, or an error message else.
+        dict
+            a positive integer corresponding to the number of results of the query
+                if it was successful, or an error message else.
         """
         variables = {
             'where': {

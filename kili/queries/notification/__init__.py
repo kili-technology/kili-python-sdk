@@ -26,7 +26,7 @@ class QueriesNotification:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -49,28 +49,28 @@ class QueriesNotification:
 
         Parameters
         ----------
-        - fields : list of string, optional (default = ['createdAt', 'hasBeenSeen',
-                'id', 'message', 'status', 'userID'])
+        fields :
             All the fields to request among the possible fields for the notifications
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.
-        - first : int (default = 100)
+        first :
             Number of notifications to query
-        - has_been_seen : bool, optional (default = None)
+        has_been_seen :
             If the notifications returned should have been seen.
-        - notification_id : str, optional (default = None)
+        notification_id :
             If given, will return the notification which has this id
-        - skip : int (default = 0)
+        skip :
             Number of notifications to skip (they are ordered by their date of creation,
             first to last).
-        - user_id : string, optional (default = None)
+        user_id :
             If given, returns the notifications of a specific user
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the notifications is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        a result object which contains the query if it was successful, or an error message else.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -119,20 +119,21 @@ class QueriesNotification:
     @typechecked
     def count_notifications(self,
                             has_been_seen: Optional[bool] = None,
-                            user_id: Optional[str] = None):
+                            user_id: Optional[str] = None) -> int:
         """
         Count the number of notifications
 
         Parameters
         ----------
-        - has_been_seen : bool, optional (default = None)
+        has_been_seen :
             Filter on notifications that have been seen.
-        - user_id : string, optional (default = None)
+        user_id :
             Filter on the notifications of a specific user
 
         Returns
         -------
-        - the number of notifications with the parameters provided
+        dict
+            the number of notifications with the parameters provided
         """
         variables = {
             'where': {

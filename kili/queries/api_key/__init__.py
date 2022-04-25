@@ -25,7 +25,7 @@ class QueriesApiKey:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -34,7 +34,7 @@ class QueriesApiKey:
     @typechecked
     def api_keys(self, api_key_id: Optional[str] = None, user_id: Optional[str] = None,
                  api_key: Optional[str] = None, skip: int = 0,
-                 fields: list = ['id', 'name', 'createdAt', 'revoked'],
+                 fields: List[str] = ['id', 'name', 'createdAt', 'revoked'],
                  first: Optional[int] = 100,
                  disable_tqdm: bool = False,
                  as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
@@ -45,26 +45,28 @@ class QueriesApiKey:
 
         Parameters
         ----------
-        - api_key_id : str, optional (default = None)
+        api_key_id :
             The unique id of the api key to retrieve.
-        - user_id : str
+        user_id :
             Identifier of the user (you can only query your own api keys).
-        - api_key : str
+        api_key :
             Value of the api key (you can only query your own api keys).
-        - skip : int, optional (default = None)
+        skip :
             Number of assets to skip (they are ordered by their date of creation, first to last).
-        - fields : list of string, optional (default = ['id', 'name', 'createdAt', 'revoked'])
+        fields :
             All the fields to request among the possible fields for the assets.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.
-        - first : int, optional (default = None)
+        first :
             Maximum number of assets to return.
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the API key is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        result:
+            a result object which contains the query if it was successful, or an error message else.
 
         Examples
         -------
@@ -125,22 +127,23 @@ class QueriesApiKey:
     @Compatible(['v2'])
     @typechecked
     def count_api_keys(self, api_key_id: Optional[str] = None, user_id: Optional[str] = None,
-                       api_key: Optional[str] = None):
+                       api_key: Optional[str] = None) -> int:
         """
         Count and return the number of api keys with the given constraints
 
         Parameters
         ----------
-        - api_key_id : str, optional (default = None)
+        api_key_id :
             The unique id of the api key to retrieve.
-        - user_id : str
+        user_id :
             Identifier of the user (you can only query your own api keys).
-        - api_key : str
+        api_key :
             Value of the api key (you can only query your own api keys).
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        dict
+            A result object which contains the query if it was successful, or an error message else.
 
         Examples
         -------

@@ -24,7 +24,7 @@ class MutationsUser:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -41,20 +41,21 @@ class MutationsUser:
 
         Parameters
         ----------
-        - email : str
+        email :
             Email of the new user, used as user's unique identifier.
-        - password : str
+        password :
             On the first sign in, he will use this password and be able to change it.
-        - organization_role : str
+        organization_role :
             One of "ADMIN", "USER".
-        - firstname : str, optional (default = None)
+        firstname :
             First name of the new user.
-        - lastname : str, optional (default = None)
+        lastname :
             Last name of the new user.
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
             'data': {'email': email,
@@ -78,16 +79,17 @@ class MutationsUser:
 
         Parameters
         ----------
-        - email : str
-        - old_password : str
-        - new_password_1 : str
+        email :
+        old_password :
+        new_password_1 :
             The new password.
-        - new_password_2 : str
+        new_password_2 :
             A confirmation field for the new password.
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
             'data': {'oldPassword': old_password,
@@ -109,12 +111,13 @@ class MutationsUser:
 
         Parameters
         ----------
-        - email : str
+        email :
             Email of the person whose password has to be reset.
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {'where': {'email': email}}
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
@@ -134,22 +137,23 @@ class MutationsUser:
 
         Parameters
         ----------
-        - email : str
+        email : str
             The email is the identifier of the user.
-        - firstname : str, optional (default = None)
+        firstname :
             Change the first name of the user.
-        - lastname : str, optional (default = None)
+        lastname :
             Change the last name of the user.
-        - organization_id : str, optional (default = None)
+        organization_id :
             Change the organization the user is related to.
-        - organization_role : str, optional (default = None)
+        organization_role :
             Change the role of the user. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".
-        - activated : bool, optional (default = None)
+        activated :
             In case we want to deactivate a user, but keep it.
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {
             'email': email,

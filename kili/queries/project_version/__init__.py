@@ -26,7 +26,7 @@ class QueriesProjectVersion:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -53,24 +53,25 @@ class QueriesProjectVersion:
 
         Parameters
         ----------
-        - fields : list of string, optional (default = ['createdAt', 'id', 'content',
-            'name', 'project'])
+        fields :
             All the fields to request among the possible fields for the project versions
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectVersions) for all possible fields.
-        - first : int, optionnal (default = 100)
+        first :
             Number of project versions to query
-        - project_id : string (default = '')
+        project_id :
             Filter on Id of project
-        - skip : int, optionnal (default = 0)
+        skip :
             Number of project versions to skip (they are ordered by their date
             of creation, first to last).
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the project versions is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        result:
+            a result object which contains the query if it was successful, or an error message else.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -113,18 +114,19 @@ class QueriesProjectVersion:
 
     @Compatible(['v2'])
     @typechecked
-    def count_project_versions(self, project_id: str):
+    def count_project_versions(self, project_id: str) -> int:
         """
         Count the number of project versions
 
         Parameters
         ----------
-        - project_id :
+        project_id :
             Filter on ID of project
 
         Returns
         -------
-        - the number of project versions with the parameters provided
+        result:
+            the number of project versions with the parameters provided
         """
         variables = {
             'where': {'projectId': project_id},

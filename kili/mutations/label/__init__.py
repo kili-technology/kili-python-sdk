@@ -26,7 +26,7 @@ class MutationsLabel:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -46,41 +46,22 @@ class MutationsLabel:
 
         Parameters
         ----------
-        - project_id : str
-        - external_id_array : list of str
+        project_id :
+            Identifier of the project
+        external_id_array :
             The external identifiers of the assets for which we want to add predictions
-        - model_name_array : list of str
+        model_name_array :
             In case you want to precise from which model the label originated
-        - json_response_array : list of dict
-            The predictions are given here. An example for a polygon can be found here.
-            For other examples,
+        json_response_array :
+            The predictions are given here. For examples,
                 see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
-            ```
-            {
-                "JOB_0": {
-                    "annotations": [
-                        {
-                            "categories": [{ "name": "OBJECT_B", "confidence": 100 }],
-                            "boundingPoly": [
-                                {
-                                    "normalizedVertices": [
-                                        { "x": 0.07, "y": 0.88 },
-                                        { "x": 0.07, "y": 0.32 },
-                                        { "x": 0.94, "y": 0.32 },
-                                        { "x": 0.94, "y": 0.88 }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            }
-            ```
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful, or an error message else.
         """
+
         assert len(external_id_array) == len(
             json_response_array), "IDs list and predictions list should have the same length"
         assert len(external_id_array) == len(
@@ -105,32 +86,36 @@ class MutationsLabel:
 
         Parameters
         ----------
-        - json_response : dict
+        json_response :
             Label is given here
-        - author_id : str, optional (default = auth.user_id)
+        author_id :
             ID of the author of the label
-        - label_asset_external_id : str, optional (default = None)
+        label_asset_external_id :
             External identifier of the asset
             Either provide label_asset_id or label_asset_external_id and project_id
-        - label_asset_id : str, optional (default = None)
+        label_asset_id :
             Identifier of the asset
             Either provide label_asset_id or label_asset_external_id and project_id
-        - project_id : str, optional (default = None)
-            Project ID of the asset
+        project_id :
+            Identifier of the project
             Either provide label_asset_id or label_asset_external_id and project_id
-        - label_type : str, optional (default = 'DEFAULT')
+        label_type :
             Can be one of {'AUTOSAVE', 'DEFAULT', 'PREDICTION', 'REVIEW'}
-        - seconds_to_label : int, optional (default = 0)
-        - skipped : bool, optional (default = False)
+        seconds_to_label :
+            Time to create the label
+        skipped :
+            Describe if the label is skipped or not
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful, or an error message else.
 
         Examples
         -------
         >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
         """
+
         if author_id is None:
             author_id = self.auth.user_id
         label_asset_id = infer_id_from_external_id(
@@ -158,16 +143,19 @@ class MutationsLabel:
 
         Parameters
         ----------
-        - label_id : str
+        label_id :
             Identifier of the label
-        - seconds_to_label : int, optional (default = None)
-        - model_name : str, optional (default = None)
-        - json_response : dict, optional (default = None)
+        seconds_to_label :
+            Time to create the label
+        model_name :
+            Name of the model
+        json_response :
             The label is given here
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful, or an error message else.
 
         Examples
         -------
@@ -197,21 +185,22 @@ class MutationsLabel:
 
         Parameters
         ----------
-        - json_response : dict
+        json_response :
             The JSON response of the honeypot label of the asset
-        - asset_id : str, optional (default = None)
+        asset_id :
             Identifier of the asset
             Either provide asset_id or asset_external_id and project_id
-        - asset_external_id : str, optional (default = None)
+        asset_external_id :
             External identifier of the asset
             Either provide asset_id or asset_external_id and project_id
-        - project_id : str, optional (default = None)
-            External identifier of the asset
+        project_id :
+            Identifier of the project
             Either provide asset_id or asset_external_id and project_id
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful, or an error message else.
         """
         asset_id = infer_id_from_external_id(
             self, asset_id, asset_external_id, project_id)

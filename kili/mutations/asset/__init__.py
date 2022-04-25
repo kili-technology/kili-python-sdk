@@ -71,7 +71,8 @@ class MutationsAsset:
         external_id_array :
             List of external ids given to identify the assets.
             If None, random identifiers are created.
-        is_honeypot_array : List[bool], optional (default = None)
+        is_honeypot_array:
+            Whether to use the asset for honeypot
         status_array :
             By default, all imported assets are set to 'TODO'. Other options:
             'ONGOING', 'LABELED', 'REVIEWED'.
@@ -91,7 +92,7 @@ class MutationsAsset:
 
         Returns
         -------
-        result
+        dict
             a result object which indicates if the mutation was successful, or an error message else.
 
         Examples
@@ -173,7 +174,7 @@ class MutationsAsset:
 
         Returns
         -------
-        result
+        dict
             a result object which indicates if the mutation was successful, or an error message else.
 
         Examples
@@ -266,7 +267,7 @@ class MutationsAsset:
 
         Returns
         -------
-        result
+        dict
             a result object which indicates if the mutation was successful, or an error message else.
         """
         variables = {'where': {'idIn': asset_ids}}
