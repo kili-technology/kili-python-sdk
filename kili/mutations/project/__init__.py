@@ -82,7 +82,6 @@ class MutationsProject:
                                      description: Optional[str] = None,
                                      honeypot_mark: Optional[float] = None,
                                      instructions: Optional[str] = None,
-                                     interface_category: str = 'IV2',
                                      input_type: Optional[str] = None,
                                      json_interface: Optional[dict] = None,
                                      min_consensus_size: Optional[int] = None,
@@ -110,8 +109,6 @@ class MutationsProject:
         - honeypot_mark : float, optional (default = None)
             Should be between 0 and 1
         - instructions : str, optional (default = None)
-        - interface_category : str, optional (default = 'IV2')
-            Always use 'IV2'
         - input_type : str, optional (default = None)
             Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
         - json_interface : dict, optional (default = None)
