@@ -210,6 +210,21 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../api_key/" class="md-nav__link">
+        API Key
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
   
@@ -324,6 +339,126 @@
     <li class="md-nav__item">
       <a href="../issue/" class="md-nav__link">
         Issue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label/" class="md-nav__link">
+        Label
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lock/" class="md-nav__link">
+        Lock
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notification/" class="md-nav__link">
+        Notification
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../organization/" class="md-nav__link">
+        Organization
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project/" class="md-nav__link">
+        Project
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_user/" class="md-nav__link">
+        Project User
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_version/" class="md-nav__link">
+        Project Version
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user/" class="md-nav__link">
+        User
       </a>
     </li>
   
@@ -491,19 +626,19 @@ QueriesAsset        </code>
                <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-               <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;externalId&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;isHoneypot&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;jsonMetadata&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;labels.author.id&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;labels.author.email&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;labels.createdAt&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;labels.id&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;labels.jsonResponse&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;skipped&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;status&#39;</span><span class="p">],</span>
+               <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;externalId&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;isHoneypot&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;jsonMetadata&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;labels.author.id&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;labels.author.email&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;labels.createdAt&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;labels.id&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;labels.jsonResponse&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;skipped&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;status&#39;</span><span class="p">],</span>
                <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">consensus_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">consensus_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -611,7 +746,7 @@ QueriesAsset        </code>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        result</span>
+<span class="sd">        dict</span>
 <span class="sd">            a result object which contains the query if it was successful, else an error message.</span>
 
 <span class="sd">        Examples</span>
@@ -791,7 +926,7 @@ QueriesAsset        </code>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        result</span>
+<span class="sd">        dict</span>
 <span class="sd">            a result object which contains the query if it was successful, or an error message else.</span>
 
 <span class="sd">        Example</span>
@@ -902,7 +1037,7 @@ QueriesAsset        </code>
       </tr>
       <tr>
         <td><code>fields</code></td>
-        <td><code>list</code></td>
+        <td><code>List[str]</code></td>
         <td><p>All the fields to request among the possible fields for the assets.
 See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset">the documentation</a> for all possible fields.</p></td>
         <td><code>[&#39;content&#39;, &#39;createdAt&#39;, &#39;externalId&#39;, &#39;id&#39;, &#39;isHoneypot&#39;, &#39;jsonMetadata&#39;, &#39;labels.author.id&#39;, &#39;labels.author.email&#39;, &#39;labels.createdAt&#39;, &#39;labels.id&#39;, &#39;labels.jsonResponse&#39;, &#39;skipped&#39;, &#39;status&#39;]</code></td>
@@ -1095,19 +1230,19 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
            <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-           <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;externalId&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;isHoneypot&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;jsonMetadata&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;labels.author.id&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;labels.author.email&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;labels.createdAt&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;labels.id&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;labels.jsonResponse&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;skipped&#39;</span><span class="p">,</span>
-                           <span class="s1">&#39;status&#39;</span><span class="p">],</span>
+           <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;externalId&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;isHoneypot&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;jsonMetadata&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;labels.author.id&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;labels.author.email&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;labels.createdAt&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;labels.id&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;labels.jsonResponse&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;skipped&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;status&#39;</span><span class="p">],</span>
            <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">consensus_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">consensus_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1215,7 +1350,7 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result</span>
+<span class="sd">    dict</span>
 <span class="sd">        a result object which contains the query if it was successful, else an error message.</span>
 
 <span class="sd">    Examples</span>
@@ -1593,7 +1728,7 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result</span>
+<span class="sd">    dict</span>
 <span class="sd">        a result object which contains the query if it was successful, or an error message else.</span>
 
 <span class="sd">    Example</span>
@@ -1774,7 +1909,7 @@ MutationsAsset        </code>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        result</span>
+<span class="sd">        dict</span>
 <span class="sd">            a result object which indicates if the mutation was successful, or an error message else.</span>
 
 <span class="sd">        Examples</span>
@@ -1856,7 +1991,7 @@ MutationsAsset        </code>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        result</span>
+<span class="sd">        dict</span>
 <span class="sd">            a result object which indicates if the mutation was successful, or an error message else.</span>
 
 <span class="sd">        Examples</span>
@@ -1949,7 +2084,7 @@ MutationsAsset        </code>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        result</span>
+<span class="sd">        dict</span>
 <span class="sd">            a result object which indicates if the mutation was successful, or an error message else.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">asset_ids</span><span class="p">}}</span>
@@ -2077,7 +2212,7 @@ For video, you can specify a value with key 'processingParameters' to specify th
   </thead>
   <tbody>
     <tr>
-      <td><code>result</code></td>
+      <td><code>dict</code></td>
       <td><p>a result object which indicates if the mutation was successful, or an error message else.</p></td>
     </tr>
   </tbody>
@@ -2140,7 +2275,7 @@ For video, you can specify a value with key 'processingParameters' to specify th
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result</span>
+<span class="sd">    dict</span>
 <span class="sd">        a result object which indicates if the mutation was successful, or an error message else.</span>
 
 <span class="sd">    Examples</span>
@@ -2217,7 +2352,7 @@ For video, you can specify a value with key 'processingParameters' to specify th
   </thead>
   <tbody>
     <tr>
-      <td><code>result</code></td>
+      <td><code>dict</code></td>
       <td><p>a result object which indicates if the mutation was successful, or an error message else.</p></td>
     </tr>
   </tbody>
@@ -2237,7 +2372,7 @@ For video, you can specify a value with key 'processingParameters' to specify th
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result</span>
+<span class="sd">    dict</span>
 <span class="sd">        a result object which indicates if the mutation was successful, or an error message else.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">asset_ids</span><span class="p">}}</span>
@@ -2388,7 +2523,7 @@ and you point Kili to your data by giving the URLs</li>
   </thead>
   <tbody>
     <tr>
-      <td><code>result</code></td>
+      <td><code>dict</code></td>
       <td><p>a result object which indicates if the mutation was successful, or an error message else.</p></td>
     </tr>
   </tbody>
@@ -2450,7 +2585,7 @@ and you point Kili to your data by giving the URLs</li>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result</span>
+<span class="sd">    dict</span>
 <span class="sd">        a result object which indicates if the mutation was successful, or an error message else.</span>
 
 <span class="sd">    Examples</span>
@@ -2567,6 +2702,21 @@ and you point Kili to your data by giving the URLs</li>
         <footer class="md-footer">
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../api_key/" class="md-footer__link md-footer__link--prev" aria-label="Previous: API Key" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              API Key
+            </div>
+          </div>
+        </a>
       
       
         

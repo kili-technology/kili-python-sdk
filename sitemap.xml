@@ -6,12 +6,57 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://kili-technology.github.io/kili-playground/api_key/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://kili-technology.github.io/kili-playground/asset/</loc>
          <lastmod>2022-04-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kili-technology.github.io/kili-playground/issue/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/label/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/lock/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/notification/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/organization/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/project/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/project_user/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/project_version/</loc>
+         <lastmod>2022-04-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kili-technology.github.io/kili-playground/user/</loc>
          <lastmod>2022-04-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
