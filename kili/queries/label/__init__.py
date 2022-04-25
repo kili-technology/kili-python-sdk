@@ -301,19 +301,8 @@ class QueriesLabel:
         projects = QueriesProject(self.auth).projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         project = projects[0]
-        if 'interfaceCategory' not in project:
-            return pd.DataFrame()
+        return pd.DataFrame()
 
-        interface_category = project['interfaceCategory']
-        assets = QueriesAsset(self.auth).assets(
-            project_id=project_id, fields=asset_fields + ['labels.' + field for field in fields])
-        labels = [dict(label, **dict((f'asset_{key}', asset[key]) for key in asset if key != 'labels'))
-                  for asset in assets for label in asset['labels']]
-        labels_df = pd.DataFrame(labels)
-        if 'jsonResponse' in labels_df.columns:
-            labels_df['jsonResponse'] = labels_df['jsonResponse'].apply(
-                lambda json_response: QueriesLabel.parse_json_response(json_response, interface_category))
-        return labels_df
 
     @Compatible(['v1', 'v2'])
     @typechecked

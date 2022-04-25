@@ -52,6 +52,7 @@ class KiliAuth:
                 ' (or None), the former endpoint call will be deprecated on February 15th 2021'
             warnings.warn(message, DeprecationWarning)
         try:
+            print(api_endpoint)
             self.check_versions_match(api_endpoint)
         except:  # pylint: disable=bare-except
             message = 'We could not check the version, there might be a version' \
@@ -93,6 +94,7 @@ class KiliAuth:
         url = api_endpoint.replace('/graphql', '/version')
         response = requests.get(url, verify=self.verify).json()
         version = response['version']
+        print(get_version_without_patch(version), get_version_without_patch(__version__))
         if get_version_without_patch(version) != get_version_without_patch(__version__):
             message = 'Kili Playground version should match with Kili API version.\n' + \
                       f'Please install version: "pip install kili=={version}"'

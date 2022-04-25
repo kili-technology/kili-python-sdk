@@ -155,7 +155,6 @@ class MutationsProject:
             'description': description,
             'honeypotMark': honeypot_mark,
             'instructions': instructions,
-            'interfaceCategory': interface_category,
             'inputType': input_type,
             'jsonInterface': dumps(json_interface) if json_interface is not None else None,
             'minConsensusSize': min_consensus_size,
