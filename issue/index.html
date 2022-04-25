@@ -212,6 +212,21 @@
   
   
     <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../api_key/" class="md-nav__link">
         API Key
       </a>
@@ -577,7 +592,8 @@ QueriesIssue        </code>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        fields : All the fields to request among the possible fields for the assets.</span>
+<span class="sd">        fields :</span>
+<span class="sd">            All the fields to request among the possible fields for the assets.</span>
 <span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.</span>
 <span class="sd">        first :</span>
 <span class="sd">            Maximum number of issues to return.</span>
@@ -650,8 +666,7 @@ QueriesIssue        </code>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Project ID the issue belongs to.</span>
+<span class="sd">        project_id : Project ID the issue belongs to.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -713,7 +728,7 @@ QueriesIssue        </code>
       <tr>
         <td><code>project_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Project ID the issue belongs to.</p></td>
+        <td></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -743,8 +758,7 @@ QueriesIssue        </code>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Project ID the issue belongs to.</span>
+<span class="sd">    project_id : Project ID the issue belongs to.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -798,7 +812,8 @@ QueriesIssue        </code>
       <tr>
         <td><code>fields</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue">the documentation</a> for all possible fields.</p></td>
+        <td><p>All the fields to request among the possible fields for the assets.
+See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue">the documentation</a> for all possible fields.</p></td>
         <td><code>[&#39;id&#39;, &#39;createdAt&#39;, &#39;hasBeenSeen&#39;, &#39;issueNumber&#39;, &#39;status&#39;, &#39;type&#39;]</code></td>
       </tr>
       <tr>
@@ -876,7 +891,8 @@ QueriesIssue        </code>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    fields : All the fields to request among the possible fields for the assets.</span>
+<span class="sd">    fields :</span>
+<span class="sd">        All the fields to request among the possible fields for the assets.</span>
 <span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.</span>
 <span class="sd">    first :</span>
 <span class="sd">        Maximum number of issues to return.</span>
