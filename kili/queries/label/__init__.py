@@ -207,19 +207,7 @@ class QueriesLabel:
 
     # pylint: disable=dangerous-default-value
     @typechecked
-    def export_labels_as_df(self,
-                            project_id: str,
-                            fields: list = [
-                                'author.email',
-                                'author.id',
-                                'createdAt',
-                                'id',
-                                'labelType',
-                                'skipped'
-                            ],
-                            asset_fields: list = [
-                                'externalId'
-                            ]):
+    def export_labels_as_df(self, project_id: str):
         # pylint: disable=line-too-long
         """
         Get the labels of a project as a pandas DataFrame
@@ -241,7 +229,6 @@ class QueriesLabel:
         """
         projects = QueriesProject(self.auth).projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
-        project = projects[0]
         return pd.DataFrame()
 
 
