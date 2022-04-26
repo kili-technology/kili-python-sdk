@@ -26,10 +26,6 @@
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.9647289d.min.css">
         
-          
-          
-          <meta name="theme-color" content="#000000">
-        
       
     
     
@@ -61,7 +57,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="black" data-md-color-accent="deep-purple">
+    <body dir="ltr" data-md-color-scheme="kili" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -780,10 +776,10 @@ QueriesLabel        </code>
 <span class="sd">        created_at :</span>
 <span class="sd">            Returned labels should have a label whose creation date is equal to this date.</span>
 <span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        created_at_gt :</span>
+<span class="sd">        created_at_gte :</span>
 <span class="sd">            Returned labels should have a label whose creation date is greater than this date.</span>
 <span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        created_at_lt :</span>
+<span class="sd">        created_at_lte :</span>
 <span class="sd">            Returned labels should have a label whose creation date is lower than this date.</span>
 <span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
 <span class="sd">        fields :</span>
@@ -791,9 +787,9 @@ QueriesLabel        </code>
 <span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
 <span class="sd">        first :</span>
 <span class="sd">            Maximum number of labels to return.</span>
-<span class="sd">        honeypot_mark_gt :</span>
+<span class="sd">        honeypot_mark_gte :</span>
 <span class="sd">            Returned labels should have a label whose honeypot is greater than this number.</span>
-<span class="sd">        honeypot_mark_lt :</span>
+<span class="sd">        honeypot_mark_lte :</span>
 <span class="sd">            Returned labels should have a label whose honeypot is lower than this number.</span>
 <span class="sd">        id_contains :</span>
 <span class="sd">            Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
@@ -1551,18 +1547,18 @@ Formatted string should have format : "YYYY-MM-DD"</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
-        <td><code>created_at_gt</code></td>
-        <td></td>
+        <td><code>created_at_gte</code></td>
+        <td><code>Optional[str]</code></td>
         <td><p>Returned labels should have a label whose creation date is greater than this date.
 Formatted string should have format : "YYYY-MM-DD"</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
-        <td><code>created_at_lt</code></td>
-        <td></td>
+        <td><code>created_at_lte</code></td>
+        <td><code>Optional[str]</code></td>
         <td><p>Returned labels should have a label whose creation date is lower than this date.
 Formatted string should have format : "YYYY-MM-DD"</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>fields</code></td>
@@ -1578,16 +1574,16 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
         <td><code>None</code></td>
       </tr>
       <tr>
-        <td><code>honeypot_mark_gt</code></td>
-        <td></td>
+        <td><code>honeypot_mark_gte</code></td>
+        <td><code>Optional[float]</code></td>
         <td><p>Returned labels should have a label whose honeypot is greater than this number.</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
-        <td><code>honeypot_mark_lt</code></td>
-        <td></td>
+        <td><code>honeypot_mark_lte</code></td>
+        <td><code>Optional[float]</code></td>
         <td><p>Returned labels should have a label whose honeypot is lower than this number.</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>id_contains</code></td>
@@ -1713,10 +1709,10 @@ to that list, if given.</p></td>
 <span class="sd">    created_at :</span>
 <span class="sd">        Returned labels should have a label whose creation date is equal to this date.</span>
 <span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    created_at_gt :</span>
+<span class="sd">    created_at_gte :</span>
 <span class="sd">        Returned labels should have a label whose creation date is greater than this date.</span>
 <span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    created_at_lt :</span>
+<span class="sd">    created_at_lte :</span>
 <span class="sd">        Returned labels should have a label whose creation date is lower than this date.</span>
 <span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
 <span class="sd">    fields :</span>
@@ -1724,9 +1720,9 @@ to that list, if given.</p></td>
 <span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
 <span class="sd">    first :</span>
 <span class="sd">        Maximum number of labels to return.</span>
-<span class="sd">    honeypot_mark_gt :</span>
+<span class="sd">    honeypot_mark_gte :</span>
 <span class="sd">        Returned labels should have a label whose honeypot is greater than this number.</span>
-<span class="sd">    honeypot_mark_lt :</span>
+<span class="sd">    honeypot_mark_lte :</span>
 <span class="sd">        Returned labels should have a label whose honeypot is lower than this number.</span>
 <span class="sd">    id_contains :</span>
 <span class="sd">        Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
