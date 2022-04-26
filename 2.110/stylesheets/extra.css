@@ -18,5 +18,9 @@ div.doc-contents:not(.first) {
 }
 
 .md-grid {
-  max-width: 70rem;
+  max-width: 72rem;
+}
+
+.md-sidebar--primary {
+  max-width: 180px;
 }
