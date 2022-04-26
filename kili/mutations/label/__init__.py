@@ -109,7 +109,8 @@ class MutationsLabel:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -155,7 +156,8 @@ class MutationsLabel:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -200,7 +202,8 @@ class MutationsLabel:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         asset_id = infer_id_from_external_id(
             self, asset_id, asset_external_id, project_id)

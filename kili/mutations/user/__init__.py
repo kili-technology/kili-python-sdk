@@ -55,7 +55,8 @@ class MutationsUser:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'data': {'email': email,
@@ -73,8 +74,7 @@ class MutationsUser:
     @typechecked
     def update_password(self, email: str, old_password: str, new_password_1: str,
                         new_password_2: str):
-        """
-        Allows you to modify the password that you use to connect to Kili.
+        """Allow to modify the password that you use to connect to Kili. \
         This resolver only works for on-premise installations without Auth0.
 
         Parameters
@@ -89,7 +89,8 @@ class MutationsUser:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'data': {'oldPassword': old_password,
@@ -117,7 +118,8 @@ class MutationsUser:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'where': {'email': email}}
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
@@ -153,7 +155,8 @@ class MutationsUser:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'email': email,

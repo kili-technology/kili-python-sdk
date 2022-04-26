@@ -175,7 +175,8 @@ class MutationsAsset:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         --------
@@ -268,7 +269,8 @@ class MutationsAsset:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'where': {'idIn': asset_ids}}
         result = self.auth.client.execute(

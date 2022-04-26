@@ -43,7 +43,8 @@ class MutationsNotification:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'data': {
@@ -79,7 +80,8 @@ class MutationsNotification:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'id': notification_id,

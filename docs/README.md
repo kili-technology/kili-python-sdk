@@ -42,12 +42,14 @@ The documentation website is hosted on Github Pages based in the files on the br
 To push a new documentation to the website, just deploy the new version on the branch `gh-pages` by adding the `--push` argument to the deploy command:
 
 ```
+git fetch origin gh-pages --depth=1
 mike deploy --push [version: X.XX] [alias]...
 ```
 
 or by updating the alias:
 
 ```
+git fetch origin gh-pages --depth=1
 mike deploy --push --update-aliases [version: X.XX] latest
 ```
 

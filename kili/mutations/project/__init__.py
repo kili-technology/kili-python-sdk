@@ -61,7 +61,8 @@ class MutationsProject:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -140,7 +141,8 @@ class MutationsProject:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -274,7 +276,8 @@ class MutationsProject:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'roleID': role_id,
@@ -299,7 +302,8 @@ class MutationsProject:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'where': {'id': role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
@@ -333,7 +337,8 @@ class MutationsProject:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -387,7 +392,8 @@ class MutationsProject:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'projectID': project_id}
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
@@ -407,7 +413,8 @@ class MutationsProject:
         Returns
         -------
         dict
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'where': {'id': project_id}}
         result = self.auth.client.execute(

@@ -47,7 +47,8 @@ class MutationsOrganization:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'data': {'name': name,
@@ -85,7 +86,8 @@ class MutationsOrganization:
         Returns
         -------
         dict
-            a result object which indicates if the mutation was successful, or an error message else.
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         license_str = None if not license else json.dumps(license)
         variables = {
