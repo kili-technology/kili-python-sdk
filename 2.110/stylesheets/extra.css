@@ -16,3 +16,7 @@ div.doc-contents:not(.first) {
 .md-nav__item .md-nav__link--active {
   color: var(--md-accent-fg-color);
 }
+
+.md-grid {
+  max-width: 70rem;
+}
