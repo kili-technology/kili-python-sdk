@@ -219,7 +219,8 @@ class QueriesLabel:
                             ],
                             asset_fields: list = [
                                 'externalId'
-                            ]):        # pylint: disable=line-too-long
+                            ]):        
+        # pylint: disable=line-too-long
         """
         Get the labels of a project as a pandas DataFrame
 
@@ -241,7 +242,8 @@ class QueriesLabel:
         projects = QueriesProject(self.auth).projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         assets = QueriesAsset(self.auth).assets(
-            project_id=project_id, fields=asset_fields + ['labels.' + field for field in fields])
+            project_id=project_id,
+            fields=asset_fields + ['labels.' + field for field in fields])
         labels = [dict(label, **dict((f'asset_{key}', asset[key]) for key in asset if key != 'labels'))
                   for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)
