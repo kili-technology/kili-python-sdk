@@ -18,7 +18,6 @@ users:
 projects:
   - title: "Classification de mails single-class"
     description: "Classifier des mails suivant une seule catégorie"
-    interface_category: SINGLECLASS_TEXT_CLASSIFICATION
 
 tools:
   - name: "Categories simples"

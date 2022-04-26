@@ -101,7 +101,6 @@ class ProjectWithoutDataset:
     inputType = 'inputType'
     instructions = 'instructions'
     interface = 'interface'
-    interfaceCategory = 'interfaceCategory'
     interfaceCompute = 'interfaceCompute'
     jsonInterface = 'jsonInterface'
     minConsensusSize = 'minConsensusSize'

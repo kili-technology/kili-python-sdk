@@ -204,65 +204,6 @@ class QueriesLabel:
         result = self.auth.client.execute(_gql_labels, payload)
         return format_result('data', result, Label)
 
-    @staticmethod
-    def parse_json_response_for_single_classification(json_response):
-        """
-        Parameters
-        -------
-        - json_response : dict
-            A valid JSON response
-
-        Returns
-        -------
-        - the names of categories from a json_response, for a single-class classification task
-        """
-        categories = QueriesLabel.parse_json_response_for_multi_classification(
-            json_response)
-        if len(categories) == 0:
-            return []
-
-        return categories[0]
-
-    @staticmethod
-    def parse_json_response_for_multi_classification(json_response):
-        """
-        Parameters
-        -------
-        - json_response : dict
-            A valid JSON response
-
-        Returns
-        -------
-        - the names of categories from a json_response, for a multi-class classification task
-        """
-        # pylint: disable=eval-used
-        formatted_json_response = eval(
-            json_response)
-        if 'categories' not in formatted_json_response:
-            return []
-        categories = formatted_json_response['categories']
-        return list(map(lambda category: category['name'], categories))
-
-    @staticmethod
-    def parse_json_response(json_response, interface_category):
-        """
-        Parameters
-        -------
-        - json_response : dict
-            A valid JSON response
-        - interface_category: str
-            A valid interface category
-
-        Returns
-        -------
-        - the names of categories from a json_response
-        """
-        if interface_category == 'SINGLECLASS_TEXT_CLASSIFICATION':
-            return QueriesLabel.parse_json_response_for_single_classification(json_response)
-        if interface_category == 'MULTICLASS_TEXT_CLASSIFICATION':
-            return QueriesLabel.parse_json_response_for_multi_classification(json_response)
-
-        return json_response
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -300,20 +241,14 @@ class QueriesLabel:
         """
         projects = QueriesProject(self.auth).projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
-        project = projects[0]
-        if 'interfaceCategory' not in project:
-            return pd.DataFrame()
-
-        interface_category = project['interfaceCategory']
         assets = QueriesAsset(self.auth).assets(
-            project_id=project_id, fields=asset_fields + ['labels.' + field for field in fields])
+            project_id=project_id,
+            fields=asset_fields + ['labels.' + field for field in fields])
         labels = [dict(label, **dict((f'asset_{key}', asset[key]) for key in asset if key != 'labels'))
                   for asset in assets for label in asset['labels']]
         labels_df = pd.DataFrame(labels)
-        if 'jsonResponse' in labels_df.columns:
-            labels_df['jsonResponse'] = labels_df['jsonResponse'].apply(
-                lambda json_response: QueriesLabel.parse_json_response(json_response, interface_category))
         return labels_df
+
 
     @Compatible(['v1', 'v2'])
     @typechecked

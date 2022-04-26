@@ -44,7 +44,6 @@ class QueriesProject:
                      'consensusTotCoverage',
                      'id',
                      'inputType',
-                     'interfaceCategory',
                      'jsonInterface',
                      'minConsensusSize',
                      'reviewCoverage',
@@ -78,7 +77,7 @@ class QueriesProject:
         - skip : int, optional (default = 0)
             Number of projects to skip (they are ordered by their creation).
         - fields : list of string, optional (default = ['consensusTotCoverage', 'id',
-            'inputType', 'interfaceCategory', 'jsonInterface', 'minConsensusSize', 'roles.id', 'roles.role',
+            'inputType', 'jsonInterface', 'minConsensusSize', 'roles.id', 'roles.role',
             'roles.user.email', 'roles.user.id', 'title'])
             All the fields to request among the possible fields for the projects.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project) for all possible fields.
