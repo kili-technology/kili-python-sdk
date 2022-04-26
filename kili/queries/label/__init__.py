@@ -219,7 +219,7 @@ class QueriesLabel:
                             ],
                             asset_fields: list = [
                                 'externalId'
-                            ]):        
+                            ]):
         # pylint: disable=line-too-long
         """
         Get the labels of a project as a pandas DataFrame
