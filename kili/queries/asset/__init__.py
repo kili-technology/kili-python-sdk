@@ -338,10 +338,6 @@ class QueriesAsset:
             Returned assets should have a label whose update date is lower or equal to this date.
             Formatted string should have format: "YYYY-MM-DD"
 
-        Note
-        ----
-        test note
-
         Returns
         -------
         dict

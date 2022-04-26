@@ -127,7 +127,8 @@ class QueriesIssue:
 
         Parameters
         ----------
-        project_id : Project ID the issue belongs to.
+        project_id :
+            Project ID the issue belongs to.
 
         Returns
         -------

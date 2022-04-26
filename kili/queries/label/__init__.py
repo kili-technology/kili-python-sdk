@@ -80,10 +80,10 @@ class QueriesLabel:
         created_at :
             Returned labels should have a label whose creation date is equal to this date.
             Formatted string should have format : "YYYY-MM-DD"
-        created_at_gt :
+        created_at_gte :
             Returned labels should have a label whose creation date is greater than this date.
             Formatted string should have format : "YYYY-MM-DD"
-        created_at_lt :
+        created_at_lte :
             Returned labels should have a label whose creation date is lower than this date.
             Formatted string should have format : "YYYY-MM-DD"
         fields :
@@ -91,9 +91,9 @@ class QueriesLabel:
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
         first :
             Maximum number of labels to return.
-        honeypot_mark_gt :
+        honeypot_mark_gte :
             Returned labels should have a label whose honeypot is greater than this number.
-        honeypot_mark_lt :
+        honeypot_mark_lte :
             Returned labels should have a label whose honeypot is lower than this number.
         id_contains :
             Filters out labels not belonging to that list. If empty, no filtering is applied.
@@ -282,7 +282,7 @@ class QueriesLabel:
                             ],
                             asset_fields: List[str] = [
                                 'externalId'
-                            ]):
+                            ]) -> pd.DataFrame:
         # pylint: disable=line-too-long
         """
         Get the labels of a project as a pandas DataFrame

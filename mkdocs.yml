@@ -41,13 +41,19 @@ plugins:
               - '!^__' # exclude all members starting with __
       watch:
         - kili
+  - mike:
+      version_selector: true
+
+##versionning
+extra:
+  version:
+    provider: mike
 
 ## Theme and Design
 theme:
   name: 'material'
   palette:
-    primary: black
-    accent: deep purple
+    scheme: kili
   logo: assets/kili_logo.png
   favicon: assets/kili_favicon.ico
   language: en
