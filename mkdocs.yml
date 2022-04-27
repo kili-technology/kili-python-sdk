@@ -1,11 +1,11 @@
 ## Project information
 site_name: Python SDK
 site_description: Kili Python SDK
-site_url: https://kili-technology.github.io/kili-playground/
+site_url: https://python-sdk-docs.kili-technology.com/
 
 ## Repository
 repo_url: https://github.com/kili-technology/kili-playground
-repo_name: SDK on GitHub
+repo_name: Kili Python SDK
 edit_uri: '' #disables edit button
 
 ## Site Architecture
@@ -53,7 +53,7 @@ extra:
     provider: mike
   analytics:
     provider: google
-    property: G-BXDZ528J03
+    property: G-HRVEXSEWL0
 
 ## Theme and Design
 theme:

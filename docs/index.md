@@ -1,12 +1,12 @@
-# Kili's Python SDK
+# Kili Python SDK
 
+<img src="assets/Kili_Core_Illustration_Interact.png" alt="Kili Character" align="right" style="height:400px;"/>
 ## What is Kili?
-
 Kili is a platform that empowers a data-centric approach to Machine Learning through quality training data creation. It provides collaborative data **annotation tools** and APIs that enable quick iterations between reliable dataset building and model training. More info [here](https://kili-technology.com/product/label-annotate).
 
 ## Requirements
 
-- Python >= 3.7
+- `python >= 3.7`
 - Create and copy a Kili API key
 - Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
 
@@ -37,5 +37,3 @@ Note that you can also pass the API key as an argument of the `Kili` initializat
 ```python
 kili = Kili(api_key='MY API KEY')
 ```
-
-Here is a sample of the operations you can do with the Kili client:
