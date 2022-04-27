@@ -62,12 +62,12 @@ class MutationsAsset:
             Identifier of the project
         content_array :
             List of elements added to the assets of the project
-            - For a Text project, the content can be either raw text, or URLs to TEXT assets.
-            - For an Image / PDF project, the content can be either URLs or paths to existing
-                images/pdf on your computer.
-            - For a Video  project, the content must be hosted on a web server,
-                and you point Kili to your data by giving the URLs.
-            Must not be None except if you provide json_content_array.
+                - For a Text project, the content can be either raw text, or URLs to TEXT assets.
+                - For an Image / PDF project, the content can be either URLs or paths to existing
+                    images/pdf on your computer.
+                - For a Video  project, the content must be hosted on a web server,
+                    and you point Kili to your data by giving the URLs.
+                Must not be None except if you provide json_content_array.
         external_id_array :
             List of external ids given to identify the assets.
             If None, random identifiers are created.
@@ -81,8 +81,8 @@ class MutationsAsset:
             For FRAME projects, each element is a sequence of frames, i.e. a
             list of URLs to images or a list of paths to images.
             For TEXT projects, each element is a json_content dict,
-            formatted according to documentation on how to import
-            rich-text assets: https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb
+            formatted according to documentation [on how to import
+            rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)
         json_metadata_array :
             The metadata given to each asset should be stored in a json like dict with keys.
             Add metadata visible on the asset with the following keys: "imageUrl", "text", "url".

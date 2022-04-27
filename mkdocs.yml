@@ -44,6 +44,9 @@ plugins:
   - mike:
       version_selector: true
 
+markdown_extensions:
+  - pymdownx.superfences
+
 ##versionning
 extra:
   version:

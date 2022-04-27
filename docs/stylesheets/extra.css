@@ -5,11 +5,13 @@
   --md-primary-fg-color: #081819;
   --md-primary-bg-color: white;
   --md-accent-fg-color: #ff8200;
+  --md-accent-fg-color--transparent: rgba(176, 144, 239, 0.1);
 }
 
+/* Indentation. */
 div.doc-contents:not(.first) {
   padding-left: 25px;
-  border-left: 4px solid rgba(230, 230, 230);
+  border-left: 0.05rem solid var(--md-default-fg-color--lightest);
   margin-bottom: 80px;
 }
 
@@ -18,9 +20,13 @@ div.doc-contents:not(.first) {
 }
 
 .md-grid {
-  max-width: 72rem;
+  max-width: 1500px;
 }
 
-.md-sidebar--primary {
-  max-width: 180px;
+div.doc-contents:not(.first)
+  > div.md-typeset__scrollwrap
+  > div
+  > table
+  > thead {
+  background-color: var(--md-accent-fg-color--transparent);
 }

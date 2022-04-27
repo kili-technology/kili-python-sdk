@@ -95,7 +95,7 @@ class QueriesAsset:
             Number of assets to skip (they are ordered by their date of creation, first to last).
         fields :
             All the fields to request among the possible fields for the assets.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
         first :
             Maximum number of assets to return.
         consensus_mark_gt :
