@@ -51,6 +51,9 @@ markdown_extensions:
 extra:
   version:
     provider: mike
+  analytics:
+    provider: google
+    property: G-BXDZ528J03
 
 ## Theme and Design
 theme:
