@@ -24,7 +24,7 @@ class MutationsOrganization:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -38,15 +38,17 @@ class MutationsOrganization:
 
         Parameters
         ----------
-        - name : str
-        - address : str
-        - zip_code : str
-        - city : str
-        - country : str
+        name :
+        address :
+        zip_code :
+        city :
+        country :
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'data': {'name': name,
@@ -73,17 +75,19 @@ class MutationsOrganization:
 
         Parameters
         ----------
-        - organization_id : str
-        - name : str
-        - address : str
-        - license : dict
-        - zip_code : str
-        - city : str
-        - country : str
+        organization_id :
+        name :
+        address :
+        license :
+        zip_code :
+        city :
+        country :
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         license_str = None if not license else json.dumps(license)
         variables = {

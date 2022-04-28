@@ -26,7 +26,7 @@ class QueriesUser:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -37,7 +37,7 @@ class QueriesUser:
               api_key: Optional[str] = None,
               email: Optional[str] = None,
               organization_id: Optional[str] = None,
-              fields: list = ['email', 'id', 'firstname', 'lastname'],
+              fields: List[str] = ['email', 'id', 'firstname', 'lastname'],
               first: int = 100,
               skip: int = 0,
               disable_tqdm: bool = False,
@@ -48,30 +48,37 @@ class QueriesUser:
 
         Parameters
         ----------
-        - api_key : str, optional (default = None) Query an user by its API KEY
-        - email : str, optional (default = None)
-        - organization_id : str, optional (default = None)
-        - fields : list of string, optional (default = ['email', 'id', 'firstname', 'lastname'])
+        api_key :
+            Query an user by its API KEY
+        email :
+            Email of the user
+        organization_id :
+            Identifier of the user's organization
+        fields :
             All the fields to request among the possible fields for the users.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
-        - first : int, optional (default = 100)
+        first :
             Maximum number of users to return.
-        - skip : int, optional (default = 0)
+        skip :
             Number of skipped users (they are ordered by creation date)
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the users is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        dict
+            a result object which contains the query if it was successful, or an error message else.
 
         Examples
         -------
-        >>> # List all users in my organization
+        ```
+        # List all users in my organization
         >>> organization = kili.organizations()
         >>> organization_id = organizations[0]['id]
         >>> kili.users(organization_id=organization_id)
+        ```
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -120,17 +127,19 @@ class QueriesUser:
     @Compatible(['v1', 'v2'])
     @typechecked
     def count_users(self,
-                    organization_id: Optional[str] = None):
+                    organization_id: Optional[str] = None) -> int:
         """
         Get user count based on a set of constraints
 
         Parameters
         ----------
-        - organization_id : str, optional (default = None)
+        organization_id :
+            Identifier of the user's organization
 
         Returns
         -------
-        - the count of users whose organization ID matches the given ID
+        dict
+            the count of users whose organization ID matches the given ID
         """
         variables = {
             'where': {

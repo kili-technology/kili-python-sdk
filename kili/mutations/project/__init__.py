@@ -35,7 +35,7 @@ class MutationsProject:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -51,16 +51,18 @@ class MutationsProject:
 
         Parameters
         ----------
-        - project_id : str
-            Id of the project.
-        - user_email : str
+        project_id :
+            Identifier of the project
+        user_email :
             The email of the user. This email is used as the unique identifier of the user.
-        - role : str, optional (default = 'LABELER')
+        role :
             One of {"ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"}.
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -98,47 +100,49 @@ class MutationsProject:
 
         Parameters
         ----------
-        - project_id : str
+        project_id :
             Identifier of the project
-        - consensus_mark : float, optional (default = None)
+        consensus_mark :
             Should be between 0 and 1
-        - consensus_tot_coverage : int, optional (default = None)
+        consensus_tot_coverage :
             Should be between 0 and 100. It is the percentage of the dataset
             that will be annotated several times.
-        - description : str, optional (default = None)
-        - honeypot_mark : float, optional (default = None)
+        description :
+        honeypot_mark :
             Should be between 0 and 1
-        - instructions : str, optional (default = None)
-        - interface_category : str, optional (default = 'IV2')
+        instructions :
+        interface_category :
             Always use 'IV2'
-        - input_type : str, optional (default = None)
+        input_type :
             Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
-        - json_interface : dict, optional (default = None)
+        json_interface :
             The json parameters of the project, see Edit your interface.
-        - min_consensus_size : int, optional (default = None)
+        min_consensus_size :
             Should be between 1 and 10
             Number of people that will annotate the same asset, for consensus computation.
-        - number_of_assets : int, optional (default = None)
+        number_of_assets :
             Defaults to 0
-        - number_of_assets_with_empty_labels : int, optional (default = None)
+        number_of_assets_with_empty_labels :
             Defaults to 0
-        - number_of_remaining_assets : int, optional (default = None)
+        number_of_remaining_assets :
             Defaults to 0
-        - number_of_reviewed_assets : int, optional (default = None)
+        number_of_reviewed_assets :
             Defaults to 0
-        - review_coverage : int, optional (default = None)
+        review_coverage :
             Should be between 0 and 100
             Allow to set the percentage of assets that will be queued in the review interface
-        - should_relaunch_kpi_computation : bool, optional (default = None)
+        should_relaunch_kpi_computation :
             Technical field, added to indicate changes in honeypot or consensus settings
-        - title : str, optional (default = None)
+        title :
             Title of the project
-        - use_honeypot : bool, optional (default = None)
+        use_honeypot :
             Activate / Deactivate the use of honeypot in the project
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -184,13 +188,13 @@ class MutationsProject:
 
         Parameters
         ----------
-        - input_type : str
+        input_type : str
             Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
-        - json_interface: dict
+        json_interface: dict
             The json parameters of the project, see Edit your interface.
-        - title : str
-        - description : str, optional (default = '')
-        - project_type: str, optional (default = None)
+        title : str
+        description :
+        project_type:
             Currently, one of {
                 IMAGE_CLASSIFICATION_SINGLE,
                 IMAGE_CLASSIFICATION_MULTI,
@@ -210,7 +214,8 @@ class MutationsProject:
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful, or an error message else.
 
         Examples
         -------
@@ -234,11 +239,13 @@ class MutationsProject:
 
         Parameters
         ----------
-        - project_id : str
+        project_id :
+            Identifier of the project
 
         Returns
         -------
-        - the public token to provide in the public URL
+        dict
+            The public token to provide in the public URL
         """
         variables = {'where': {'id': project_id}}
         result = self.auth.client.execute(GQL_MAKE_PROJECT_PUBLIC, variables)
@@ -257,18 +264,20 @@ class MutationsProject:
 
         Parameters
         ----------
-        - role_id : str
+        role_id :
             Role identifier of the user. E.g. : 'to-be-deactivated'
-        - project_id : str
+        project_id :
             Identifier of the project
-        - user_id : str
+        user_id :
             The email or identifier of the user with updated role
-        - role : str
+        role :
             The new role. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'roleID': role_id,
@@ -288,11 +297,13 @@ class MutationsProject:
 
         Parameters
         ----------
-        - role_id : str
+        role_id :
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'where': {'id': role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
@@ -311,21 +322,23 @@ class MutationsProject:
 
         Parameters
         ----------
-        - project_user_id : str
-        - consensus_mark : float, optional (default = None)
+        project_user_id : str
+        consensus_mark :
             Should be between 0 and 1.
-        - honeypot_mark : float, optional (default = None)
+        honeypot_mark :
             Should be between 0 and 1.
-        - number_of_labeled_assets : int, optional (default = None)
+        number_of_labeled_assets :
             Number of assets the user labeled in the project.
-        - starred : bool, optional (default = None)
+        starred :
             Whether to star the project in the project list.
-        - total_duration : int, optional (default = None)
+        total_duration :
             Total time the user spent in the project.
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
         -------
@@ -348,17 +361,18 @@ class MutationsProject:
 
     @Compatible()
     @typechecked
-    def force_project_kpis(self, project_id: str):
+    def force_project_kpis(self, project_id: str) -> None:
         """
         Compute KPIs for a project
 
         Parameters
         ----------
-        - project_id : str
+        project_id :
+            Identifier of the project
 
         Returns
         -------
-        - None
+        None
         """
         _ = QueriesAsset(self.auth).assets(project_id=project_id)
         _ = QueriesProject(self.auth).projects(project_id=project_id)
@@ -372,11 +386,14 @@ class MutationsProject:
 
         Parameters
         ----------
-        - project_id : str
+        project_id :
+            Identifier of the project
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'projectID': project_id}
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
@@ -390,11 +407,14 @@ class MutationsProject:
 
         Parameters
         ----------
-        - project_id : str
+        project_id :
+            Identifier of the project
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            A result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'where': {'id': project_id}}
         result = self.auth.client.execute(

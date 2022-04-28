@@ -25,7 +25,7 @@ class QueriesLock:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -34,7 +34,7 @@ class QueriesLock:
     @typechecked
     def locks(self,
               lock_id: Optional[str] = None,
-              fields: list = ['id', 'lockType'],
+              fields: List[str] = ['id', 'lockType'],
               first: int = 100,
               skip: int = 0,
               disable_tqdm: bool = False,
@@ -45,22 +45,24 @@ class QueriesLock:
 
         Parameters
         ----------
-        - lock_id : str, optional (default = None)
+        lock_id :
             The id of the lock to request. If None, all locks are returned
-        - fields : list of string, optional (default = ['id', 'lock_type'])
+        fields :
             All the fields to request among the possible fields for the locks.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks) for all possible fields.
-        - first : int, optional (default = 100)
+        first :
             Maximum number of locks to return.
-        - skip : int, optional (default = 0)
+        skip :
             Number of skipped locks (they are ordered by creation date)
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the API key is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        dict
+            a result object which contains the query if it was successful, or an error message else.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -104,7 +106,7 @@ class QueriesLock:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def count_locks(self: any):
+    def count_locks(self: any) -> int:
         """
         Get the number of locks
 
@@ -113,7 +115,8 @@ class QueriesLock:
 
         Returns
         -------
-        - the number of locks
+        dict
+            the number of locks
         """
         variables = {
             'where': {

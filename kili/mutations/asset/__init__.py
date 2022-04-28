@@ -32,7 +32,7 @@ class MutationsAsset:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -58,31 +58,32 @@ class MutationsAsset:
 
         Parameters
         ----------
-        - project_id : str
+        project_id :
             Identifier of the project
-        - content_array : List[str], optional (default = None)
+        content_array :
             List of elements added to the assets of the project
-            - For a Text project, the content can be either raw text, or URLs to TEXT assets.
-            - For an Image / PDF project, the content can be either URLs or paths to existing
-                images/pdf on your computer.
-            - For a Video  project, the content must be hosted on a web server,
-                and you point Kili to your data by giving the URLs.
-            Must not be None except if you provide json_content_array.
-        - external_id_array : List[str], optional (default = None)
+                - For a Text project, the content can be either raw text, or URLs to TEXT assets.
+                - For an Image / PDF project, the content can be either URLs or paths to existing
+                    images/pdf on your computer.
+                - For a Video  project, the content must be hosted on a web server,
+                    and you point Kili to your data by giving the URLs.
+                Must not be None except if you provide json_content_array.
+        external_id_array :
             List of external ids given to identify the assets.
             If None, random identifiers are created.
-        - is_honeypot_array : List[bool], optional (default = None)
-        - status_array : List[str], optional (default = None)
+        is_honeypot_array:
+            Whether to use the asset for honeypot
+        status_array :
             By default, all imported assets are set to 'TODO'. Other options:
             'ONGOING', 'LABELED', 'REVIEWED'.
-        - json_content_array : List[List[str]], optional (default = None)
+        json_content_array :
             Useful for 'FRAME' or 'TEXT' projects only.
             For FRAME projects, each element is a sequence of frames, i.e. a
             list of URLs to images or a list of paths to images.
             For TEXT projects, each element is a json_content dict,
-            formatted according to documentation on how to import
-            rich-text assets: https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb
-        - json_metadata_array : List[Dict] , optional (default = None)
+            formatted according to documentation [on how to import
+            rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)
+        json_metadata_array :
             The metadata given to each asset should be stored in a json like dict with keys.
             Add metadata visible on the asset with the following keys: "imageUrl", "text", "url".
                 Example: json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
@@ -91,10 +92,11 @@ class MutationsAsset:
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful, or an error message else.
 
         Examples
-        -------
+        --------
         >>> kili.append_many_to_dataset(
                 project_id=project_id,
                 content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
@@ -104,12 +106,12 @@ class MutationsAsset:
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
         data, request = process_append_many_to_dataset_parameters(input_type,
-                                                         content_array,
-                                                         external_id_array,
-                                                         is_honeypot_array,
-                                                         status_array,
-                                                         json_content_array,
-                                                         json_metadata_array)
+                                                                  content_array,
+                                                                  external_id_array,
+                                                                  is_honeypot_array,
+                                                                  status_array,
+                                                                  json_content_array,
+                                                                  json_metadata_array)
         variables = {
             'data': data,
             'where': {'id': project_id}
@@ -137,46 +139,48 @@ class MutationsAsset:
 
         Parameters
         ----------
-        - asset_ids : List[str]
+        asset_ids : List[str]
             The asset IDs to modify
-        - external_ids : List[str], optional (default = None)
+        external_ids :
             Change the external id of the assets
-        - priorities : List[int], optional (default = None)
+        priorities : List[int], optional (default = None)
             You can change the priority of the assets
             By default, all assets have a priority of 0.
-        - json_metadatas : List[dict] , optional (default = None)
+        json_metadatas :
             The metadata given to an asset should be stored in a json like dict with keys
             "imageUrl", "text", "url".
             json_metadata = {'imageUrl': '','text': '','url': ''}
-        - consensus_marks : List[float] (default = None)
+        consensus_marks :
             Should be between 0 and 1
-        - honeypot_marks : List[float] (default = None)
+        honeypot_marks :
             Should be between 0 and 1
-        - to_be_labeled_by_array : List[List[str]] (default = None)
+        to_be_labeled_by_array :
             If given, each element of the list should contain the emails of
             the labelers authorized to label the asset.
-        - contents : List[str] (default = None)
+        contents :
             - For a NLP project, the content can be directly in text format
             - For an Image / Video / Pdf project, the content must be hosted on a web server,
             and you point Kili to your data by giving the URLs
-        - json_contents : List[str] (default = None)
+        json_contents :
             - For a NLP project, the json_content is a a text formatted using RichText
             - For a Video project, the json_content is a json containg urls pointing
                 to each frame of the video.
-        - status_array : List[str] (default = None)
+        status_array :
             Each element should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
-        - is_used_for_consensus_array : List[bool] (default = None)
+        is_used_for_consensus_array :
             Whether to use the asset to compute consensus kpis or not
-        - is_honeypot_array : List[bool] (default = None)
+        is_honeypot_array :
             Whether to use the asset for honeypot
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful,
+                or an error message else.
 
         Examples
-        -------
-        kili.update_properties_in_assets(
+        --------
+        >>> kili.update_properties_in_assets(
                 asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 consensus_marks=[1, 0.7],
                 contents=[None, 'https://to/second/asset.png'],
@@ -259,12 +263,14 @@ class MutationsAsset:
 
         Parameters
         ----------
-        - asset_ids : list of str
+        asset_ids :
             The list of identifiers of the assets to delete.
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {'where': {'idIn': asset_ids}}
         result = self.auth.client.execute(

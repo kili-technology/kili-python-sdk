@@ -21,7 +21,7 @@ class MutationsNotification:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -35,14 +35,16 @@ class MutationsNotification:
 
         Parameters
         ----------
-        - message : str
-        - status : str
-        - url : str
-        - user_id : str
+        message :
+        status :
+        url :
+        user_id :
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'data': {
@@ -70,14 +72,16 @@ class MutationsNotification:
 
         Parameters
         ----------
-        - notification_id : str
-        - hasBeenSeen: bool
-        - status : str
-        - url : str
+        notification_id :
+        hasBeenSeen:
+        status :
+        url :
 
         Returns
         -------
-        - a result object which indicates if the mutation was successful, or an error message else.
+        dict
+            a result object which indicates if the mutation was successful,
+                or an error message else.
         """
         variables = {
             'id': notification_id,

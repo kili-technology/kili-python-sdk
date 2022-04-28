@@ -26,7 +26,7 @@ class QueriesProjectUser:
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -38,8 +38,8 @@ class QueriesProjectUser:
                       id: Optional[str] = None,  # pylint: disable=redefined-builtin
                       organization_id: Optional[str] = None,
                       project_id: Optional[str] = None,
-                      fields: list = ['activated', 'id', 'role',
-                                      'starred', 'user.email', 'user.id'],
+                      fields: List[str] = ['activated', 'id', 'role',
+                                           'starred', 'user.email', 'user.id'],
                       first: int = 100,
                       skip: int = 0,
                       disable_tqdm: bool = False,
@@ -51,29 +51,35 @@ class QueriesProjectUser:
 
         Parameters
         ----------
-        - email : str, optional (default = None)
-        - organization_id : str, optional (default = None)
-        - project_id : str, optional (default = None)
-        - fields : list, optional (default = ['activated', 'id', 'role', 'starred',
-            'user.email', 'user.id'])
+        email :
+            Email of the user
+        organization_id :
+            Identifier of the user's organization
+        project_id :
+            Identifier of the project
+        fields :
             All the fields to request among the possible fields for the projectUsers.
             See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
-        - first : int, optional (default = 100)
+        first :
             Maximum number of users to return
-        - skip : int, optional (default = 0)
+        skip :
             Number of project users to skip
-        - disable_tqdm : bool, (default = False)
-        - as_generator: bool, (default = False)
+        disable_tqdm :
+            If True, the progress bar will be disabled
+        as_generator:
             If True, a generator on the project users is returned.
 
         Returns
         -------
-        - a result object which contains the query if it was successful, or an error message else.
+        dict
+            a result object which contains the query if it was successful, or an error message else.
 
         Examples
         -------
-        >>> # Retrieve consensus marks of all users in project
+        ```
+        # Retrieve consensus marks of all users in project
         >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
+        ```
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -134,20 +140,24 @@ class QueriesProjectUser:
             email: Optional[str] = None,
             id: Optional[str] = None,  # pylint: disable=redefined-builtin
             organization_id: Optional[str] = None,
-            project_id: Optional[str] = None):
+            project_id: Optional[str] = None) -> int:
         """
         Counts the number of projects and their users that match a set of criteria
 
         Parameters
         ----------
-        - email : str, optional (default = None)
-        - organization_id : str, optional (default = None)
-        - project_id : str, optional (default = None)
+        email :
+            Email of the user
+        organization_id :
+            Identifier of the user's organization
+        project_id :
+            Identifier of the project
 
         Returns
         -------
-        - a positive integer corresponding to the number of results of the query
-            if it was successful, or an error message else.
+        dict
+            a positive integer corresponding to the number of results of the query
+                if it was successful, or an error message else.
         """
         variables = {
             'where': {

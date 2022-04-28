@@ -7,7 +7,8 @@ from ...helpers import Compatible, deprecate, format_result
 
 from .queries import GQL_APPEND_TO_API_KEYS
 
-class MutationsApiKey: # pylint: disable=too-few-public-methods
+
+class MutationsApiKey:  # pylint: disable=too-few-public-methods
     """
     Set of User mutations
     """
@@ -19,7 +20,7 @@ class MutationsApiKey: # pylint: disable=too-few-public-methods
 
         Parameters
         ----------
-        - auth : KiliAuth object
+        auth : KiliAuth object
         """
         self.auth = auth
 
@@ -31,8 +32,10 @@ class MutationsApiKey: # pylint: disable=too-few-public-methods
 
         Parameters
         ----------
-        - api_key : str, a new api key to connect with
-        - name : str, a name used to describe the api key.
+        api_key :
+            A new api key to connect with
+        name :
+            A name used to describe the api key.
         """
         variables = {
             'data': {'key': api_key,
