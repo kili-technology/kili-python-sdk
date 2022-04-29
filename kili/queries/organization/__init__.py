@@ -78,10 +78,6 @@ class QueriesOrganization:
         >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
         [{'users': [{'email': 'john@doe.com'}]}]
         """
-        if as_generator is False:
-            warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
-                          "If you want to force the query return to be a list, you can already call this method with the argument as_generator=False",
-                          DeprecationWarning)
 
         count_args = {"email": email, "organization_id": organization_id}
         disable_tqdm = disable_tqdm or as_generator
