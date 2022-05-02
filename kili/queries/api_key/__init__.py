@@ -40,18 +40,22 @@ class QueriesApiKey:
         """Get a generator or a list of API keys that match a set of constraints.
 
         Args:
-            api_key_id: The unique id of the api key to retrieve.
-            user_id: Identifier of the user (you can only query your own api keys).
-            api_key: Value of the api key (you can only query your own api keys).
+            api_key_id: Identifier of the API key to retrieve.
+            user_id: Identifier of the user.
+            api_key: Value of the API key.
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.
-            first: Maximum number of assets to return.
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the API key is returned.
+            first: Maximum number of API keys to return.
+            disable_tqdm: If `True`, the progress bar will be disabled.
+            as_generator: If `True`, a generator on the API key is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
+
+        !!! info
+            You can only query your own API keys
 
         Examples:
             >>> kili.api_keys(user_id=user_id)
@@ -115,12 +119,13 @@ class QueriesApiKey:
         """Count and return the number of api keys with the given constraints.
 
         Args:
-            api_key_id: The unique id of the api key to retrieve.
-            user_id: Identifier of the user (you can only query your own api keys).
-            api_key: Value of the api key (you can only query your own api keys).
+            api_key_id: Identifier of the API key to retrieve.
+            user_id: Identifier of the user.
+            api_key: Value of the api key.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
 
         Examples:
             >>> kili.count_api_keys(user_id=user_id)

@@ -46,11 +46,12 @@ class QueriesLock:
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks) for all possible fields.
             first: Maximum number of locks to return.
             skip: Number of skipped locks (they are ordered by creation date)
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the API key is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the API key is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"

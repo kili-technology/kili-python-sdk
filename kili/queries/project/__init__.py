@@ -59,22 +59,24 @@ class QueriesProject:
             should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot or consensus settings.
             updated_at_gte: Returned projects should have a label whose update date is greater or equal
                 to this date.
-                Formatted string should have format : "YYYY-MM-DD"
             updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.
-                Formatted string should have format : "YYYY-MM-DD"
             skip: Number of projects to skip (they are ordered by their creation).
             fields: All the fields to request among the possible fields for the projects.
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project) for all possible fields.
             first: Maximum number of projects to return.
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the projects is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the projects is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
 
         Examples:
             >>> # List all my projects
             >>> kili.projects()
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
         """
 
         if as_generator is False:
@@ -146,16 +148,17 @@ class QueriesProject:
         Args:
             project_id: Select a specific project through its project_id.
             search_query: Returned projects have a title or a description that matches this string.
-            should_relaunch_kpi_computation : bool, optional (default = None)
-                Technical field, added to indicate changes in honeypot or consensus settings
+            should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot
+                or consensus settings
             updated_at_gte: Returned projects should have a label whose update date is greater
                 or equal to this date.
-                Formatted string should have format : "YYYY-MM-DD"
             updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.
-                Formatted string should have format : "YYYY-MM-DD"
 
         Returns:
             The number of projects with the parameters provided
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
         """
         variables = {
             'where': {

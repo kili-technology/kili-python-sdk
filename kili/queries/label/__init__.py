@@ -63,15 +63,12 @@ class QueriesLabel:
         Args:
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
-                Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             author_in: Returned labels should have a label whose status belongs to that list, if given.
             created_at: Returned labels should have a label whose creation date is equal to this date.
-                Formatted string should have format : "YYYY-MM-DD"
             created_at_gte: Returned labels should have a label whose creation date is greater than this date.
-                Formatted string should have format : "YYYY-MM-DD"
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
-                Formatted string should have format : "YYYY-MM-DD"
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
             first: Maximum number of labels to return.
@@ -86,8 +83,8 @@ class QueriesLabel:
             skipped: Returned labels should have a label which is skipped
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the labels is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the labels is returned.
 
         Returns:
             A result object which contains the query if it was successful, else an error message.
@@ -95,6 +92,9 @@ class QueriesLabel:
         Examples:
             >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
             >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -235,15 +235,12 @@ class QueriesLabel:
         Args:
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
-                Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             author_in: Returned labels should have a label whose status belongs to that list, if given.
             created_at: Returned labels should have a label whose creation date is equal to this date.
-                Formatted string should have format : "YYYY-MM-DD"
             created_at_gte: Returned labels should have a label whose creation date is greater than this date.
-                Formatted string should have format : "YYYY-MM-DD"
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
-                Formatted string should have format : "YYYY-MM-DD"
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
             json_response_contains: Returned labels should have a substring of the jsonResponse that
@@ -257,6 +254,9 @@ class QueriesLabel:
 
         Returns:
             The number of labels with the parameters provided
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
         """
         variables = {
             'where': {

@@ -42,7 +42,7 @@ class GraphQLClient:
 
         Args:
             token
-            headername: by default "Authorization"
+            headername:
         """
         self.token = token
         self.headername = headername

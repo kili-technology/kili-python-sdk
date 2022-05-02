@@ -54,11 +54,12 @@ class QueriesOrganization:
                     for all possible fields.
             first: Maximum number of organizations to return.
             Skip: Number of skipped organizations (they are ordered by creation date)
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the organizations is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the organizations is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
 
         Examples:
             >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
@@ -121,7 +122,8 @@ class QueriesOrganization:
             organization_id: Identifier of the organization
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
         """
         variables = {
             'where': {
@@ -147,7 +149,8 @@ class QueriesOrganization:
             end_date: End date of the metrics computation
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
         """
         variables = {
             'where': {

@@ -1,5 +1,6 @@
 # Asset module
 
-::: kili.queries.asset.__init__ 
-
-::: kili.mutations.asset.__init__
+## Queries
+::: kili.queries.asset.__init__.QueriesAsset
+## Mutations
+::: kili.mutations.asset.__init__.MutationsAsset

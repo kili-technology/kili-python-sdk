@@ -50,11 +50,12 @@ class QueriesNotification:
             skip: Number of notifications to skip (they are ordered by their date of creation,
                 first to last).
             user_id: If given, returns the notifications of a specific user
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the notifications is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the notifications is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"

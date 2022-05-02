@@ -40,18 +40,19 @@ class QueriesUser:
         """Get a generator or a list of users given a set of criteria
 
         Args:
-        api_key: Query an user by its API Key
-        email: Email of the user
-        organization_id: Identifier of the user's organization
-        fields: All the fields to request among the possible fields for the users.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
-        first: Maximum number of users to return
-        skip: Number of skipped users (they are ordered by creation date)
-        disable_tqdm: If True, the progress bar will be disabled
-        as_generator: If True, a generator on the users is returned.
+            api_key: Query an user by its API Key
+            email: Email of the user
+            organization_id: Identifier of the user's organization
+            fields: All the fields to request among the possible fields for the users.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
+            first: Maximum number of users to return
+            skip: Number of skipped users (they are ordered by creation date)
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the users is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
 
         Examples:
             ```

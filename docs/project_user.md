@@ -1,3 +1,4 @@
 # Project User module
 
-::: kili.queries.project_user.__init__ 
+## Queries
+::: kili.queries.project_user.__init__.QueriesProjectUser

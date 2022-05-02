@@ -51,11 +51,12 @@ class QueriesIssue:
             first: Maximum number of issues to return.
             project_id: Project ID the issue belongs to.
             skip: Number of issues to skip (they are ordered by their date of creation, first to last).
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the issues is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the issues is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
 
         Examples:
             ```

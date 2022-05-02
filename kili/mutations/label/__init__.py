@@ -47,7 +47,7 @@ class MutationsLabel:
                 see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
 
         Returns:
-            A result object which indicates if the mutation was successful, or an error message else.
+            A result object which indicates if the mutation was successful, or an error message.
         """
         assert len(external_id_array) == len(
             json_response_array), "IDs list and predictions list should have the same length"

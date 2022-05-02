@@ -51,11 +51,12 @@ class QueriesProjectUser:
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
             first: Maximum number of users to return
             skip: Number of project users to skip
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the project users is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the project users is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
 
         Examples:
             ```

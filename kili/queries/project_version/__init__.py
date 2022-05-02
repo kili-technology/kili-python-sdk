@@ -52,11 +52,12 @@ class QueriesProjectVersion:
             project_id: Filter on Id of project
             skip: Number of project versions to skip (they are ordered by their date
                 of creation, first to last).
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the project versions is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the project versions is returned.
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"

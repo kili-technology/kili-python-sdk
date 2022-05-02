@@ -79,57 +79,61 @@ class QueriesAsset:
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
         Args:
-            asset_id: The unique id of the asset to retrieve.
-            asset_id_in: A list of the ids of the assets to retrieve.
+            asset_id: Identifier of the asset to retrieve.
+            asset_id_in: A list of the IDs of the assets to retrieve.
             project_id: Identifier of the project.
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
-                All the fields to request among the possible fields for the assets.
+            fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
             first: Maximum number of assets to return.
             consensus_mark_gt: Minimum amount of consensus for the asset.
             consensus_mark_lt: Maximum amount of consensus for the asset.
             external_id_contains: Returned assets have an external id that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
-                - metadata_where = {key1: "value1"} to filter on assets whose metadata
-                    have key "key1" with value "value1"
-                - metadata_where = {key1: ["value1", "value2"]} to filter on assets whose metadata
-                    have key "key1" with value "value1" or value "value2
-                - metadata_where = {key2: [2, 10]} to filter on assets whose metadata
-                    have key "key2" with a value between 2 and 10.
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
             honeypot_mark_lt : Maximum amount of honeypot for the asset.
             status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices: {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+                Possible choices: `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose status belongs to that list, if given.
             label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.
             label_consensus_mark_lt: Returned assets should have a label whose consensus is lower than this number.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
-                Formatted string should have format: "YYYY-MM-DD"
             label_created_at_gt: Returned assets should have a label whose creation date is greater than this date.
-                Formatted string should have format: "YYYY-MM-DD"
             label_created_at_lt: Returned assets should have a label whose creation date is lower than this date.
-                Formatted string should have format: "YYYY-MM-DD"
             label_json_response_contains: Returned assets should have a substring of the label's jsonResponse
                     that belongs to that list, if given.
             label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number
             label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number
             skipped: Returned assets should be skipped
             updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.
-                Formatted string should have format: "YYYY-MM-DD"
             updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
-                Formatted string should have format: "YYYY-MM-DD"
             format: If equal to 'pandas', returns a pandas DataFrame
-            disable_tqdm: If True, the progress bar will be disabled
-            as_generator: If True, a generator on the assets is returned.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the assets is returned.
 
         Returns:
-            A result object which contains the query if it was successful, else an error message.
+            A result object which contains the query if it was successful,
+                or an error message.
 
-        Examples:
+        Example:
+            ```
             >>> kili.assets(project_id=project_id) # returns the assets list of the project
             >>> kili.assets(asset_id=asset_id)
             >>> kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets
+            ```
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
+
+        !!! example "How to filter based on Metadata"
+                    - `metadata_where = {key1: "value1"}` to filter on assets whose metadata
+                        have key "key1" with value "value1"
+                    - `metadata_where = {key1: ["value1", "value2"]}` to filter on assets whose metadata
+                        have key "key1" with value "value1" or value "value2
+                    - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
+                        have key "key2" with a value between 2 and 10.
+
         """
         if format == "pandas" and as_generator:
             raise ValueError(
@@ -243,14 +247,8 @@ class QueriesAsset:
             project_id: Identifier of the project
             external_id_contains: Returned assets should have an external id that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
-                - metadata_where = {key1: "value1"} to filter on assets whose metadata have key "key1"
-                    with value "value1"
-                - metadata_where = {key1: ["value1", "value2"]} to filter on assets whose metadata
-                    have key "key1" with value "value1" or value "value2
-                - metadata_where = {key2: [2, 10]} to filter on assets whose metadata have key "key2"
-                    with a value between 2 and 10.
             status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
             consensus_mark_gt:Minimum amount of consensus for the asset.
             consensus_mark_lt: Maximum amount of consensus for the asset.
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
@@ -260,29 +258,36 @@ class QueriesAsset:
             label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.
             label_consensus_mark_lt: Returned assets should have a label whose consensus is lower than this number.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
-                Formatted string should have format: "YYYY-MM-DD"
             label_created_at_gt: Returned assets should have a label whose creation date is greater than this date.
-                Formatted string should have format: "YYYY-MM-DD"
             label_created_at_lt: Returned assets should have a label whose creation date is lower than this date.
-                Formatted string should have format: "YYYY-MM-DD"
             label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number.
             label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number.
             label_json_response_contains: Returned assets should have a substring of the label's jsonResponse that belongs
                 to that list, if given.
             skipped: Returned assets should be skipped
             updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.
-                Formatted string should have format: "YYYY-MM-DD"
             updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
-                Formatted string should have format: "YYYY-MM-DD"
 
         Returns:
-            A result object which contains the query if it was successful, or an error message else.
+            A result object which contains the query if it was successful,
+                or an error message.
 
         Examples:
             >>> kili.count_assets(project_id=project_id)
             250
             >>> kili.count_assets(asset_id=asset_id)
             1
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
+
+        !!! example "How to filter based on Metadata"
+                    - `metadata_where = {key1: "value1"}` to filter on assets whose metadata
+                        have key "key1" with value "value1"
+                    - `metadata_where = {key1: ["value1", "value2"]}` to filter on assets whose metadata
+                        have key "key1" with value "value1" or value "value2
+                    - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
+                        have key "key2" with a value between 2 and 10.
         """
         variables = {
             'where': {
