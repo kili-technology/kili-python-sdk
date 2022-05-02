@@ -1,6 +1,4 @@
-"""
-Organization mutations
-"""
+"""Organization mutations."""
 
 import json
 from typing import Optional
@@ -13,41 +11,34 @@ from .queries import (GQL_CREATE_ORGANIZATION,
 
 
 class MutationsOrganization:
-    """
-    Set of Organization mutations
-    """
+    """Set of Organization mutations."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initializes the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str):
-        """
-        Create an organization
+    def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str) -> dict:
+        """Create an organization.
 
         Each user must be linked to an organization
 
-        Parameters
-        ----------
-        name :
-        address :
-        zip_code :
-        city :
-        country :
+        Args:
+            name :
+            address :
+            zip_code :
+            city :
+            country :
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
+        Returns:
+            A result object which indicates if the mutation was successful,
                 or an error message else.
         """
         variables = {
@@ -69,24 +60,20 @@ class MutationsOrganization:
                                           zip_code: Optional[str] = None,
                                           city: Optional[str] = None,
                                           country: Optional[str] = None,
-                                          license: Optional[dict] = None):  # pylint: disable=redefined-builtin
-        """
-        Modify an organization
+                                          license: Optional[dict] = None) -> dict:  # pylint: disable=redefined-builtin
+        """Modify an organization.
 
-        Parameters
-        ----------
-        organization_id :
-        name :
-        address :
-        license :
-        zip_code :
-        city :
-        country :
+        Args:
+            organization_id :
+            name :
+            address :
+            license :
+            zip_code :
+            city :
+            country :
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
+        Returns:
+            A result object which indicates if the mutation was successful,
                 or an error message else.
         """
         license_str = None if not license else json.dumps(license)

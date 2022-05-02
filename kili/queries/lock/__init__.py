@@ -20,12 +20,10 @@ class QueriesLock:
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -40,29 +38,19 @@ class QueriesLock:
               disable_tqdm: bool = False,
               as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Gets a generator or a list of locks respecting a set of criteria
+        """Get a generator or a list of locks respecting a set of criteria.
 
-        Parameters
-        ----------
-        lock_id :
-            The id of the lock to request. If None, all locks are returned
-        fields :
-            All the fields to request among the possible fields for the locks.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks) for all possible fields.
-        first :
-            Maximum number of locks to return.
-        skip :
-            Number of skipped locks (they are ordered by creation date)
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the API key is returned.
+        Args:
+            lock_id: The id of the lock to request. If None, all locks are returned
+            fields: All the fields to request among the possible fields for the locks.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks) for all possible fields.
+            first: Maximum number of locks to return.
+            skip: Number of skipped locks (they are ordered by creation date)
+            disable_tqdm: If True, the progress bar will be disabled
+            as_generator: If True, a generator on the API key is returned.
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful, or an error message else.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -107,16 +95,12 @@ class QueriesLock:
     @Compatible(['v1', 'v2'])
     @typechecked
     def count_locks(self: any) -> int:
-        """
-        Get the number of locks
+        """Get the number of locks
 
-        Parameters
-        ----------
+        Args:
 
-        Returns
-        -------
-        dict
-            the number of locks
+        Returns:
+            The number of locks
         """
         variables = {
             'where': {

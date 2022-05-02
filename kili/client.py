@@ -57,25 +57,19 @@ class Kili(  # pylint: disable=too-many-ancestors
                  api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
                  verify=True):
         """
-        Parameters
-        ----------
-        api_key:
-            User API key generated from https://cloud.kili-technology.com/label/my-account/api-key
+        Args:
+            api_key: User API key generated from https://cloud.kili-technology.com/label/my-account/api-key
+            api_endpoint: Recipient of the HTTP operation
+            verify: Verify certificate. Set to False on local deployment without SSL.
 
-        api_endpoint : str
-            Recipient of the HTTP operation
+        Returns:
+            Object container your API session
 
-        verify : bool
-            Verify certificate. Set to False on local deployment without SSL.
-
-        Returns
-        -------
-        Kili object
-        Object container your API session.
-        Then, list:
-        - your assets with: kili.assets()
-        - your labels with: kili.labels()
-        - your projects with: kili.projects()
+        Examples:
+            list:
+                - your assets with: `kili.assets()`
+                - your labels with: `kili.labels()`
+                - your projects with: `kili.projects()`
         """
         self.auth = KiliAuth(
             api_key=api_key, api_endpoint=api_endpoint, verify=verify)

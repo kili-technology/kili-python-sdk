@@ -4,6 +4,7 @@ This script defines object-relational mapping helpers to ease
 """
 from dataclasses import dataclass
 
+
 class DictClass(dict):
     """
     A python class that acts like dict
@@ -12,6 +13,7 @@ class DictClass(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__dict__ = self
+
 
 @dataclass
 class AnnotationFormat:
@@ -45,6 +47,7 @@ class JobMLTask:
     SpeechToText = 'SPEECH_TO_TEXT'
     Transcription = 'TRANSCRIPTION'
 
+
 @dataclass
 class JobTool:
     # pylint: disable=invalid-name
@@ -64,9 +67,8 @@ def get_polygon(annotation):
     """
     Extracts a polygon from an annotation
 
-    Parameters
-    ----------
-    - annotation : Kili annotation
+    Args:
+        annotation : Kili annotation
     """
     try:
         return annotation['boundingPoly'][0]['normalizedVertices']
@@ -78,9 +80,8 @@ def get_category(annotation):
     """
     Extracts a category from an annotation
 
-    Parameters
-    ----------
-    - annotation : Kili annotation
+    Args:
+        annotation : Kili annotation
     """
     try:
         return annotation['categories'][0]['name']
@@ -92,9 +93,8 @@ def get_named_entity(annotation):
     """
     Extracts a named entity from an annotation
 
-    Parameters
-    ----------
-    - annotation : Kili annotation
+    Args:
+        annotation : Kili annotation
     """
     try:
         return {
@@ -113,9 +113,8 @@ def format_image_annotation(annotation):
     Extracts a category, polygon, named entity from an annotation
     depending of the annotation type
 
-    Parameters
-    ----------
-    - annotation : Kili annotation
+    Args:
+        annotation : Kili annotation
     """
     category = get_category(annotation)
     polygon = get_polygon(annotation)
@@ -140,9 +139,8 @@ class Label(DictClass):
         """
         Format a json response
 
-        Parameters
-        ----------
-        - _format: expected format
+        Args:
+            _format: expected format
         """
         if 'jsonResponse' not in self:
             raise Exception(
@@ -167,7 +165,8 @@ class Label(DictClass):
                 return [format_image_annotation(annotation) \
                     for annotation in job_response['annotations']]
             return None
-        raise Exception(f'format "{_format}" is not a valid annotation format.')
+        raise Exception(
+            f'format "{_format}" is not a valid annotation format.')
 
 
 class Asset(DictClass):

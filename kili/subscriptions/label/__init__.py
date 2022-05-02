@@ -1,6 +1,4 @@
-"""
-Label subscription
-"""
+"""Label subscription."""
 
 from dataclasses import dataclass
 from typing import Any, Callable
@@ -13,18 +11,15 @@ from ...graphql_client import SubscriptionGraphQLClient
 
 @dataclass
 class SubscriptionsLabel:
-    """
-    Set of Label subscriptions
-    """
+    """Set of Label subscriptions."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -35,17 +30,12 @@ class SubscriptionsLabel:
         Subscribe a callback to a project, which is executed when a label is created or updated.
         See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb) for more explanation on how to use it.
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
-        callback :
-            This function takes as input the id of the asset and its content.
+        Args:
+            project_id: Identifier of the project
+            callback: This function takes as input the id of the asset and its content.
 
-        Returns
-        -------
-        return
-            subscription client
+        Returns:
+            A subscription client
         """
         ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
         websocket = SubscriptionGraphQLClient(ws_endpoint)

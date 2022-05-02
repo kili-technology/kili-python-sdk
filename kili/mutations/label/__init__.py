@@ -15,18 +15,14 @@ from ...orm import Label
 
 
 class MutationsLabel:
-    """
-    Set of Label mutations
-    """
+    """Set of Label mutations."""
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initializes the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -37,31 +33,22 @@ class MutationsLabel:
             project_id: str,
             external_id_array: List[str],
             model_name_array: List[str],
-            json_response_array: List[dict]):
+            json_response_array: List[dict]) -> dict:
         # pylint: disable=line-too-long
-        """
-        Create predictions for specific assets
+        """Create predictions for specific assets.
 
         For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
-        external_id_array :
-            The external identifiers of the assets for which we want to add predictions
-        model_name_array :
-            In case you want to precise from which model the label originated
-        json_response_array :
-            The predictions are given here. For examples,
+        Args:
+            project_id: Identifier of the project
+            external_id_array: The external identifiers of the assets for which we want to add predictions
+            model_name_array: In case you want to precise from which model the label originated
+            json_response_array: The predictions are given here. For examples,
                 see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful, or an error message else.
         """
-
         assert len(external_id_array) == len(
             json_response_array), "IDs list and predictions list should have the same length"
         assert len(external_id_array) == len(
@@ -80,41 +67,28 @@ class MutationsLabel:
                          label_asset_external_id: Optional[str] = None,
                          label_asset_id: Optional[str] = None, label_type: str = 'DEFAULT',
                          project_id: Optional[str] = None, seconds_to_label: Optional[int] = 0,
-                         skipped: Optional[bool] = False):
-        """
-        Append a label to an asset
+                         skipped: Optional[bool] = False) -> dict:
+        """Append a label to an asset.
 
-        Parameters
-        ----------
-        json_response :
-            Label is given here
-        author_id :
-            ID of the author of the label
-        label_asset_external_id :
-            External identifier of the asset
-            Either provide label_asset_id or label_asset_external_id and project_id
-        label_asset_id :
-            Identifier of the asset
-            Either provide label_asset_id or label_asset_external_id and project_id
-        project_id :
-            Identifier of the project
-            Either provide label_asset_id or label_asset_external_id and project_id
-        label_type :
-            Can be one of {'AUTOSAVE', 'DEFAULT', 'PREDICTION', 'REVIEW'}
-        seconds_to_label :
-            Time to create the label
-        skipped :
-            Describe if the label is skipped or not
+        Args:
+            json_response: Label is given here
+            author_id: ID of the author of the label
+            label_asset_external_id: External identifier of the asset
+                Either provide label_asset_id or label_asset_external_id and project_id
+            label_asset_id: Identifier of the asset
+                Either provide label_asset_id or label_asset_external_id and project_id
+            project_id: Identifier of the project
+                Either provide label_asset_id or label_asset_external_id and project_id
+            label_type: Can be one of {'AUTOSAVE', 'DEFAULT', 'PREDICTION', 'REVIEW'}
+            seconds_to_label: Time to create the label
+            skipped: Describe if the label is skipped or not
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
+        Returns:
+            A result object which indicates if the mutation was successful,
                 or an error message else.
 
-        Examples
-        -------
-        >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
+        Examples:
+            >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
         """
 
         if author_id is None:
@@ -138,30 +112,21 @@ class MutationsLabel:
                                    label_id: str,
                                    seconds_to_label: Optional[int] = None,
                                    model_name: Optional[str] = None,
-                                   json_response: Optional[dict] = None):
-        """
-        Update properties of a label
+                                   json_response: Optional[dict] = None) -> dict:
+        """Update properties of a label.
 
-        Parameters
-        ----------
-        label_id :
-            Identifier of the label
-        seconds_to_label :
-            Time to create the label
-        model_name :
-            Name of the model
-        json_response :
-            The label is given here
+        Args:
+            label_id: Identifier of the label
+            seconds_to_label: Time to create the label
+            model_name: Name of the model
+            json_response: The label is given here
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
+        Returns:
+            A result object which indicates if the mutation was successful,
                 or an error message else.
 
-        Examples
-        -------
-        >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
+        Examples:
+            >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
         """
         formatted_json_response = None if json_response is None else dumps(
             json_response)
@@ -178,31 +143,23 @@ class MutationsLabel:
     @Compatible(['v1', 'v2'])
     @typechecked
     def create_honeypot(self, json_response: dict, asset_external_id: Optional[str] = None,
-                        asset_id: Optional[str] = None, project_id: Optional[str] = None):
-        """
-        Create honeypot for an asset.
+                        asset_id: Optional[str] = None, project_id: Optional[str] = None) -> dict:
+        """Create honeypot for an asset.
 
         Uses the given `json_response` to create a "REVIEW" label. This enables Kili to compute a
         `honeypotMark`, which measures the similarity between this label and other labels.
 
-        Parameters
-        ----------
-        json_response :
-            The JSON response of the honeypot label of the asset
-        asset_id :
-            Identifier of the asset
-            Either provide asset_id or asset_external_id and project_id
-        asset_external_id :
-            External identifier of the asset
-            Either provide asset_id or asset_external_id and project_id
-        project_id :
-            Identifier of the project
-            Either provide asset_id or asset_external_id and project_id
+        Args:
+            json_response: The JSON response of the honeypot label of the asset
+            asset_id: Identifier of the asset
+                Either provide asset_id or asset_external_id and project_id
+            asset_external_id: External identifier of the asset
+                Either provide asset_id or asset_external_id and project_id
+            project_id: Identifier of the project
+                Either provide asset_id or asset_external_id and project_id
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
+        Returns:
+            A result object which indicates if the mutation was successful,
                 or an error message else.
         """
         asset_id = infer_id_from_external_id(

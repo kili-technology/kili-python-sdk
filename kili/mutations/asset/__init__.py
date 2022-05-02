@@ -27,12 +27,10 @@ class MutationsAsset:
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -46,60 +44,48 @@ class MutationsAsset:
             is_honeypot_array: Optional[List[bool]] = None,
             status_array: Optional[List[str]] = None,
             json_content_array: Optional[List[List[Union[dict, str]]]] = None,
-            json_metadata_array: Optional[List[dict]] = None):
+            json_metadata_array: Optional[List[dict]] = None) -> dict:
         # pylint: disable=line-too-long
-        """
-        Append assets to a project
+        """Append assets to a project.
 
         For more detailed examples on how to import assets,
             see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb).
         For more detailed examples on how to import text assets,
             see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
-        content_array :
-            List of elements added to the assets of the project
+        Args:
+            project_id: Identifier of the project
+            content_array: List of elements added to the assets of the project
                 - For a Text project, the content can be either raw text, or URLs to TEXT assets.
                 - For an Image / PDF project, the content can be either URLs or paths to existing
                     images/pdf on your computer.
                 - For a Video  project, the content must be hosted on a web server,
                     and you point Kili to your data by giving the URLs.
                 Must not be None except if you provide json_content_array.
-        external_id_array :
-            List of external ids given to identify the assets.
-            If None, random identifiers are created.
-        is_honeypot_array:
-            Whether to use the asset for honeypot
-        status_array :
-            By default, all imported assets are set to 'TODO'. Other options:
-            'ONGOING', 'LABELED', 'REVIEWED'.
-        json_content_array :
-            Useful for 'FRAME' or 'TEXT' projects only.
-            For FRAME projects, each element is a sequence of frames, i.e. a
-            list of URLs to images or a list of paths to images.
-            For TEXT projects, each element is a json_content dict,
-            formatted according to documentation [on how to import
-            rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)
-        json_metadata_array :
-            The metadata given to each asset should be stored in a json like dict with keys.
-            Add metadata visible on the asset with the following keys: "imageUrl", "text", "url".
-                Example: json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
-            For video, you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
-                Example: json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}] to upload one asset.
+            external_id_array: List of external ids given to identify the assets.
+                If None, random identifiers are created.
+            is_honeypot_array:  Whether to use the asset for honeypot
+            status_array: By default, all imported assets are set to 'TODO'. Other options:
+                'ONGOING', 'LABELED', 'REVIEWED'.
+            json_content_array: Useful for 'FRAME' or 'TEXT' projects only.
+                For FRAME projects, each element is a sequence of frames, i.e. a
+                list of URLs to images or a list of paths to images.
+                For TEXT projects, each element is a json_content dict,
+                formatted according to documentation [on how to import
+                rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)
+            json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.
+                Add metadata visible on the asset with the following keys: "imageUrl", "text", "url".
+                    Example: json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
+                For video, you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
+                    Example: json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}] to upload one asset.
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful, or an error message else.
+        Returns:
+            A result object which indicates if the mutation was successful, or an error message else.
 
-        Examples
-        --------
-        >>> kili.append_many_to_dataset(
-                project_id=project_id,
-                content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
+        Examples:
+            >>> kili.append_many_to_dataset(
+                    project_id=project_id,
+                    content_array=['https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png'])
         """
         playground = QueriesProject(self.auth)
         projects = playground.projects(project_id)
@@ -133,65 +119,48 @@ class MutationsAsset:
                                     json_contents: Optional[List[str]] = None,
                                     status_array: Optional[List[str]] = None,
                                     is_used_for_consensus_array: Optional[List[bool]] = None,
-                                    is_honeypot_array: Optional[List[bool]] = None):
-        """
-        Update the properties of one or more assets.
+                                    is_honeypot_array: Optional[List[bool]] = None) -> dict:
+        """Update the properties of one or more assets.
 
-        Parameters
-        ----------
-        asset_ids : List[str]
-            The asset IDs to modify
-        external_ids :
-            Change the external id of the assets
-        priorities : List[int], optional (default = None)
-            You can change the priority of the assets
-            By default, all assets have a priority of 0.
-        json_metadatas :
-            The metadata given to an asset should be stored in a json like dict with keys
-            "imageUrl", "text", "url".
-            json_metadata = {'imageUrl': '','text': '','url': ''}
-        consensus_marks :
-            Should be between 0 and 1
-        honeypot_marks :
-            Should be between 0 and 1
-        to_be_labeled_by_array :
-            If given, each element of the list should contain the emails of
-            the labelers authorized to label the asset.
-        contents :
-            - For a NLP project, the content can be directly in text format
-            - For an Image / Video / Pdf project, the content must be hosted on a web server,
-            and you point Kili to your data by giving the URLs
-        json_contents :
-            - For a NLP project, the json_content is a a text formatted using RichText
-            - For a Video project, the json_content is a json containg urls pointing
-                to each frame of the video.
-        status_array :
-            Each element should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
-        is_used_for_consensus_array :
-            Whether to use the asset to compute consensus kpis or not
-        is_honeypot_array :
-            Whether to use the asset for honeypot
+        Args:
+            asset_ids : The asset IDs to modify
+            external_ids: Change the external id of the assets
+            priorities : You can change the priority of the assets
+                By default, all assets have a priority of 0.
+            json_metadatas: The metadata given to an asset should be stored in a json like dict with keys
+                "imageUrl", "text", "url".
+                json_metadata = {'imageUrl': '','text': '','url': ''}
+            consensus_marks: Should be between 0 and 1
+            honeypot_marks: Should be between 0 and 1
+            to_be_labeled_by_array: If given, each element of the list should contain the emails of
+                the labelers authorized to label the asset.
+            contents: - For a NLP project, the content can be directly in text format
+                - For an Image / Video / Pdf project, the content must be hosted on a web server,
+                and you point Kili to your data by giving the URLs
+            json_contents: - For a NLP project, the json_content is a a text formatted using RichText
+                - For a Video project, the json_content is a json containg urls pointing
+                    to each frame of the video.
+            status_array: Each element should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+            is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not
+            is_honeypot_array: Whether to use the asset for honeypot
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
+        Returns:
+            A result object which indicates if the mutation was successful,
                 or an error message else.
 
-        Examples
-        --------
-        >>> kili.update_properties_in_assets(
-                asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
-                consensus_marks=[1, 0.7],
-                contents=[None, 'https://to/second/asset.png'],
-                external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
-                honeypot_marks=[0.8, 0.5],
-                is_honeypot_array=[True, True],
-                is_used_for_consensus_array=[True, False],
-                priorities=[None, 2],
-                status_array=['LABELED', 'REVIEWED'],
-                to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
-        )
+        Examples:
+            >>> kili.update_properties_in_assets(
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    consensus_marks=[1, 0.7],
+                    contents=[None, 'https://to/second/asset.png'],
+                    external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
+                    honeypot_marks=[0.8, 0.5],
+                    is_honeypot_array=[True, True],
+                    is_used_for_consensus_array=[True, False],
+                    priorities=[None, 2],
+                    status_array=['LABELED', 'REVIEWED'],
+                    to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
+            )
         """
 
         formatted_json_metadatas = None
@@ -257,19 +226,14 @@ class MutationsAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def delete_many_from_dataset(self, asset_ids: List[str]):
-        """
-        Delete assets from a project
+    def delete_many_from_dataset(self, asset_ids: List[str]) -> dict:
+        """Delete assets from a project.
 
-        Parameters
-        ----------
-        asset_ids :
-            The list of identifiers of the assets to delete.
+        Args:
+            asset_ids: The list of identifiers of the assets to delete.
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
+        Returns:
+            A result object which indicates if the mutation was successful,
                 or an error message else.
         """
         variables = {'where': {'idIn': asset_ids}}

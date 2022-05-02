@@ -1,6 +1,4 @@
-"""
-Project version queries
-"""
+"""Project version queries."""
 
 from typing import Generator, List, Optional, Union
 import warnings
@@ -15,18 +13,15 @@ from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesProjectVersion:
-    """
-    Set of ProjectVersion queries
-    """
+    """Set of ProjectVersion queries."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -48,30 +43,20 @@ class QueriesProjectVersion:
             disable_tqdm: bool = False,
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Gets a generator or a list of project versions respecting a set of criteria
+        """Get a generator or a list of project versions respecting a set of criteria.
 
-        Parameters
-        ----------
-        fields :
-            All the fields to request among the possible fields for the project versions
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectVersions) for all possible fields.
-        first :
-            Number of project versions to query
-        project_id :
-            Filter on Id of project
-        skip :
-            Number of project versions to skip (they are ordered by their date
-            of creation, first to last).
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the project versions is returned.
+        Args:
+            fields: All the fields to request among the possible fields for the project versions
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectVersions) for all possible fields.
+            first: Number of project versions to query
+            project_id: Filter on Id of project
+            skip: Number of project versions to skip (they are ordered by their date
+                of creation, first to last).
+            disable_tqdm: If True, the progress bar will be disabled
+            as_generator: If True, a generator on the project versions is returned.
 
-        Returns
-        -------
-        result:
-            a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful, or an error message else.
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -115,18 +100,13 @@ class QueriesProjectVersion:
     @Compatible(['v2'])
     @typechecked
     def count_project_versions(self, project_id: str) -> int:
-        """
-        Count the number of project versions
+        """Count the number of project versions.
 
-        Parameters
-        ----------
-        project_id :
-            Filter on ID of project
+        Args:
+            project_id: Filter on ID of project
 
-        Returns
-        -------
-        result:
-            the number of project versions with the parameters provided
+        Returns:
+            The number of project versions with the parameters provided
         """
         variables = {
             'where': {'projectId': project_id},

@@ -1,6 +1,4 @@
-"""
-Label queries
-"""
+"""Label queries."""
 
 from typing import Generator, List, Optional, Union
 import warnings
@@ -20,18 +18,15 @@ from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesLabel:
-    """
-    Set of Label queries
-    """
+    """Set of Label queries."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -63,70 +58,43 @@ class QueriesLabel:
                as_generator: bool = False,
                ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Gets a label list or a label generator from a project based on a set of criteria
+        """Get a label list or a label generator from a project based on a set of criteria.
 
-        Parameters
-        ----------
-        asset_id :
-            Identifier of the asset.
-        asset_status_in :
-            Returned labels should have a status that belongs to that list, if given.
-            Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
-        asset_external_id_in :
-            Returned labels should have an external id that belongs to that list, if given.
-        author_in :
-            Returned labels should have a label whose status belongs to that list, if given.
-        created_at :
-            Returned labels should have a label whose creation date is equal to this date.
-            Formatted string should have format : "YYYY-MM-DD"
-        created_at_gte :
-            Returned labels should have a label whose creation date is greater than this date.
-            Formatted string should have format : "YYYY-MM-DD"
-        created_at_lte :
-            Returned labels should have a label whose creation date is lower than this date.
-            Formatted string should have format : "YYYY-MM-DD"
-        fields :
-            All the fields to request among the possible fields for the labels.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
-        first :
-            Maximum number of labels to return.
-        honeypot_mark_gte :
-            Returned labels should have a label whose honeypot is greater than this number.
-        honeypot_mark_lte :
-            Returned labels should have a label whose honeypot is lower than this number.
-        id_contains :
-            Filters out labels not belonging to that list. If empty, no filtering is applied.
-        json_response_contains :
-            Returned labels should have a substring of the jsonResponse that belongs
-            to that list, if given.
-        label_id :
-            Identifier of the label.
-        project_id :
-            Identifier of the project.
-        skip :
-            Number of labels to skip (they are ordered by their date of creation, first to last).
-        skipped :
-            Returned labels should have a label which is skipped
-        type_in :
-            Returned labels should have a label whose type belongs to that list, if given.
-        user_id :
-            Identifier of the user.
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the labels is returned.
+        Args:
+            asset_id: Identifier of the asset.
+            asset_status_in: Returned labels should have a status that belongs to that list, if given.
+                Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            author_in: Returned labels should have a label whose status belongs to that list, if given.
+            created_at: Returned labels should have a label whose creation date is equal to this date.
+                Formatted string should have format : "YYYY-MM-DD"
+            created_at_gte: Returned labels should have a label whose creation date is greater than this date.
+                Formatted string should have format : "YYYY-MM-DD"
+            created_at_lte: Returned labels should have a label whose creation date is lower than this date.
+                Formatted string should have format : "YYYY-MM-DD"
+            fields: All the fields to request among the possible fields for the labels.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
+            first: Maximum number of labels to return.
+            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
+            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
+            id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.
+            json_response_contains: Returned labels should have a substring of the jsonResponse that belongs
+                to that list, if given.
+            label_id: Identifier of the label.
+            project_id: Identifier of the project.
+            skip: Number of labels to skip (they are ordered by their date of creation, first to last).
+            skipped: Returned labels should have a label which is skipped
+            type_in: Returned labels should have a label whose type belongs to that list, if given.
+            user_id: Identifier of the user.
+            disable_tqdm: If True, the progress bar will be disabled
+            as_generator: If True, a generator on the labels is returned.
 
+        Returns:
+            A result object which contains the query if it was successful, else an error message.
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, else an error message.
-
-        Examples
-        -------
-        >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
-        >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
+        Examples:
+            >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
+            >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -221,23 +189,16 @@ class QueriesLabel:
                                 'externalId'
                             ]) -> pd.DataFrame:
         # pylint: disable=line-too-long
-        """
-        Get the labels of a project as a pandas DataFrame
+        """Get the labels of a project as a pandas DataFrame.
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
-        fields :
-            All the fields to request among the possible fields for the labels.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
-        asset_fields :
-            All the fields to request among the possible fields for the assets.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
+        Args:
+            project_id: Identifier of the project
+            fields: All the fields to request among the possible fields for the labels.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.
+            asset_fields: All the fields to request among the possible fields for the assets.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.
 
-        Returns
-        -------
-        labels_df :
+        Returns:
             pandas DataFrame containing the labels.
         """
         projects = QueriesProject(self.auth).projects(project_id)
@@ -269,52 +230,33 @@ class QueriesLabel:
                      type_in: Optional[List[str]] = None,
                      user_id: Optional[str] = None) -> int:
         # pylint: disable=line-too-long
-        """
-        Get the number of labels for the given parameters
+        """Get the number of labels for the given parameters.
 
-        Parameters
-        ----------
-        asset_id :
-            Identifier of the asset.
-        asset_status_in :
-            Returned labels should have a status that belongs to that list, if given.
-            Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
-        asset_external_id_in :
-            Returned labels should have an external id that belongs to that list, if given.
-        author_in :
-            Returned labels should have a label whose status belongs to that list, if given.
-        created_at :
-            Returned labels should have a label whose creation date is equal to this date.
-            Formatted string should have format : "YYYY-MM-DD"
-        created_at_gte :
-            Returned labels should have a label whose creation date is greater than this date.
-            Formatted string should have format : "YYYY-MM-DD"
-        created_at_lte :
-            Returned labels should have a label whose creation date is lower than this date.
-            Formatted string should have format : "YYYY-MM-DD"
-        honeypot_mark_gte :
-            Returned labels should have a label whose honeypot is greater than this number.
-        honeypot_mark_lte :
-            Returned labels should have a label whose honeypot is lower than this number.
-        json_response_contains :
-            Returned labels should have a substring of the jsonResponse that
-            belongs to that list, if given.
-        label_id :
-            Identifier of the label.
-        project_id :
-            Identifier of the project.
-        skipped :
-            Returned labels should have a label which is skipped
-        type_in :
-            Returned labels should have a label whose type belongs to that list, if given.
-        user_id :
-            Identifier of the user.
+        Args:
+            asset_id: Identifier of the asset.
+            asset_status_in: Returned labels should have a status that belongs to that list, if given.
+                Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}
+            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            author_in: Returned labels should have a label whose status belongs to that list, if given.
+            created_at: Returned labels should have a label whose creation date is equal to this date.
+                Formatted string should have format : "YYYY-MM-DD"
+            created_at_gte: Returned labels should have a label whose creation date is greater than this date.
+                Formatted string should have format : "YYYY-MM-DD"
+            created_at_lte: Returned labels should have a label whose creation date is lower than this date.
+                Formatted string should have format : "YYYY-MM-DD"
+            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
+            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
+            json_response_contains: Returned labels should have a substring of the jsonResponse that
+                belongs to that list, if given.
+            label_id: Identifier of the label.
+            project_id: Identifier of the project.
+            skipped: Returned labels should have a label which is skipped
+            type_in: Returned labels should have a label whose type belongs to that list, if given.
+            user_id: Identifier of the user.
 
 
-        Returns
-        -------
-        dict
-            the number of labels with the parameters provided
+        Returns:
+            The number of labels with the parameters provided
         """
         variables = {
             'where': {
