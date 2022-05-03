@@ -24,7 +24,7 @@ class MutationsNotification:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def create_notification(self, message: str, status: str, url: str, user_id: str) -> dict:
+    def create_notification(self, message: str, status: str, url: str, user_id: str):
         """Create a notification.
 
         This method is currently only active for Kili administrators.

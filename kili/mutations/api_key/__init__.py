@@ -22,7 +22,7 @@ class MutationsApiKey:  # pylint: disable=too-few-public-methods
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def append_to_api_keys(self, api_key: str, name: str) -> dict:
+    def append_to_api_keys(self, api_key: str, name: str):
         """Create an api key to connect to the API.
 
         Args:

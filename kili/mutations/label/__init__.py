@@ -34,7 +34,7 @@ class MutationsLabel:
             project_id: str,
             external_id_array: List[str],
             model_name_array: List[str],
-            json_response_array: List[dict]) -> dict:
+            json_response_array: List[dict]):
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
@@ -69,7 +69,7 @@ class MutationsLabel:
                          label_asset_external_id: Optional[str] = None,
                          label_asset_id: Optional[str] = None, label_type: str = 'DEFAULT',
                          project_id: Optional[str] = None, seconds_to_label: Optional[int] = 0,
-                         skipped: Optional[bool] = False) -> dict:
+                         skipped: Optional[bool] = False):
         """Append a label to an asset.
 
         Args:
@@ -115,7 +115,7 @@ class MutationsLabel:
                                    label_id: str,
                                    seconds_to_label: Optional[int] = None,
                                    model_name: Optional[str] = None,
-                                   json_response: Optional[dict] = None) -> dict:
+                                   json_response: Optional[dict] = None):
         """Update properties of a label.
 
         Args:
@@ -146,7 +146,7 @@ class MutationsLabel:
     @Compatible(['v1', 'v2'])
     @typechecked
     def create_honeypot(self, json_response: dict, asset_external_id: Optional[str] = None,
-                        asset_id: Optional[str] = None, project_id: Optional[str] = None) -> dict:
+                        asset_id: Optional[str] = None, project_id: Optional[str] = None):
         """Create honeypot for an asset.
 
         !!! info

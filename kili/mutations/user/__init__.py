@@ -30,7 +30,7 @@ class MutationsUser:
                     password: str = None,
                     organization_role: str = None,
                     firstname: Optional[str] = None,
-                    lastname: Optional[str] = None) -> dict:
+                    lastname: Optional[str] = None):
         """Add a user to your organization.
 
         Args:
@@ -59,7 +59,7 @@ class MutationsUser:
     @Compatible(['v1', 'v2'])
     @typechecked
     def update_password(self, email: str, old_password: str, new_password_1: str,
-                        new_password_2: str) -> dict:
+                        new_password_2: str):
         """Allow to modify the password that you use to connect to Kili. \
         This resolver only works for on-premise installations without Auth0.
 
@@ -84,7 +84,7 @@ class MutationsUser:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def reset_password(self, email: str) -> dict:
+    def reset_password(self, email: str):
         """Reset password.
 
         This resolver only works for on-premise installations without Auth0,
@@ -109,7 +109,7 @@ class MutationsUser:
                                   lastname: Optional[str] = None,
                                   organization_id: Optional[str] = None,
                                   organization_role: Optional[str] = None,
-                                  activated: Optional[bool] = None) -> dict:
+                                  activated: Optional[bool] = None):
         """Update the properties of a user.
 
         Args:

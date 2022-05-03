@@ -28,7 +28,7 @@ class MutationsProjectVersion:
     def update_properties_in_project_version(
             self,
             project_version_id: str,
-            content: Optional[str]) -> dict:
+            content: Optional[str]):
         """Update properties of a project version.
 
         Args:

@@ -44,7 +44,7 @@ class MutationsAsset:
             is_honeypot_array: Optional[List[bool]] = None,
             status_array: Optional[List[str]] = None,
             json_content_array: Optional[List[List[Union[dict, str]]]] = None,
-            json_metadata_array: Optional[List[dict]] = None) -> dict:
+            json_metadata_array: Optional[List[dict]] = None):
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -124,7 +124,7 @@ class MutationsAsset:
                                     json_contents: Optional[List[str]] = None,
                                     status_array: Optional[List[str]] = None,
                                     is_used_for_consensus_array: Optional[List[bool]] = None,
-                                    is_honeypot_array: Optional[List[bool]] = None) -> dict:
+                                    is_honeypot_array: Optional[List[bool]] = None):
         """Update the properties of one or more assets.
 
         Args:
@@ -232,7 +232,7 @@ class MutationsAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def delete_many_from_dataset(self, asset_ids: List[str]) -> dict:
+    def delete_many_from_dataset(self, asset_ids: List[str]):
         """Delete assets from a project.
 
         Args:

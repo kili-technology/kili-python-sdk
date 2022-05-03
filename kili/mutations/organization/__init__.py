@@ -26,7 +26,7 @@ class MutationsOrganization:
     @Compatible(['v1', 'v2'])
     @typechecked
     def create_organization(self, name: str, address: str,
-                            zip_code: str, city: str, country: str) -> dict:
+                            zip_code: str, city: str, country: str):
         """Create an organization.
 
         Each user must be linked to an organization
@@ -61,7 +61,7 @@ class MutationsOrganization:
                                           zip_code: Optional[str] = None,
                                           city: Optional[str] = None,
                                           country: Optional[str] = None,
-                                          license: Optional[dict] = None) -> dict:  # pylint: disable=redefined-builtin
+                                          license: Optional[dict] = None):  # pylint: disable=redefined-builtin
         """Modify an organization.
 
         Args:

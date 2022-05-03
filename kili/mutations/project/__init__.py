@@ -35,7 +35,7 @@ class MutationsProject:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def append_to_roles(self, project_id: str, user_email: str, role: str = 'LABELER') -> dict:
+    def append_to_roles(self, project_id: str, user_email: str, role: str = 'LABELER'):
         """Add a user to a project.
 
         !!! info
@@ -83,7 +83,7 @@ class MutationsProject:
                                      review_coverage: Optional[int] = None,
                                      should_relaunch_kpi_computation: Optional[bool] = None,
                                      title: Optional[str] = None,
-                                     use_honeypot: Optional[bool] = None) -> dict:
+                                     use_honeypot: Optional[bool] = None):
         """Update properties of a project.
 
         Args:
@@ -149,7 +149,7 @@ class MutationsProject:
     @typechecked
     def create_project(self, input_type: str, json_interface: dict,
                        title: str, description: str = '',
-                       project_type: Optional[str] = None) -> dict:
+                       project_type: Optional[str] = None):
         # pylint: disable=line-too-long
         """Create a project.
 
@@ -199,7 +199,7 @@ class MutationsProject:
 
     @Compatible(['v2'])
     @typechecked
-    def make_project_public(self, project_id: str) -> dict:
+    def make_project_public(self, project_id: str):
         """
         Make a project public.
 
@@ -219,7 +219,7 @@ class MutationsProject:
     @Compatible(['v1', 'v2'])
     @typechecked
     def update_properties_in_role(self, role_id: str,
-                                  project_id: str, user_id: str, role: str) -> dict:
+                                  project_id: str, user_id: str, role: str):
         """Update properties of a role.
 
         !!! info
@@ -252,7 +252,7 @@ class MutationsProject:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def delete_from_roles(self, role_id: str) -> dict:
+    def delete_from_roles(self, role_id: str):
         """Delete users by their role_id.
 
         Args:
@@ -273,7 +273,7 @@ class MutationsProject:
                                           honeypot_mark: Optional[float] = None,
                                           number_of_labeled_assets: Optional[int] = None,
                                           starred: Optional[bool] = None,
-                                          total_duration: Optional[int] = None) -> dict:
+                                          total_duration: Optional[int] = None):
         """
         Update properties of a project-user tuple
 
@@ -326,7 +326,7 @@ class MutationsProject:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def internal_delete_project(self, project_id: str) -> dict:
+    def internal_delete_project(self, project_id: str):
         """Delete project permanently.
         WARNING: This resolver is for internal use by Kili Technology only.
 
@@ -343,7 +343,7 @@ class MutationsProject:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def delete_project(self, project_id: str) -> dict:
+    def delete_project(self, project_id: str):
         """
         Delete a project permanently.
 
