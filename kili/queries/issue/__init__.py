@@ -59,10 +59,7 @@ class QueriesIssue:
                 or an error message.
 
         Examples:
-            ```
-            # List all issues of a project and their authors
-            >>> kili.issues(project_id=project_id, fields=['author.email'])
-            ```
+            >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"

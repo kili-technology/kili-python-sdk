@@ -290,12 +290,10 @@ class MutationsProject:
                 or an error message.
 
         Examples:
-            ```
             >>> for project_user in project_users:
             ...     kili.update_properties_in_project_user(
                         project_user_id=project_user['id'],
                         honeypot_mark=0)
-            ```
         """
         variables = {
             'consensusMark': consensus_mark,

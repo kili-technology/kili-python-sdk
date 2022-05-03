@@ -29,8 +29,14 @@ pip install kili
 
   ```python
   from kili.client import Kili
-  kili = Kili(api_key=KILI_API_KEY)
+  kili = Kili()
   ```
 
 !!! success "Great!"
     You can now begin to use the Kili Python SDK
+
+!!! info
+    You can also pass the API key as an argument of the `Kili` initialization:
+    ```python
+    kili = Kili(api_key='<you api key value here>')
+    ```
