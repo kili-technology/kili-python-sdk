@@ -345,9 +345,6 @@ class MutationsProject:
         """
         Delete a project permanently.
 
-        !!! warning
-            This action is permanent and irreversible.
-
         Args:
             project_id: Identifier of the project
 
