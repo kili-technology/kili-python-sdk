@@ -1,5 +1,6 @@
 # User module
 
-::: kili.queries.user.__init__ 
-
-::: kili.mutations.user.__init__
+## Queries
+::: kili.queries.user.__init__.QueriesUser
+## Mutations
+::: kili.mutations.user.__init__.MutationsUser

@@ -1,3 +1,4 @@
 # Lock module
 
-::: kili.queries.lock.__init__ 
+## Queries
+::: kili.queries.lock.__init__.QueriesLock

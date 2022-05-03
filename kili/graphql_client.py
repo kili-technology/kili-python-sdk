@@ -31,21 +31,18 @@ class GraphQLClient:
         """
         Execute a query
 
-        Parameters
-        ----------
-        - query
-        - variables
+        Args:
+            query
+            variables
         """
         return self._send(query, variables)
 
     def inject_token(self, token, headername='Authorization'):
-        """
-        Inject a token
+        """Inject a token.
 
-        Parameters
-        ----------
-        - token
-        - headername: by default "Authorization"
+        Args:
+            token
+            headername:
         """
         self.token = token
         self.headername = headername
@@ -54,10 +51,9 @@ class GraphQLClient:
         """
         Send the query
 
-        Parameters
-        ----------
-        - query
-        - variables
+        Args:
+            query
+            variables
         """
         data = {'query': query,
                 'variables': variables}
@@ -142,9 +138,8 @@ class SubscriptionGraphQLClient:
         """
         Handles messages
 
-        Parameters
-        ----------
-        - message : the message
+        Args:
+            message : the message
         """
         # pylint: disable=no-self-use
         data = json.loads(message)
@@ -156,10 +151,9 @@ class SubscriptionGraphQLClient:
         """
         Initializes the websocket connection
 
-        Parameters
-        ----------
-        - headers : Headers are necessary for Kili API v1
-        - authorization : Headers are necessary for Kili API v2
+        Args:
+            headers : Headers are necessary for Kili API v1
+            authorization : Headers are necessary for Kili API v2
         """
         payload = {
             'type': 'connection_init',
@@ -172,9 +166,8 @@ class SubscriptionGraphQLClient:
         """
         Handles start
 
-        Parameters
-        ----------
-        - payload
+        Args:
+            payload
         """
         _id = gen_id()
         frame = {'id': _id, 'type': 'start', 'payload': payload}
@@ -185,8 +178,7 @@ class SubscriptionGraphQLClient:
         """
         Handles stop
 
-        Parameters
-        ----------
+        Args:
         - _id: connection id
         """
         payload = {'id': _id, 'type': 'stop'}
@@ -197,11 +189,10 @@ class SubscriptionGraphQLClient:
         """
         Sends a query
 
-        Parameters
-        ----------
-        - query
-        - variables
-        - headers
+        Args:
+            query
+            variables
+            headers
         """
         self._conn_init(headers)
         payload = {'headers': headers, 'query': query, 'variables': variables}
@@ -214,13 +205,12 @@ class SubscriptionGraphQLClient:
         """
         Prepares a subscription
 
-        Parameters
-        ----------
-        - query
-        - variables
-        - headers
-        - callback: function executed after the subscription
-        - authorization: authorization header
+        Args:
+            query
+            variables
+            headers
+            callback: function executed after the subscription
+            authorization: authorization header
         """
         self._conn_init(headers, authorization)
         payload = {'headers': headers, 'query': query, 'variables': variables}
@@ -233,13 +223,12 @@ class SubscriptionGraphQLClient:
         """
         Subscribes
 
-        Parameters
-        ----------
-        - query
-        - variables
-        - headers
-        - callback: function executed after the subscription
-        - authorization: authorization header
+        Args:
+            query
+            variables
+            headers
+            callback: function executed after the subscription
+            authorization: authorization header
         """
         _cc, _id = self.prepare_subscribe(
             query, variables, headers, callback, authorization)
@@ -316,9 +305,8 @@ def gen_id(size=6, chars=string.ascii_letters + string.digits):
     """
     Generate random alphanumeric id
 
-    Parameters
-    ----------
-    - size: length of the id
-    - chars: chars used to generate the id
+    Args:
+        size: length of the id
+        chars: chars used to generate the id
     """
     return ''.join(random.choice(chars) for _ in range(size))

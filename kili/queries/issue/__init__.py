@@ -1,6 +1,4 @@
-"""
-Issue queries
-"""
+"""Issue queries."""
 
 from dataclasses import dataclass
 from typing import Generator, List, Optional, Union
@@ -16,18 +14,15 @@ from ...utils import row_generator_from_paginated_calls
 
 @dataclass
 class QueriesIssue:
-    """
-    Set of Issue queries
-    """
+    """Set of Issue queries."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -48,36 +43,23 @@ class QueriesIssue:
                disable_tqdm: bool = False,
                as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Gets a generator or a list of issues that match a set of criteria
+        """Get a generator or a list of issues that match a set of criteria.
 
-        Parameters
-        ----------
-        fields :
-            All the fields to request among the possible fields for the assets.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.
-        first :
-            Maximum number of issues to return.
-        project_id :
-            Project ID the issue belongs to.
-        skip :
-            Number of issues to skip (they are ordered by their date of creation, first to last).
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the issues is returned.
+        Args:
+            fields: All the fields to request among the possible fields for the assets.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.
+            first: Maximum number of issues to return.
+            project_id: Project ID the issue belongs to.
+            skip: Number of issues to skip (they are ordered by their date of creation, first to last).
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the issues is returned.
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful,
+                or an error message.
 
-        Examples
-        --------
-        ```
-        # List all issues of a project and their authors
-        >>> kili.issues(project_id=project_id, fields=['author.email'])
-        ```
+        Examples:
+            >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
 
         count_args = {'project_id': project_id}
@@ -118,18 +100,13 @@ class QueriesIssue:
     @Compatible(['v2'])
     @typechecked
     def count_issues(self, project_id: Optional[str] = None) -> int:
-        """
-        Count and return the number of api keys with the given constraints
+        """Count and return the number of api keys with the given constraints.
 
-        Parameters
-        ----------
-        project_id :
-            Project ID the issue belongs to.
+        Args:
+            project_id: Project ID the issue belongs to.
 
-        Returns
-        -------
-        dict
-            the number of issues with the parameters provided
+        Returns:
+            The number of issues with the parameters provided
 
         """
         variables = {

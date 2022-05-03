@@ -1,6 +1,4 @@
-"""
-Notification queries
-"""
+"""Notification queries."""
 
 from typing import Generator, List, Optional, Union
 import warnings
@@ -15,18 +13,15 @@ from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesNotification:
-    """
-    Set of Notification queries
-    """
+    """Set of Notification queries."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -44,33 +39,23 @@ class QueriesNotification:
                       disable_tqdm: bool = False,
                       as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Gets a generator or a list of notifications respecting a set of criteria
+        """Get a generator or a list of notifications respecting a set of criteria.
 
-        Parameters
-        ----------
-        fields :
-            All the fields to request among the possible fields for the notifications
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.
-        first :
-            Number of notifications to query
-        has_been_seen :
-            If the notifications returned should have been seen.
-        notification_id :
-            If given, will return the notification which has this id
-        skip :
-            Number of notifications to skip (they are ordered by their date of creation,
-            first to last).
-        user_id :
-            If given, returns the notifications of a specific user
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the notifications is returned.
+        Args:
+            fields: All the fields to request among the possible fields for the notifications
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.
+            first: Number of notifications to query
+            has_been_seen: If the notifications returned should have been seen.
+            notification_id: If given, will return the notification which has this id
+            skip: Number of notifications to skip (they are ordered by their date of creation,
+                first to last).
+            user_id: If given, returns the notifications of a specific user
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the notifications is returned.
 
-        Returns
-        -------
-        a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful,
+                or an error message.
         """
 
         count_args = {"has_been_seen": has_been_seen, "user_id": user_id}
@@ -116,20 +101,14 @@ class QueriesNotification:
     def count_notifications(self,
                             has_been_seen: Optional[bool] = None,
                             user_id: Optional[str] = None) -> int:
-        """
-        Count the number of notifications
+        """Count the number of notifications.
 
-        Parameters
-        ----------
-        has_been_seen :
-            Filter on notifications that have been seen.
-        user_id :
-            Filter on the notifications of a specific user
+        Args:
+            has_been_seen: Filter on notifications that have been seen.
+            user_id: Filter on the notifications of a specific user
 
-        Returns
-        -------
-        dict
-            the number of notifications with the parameters provided
+        Returns:
+            The number of notifications with the parameters provided
         """
         variables = {
             'where': {

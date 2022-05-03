@@ -1,6 +1,4 @@
-"""
-User queries
-"""
+"""User queries."""
 
 from typing import Generator, List, Optional, Union
 import warnings
@@ -15,18 +13,14 @@ from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesUser:
-    """
-    Set of User queries
-    """
+    """Set of User queries."""
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -43,42 +37,30 @@ class QueriesUser:
               disable_tqdm: bool = False,
               as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Gets a generator or a list of users given a set of criteria
+        """Get a generator or a list of users given a set of criteria
 
-        Parameters
-        ----------
-        api_key :
-            Query an user by its API KEY
-        email :
-            Email of the user
-        organization_id :
-            Identifier of the user's organization
-        fields :
-            All the fields to request among the possible fields for the users.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
-        first :
-            Maximum number of users to return.
-        skip :
-            Number of skipped users (they are ordered by creation date)
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the users is returned.
+        Args:
+            api_key: Query an user by its API Key
+            email: Email of the user
+            organization_id: Identifier of the user's organization
+            fields: All the fields to request among the possible fields for the users.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
+            first: Maximum number of users to return
+            skip: Number of skipped users (they are ordered by creation date)
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the users is returned.
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful,
+                or an error message.
 
-        Examples
-        -------
-        ```
-        # List all users in my organization
-        >>> organization = kili.organizations()
-        >>> organization_id = organizations[0]['id]
-        >>> kili.users(organization_id=organization_id)
-        ```
+        Examples:
+            ```
+            # List all users in my organization
+            >>> organization = kili.organizations()
+            >>> organization_id = organizations[0]['id]
+            >>> kili.users(organization_id=organization_id)
+            ```
         """
 
         count_args = {"organization_id": organization_id}
@@ -124,18 +106,13 @@ class QueriesUser:
     @typechecked
     def count_users(self,
                     organization_id: Optional[str] = None) -> int:
-        """
-        Get user count based on a set of constraints
+        """Get user count based on a set of constraints.
 
-        Parameters
-        ----------
-        organization_id :
-            Identifier of the user's organization
+        Args:
+            organization_id: Identifier of the user's organization
 
-        Returns
-        -------
-        dict
-            the count of users whose organization ID matches the given ID
+        Returns:
+            The number of organizations with the parameters provided
         """
         variables = {
             'where': {

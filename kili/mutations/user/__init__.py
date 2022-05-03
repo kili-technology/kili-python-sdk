@@ -1,6 +1,4 @@
-"""
-User mutations
-"""
+"""User mutations."""
 
 from typing import Optional
 
@@ -13,18 +11,15 @@ from .queries import (GQL_CREATE_USER,
 
 
 class MutationsUser:
-    """
-    Set of User mutations
-    """
+    """Set of User mutations."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -36,27 +31,18 @@ class MutationsUser:
                     organization_role: str = None,
                     firstname: Optional[str] = None,
                     lastname: Optional[str] = None):
-        """
-        Add a user to your organization.
+        """Add a user to your organization.
 
-        Parameters
-        ----------
-        email :
-            Email of the new user, used as user's unique identifier.
-        password :
-            On the first sign in, he will use this password and be able to change it.
-        organization_role :
-            One of "ADMIN", "USER".
-        firstname :
-            First name of the new user.
-        lastname :
-            Last name of the new user.
+        Args:
+            email: Email of the new user, used as user's unique identifier.
+            password: On the first sign in, he will use this password and be able to change it.
+            organization_role: One of "ADMIN", "USER".
+            firstname: First name of the new user.
+            lastname: Last name of the new user.
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
-                or an error message else.
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
         """
         variables = {
             'data': {'email': email,
@@ -77,20 +63,15 @@ class MutationsUser:
         """Allow to modify the password that you use to connect to Kili. \
         This resolver only works for on-premise installations without Auth0.
 
-        Parameters
-        ----------
-        email :
-        old_password :
-        new_password_1 :
-            The new password.
-        new_password_2 :
-            A confirmation field for the new password.
+        Args:
+            email : Email of the person whose password has to be updated.
+            old_password : The old password
+            new_password_1: The new password
+            new_password_2: A confirmation field for the new password
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'data': {'oldPassword': old_password,
@@ -104,22 +85,17 @@ class MutationsUser:
     @Compatible(['v1', 'v2'])
     @typechecked
     def reset_password(self, email: str):
-        """
-        Reset password
+        """Reset password.
 
         This resolver only works for on-premise installations without Auth0,
         if your organization allows Kili to send emails.
 
-        Parameters
-        ----------
-        email :
-            Email of the person whose password has to be reset.
+        Args:
+            email: Email of the person whose password has to be reset.
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
-                or an error message else.
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
         """
         variables = {'where': {'email': email}}
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
@@ -134,29 +110,21 @@ class MutationsUser:
                                   organization_id: Optional[str] = None,
                                   organization_role: Optional[str] = None,
                                   activated: Optional[bool] = None):
-        """
-        Update the properties of a user
+        """Update the properties of a user.
 
-        Parameters
-        ----------
-        email : str
-            The email is the identifier of the user.
-        firstname :
-            Change the first name of the user.
-        lastname :
-            Change the last name of the user.
-        organization_id :
-            Change the organization the user is related to.
-        organization_role :
-            Change the role of the user. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".
-        activated :
-            In case we want to deactivate a user, but keep it.
+        Args:
+            email: The email is the identifier of the user.
+            firstname:Change the first name of the user.
+            lastname: Change the last name of the user.
+            organization_id: Change the organization the user is related to.
+            organization_role: Change the role of the user.
+                One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".
+            activated: In case we want to deactivate a user, but keep it.
 
-        Returns
-        -------
-        dict
+
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'email': email,

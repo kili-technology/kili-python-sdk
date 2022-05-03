@@ -10,41 +10,34 @@ from .queries import (GQL_CREATE_NOTIFICATION,
 
 
 class MutationsNotification:
-    """
-    Set of Notification mutations
-    """
+    """Set of Notification mutations."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
     @typechecked
     def create_notification(self, message: str, status: str, url: str, user_id: str):
-        """
-        Create a notification
+        """Create a notification.
 
         This method is currently only active for Kili administrators.
 
-        Parameters
-        ----------
-        message :
-        status :
-        url :
-        user_id :
+        Args:
+            message :
+            status :
+            url :
+            user_id :
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
-                or an error message else.
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
         """
         variables = {
             'data': {
@@ -65,23 +58,19 @@ class MutationsNotification:
             has_been_seen: bool,
             status: str,
             url: str):
-        """
-        Modify a notification
+        """Modify a notification.
 
         This method is currently only active for Kili administrators.
 
-        Parameters
-        ----------
-        notification_id :
-        hasBeenSeen:
-        status :
-        url :
+        Args:
+            notification_id :
+            hasBeenSeen:
+            status :
+            url :
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
-                or an error message else.
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
         """
         variables = {
             'id': notification_id,

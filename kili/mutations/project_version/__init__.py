@@ -1,6 +1,4 @@
-"""
-Project version mutations
-"""
+"""Project version mutations."""
 
 from dataclasses import dataclass
 from typing import Optional
@@ -13,18 +11,15 @@ from .queries import (GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION)
 
 @dataclass
 class MutationsProjectVersion:
-    """
-    Set of ProjectVersion mutations
-    """
+    """Set of ProjectVersion mutations."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -34,26 +29,19 @@ class MutationsProjectVersion:
             self,
             project_version_id: str,
             content: Optional[str]):
-        """
-        Update properties of a project version
+        """Update properties of a project version.
 
-        Parameters
-        ----------
-        project_version_id :
-            Identifier of the project version
-        content :
-            Link to download the project version
+        Args:
+            project_version_id: Identifier of the project version
+            content: Link to download the project version
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful.
 
-        Examples
-        -------
-        >>> kili.update_properties_in_project_version(
-                project_version_id=project_version_id,
-                content='test')
+        Examples:
+            >>> kili.update_properties_in_project_version(
+                    project_version_id=project_version_id,
+                    content='test')
         """
         variables = {
             'content': content,

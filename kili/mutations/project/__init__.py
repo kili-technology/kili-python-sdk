@@ -1,6 +1,4 @@
-"""
-Project mutations
-"""
+"""Project mutations."""
 
 from json import dumps
 from typing import Optional
@@ -23,50 +21,41 @@ from .queries import (GQL_APPEND_TO_ROLES,
 
 
 class MutationsProject:
+    """ Set of Project mutations."""
 
-    """
-    Set of Project mutations
-    """
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
     @Compatible(['v1', 'v2'])
     @typechecked
     def append_to_roles(self, project_id: str, user_email: str, role: str = 'LABELER'):
-        """
-        Add a user to a project
+        """Add a user to a project.
 
-        If the user does not exist in your organization, he/she is invited and added
-        both to your organization and project. This function can also be used to change
-        the role of the user in the project.
+        !!! info
+            If the user does not exist in your organization, he/she is invited and added
+                both to your organization and project. This function can also be used to change
+                the role of the user in the project.
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
-        user_email :
-            The email of the user. This email is used as the unique identifier of the user.
-        role :
-            One of {"ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"}.
+        Args:
+            project_id: Identifier of the project
+            user_email: The email of the user.
+                This email is used as the unique identifier of the user.
+            role: One of {"ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"}.
 
-        Returns
-        -------
-        dict
-            a result object which indicates if the mutation was successful,
-                or an error message else.
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
 
-        Examples
-        -------
-        >>> kili.append_to_roles(project_id=project_id, user_email='john@doe.com')
+
+        Examples:
+            >>> kili.append_to_roles(project_id=project_id, user_email='john@doe.com')
         """
         variables = {
             'data': {'role': role,
@@ -95,58 +84,39 @@ class MutationsProject:
                                      should_relaunch_kpi_computation: Optional[bool] = None,
                                      title: Optional[str] = None,
                                      use_honeypot: Optional[bool] = None):
-        """
-        Update properties of a project
+        """Update properties of a project.
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
-        consensus_mark :
-            Should be between 0 and 1
-        consensus_tot_coverage :
-            Should be between 0 and 100. It is the percentage of the dataset
-            that will be annotated several times.
-        description :
-        honeypot_mark :
-            Should be between 0 and 1
-        instructions :
-        interface_category :
-            Always use 'IV2'
-        input_type :
-            Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
-        json_interface :
-            The json parameters of the project, see Edit your interface.
-        min_consensus_size :
-            Should be between 1 and 10
-            Number of people that will annotate the same asset, for consensus computation.
-        number_of_assets :
-            Defaults to 0
-        number_of_assets_with_empty_labels :
-            Defaults to 0
-        number_of_remaining_assets :
-            Defaults to 0
-        number_of_reviewed_assets :
-            Defaults to 0
-        review_coverage :
-            Should be between 0 and 100
-            Allow to set the percentage of assets that will be queued in the review interface
-        should_relaunch_kpi_computation :
-            Technical field, added to indicate changes in honeypot or consensus settings
-        title :
-            Title of the project
-        use_honeypot :
-            Activate / Deactivate the use of honeypot in the project
+        Args:
+            project_id: Identifier of the project.
+            consensus_mark: Should be between 0 and 1.
+            consensus_tot_coverage: Should be between 0 and 100.
+                It is the percentage of the dataset that will be annotated several times.
+            description : Description of the project.
+            honeypot_mark : Should be between 0 and 1
+            instructions : Instructions of the project.
+            interface_category: Always use 'IV2'.
+            input_type: Currently, one of `AUDIO`, `FRAME`, `IMAGE`, `PDF`, `TEXT`, `VIDEO`, `NA`.
+            json_interface: The json parameters of the project, see Edit your interface.
+            min_consensus_size: Should be between 1 and 10
+                Number of people that will annotate the same asset, for consensus computation.
+            number_of_assets: Defaults to 0
+            number_of_assets_with_empty_labels: Defaults to 0
+            number_of_remaining_assets: Defaults to 0
+            number_of_reviewed_assets: Defaults to 0
+            review_coverage: Allow to set the percentage of assets
+                that will be queued in the review interface.
+                Should be between 0 and 100
+            should_relaunch_kpi_computation: Technical field, added to indicate changes
+                in honeypot or consensus settings
+            title: Title of the project
+            use_honeypot: Activate / Deactivate the use of honeypot in the project
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
 
-        Examples
-        -------
-        >>> kili.update_properties_in_project(project_id=project_id, title='New title')
+        Examples:
+            >>> kili.update_properties_in_project(project_id=project_id, title='New title')
         """
         verify_argument_ranges(consensus_tot_coverage,
                                min_consensus_size,
@@ -178,48 +148,44 @@ class MutationsProject:
     @Compatible(endpoints=['v2'])
     @typechecked
     def create_project(self, input_type: str, json_interface: dict,
-                       title: str, description: str = '', project_type: Optional[str] = None):
+                       title: str, description: str = '',
+                       project_type: Optional[str] = None):
         # pylint: disable=line-too-long
-        """
-        Create a project
+        """Create a project.
 
-        For more detailed examples on how to create projects,
-        see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb).
+        Args:
+            input_type : Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
+            json_interface: The json parameters of the project, see Edit your interface.
+            title : Title of the project
+            description : Description of the project
+            project_type:
+                Currently, one of {
+                    `IMAGE_CLASSIFICATION_SINGLE`,
+                    `IMAGE_CLASSIFICATION_MULTI`,
+                    `IMAGE_OBJECT_DETECTION_RECTANGLE`,
+                    `IMAGE_OBJECT_DETECTION_POLYGON`,
+                    `IMAGE_OBJECT_DETECTION_SEMANTIC`,
+                    `OCR, PDF_CLASSIFICATION_SINGLE`,
+                    `PDF_CLASSIFICATION_MULTI`,
+                    `TEXT_CLASSIFICATION_SINGLE`,
+                    `TEXT_CLASSIFICATION_MULTI`,
+                    `TEXT_TRANSCRIPTION, TEXT_NER`,
+                    `VIDEO_CLASSIFICATION_SINGLE`,
+                    `VIDEO_FRAME_CLASSIFICATION`,
+                    `VIDEO_FRAME_OBJECT_TRACKING`,
+                    `SPEECH_TO_TEXT`
+                }
 
-        Parameters
-        ----------
-        input_type : str
-            Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
-        json_interface: dict
-            The json parameters of the project, see Edit your interface.
-        title : str
-        description :
-        project_type:
-            Currently, one of {
-                IMAGE_CLASSIFICATION_SINGLE,
-                IMAGE_CLASSIFICATION_MULTI,
-                IMAGE_OBJECT_DETECTION_RECTANGLE,
-                IMAGE_OBJECT_DETECTION_POLYGON,
-                IMAGE_OBJECT_DETECTION_SEMANTIC,
-                OCR, PDF_CLASSIFICATION_SINGLE,
-                PDF_CLASSIFICATION_MULTI,
-                TEXT_CLASSIFICATION_SINGLE,
-                TEXT_CLASSIFICATION_MULTI,
-                TEXT_TRANSCRIPTION, TEXT_NER,
-                VIDEO_CLASSIFICATION_SINGLE,
-                VIDEO_FRAME_CLASSIFICATION,
-                VIDEO_FRAME_OBJECT_TRACKING,
-                SPEECH_TO_TEXT
-            }
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
 
-        Returns
-        -------
-        dict
-            A result object which indicates if the mutation was successful, or an error message else.
+        Examples:
+            >>> kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
 
-        Examples
-        -------
-        >>> kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
+        !!! example "Recipe"
+            For more detailed examples on how to create projects,
+                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb).
         """
         variables = {
             'data': {'description': description,
@@ -235,16 +201,15 @@ class MutationsProject:
     @typechecked
     def make_project_public(self, project_id: str):
         """
-        Make a project public. Warning: This action is permanent and irreversible.
+        Make a project public.
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
+        !!! warning
+            This action is permanent and irreversible.
 
-        Returns
-        -------
-        dict
+        Args:
+            project_id: Identifier of the project
+
+        Returns:
             The public token to provide in the public URL
         """
         variables = {'where': {'id': project_id}}
@@ -253,31 +218,27 @@ class MutationsProject:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
-        """
-        Update properties of a role
+    def update_properties_in_role(self, role_id: str,
+                                  project_id: str, user_id: str, role: str):
+        """Update properties of a role.
 
-        To be able to change someone's role, you must be either of:
-        - an admin
-        - a team manager of the project
-        - an admin of the organization
+        !!! info
+            To be able to change someone's role, you must be either of:
 
-        Parameters
-        ----------
-        role_id :
-            Role identifier of the user. E.g. : 'to-be-deactivated'
-        project_id :
-            Identifier of the project
-        user_id :
-            The email or identifier of the user with updated role
-        role :
-            The new role. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"
+            - an admin of the project
+            - a team manager of the project
+            - an admin of the organization
 
-        Returns
-        -------
-        dict
+        Args:
+            role_id: Role identifier of the user. E.g. : 'to-be-deactivated'
+            project_id: Identifier of the project
+            user_id: The email or identifier of the user with updated role
+            role: The new role.
+                Possible choices are: `ADMIN`, `TEAM_MANAGER`, `REVIEWER`, `LABELER`
+
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'roleID': role_id,
@@ -292,18 +253,14 @@ class MutationsProject:
     @Compatible(['v1', 'v2'])
     @typechecked
     def delete_from_roles(self, role_id: str):
-        """
-        Delete users by their role_id
+        """Delete users by their role_id.
 
-        Parameters
-        ----------
-        role_id :
+        Args:
+            role_id : Identifier of the project user (not the ID of the user)
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {'where': {'id': role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
@@ -320,32 +277,23 @@ class MutationsProject:
         """
         Update properties of a project-user tuple
 
-        Parameters
-        ----------
-        project_user_id : str
-        consensus_mark :
-            Should be between 0 and 1.
-        honeypot_mark :
-            Should be between 0 and 1.
-        number_of_labeled_assets :
-            Number of assets the user labeled in the project.
-        starred :
-            Whether to star the project in the project list.
-        total_duration :
-            Total time the user spent in the project.
+        Args:
+            project_user_id : Identifier of the project user
+            consensus_mark: Should be between 0 and 1.
+            honeypot_mark: Should be between 0 and 1.
+            number_of_labeled_assets: Number of assets the user labeled in the project.
+            starred: Whether to star the project in the project list.
+            total_duration: Total time the user spent in the project.
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
 
-        Examples
-        -------
-        >>> for project_user in project_users:
-        ...     kili.update_properties_in_project_user(
-                    project_user_id=project_user['id'],
-                    honeypot_mark=0)
+        Examples:
+            >>> for project_user in project_users:
+            ...     kili.update_properties_in_project_user(
+                        project_user_id=project_user['id'],
+                        honeypot_mark=0)
         """
         variables = {
             'consensusMark': consensus_mark,
@@ -365,14 +313,11 @@ class MutationsProject:
         """
         Compute KPIs for a project
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
+        Args:
+            project_id: Identifier of the project
 
-        Returns
-        -------
-        None
+        Returns:
+            None
         """
         _ = QueriesAsset(self.auth).assets(project_id=project_id)
         _ = QueriesProject(self.auth).projects(project_id=project_id)
@@ -380,20 +325,15 @@ class MutationsProject:
     @Compatible(['v1', 'v2'])
     @typechecked
     def internal_delete_project(self, project_id: str):
-        """
-        Delete project permanently.
+        """Delete project permanently.
         WARNING: This resolver is for internal use by Kili Technology only.
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
+        Args:
+            project_id: Identifier of the project
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {'projectID': project_id}
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
@@ -403,18 +343,14 @@ class MutationsProject:
     @typechecked
     def delete_project(self, project_id: str):
         """
-        Delete project permanently.
+        Delete a project permanently.
 
-        Parameters
-        ----------
-        project_id :
-            Identifier of the project
+        Args:
+            project_id: Identifier of the project
 
-        Returns
-        -------
-        dict
+        Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {'where': {'id': project_id}}
         result = self.auth.client.execute(

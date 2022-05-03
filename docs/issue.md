@@ -1,3 +1,4 @@
 # Issue module
 
-::: kili.queries.issue.__init__
+## Queries
+::: kili.queries.issue.__init__.QueriesIssue

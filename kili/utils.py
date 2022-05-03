@@ -22,24 +22,15 @@ def row_generator_from_paginated_calls(
     """
     Builds a row generator from paginated calls.
 
-    Parameters
-    ----------
-    - skip : int
-        Number of assets to skip (they are ordered by their date of creation, first to last).
-    - first : int
-        Maximum number of assets to return.
-    - count_method: ... -> int
-        Callable returning the number of available assets given `count_args`.
-    - count_kwargs: dict
-        Keyword arguments passed to the `count_method`.
-    - paged_call_method: ... -> List[dict]
-        Callable returning the list of samples.
-    - paged_call_payload: dict
-        Payload for the GraphQL query.
-    - fields: List[str]
-        The list of strings to retrieved.
-    - disable_tqdm: bool
-        If `True`, disables tqdm.
+    Args:
+        skip: Number of assets to skip (they are ordered by their date of creation, first to last).
+        first: Maximum number of assets to return.
+        count_method: Callable returning the number of available assets given `count_args`.
+        count_kwargs: Keyword arguments passed to the `count_method`.
+        paged_call_method: Callable returning the list of samples.
+        paged_call_payload: Payload for the GraphQL query.
+        fields: The list of strings to retrieved.
+        disable_tqdm: If `True`, disables tqdm.
     """
     count_rows_retrieved = 0
     if not disable_tqdm:

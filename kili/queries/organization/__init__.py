@@ -1,6 +1,4 @@
-"""
-Organization queries
-"""
+"""Organization queries."""
 
 from datetime import datetime
 from typing import Generator, List, Optional, Union
@@ -22,12 +20,10 @@ class QueriesOrganization:
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -44,39 +40,26 @@ class QueriesOrganization:
             disable_tqdm: bool = False,
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Get a generator or a list of organizations that match a set of criteria
+        """Get a generator or a list of organizations that match a set of criteria.
 
-        Returns all organizations:
-        with a given organization id
-        containing a user with a given email
+        Args:
+            email : Email of a user of the organization
+            organization_id : Identifier of the organization
+            fields: All the fields to request among the possible fields for the organizations.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization)
+                    for all possible fields.
+            first: Maximum number of organizations to return.
+            Skip: Number of skipped organizations (they are ordered by creation date)
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the organizations is returned.
 
-        Parameters
-        ----------
-        email :
-        organization_id :
-        fields :
-            All the fields to request among the possible fields for the organizations.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization)
-                for all possible fields.
-        first :
-            Maximum number of organizations to return
-        skip :
-            Number of skipped organizations (they are ordered by creation date)
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the organizations is returned.
+        Returns:
+            A result object which contains the query if it was successful,
+                or an error message.
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, or an error message else.
-
-        Examples
-        -------
-        >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
-        [{'users': [{'email': 'john@doe.com'}]}]
+        Examples:
+            >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
+            [{'users': [{'email': 'john@doe.com'}]}]
         """
 
         count_args = {"email": email, "organization_id": organization_id}
@@ -124,18 +107,15 @@ class QueriesOrganization:
             self,
             email: Optional[str] = None,
             organization_id: Optional[str] = None) -> int:
-        """
-        Count organizations that match a set of criteria
+        """Count organizations that match a set of criteria.
 
-        Parameters
-        ----------
-        email :
-        organization_id :
+        Args:
+            email: Email of a user of the organization
+            organization_id: Identifier of the organization
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful,
+                or an error message.
         """
         variables = {
             'where': {
@@ -153,19 +133,16 @@ class QueriesOrganization:
     def organization_metrics(self, organization_id: str = None,
                              start_date: datetime = datetime.now(),
                              end_date: datetime = datetime.now()):
-        """
-        Get organization metrics
+        """Get organization metrics.
 
-        Parameters
-        ----------
-        organization_id :
-        start_date :
-        end_date :
+        Args:
+            organization_id: Identifier of the organization
+            start_date: Start date of the metrics computation
+            end_date: End date of the metrics computation
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful,
+                or an error message.
         """
         variables = {
             'where': {

@@ -1,5 +1,4 @@
 # Notification module
 
-::: kili.queries.notification.__init__ 
-
-::: kili.mutations.notification.__init__
+## Queries
+::: kili.queries.notification.__init__.QueriesNotification

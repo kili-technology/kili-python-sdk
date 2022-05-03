@@ -6,13 +6,7 @@ Kili is a platform that empowers a data-centric approach to Machine Learning thr
 
 ## Requirements
 
-- `python >= 3.7`
-- Create and copy a Kili API key
-- Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
-
-```bash
-export KILI_API_KEY='<you api key value here>'
-```
+You only need Python 3.7 or greater
 
 ## Installation
 
@@ -22,18 +16,27 @@ Install the Kili client with pip:
 pip install kili
 ```
 
-## Usage
+## Getting Started
 
-Instantiate the Kili client:
+- Create and copy a [Kili API key](https://docs.kili-technology.com/docs/creating-an-api-key)
+- Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
 
-```python
-from kili.client import Kili
-kili = Kili()
-# You can now use the Kili client!
-```
+  ```bash
+  export KILI_API_KEY='<you api key value here>'
+  ```
 
-Note that you can also pass the API key as an argument of the `Kili` initialization:
+- Instantiate the Kili client:
 
-```python
-kili = Kili(api_key='MY API KEY')
-```
+  ```python
+  from kili.client import Kili
+  kili = Kili()
+  ```
+
+!!! success "Great!"
+    You can now begin to use the Kili Python SDK
+
+!!! info
+    You can also pass the API key as an argument of the `Kili` initialization:
+    ```python
+    kili = Kili(api_key='<you api key value here>')
+    ```

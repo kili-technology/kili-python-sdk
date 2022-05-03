@@ -1,6 +1,4 @@
-"""
-API authentication module
-"""
+"""API authentication module"""
 
 import os
 import warnings
@@ -20,12 +18,10 @@ warnings.filterwarnings("default", module='kili', category=DeprecationWarning)
 
 
 def get_version_without_patch(version):
-    """
-    Return the version of Kili API removing the patch version
+    """Return the version of Kili API removing the patch version.
 
-    Parameters
-    ----------
-    - version
+    Args:
+        version
     """
     return '.'.join(version.split('.')[:-1])
 
@@ -83,12 +79,10 @@ class KiliAuth:
         self.session.close()
 
     def check_versions_match(self, api_endpoint):
-        """
-        Checks that the versions of Kili Playground and Kili API are the same
+        """Check that the versions of Kili Playground and Kili API are the same
 
-        Parameters
-        ----------
-        - api_endpoint: url of the Kili API
+        Args:
+            api_endpoint: url of the Kili API
         """
         url = api_endpoint.replace('/graphql', '/version')
         response = requests.get(url, verify=self.verify).json()
@@ -99,12 +93,10 @@ class KiliAuth:
             warnings.warn(message, UserWarning)
 
     def check_expiry_of_key_is_close(self, api_key):
-        """
-        Checks that the expiration date of the api_key is not too close
+        """Check that the expiration date of the api_key is not too close.
 
-        Parameters
-        ----------
-        - api_key: key used to connect to the Kili API
+        Args:
+            api_key: key used to connect to the Kili API
         """
         duration_days = 365
         warn_days = 30
@@ -123,8 +115,6 @@ You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning)
 
     def get_user(self):
-        """
-        Gets the current user from the api_key provided
-        """
+        """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
         return format_result('data', result)

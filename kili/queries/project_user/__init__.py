@@ -1,6 +1,4 @@
-"""
-Project user queries
-"""
+"""Project user queries."""
 
 from typing import Generator, List, Optional, Union
 import warnings
@@ -15,18 +13,15 @@ from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesProjectUser:
-    """
-    Set of ProjectUser queries
-    """
+    """Set of ProjectUser queries."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
-        """
-        Initializes the subclass
+        """Initialize the subclass.
 
-        Parameters
-        ----------
-        auth : KiliAuth object
+        Args:
+            auth: KiliAuth object
         """
         self.auth = auth
 
@@ -45,41 +40,29 @@ class QueriesProjectUser:
                       disable_tqdm: bool = False,
                       as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """
-        Return project users (possibly with their KPIs) that match a set of criteria
+        """Return project users (possibly with their KPIs) that match a set of criteria
 
 
-        Parameters
-        ----------
-        email :
-            Email of the user
-        organization_id :
-            Identifier of the user's organization
-        project_id :
-            Identifier of the project
-        fields :
-            All the fields to request among the possible fields for the projectUsers.
-            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
-        first :
-            Maximum number of users to return
-        skip :
-            Number of project users to skip
-        disable_tqdm :
-            If True, the progress bar will be disabled
-        as_generator:
-            If True, a generator on the project users is returned.
+        Args:
+            email: Email of the user
+            organization_id: Identifier of the user's organization
+            project_id: Identifier of the project
+            fields: All the fields to request among the possible fields for the projectUsers
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
+            first: Maximum number of users to return
+            skip: Number of project users to skip
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the project users is returned.
 
-        Returns
-        -------
-        dict
-            a result object which contains the query if it was successful, or an error message else.
+        Returns:
+            A result object which contains the query if it was successful,
+                or an error message.
 
-        Examples
-        -------
-        ```
-        # Retrieve consensus marks of all users in project
-        >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
-        ```
+        Examples:
+            ```
+            # Retrieve consensus marks of all users in project
+            >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
+            ```
         """
 
         count_args = {"email": email,
@@ -140,20 +123,13 @@ class QueriesProjectUser:
         """
         Counts the number of projects and their users that match a set of criteria
 
-        Parameters
-        ----------
-        email :
-            Email of the user
-        organization_id :
-            Identifier of the user's organization
-        project_id :
-            Identifier of the project
+        Args:
+            email: Email of the user
+            organization_id: Identifier of the user's organization
+            project_id: Identifier of the project
 
-        Returns
-        -------
-        dict
-            a positive integer corresponding to the number of results of the query
-                if it was successful, or an error message else.
+        Returns:
+            The number of project users with the parameters provided
         """
         variables = {
             'where': {

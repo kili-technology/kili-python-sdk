@@ -31,23 +31,32 @@ plugins:
         python:
           rendering:
             show_root_heading: false
+            heading_level: 3
             show_source: true
-            docstring_style: spacy
             show_category_heading: false
             show_root_toc_entry: false
           selection:
-            docstring_style: numpy
+            docstring_style: google
             filters:
               - '!^__' # exclude all members starting with __
+            docstring_options:
+              replace_admonitions: yes
       watch:
         - kili
   - mike:
       version_selector: true
 
 markdown_extensions:
-  - pymdownx.superfences
+  - admonition
+  - def_list
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
-##versionning
 extra:
   version:
     provider: mike

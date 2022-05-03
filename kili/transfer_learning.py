@@ -8,18 +8,19 @@ import time
 from kili.client import Kili
 
 SECONDS_TO_WAIT = 1
-LABEL_FIELDS = ['isLatestLabelForUser', 'labelType', 'jsonResponse', 'createdAt']
-FIELDS = ['id', 'content', 'externalId'] + [f'labels.{x}' for x in LABEL_FIELDS]
+LABEL_FIELDS = ['isLatestLabelForUser',
+                'labelType', 'jsonResponse', 'createdAt']
+FIELDS = ['id', 'content', 'externalId'] + \
+    [f'labels.{x}' for x in LABEL_FIELDS]
 
 
 def get_labels_of_types(asset, label_types):
     """
     Extracts the latest labels from an asset
 
-    Parameters
-    ----------
-    - asset: the asset to extract the labels from
-    - label_types: type of label, either DEFAULT or REVIEW
+    Args:
+        asset: the asset to extract the labels from
+        label_types: type of label, either DEFAULT or REVIEW
     """
     labels = [label for label in asset['labels']
               if label['labelType'] in label_types and label['isLatestLabelForUser']]
@@ -50,7 +51,6 @@ class TransferLearning:
             minimum_number_of_assets_to_launch_training
         self.number_of_inferences = number_of_inferences
 
-
     def get_assets_to_train(self):
         """
         Collects the assets to train on
@@ -79,7 +79,7 @@ class TransferLearning:
         Prints that training is ongoing
         """
         print(
-            f'Launch training for {len(assets_to_train)} assets:' \
+            f'Launch training for {len(assets_to_train)} assets:'
             f' {[asset["id"] for asset in assets_to_train]}')
 
     def launch_train(self):
@@ -122,7 +122,7 @@ class TransferLearning:
         Prints that prediction is ongoing
         """
         print(
-            f'Launch inference for {len(assets_to_predict)} assets:' \
+            f'Launch inference for {len(assets_to_predict)} assets:'
             f' {[asset["id"] for asset in assets_to_predict]}')
 
     def launch_predict(self):

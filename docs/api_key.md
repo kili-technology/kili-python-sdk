@@ -1,5 +1,7 @@
 # API Key module
 
-::: kili.queries.api_key.__init__ 
+## Queries
+::: kili.queries.api_key.__init__.QueriesApiKey 
 
-::: kili.mutations.api_key.__init__
+## Mutations
+::: kili.mutations.api_key.__init__.MutationsApiKey 
