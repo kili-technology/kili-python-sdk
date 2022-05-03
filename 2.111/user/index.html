@@ -1032,7 +1032,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
                     <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">organization_role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
 
 <span class="sd">        Args:</span>
@@ -1061,7 +1061,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">update_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">old_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                        <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                        <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Allow to modify the password that you use to connect to Kili. \</span>
 <span class="sd">        This resolver only works for on-premise installations without Auth0.</span>
 
@@ -1086,7 +1086,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset password.</span>
 
 <span class="sd">        This resolver only works for on-premise installations without Auth0,</span>
@@ -1111,7 +1111,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
                                   <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                   <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                   <span class="n">organization_role</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                  <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                                  <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update the properties of a user.</span>
 
 <span class="sd">        Args:</span>
@@ -1226,7 +1226,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
   </thead>
   <tbody>
     <tr>
-      <td><code>dict</code></td>
+      <td></td>
       <td><p>A result object which indicates if the mutation was successful,
     or an error message.</p></td>
     </tr>
@@ -1241,7 +1241,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
                 <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">organization_role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
 
 <span class="sd">    Args:</span>
@@ -1319,7 +1319,7 @@ if your organization allows Kili to send emails.</p>
   </thead>
   <tbody>
     <tr>
-      <td><code>dict</code></td>
+      <td></td>
       <td><p>A result object which indicates if the mutation was successful,
     or an error message.</p></td>
     </tr>
@@ -1329,7 +1329,7 @@ if your organization allows Kili to send emails.</p>
           <summary>Source code in <code>kili/mutations/user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reset password.</span>
 
 <span class="sd">    This resolver only works for on-premise installations without Auth0,</span>
@@ -1414,7 +1414,7 @@ if your organization allows Kili to send emails.</p>
   </thead>
   <tbody>
     <tr>
-      <td><code>dict</code></td>
+      <td></td>
       <td><p>A result object which indicates if the mutation was successful,
     or an error message.</p></td>
     </tr>
@@ -1425,7 +1425,7 @@ if your organization allows Kili to send emails.</p>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">update_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">old_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                    <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Allow to modify the password that you use to connect to Kili. \</span>
 <span class="sd">    This resolver only works for on-premise installations without Auth0.</span>
 
@@ -1529,7 +1529,7 @@ One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
   </thead>
   <tbody>
     <tr>
-      <td><code>dict</code></td>
+      <td></td>
       <td><p>A result object which indicates if the mutation was successful,
     or an error message.</p></td>
     </tr>
@@ -1545,7 +1545,7 @@ One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
                               <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">organization_role</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                              <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                              <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Update the properties of a user.</span>
 
 <span class="sd">    Args:</span>
