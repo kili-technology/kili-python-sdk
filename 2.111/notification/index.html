@@ -333,11 +333,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.notification.__init__.QueriesNotification" class="md-nav__link">
-    QueriesNotification
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesNotification">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -350,33 +350,6 @@
           <li class="md-nav__item">
   <a href="#kili.queries.notification.__init__.QueriesNotification.notifications" class="md-nav__link">
     notifications()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kili.mutations.notification.__init__.MutationsNotification" class="md-nav__link">
-    MutationsNotification
-  </a>
-  
-    <nav class="md-nav" aria-label="MutationsNotification">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kili.mutations.notification.__init__.MutationsNotification.create_notification" class="md-nav__link">
-    create_notification()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kili.mutations.notification.__init__.MutationsNotification.update_properties_in_notification" class="md-nav__link">
-    update_properties_in_notification()
   </a>
   
 </li>
@@ -496,11 +469,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.notification.__init__.QueriesNotification" class="md-nav__link">
-    QueriesNotification
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesNotification">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -513,33 +486,6 @@
           <li class="md-nav__item">
   <a href="#kili.queries.notification.__init__.QueriesNotification.notifications" class="md-nav__link">
     notifications()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kili.mutations.notification.__init__.MutationsNotification" class="md-nav__link">
-    MutationsNotification
-  </a>
-  
-    <nav class="md-nav" aria-label="MutationsNotification">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kili.mutations.notification.__init__.MutationsNotification.create_notification" class="md-nav__link">
-    create_notification()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kili.mutations.notification.__init__.MutationsNotification.update_properties_in_notification" class="md-nav__link">
-    update_properties_in_notification()
   </a>
   
 </li>
@@ -564,56 +510,28 @@
 
 
 <h1 id="notification-module">Notification module</h1>
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Notification queries</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="queries">Queries</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.queries.notification.__init__.QueriesNotification" class="doc doc-heading">
-        <code>
-QueriesNotification        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of Notification queries</p>
+      <p>Set of Notification queries.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/notification/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesNotification</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Notification queries</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of Notification queries.&quot;&quot;&quot;</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -631,33 +549,23 @@ QueriesNotification        </code>
                       <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                       <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets a generator or a list of notifications respecting a set of criteria</span>
+        <span class="sd">&quot;&quot;&quot;Get a generator or a list of notifications respecting a set of criteria.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the notifications</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.</span>
-<span class="sd">        first :</span>
-<span class="sd">            Number of notifications to query</span>
-<span class="sd">        has_been_seen :</span>
-<span class="sd">            If the notifications returned should have been seen.</span>
-<span class="sd">        notification_id :</span>
-<span class="sd">            If given, will return the notification which has this id</span>
-<span class="sd">        skip :</span>
-<span class="sd">            Number of notifications to skip (they are ordered by their date of creation,</span>
-<span class="sd">            first to last).</span>
-<span class="sd">        user_id :</span>
-<span class="sd">            If given, returns the notifications of a specific user</span>
-<span class="sd">        disable_tqdm :</span>
-<span class="sd">            If True, the progress bar will be disabled</span>
-<span class="sd">        as_generator:</span>
-<span class="sd">            If True, a generator on the notifications is returned.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the notifications</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.</span>
+<span class="sd">            first: Number of notifications to query</span>
+<span class="sd">            has_been_seen: If the notifications returned should have been seen.</span>
+<span class="sd">            notification_id: If given, will return the notification which has this id</span>
+<span class="sd">            skip: Number of notifications to skip (they are ordered by their date of creation,</span>
+<span class="sd">                first to last).</span>
+<span class="sd">            user_id: If given, returns the notifications of a specific user</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the notifications is returned.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -707,20 +615,14 @@ QueriesNotification        </code>
     <span class="k">def</span> <span class="nf">count_notifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                             <span class="n">has_been_seen</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Count the number of notifications</span>
+        <span class="sd">&quot;&quot;&quot;Count the number of notifications.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        has_been_seen :</span>
-<span class="sd">            Filter on notifications that have been seen.</span>
-<span class="sd">        user_id :</span>
-<span class="sd">            Filter on the notifications of a specific user</span>
+<span class="sd">        Args:</span>
+<span class="sd">            has_been_seen: Filter on notifications that have been seen.</span>
+<span class="sd">            user_id: Filter on the notifications of a specific user</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            the number of notifications with the parameters provided</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The number of notifications with the parameters provided</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -761,7 +663,7 @@ QueriesNotification        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Count the number of notifications</p>
+      <p>Count the number of notifications.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -799,7 +701,7 @@ QueriesNotification        </code>
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>the number of notifications with the parameters provided</p></td>
+      <td><p>The number of notifications with the parameters provided</p></td>
     </tr>
   </tbody>
 </table>
@@ -810,20 +712,14 @@ QueriesNotification        </code>
 <span class="k">def</span> <span class="nf">count_notifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">has_been_seen</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Count the number of notifications</span>
+    <span class="sd">&quot;&quot;&quot;Count the number of notifications.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    has_been_seen :</span>
-<span class="sd">        Filter on notifications that have been seen.</span>
-<span class="sd">    user_id :</span>
-<span class="sd">        Filter on the notifications of a specific user</span>
+<span class="sd">    Args:</span>
+<span class="sd">        has_been_seen: Filter on notifications that have been seen.</span>
+<span class="sd">        user_id: Filter on the notifications of a specific user</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        the number of notifications with the parameters provided</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The number of notifications with the parameters provided</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -856,7 +752,7 @@ QueriesNotification        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Gets a generator or a list of notifications respecting a set of criteria</p>
+      <p>Get a generator or a list of notifications respecting a set of criteria.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -910,13 +806,13 @@ first to last).</p></td>
       <tr>
         <td><code>disable_tqdm</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, the progress bar will be disabled</p></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>as_generator</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, a generator on the notifications is returned.</p></td>
+        <td><p>If <code>True</code>, a generator on the notifications is returned.</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
@@ -932,7 +828,8 @@ first to last).</p></td>
   <tbody>
     <tr>
       <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
-      <td></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -951,33 +848,23 @@ first to last).</p></td>
                   <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                   <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gets a generator or a list of notifications respecting a set of criteria</span>
+    <span class="sd">&quot;&quot;&quot;Get a generator or a list of notifications respecting a set of criteria.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the notifications</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.</span>
-<span class="sd">    first :</span>
-<span class="sd">        Number of notifications to query</span>
-<span class="sd">    has_been_seen :</span>
-<span class="sd">        If the notifications returned should have been seen.</span>
-<span class="sd">    notification_id :</span>
-<span class="sd">        If given, will return the notification which has this id</span>
-<span class="sd">    skip :</span>
-<span class="sd">        Number of notifications to skip (they are ordered by their date of creation,</span>
-<span class="sd">        first to last).</span>
-<span class="sd">    user_id :</span>
-<span class="sd">        If given, returns the notifications of a specific user</span>
-<span class="sd">    disable_tqdm :</span>
-<span class="sd">        If True, the progress bar will be disabled</span>
-<span class="sd">    as_generator:</span>
-<span class="sd">        If True, a generator on the notifications is returned.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the notifications</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#notification) for all possible fields.</span>
+<span class="sd">        first: Number of notifications to query</span>
+<span class="sd">        has_been_seen: If the notifications returned should have been seen.</span>
+<span class="sd">        notification_id: If given, will return the notification which has this id</span>
+<span class="sd">        skip: Number of notifications to skip (they are ordered by their date of creation,</span>
+<span class="sd">            first to last).</span>
+<span class="sd">        user_id: If given, returns the notifications of a specific user</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the notifications is returned.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1014,395 +901,6 @@ first to last).</p></td>
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Notification mutations</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h2 id="kili.mutations.notification.__init__.MutationsNotification" class="doc doc-heading">
-        <code>
-MutationsNotification        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of Notification mutations</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kili/mutations/notification/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsNotification</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Notification mutations</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
-
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
-    <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">create_notification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a notification</span>
-
-<span class="sd">        This method is currently only active for Kili administrators.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        message :</span>
-<span class="sd">        status :</span>
-<span class="sd">        url :</span>
-<span class="sd">        user_id :</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
-                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
-                <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
-                <span class="s1">&#39;userID&#39;</span><span class="p">:</span> <span class="n">user_id</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_NOTIFICATION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
-    <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">update_properties_in_notification</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">notification_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">has_been_seen</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-            <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Modify a notification</span>
-
-<span class="sd">        This method is currently only active for Kili administrators.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        notification_id :</span>
-<span class="sd">        hasBeenSeen:</span>
-<span class="sd">        status :</span>
-<span class="sd">        url :</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">notification_id</span><span class="p">,</span>
-            <span class="s1">&#39;hasBeenSeen&#39;</span><span class="p">:</span> <span class="n">has_been_seen</span><span class="p">,</span>
-            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
-            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span>
-        <span class="p">}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-            <span class="n">GQL_UPDATE_PROPERTIES_IN_NOTIFICATION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h3 id="kili.mutations.notification.__init__.MutationsNotification.create_notification" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_notification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span></code>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Create a notification</p>
-<p>This method is currently only active for Kili administrators.</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>message</code></td>
-        <td><code>str</code></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>status</code></td>
-        <td><code>str</code></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>url</code></td>
-        <td><code>str</code></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>user_id</code></td>
-        <td><code>str</code></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>kili/mutations/notification/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
-<span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">create_notification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create a notification</span>
-
-<span class="sd">    This method is currently only active for Kili administrators.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    message :</span>
-<span class="sd">    status :</span>
-<span class="sd">    url :</span>
-<span class="sd">    user_id :</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
-            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
-            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
-            <span class="s1">&#39;userID&#39;</span><span class="p">:</span> <span class="n">user_id</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_NOTIFICATION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h3 id="kili.mutations.notification.__init__.MutationsNotification.update_properties_in_notification" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">update_properties_in_notification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notification_id</span><span class="p">,</span> <span class="n">has_been_seen</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span></code>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Modify a notification</p>
-<p>This method is currently only active for Kili administrators.</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>notification_id</code></td>
-        <td><code>str</code></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>hasBeenSeen</code></td>
-        <td></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>status</code></td>
-        <td><code>str</code></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>url</code></td>
-        <td><code>str</code></td>
-        <td></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>kili/mutations/notification/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
-<span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">update_properties_in_notification</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">notification_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">has_been_seen</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-        <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Modify a notification</span>
-
-<span class="sd">    This method is currently only active for Kili administrators.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    notification_id :</span>
-<span class="sd">    hasBeenSeen:</span>
-<span class="sd">    status :</span>
-<span class="sd">    url :</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">notification_id</span><span class="p">,</span>
-        <span class="s1">&#39;hasBeenSeen&#39;</span><span class="p">:</span> <span class="n">has_been_seen</span><span class="p">,</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
-        <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span>
-    <span class="p">}</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-        <span class="n">GQL_UPDATE_PROPERTIES_IN_NOTIFICATION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
 
 

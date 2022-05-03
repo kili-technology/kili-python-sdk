@@ -258,11 +258,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.api_key.__init__.QueriesApiKey" class="md-nav__link">
-    QueriesApiKey
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesApiKey">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -285,11 +285,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.api_key.__init__.MutationsApiKey" class="md-nav__link">
-    MutationsApiKey
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsApiKey">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -489,11 +489,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.api_key.__init__.QueriesApiKey" class="md-nav__link">
-    QueriesApiKey
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesApiKey">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -516,11 +516,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.api_key.__init__.MutationsApiKey" class="md-nav__link">
-    MutationsApiKey
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsApiKey">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -550,38 +550,13 @@
 
 
 <h1 id="api-key-module">API Key module</h1>
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Api key queries</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="queries">Queries</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
-
-<h2 id="kili.queries.api_key.__init__.QueriesApiKey" class="doc doc-heading">
-        <code>
-QueriesApiKey        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
+    <div class="doc doc-contents first">
 
       <p>Set of ApiKey queries</p>
 
@@ -594,12 +569,10 @@ QueriesApiKey        </code>
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -613,40 +586,31 @@ QueriesApiKey        </code>
                  <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets a generator or a list of API keys that match a set of constraints</span>
+        <span class="sd">&quot;&quot;&quot;Get a generator or a list of API keys that match a set of constraints.</span>
+
+<span class="sd">        !!! info</span>
+<span class="sd">            You can only query your own API keys</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            api_key_id: Identifier of the API key to retrieve.</span>
+<span class="sd">            user_id: Identifier of the user.</span>
+<span class="sd">            api_key: Value of the API key.</span>
+<span class="sd">            skip: Number of assets to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.</span>
+<span class="sd">            first: Maximum number of API keys to return.</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled.</span>
+<span class="sd">            as_generator: If `True`, a generator on the API key is returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
 
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        api_key_id :</span>
-<span class="sd">            The unique id of the api key to retrieve.</span>
-<span class="sd">        user_id :</span>
-<span class="sd">            Identifier of the user (you can only query your own api keys).</span>
-<span class="sd">        api_key :</span>
-<span class="sd">            Value of the api key (you can only query your own api keys).</span>
-<span class="sd">        skip :</span>
-<span class="sd">            Number of assets to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the assets.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.</span>
-<span class="sd">        first :</span>
-<span class="sd">            Maximum number of assets to return.</span>
-<span class="sd">        disable_tqdm :</span>
-<span class="sd">            If True, the progress bar will be disabled</span>
-<span class="sd">        as_generator:</span>
-<span class="sd">            If True, a generator on the API key is returned.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        result:</span>
-<span class="sd">            a result object which contains the query if it was successful, or an error message else.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        -------</span>
-<span class="sd">        &gt;&gt;&gt; kili.api_keys(user_id=user_id)</span>
-<span class="sd">        &gt;&gt;&gt; kili.api_keys(api_key=api_key)</span>
-<span class="sd">        &gt;&gt;&gt; kili.api_keys(api_key=api_key, as_generator=False)</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.api_keys(user_id=user_id)</span>
+<span class="sd">            &gt;&gt;&gt; kili.api_keys(api_key=api_key)</span>
+<span class="sd">            &gt;&gt;&gt; kili.api_keys(api_key=api_key, as_generator=False)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">saved_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
@@ -702,29 +666,22 @@ QueriesApiKey        </code>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_api_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                        <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Count and return the number of api keys with the given constraints</span>
+        <span class="sd">&quot;&quot;&quot;Count and return the number of api keys with the given constraints.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        api_key_id :</span>
-<span class="sd">            The unique id of the api key to retrieve.</span>
-<span class="sd">        user_id :</span>
-<span class="sd">            Identifier of the user (you can only query your own api keys).</span>
-<span class="sd">        api_key :</span>
-<span class="sd">            Value of the api key (you can only query your own api keys).</span>
+<span class="sd">        Args:</span>
+<span class="sd">            api_key_id: Identifier of the API key to retrieve.</span>
+<span class="sd">            user_id: Identifier of the user.</span>
+<span class="sd">            api_key: Value of the api key.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            A result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        -------</span>
-<span class="sd">        &gt;&gt;&gt; kili.count_api_keys(user_id=user_id)</span>
-<span class="sd">        3</span>
-<span class="sd">        &gt;&gt;&gt; kili.count_api_keys(api_key=api_key)</span>
-<span class="sd">        1</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.count_api_keys(user_id=user_id)</span>
+<span class="sd">            3</span>
+<span class="sd">            &gt;&gt;&gt; kili.count_api_keys(api_key=api_key)</span>
+<span class="sd">            1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -766,7 +723,11 @@ QueriesApiKey        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Gets a generator or a list of API keys that match a set of constraints</p>
+      <p>Get a generator or a list of API keys that match a set of constraints.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>You can only query your own API keys</p>
+</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -782,19 +743,19 @@ QueriesApiKey        </code>
       <tr>
         <td><code>api_key_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>The unique id of the api key to retrieve.</p></td>
+        <td><p>Identifier of the API key to retrieve.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>user_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the user (you can only query your own api keys).</p></td>
+        <td><p>Identifier of the user.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>api_key</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Value of the api key (you can only query your own api keys).</p></td>
+        <td><p>Value of the API key.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -813,19 +774,19 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
       <tr>
         <td><code>first</code></td>
         <td><code>Optional[int]</code></td>
-        <td><p>Maximum number of assets to return.</p></td>
+        <td><p>Maximum number of API keys to return.</p></td>
         <td><code>100</code></td>
       </tr>
       <tr>
         <td><code>disable_tqdm</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, the progress bar will be disabled</p></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled.</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>as_generator</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, a generator on the API key is returned.</p></td>
+        <td><p>If <code>True</code>, a generator on the API key is returned.</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
@@ -841,10 +802,17 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
   <tbody>
     <tr>
       <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
-      <td><p>a result object which contains the query if it was successful, or an error message else.</p></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">api_keys</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">api_keys</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">api_keys</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/api_key/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -856,40 +824,31 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
              <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
              <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gets a generator or a list of API keys that match a set of constraints</span>
+    <span class="sd">&quot;&quot;&quot;Get a generator or a list of API keys that match a set of constraints.</span>
+
+<span class="sd">    !!! info</span>
+<span class="sd">        You can only query your own API keys</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        api_key_id: Identifier of the API key to retrieve.</span>
+<span class="sd">        user_id: Identifier of the user.</span>
+<span class="sd">        api_key: Value of the API key.</span>
+<span class="sd">        skip: Number of assets to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.</span>
+<span class="sd">        first: Maximum number of API keys to return.</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled.</span>
+<span class="sd">        as_generator: If `True`, a generator on the API key is returned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
 
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    api_key_id :</span>
-<span class="sd">        The unique id of the api key to retrieve.</span>
-<span class="sd">    user_id :</span>
-<span class="sd">        Identifier of the user (you can only query your own api keys).</span>
-<span class="sd">    api_key :</span>
-<span class="sd">        Value of the api key (you can only query your own api keys).</span>
-<span class="sd">    skip :</span>
-<span class="sd">        Number of assets to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the assets.</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.</span>
-<span class="sd">    first :</span>
-<span class="sd">        Maximum number of assets to return.</span>
-<span class="sd">    disable_tqdm :</span>
-<span class="sd">        If True, the progress bar will be disabled</span>
-<span class="sd">    as_generator:</span>
-<span class="sd">        If True, a generator on the API key is returned.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    result:</span>
-<span class="sd">        a result object which contains the query if it was successful, or an error message else.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; kili.api_keys(user_id=user_id)</span>
-<span class="sd">    &gt;&gt;&gt; kili.api_keys(api_key=api_key)</span>
-<span class="sd">    &gt;&gt;&gt; kili.api_keys(api_key=api_key, as_generator=False)</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.api_keys(user_id=user_id)</span>
+<span class="sd">        &gt;&gt;&gt; kili.api_keys(api_key=api_key)</span>
+<span class="sd">        &gt;&gt;&gt; kili.api_keys(api_key=api_key, as_generator=False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">saved_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
@@ -949,7 +908,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 
     <div class="doc doc-contents ">
 
-      <p>Count and return the number of api keys with the given constraints</p>
+      <p>Count and return the number of api keys with the given constraints.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -965,19 +924,19 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
       <tr>
         <td><code>api_key_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>The unique id of the api key to retrieve.</p></td>
+        <td><p>Identifier of the API key to retrieve.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>user_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the user (you can only query your own api keys).</p></td>
+        <td><p>Identifier of the user.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>api_key</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Value of the api key (you can only query your own api keys).</p></td>
+        <td><p>Value of the api key.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -993,39 +952,40 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>A result object which contains the query if it was successful, or an error message else.</p></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">count_api_keys</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+<span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">count_api_keys</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+<span class="mi">1</span>
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/api_key/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">count_api_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Count and return the number of api keys with the given constraints</span>
+    <span class="sd">&quot;&quot;&quot;Count and return the number of api keys with the given constraints.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    api_key_id :</span>
-<span class="sd">        The unique id of the api key to retrieve.</span>
-<span class="sd">    user_id :</span>
-<span class="sd">        Identifier of the user (you can only query your own api keys).</span>
-<span class="sd">    api_key :</span>
-<span class="sd">        Value of the api key (you can only query your own api keys).</span>
+<span class="sd">    Args:</span>
+<span class="sd">        api_key_id: Identifier of the API key to retrieve.</span>
+<span class="sd">        user_id: Identifier of the user.</span>
+<span class="sd">        api_key: Value of the api key.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        A result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; kili.count_api_keys(user_id=user_id)</span>
-<span class="sd">    3</span>
-<span class="sd">    &gt;&gt;&gt; kili.count_api_keys(api_key=api_key)</span>
-<span class="sd">    1</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.count_api_keys(user_id=user_id)</span>
+<span class="sd">        3</span>
+<span class="sd">        &gt;&gt;&gt; kili.count_api_keys(api_key=api_key)</span>
+<span class="sd">        1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -1055,83 +1015,42 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 
   </div>
 
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Api key mutations</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="mutations">Mutations</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.mutations.api_key.__init__.MutationsApiKey" class="doc doc-heading">
-        <code>
-MutationsApiKey        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of User mutations</p>
+      <p>Set of User mutations.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/api_key/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsApiKey</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of User mutations</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of User mutations.&quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">append_to_api_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create an api key to connect to the API</span>
+    <span class="k">def</span> <span class="nf">append_to_api_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create an api key to connect to the API.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        api_key :</span>
-<span class="sd">            A new api key to connect with</span>
-<span class="sd">        name :</span>
-<span class="sd">            A name used to describe the api key.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            api_key: A new api key to connect with</span>
+<span class="sd">            name: A name used to describe the api key.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">,</span>
@@ -1167,7 +1086,7 @@ MutationsApiKey        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Create an api key to connect to the API</p>
+      <p>Create an api key to connect to the API.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1194,20 +1113,36 @@ MutationsApiKey        </code>
       </tr>
   </tbody>
 </table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
+    </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kili/mutations/api_key/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">append_to_api_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create an api key to connect to the API</span>
+<span class="k">def</span> <span class="nf">append_to_api_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create an api key to connect to the API.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    api_key :</span>
-<span class="sd">        A new api key to connect with</span>
-<span class="sd">    name :</span>
-<span class="sd">        A name used to describe the api key.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        api_key: A new api key to connect with</span>
+<span class="sd">        name: A name used to describe the api key.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">,</span>
@@ -1221,18 +1156,6 @@ MutationsApiKey        </code>
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
 
 

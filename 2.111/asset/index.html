@@ -273,11 +273,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.asset.__init__.QueriesAsset" class="md-nav__link">
-    QueriesAsset
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesAsset">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -300,11 +300,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.asset.__init__.MutationsAsset" class="md-nav__link">
-    MutationsAsset
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsAsset">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -503,11 +503,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.asset.__init__.QueriesAsset" class="md-nav__link">
-    QueriesAsset
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesAsset">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -530,11 +530,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.asset.__init__.MutationsAsset" class="md-nav__link">
-    MutationsAsset
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsAsset">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -578,38 +578,13 @@
 
 
 <h1 id="asset-module">Asset module</h1>
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Asset queries</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="queries">Queries</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
-
-<h2 id="kili.queries.asset.__init__.QueriesAsset" class="doc doc-heading">
-        <code>
-QueriesAsset        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
+    <div class="doc doc-contents first">
 
       <p>Set of Asset queries</p>
 
@@ -622,12 +597,10 @@ QueriesAsset        </code>
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -678,94 +651,64 @@ QueriesAsset        </code>
                <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
+        <span class="sd">&quot;&quot;&quot;Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        asset_id :</span>
-<span class="sd">            The unique id of the asset to retrieve.</span>
-<span class="sd">        asset_id_in :</span>
-<span class="sd">            A list of the ids of the assets to retrieve.</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project.</span>
-<span class="sd">        skip :</span>
-<span class="sd">            Number of assets to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the assets.</span>
-<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
-<span class="sd">        first :</span>
-<span class="sd">            Maximum number of assets to return.</span>
-<span class="sd">        consensus_mark_gt :</span>
-<span class="sd">            Minimum amount of consensus for the asset.</span>
-<span class="sd">        consensus_mark_lt :</span>
-<span class="sd">            Maximum amount of consensus for the asset.</span>
-<span class="sd">        external_id_contains :</span>
-<span class="sd">            Returned assets have an external id that belongs to that list, if given.</span>
-<span class="sd">        metadata_where :</span>
-<span class="sd">            Filters by the values of the metadata of the asset.</span>
-<span class="sd">            - metadata_where = {key1: &quot;value1&quot;} to filter on assets whose metadata</span>
+<span class="sd">        Args:</span>
+<span class="sd">            asset_id: Identifier of the asset to retrieve.</span>
+<span class="sd">            asset_id_in: A list of the IDs of the assets to retrieve.</span>
+<span class="sd">            project_id: Identifier of the project.</span>
+<span class="sd">            skip: Number of assets to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">                    See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
+<span class="sd">            first: Maximum number of assets to return.</span>
+<span class="sd">            consensus_mark_gt: Minimum amount of consensus for the asset.</span>
+<span class="sd">            consensus_mark_lt: Maximum amount of consensus for the asset.</span>
+<span class="sd">            external_id_contains: Returned assets have an external id that belongs to that list, if given.</span>
+<span class="sd">            metadata_where: Filters by the values of the metadata of the asset.</span>
+<span class="sd">            honeypot_mark_gt: Minimum amount of honeypot for the asset.</span>
+<span class="sd">            honeypot_mark_lt : Maximum amount of honeypot for the asset.</span>
+<span class="sd">            status_in: Returned assets should have a status that belongs to that list, if given.</span>
+<span class="sd">                Possible choices: `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">            label_type_in: Returned assets should have a label whose type belongs to that list, if given.</span>
+<span class="sd">            label_author_in: Returned assets should have a label whose status belongs to that list, if given.</span>
+<span class="sd">            label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.</span>
+<span class="sd">            label_consensus_mark_lt: Returned assets should have a label whose consensus is lower than this number.</span>
+<span class="sd">            label_created_at: Returned assets should have a label whose creation date is equal to this date.</span>
+<span class="sd">            label_created_at_gt: Returned assets should have a label whose creation date is greater than this date.</span>
+<span class="sd">            label_created_at_lt: Returned assets should have a label whose creation date is lower than this date.</span>
+<span class="sd">            label_json_response_contains: Returned assets should have a substring of the label&#39;s jsonResponse</span>
+<span class="sd">                    that belongs to that list, if given.</span>
+<span class="sd">            label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number</span>
+<span class="sd">            label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number</span>
+<span class="sd">            skipped: Returned assets should be skipped</span>
+<span class="sd">            updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.</span>
+<span class="sd">            updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.</span>
+<span class="sd">            format: If equal to &#39;pandas&#39;, returns a pandas DataFrame</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the assets is returned.</span>
+
+<span class="sd">        !!! info &quot;Dates format&quot;</span>
+<span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            ```</span>
+<span class="sd">            &gt;&gt;&gt; kili.assets(project_id=project_id) # returns the assets list of the project</span>
+<span class="sd">            &gt;&gt;&gt; kili.assets(asset_id=asset_id)</span>
+<span class="sd">            &gt;&gt;&gt; kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets</span>
+<span class="sd">            ```</span>
+
+<span class="sd">        !!! example &quot;How to filter based on Metadata&quot;</span>
+<span class="sd">            - `metadata_where = {key1: &quot;value1&quot;}` to filter on assets whose metadata</span>
 <span class="sd">                have key &quot;key1&quot; with value &quot;value1&quot;</span>
-<span class="sd">            - metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]} to filter on assets whose metadata</span>
+<span class="sd">            - `metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]}` to filter on assets whose metadata</span>
 <span class="sd">                have key &quot;key1&quot; with value &quot;value1&quot; or value &quot;value2</span>
-<span class="sd">            - metadata_where = {key2: [2, 10]} to filter on assets whose metadata</span>
+<span class="sd">            - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata</span>
 <span class="sd">                have key &quot;key2&quot; with a value between 2 and 10.</span>
-<span class="sd">        honeypot_mark_gt :</span>
-<span class="sd">            Minimum amount of honeypot for the asset.</span>
-<span class="sd">        honeypot_mark_lt :</span>
-<span class="sd">            Maximum amount of honeypot for the asset.</span>
-<span class="sd">        status_in :</span>
-<span class="sd">            Returned assets should have a status that belongs to that list, if given.</span>
-<span class="sd">            Possible choices: {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">        label_type_in :</span>
-<span class="sd">            Returned assets should have a label whose type belongs to that list, if given.</span>
-<span class="sd">        label_author_in :</span>
-<span class="sd">            Returned assets should have a label whose status belongs to that list, if given.</span>
-<span class="sd">        label_consensus_mark_gt :</span>
-<span class="sd">            Returned assets should have a label whose consensus is greater than this number.</span>
-<span class="sd">        label_consensus_mark_lt :</span>
-<span class="sd">            Returned assets should have a label whose consensus is lower than this number.</span>
-<span class="sd">        label_created_at :</span>
-<span class="sd">            Returned assets should have a label whose creation date is equal to this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        label_created_at_gt :</span>
-<span class="sd">            Returned assets should have a label whose creation date is greater than this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        label_created_at_lt :</span>
-<span class="sd">            Returned assets should have a label whose creation date is lower than this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        label_json_response_contains :</span>
-<span class="sd">            Returned assets should have a substring of the label&#39;s jsonResponse</span>
-<span class="sd">                that belongs to that list, if given.</span>
-<span class="sd">        label_honeypot_mark_gt :</span>
-<span class="sd">            Returned assets should have a label whose honeypot is greater than this number.</span>
-<span class="sd">        label_honeypot_mark_lt :</span>
-<span class="sd">            Returned assets should have a label whose honeypot is lower than this number.</span>
-<span class="sd">        skipped :</span>
-<span class="sd">            Returned assets should be skipped</span>
-<span class="sd">        updated_at_gte :</span>
-<span class="sd">            Returned assets should have a label whose update date is greated or equal to this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        updated_at_lte :</span>
-<span class="sd">            Returned assets should have a label whose update date is lower or equal to this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        format:</span>
-<span class="sd">            If equal to &#39;pandas&#39;, returns a pandas DataFrame</span>
-<span class="sd">        disable_tqdm :</span>
-<span class="sd">            If True, the progress bar will be disabled</span>
-<span class="sd">        as_generator :</span>
-<span class="sd">            If True, a generator on the assets is returned.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which contains the query if it was successful, else an error message.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; kili.assets(project_id=project_id) # returns the assets list of the project</span>
-<span class="sd">        &gt;&gt;&gt; kili.assets(asset_id=asset_id)</span>
-<span class="sd">        &gt;&gt;&gt; kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span> <span class="ow">and</span> <span class="n">as_generator</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -869,84 +812,70 @@ QueriesAsset        </code>
                      <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Count and return the number of assets with the given constraints</span>
+        <span class="sd">&quot;&quot;&quot;Count and return the number of assets with the given constraints.</span>
 
 <span class="sd">        Parameters beginning with &#39;label_&#39; apply to labels, others apply to assets.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        asset_id :</span>
-<span class="sd">            The unique id of the asset to retrieve.</span>
-<span class="sd">        asset_id_in :</span>
-<span class="sd">            A list of the ids of the assets to retrieve.</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">        external_id_contains :</span>
-<span class="sd">            Returned assets should have an external id that belongs to that list, if given.</span>
-<span class="sd">        metadata_where :</span>
-<span class="sd">            Filters by the values of the metadata of the asset.</span>
-<span class="sd">            - metadata_where = {key1: &quot;value1&quot;} to filter on assets whose metadata have key &quot;key1&quot;</span>
-<span class="sd">                with value &quot;value1&quot;</span>
-<span class="sd">            - metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]} to filter on assets whose metadata</span>
+<span class="sd">        Args:</span>
+<span class="sd">            asset_id: The unique id of the asset to retrieve.</span>
+<span class="sd">            asset_id_in: A list of the ids of the assets to retrieve.</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">            external_id_contains: Returned assets should have an external id</span>
+<span class="sd">                that belongs to that list, if given.</span>
+<span class="sd">            metadata_where: Filters by the values of the metadata of the asset.</span>
+<span class="sd">            status_in: Returned assets should have a status that belongs to that list, if given.</span>
+<span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">            consensus_mark_gt:Minimum amount of consensus for the asset.</span>
+<span class="sd">            consensus_mark_lt: Maximum amount of consensus for the asset.</span>
+<span class="sd">            honeypot_mark_gt: Minimum amount of honeypot for the asset.</span>
+<span class="sd">            honeypot_mark_lt: Maximum amount of consensus for the asset.</span>
+<span class="sd">            label_type_in: Returned assets should have a label</span>
+<span class="sd">                whose type belongs to that list, if given.</span>
+<span class="sd">            label_author_in: Returned assets should have a label</span>
+<span class="sd">                whose status belongs to that list, if given.</span>
+<span class="sd">            label_consensus_mark_gt: Returned assets should have a label</span>
+<span class="sd">                whose consensus is greater than this number.</span>
+<span class="sd">            label_consensus_mark_lt: Returned assets should have a label</span>
+<span class="sd">                whose consensus is lower than this number.</span>
+<span class="sd">            label_created_at: Returned assets should have a label</span>
+<span class="sd">                whose creation date is equal to this date.</span>
+<span class="sd">            label_created_at_gt: Returned assets should have a label</span>
+<span class="sd">                whose creation date is greater than this date.</span>
+<span class="sd">            label_created_at_lt: Returned assets should have a label</span>
+<span class="sd">                whose creation date is lower than this date.</span>
+<span class="sd">            label_honeypot_mark_gt: Returned assets should have a label</span>
+<span class="sd">                whose honeypot is greater than this number.</span>
+<span class="sd">            label_honeypot_mark_lt: Returned assets should have a label</span>
+<span class="sd">                whose honeypot is lower than this number.</span>
+<span class="sd">            label_json_response_contains: Returned assets should have</span>
+<span class="sd">                a substring of the label&#39;s jsonResponse that belongs</span>
+<span class="sd">                to that list, if given.</span>
+<span class="sd">            skipped: Returned assets should be skipped</span>
+<span class="sd">            updated_at_gte: Returned assets should have a label</span>
+<span class="sd">                whose update date is greated or equal to this date.</span>
+<span class="sd">            updated_at_lte: Returned assets should have a label</span>
+<span class="sd">                whose update date is lower or equal to this date.</span>
+
+<span class="sd">        !!! info &quot;Dates format&quot;</span>
+<span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.count_assets(project_id=project_id)</span>
+<span class="sd">            250</span>
+<span class="sd">            &gt;&gt;&gt; kili.count_assets(asset_id=asset_id)</span>
+<span class="sd">            1</span>
+
+<span class="sd">        !!! example &quot;How to filter based on Metadata&quot;</span>
+<span class="sd">            - `metadata_where = {key1: &quot;value1&quot;}` to filter on assets whose metadata</span>
+<span class="sd">                have key &quot;key1&quot; with value &quot;value1&quot;</span>
+<span class="sd">            - `metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]}` to filter on assets whose metadata</span>
 <span class="sd">                have key &quot;key1&quot; with value &quot;value1&quot; or value &quot;value2</span>
-<span class="sd">            - metadata_where = {key2: [2, 10]} to filter on assets whose metadata have key &quot;key2&quot;</span>
-<span class="sd">                with a value between 2 and 10.</span>
-<span class="sd">        status_in :</span>
-<span class="sd">            Returned assets should have a status that belongs to that list, if given.</span>
-<span class="sd">            Possible choices : {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">        consensus_mark_gt :</span>
-<span class="sd">            Minimum amount of consensus for the asset.</span>
-<span class="sd">        consensus_mark_lt :</span>
-<span class="sd">            Maximum amount of consensus for the asset.</span>
-<span class="sd">        honeypot_mark_gt :</span>
-<span class="sd">            Minimum amount of honeypot for the asset.</span>
-<span class="sd">        honeypot_mark_lt :</span>
-<span class="sd">            Maximum amount of consensus for the asset.</span>
-<span class="sd">        label_type_in :</span>
-<span class="sd">            Returned assets should have a label whose type belongs to that list, if given.</span>
-<span class="sd">        label_author_in :</span>
-<span class="sd">            Returned assets should have a label whose status belongs to that list, if given.</span>
-<span class="sd">        label_consensus_mark_gt :</span>
-<span class="sd">            Returned assets should have a label whose consensus is greater than this number.</span>
-<span class="sd">        label_consensus_mark_lt :</span>
-<span class="sd">            Returned assets should have a label whose consensus is lower than this number.</span>
-<span class="sd">        label_created_at :</span>
-<span class="sd">            Returned assets should have a label whose creation date is equal to this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        label_created_at_gt :</span>
-<span class="sd">            Returned assets should have a label whose creation date is greater than this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        label_created_at_lt :</span>
-<span class="sd">            Returned assets should have a label whose creation date is lower than this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        label_honeypot_mark_gt :</span>
-<span class="sd">            Returned assets should have a label whose honeypot is greater than this number.</span>
-<span class="sd">        label_honeypot_mark_lt :</span>
-<span class="sd">            Returned assets should have a label whose honeypot is lower than this number.</span>
-<span class="sd">        label_json_response_contains :</span>
-<span class="sd">            Returned assets should have a substring of the label&#39;s jsonResponse that belongs</span>
-<span class="sd">            to that list, if given.</span>
-<span class="sd">        skipped :</span>
-<span class="sd">            Returned assets should be skipped</span>
-<span class="sd">        updated_at_gte :</span>
-<span class="sd">            Returned assets should have a label whose update date is greated or equal to this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        updated_at_lte :</span>
-<span class="sd">            Returned assets should have a label whose update date is lower or equal to this date.</span>
-<span class="sd">            Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which contains the query if it was successful, or an error message else.</span>
-
-<span class="sd">        Example</span>
-<span class="sd">        -------</span>
-<span class="sd">        &gt;&gt;&gt; kili.count_assets(project_id=project_id)</span>
-<span class="sd">        250</span>
-<span class="sd">        &gt;&gt;&gt; kili.count_assets(asset_id=asset_id)</span>
-<span class="sd">        1</span>
+<span class="sd">            - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata</span>
+<span class="sd">                have key &quot;key2&quot; with a value between 2 and 10.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -1010,7 +939,7 @@ QueriesAsset        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Gets an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</p>
+      <p>Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1026,13 +955,13 @@ QueriesAsset        </code>
       <tr>
         <td><code>asset_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>The unique id of the asset to retrieve.</p></td>
+        <td><p>Identifier of the asset to retrieve.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>asset_id_in</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>A list of the ids of the assets to retrieve.</p></td>
+        <td><p>A list of the IDs of the assets to retrieve.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1081,13 +1010,7 @@ QueriesAsset        </code>
       <tr>
         <td><code>metadata_where</code></td>
         <td><code>Optional[dict]</code></td>
-        <td><p>Filters by the values of the metadata of the asset.
-- metadata_where = {key1: "value1"} to filter on assets whose metadata
-    have key "key1" with value "value1"
-- metadata_where = {key1: ["value1", "value2"]} to filter on assets whose metadata
-    have key "key1" with value "value1" or value "value2
-- metadata_where = {key2: [2, 10]} to filter on assets whose metadata
-    have key "key2" with a value between 2 and 10.</p></td>
+        <td><p>Filters by the values of the metadata of the asset.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1098,7 +1021,7 @@ QueriesAsset        </code>
       </tr>
       <tr>
         <td><code>honeypot_mark_lt</code></td>
-        <td><code>Optional[float]</code></td>
+        <td></td>
         <td><p>Maximum amount of honeypot for the asset.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -1106,7 +1029,7 @@ QueriesAsset        </code>
         <td><code>status_in</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>Returned assets should have a status that belongs to that list, if given.
-Possible choices: {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
+Possible choices: <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code> or <code>REVIEWED</code></p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1136,22 +1059,19 @@ Possible choices: {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
       <tr>
         <td><code>label_created_at</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose creation date is equal to this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label whose creation date is equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_created_at_gt</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose creation date is greater than this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label whose creation date is greater than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_created_at_lt</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose creation date is lower than this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label whose creation date is lower than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1164,13 +1084,13 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
       <tr>
         <td><code>label_honeypot_mark_gt</code></td>
         <td><code>Optional[float]</code></td>
-        <td><p>Returned assets should have a label whose honeypot is greater than this number.</p></td>
+        <td><p>Returned assets should have a label whose honeypot is greater than this number</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_honeypot_mark_lt</code></td>
         <td><code>Optional[float]</code></td>
-        <td><p>Returned assets should have a label whose honeypot is lower than this number.</p></td>
+        <td><p>Returned assets should have a label whose honeypot is lower than this number</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1182,15 +1102,13 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
       <tr>
         <td><code>updated_at_gte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose update date is greated or equal to this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label whose update date is greated or equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>updated_at_lte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose update date is lower or equal to this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label whose update date is lower or equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1202,22 +1120,20 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
       <tr>
         <td><code>disable_tqdm</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, the progress bar will be disabled</p></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>as_generator</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, a generator on the assets is returned.</p></td>
+        <td><p>If <code>True</code>, a generator on the assets is returned.</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
-</table>
-<p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span> <span class="c1"># returns the assets list of the project</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># returns a generator of the project assets</span>
-</code></pre></div>
+</table>      <div class="admonition info">
+<p class="admonition-title">Dates format</p>
+<p>Date strings should have format: "YYYY-MM-DD"</p>
+</div>
 
 <p><strong>Returns:</strong></p>
 <table>
@@ -1230,10 +1146,28 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
   <tbody>
     <tr>
       <td><code>Union[List[dict], Generator[dict, NoneType], pandas.core.frame.DataFrame]</code></td>
-      <td><p>a result object which contains the query if it was successful, else an error message.</p></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code>&gt;&gt;&gt; kili.assets(project_id=project_id) # returns the assets list of the project
+&gt;&gt;&gt; kili.assets(asset_id=asset_id)
+&gt;&gt;&gt; kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets
+</code></pre></div>
+      <div class="admonition example">
+<p class="admonition-title">How to filter based on Metadata</p>
+<ul>
+<li><code>metadata_where = {key1: "value1"}</code> to filter on assets whose metadata
+    have key "key1" with value "value1"</li>
+<li><code>metadata_where = {key1: ["value1", "value2"]}</code> to filter on assets whose metadata
+    have key "key1" with value "value1" or value "value2</li>
+<li><code>metadata_where = {key2: [2, 10]}</code> to filter on assets whose metadata
+    have key "key2" with a value between 2 and 10.</li>
+</ul>
+</div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -1282,94 +1216,64 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
            <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gets an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
+    <span class="sd">&quot;&quot;&quot;Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    asset_id :</span>
-<span class="sd">        The unique id of the asset to retrieve.</span>
-<span class="sd">    asset_id_in :</span>
-<span class="sd">        A list of the ids of the assets to retrieve.</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project.</span>
-<span class="sd">    skip :</span>
-<span class="sd">        Number of assets to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the assets.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
-<span class="sd">    first :</span>
-<span class="sd">        Maximum number of assets to return.</span>
-<span class="sd">    consensus_mark_gt :</span>
-<span class="sd">        Minimum amount of consensus for the asset.</span>
-<span class="sd">    consensus_mark_lt :</span>
-<span class="sd">        Maximum amount of consensus for the asset.</span>
-<span class="sd">    external_id_contains :</span>
-<span class="sd">        Returned assets have an external id that belongs to that list, if given.</span>
-<span class="sd">    metadata_where :</span>
-<span class="sd">        Filters by the values of the metadata of the asset.</span>
-<span class="sd">        - metadata_where = {key1: &quot;value1&quot;} to filter on assets whose metadata</span>
+<span class="sd">    Args:</span>
+<span class="sd">        asset_id: Identifier of the asset to retrieve.</span>
+<span class="sd">        asset_id_in: A list of the IDs of the assets to retrieve.</span>
+<span class="sd">        project_id: Identifier of the project.</span>
+<span class="sd">        skip: Number of assets to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
+<span class="sd">        first: Maximum number of assets to return.</span>
+<span class="sd">        consensus_mark_gt: Minimum amount of consensus for the asset.</span>
+<span class="sd">        consensus_mark_lt: Maximum amount of consensus for the asset.</span>
+<span class="sd">        external_id_contains: Returned assets have an external id that belongs to that list, if given.</span>
+<span class="sd">        metadata_where: Filters by the values of the metadata of the asset.</span>
+<span class="sd">        honeypot_mark_gt: Minimum amount of honeypot for the asset.</span>
+<span class="sd">        honeypot_mark_lt : Maximum amount of honeypot for the asset.</span>
+<span class="sd">        status_in: Returned assets should have a status that belongs to that list, if given.</span>
+<span class="sd">            Possible choices: `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">        label_type_in: Returned assets should have a label whose type belongs to that list, if given.</span>
+<span class="sd">        label_author_in: Returned assets should have a label whose status belongs to that list, if given.</span>
+<span class="sd">        label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.</span>
+<span class="sd">        label_consensus_mark_lt: Returned assets should have a label whose consensus is lower than this number.</span>
+<span class="sd">        label_created_at: Returned assets should have a label whose creation date is equal to this date.</span>
+<span class="sd">        label_created_at_gt: Returned assets should have a label whose creation date is greater than this date.</span>
+<span class="sd">        label_created_at_lt: Returned assets should have a label whose creation date is lower than this date.</span>
+<span class="sd">        label_json_response_contains: Returned assets should have a substring of the label&#39;s jsonResponse</span>
+<span class="sd">                that belongs to that list, if given.</span>
+<span class="sd">        label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number</span>
+<span class="sd">        label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number</span>
+<span class="sd">        skipped: Returned assets should be skipped</span>
+<span class="sd">        updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.</span>
+<span class="sd">        updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.</span>
+<span class="sd">        format: If equal to &#39;pandas&#39;, returns a pandas DataFrame</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the assets is returned.</span>
+
+<span class="sd">    !!! info &quot;Dates format&quot;</span>
+<span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        ```</span>
+<span class="sd">        &gt;&gt;&gt; kili.assets(project_id=project_id) # returns the assets list of the project</span>
+<span class="sd">        &gt;&gt;&gt; kili.assets(asset_id=asset_id)</span>
+<span class="sd">        &gt;&gt;&gt; kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets</span>
+<span class="sd">        ```</span>
+
+<span class="sd">    !!! example &quot;How to filter based on Metadata&quot;</span>
+<span class="sd">        - `metadata_where = {key1: &quot;value1&quot;}` to filter on assets whose metadata</span>
 <span class="sd">            have key &quot;key1&quot; with value &quot;value1&quot;</span>
-<span class="sd">        - metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]} to filter on assets whose metadata</span>
+<span class="sd">        - `metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]}` to filter on assets whose metadata</span>
 <span class="sd">            have key &quot;key1&quot; with value &quot;value1&quot; or value &quot;value2</span>
-<span class="sd">        - metadata_where = {key2: [2, 10]} to filter on assets whose metadata</span>
+<span class="sd">        - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata</span>
 <span class="sd">            have key &quot;key2&quot; with a value between 2 and 10.</span>
-<span class="sd">    honeypot_mark_gt :</span>
-<span class="sd">        Minimum amount of honeypot for the asset.</span>
-<span class="sd">    honeypot_mark_lt :</span>
-<span class="sd">        Maximum amount of honeypot for the asset.</span>
-<span class="sd">    status_in :</span>
-<span class="sd">        Returned assets should have a status that belongs to that list, if given.</span>
-<span class="sd">        Possible choices: {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">    label_type_in :</span>
-<span class="sd">        Returned assets should have a label whose type belongs to that list, if given.</span>
-<span class="sd">    label_author_in :</span>
-<span class="sd">        Returned assets should have a label whose status belongs to that list, if given.</span>
-<span class="sd">    label_consensus_mark_gt :</span>
-<span class="sd">        Returned assets should have a label whose consensus is greater than this number.</span>
-<span class="sd">    label_consensus_mark_lt :</span>
-<span class="sd">        Returned assets should have a label whose consensus is lower than this number.</span>
-<span class="sd">    label_created_at :</span>
-<span class="sd">        Returned assets should have a label whose creation date is equal to this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    label_created_at_gt :</span>
-<span class="sd">        Returned assets should have a label whose creation date is greater than this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    label_created_at_lt :</span>
-<span class="sd">        Returned assets should have a label whose creation date is lower than this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    label_json_response_contains :</span>
-<span class="sd">        Returned assets should have a substring of the label&#39;s jsonResponse</span>
-<span class="sd">            that belongs to that list, if given.</span>
-<span class="sd">    label_honeypot_mark_gt :</span>
-<span class="sd">        Returned assets should have a label whose honeypot is greater than this number.</span>
-<span class="sd">    label_honeypot_mark_lt :</span>
-<span class="sd">        Returned assets should have a label whose honeypot is lower than this number.</span>
-<span class="sd">    skipped :</span>
-<span class="sd">        Returned assets should be skipped</span>
-<span class="sd">    updated_at_gte :</span>
-<span class="sd">        Returned assets should have a label whose update date is greated or equal to this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    updated_at_lte :</span>
-<span class="sd">        Returned assets should have a label whose update date is lower or equal to this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    format:</span>
-<span class="sd">        If equal to &#39;pandas&#39;, returns a pandas DataFrame</span>
-<span class="sd">    disable_tqdm :</span>
-<span class="sd">        If True, the progress bar will be disabled</span>
-<span class="sd">    as_generator :</span>
-<span class="sd">        If True, a generator on the assets is returned.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which contains the query if it was successful, else an error message.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; kili.assets(project_id=project_id) # returns the assets list of the project</span>
-<span class="sd">    &gt;&gt;&gt; kili.assets(asset_id=asset_id)</span>
-<span class="sd">    &gt;&gt;&gt; kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span> <span class="ow">and</span> <span class="n">as_generator</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1455,7 +1359,7 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
 
     <div class="doc doc-contents ">
 
-      <p>Count and return the number of assets with the given constraints</p>
+      <p>Count and return the number of assets with the given constraints.</p>
 <p>Parameters beginning with 'label_' apply to labels, others apply to assets.</p>
 
 <p><strong>Parameters:</strong></p>
@@ -1490,26 +1394,21 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
       <tr>
         <td><code>external_id_contains</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>Returned assets should have an external id that belongs to that list, if given.</p></td>
+        <td><p>Returned assets should have an external id
+that belongs to that list, if given.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>metadata_where</code></td>
         <td><code>Optional[dict]</code></td>
-        <td><p>Filters by the values of the metadata of the asset.
-- metadata_where = {key1: "value1"} to filter on assets whose metadata have key "key1"
-    with value "value1"
-- metadata_where = {key1: ["value1", "value2"]} to filter on assets whose metadata
-    have key "key1" with value "value1" or value "value2
-- metadata_where = {key2: [2, 10]} to filter on assets whose metadata have key "key2"
-    with a value between 2 and 10.</p></td>
+        <td><p>Filters by the values of the metadata of the asset.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>status_in</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>Returned assets should have a status that belongs to that list, if given.
-Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
+Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code> or <code>REVIEWED</code></p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1539,64 +1438,71 @@ Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
       <tr>
         <td><code>label_type_in</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>Returned assets should have a label whose type belongs to that list, if given.</p></td>
+        <td><p>Returned assets should have a label
+whose type belongs to that list, if given.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_author_in</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>Returned assets should have a label whose status belongs to that list, if given.</p></td>
+        <td><p>Returned assets should have a label
+whose status belongs to that list, if given.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_consensus_mark_gt</code></td>
         <td><code>Optional[float]</code></td>
-        <td><p>Returned assets should have a label whose consensus is greater than this number.</p></td>
+        <td><p>Returned assets should have a label
+whose consensus is greater than this number.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_consensus_mark_lt</code></td>
         <td><code>Optional[float]</code></td>
-        <td><p>Returned assets should have a label whose consensus is lower than this number.</p></td>
+        <td><p>Returned assets should have a label
+whose consensus is lower than this number.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_created_at</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose creation date is equal to this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label
+whose creation date is equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_created_at_gt</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose creation date is greater than this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label
+whose creation date is greater than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_created_at_lt</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose creation date is lower than this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label
+whose creation date is lower than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_honeypot_mark_gt</code></td>
         <td><code>Optional[float]</code></td>
-        <td><p>Returned assets should have a label whose honeypot is greater than this number.</p></td>
+        <td><p>Returned assets should have a label
+whose honeypot is greater than this number.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_honeypot_mark_lt</code></td>
         <td><code>Optional[float]</code></td>
-        <td><p>Returned assets should have a label whose honeypot is lower than this number.</p></td>
+        <td><p>Returned assets should have a label
+whose honeypot is lower than this number.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_json_response_contains</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>Returned assets should have a substring of the label's jsonResponse that belongs
+        <td><p>Returned assets should have
+a substring of the label's jsonResponse that belongs
 to that list, if given.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -1609,25 +1515,22 @@ to that list, if given.</p></td>
       <tr>
         <td><code>updated_at_gte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose update date is greated or equal to this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label
+whose update date is greated or equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>updated_at_lte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned assets should have a label whose update date is lower or equal to this date.
-Formatted string should have format: "YYYY-MM-DD"</p></td>
+        <td><p>Returned assets should have a label
+whose update date is lower or equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
-</table>
-<p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
-<span class="mi">250</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span><span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">)</span>
-<span class="mi">1</span>
-</code></pre></div>
+</table>      <div class="admonition info">
+<p class="admonition-title">Dates format</p>
+<p>Date strings should have format: "YYYY-MM-DD"</p>
+</div>
 
 <p><strong>Returns:</strong></p>
 <table>
@@ -1640,10 +1543,29 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>a result object which contains the query if it was successful, or an error message else.</p></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
+<span class="mi">250</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span><span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">)</span>
+<span class="mi">1</span>
+</code></pre></div>
+      <div class="admonition example">
+<p class="admonition-title">How to filter based on Metadata</p>
+<ul>
+<li><code>metadata_where = {key1: "value1"}</code> to filter on assets whose metadata
+    have key "key1" with value "value1"</li>
+<li><code>metadata_where = {key1: ["value1", "value2"]}</code> to filter on assets whose metadata
+    have key "key1" with value "value1" or value "value2</li>
+<li><code>metadata_where = {key2: [2, 10]}</code> to filter on assets whose metadata
+    have key "key2" with a value between 2 and 10.</li>
+</ul>
+</div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -1671,84 +1593,70 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
                  <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Count and return the number of assets with the given constraints</span>
+    <span class="sd">&quot;&quot;&quot;Count and return the number of assets with the given constraints.</span>
 
 <span class="sd">    Parameters beginning with &#39;label_&#39; apply to labels, others apply to assets.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    asset_id :</span>
-<span class="sd">        The unique id of the asset to retrieve.</span>
-<span class="sd">    asset_id_in :</span>
-<span class="sd">        A list of the ids of the assets to retrieve.</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">    external_id_contains :</span>
-<span class="sd">        Returned assets should have an external id that belongs to that list, if given.</span>
-<span class="sd">    metadata_where :</span>
-<span class="sd">        Filters by the values of the metadata of the asset.</span>
-<span class="sd">        - metadata_where = {key1: &quot;value1&quot;} to filter on assets whose metadata have key &quot;key1&quot;</span>
-<span class="sd">            with value &quot;value1&quot;</span>
-<span class="sd">        - metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]} to filter on assets whose metadata</span>
+<span class="sd">    Args:</span>
+<span class="sd">        asset_id: The unique id of the asset to retrieve.</span>
+<span class="sd">        asset_id_in: A list of the ids of the assets to retrieve.</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">        external_id_contains: Returned assets should have an external id</span>
+<span class="sd">            that belongs to that list, if given.</span>
+<span class="sd">        metadata_where: Filters by the values of the metadata of the asset.</span>
+<span class="sd">        status_in: Returned assets should have a status that belongs to that list, if given.</span>
+<span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">        consensus_mark_gt:Minimum amount of consensus for the asset.</span>
+<span class="sd">        consensus_mark_lt: Maximum amount of consensus for the asset.</span>
+<span class="sd">        honeypot_mark_gt: Minimum amount of honeypot for the asset.</span>
+<span class="sd">        honeypot_mark_lt: Maximum amount of consensus for the asset.</span>
+<span class="sd">        label_type_in: Returned assets should have a label</span>
+<span class="sd">            whose type belongs to that list, if given.</span>
+<span class="sd">        label_author_in: Returned assets should have a label</span>
+<span class="sd">            whose status belongs to that list, if given.</span>
+<span class="sd">        label_consensus_mark_gt: Returned assets should have a label</span>
+<span class="sd">            whose consensus is greater than this number.</span>
+<span class="sd">        label_consensus_mark_lt: Returned assets should have a label</span>
+<span class="sd">            whose consensus is lower than this number.</span>
+<span class="sd">        label_created_at: Returned assets should have a label</span>
+<span class="sd">            whose creation date is equal to this date.</span>
+<span class="sd">        label_created_at_gt: Returned assets should have a label</span>
+<span class="sd">            whose creation date is greater than this date.</span>
+<span class="sd">        label_created_at_lt: Returned assets should have a label</span>
+<span class="sd">            whose creation date is lower than this date.</span>
+<span class="sd">        label_honeypot_mark_gt: Returned assets should have a label</span>
+<span class="sd">            whose honeypot is greater than this number.</span>
+<span class="sd">        label_honeypot_mark_lt: Returned assets should have a label</span>
+<span class="sd">            whose honeypot is lower than this number.</span>
+<span class="sd">        label_json_response_contains: Returned assets should have</span>
+<span class="sd">            a substring of the label&#39;s jsonResponse that belongs</span>
+<span class="sd">            to that list, if given.</span>
+<span class="sd">        skipped: Returned assets should be skipped</span>
+<span class="sd">        updated_at_gte: Returned assets should have a label</span>
+<span class="sd">            whose update date is greated or equal to this date.</span>
+<span class="sd">        updated_at_lte: Returned assets should have a label</span>
+<span class="sd">            whose update date is lower or equal to this date.</span>
+
+<span class="sd">    !!! info &quot;Dates format&quot;</span>
+<span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.count_assets(project_id=project_id)</span>
+<span class="sd">        250</span>
+<span class="sd">        &gt;&gt;&gt; kili.count_assets(asset_id=asset_id)</span>
+<span class="sd">        1</span>
+
+<span class="sd">    !!! example &quot;How to filter based on Metadata&quot;</span>
+<span class="sd">        - `metadata_where = {key1: &quot;value1&quot;}` to filter on assets whose metadata</span>
+<span class="sd">            have key &quot;key1&quot; with value &quot;value1&quot;</span>
+<span class="sd">        - `metadata_where = {key1: [&quot;value1&quot;, &quot;value2&quot;]}` to filter on assets whose metadata</span>
 <span class="sd">            have key &quot;key1&quot; with value &quot;value1&quot; or value &quot;value2</span>
-<span class="sd">        - metadata_where = {key2: [2, 10]} to filter on assets whose metadata have key &quot;key2&quot;</span>
-<span class="sd">            with a value between 2 and 10.</span>
-<span class="sd">    status_in :</span>
-<span class="sd">        Returned assets should have a status that belongs to that list, if given.</span>
-<span class="sd">        Possible choices : {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">    consensus_mark_gt :</span>
-<span class="sd">        Minimum amount of consensus for the asset.</span>
-<span class="sd">    consensus_mark_lt :</span>
-<span class="sd">        Maximum amount of consensus for the asset.</span>
-<span class="sd">    honeypot_mark_gt :</span>
-<span class="sd">        Minimum amount of honeypot for the asset.</span>
-<span class="sd">    honeypot_mark_lt :</span>
-<span class="sd">        Maximum amount of consensus for the asset.</span>
-<span class="sd">    label_type_in :</span>
-<span class="sd">        Returned assets should have a label whose type belongs to that list, if given.</span>
-<span class="sd">    label_author_in :</span>
-<span class="sd">        Returned assets should have a label whose status belongs to that list, if given.</span>
-<span class="sd">    label_consensus_mark_gt :</span>
-<span class="sd">        Returned assets should have a label whose consensus is greater than this number.</span>
-<span class="sd">    label_consensus_mark_lt :</span>
-<span class="sd">        Returned assets should have a label whose consensus is lower than this number.</span>
-<span class="sd">    label_created_at :</span>
-<span class="sd">        Returned assets should have a label whose creation date is equal to this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    label_created_at_gt :</span>
-<span class="sd">        Returned assets should have a label whose creation date is greater than this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    label_created_at_lt :</span>
-<span class="sd">        Returned assets should have a label whose creation date is lower than this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    label_honeypot_mark_gt :</span>
-<span class="sd">        Returned assets should have a label whose honeypot is greater than this number.</span>
-<span class="sd">    label_honeypot_mark_lt :</span>
-<span class="sd">        Returned assets should have a label whose honeypot is lower than this number.</span>
-<span class="sd">    label_json_response_contains :</span>
-<span class="sd">        Returned assets should have a substring of the label&#39;s jsonResponse that belongs</span>
-<span class="sd">        to that list, if given.</span>
-<span class="sd">    skipped :</span>
-<span class="sd">        Returned assets should be skipped</span>
-<span class="sd">    updated_at_gte :</span>
-<span class="sd">        Returned assets should have a label whose update date is greated or equal to this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    updated_at_lte :</span>
-<span class="sd">        Returned assets should have a label whose update date is lower or equal to this date.</span>
-<span class="sd">        Formatted string should have format: &quot;YYYY-MM-DD&quot;</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which contains the query if it was successful, or an error message else.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; kili.count_assets(project_id=project_id)</span>
-<span class="sd">    250</span>
-<span class="sd">    &gt;&gt;&gt; kili.count_assets(asset_id=asset_id)</span>
-<span class="sd">    1</span>
+<span class="sd">        - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata</span>
+<span class="sd">            have key &quot;key2&quot; with a value between 2 and 10.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -1800,50 +1708,13 @@ Formatted string should have format: "YYYY-MM-DD"</p></td>
 
   </div>
 
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Asset mutations</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="mutations">Mutations</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
-
-<h2 id="kili.mutations.asset.__init__.MutationsAsset" class="doc doc-heading">
-        <code>
-MutationsAsset        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
+    <div class="doc doc-contents first">
 
       <p>Set of Asset mutations</p>
 
@@ -1856,12 +1727,10 @@ MutationsAsset        </code>
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -1875,60 +1744,53 @@ MutationsAsset        </code>
             <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">status_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">json_content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Append assets to a project</span>
+        <span class="sd">&quot;&quot;&quot;Append assets to a project.</span>
 
-<span class="sd">        For more detailed examples on how to import assets,</span>
-<span class="sd">            see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb).</span>
-<span class="sd">        For more detailed examples on how to import text assets,</span>
-<span class="sd">            see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">        content_array :</span>
-<span class="sd">            List of elements added to the assets of the project</span>
-<span class="sd">                - For a Text project, the content can be either raw text, or URLs to TEXT assets.</span>
-<span class="sd">                - For an Image / PDF project, the content can be either URLs or paths to existing</span>
-<span class="sd">                    images/pdf on your computer.</span>
-<span class="sd">                - For a Video  project, the content must be hosted on a web server,</span>
-<span class="sd">                    and you point Kili to your data by giving the URLs.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">            content_array: List of elements added to the assets of the project</span>
 <span class="sd">                Must not be None except if you provide json_content_array.</span>
-<span class="sd">        external_id_array :</span>
-<span class="sd">            List of external ids given to identify the assets.</span>
-<span class="sd">            If None, random identifiers are created.</span>
-<span class="sd">        is_honeypot_array:</span>
-<span class="sd">            Whether to use the asset for honeypot</span>
-<span class="sd">        status_array :</span>
-<span class="sd">            By default, all imported assets are set to &#39;TODO&#39;. Other options:</span>
-<span class="sd">            &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;.</span>
-<span class="sd">        json_content_array :</span>
-<span class="sd">            Useful for &#39;FRAME&#39; or &#39;TEXT&#39; projects only.</span>
-<span class="sd">            For FRAME projects, each element is a sequence of frames, i.e. a</span>
-<span class="sd">            list of URLs to images or a list of paths to images.</span>
-<span class="sd">            For TEXT projects, each element is a json_content dict,</span>
-<span class="sd">            formatted according to documentation [on how to import</span>
-<span class="sd">            rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)</span>
-<span class="sd">        json_metadata_array :</span>
-<span class="sd">            The metadata given to each asset should be stored in a json like dict with keys.</span>
-<span class="sd">            Add metadata visible on the asset with the following keys: &quot;imageUrl&quot;, &quot;text&quot;, &quot;url&quot;.</span>
-<span class="sd">                Example: json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}] to upload one asset.</span>
-<span class="sd">            For video, you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
-<span class="sd">                Example: json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}] to upload one asset.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful, or an error message else.</span>
+<span class="sd">                - For a `TEXT` project, the content can be either raw text, or URLs to TEXT assets.</span>
+<span class="sd">                - For an `IMAGE` / `PDF` project, the content can be either URLs or paths to existing</span>
+<span class="sd">                    images/pdf on your computer.</span>
+<span class="sd">                - For a `VIDEO`  project, the content must be hosted on a web server,</span>
+<span class="sd">                    and you point Kili to your data by giving the URLs.</span>
+<span class="sd">            external_id_array: List of external ids given to identify the assets.</span>
+<span class="sd">                If None, random identifiers are created.</span>
+<span class="sd">            is_honeypot_array:  Whether to use the asset for honeypot</span>
+<span class="sd">            status_array: By default, all imported assets are set to `TODO`. Other options:</span>
+<span class="sd">                `ONGOING`, `LABELED`, `REVIEWED`.</span>
+<span class="sd">            json_content_array: Useful for `FRAME` or `TEXT` projects only.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; kili.append_many_to_dataset(</span>
-<span class="sd">                project_id=project_id,</span>
-<span class="sd">                content_array=[&#39;https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png&#39;])</span>
+<span class="sd">                - For `FRAME` projects, each element is a sequence of frames, i.e. a</span>
+<span class="sd">                    list of URLs to images or a list of paths to images.</span>
+<span class="sd">                - For `TEXT` projects, each element is a json_content dict,</span>
+<span class="sd">                    formatted according to documentation [on how to import</span>
+<span class="sd">                rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)</span>
+<span class="sd">            json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.</span>
+
+<span class="sd">                - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.</span>
+<span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}]`.</span>
+<span class="sd">                - For video, you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
+<span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful, or an error message.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.append_many_to_dataset(</span>
+<span class="sd">                    project_id=project_id,</span>
+<span class="sd">                    content_array=[&#39;https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png&#39;])</span>
+
+<span class="sd">        !!! example &quot;Recipe&quot;</span>
+<span class="sd">            - For more detailed examples on how to import assets,</span>
+<span class="sd">                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb)</span>
+<span class="sd">                or [other examples](https://docs.kili-technology.com/recipes/importing-data) in our documentation.</span>
+<span class="sd">            - For more detailed examples on how to import text assets,</span>
+<span class="sd">                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">playground</span> <span class="o">=</span> <span class="n">QueriesProject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span>
         <span class="n">projects</span> <span class="o">=</span> <span class="n">playground</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
@@ -1962,65 +1824,49 @@ MutationsAsset        </code>
                                     <span class="n">json_contents</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                     <span class="n">status_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                     <span class="n">is_used_for_consensus_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                    <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the properties of one or more assets.</span>
+                                    <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update the properties of one or more assets.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        asset_ids : List[str]</span>
-<span class="sd">            The asset IDs to modify</span>
-<span class="sd">        external_ids :</span>
-<span class="sd">            Change the external id of the assets</span>
-<span class="sd">        priorities : List[int], optional (default = None)</span>
-<span class="sd">            You can change the priority of the assets</span>
-<span class="sd">            By default, all assets have a priority of 0.</span>
-<span class="sd">        json_metadatas :</span>
-<span class="sd">            The metadata given to an asset should be stored in a json like dict with keys</span>
-<span class="sd">            &quot;imageUrl&quot;, &quot;text&quot;, &quot;url&quot;.</span>
-<span class="sd">            json_metadata = {&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}</span>
-<span class="sd">        consensus_marks :</span>
-<span class="sd">            Should be between 0 and 1</span>
-<span class="sd">        honeypot_marks :</span>
-<span class="sd">            Should be between 0 and 1</span>
-<span class="sd">        to_be_labeled_by_array :</span>
-<span class="sd">            If given, each element of the list should contain the emails of</span>
-<span class="sd">            the labelers authorized to label the asset.</span>
-<span class="sd">        contents :</span>
-<span class="sd">            - For a NLP project, the content can be directly in text format</span>
-<span class="sd">            - For an Image / Video / Pdf project, the content must be hosted on a web server,</span>
-<span class="sd">            and you point Kili to your data by giving the URLs</span>
-<span class="sd">        json_contents :</span>
-<span class="sd">            - For a NLP project, the json_content is a a text formatted using RichText</span>
-<span class="sd">            - For a Video project, the json_content is a json containg urls pointing</span>
-<span class="sd">                to each frame of the video.</span>
-<span class="sd">        status_array :</span>
-<span class="sd">            Each element should be in {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">        is_used_for_consensus_array :</span>
-<span class="sd">            Whether to use the asset to compute consensus kpis or not</span>
-<span class="sd">        is_honeypot_array :</span>
-<span class="sd">            Whether to use the asset for honeypot</span>
+<span class="sd">        Args:</span>
+<span class="sd">            asset_ids : The asset IDs to modify</span>
+<span class="sd">            external_ids: Change the external id of the assets</span>
+<span class="sd">            priorities : You can change the priority of the assets</span>
+<span class="sd">                By default, all assets have a priority of 0.</span>
+<span class="sd">            json_metadatas: The metadata given to an asset should be stored</span>
+<span class="sd">                in a json like dict with keys `imageUrl`, `text`, `url`:</span>
+<span class="sd">                `json_metadata = {&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}`</span>
+<span class="sd">            consensus_marks: Should be between 0 and 1</span>
+<span class="sd">            honeypot_marks: Should be between 0 and 1</span>
+<span class="sd">            to_be_labeled_by_array: If given, each element of the list should contain the emails of</span>
+<span class="sd">                the labelers authorized to label the asset.</span>
+<span class="sd">            contents: - For a NLP project, the content can be directly in text format</span>
+<span class="sd">                - For an Image / Video / Pdf project, the content must be hosted on a web server,</span>
+<span class="sd">                and you point Kili to your data by giving the URLs</span>
+<span class="sd">            json_contents: - For a NLP project, the `json_content`</span>
+<span class="sd">                is a text formatted using RichText</span>
+<span class="sd">                - For a Video project, the`json_content` is a json containg urls pointing</span>
+<span class="sd">                    to each frame of the video.</span>
+<span class="sd">            status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`, `REVIEWED`</span>
+<span class="sd">            is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not</span>
+<span class="sd">            is_honeypot_array: Whether to use the asset for honeypot</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; kili.update_properties_in_assets(</span>
-<span class="sd">                asset_ids=[&quot;ckg22d81r0jrg0885unmuswj8&quot;, &quot;ckg22d81s0jrh0885pdxfd03n&quot;],</span>
-<span class="sd">                consensus_marks=[1, 0.7],</span>
-<span class="sd">                contents=[None, &#39;https://to/second/asset.png&#39;],</span>
-<span class="sd">                external_ids=[&#39;external-id-of-your-choice-1&#39;, &#39;external-id-of-your-choice-2&#39;],</span>
-<span class="sd">                honeypot_marks=[0.8, 0.5],</span>
-<span class="sd">                is_honeypot_array=[True, True],</span>
-<span class="sd">                is_used_for_consensus_array=[True, False],</span>
-<span class="sd">                priorities=[None, 2],</span>
-<span class="sd">                status_array=[&#39;LABELED&#39;, &#39;REVIEWED&#39;],</span>
-<span class="sd">                to_be_labeled_by_array=[[&#39;test+pierre@kili-technology.com&#39;], None],</span>
-<span class="sd">        )</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.update_properties_in_assets(</span>
+<span class="sd">                    asset_ids=[&quot;ckg22d81r0jrg0885unmuswj8&quot;, &quot;ckg22d81s0jrh0885pdxfd03n&quot;],</span>
+<span class="sd">                    consensus_marks=[1, 0.7],</span>
+<span class="sd">                    contents=[None, &#39;https://to/second/asset.png&#39;],</span>
+<span class="sd">                    external_ids=[&#39;external-id-of-your-choice-1&#39;, &#39;external-id-of-your-choice-2&#39;],</span>
+<span class="sd">                    honeypot_marks=[0.8, 0.5],</span>
+<span class="sd">                    is_honeypot_array=[True, True],</span>
+<span class="sd">                    is_used_for_consensus_array=[True, False],</span>
+<span class="sd">                    priorities=[None, 2],</span>
+<span class="sd">                    status_array=[&#39;LABELED&#39;, &#39;REVIEWED&#39;],</span>
+<span class="sd">                    to_be_labeled_by_array=[[&#39;test+pierre@kili-technology.com&#39;], None],</span>
+<span class="sd">            )</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">formatted_json_metadatas</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2086,20 +1932,15 @@ MutationsAsset        </code>
 
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">delete_many_from_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete assets from a project</span>
+    <span class="k">def</span> <span class="nf">delete_many_from_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete assets from a project.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        asset_ids :</span>
-<span class="sd">            The list of identifiers of the assets to delete.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            asset_ids: The list of identifiers of the assets to delete.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">asset_ids</span><span class="p">}}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -2132,11 +1973,7 @@ MutationsAsset        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Append assets to a project</p>
-<p>For more detailed examples on how to import assets,
-    see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb">the recipe</a>.
-For more detailed examples on how to import text assets,
-    see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb">the recipe</a>.</p>
+      <p>Append assets to a project.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2159,12 +1996,14 @@ For more detailed examples on how to import text assets,
         <td><code>content_array</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>List of elements added to the assets of the project
-    - For a Text project, the content can be either raw text, or URLs to TEXT assets.
-    - For an Image / PDF project, the content can be either URLs or paths to existing
-        images/pdf on your computer.
-    - For a Video  project, the content must be hosted on a web server,
-        and you point Kili to your data by giving the URLs.
-    Must not be None except if you provide json_content_array.</p></td>
+Must not be None except if you provide json_content_array.</p>
+<ul>
+<li>For a <code>TEXT</code> project, the content can be either raw text, or URLs to TEXT assets.</li>
+<li>For an <code>IMAGE</code> / <code>PDF</code> project, the content can be either URLs or paths to existing
+    images/pdf on your computer.</li>
+<li>For a <code>VIDEO</code>  project, the content must be hosted on a web server,
+    and you point Kili to your data by giving the URLs.</li>
+</ul></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2183,39 +2022,37 @@ If None, random identifiers are created.</p></td>
       <tr>
         <td><code>status_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>By default, all imported assets are set to 'TODO'. Other options:
-'ONGOING', 'LABELED', 'REVIEWED'.</p></td>
+        <td><p>By default, all imported assets are set to <code>TODO</code>. Other options:
+<code>ONGOING</code>, <code>LABELED</code>, <code>REVIEWED</code>.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>json_content_array</code></td>
         <td><code>Optional[List[List[Union[dict, str]]]]</code></td>
-        <td><p>Useful for 'FRAME' or 'TEXT' projects only.
-For FRAME projects, each element is a sequence of frames, i.e. a
-list of URLs to images or a list of paths to images.
-For TEXT projects, each element is a json_content dict,
-formatted according to documentation <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb">on how to import
-rich-text assets</a></p></td>
+        <td><p>Useful for <code>FRAME</code> or <code>TEXT</code> projects only.</p>
+<ul>
+<li>For <code>FRAME</code> projects, each element is a sequence of frames, i.e. a
+    list of URLs to images or a list of paths to images.</li>
+<li>For <code>TEXT</code> projects, each element is a json_content dict,
+    formatted according to documentation <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb">on how to import
+rich-text assets</a></li>
+</ul></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>json_metadata_array</code></td>
         <td><code>Optional[List[dict]]</code></td>
-        <td><p>The metadata given to each asset should be stored in a json like dict with keys.
-Add metadata visible on the asset with the following keys: "imageUrl", "text", "url".
-    Example: json_metadata_array = [{'imageUrl': '','text': '','url': ''}] to upload one asset.
-For video, you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
-    Example: json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}] to upload one asset.</p></td>
+        <td><p>The metadata given to each asset should be stored in a json like dict with keys.</p>
+<ul>
+<li>Add metadata visible on the asset with the following keys: <code>imageUrl</code>, <code>text</code>, <code>url</code>.
+    Example for one asset: <code>json_metadata_array = [{'imageUrl': '','text': '','url': ''}]</code>.</li>
+<li>For video, you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
+    Example for one asset: <code>json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]</code>.</li>
+</ul></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-        <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png&#39;</span><span class="p">])</span>
-</code></pre></div>
-
 <p><strong>Returns:</strong></p>
 <table>
   <thead>
@@ -2227,10 +2064,26 @@ For video, you can specify a value with key 'processingParameters' to specify th
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful, or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful, or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png&#39;</span><span class="p">])</span>
+</code></pre></div>
+      <div class="admonition example">
+<p class="admonition-title">Recipe</p>
+<ul>
+<li>For more detailed examples on how to import assets,
+    see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb">the recipe</a>
+    or <a href="https://docs.kili-technology.com/recipes/importing-data">other examples</a> in our documentation.</li>
+<li>For more detailed examples on how to import text assets,
+    see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb">the recipe</a>.</li>
+</ul>
+</div>
+
         <details class="quote">
           <summary>Source code in <code>kili/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -2243,60 +2096,53 @@ For video, you can specify a value with key 'processingParameters' to specify th
         <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">json_content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Append assets to a project</span>
+    <span class="sd">&quot;&quot;&quot;Append assets to a project.</span>
 
-<span class="sd">    For more detailed examples on how to import assets,</span>
-<span class="sd">        see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb).</span>
-<span class="sd">    For more detailed examples on how to import text assets,</span>
-<span class="sd">        see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">    content_array :</span>
-<span class="sd">        List of elements added to the assets of the project</span>
-<span class="sd">            - For a Text project, the content can be either raw text, or URLs to TEXT assets.</span>
-<span class="sd">            - For an Image / PDF project, the content can be either URLs or paths to existing</span>
-<span class="sd">                images/pdf on your computer.</span>
-<span class="sd">            - For a Video  project, the content must be hosted on a web server,</span>
-<span class="sd">                and you point Kili to your data by giving the URLs.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">        content_array: List of elements added to the assets of the project</span>
 <span class="sd">            Must not be None except if you provide json_content_array.</span>
-<span class="sd">    external_id_array :</span>
-<span class="sd">        List of external ids given to identify the assets.</span>
-<span class="sd">        If None, random identifiers are created.</span>
-<span class="sd">    is_honeypot_array:</span>
-<span class="sd">        Whether to use the asset for honeypot</span>
-<span class="sd">    status_array :</span>
-<span class="sd">        By default, all imported assets are set to &#39;TODO&#39;. Other options:</span>
-<span class="sd">        &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;.</span>
-<span class="sd">    json_content_array :</span>
-<span class="sd">        Useful for &#39;FRAME&#39; or &#39;TEXT&#39; projects only.</span>
-<span class="sd">        For FRAME projects, each element is a sequence of frames, i.e. a</span>
-<span class="sd">        list of URLs to images or a list of paths to images.</span>
-<span class="sd">        For TEXT projects, each element is a json_content dict,</span>
-<span class="sd">        formatted according to documentation [on how to import</span>
-<span class="sd">        rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)</span>
-<span class="sd">    json_metadata_array :</span>
-<span class="sd">        The metadata given to each asset should be stored in a json like dict with keys.</span>
-<span class="sd">        Add metadata visible on the asset with the following keys: &quot;imageUrl&quot;, &quot;text&quot;, &quot;url&quot;.</span>
-<span class="sd">            Example: json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}] to upload one asset.</span>
-<span class="sd">        For video, you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
-<span class="sd">            Example: json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}] to upload one asset.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful, or an error message else.</span>
+<span class="sd">            - For a `TEXT` project, the content can be either raw text, or URLs to TEXT assets.</span>
+<span class="sd">            - For an `IMAGE` / `PDF` project, the content can be either URLs or paths to existing</span>
+<span class="sd">                images/pdf on your computer.</span>
+<span class="sd">            - For a `VIDEO`  project, the content must be hosted on a web server,</span>
+<span class="sd">                and you point Kili to your data by giving the URLs.</span>
+<span class="sd">        external_id_array: List of external ids given to identify the assets.</span>
+<span class="sd">            If None, random identifiers are created.</span>
+<span class="sd">        is_honeypot_array:  Whether to use the asset for honeypot</span>
+<span class="sd">        status_array: By default, all imported assets are set to `TODO`. Other options:</span>
+<span class="sd">            `ONGOING`, `LABELED`, `REVIEWED`.</span>
+<span class="sd">        json_content_array: Useful for `FRAME` or `TEXT` projects only.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; kili.append_many_to_dataset(</span>
-<span class="sd">            project_id=project_id,</span>
-<span class="sd">            content_array=[&#39;https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png&#39;])</span>
+<span class="sd">            - For `FRAME` projects, each element is a sequence of frames, i.e. a</span>
+<span class="sd">                list of URLs to images or a list of paths to images.</span>
+<span class="sd">            - For `TEXT` projects, each element is a json_content dict,</span>
+<span class="sd">                formatted according to documentation [on how to import</span>
+<span class="sd">            rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)</span>
+<span class="sd">        json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.</span>
+
+<span class="sd">            - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.</span>
+<span class="sd">                Example for one asset: `json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}]`.</span>
+<span class="sd">            - For video, you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
+<span class="sd">                Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful, or an error message.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.append_many_to_dataset(</span>
+<span class="sd">                project_id=project_id,</span>
+<span class="sd">                content_array=[&#39;https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png&#39;])</span>
+
+<span class="sd">    !!! example &quot;Recipe&quot;</span>
+<span class="sd">        - For more detailed examples on how to import assets,</span>
+<span class="sd">            see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb)</span>
+<span class="sd">            or [other examples](https://docs.kili-technology.com/recipes/importing-data) in our documentation.</span>
+<span class="sd">        - For more detailed examples on how to import text assets,</span>
+<span class="sd">            see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">playground</span> <span class="o">=</span> <span class="n">QueriesProject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span>
     <span class="n">projects</span> <span class="o">=</span> <span class="n">playground</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
@@ -2335,7 +2181,7 @@ For video, you can specify a value with key 'processingParameters' to specify th
 
     <div class="doc doc-contents ">
 
-      <p>Delete assets from a project</p>
+      <p>Delete assets from a project.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2367,8 +2213,8 @@ For video, you can specify a value with key 'processingParameters' to specify th
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2376,20 +2222,15 @@ For video, you can specify a value with key 'processingParameters' to specify th
           <summary>Source code in <code>kili/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">delete_many_from_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Delete assets from a project</span>
+<span class="k">def</span> <span class="nf">delete_many_from_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Delete assets from a project.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    asset_ids :</span>
-<span class="sd">        The list of identifiers of the assets to delete.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        asset_ids: The list of identifiers of the assets to delete.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">asset_ids</span><span class="p">}}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -2430,7 +2271,7 @@ For video, you can specify a value with key 'processingParameters' to specify th
   <tbody>
       <tr>
         <td><code>asset_ids</code></td>
-        <td><code>List[str]</code></td>
+        <td></td>
         <td><p>The asset IDs to modify</p></td>
         <td><em>required</em></td>
       </tr>
@@ -2442,7 +2283,7 @@ For video, you can specify a value with key 'processingParameters' to specify th
       </tr>
       <tr>
         <td><code>priorities</code></td>
-        <td><code>Optional[List[int]]</code></td>
+        <td></td>
         <td><p>You can change the priority of the assets
 By default, all assets have a priority of 0.</p></td>
         <td><code>None</code></td>
@@ -2450,9 +2291,9 @@ By default, all assets have a priority of 0.</p></td>
       <tr>
         <td><code>json_metadatas</code></td>
         <td><code>Optional[List[Union[dict, str]]]</code></td>
-        <td><p>The metadata given to an asset should be stored in a json like dict with keys
-"imageUrl", "text", "url".
-json_metadata = {'imageUrl': '','text': '','url': ''}</p></td>
+        <td><p>The metadata given to an asset should be stored
+in a json like dict with keys <code>imageUrl</code>, <code>text</code>, <code>url</code>:
+<code>json_metadata = {'imageUrl': '','text': '','url': ''}</code></p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2488,8 +2329,9 @@ and you point Kili to your data by giving the URLs</li>
         <td><code>json_contents</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><ul>
-<li>For a NLP project, the json_content is a a text formatted using RichText</li>
-<li>For a Video project, the json_content is a json containg urls pointing
+<li>For a NLP project, the <code>json_content</code>
+is a text formatted using RichText</li>
+<li>For a Video project, the<code>json_content</code> is a json containg urls pointing
     to each frame of the video.</li>
 </ul></td>
         <td><code>None</code></td>
@@ -2497,7 +2339,7 @@ and you point Kili to your data by giving the URLs</li>
       <tr>
         <td><code>status_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>Each element should be in {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
+        <td><p>Each element should be in <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>, <code>REVIEWED</code></p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2512,6 +2354,22 @@ and you point Kili to your data by giving the URLs</li>
         <td><p>Whether to use the asset for honeypot</p></td>
         <td><code>None</code></td>
       </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
+    </tr>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
@@ -2529,22 +2387,6 @@ and you point Kili to your data by giving the URLs</li>
 <span class="p">)</span>
 </code></pre></div>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>kili/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -2561,65 +2403,49 @@ and you point Kili to your data by giving the URLs</li>
                                 <span class="n">json_contents</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">status_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">is_used_for_consensus_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Update the properties of one or more assets.</span>
+                                <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Update the properties of one or more assets.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    asset_ids : List[str]</span>
-<span class="sd">        The asset IDs to modify</span>
-<span class="sd">    external_ids :</span>
-<span class="sd">        Change the external id of the assets</span>
-<span class="sd">    priorities : List[int], optional (default = None)</span>
-<span class="sd">        You can change the priority of the assets</span>
-<span class="sd">        By default, all assets have a priority of 0.</span>
-<span class="sd">    json_metadatas :</span>
-<span class="sd">        The metadata given to an asset should be stored in a json like dict with keys</span>
-<span class="sd">        &quot;imageUrl&quot;, &quot;text&quot;, &quot;url&quot;.</span>
-<span class="sd">        json_metadata = {&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}</span>
-<span class="sd">    consensus_marks :</span>
-<span class="sd">        Should be between 0 and 1</span>
-<span class="sd">    honeypot_marks :</span>
-<span class="sd">        Should be between 0 and 1</span>
-<span class="sd">    to_be_labeled_by_array :</span>
-<span class="sd">        If given, each element of the list should contain the emails of</span>
-<span class="sd">        the labelers authorized to label the asset.</span>
-<span class="sd">    contents :</span>
-<span class="sd">        - For a NLP project, the content can be directly in text format</span>
-<span class="sd">        - For an Image / Video / Pdf project, the content must be hosted on a web server,</span>
-<span class="sd">        and you point Kili to your data by giving the URLs</span>
-<span class="sd">    json_contents :</span>
-<span class="sd">        - For a NLP project, the json_content is a a text formatted using RichText</span>
-<span class="sd">        - For a Video project, the json_content is a json containg urls pointing</span>
-<span class="sd">            to each frame of the video.</span>
-<span class="sd">    status_array :</span>
-<span class="sd">        Each element should be in {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">    is_used_for_consensus_array :</span>
-<span class="sd">        Whether to use the asset to compute consensus kpis or not</span>
-<span class="sd">    is_honeypot_array :</span>
-<span class="sd">        Whether to use the asset for honeypot</span>
+<span class="sd">    Args:</span>
+<span class="sd">        asset_ids : The asset IDs to modify</span>
+<span class="sd">        external_ids: Change the external id of the assets</span>
+<span class="sd">        priorities : You can change the priority of the assets</span>
+<span class="sd">            By default, all assets have a priority of 0.</span>
+<span class="sd">        json_metadatas: The metadata given to an asset should be stored</span>
+<span class="sd">            in a json like dict with keys `imageUrl`, `text`, `url`:</span>
+<span class="sd">            `json_metadata = {&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}`</span>
+<span class="sd">        consensus_marks: Should be between 0 and 1</span>
+<span class="sd">        honeypot_marks: Should be between 0 and 1</span>
+<span class="sd">        to_be_labeled_by_array: If given, each element of the list should contain the emails of</span>
+<span class="sd">            the labelers authorized to label the asset.</span>
+<span class="sd">        contents: - For a NLP project, the content can be directly in text format</span>
+<span class="sd">            - For an Image / Video / Pdf project, the content must be hosted on a web server,</span>
+<span class="sd">            and you point Kili to your data by giving the URLs</span>
+<span class="sd">        json_contents: - For a NLP project, the `json_content`</span>
+<span class="sd">            is a text formatted using RichText</span>
+<span class="sd">            - For a Video project, the`json_content` is a json containg urls pointing</span>
+<span class="sd">                to each frame of the video.</span>
+<span class="sd">        status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`, `REVIEWED`</span>
+<span class="sd">        is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not</span>
+<span class="sd">        is_honeypot_array: Whether to use the asset for honeypot</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; kili.update_properties_in_assets(</span>
-<span class="sd">            asset_ids=[&quot;ckg22d81r0jrg0885unmuswj8&quot;, &quot;ckg22d81s0jrh0885pdxfd03n&quot;],</span>
-<span class="sd">            consensus_marks=[1, 0.7],</span>
-<span class="sd">            contents=[None, &#39;https://to/second/asset.png&#39;],</span>
-<span class="sd">            external_ids=[&#39;external-id-of-your-choice-1&#39;, &#39;external-id-of-your-choice-2&#39;],</span>
-<span class="sd">            honeypot_marks=[0.8, 0.5],</span>
-<span class="sd">            is_honeypot_array=[True, True],</span>
-<span class="sd">            is_used_for_consensus_array=[True, False],</span>
-<span class="sd">            priorities=[None, 2],</span>
-<span class="sd">            status_array=[&#39;LABELED&#39;, &#39;REVIEWED&#39;],</span>
-<span class="sd">            to_be_labeled_by_array=[[&#39;test+pierre@kili-technology.com&#39;], None],</span>
-<span class="sd">    )</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.update_properties_in_assets(</span>
+<span class="sd">                asset_ids=[&quot;ckg22d81r0jrg0885unmuswj8&quot;, &quot;ckg22d81s0jrh0885pdxfd03n&quot;],</span>
+<span class="sd">                consensus_marks=[1, 0.7],</span>
+<span class="sd">                contents=[None, &#39;https://to/second/asset.png&#39;],</span>
+<span class="sd">                external_ids=[&#39;external-id-of-your-choice-1&#39;, &#39;external-id-of-your-choice-2&#39;],</span>
+<span class="sd">                honeypot_marks=[0.8, 0.5],</span>
+<span class="sd">                is_honeypot_array=[True, True],</span>
+<span class="sd">                is_used_for_consensus_array=[True, False],</span>
+<span class="sd">                priorities=[None, 2],</span>
+<span class="sd">                status_array=[&#39;LABELED&#39;, &#39;REVIEWED&#39;],</span>
+<span class="sd">                to_be_labeled_by_array=[[&#39;test+pierre@kili-technology.com&#39;], None],</span>
+<span class="sd">        )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">formatted_json_metadatas</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2687,18 +2513,6 @@ and you point Kili to your data by giving the URLs</li>
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
 
 

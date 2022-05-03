@@ -303,11 +303,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.label.__init__.QueriesLabel" class="md-nav__link">
-    QueriesLabel
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesLabel">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -337,11 +337,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.label.__init__.MutationsLabel" class="md-nav__link">
-    MutationsLabel
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsLabel">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -378,11 +378,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.subscriptions.label.__init__.SubscriptionsLabel" class="md-nav__link">
-    SubscriptionsLabel
+  <a href="#subscriptions" class="md-nav__link">
+    Subscriptions
   </a>
   
-    <nav class="md-nav" aria-label="SubscriptionsLabel">
+    <nav class="md-nav" aria-label="Subscriptions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -537,11 +537,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.label.__init__.QueriesLabel" class="md-nav__link">
-    QueriesLabel
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesLabel">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -571,11 +571,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.label.__init__.MutationsLabel" class="md-nav__link">
-    MutationsLabel
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsLabel">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -612,11 +612,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.subscriptions.label.__init__.SubscriptionsLabel" class="md-nav__link">
-    SubscriptionsLabel
+  <a href="#subscriptions" class="md-nav__link">
+    Subscriptions
   </a>
   
-    <nav class="md-nav" aria-label="SubscriptionsLabel">
+    <nav class="md-nav" aria-label="Subscriptions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -646,56 +646,28 @@
 
 
 <h1 id="label-module">Label module</h1>
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Label queries</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="queries">Queries</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.queries.label.__init__.QueriesLabel" class="doc doc-heading">
-        <code>
-QueriesLabel        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of Label queries</p>
+      <p>Set of Label queries.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesLabel</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Label queries</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of Label queries.&quot;&quot;&quot;</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -727,70 +699,43 @@ QueriesLabel        </code>
                <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets a label list or a label generator from a project based on a set of criteria</span>
+        <span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        asset_id :</span>
-<span class="sd">            Identifier of the asset.</span>
-<span class="sd">        asset_status_in :</span>
-<span class="sd">            Returned labels should have a status that belongs to that list, if given.</span>
-<span class="sd">            Possible choices : {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">        asset_external_id_in :</span>
-<span class="sd">            Returned labels should have an external id that belongs to that list, if given.</span>
-<span class="sd">        author_in :</span>
-<span class="sd">            Returned labels should have a label whose status belongs to that list, if given.</span>
-<span class="sd">        created_at :</span>
-<span class="sd">            Returned labels should have a label whose creation date is equal to this date.</span>
-<span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        created_at_gte :</span>
-<span class="sd">            Returned labels should have a label whose creation date is greater than this date.</span>
-<span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        created_at_lte :</span>
-<span class="sd">            Returned labels should have a label whose creation date is lower than this date.</span>
-<span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the labels.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
-<span class="sd">        first :</span>
-<span class="sd">            Maximum number of labels to return.</span>
-<span class="sd">        honeypot_mark_gte :</span>
-<span class="sd">            Returned labels should have a label whose honeypot is greater than this number.</span>
-<span class="sd">        honeypot_mark_lte :</span>
-<span class="sd">            Returned labels should have a label whose honeypot is lower than this number.</span>
-<span class="sd">        id_contains :</span>
-<span class="sd">            Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
-<span class="sd">        json_response_contains :</span>
-<span class="sd">            Returned labels should have a substring of the jsonResponse that belongs</span>
-<span class="sd">            to that list, if given.</span>
-<span class="sd">        label_id :</span>
-<span class="sd">            Identifier of the label.</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project.</span>
-<span class="sd">        skip :</span>
-<span class="sd">            Number of labels to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">        skipped :</span>
-<span class="sd">            Returned labels should have a label which is skipped</span>
-<span class="sd">        type_in :</span>
-<span class="sd">            Returned labels should have a label whose type belongs to that list, if given.</span>
-<span class="sd">        user_id :</span>
-<span class="sd">            Identifier of the user.</span>
-<span class="sd">        disable_tqdm :</span>
-<span class="sd">            If True, the progress bar will be disabled</span>
-<span class="sd">        as_generator:</span>
-<span class="sd">            If True, a generator on the labels is returned.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            asset_id: Identifier of the asset.</span>
+<span class="sd">            asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">            author_in: Returned labels should have a label whose status belongs to that list, if given.</span>
+<span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">            created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">            created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
+<span class="sd">            first: Maximum number of labels to return.</span>
+<span class="sd">            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">            id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
+<span class="sd">            json_response_contains: Returned labels should have a substring of the jsonResponse that belongs</span>
+<span class="sd">                to that list, if given.</span>
+<span class="sd">            label_id: Identifier of the label.</span>
+<span class="sd">            project_id: Identifier of the project.</span>
+<span class="sd">            skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">            skipped: Returned labels should have a label which is skipped</span>
+<span class="sd">            type_in: Returned labels should have a label whose type belongs to that list, if given.</span>
+<span class="sd">            user_id: Identifier of the user.</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the labels is returned.</span>
 
+<span class="sd">        !!! info &quot;Dates format&quot;</span>
+<span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which contains the query if it was successful, else an error message.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful, else an error message.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        -------</span>
-<span class="sd">        &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;, &#39;labelOf.externalId&#39;]) # returns a list of all labels of a project and their assets external ID</span>
-<span class="sd">        &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;], as_generator=True) # returns a generator of all labels of a project</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;, &#39;labelOf.externalId&#39;]) # returns a list of all labels of a project and their assets external ID</span>
+<span class="sd">            &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;], as_generator=True) # returns a generator of all labels of a project</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -885,23 +830,16 @@ QueriesLabel        </code>
                                 <span class="s1">&#39;externalId&#39;</span>
                             <span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the labels of a project as a pandas DataFrame</span>
+        <span class="sd">&quot;&quot;&quot;Get the labels of a project as a pandas DataFrame.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the labels.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
-<span class="sd">        asset_fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the assets.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
+<span class="sd">            asset_fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        labels_df :</span>
+<span class="sd">        Returns:</span>
 <span class="sd">            pandas DataFrame containing the labels.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">projects</span> <span class="o">=</span> <span class="n">QueriesProject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
@@ -933,52 +871,32 @@ QueriesLabel        </code>
                      <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the number of labels for the given parameters</span>
+        <span class="sd">&quot;&quot;&quot;Get the number of labels for the given parameters.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        asset_id :</span>
-<span class="sd">            Identifier of the asset.</span>
-<span class="sd">        asset_status_in :</span>
-<span class="sd">            Returned labels should have a status that belongs to that list, if given.</span>
-<span class="sd">            Possible choices : {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">        asset_external_id_in :</span>
-<span class="sd">            Returned labels should have an external id that belongs to that list, if given.</span>
-<span class="sd">        author_in :</span>
-<span class="sd">            Returned labels should have a label whose status belongs to that list, if given.</span>
-<span class="sd">        created_at :</span>
-<span class="sd">            Returned labels should have a label whose creation date is equal to this date.</span>
-<span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        created_at_gte :</span>
-<span class="sd">            Returned labels should have a label whose creation date is greater than this date.</span>
-<span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        created_at_lte :</span>
-<span class="sd">            Returned labels should have a label whose creation date is lower than this date.</span>
-<span class="sd">            Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">        honeypot_mark_gte :</span>
-<span class="sd">            Returned labels should have a label whose honeypot is greater than this number.</span>
-<span class="sd">        honeypot_mark_lte :</span>
-<span class="sd">            Returned labels should have a label whose honeypot is lower than this number.</span>
-<span class="sd">        json_response_contains :</span>
-<span class="sd">            Returned labels should have a substring of the jsonResponse that</span>
-<span class="sd">            belongs to that list, if given.</span>
-<span class="sd">        label_id :</span>
-<span class="sd">            Identifier of the label.</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project.</span>
-<span class="sd">        skipped :</span>
-<span class="sd">            Returned labels should have a label which is skipped</span>
-<span class="sd">        type_in :</span>
-<span class="sd">            Returned labels should have a label whose type belongs to that list, if given.</span>
-<span class="sd">        user_id :</span>
-<span class="sd">            Identifier of the user.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            asset_id: Identifier of the asset.</span>
+<span class="sd">            asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">            author_in: Returned labels should have a label whose status belongs to that list, if given.</span>
+<span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">            created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">            created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">            json_response_contains: Returned labels should have a substring of the jsonResponse that</span>
+<span class="sd">                belongs to that list, if given.</span>
+<span class="sd">            label_id: Identifier of the label.</span>
+<span class="sd">            project_id: Identifier of the project.</span>
+<span class="sd">            skipped: Returned labels should have a label which is skipped</span>
+<span class="sd">            type_in: Returned labels should have a label whose type belongs to that list, if given.</span>
+<span class="sd">            user_id: Identifier of the user.</span>
 
+<span class="sd">        !!! info &quot;Dates format&quot;</span>
+<span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            the number of labels with the parameters provided</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The number of labels with the parameters provided</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -1036,7 +954,7 @@ QueriesLabel        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Get the number of labels for the given parameters</p>
+      <p>Get the number of labels for the given parameters.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1059,7 +977,7 @@ QueriesLabel        </code>
         <td><code>asset_status_in</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>Returned labels should have a status that belongs to that list, if given.
-Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
+Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code> or <code>REVIEWED</code></p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1077,22 +995,19 @@ Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
       <tr>
         <td><code>created_at</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is equal to this date.
-Formatted string should have format : "YYYY-MM-DD"</p></td>
+        <td><p>Returned labels should have a label whose creation date is equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>created_at_gte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is greater than this date.
-Formatted string should have format : "YYYY-MM-DD"</p></td>
+        <td><p>Returned labels should have a label whose creation date is greater than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>created_at_lte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is lower than this date.
-Formatted string should have format : "YYYY-MM-DD"</p></td>
+        <td><p>Returned labels should have a label whose creation date is lower than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1145,7 +1060,11 @@ belongs to that list, if given.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
-</table>
+</table>      <div class="admonition info">
+<p class="admonition-title">Dates format</p>
+<p>Date strings should have format: "YYYY-MM-DD"</p>
+</div>
+
 <p><strong>Returns:</strong></p>
 <table>
   <thead>
@@ -1157,7 +1076,7 @@ belongs to that list, if given.</p></td>
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>the number of labels with the parameters provided</p></td>
+      <td><p>The number of labels with the parameters provided</p></td>
     </tr>
   </tbody>
 </table>
@@ -1182,52 +1101,32 @@ belongs to that list, if given.</p></td>
                  <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the number of labels for the given parameters</span>
+    <span class="sd">&quot;&quot;&quot;Get the number of labels for the given parameters.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    asset_id :</span>
-<span class="sd">        Identifier of the asset.</span>
-<span class="sd">    asset_status_in :</span>
-<span class="sd">        Returned labels should have a status that belongs to that list, if given.</span>
-<span class="sd">        Possible choices : {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">    asset_external_id_in :</span>
-<span class="sd">        Returned labels should have an external id that belongs to that list, if given.</span>
-<span class="sd">    author_in :</span>
-<span class="sd">        Returned labels should have a label whose status belongs to that list, if given.</span>
-<span class="sd">    created_at :</span>
-<span class="sd">        Returned labels should have a label whose creation date is equal to this date.</span>
-<span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    created_at_gte :</span>
-<span class="sd">        Returned labels should have a label whose creation date is greater than this date.</span>
-<span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    created_at_lte :</span>
-<span class="sd">        Returned labels should have a label whose creation date is lower than this date.</span>
-<span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    honeypot_mark_gte :</span>
-<span class="sd">        Returned labels should have a label whose honeypot is greater than this number.</span>
-<span class="sd">    honeypot_mark_lte :</span>
-<span class="sd">        Returned labels should have a label whose honeypot is lower than this number.</span>
-<span class="sd">    json_response_contains :</span>
-<span class="sd">        Returned labels should have a substring of the jsonResponse that</span>
-<span class="sd">        belongs to that list, if given.</span>
-<span class="sd">    label_id :</span>
-<span class="sd">        Identifier of the label.</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project.</span>
-<span class="sd">    skipped :</span>
-<span class="sd">        Returned labels should have a label which is skipped</span>
-<span class="sd">    type_in :</span>
-<span class="sd">        Returned labels should have a label whose type belongs to that list, if given.</span>
-<span class="sd">    user_id :</span>
-<span class="sd">        Identifier of the user.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        asset_id: Identifier of the asset.</span>
+<span class="sd">        asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">        author_in: Returned labels should have a label whose status belongs to that list, if given.</span>
+<span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">        created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">        created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">        honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">        honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">        json_response_contains: Returned labels should have a substring of the jsonResponse that</span>
+<span class="sd">            belongs to that list, if given.</span>
+<span class="sd">        label_id: Identifier of the label.</span>
+<span class="sd">        project_id: Identifier of the project.</span>
+<span class="sd">        skipped: Returned labels should have a label which is skipped</span>
+<span class="sd">        type_in: Returned labels should have a label whose type belongs to that list, if given.</span>
+<span class="sd">        user_id: Identifier of the user.</span>
 
+<span class="sd">    !!! info &quot;Dates format&quot;</span>
+<span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        the number of labels with the parameters provided</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The number of labels with the parameters provided</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -1277,7 +1176,7 @@ belongs to that list, if given.</p></td>
 
     <div class="doc doc-contents ">
 
-      <p>Get the labels of a project as a pandas DataFrame</p>
+      <p>Get the labels of a project as a pandas DataFrame.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1344,23 +1243,16 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
                             <span class="s1">&#39;externalId&#39;</span>
                         <span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the labels of a project as a pandas DataFrame</span>
+    <span class="sd">&quot;&quot;&quot;Get the labels of a project as a pandas DataFrame.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the labels.</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
-<span class="sd">    asset_fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the assets.</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
+<span class="sd">        asset_fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#asset) for all possible fields.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    labels_df :</span>
+<span class="sd">    Returns:</span>
 <span class="sd">        pandas DataFrame containing the labels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">projects</span> <span class="o">=</span> <span class="n">QueriesProject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
@@ -1392,7 +1284,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 
     <div class="doc doc-contents ">
 
-      <p>Gets a label list or a label generator from a project based on a set of criteria</p>
+      <p>Get a label list or a label generator from a project based on a set of criteria.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1415,7 +1307,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
         <td><code>asset_status_in</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>Returned labels should have a status that belongs to that list, if given.
-Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
+Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code> or <code>REVIEWED</code></p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1433,22 +1325,19 @@ Possible choices : {'TODO', 'ONGOING', 'LABELED', 'REVIEWED'}</p></td>
       <tr>
         <td><code>created_at</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is equal to this date.
-Formatted string should have format : "YYYY-MM-DD"</p></td>
+        <td><p>Returned labels should have a label whose creation date is equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>created_at_gte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is greater than this date.
-Formatted string should have format : "YYYY-MM-DD"</p></td>
+        <td><p>Returned labels should have a label whose creation date is greater than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>created_at_lte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is lower than this date.
-Formatted string should have format : "YYYY-MM-DD"</p></td>
+        <td><p>Returned labels should have a label whose creation date is lower than this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1528,17 +1417,21 @@ to that list, if given.</p></td>
       <tr>
         <td><code>disable_tqdm</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, the progress bar will be disabled</p></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>as_generator</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, a generator on the labels is returned.</p></td>
+        <td><p>If <code>True</code>, a generator on the labels is returned.</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
-</table>
+</table>      <div class="admonition info">
+<p class="admonition-title">Dates format</p>
+<p>Date strings should have format: "YYYY-MM-DD"</p>
+</div>
+
 <p><strong>Returns:</strong></p>
 <table>
   <thead>
@@ -1550,10 +1443,15 @@ to that list, if given.</p></td>
   <tbody>
     <tr>
       <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
-      <td><p>a result object which contains the query if it was successful, else an error message.</p></td>
+      <td><p>A result object which contains the query if it was successful, else an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelOf.externalId&#39;</span><span class="p">])</span> <span class="c1"># returns a list of all labels of a project and their assets external ID</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">],</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># returns a generator of all labels of a project</span>
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -1583,70 +1481,43 @@ to that list, if given.</p></td>
            <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gets a label list or a label generator from a project based on a set of criteria</span>
+    <span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    asset_id :</span>
-<span class="sd">        Identifier of the asset.</span>
-<span class="sd">    asset_status_in :</span>
-<span class="sd">        Returned labels should have a status that belongs to that list, if given.</span>
-<span class="sd">        Possible choices : {&#39;TODO&#39;, &#39;ONGOING&#39;, &#39;LABELED&#39;, &#39;REVIEWED&#39;}</span>
-<span class="sd">    asset_external_id_in :</span>
-<span class="sd">        Returned labels should have an external id that belongs to that list, if given.</span>
-<span class="sd">    author_in :</span>
-<span class="sd">        Returned labels should have a label whose status belongs to that list, if given.</span>
-<span class="sd">    created_at :</span>
-<span class="sd">        Returned labels should have a label whose creation date is equal to this date.</span>
-<span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    created_at_gte :</span>
-<span class="sd">        Returned labels should have a label whose creation date is greater than this date.</span>
-<span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    created_at_lte :</span>
-<span class="sd">        Returned labels should have a label whose creation date is lower than this date.</span>
-<span class="sd">        Formatted string should have format : &quot;YYYY-MM-DD&quot;</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the labels.</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
-<span class="sd">    first :</span>
-<span class="sd">        Maximum number of labels to return.</span>
-<span class="sd">    honeypot_mark_gte :</span>
-<span class="sd">        Returned labels should have a label whose honeypot is greater than this number.</span>
-<span class="sd">    honeypot_mark_lte :</span>
-<span class="sd">        Returned labels should have a label whose honeypot is lower than this number.</span>
-<span class="sd">    id_contains :</span>
-<span class="sd">        Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
-<span class="sd">    json_response_contains :</span>
-<span class="sd">        Returned labels should have a substring of the jsonResponse that belongs</span>
-<span class="sd">        to that list, if given.</span>
-<span class="sd">    label_id :</span>
-<span class="sd">        Identifier of the label.</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project.</span>
-<span class="sd">    skip :</span>
-<span class="sd">        Number of labels to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">    skipped :</span>
-<span class="sd">        Returned labels should have a label which is skipped</span>
-<span class="sd">    type_in :</span>
-<span class="sd">        Returned labels should have a label whose type belongs to that list, if given.</span>
-<span class="sd">    user_id :</span>
-<span class="sd">        Identifier of the user.</span>
-<span class="sd">    disable_tqdm :</span>
-<span class="sd">        If True, the progress bar will be disabled</span>
-<span class="sd">    as_generator:</span>
-<span class="sd">        If True, a generator on the labels is returned.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        asset_id: Identifier of the asset.</span>
+<span class="sd">        asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
+<span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">        author_in: Returned labels should have a label whose status belongs to that list, if given.</span>
+<span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">        created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">        created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#label) for all possible fields.</span>
+<span class="sd">        first: Maximum number of labels to return.</span>
+<span class="sd">        honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">        honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">        id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
+<span class="sd">        json_response_contains: Returned labels should have a substring of the jsonResponse that belongs</span>
+<span class="sd">            to that list, if given.</span>
+<span class="sd">        label_id: Identifier of the label.</span>
+<span class="sd">        project_id: Identifier of the project.</span>
+<span class="sd">        skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">        skipped: Returned labels should have a label which is skipped</span>
+<span class="sd">        type_in: Returned labels should have a label whose type belongs to that list, if given.</span>
+<span class="sd">        user_id: Identifier of the user.</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the labels is returned.</span>
 
+<span class="sd">    !!! info &quot;Dates format&quot;</span>
+<span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which contains the query if it was successful, else an error message.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful, else an error message.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;, &#39;labelOf.externalId&#39;]) # returns a list of all labels of a project and their assets external ID</span>
-<span class="sd">    &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;], as_generator=True) # returns a generator of all labels of a project</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;, &#39;labelOf.externalId&#39;]) # returns a list of all labels of a project and their assets external ID</span>
+<span class="sd">        &gt;&gt;&gt; kili.labels(project_id=project_id, fields=[&#39;jsonResponse&#39;], as_generator=True) # returns a generator of all labels of a project</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1729,68 +1600,27 @@ to that list, if given.</p></td>
 
   </div>
 
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Label mutations</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="mutations">Mutations</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.mutations.label.__init__.MutationsLabel" class="doc doc-heading">
-        <code>
-MutationsLabel        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of Label mutations</p>
+      <p>Set of Label mutations.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsLabel</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Label mutations</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of Label mutations.&quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -1801,31 +1631,23 @@ MutationsLabel        </code>
             <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">external_id_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
             <span class="n">model_name_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
+            <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create predictions for specific assets</span>
+        <span class="sd">&quot;&quot;&quot;Create predictions for specific assets.</span>
 
-<span class="sd">        For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">        external_id_array :</span>
-<span class="sd">            The external identifiers of the assets for which we want to add predictions</span>
-<span class="sd">        model_name_array :</span>
-<span class="sd">            In case you want to precise from which model the label originated</span>
-<span class="sd">        json_response_array :</span>
-<span class="sd">            The predictions are given here. For examples,</span>
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">            external_id_array: The external identifiers of the assets for which we want to add predictions</span>
+<span class="sd">            model_name_array: In case you want to precise from which model the label originated</span>
+<span class="sd">            json_response_array: The predictions are given here. For examples,</span>
 <span class="sd">                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            A result object which indicates if the mutation was successful, or an error message else.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful, or an error message.</span>
 
+<span class="sd">        !!! example &quot;Recipe&quot;</span>
+<span class="sd">            For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
             <span class="n">json_response_array</span><span class="p">),</span> <span class="s2">&quot;IDs list and predictions list should have the same length&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
@@ -1844,41 +1666,29 @@ MutationsLabel        </code>
                          <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                          <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;DEFAULT&#39;</span><span class="p">,</span>
                          <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Append a label to an asset</span>
+                         <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Append a label to an asset.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        json_response :</span>
-<span class="sd">            Label is given here</span>
-<span class="sd">        author_id :</span>
-<span class="sd">            ID of the author of the label</span>
-<span class="sd">        label_asset_external_id :</span>
-<span class="sd">            External identifier of the asset</span>
-<span class="sd">            Either provide label_asset_id or label_asset_external_id and project_id</span>
-<span class="sd">        label_asset_id :</span>
-<span class="sd">            Identifier of the asset</span>
-<span class="sd">            Either provide label_asset_id or label_asset_external_id and project_id</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">            Either provide label_asset_id or label_asset_external_id and project_id</span>
-<span class="sd">        label_type :</span>
-<span class="sd">            Can be one of {&#39;AUTOSAVE&#39;, &#39;DEFAULT&#39;, &#39;PREDICTION&#39;, &#39;REVIEW&#39;}</span>
-<span class="sd">        seconds_to_label :</span>
-<span class="sd">            Time to create the label</span>
-<span class="sd">        skipped :</span>
-<span class="sd">            Describe if the label is skipped or not</span>
+<span class="sd">        Args:</span>
+<span class="sd">            json_response: Label is given here</span>
+<span class="sd">            author_id: ID of the author of the label</span>
+<span class="sd">            label_asset_external_id: External identifier of the asset</span>
+<span class="sd">            label_asset_id: Identifier of the asset</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`</span>
+<span class="sd">            seconds_to_label: Time to create the label</span>
+<span class="sd">            skipped: Describe if the label is skipped or not</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">        !!! warning</span>
+<span class="sd">            Either provide `label_asset_id` or `label_asset_external_id` and `project_id`</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        -------</span>
-<span class="sd">        &gt;&gt;&gt; kili.append_to_labels(label_asset_id=asset_id, json_response={...})</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.append_to_labels(label_asset_id=asset_id, json_response={...})</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">author_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1902,30 +1712,21 @@ MutationsLabel        </code>
                                    <span class="n">label_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                    <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                    <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                   <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update properties of a label</span>
+                                   <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update properties of a label.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        label_id :</span>
-<span class="sd">            Identifier of the label</span>
-<span class="sd">        seconds_to_label :</span>
-<span class="sd">            Time to create the label</span>
-<span class="sd">        model_name :</span>
-<span class="sd">            Name of the model</span>
-<span class="sd">        json_response :</span>
-<span class="sd">            The label is given here</span>
+<span class="sd">        Args:</span>
+<span class="sd">            label_id: Identifier of the label</span>
+<span class="sd">            seconds_to_label: Time to create the label</span>
+<span class="sd">            model_name: Name of the model</span>
+<span class="sd">            json_response: The label is given here</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        -------</span>
-<span class="sd">        &gt;&gt;&gt; kili.update_properties_in_label(label_id=label_id, json_response={...})</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.update_properties_in_label(label_id=label_id, json_response={...})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">formatted_json_response</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">json_response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dumps</span><span class="p">(</span>
             <span class="n">json_response</span><span class="p">)</span>
@@ -1942,32 +1743,26 @@ MutationsLabel        </code>
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">create_honeypot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create honeypot for an asset.</span>
+                        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create honeypot for an asset.</span>
 
-<span class="sd">        Uses the given `json_response` to create a &quot;REVIEW&quot; label. This enables Kili to compute a</span>
-<span class="sd">        `honeypotMark`, which measures the similarity between this label and other labels.</span>
+<span class="sd">        !!! info</span>
+<span class="sd">            Uses the given `json_response` to create a `REVIEW` label.</span>
+<span class="sd">            This enables Kili to compute a`honeypotMark`,</span>
+<span class="sd">            which measures the similarity between this label and other labels.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        json_response :</span>
-<span class="sd">            The JSON response of the honeypot label of the asset</span>
-<span class="sd">        asset_id :</span>
-<span class="sd">            Identifier of the asset</span>
-<span class="sd">            Either provide asset_id or asset_external_id and project_id</span>
-<span class="sd">        asset_external_id :</span>
-<span class="sd">            External identifier of the asset</span>
-<span class="sd">            Either provide asset_id or asset_external_id and project_id</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">            Either provide asset_id or asset_external_id and project_id</span>
+<span class="sd">        Args:</span>
+<span class="sd">            json_response: The JSON response of the honeypot label of the asset</span>
+<span class="sd">            asset_id: Identifier of the asset</span>
+<span class="sd">                Either provide asset_id or asset_external_id and project_id</span>
+<span class="sd">            asset_external_id: External identifier of the asset</span>
+<span class="sd">                Either provide asset_id or asset_external_id and project_id</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">                Either provide asset_id or asset_external_id and project_id</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
@@ -2005,7 +1800,7 @@ MutationsLabel        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Append a label to an asset</p>
+      <p>Append a label to an asset.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2033,28 +1828,25 @@ MutationsLabel        </code>
       <tr>
         <td><code>label_asset_external_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>External identifier of the asset
-Either provide label_asset_id or label_asset_external_id and project_id</p></td>
+        <td><p>External identifier of the asset</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_asset_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the asset
-Either provide label_asset_id or label_asset_external_id and project_id</p></td>
+        <td><p>Identifier of the asset</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>project_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the project
-Either provide label_asset_id or label_asset_external_id and project_id</p></td>
+        <td><p>Identifier of the project</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_type</code></td>
         <td><code>str</code></td>
-        <td><p>Can be one of {'AUTOSAVE', 'DEFAULT', 'PREDICTION', 'REVIEW'}</p></td>
+        <td><p>Can be one of <code>AUTOSAVE</code>, <code>DEFAULT</code>, <code>PREDICTION</code> or <code>REVIEW</code></p></td>
         <td><code>&#39;DEFAULT&#39;</code></td>
       </tr>
       <tr>
@@ -2070,7 +1862,11 @@ Either provide label_asset_id or label_asset_external_id and project_id</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
-</table>
+</table>      <div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Either provide <code>label_asset_id</code> or <code>label_asset_external_id</code> and <code>project_id</code></p>
+</div>
+
 <p><strong>Returns:</strong></p>
 <table>
   <thead>
@@ -2082,11 +1878,15 @@ Either provide label_asset_id or label_asset_external_id and project_id</p></td>
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_to_labels</span><span class="p">(</span><span class="n">label_asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">json_response</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -2095,41 +1895,29 @@ Either provide label_asset_id or label_asset_external_id and project_id</p></td>
                      <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;DEFAULT&#39;</span><span class="p">,</span>
                      <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Append a label to an asset</span>
+                     <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Append a label to an asset.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    json_response :</span>
-<span class="sd">        Label is given here</span>
-<span class="sd">    author_id :</span>
-<span class="sd">        ID of the author of the label</span>
-<span class="sd">    label_asset_external_id :</span>
-<span class="sd">        External identifier of the asset</span>
-<span class="sd">        Either provide label_asset_id or label_asset_external_id and project_id</span>
-<span class="sd">    label_asset_id :</span>
-<span class="sd">        Identifier of the asset</span>
-<span class="sd">        Either provide label_asset_id or label_asset_external_id and project_id</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">        Either provide label_asset_id or label_asset_external_id and project_id</span>
-<span class="sd">    label_type :</span>
-<span class="sd">        Can be one of {&#39;AUTOSAVE&#39;, &#39;DEFAULT&#39;, &#39;PREDICTION&#39;, &#39;REVIEW&#39;}</span>
-<span class="sd">    seconds_to_label :</span>
-<span class="sd">        Time to create the label</span>
-<span class="sd">    skipped :</span>
-<span class="sd">        Describe if the label is skipped or not</span>
+<span class="sd">    Args:</span>
+<span class="sd">        json_response: Label is given here</span>
+<span class="sd">        author_id: ID of the author of the label</span>
+<span class="sd">        label_asset_external_id: External identifier of the asset</span>
+<span class="sd">        label_asset_id: Identifier of the asset</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">        label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`</span>
+<span class="sd">        seconds_to_label: Time to create the label</span>
+<span class="sd">        skipped: Describe if the label is skipped or not</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">    !!! warning</span>
+<span class="sd">        Either provide `label_asset_id` or `label_asset_external_id` and `project_id`</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; kili.append_to_labels(label_asset_id=asset_id, json_response={...})</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.append_to_labels(label_asset_id=asset_id, json_response={...})</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">author_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2167,8 +1955,12 @@ Either provide label_asset_id or label_asset_external_id and project_id</p></td>
     <div class="doc doc-contents ">
 
       <p>Create honeypot for an asset.</p>
-<p>Uses the given <code>json_response</code> to create a "REVIEW" label. This enables Kili to compute a
-<code>honeypotMark</code>, which measures the similarity between this label and other labels.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Uses the given <code>json_response</code> to create a <code>REVIEW</code> label.
+This enables Kili to compute a<code>honeypotMark</code>,
+which measures the similarity between this label and other labels.</p>
+</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2221,8 +2013,8 @@ Either provide asset_id or asset_external_id and project_id</p></td>
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2231,32 +2023,26 @@ Either provide asset_id or asset_external_id and project_id</p></td>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">create_honeypot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create honeypot for an asset.</span>
+                    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create honeypot for an asset.</span>
 
-<span class="sd">    Uses the given `json_response` to create a &quot;REVIEW&quot; label. This enables Kili to compute a</span>
-<span class="sd">    `honeypotMark`, which measures the similarity between this label and other labels.</span>
+<span class="sd">    !!! info</span>
+<span class="sd">        Uses the given `json_response` to create a `REVIEW` label.</span>
+<span class="sd">        This enables Kili to compute a`honeypotMark`,</span>
+<span class="sd">        which measures the similarity between this label and other labels.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    json_response :</span>
-<span class="sd">        The JSON response of the honeypot label of the asset</span>
-<span class="sd">    asset_id :</span>
-<span class="sd">        Identifier of the asset</span>
-<span class="sd">        Either provide asset_id or asset_external_id and project_id</span>
-<span class="sd">    asset_external_id :</span>
-<span class="sd">        External identifier of the asset</span>
-<span class="sd">        Either provide asset_id or asset_external_id and project_id</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">        Either provide asset_id or asset_external_id and project_id</span>
+<span class="sd">    Args:</span>
+<span class="sd">        json_response: The JSON response of the honeypot label of the asset</span>
+<span class="sd">        asset_id: Identifier of the asset</span>
+<span class="sd">            Either provide asset_id or asset_external_id and project_id</span>
+<span class="sd">        asset_external_id: External identifier of the asset</span>
+<span class="sd">            Either provide asset_id or asset_external_id and project_id</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">            Either provide asset_id or asset_external_id and project_id</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
@@ -2287,8 +2073,7 @@ Either provide asset_id or asset_external_id and project_id</p></td>
 
     <div class="doc doc-contents ">
 
-      <p>Create predictions for specific assets</p>
-<p>For more detailed examples on how to create predictions, see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb">the recipe</a>.</p>
+      <p>Create predictions for specific assets.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2323,7 +2108,7 @@ Either provide asset_id or asset_external_id and project_id</p></td>
         <td><code>json_response_array</code></td>
         <td><code>List[dict]</code></td>
         <td><p>The predictions are given here. For examples,
-    see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb">the recipe</a>.</p></td>
+see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb">the recipe</a>.</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -2339,10 +2124,14 @@ Either provide asset_id or asset_external_id and project_id</p></td>
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>A result object which indicates if the mutation was successful, or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful, or an error message.</p></td>
     </tr>
   </tbody>
-</table>
+</table>      <div class="admonition example">
+<p class="admonition-title">Recipe</p>
+<p>For more detailed examples on how to create predictions, see <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb">the recipe</a>.</p>
+</div>
+
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -2352,31 +2141,23 @@ Either provide asset_id or asset_external_id and project_id</p></td>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">external_id_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">model_name_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
+        <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create predictions for specific assets</span>
+    <span class="sd">&quot;&quot;&quot;Create predictions for specific assets.</span>
 
-<span class="sd">    For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">    external_id_array :</span>
-<span class="sd">        The external identifiers of the assets for which we want to add predictions</span>
-<span class="sd">    model_name_array :</span>
-<span class="sd">        In case you want to precise from which model the label originated</span>
-<span class="sd">    json_response_array :</span>
-<span class="sd">        The predictions are given here. For examples,</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">        external_id_array: The external identifiers of the assets for which we want to add predictions</span>
+<span class="sd">        model_name_array: In case you want to precise from which model the label originated</span>
+<span class="sd">        json_response_array: The predictions are given here. For examples,</span>
 <span class="sd">            see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        A result object which indicates if the mutation was successful, or an error message else.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful, or an error message.</span>
 
+<span class="sd">    !!! example &quot;Recipe&quot;</span>
+<span class="sd">        For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
         <span class="n">json_response_array</span><span class="p">),</span> <span class="s2">&quot;IDs list and predictions list should have the same length&quot;</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
@@ -2408,7 +2189,7 @@ Either provide asset_id or asset_external_id and project_id</p></td>
 
     <div class="doc doc-contents ">
 
-      <p>Update properties of a label</p>
+      <p>Update properties of a label.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2458,11 +2239,15 @@ Either provide asset_id or asset_external_id and project_id</p></td>
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_label</span><span class="p">(</span><span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">json_response</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -2471,30 +2256,21 @@ Either provide asset_id or asset_external_id and project_id</p></td>
                                <span class="n">label_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                               <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Update properties of a label</span>
+                               <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Update properties of a label.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    label_id :</span>
-<span class="sd">        Identifier of the label</span>
-<span class="sd">    seconds_to_label :</span>
-<span class="sd">        Time to create the label</span>
-<span class="sd">    model_name :</span>
-<span class="sd">        Name of the model</span>
-<span class="sd">    json_response :</span>
-<span class="sd">        The label is given here</span>
+<span class="sd">    Args:</span>
+<span class="sd">        label_id: Identifier of the label</span>
+<span class="sd">        seconds_to_label: Time to create the label</span>
+<span class="sd">        model_name: Name of the model</span>
+<span class="sd">        json_response: The label is given here</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; kili.update_properties_in_label(label_id=label_id, json_response={...})</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.update_properties_in_label(label_id=label_id, json_response={...})</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">formatted_json_response</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">json_response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dumps</span><span class="p">(</span>
         <span class="n">json_response</span><span class="p">)</span>
@@ -2523,72 +2299,29 @@ Either provide asset_id or asset_external_id and project_id</p></td>
 
   </div>
 
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Label subscription</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="subscriptions">Subscriptions</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.subscriptions.label.__init__.SubscriptionsLabel" class="doc doc-heading">
-        <code>
-SubscriptionsLabel        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-dataclass"><code>dataclass</code></small>
-  </span>
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of Label subscriptions</p>
+      <p>Set of Label subscriptions.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/subscriptions/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">SubscriptionsLabel</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Label subscriptions</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of Label subscriptions.&quot;&quot;&quot;</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -2597,19 +2330,17 @@ SubscriptionsLabel        </code>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Subscribe a callback to a project, which is executed when a label is created or updated.</span>
-<span class="sd">        See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb) for more explanation on how to use it.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">        callback :</span>
-<span class="sd">            This function takes as input the id of the asset and its content.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">            callback: This function takes as input the id of the asset and its content.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        return</span>
-<span class="sd">            subscription client</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A subscription client</span>
+
+<span class="sd">        !!! example &quot;Recipe&quot;</span>
+<span class="sd">            For more detailed examples on how to use Webhooks,</span>
+<span class="sd">            See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;ws&#39;</span><span class="p">)</span>
         <span class="n">websocket</span> <span class="o">=</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">(</span><span class="n">ws_endpoint</span><span class="p">)</span>
@@ -2653,7 +2384,6 @@ SubscriptionsLabel        </code>
     <div class="doc doc-contents ">
 
       <p>Subscribe a callback to a project, which is executed when a label is created or updated.</p>
-<p>See <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb">the related recipe</a> for more explanation on how to use it.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2690,11 +2420,16 @@ SubscriptionsLabel        </code>
   </thead>
   <tbody>
     <tr>
-      <td><code>return</code></td>
-      <td><p>subscription client</p></td>
+      <td></td>
+      <td><p>A subscription client</p></td>
     </tr>
   </tbody>
-</table>
+</table>      <div class="admonition example">
+<p class="admonition-title">Recipe</p>
+<p>For more detailed examples on how to use Webhooks,
+See <a href="https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb">the related recipe</a></p>
+</div>
+
         <details class="quote">
           <summary>Source code in <code>kili/subscriptions/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
@@ -2702,19 +2437,17 @@ SubscriptionsLabel        </code>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Subscribe a callback to a project, which is executed when a label is created or updated.</span>
-<span class="sd">    See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb) for more explanation on how to use it.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">    callback :</span>
-<span class="sd">        This function takes as input the id of the asset and its content.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">        callback: This function takes as input the id of the asset and its content.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    return</span>
-<span class="sd">        subscription client</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A subscription client</span>
+
+<span class="sd">    !!! example &quot;Recipe&quot;</span>
+<span class="sd">        For more detailed examples on how to use Webhooks,</span>
+<span class="sd">        See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;ws&#39;</span><span class="p">)</span>
     <span class="n">websocket</span> <span class="o">=</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">(</span><span class="n">ws_endpoint</span><span class="p">)</span>
@@ -2735,18 +2468,6 @@ SubscriptionsLabel        </code>
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
 
 

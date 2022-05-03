@@ -408,11 +408,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.user.__init__.QueriesUser" class="md-nav__link">
-    QueriesUser
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesUser">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -435,11 +435,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.user.__init__.MutationsUser" class="md-nav__link">
-    MutationsUser
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsUser">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -510,11 +510,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.user.__init__.QueriesUser" class="md-nav__link">
-    QueriesUser
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesUser">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -537,11 +537,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kili.mutations.user.__init__.MutationsUser" class="md-nav__link">
-    MutationsUser
+  <a href="#mutations" class="md-nav__link">
+    Mutations
   </a>
   
-    <nav class="md-nav" aria-label="MutationsUser">
+    <nav class="md-nav" aria-label="Mutations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -592,56 +592,27 @@
 
 
 <h1 id="user-module">User module</h1>
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>User queries</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="queries">Queries</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.queries.user.__init__.QueriesUser" class="doc doc-heading">
-        <code>
-QueriesUser        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of User queries</p>
+      <p>Set of User queries.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesUser</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of User queries</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of User queries.&quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -658,42 +629,30 @@ QueriesUser        </code>
               <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
               <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets a generator or a list of users given a set of criteria</span>
+        <span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        api_key :</span>
-<span class="sd">            Query an user by its API KEY</span>
-<span class="sd">        email :</span>
-<span class="sd">            Email of the user</span>
-<span class="sd">        organization_id :</span>
-<span class="sd">            Identifier of the user&#39;s organization</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the users.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.</span>
-<span class="sd">        first :</span>
-<span class="sd">            Maximum number of users to return.</span>
-<span class="sd">        skip :</span>
-<span class="sd">            Number of skipped users (they are ordered by creation date)</span>
-<span class="sd">        disable_tqdm :</span>
-<span class="sd">            If True, the progress bar will be disabled</span>
-<span class="sd">        as_generator:</span>
-<span class="sd">            If True, a generator on the users is returned.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            api_key: Query an user by its API Key</span>
+<span class="sd">            email: Email of the user</span>
+<span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the users.</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.</span>
+<span class="sd">            first: Maximum number of users to return</span>
+<span class="sd">            skip: Number of skipped users (they are ordered by creation date)</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the users is returned.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        -------</span>
-<span class="sd">        ```</span>
-<span class="sd">        # List all users in my organization</span>
-<span class="sd">        &gt;&gt;&gt; organization = kili.organizations()</span>
-<span class="sd">        &gt;&gt;&gt; organization_id = organizations[0][&#39;id]</span>
-<span class="sd">        &gt;&gt;&gt; kili.users(organization_id=organization_id)</span>
-<span class="sd">        ```</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            ```</span>
+<span class="sd">            # List all users in my organization</span>
+<span class="sd">            &gt;&gt;&gt; organization = kili.organizations()</span>
+<span class="sd">            &gt;&gt;&gt; organization_id = organizations[0][&#39;id]</span>
+<span class="sd">            &gt;&gt;&gt; kili.users(organization_id=organization_id)</span>
+<span class="sd">            ```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -743,18 +702,13 @@ QueriesUser        </code>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get user count based on a set of constraints</span>
+        <span class="sd">&quot;&quot;&quot;Get user count based on a set of constraints.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        organization_id :</span>
-<span class="sd">            Identifier of the user&#39;s organization</span>
+<span class="sd">        Args:</span>
+<span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            the count of users whose organization ID matches the given ID</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The number of organizations with the parameters provided</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -793,7 +747,7 @@ QueriesUser        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Get user count based on a set of constraints</p>
+      <p>Get user count based on a set of constraints.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -825,7 +779,7 @@ QueriesUser        </code>
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>the count of users whose organization ID matches the given ID</p></td>
+      <td><p>The number of organizations with the parameters provided</p></td>
     </tr>
   </tbody>
 </table>
@@ -835,18 +789,13 @@ QueriesUser        </code>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">count_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get user count based on a set of constraints</span>
+    <span class="sd">&quot;&quot;&quot;Get user count based on a set of constraints.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    organization_id :</span>
-<span class="sd">        Identifier of the user&#39;s organization</span>
+<span class="sd">    Args:</span>
+<span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        the count of users whose organization ID matches the given ID</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The number of organizations with the parameters provided</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -877,7 +826,7 @@ QueriesUser        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Gets a generator or a list of users given a set of criteria</p>
+      <p>Get a generator or a list of users given a set of criteria</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -893,7 +842,7 @@ QueriesUser        </code>
       <tr>
         <td><code>api_key</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Query an user by its API KEY</p></td>
+        <td><p>Query an user by its API Key</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -918,7 +867,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
       <tr>
         <td><code>first</code></td>
         <td><code>int</code></td>
-        <td><p>Maximum number of users to return.</p></td>
+        <td><p>Maximum number of users to return</p></td>
         <td><code>100</code></td>
       </tr>
       <tr>
@@ -930,13 +879,13 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
       <tr>
         <td><code>disable_tqdm</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, the progress bar will be disabled</p></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>as_generator</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, a generator on the users is returned.</p></td>
+        <td><p>If <code>True</code>, a generator on the users is returned.</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
@@ -952,10 +901,18 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
   <tbody>
     <tr>
       <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
-      <td><p>a result object which contains the query if it was successful, or an error message else.</p></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code># List all users in my organization
+&gt;&gt;&gt; organization = kili.organizations()
+&gt;&gt;&gt; organization_id = organizations[0][&#39;id]
+&gt;&gt;&gt; kili.users(organization_id=organization_id)
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -970,42 +927,30 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
           <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
           <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gets a generator or a list of users given a set of criteria</span>
+    <span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    api_key :</span>
-<span class="sd">        Query an user by its API KEY</span>
-<span class="sd">    email :</span>
-<span class="sd">        Email of the user</span>
-<span class="sd">    organization_id :</span>
-<span class="sd">        Identifier of the user&#39;s organization</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the users.</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.</span>
-<span class="sd">    first :</span>
-<span class="sd">        Maximum number of users to return.</span>
-<span class="sd">    skip :</span>
-<span class="sd">        Number of skipped users (they are ordered by creation date)</span>
-<span class="sd">    disable_tqdm :</span>
-<span class="sd">        If True, the progress bar will be disabled</span>
-<span class="sd">    as_generator:</span>
-<span class="sd">        If True, a generator on the users is returned.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        api_key: Query an user by its API Key</span>
+<span class="sd">        email: Email of the user</span>
+<span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the users.</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.</span>
+<span class="sd">        first: Maximum number of users to return</span>
+<span class="sd">        skip: Number of skipped users (they are ordered by creation date)</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the users is returned.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    ```</span>
-<span class="sd">    # List all users in my organization</span>
-<span class="sd">    &gt;&gt;&gt; organization = kili.organizations()</span>
-<span class="sd">    &gt;&gt;&gt; organization_id = organizations[0][&#39;id]</span>
-<span class="sd">    &gt;&gt;&gt; kili.users(organization_id=organization_id)</span>
-<span class="sd">    ```</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        ```</span>
+<span class="sd">        # List all users in my organization</span>
+<span class="sd">        &gt;&gt;&gt; organization = kili.organizations()</span>
+<span class="sd">        &gt;&gt;&gt; organization_id = organizations[0][&#39;id]</span>
+<span class="sd">        &gt;&gt;&gt; kili.users(organization_id=organization_id)</span>
+<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1055,68 +1000,28 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 
   </div>
 
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>User mutations</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="mutations">Mutations</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.mutations.user.__init__.MutationsUser" class="doc doc-heading">
-        <code>
-MutationsUser        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of User mutations</p>
+      <p>Set of User mutations.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsUser</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of User mutations</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of User mutations.&quot;&quot;&quot;</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -1127,28 +1032,19 @@ MutationsUser        </code>
                     <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">organization_role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a user to your organization.</span>
+                    <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        email :</span>
-<span class="sd">            Email of the new user, used as user&#39;s unique identifier.</span>
-<span class="sd">        password :</span>
-<span class="sd">            On the first sign in, he will use this password and be able to change it.</span>
-<span class="sd">        organization_role :</span>
-<span class="sd">            One of &quot;ADMIN&quot;, &quot;USER&quot;.</span>
-<span class="sd">        firstname :</span>
-<span class="sd">            First name of the new user.</span>
-<span class="sd">        lastname :</span>
-<span class="sd">            Last name of the new user.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            email: Email of the new user, used as user&#39;s unique identifier.</span>
+<span class="sd">            password: On the first sign in, he will use this password and be able to change it.</span>
+<span class="sd">            organization_role: One of &quot;ADMIN&quot;, &quot;USER&quot;.</span>
+<span class="sd">            firstname: First name of the new user.</span>
+<span class="sd">            lastname: Last name of the new user.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
@@ -1165,24 +1061,19 @@ MutationsUser        </code>
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">update_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">old_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                        <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Allow to modify the password that you use to connect to Kili. \</span>
 <span class="sd">        This resolver only works for on-premise installations without Auth0.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        email :</span>
-<span class="sd">        old_password :</span>
-<span class="sd">        new_password_1 :</span>
-<span class="sd">            The new password.</span>
-<span class="sd">        new_password_2 :</span>
-<span class="sd">            A confirmation field for the new password.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            email : Email of the person whose password has to be updated.</span>
+<span class="sd">            old_password : The old password</span>
+<span class="sd">            new_password_1: The new password</span>
+<span class="sd">            new_password_2: A confirmation field for the new password</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
+<span class="sd">        Returns:</span>
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;oldPassword&#39;</span><span class="p">:</span> <span class="n">old_password</span><span class="p">,</span>
@@ -1195,23 +1086,18 @@ MutationsUser        </code>
 
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset password</span>
+    <span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset password.</span>
 
 <span class="sd">        This resolver only works for on-premise installations without Auth0,</span>
 <span class="sd">        if your organization allows Kili to send emails.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        email :</span>
-<span class="sd">            Email of the person whose password has to be reset.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            email: Email of the person whose password has to be reset.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">email</span><span class="p">}}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_RESET_PASSWORD</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
@@ -1225,30 +1111,22 @@ MutationsUser        </code>
                                   <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                   <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                   <span class="n">organization_role</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                  <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the properties of a user</span>
+                                  <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update the properties of a user.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        email : str</span>
-<span class="sd">            The email is the identifier of the user.</span>
-<span class="sd">        firstname :</span>
-<span class="sd">            Change the first name of the user.</span>
-<span class="sd">        lastname :</span>
-<span class="sd">            Change the last name of the user.</span>
-<span class="sd">        organization_id :</span>
-<span class="sd">            Change the organization the user is related to.</span>
-<span class="sd">        organization_role :</span>
-<span class="sd">            Change the role of the user. One of &quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;.</span>
-<span class="sd">        activated :</span>
-<span class="sd">            In case we want to deactivate a user, but keep it.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            email: The email is the identifier of the user.</span>
+<span class="sd">            firstname:Change the first name of the user.</span>
+<span class="sd">            lastname: Change the last name of the user.</span>
+<span class="sd">            organization_id: Change the organization the user is related to.</span>
+<span class="sd">            organization_role: Change the role of the user.</span>
+<span class="sd">                One of &quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;.</span>
+<span class="sd">            activated: In case we want to deactivate a user, but keep it.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
+
+<span class="sd">        Returns:</span>
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message else.</span>
+<span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
@@ -1349,8 +1227,8 @@ MutationsUser        </code>
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -1363,28 +1241,19 @@ MutationsUser        </code>
                 <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">organization_role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Add a user to your organization.</span>
+                <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    email :</span>
-<span class="sd">        Email of the new user, used as user&#39;s unique identifier.</span>
-<span class="sd">    password :</span>
-<span class="sd">        On the first sign in, he will use this password and be able to change it.</span>
-<span class="sd">    organization_role :</span>
-<span class="sd">        One of &quot;ADMIN&quot;, &quot;USER&quot;.</span>
-<span class="sd">    firstname :</span>
-<span class="sd">        First name of the new user.</span>
-<span class="sd">    lastname :</span>
-<span class="sd">        Last name of the new user.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        email: Email of the new user, used as user&#39;s unique identifier.</span>
+<span class="sd">        password: On the first sign in, he will use this password and be able to change it.</span>
+<span class="sd">        organization_role: One of &quot;ADMIN&quot;, &quot;USER&quot;.</span>
+<span class="sd">        firstname: First name of the new user.</span>
+<span class="sd">        lastname: Last name of the new user.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
@@ -1417,7 +1286,7 @@ MutationsUser        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Reset password</p>
+      <p>Reset password.</p>
 <p>This resolver only works for on-premise installations without Auth0,
 if your organization allows Kili to send emails.</p>
 
@@ -1451,8 +1320,8 @@ if your organization allows Kili to send emails.</p>
   <tbody>
     <tr>
       <td><code>dict</code></td>
-      <td><p>a result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -1460,23 +1329,18 @@ if your organization allows Kili to send emails.</p>
           <summary>Source code in <code>kili/mutations/user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reset password</span>
+<span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reset password.</span>
 
 <span class="sd">    This resolver only works for on-premise installations without Auth0,</span>
 <span class="sd">    if your organization allows Kili to send emails.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    email :</span>
-<span class="sd">        Email of the person whose password has to be reset.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        email: Email of the person whose password has to be reset.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">email</span><span class="p">}}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_RESET_PASSWORD</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
@@ -1516,26 +1380,26 @@ if your organization allows Kili to send emails.</p>
   <tbody>
       <tr>
         <td><code>email</code></td>
-        <td><code>str</code></td>
         <td></td>
+        <td><p>Email of the person whose password has to be updated.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>old_password</code></td>
-        <td><code>str</code></td>
         <td></td>
+        <td><p>The old password</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>new_password_1</code></td>
         <td><code>str</code></td>
-        <td><p>The new password.</p></td>
+        <td><p>The new password</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>new_password_2</code></td>
         <td><code>str</code></td>
-        <td><p>A confirmation field for the new password.</p></td>
+        <td><p>A confirmation field for the new password</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -1552,7 +1416,7 @@ if your organization allows Kili to send emails.</p>
     <tr>
       <td><code>dict</code></td>
       <td><p>A result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -1561,24 +1425,19 @@ if your organization allows Kili to send emails.</p>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">update_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">old_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                    <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Allow to modify the password that you use to connect to Kili. \</span>
 <span class="sd">    This resolver only works for on-premise installations without Auth0.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    email :</span>
-<span class="sd">    old_password :</span>
-<span class="sd">    new_password_1 :</span>
-<span class="sd">        The new password.</span>
-<span class="sd">    new_password_2 :</span>
-<span class="sd">        A confirmation field for the new password.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        email : Email of the person whose password has to be updated.</span>
+<span class="sd">        old_password : The old password</span>
+<span class="sd">        new_password_1: The new password</span>
+<span class="sd">        new_password_2: A confirmation field for the new password</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
+<span class="sd">    Returns:</span>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;oldPassword&#39;</span><span class="p">:</span> <span class="n">old_password</span><span class="p">,</span>
@@ -1608,7 +1467,7 @@ if your organization allows Kili to send emails.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Update the properties of a user</p>
+      <p>Update the properties of a user.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1648,7 +1507,8 @@ if your organization allows Kili to send emails.</p>
       <tr>
         <td><code>organization_role</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Change the role of the user. One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
+        <td><p>Change the role of the user.
+One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1671,7 +1531,7 @@ if your organization allows Kili to send emails.</p>
     <tr>
       <td><code>dict</code></td>
       <td><p>A result object which indicates if the mutation was successful,
-    or an error message else.</p></td>
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -1685,30 +1545,22 @@ if your organization allows Kili to send emails.</p>
                               <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">organization_role</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                              <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Update the properties of a user</span>
+                              <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Update the properties of a user.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    email : str</span>
-<span class="sd">        The email is the identifier of the user.</span>
-<span class="sd">    firstname :</span>
-<span class="sd">        Change the first name of the user.</span>
-<span class="sd">    lastname :</span>
-<span class="sd">        Change the last name of the user.</span>
-<span class="sd">    organization_id :</span>
-<span class="sd">        Change the organization the user is related to.</span>
-<span class="sd">    organization_role :</span>
-<span class="sd">        Change the role of the user. One of &quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;.</span>
-<span class="sd">    activated :</span>
-<span class="sd">        In case we want to deactivate a user, but keep it.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        email: The email is the identifier of the user.</span>
+<span class="sd">        firstname:Change the first name of the user.</span>
+<span class="sd">        lastname: Change the last name of the user.</span>
+<span class="sd">        organization_id: Change the organization the user is related to.</span>
+<span class="sd">        organization_role: Change the role of the user.</span>
+<span class="sd">            One of &quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;.</span>
+<span class="sd">        activated: In case we want to deactivate a user, but keep it.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
+
+<span class="sd">    Returns:</span>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message else.</span>
+<span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
@@ -1731,18 +1583,6 @@ if your organization allows Kili to send emails.</p>
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
 
 

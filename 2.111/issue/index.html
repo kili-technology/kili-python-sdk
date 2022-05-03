@@ -288,11 +288,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.issue.__init__.QueriesIssue" class="md-nav__link">
-    QueriesIssue
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesIssue">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -469,11 +469,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.issue.__init__.QueriesIssue" class="md-nav__link">
-    QueriesIssue
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesIssue">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -510,60 +510,29 @@
 
 
 <h1 id="issue-module">Issue module</h1>
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Issue queries</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="queries">Queries</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.queries.issue.__init__.QueriesIssue" class="doc doc-heading">
-        <code>
-QueriesIssue        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-dataclass"><code>dataclass</code></small>
-  </span>
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of Issue queries</p>
+      <p>Set of Issue queries.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/issue/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">QueriesIssue</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Issue queries</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of Issue queries.&quot;&quot;&quot;</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -584,36 +553,26 @@ QueriesIssue        </code>
                <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets a generator or a list of issues that match a set of criteria</span>
+        <span class="sd">&quot;&quot;&quot;Get a generator or a list of issues that match a set of criteria.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the assets.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.</span>
-<span class="sd">        first :</span>
-<span class="sd">            Maximum number of issues to return.</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Project ID the issue belongs to.</span>
-<span class="sd">        skip :</span>
-<span class="sd">            Number of issues to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">        disable_tqdm :</span>
-<span class="sd">            If True, the progress bar will be disabled</span>
-<span class="sd">        as_generator:</span>
-<span class="sd">            If True, a generator on the issues is returned.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.</span>
+<span class="sd">            first: Maximum number of issues to return.</span>
+<span class="sd">            project_id: Project ID the issue belongs to.</span>
+<span class="sd">            skip: Number of issues to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the issues is returned.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        ```</span>
-<span class="sd">        # List all issues of a project and their authors</span>
-<span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])</span>
-<span class="sd">        ```</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            ```</span>
+<span class="sd">            # List all issues of a project and their authors</span>
+<span class="sd">            &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])</span>
+<span class="sd">            ```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -658,18 +617,13 @@ QueriesIssue        </code>
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Count and return the number of api keys with the given constraints</span>
+        <span class="sd">&quot;&quot;&quot;Count and return the number of api keys with the given constraints.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Project ID the issue belongs to.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Project ID the issue belongs to.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            the number of issues with the parameters provided</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The number of issues with the parameters provided</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
@@ -710,7 +664,7 @@ QueriesIssue        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Count and return the number of api keys with the given constraints</p>
+      <p>Count and return the number of api keys with the given constraints.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -742,7 +696,7 @@ QueriesIssue        </code>
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>the number of issues with the parameters provided</p></td>
+      <td><p>The number of issues with the parameters provided</p></td>
     </tr>
   </tbody>
 </table>
@@ -751,18 +705,13 @@ QueriesIssue        </code>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">count_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Count and return the number of api keys with the given constraints</span>
+    <span class="sd">&quot;&quot;&quot;Count and return the number of api keys with the given constraints.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Project ID the issue belongs to.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Project ID the issue belongs to.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        the number of issues with the parameters provided</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The number of issues with the parameters provided</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
@@ -795,7 +744,7 @@ QueriesIssue        </code>
 
     <div class="doc doc-contents ">
 
-      <p>Gets a generator or a list of issues that match a set of criteria</p>
+      <p>Get a generator or a list of issues that match a set of criteria.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -836,22 +785,17 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
       <tr>
         <td><code>disable_tqdm</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, the progress bar will be disabled</p></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>as_generator</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, a generator on the issues is returned.</p></td>
+        <td><p>If <code>True</code>, a generator on the issues is returned.</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code># List all issues of a project and their authors
-&gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])
-</code></pre></div>
-
 <p><strong>Returns:</strong></p>
 <table>
   <thead>
@@ -863,10 +807,16 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
   <tbody>
     <tr>
       <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
-      <td><p>a result object which contains the query if it was successful, or an error message else.</p></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code># List all issues of a project and their authors
+&gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/issue/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -885,36 +835,26 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
            <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
            <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gets a generator or a list of issues that match a set of criteria</span>
+    <span class="sd">&quot;&quot;&quot;Get a generator or a list of issues that match a set of criteria.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the assets.</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.</span>
-<span class="sd">    first :</span>
-<span class="sd">        Maximum number of issues to return.</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Project ID the issue belongs to.</span>
-<span class="sd">    skip :</span>
-<span class="sd">        Number of issues to skip (they are ordered by their date of creation, first to last).</span>
-<span class="sd">    disable_tqdm :</span>
-<span class="sd">        If True, the progress bar will be disabled</span>
-<span class="sd">    as_generator:</span>
-<span class="sd">        If True, a generator on the issues is returned.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the assets.</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.</span>
+<span class="sd">        first: Maximum number of issues to return.</span>
+<span class="sd">        project_id: Project ID the issue belongs to.</span>
+<span class="sd">        skip: Number of issues to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the issues is returned.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    ```</span>
-<span class="sd">    # List all issues of a project and their authors</span>
-<span class="sd">    &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])</span>
-<span class="sd">    ```</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        ```</span>
+<span class="sd">        # List all issues of a project and their authors</span>
+<span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])</span>
+<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -950,18 +890,6 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
 
 

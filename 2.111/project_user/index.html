@@ -378,11 +378,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.project_user.__init__.QueriesProjectUser" class="md-nav__link">
-    QueriesProjectUser
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesProjectUser">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -469,11 +469,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kili.queries.project_user.__init__.QueriesProjectUser" class="md-nav__link">
-    QueriesProjectUser
+  <a href="#queries" class="md-nav__link">
+    Queries
   </a>
   
-    <nav class="md-nav" aria-label="QueriesProjectUser">
+    <nav class="md-nav" aria-label="Queries">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -510,56 +510,28 @@
 
 
 <h1 id="project-user-module">Project User module</h1>
-
-
-  <div class="doc doc-object doc-module">
-
-
-    <div class="doc doc-contents first">
-
-      <p>Project user queries</p>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
+<h2 id="queries">Queries</h2>
 
 
   <div class="doc doc-object doc-class">
 
 
+    <div class="doc doc-contents first">
 
-<h2 id="kili.queries.project_user.__init__.QueriesProjectUser" class="doc doc-heading">
-        <code>
-QueriesProjectUser        </code>
-
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Set of ProjectUser queries</p>
+      <p>Set of ProjectUser queries.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/project_user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesProjectUser</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of ProjectUser queries</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set of ProjectUser queries.&quot;&quot;&quot;</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the subclass</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        auth : KiliAuth object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            auth: KiliAuth object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
@@ -578,41 +550,29 @@ QueriesProjectUser        </code>
                       <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                       <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return project users (possibly with their KPIs) that match a set of criteria</span>
+        <span class="sd">&quot;&quot;&quot;Return project users (possibly with their KPIs) that match a set of criteria</span>
 
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        email :</span>
-<span class="sd">            Email of the user</span>
-<span class="sd">        organization_id :</span>
-<span class="sd">            Identifier of the user&#39;s organization</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
-<span class="sd">        fields :</span>
-<span class="sd">            All the fields to request among the possible fields for the projectUsers.</span>
-<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.</span>
-<span class="sd">        first :</span>
-<span class="sd">            Maximum number of users to return</span>
-<span class="sd">        skip :</span>
-<span class="sd">            Number of project users to skip</span>
-<span class="sd">        disable_tqdm :</span>
-<span class="sd">            If True, the progress bar will be disabled</span>
-<span class="sd">        as_generator:</span>
-<span class="sd">            If True, a generator on the project users is returned.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            email: Email of the user</span>
+<span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">            project_id: Identifier of the project</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the projectUsers</span>
+<span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.</span>
+<span class="sd">            first: Maximum number of users to return</span>
+<span class="sd">            skip: Number of project users to skip</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the project users is returned.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful,</span>
+<span class="sd">                or an error message.</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        -------</span>
-<span class="sd">        ```</span>
-<span class="sd">        # Retrieve consensus marks of all users in project</span>
-<span class="sd">        &gt;&gt;&gt; kili.project_users(project_id=project_id, fields=[&#39;consensusMark&#39;, &#39;user.email&#39;])</span>
-<span class="sd">        ```</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            ```</span>
+<span class="sd">            # Retrieve consensus marks of all users in project</span>
+<span class="sd">            &gt;&gt;&gt; kili.project_users(project_id=project_id, fields=[&#39;consensusMark&#39;, &#39;user.email&#39;])</span>
+<span class="sd">            ```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -677,20 +637,13 @@ QueriesProjectUser        </code>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Counts the number of projects and their users that match a set of criteria</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        email :</span>
-<span class="sd">            Email of the user</span>
-<span class="sd">        organization_id :</span>
-<span class="sd">            Identifier of the user&#39;s organization</span>
-<span class="sd">        project_id :</span>
-<span class="sd">            Identifier of the project</span>
+<span class="sd">        Args:</span>
+<span class="sd">            email: Email of the user</span>
+<span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">            project_id: Identifier of the project</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            a positive integer corresponding to the number of results of the query</span>
-<span class="sd">                if it was successful, or an error message else.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The number of project users with the parameters provided</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -781,8 +734,7 @@ QueriesProjectUser        </code>
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>a positive integer corresponding to the number of results of the query
-    if it was successful, or an error message else.</p></td>
+      <td><p>The number of project users with the parameters provided</p></td>
     </tr>
   </tbody>
 </table>
@@ -798,20 +750,13 @@ QueriesProjectUser        </code>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Counts the number of projects and their users that match a set of criteria</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    email :</span>
-<span class="sd">        Email of the user</span>
-<span class="sd">    organization_id :</span>
-<span class="sd">        Identifier of the user&#39;s organization</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
+<span class="sd">    Args:</span>
+<span class="sd">        email: Email of the user</span>
+<span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">        project_id: Identifier of the project</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a positive integer corresponding to the number of results of the query</span>
-<span class="sd">            if it was successful, or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The number of project users with the parameters provided</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -884,7 +829,7 @@ QueriesProjectUser        </code>
       <tr>
         <td><code>fields</code></td>
         <td><code>List[str]</code></td>
-        <td><p>All the fields to request among the possible fields for the projectUsers.
+        <td><p>All the fields to request among the possible fields for the projectUsers
 See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser">the documentation</a> for all possible fields.</p></td>
         <td><code>[&#39;activated&#39;, &#39;id&#39;, &#39;role&#39;, &#39;starred&#39;, &#39;user.email&#39;, &#39;user.id&#39;]</code></td>
       </tr>
@@ -903,13 +848,13 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
       <tr>
         <td><code>disable_tqdm</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, the progress bar will be disabled</p></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>as_generator</code></td>
         <td><code>bool</code></td>
-        <td><p>If True, a generator on the project users is returned.</p></td>
+        <td><p>If <code>True</code>, a generator on the project users is returned.</p></td>
         <td><code>False</code></td>
       </tr>
   </tbody>
@@ -925,10 +870,16 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
   <tbody>
     <tr>
       <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
-      <td><p>a result object which contains the query if it was successful, or an error message else.</p></td>
+      <td><p>A result object which contains the query if it was successful,
+    or an error message.</p></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code># Retrieve consensus marks of all users in project
+&gt;&gt;&gt; kili.project_users(project_id=project_id, fields=[&#39;consensusMark&#39;, &#39;user.email&#39;])
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/queries/project_user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
@@ -945,41 +896,29 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
                   <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                   <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return project users (possibly with their KPIs) that match a set of criteria</span>
+    <span class="sd">&quot;&quot;&quot;Return project users (possibly with their KPIs) that match a set of criteria</span>
 
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    email :</span>
-<span class="sd">        Email of the user</span>
-<span class="sd">    organization_id :</span>
-<span class="sd">        Identifier of the user&#39;s organization</span>
-<span class="sd">    project_id :</span>
-<span class="sd">        Identifier of the project</span>
-<span class="sd">    fields :</span>
-<span class="sd">        All the fields to request among the possible fields for the projectUsers.</span>
-<span class="sd">        See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.</span>
-<span class="sd">    first :</span>
-<span class="sd">        Maximum number of users to return</span>
-<span class="sd">    skip :</span>
-<span class="sd">        Number of project users to skip</span>
-<span class="sd">    disable_tqdm :</span>
-<span class="sd">        If True, the progress bar will be disabled</span>
-<span class="sd">    as_generator:</span>
-<span class="sd">        If True, a generator on the project users is returned.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        email: Email of the user</span>
+<span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">        project_id: Identifier of the project</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the projectUsers</span>
+<span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.</span>
+<span class="sd">        first: Maximum number of users to return</span>
+<span class="sd">        skip: Number of project users to skip</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the project users is returned.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        a result object which contains the query if it was successful, or an error message else.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful,</span>
+<span class="sd">            or an error message.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    ```</span>
-<span class="sd">    # Retrieve consensus marks of all users in project</span>
-<span class="sd">    &gt;&gt;&gt; kili.project_users(project_id=project_id, fields=[&#39;consensusMark&#39;, &#39;user.email&#39;])</span>
-<span class="sd">    ```</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        ```</span>
+<span class="sd">        # Retrieve consensus marks of all users in project</span>
+<span class="sd">        &gt;&gt;&gt; kili.project_users(project_id=project_id, fields=[&#39;consensusMark&#39;, &#39;user.email&#39;])</span>
+<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1025,18 +964,6 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
 
 
