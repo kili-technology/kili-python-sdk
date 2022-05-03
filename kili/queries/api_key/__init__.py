@@ -39,6 +39,9 @@ class QueriesApiKey:
         # pylint: disable=line-too-long
         """Get a generator or a list of API keys that match a set of constraints.
 
+        !!! info
+            You can only query your own API keys
+
         Args:
             api_key_id: Identifier of the API key to retrieve.
             user_id: Identifier of the user.
@@ -54,8 +57,6 @@ class QueriesApiKey:
             A result object which contains the query if it was successful,
                 or an error message.
 
-        !!! info
-            You can only query your own API keys
 
         Examples:
             >>> kili.api_keys(user_id=user_id)

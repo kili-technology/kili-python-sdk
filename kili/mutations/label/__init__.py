@@ -3,6 +3,7 @@ Label mutations
 """
 
 from json import dumps
+from logging import warning
 from typing import List, Optional
 
 from typeguard import typechecked
@@ -37,8 +38,6 @@ class MutationsLabel:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
-        For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
-
         Args:
             project_id: Identifier of the project
             external_id_array: The external identifiers of the assets for which we want to add predictions
@@ -48,6 +47,9 @@ class MutationsLabel:
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
+
+        !!! example "Recipe"
+            For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
         """
         assert len(external_id_array) == len(
             json_response_array), "IDs list and predictions list should have the same length"
@@ -74,21 +76,22 @@ class MutationsLabel:
             json_response: Label is given here
             author_id: ID of the author of the label
             label_asset_external_id: External identifier of the asset
-                Either provide label_asset_id or label_asset_external_id and project_id
             label_asset_id: Identifier of the asset
-                Either provide label_asset_id or label_asset_external_id and project_id
             project_id: Identifier of the project
-                Either provide label_asset_id or label_asset_external_id and project_id
-            label_type: Can be one of {'AUTOSAVE', 'DEFAULT', 'PREDICTION', 'REVIEW'}
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`
             seconds_to_label: Time to create the label
             skipped: Describe if the label is skipped or not
 
+        !!! warning
+            Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
+
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
 
         Examples:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
+
         """
 
         if author_id is None:
@@ -123,7 +126,7 @@ class MutationsLabel:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
 
         Examples:
             >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
@@ -146,8 +149,10 @@ class MutationsLabel:
                         asset_id: Optional[str] = None, project_id: Optional[str] = None) -> dict:
         """Create honeypot for an asset.
 
-        Uses the given `json_response` to create a "REVIEW" label. This enables Kili to compute a
-        `honeypotMark`, which measures the similarity between this label and other labels.
+        !!! info
+            Uses the given `json_response` to create a `REVIEW` label.
+            This enables Kili to compute a`honeypotMark`,
+            which measures the similarity between this label and other labels.
 
         Args:
             json_response: The JSON response of the honeypot label of the asset
@@ -160,7 +165,7 @@ class MutationsLabel:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         asset_id = infer_id_from_external_id(
             self, asset_id, asset_external_id, project_id)

@@ -40,11 +40,7 @@ class QueriesOrganization:
             disable_tqdm: bool = False,
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
-        """Get a generator or a list of organizations that match a set of criteria
-
-        Returns all organizations:
-        with a given organization id
-        containing a user with a given email
+        """Get a generator or a list of organizations that match a set of criteria.
 
         Args:
             email : Email of a user of the organization

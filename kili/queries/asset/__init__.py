@@ -112,6 +112,9 @@ class QueriesAsset:
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the assets is returned.
 
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
+
         Returns:
             A result object which contains the query if it was successful,
                 or an error message.
@@ -123,16 +126,13 @@ class QueriesAsset:
             >>> kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets
             ```
 
-        !!! info "Dates format"
-            Date strings should have format: "YYYY-MM-DD"
-
         !!! example "How to filter based on Metadata"
-                    - `metadata_where = {key1: "value1"}` to filter on assets whose metadata
-                        have key "key1" with value "value1"
-                    - `metadata_where = {key1: ["value1", "value2"]}` to filter on assets whose metadata
-                        have key "key1" with value "value1" or value "value2
-                    - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
-                        have key "key2" with a value between 2 and 10.
+            - `metadata_where = {key1: "value1"}` to filter on assets whose metadata
+                have key "key1" with value "value1"
+            - `metadata_where = {key1: ["value1", "value2"]}` to filter on assets whose metadata
+                have key "key1" with value "value1" or value "value2
+            - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
+                have key "key2" with a value between 2 and 10.
 
         """
         if format == "pandas" and as_generator:
@@ -245,7 +245,8 @@ class QueriesAsset:
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
             project_id: Identifier of the project
-            external_id_contains: Returned assets should have an external id that belongs to that list, if given.
+            external_id_contains: Returned assets should have an external id
+                that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
@@ -253,20 +254,35 @@ class QueriesAsset:
             consensus_mark_lt: Maximum amount of consensus for the asset.
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
             honeypot_mark_lt: Maximum amount of consensus for the asset.
-            label_type_in: Returned assets should have a label whose type belongs to that list, if given.
-            label_author_in: Returned assets should have a label whose status belongs to that list, if given.
-            label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.
-            label_consensus_mark_lt: Returned assets should have a label whose consensus is lower than this number.
-            label_created_at: Returned assets should have a label whose creation date is equal to this date.
-            label_created_at_gt: Returned assets should have a label whose creation date is greater than this date.
-            label_created_at_lt: Returned assets should have a label whose creation date is lower than this date.
-            label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number.
-            label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number.
-            label_json_response_contains: Returned assets should have a substring of the label's jsonResponse that belongs
+            label_type_in: Returned assets should have a label
+                whose type belongs to that list, if given.
+            label_author_in: Returned assets should have a label
+                whose status belongs to that list, if given.
+            label_consensus_mark_gt: Returned assets should have a label
+                whose consensus is greater than this number.
+            label_consensus_mark_lt: Returned assets should have a label
+                whose consensus is lower than this number.
+            label_created_at: Returned assets should have a label
+                whose creation date is equal to this date.
+            label_created_at_gt: Returned assets should have a label
+                whose creation date is greater than this date.
+            label_created_at_lt: Returned assets should have a label
+                whose creation date is lower than this date.
+            label_honeypot_mark_gt: Returned assets should have a label
+                whose honeypot is greater than this number.
+            label_honeypot_mark_lt: Returned assets should have a label
+                whose honeypot is lower than this number.
+            label_json_response_contains: Returned assets should have
+                a substring of the label's jsonResponse that belongs
                 to that list, if given.
             skipped: Returned assets should be skipped
-            updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.
-            updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
+            updated_at_gte: Returned assets should have a label
+                whose update date is greated or equal to this date.
+            updated_at_lte: Returned assets should have a label
+                whose update date is lower or equal to this date.
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
 
         Returns:
             A result object which contains the query if it was successful,
@@ -278,16 +294,13 @@ class QueriesAsset:
             >>> kili.count_assets(asset_id=asset_id)
             1
 
-        !!! info "Dates format"
-            Date strings should have format: "YYYY-MM-DD"
-
         !!! example "How to filter based on Metadata"
-                    - `metadata_where = {key1: "value1"}` to filter on assets whose metadata
-                        have key "key1" with value "value1"
-                    - `metadata_where = {key1: ["value1", "value2"]}` to filter on assets whose metadata
-                        have key "key1" with value "value1" or value "value2
-                    - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
-                        have key "key2" with a value between 2 and 10.
+            - `metadata_where = {key1: "value1"}` to filter on assets whose metadata
+                have key "key1" with value "value1"
+            - `metadata_where = {key1: ["value1", "value2"]}` to filter on assets whose metadata
+                have key "key1" with value "value1" or value "value2
+            - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
+                have key "key2" with a value between 2 and 10.
         """
         variables = {
             'where': {

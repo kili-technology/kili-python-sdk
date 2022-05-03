@@ -28,7 +28,6 @@ class SubscriptionsLabel:
         # pylint: disable=line-too-long
         """
         Subscribe a callback to a project, which is executed when a label is created or updated.
-        See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb) for more explanation on how to use it.
 
         Args:
             project_id: Identifier of the project
@@ -36,6 +35,10 @@ class SubscriptionsLabel:
 
         Returns:
             A subscription client
+
+        !!! example "Recipe"
+            For more detailed examples on how to use Webhooks,
+            See [the related recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/webhooks.ipynb)
         """
         ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
         websocket = SubscriptionGraphQLClient(ws_endpoint)

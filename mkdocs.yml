@@ -39,8 +39,8 @@ plugins:
             docstring_style: google
             filters:
               - '!^__' # exclude all members starting with __
-            #docstring_options:
-            #replace_admonitions: yes
+            docstring_options:
+              replace_admonitions: yes
       watch:
         - kili
   - mike:
@@ -49,6 +49,8 @@ plugins:
 markdown_extensions:
   - admonition
   - def_list
+  - attr_list
+  - md_in_html
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

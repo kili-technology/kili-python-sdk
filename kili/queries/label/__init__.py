@@ -86,15 +86,15 @@ class QueriesLabel:
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the labels is returned.
 
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
+
         Returns:
             A result object which contains the query if it was successful, else an error message.
 
         Examples:
             >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
             >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
-
-        !!! info "Dates format"
-            Date strings should have format: "YYYY-MM-DD"
         """
         if as_generator is False:
             warnings.warn("From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. \n"
@@ -251,12 +251,11 @@ class QueriesLabel:
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
 
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
 
         Returns:
             The number of labels with the parameters provided
-
-        !!! info "Dates format"
-            Date strings should have format: "YYYY-MM-DD"
         """
         variables = {
             'where': {

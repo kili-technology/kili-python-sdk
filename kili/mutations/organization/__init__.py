@@ -25,7 +25,8 @@ class MutationsOrganization:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str) -> dict:
+    def create_organization(self, name: str, address: str,
+                            zip_code: str, city: str, country: str) -> dict:
         """Create an organization.
 
         Each user must be linked to an organization
@@ -39,7 +40,7 @@ class MutationsOrganization:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'data': {'name': name,
@@ -74,7 +75,7 @@ class MutationsOrganization:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         license_str = None if not license else json.dumps(license)
         variables = {

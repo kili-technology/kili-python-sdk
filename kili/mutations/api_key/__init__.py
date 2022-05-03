@@ -31,7 +31,8 @@ class MutationsApiKey:  # pylint: disable=too-few-public-methods
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.        """
+                or an error message.
+        """
         variables = {
             'data': {'key': api_key,
                      'name': name},

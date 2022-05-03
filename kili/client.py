@@ -58,7 +58,8 @@ class Kili(  # pylint: disable=too-many-ancestors
                  verify=True):
         """
         Args:
-            api_key: User API key generated from https://cloud.kili-technology.com/label/my-account/api-key
+            api_key: User API key generated
+                from https://cloud.kili-technology.com/label/my-account/api-key
             api_endpoint: Recipient of the HTTP operation
             verify: Verify certificate. Set to False on local deployment without SSL.
 

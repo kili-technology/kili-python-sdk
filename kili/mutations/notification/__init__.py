@@ -37,7 +37,7 @@ class MutationsNotification:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'data': {
@@ -70,7 +70,7 @@ class MutationsNotification:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'id': notification_id,

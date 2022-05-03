@@ -67,6 +67,9 @@ class QueriesProject:
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the projects is returned.
 
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
+
         Returns:
             A result object which contains the query if it was successful,
                 or an error message.
@@ -74,9 +77,6 @@ class QueriesProject:
         Examples:
             >>> # List all my projects
             >>> kili.projects()
-
-        !!! info "Dates format"
-            Date strings should have format: "YYYY-MM-DD"
         """
 
         if as_generator is False:
@@ -150,15 +150,17 @@ class QueriesProject:
             search_query: Returned projects have a title or a description that matches this string.
             should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot
                 or consensus settings
-            updated_at_gte: Returned projects should have a label whose update date is greater
+            updated_at_gte: Returned projects should have a label
+                whose update date is greater
                 or equal to this date.
-            updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.
-
-        Returns:
-            The number of projects with the parameters provided
+            updated_at_lte: Returned projects should have a label
+                whose update date is lower or equal to this date.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
+
+        Returns:
+            The number of projects with the parameters provided
         """
         variables = {
             'where': {

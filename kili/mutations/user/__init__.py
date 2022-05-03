@@ -42,7 +42,7 @@ class MutationsUser:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'data': {'email': email,
@@ -71,7 +71,7 @@ class MutationsUser:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'data': {'oldPassword': old_password,
@@ -95,7 +95,7 @@ class MutationsUser:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {'where': {'email': email}}
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
@@ -124,7 +124,7 @@ class MutationsUser:
 
         Returns:
             A result object which indicates if the mutation was successful,
-                or an error message else.
+                or an error message.
         """
         variables = {
             'email': email,
