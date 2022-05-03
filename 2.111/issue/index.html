@@ -569,10 +569,7 @@
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            ```</span>
-<span class="sd">            # List all issues of a project and their authors</span>
-<span class="sd">            &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])</span>
-<span class="sd">            ```</span>
+<span class="sd">            &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;]) # List all issues of a project and their authors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -813,8 +810,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code># List all issues of a project and their authors
-&gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">])</span> <span class="c1"># List all issues of a project and their authors</span>
 </code></pre></div>
 
         <details class="quote">
@@ -851,10 +847,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        ```</span>
-<span class="sd">        # List all issues of a project and their authors</span>
-<span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;])</span>
-<span class="sd">        ```</span>
+<span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;]) # List all issues of a project and their authors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>

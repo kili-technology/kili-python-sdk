@@ -470,11 +470,17 @@
 <li>Instantiate the Kili client:</li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
-<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">KILI_API_KEY</span><span class="p">)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">()</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Great!</p>
 <p>You can now begin to use the Kili Python SDK</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>You can also pass the API key as an argument of the <code>Kili</code> initialization:
+<div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s1">&#39;&lt;you api key value here&gt;&#39;</span><span class="p">)</span>
+</code></pre></div></p>
 </div>
 
               

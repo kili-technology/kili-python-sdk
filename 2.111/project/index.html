@@ -1506,12 +1506,10 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            ```</span>
 <span class="sd">            &gt;&gt;&gt; for project_user in project_users:</span>
 <span class="sd">            ...     kili.update_properties_in_project_user(</span>
 <span class="sd">                        project_user_id=project_user[&#39;id&#39;],</span>
 <span class="sd">                        honeypot_mark=0)</span>
-<span class="sd">            ```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;consensusMark&#39;</span><span class="p">:</span> <span class="n">consensus_mark</span><span class="p">,</span>
@@ -2554,10 +2552,10 @@ in honeypot or consensus settings</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code>&gt;&gt;&gt; for project_user in project_users:
-...     kili.update_properties_in_project_user(
-            project_user_id=project_user[&#39;id&#39;],
-            honeypot_mark=0)
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">project_user</span> <span class="ow">in</span> <span class="n">project_users</span><span class="p">:</span>
+<span class="o">...</span>     <span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project_user</span><span class="p">(</span>
+            <span class="n">project_user_id</span><span class="o">=</span><span class="n">project_user</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">honeypot_mark</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -2586,12 +2584,10 @@ in honeypot or consensus settings</p></td>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        ```</span>
 <span class="sd">        &gt;&gt;&gt; for project_user in project_users:</span>
 <span class="sd">        ...     kili.update_properties_in_project_user(</span>
 <span class="sd">                    project_user_id=project_user[&#39;id&#39;],</span>
 <span class="sd">                    honeypot_mark=0)</span>
-<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;consensusMark&#39;</span><span class="p">:</span> <span class="n">consensus_mark</span><span class="p">,</span>
