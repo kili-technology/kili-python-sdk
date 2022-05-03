@@ -4,6 +4,7 @@ Label mutations
 
 from json import dumps
 from typing import List, Optional
+import warnings
 
 from typeguard import typechecked
 
@@ -66,6 +67,9 @@ class MutationsLabel:
             json_response_array), "IDs list and predictions list should have the same length"
         assert len(external_id_array) == len(
             model_name_array), "IDs list and model names list should have the same length"
+        if len(external_id_array) == 0:
+            warnings.warn("Empty IDs and prediction list")
+
         variables = {
             'data': {'modelNameArray': model_name_array,
                      'jsonResponseArray': [dumps(elem) for elem in json_response_array]},
