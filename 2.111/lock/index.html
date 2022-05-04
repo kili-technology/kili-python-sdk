@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.111/lock/">
       
       <link rel="icon" href="../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -21,10 +21,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -562,10 +562,6 @@
 <span class="sd">            A result object which contains the query if it was successful,</span>
 <span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
-                          <span class="s2">&quot;If you want to force the query return to be a list, you can already call this method with the argument as_generator=False&quot;</span><span class="p">,</span>
-                          <span class="ne">DeprecationWarning</span><span class="p">)</span>
 
         <span class="n">count_args</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
@@ -640,7 +636,7 @@
 
 
 
-<h3 id="kili.queries.lock.__init__.QueriesLock.count_locks" class="doc doc-heading">
+<h3 class="doc doc-heading" id="kili.queries.lock.__init__.QueriesLock.count_locks">
 <code class="highlight language-python"><span class="n">count_locks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -697,7 +693,7 @@
 
 
 
-<h3 id="kili.queries.lock.__init__.QueriesLock.locks" class="doc doc-heading">
+<h3 class="doc doc-heading" id="kili.queries.lock.__init__.QueriesLock.locks">
 <code class="highlight language-python"><span class="n">locks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;lockType&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -800,10 +796,6 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 <span class="sd">        A result object which contains the query if it was successful,</span>
 <span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">as_generator</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;From 2022-05-18, the default return type will be a generator. Currently, the default return type is a list. </span><span class="se">\n</span><span class="s2">&quot;</span>
-                      <span class="s2">&quot;If you want to force the query return to be a list, you can already call this method with the argument as_generator=False&quot;</span><span class="p">,</span>
-                      <span class="ne">DeprecationWarning</span><span class="p">)</span>
 
     <span class="n">count_args</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
@@ -911,7 +903,7 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
     <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>
