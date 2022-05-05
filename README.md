@@ -3,7 +3,7 @@
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Build Status](https://travis-ci.org/kili-technology/kili-playground.svg?branch=master)](https://travis-ci.org/kili-technology/kili-playground)
 
-[Technical Documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api)
+[Technical Documentation](https://python-sdk-docs.kili-technology.com/)
 
 ## What is Kili?
 
