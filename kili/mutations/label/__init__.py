@@ -44,13 +44,13 @@ class MutationsLabel:
             external_id_array: The external identifiers of the assets for which we want to add predictions
             model_name_array: In case you want to precise from which model the label originated
             json_response_array: The predictions are given here. For examples,
-                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
+                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb).
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
 
         !!! example "Recipe"
-            For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb).
+            For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb).
         """
         assert len(external_id_array) == len(
             json_response_array), "IDs list and predictions list should have the same length"

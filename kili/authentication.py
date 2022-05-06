@@ -79,7 +79,7 @@ class KiliAuth:
         self.session.close()
 
     def check_versions_match(self, api_endpoint):
-        """Check that the versions of Kili Playground and Kili API are the same
+        """Check that the versions of Kili Python SDK and Kili API are the same
 
         Args:
             api_endpoint: url of the Kili API
@@ -88,7 +88,7 @@ class KiliAuth:
         response = requests.get(url, verify=self.verify).json()
         version = response['version']
         if get_version_without_patch(version) != get_version_without_patch(__version__):
-            message = 'Kili Playground version should match with Kili API version.\n' + \
+            message = 'Kili Python SDK version should match with Kili API version.\n' + \
                       f'Please install version: "pip install kili=={version}"'
             warnings.warn(message, UserWarning)
 

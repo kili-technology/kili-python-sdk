@@ -1,13 +1,14 @@
-# Kili Playground: Kili's Python SDK
+# Kili Python SDK:
 
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
-[![Build Status](https://travis-ci.org/kili-technology/kili-playground.svg?branch=master)](https://travis-ci.org/kili-technology/kili-playground)
+[![Build Status](https://travis-ci.org/kili-technology/kili-python-sdk.svg?branch=master)](https://travis-ci.org/kili-technology/kili-python-sdk)
 
-[Technical Documentation](https://python-sdk-docs.kili-technology.com/)
+[SDK reference](https://python-sdk-docs.kili-technology.com/)
 
 ## What is Kili?
 
 Kili is a platform that empowers a data-centric approach to Machine Learning through quality training data creation. It provides collaborative data **annotation tools** and APIs that enable quick iterations between reliable dataset building and model training. More info [here](https://kili-technology.com/product/label-annotate).
+
 ### Annotation tools examples
 
 |   Named Entities Extraction and Relation    | PDF classification and bounding-box |   Object detection (bounding-box)   |
@@ -16,15 +17,16 @@ Kili is a platform that empowers a data-centric approach to Machine Learning thr
 
 and [many more](https://cloud.kili-technology.com/docs/labeling/labeling-overview/#available-labeling-job-types-per-asset-type-a-idjob-types-per-asset-typea).
 
-## What is Kili Playground?
+## What is Kili Python SDK?
 
-Kili Playground is the home of the **Kili Python SDK**. It comes with several [recipes](recipes/) that demonstrate its most frequent use cases.
-
+**Kili Python SDK** is the Software Development Kit of Kili. It allows to automate actions on the platform, query and mutate data and provide a better experience. It comes with several [recipes](recipes/) that demonstrate its most frequent use cases.
 
 ## Requirements
-* Python >= 3.7
-* Create and copy a [Kili API key](recipes/api_key.md)
-* Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
+
+- Python >= 3.7
+- Create and copy a [Kili API key](recipes/api_key.md)
+- Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
+
 ```bash
 export KILI_API_KEY='<you api key value here>'
 ```
@@ -40,17 +42,23 @@ pip install kili
 ## Usage
 
 Instantiate the Kili client:
+
 ```python
 from kili.client import Kili
 kili = Kili()
 # You can now use the Kili client!
 ```
+
 Note that you can also pass the API key as an argument of the `Kili` initialization:
+
 ```python
-kili = Kili(api_key='MY API KEY')
+kili = Kili(api_key='<you api key value here>')
 ```
+
 Here is a sample of the operations you can do with the Kili client:
+
 ### Creating an annotation project
+
 ```python
 json_interface = {
     "jobs": {
@@ -75,7 +83,9 @@ project = kili.create_project(
         json_interface=json_interface
 )["id"]
 ```
+
 ### Importing data to annotate
+
 ```python
 assets = [
     {
@@ -101,9 +111,11 @@ kili.append_many_to_dataset(
         external_id_array=external_id_array,
 )
 ```
+
 See the detailled example in this [notebook](recipes/import_assets.ipynb).
 
 ### Importing predictions
+
 ```python
 prediction_examples = [
     {
@@ -130,9 +142,11 @@ kili.create_predictions(
         json_response_array=[p["json_response"] for p in prediction_examples])
 
 ```
+
 See detailled examples in this [notebook](recipes/import_predictions.ipynb).
 
 ### Exporting labels
+
 ```python
 assets = kili.assets(project_id=project_id)
 
@@ -141,16 +155,17 @@ with open("labels.json", "w") as label_file:
         for label in asset.labels:
             label_file.write(label.json_response(format='simple'))
 ```
+
 See a detailled example in this [notebook](recipes/export_labels.ipynb).
 
 ## More examples
 
 You can find all several recipes in this [folder](/recipes/). Among them:
 
-- [How to import assets](recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
-- [How to export labels](recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb))
-- [How to import predictions](recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
-- [How to query data through the API](recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
-- [How to use AutoML for faster labeling with Kili](recipes/automl_text_classification.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/automl_text_classification.ipynb))
+- [How to import assets](recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb))
+- [How to export labels](recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb))
+- [How to import predictions](recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb))
+- [How to query data through the API](recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb))
+- [How to use AutoML for faster labeling with Kili](recipes/automl_text_classification.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/automl_text_classification.ipynb))
 
 For more details, read the [technical documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api).

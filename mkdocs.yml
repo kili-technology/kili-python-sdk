@@ -4,7 +4,7 @@ site_description: Kili Python SDK
 site_url: https://python-sdk-docs.kili-technology.com/
 
 ## Repository
-repo_url: https://github.com/kili-technology/kili-playground
+repo_url: https://github.com/kili-technology/kili-python-sdk
 repo_name: Kili Python SDK
 edit_uri: '' #disables edit button
 

@@ -37,7 +37,7 @@ setup(
     include_package_data=True,
 
     # Official page
-    url='https://github.com/kili-technology/kili-playground',
+    url='https://github.com/kili-technology/kili-python-sdk',
 
     # Some meta data:
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers.
