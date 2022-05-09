@@ -1,5 +1,5 @@
 """
-This script permits to initialize the Kili Playground client.
+This script permits to initialize the Kili Python SDK client.
 """
 import os
 

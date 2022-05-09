@@ -2,8 +2,8 @@
 
 ## How to create a project
 
-You can refer to the following [documentation](https://cloud.kili-technology.com/docs/python-graphql-api/create-a-project).
-You can also refer to [our recipe on how to create a project](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb))
+You can refer to the following [documentation](https://docs.kili-technology.com/docs/creating-a-new-project).
+You can also refer to [our recipe on how to create a project](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb))
 
 ## How to update interface settings
 
@@ -29,7 +29,7 @@ python add_users.py
 
 ## How to import assets
 
-Check out [our recipe on how to import assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb))
+Check out [our recipe on how to import assets](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb))
 
 ## How to delete all assets
 
@@ -41,31 +41,34 @@ python delete_all_assets.py
 
 ## How to push pre-annotation to existing assets
 
-Check out [our recipe on how to import predictions](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/import_predictions.ipynb))
+Check out [our recipe on how to import predictions](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb))
 
 ## How to export and parse labels
 
-Check out [our recipe on how to export labels](https://github.com/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/export_labels.ipynb))
+Check out [our recipe on how to export labels](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb))
 
 ## How to do Named-Entity Recognition with Google
 
 Check out [our recipe on how to import NER predictions into Kili](google_ner_pre_labeling.py). The script performs the following:
-  * downloads the data.
-  * gets the first 50 emails.
-  * creates a project with the appropriate JsonInterface to store the assets.
-  * pre-labels them with Google NLP.
-  * pushes both assets and predictions to Kili.
+
+- downloads the data.
+- gets the first 50 emails.
+- creates a project with the appropriate JsonInterface to store the assets.
+- pre-labels them with Google NLP.
+- pushes both assets and predictions to Kili.
 
 To run this example, do the following.
-  1. Make sure that your GCP authentication is set up correctly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)) and that the Google Natural Language API is enabled in your GCP project.
-  2. Requirements:
-  ```
-    pip install -r requirements.txt
-    pip install google-cloud-language==1.1.0
-    pip install kili # unless you have installed the version from this repository
-  ```
 
-  3. Execute:
+1. Make sure that your GCP authentication is set up correctly (or follow [this tutorial](https://cloud.google.com/natural-language/docs/reference/libraries)) and that the Google Natural Language API is enabled in your GCP project.
+2. Requirements:
+
+```
+  pip install -r requirements.txt
+  pip install google-cloud-language==1.1.0
+  pip install kili # unless you have installed the version from this repository
+```
+
+3. Execute:
 
 ```bash
 GOOGLE_APPLICATION_CREDENTIALS=path_to_your_google_application_credentials_file python main.py
@@ -74,13 +77,12 @@ GOOGLE_APPLICATION_CREDENTIALS=path_to_your_google_application_credentials_file 
 ## How to use Python functions to query data
 
 You can query every asset, label, or project-related information through the API.
-A comprehensive example is [our recipe on how to use the query methods](https://github.com/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-playground/blob/master/recipes/query_methods.ipynb))
-You can also refer to the [documentation](https://cloud.kili-technology.com/docs/python-graphql-api/playground-api/).
+A comprehensive example is [our recipe on how to use the query methods](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb))
+You can also refer to the [SDK reference](https://python-sdk-docs.kili-technology.com/).
 
 ## How to use GraphQL Playground to query data
 
-If you prefer, you can directly query GraphQL API without using
-`kili-playground`.
+If you prefer, you can directly query GraphQL API without using [Apollo Studio](http://cloud.kili-technology.com/api/label/v2/graphql)
 
 1. Generate an API key in Kili interface in [My account](https://cloud.kili-technology.com/label/my-account), under the tab API KEY. Store it in some place secured.
 

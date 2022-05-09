@@ -69,7 +69,7 @@ class MutationsAsset:
                     list of URLs to images or a list of paths to images.
                 - For `TEXT` projects, each element is a json_content dict,
                     formatted according to documentation [on how to import
-                rich-text assets](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb)
+                rich-text assets](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb)
             json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.
 
                 - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.
@@ -87,13 +87,13 @@ class MutationsAsset:
 
         !!! example "Recipe"
             - For more detailed examples on how to import assets,
-                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_assets.ipynb)
+                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb)
                 or [other examples](https://docs.kili-technology.com/recipes/importing-data) in our documentation.
             - For more detailed examples on how to import text assets,
-                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/import_text_assets.ipynb).
+                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
-        playground = QueriesProject(self.auth)
-        projects = playground.projects(project_id)
+        kili = QueriesProject(self.auth)
+        projects = kili.projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
         data, request = process_append_many_to_dataset_parameters(input_type,

@@ -14,7 +14,7 @@ import requests
 
 class Compatible():
     """
-    Compatibility of Kili playground version with Kili API version
+    Compatibility of Kili Python SDK version with Kili API version
     """
 
     # pylint: disable=dangerous-default-value
@@ -286,7 +286,7 @@ def list_is_not_none_else_none(_object):
     return [_object] if _object is not None else None
 
 
-def infer_id_from_external_id(playground, asset_id: str, external_id: str, project_id: str):
+def infer_id_from_external_id(kili, asset_id: str, external_id: str, project_id: str):
     """
     Infer asset id from external id
 
@@ -300,7 +300,7 @@ def infer_id_from_external_id(playground, asset_id: str, external_id: str, proje
             'Either provide asset_id or external_id and project_id')
     if asset_id is not None:
         return asset_id
-    assets = playground.assets(
+    assets = kili.assets(
         external_id_contains=[external_id], project_id=project_id, fields=['id'], disable_tqdm=True)
     if len(assets) == 0:
         raise Exception(

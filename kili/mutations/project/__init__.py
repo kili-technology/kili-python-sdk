@@ -185,7 +185,7 @@ class MutationsProject:
 
         !!! example "Recipe"
             For more detailed examples on how to create projects,
-                see [the recipe](https://github.com/kili-technology/kili-playground/blob/master/recipes/create_project.ipynb).
+                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb).
         """
         variables = {
             'data': {'description': description,

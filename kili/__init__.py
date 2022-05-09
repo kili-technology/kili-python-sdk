@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Kili Playground
+Kili Python SDK
 """
 
 __version__ = "2.111.1"
