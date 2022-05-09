@@ -19,7 +19,8 @@ and [many more](https://cloud.kili-technology.com/docs/labeling/labeling-overvie
 
 ## What is Kili Python SDK?
 
-**Kili Python SDK** is the Software Development Kit of Kili. It allows to automate actions on the platform, query and mutate data and provide a better experience. It comes with several [recipes](recipes/) that demonstrate its most frequent use cases.
+**Kili Python SDK** is the Python client for the Kili platform. It allows to query and manipulate the main entities available in Kili, like projects, assets, labels, api keys...
+It comes with several [recipes](recipes/) that demonstrate how to use it in the most frequent use cases.
 
 ## Requirements
 
@@ -28,7 +29,7 @@ and [many more](https://cloud.kili-technology.com/docs/labeling/labeling-overvie
 - Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
 
 ```bash
-export KILI_API_KEY='<you api key value here>'
+export KILI_API_KEY='<your api key value here>'
 ```
 
 ## Installation
@@ -52,7 +53,7 @@ kili = Kili()
 Note that you can also pass the API key as an argument of the `Kili` initialization:
 
 ```python
-kili = Kili(api_key='<you api key value here>')
+kili = Kili(api_key='<your api key value here>')
 ```
 
 Here is a sample of the operations you can do with the Kili client:
