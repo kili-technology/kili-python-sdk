@@ -4,10 +4,11 @@ Asset mutations
 
 from typing import List, Optional, Union
 from functools import partial
+from kili.utils import batch_iterator_builder, batch_iterators_builder
 
 from typeguard import typechecked
 
-from ...helpers import (Compatible,
+from ...helpers import (Compatible, arrays_have_same_size,
                         convert_to_list_of_none,
                         format_metadata,
                         format_result,
@@ -95,19 +96,30 @@ class MutationsAsset:
         kili = QueriesProject(self.auth)
         projects = kili.projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
+        properties_arrays = [content_array, external_id_array, is_honeypot_array,
+                             status_array, json_content_array, json_metadata_array]
+        assert arrays_have_same_size(
+            properties_arrays), "All arrays do not have the same size"
         input_type = projects[0]['inputType']
-        data, request = process_append_many_to_dataset_parameters(input_type,
-                                                                  content_array,
-                                                                  external_id_array,
-                                                                  is_honeypot_array,
-                                                                  status_array,
-                                                                  json_content_array,
-                                                                  json_metadata_array)
-        variables = {
-            'data': data,
-            'where': {'id': project_id}
-        }
-        result = self.auth.client.execute(request, variables)
+        for content_array_batch, \
+                external_id_array_batch, \
+                is_honeypot_array_batch, \
+                status_array_batch, \
+                json_content_array_batch, \
+                json_metadata_array_batch in batch_iterators_builder(properties_arrays, batch_size=100):
+            data, request = process_append_many_to_dataset_parameters(input_type,
+                                                                      content_array_batch,
+                                                                      external_id_array_batch,
+                                                                      is_honeypot_array_batch,
+                                                                      status_array_batch,
+                                                                      json_content_array_batch,
+                                                                      json_metadata_array_batch)
+            variables = {
+                'data': data,
+                'where': {'id': project_id}
+            }
+            result = self.auth.client.execute(request, variables)
+            print(format_result('data', result, Asset))
         return format_result('data', result, Asset)
 
     @Compatible(['v2'])
@@ -180,12 +192,6 @@ class MutationsAsset:
                 raise Exception('json_metadatas',
                                 'Should be either a None or a list of None, string, list or dict')
 
-        where_array = [{'id': asset_id} for asset_id in asset_ids]
-        nb_assets_to_modify = len(where_array)
-        if nb_assets_to_modify > 100:
-            raise Exception(
-                f'Too many assets ({nb_assets_to_modify}) updated at a time')
-        data_array = [{} for i in range(len(where_array))]
         list_of_properties = [
             external_ids,
             priorities,
@@ -199,35 +205,46 @@ class MutationsAsset:
             is_used_for_consensus_array,
             is_honeypot_array
         ]
-        data = list(map(partial(convert_to_list_of_none,
-                                length=nb_assets_to_modify), list_of_properties))
-        property_names = [
-            'externalId',
-            'priority',
-            'jsonMetadata',
-            'consensusMark',
-            'honeypotMark',
-            'toBeLabeledBy',
-            'content',
-            'jsonContent',
-            'status',
-            'isUsedForConsensus',
-            'isHoneypot'
-        ]
-        to_be_labeled_by_array = data[5]
-        should_reset_to_be_labeled_by_array = list(
-            map(is_none_or_empty, to_be_labeled_by_array))
-        for i, properties in enumerate(zip(*data)):
-            for _property, property_value in zip(property_names, properties):
-                data_array[i][_property] = property_value
-        for i in range(nb_assets_to_modify):
-            data_array[i]['shouldResetToBeLabeledBy'] = should_reset_to_be_labeled_by_array[i]
-        variables = {
-            'whereArray': where_array,
-            'dataArray': data_array
-        }
-        result = self.auth.client.execute(
-            GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
+        assert arrays_have_same_size(
+            asset_ids+list_of_properties), "All arrays do not have the same size"
+        for paginated_properties in batch_iterators_builder(asset_ids+list_of_properties, batch_size=100):
+            asset_ids_batch = paginated_properties[0]
+            list_of_properties_batch = paginated_properties[1:]
+            where_array = [{'id': asset_id} for asset_id in asset_ids_batch]
+            nb_assets_to_modify = len(where_array)
+            data_array = [{} for i in range(len(where_array))]
+            data = list(map(partial(convert_to_list_of_none,
+                                    length=nb_assets_to_modify), list_of_properties_batch))
+            property_names = [
+                'externalId',
+                'priority',
+                'jsonMetadata',
+                'consensusMark',
+                'honeypotMark',
+                'toBeLabeledBy',
+                'content',
+                'jsonContent',
+                'status',
+                'isUsedForConsensus',
+                'isHoneypot'
+            ]
+            to_be_labeled_by_array = data[5]
+            should_reset_to_be_labeled_by_array = list(
+                map(is_none_or_empty, to_be_labeled_by_array))
+            for i, properties in enumerate(zip(*data)):
+                for _property, property_value in zip(property_names, properties):
+                    data_array[i][_property] = property_value
+            for i in range(nb_assets_to_modify):
+                data_array[i]['shouldResetToBeLabeledBy'] = should_reset_to_be_labeled_by_array[i]
+            variables = {
+                'whereArray': where_array,
+                'dataArray': data_array
+            }
+            try:
+                result = self.auth.client.execute(
+                    GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
+            except:
+
         return format_result('data', result, Asset)
 
     @Compatible(['v1', 'v2'])
@@ -242,7 +259,8 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        variables = {'where': {'idIn': asset_ids}}
-        result = self.auth.client.execute(
-            GQL_DELETE_MANY_FROM_DATASET, variables)
+        for asset_ids_batch in batch_iterator_builder(asset_ids, batch_size=100):
+            variables = {'where': {'idIn': asset_ids_batch}}
+            result = self.auth.client.execute(
+                GQL_DELETE_MANY_FROM_DATASET, variables)
         return format_result('data', result, Asset)

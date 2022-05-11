@@ -1,7 +1,7 @@
 """
 Utils
 """
-from typing import List, Callable
+from typing import List, Callable, Optional
 
 import time
 from tqdm import tqdm
@@ -19,8 +19,7 @@ def row_generator_from_paginated_calls(
     fields: List[str],
     disable_tqdm: bool,
 ):
-    """
-    Builds a row generator from paginated calls.
+    """Build a row generator from paginated query calls.
 
     Args:
         skip: Number of assets to skip (they are ordered by their date of creation, first to last).
@@ -70,3 +69,31 @@ def row_generator_from_paginated_calls(
                 pbar.update(len(rows))
                 if first is not None and count_rows_retrieved >= first:
                     break
+
+
+def batch_iterator_builder(iterable: List, batch_size=100):
+    """Generate an paginated iterator from a list
+
+    Args:
+        iterable: a list to paginate
+        batch_size: the size of the batches to produce
+    """
+    iterable_length = len(iterable)
+    for ndx in range(0, iterable_length, batch_size):
+        yield iterable[ndx:min(ndx + batch_size, iterable_length)]
+
+
+def batch_iterators_builder(arrays: List[Optional[List]], batch_size=100):
+    """Generate a paginated iterator for several variables
+
+    Args:
+        arrays: a list of arrays to paginate
+        batch_size: the size of the batches to produce
+    """
+    if len(list(filter(None, arrays))) == 0:
+        return arrays
+    number_of_object = len(list(filter(None, arrays))[0])
+    number_of_batch = len(range(0, number_of_object, batch_size))
+    iterables = [batch_iterator_builder(array, batch_size) if array is not None else [
+        None]*number_of_batch for array in arrays]
+    return zip(*iterables)

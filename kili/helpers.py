@@ -75,7 +75,7 @@ class GraphQLError(Exception):
         super().__init__(f'Mutation "{mutation}" failed with error: "{error}"')
 
 
-def format_result(name, result, _object=None):
+def format_result(name, result, _object=None, batch_number=None):
     """
     Formats the result of the GraphQL queries.
 
@@ -310,3 +310,13 @@ def infer_id_from_external_id(kili, asset_id: str, external_id: str, project_id:
             f'Several assets found containing external ID "{external_id}":'
             f' {assets}. Please, use asset ID instead.')
     return assets[0]['id']
+
+
+def arrays_have_same_size(arrays):
+    """Test if all arrays that are not None have the same size.
+
+    Args:
+        arrays: list of arrays to test
+    """
+    length_list = [len(array) for array in arrays if array is not None]
+    return len(list(set(length_list))) <= 1
