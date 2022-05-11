@@ -58,8 +58,7 @@ class GraphQLClient:
         data = {'query': query,
                 'variables': variables}
         headers = {'Accept': 'application/json',
-                   'Content-Type': 'application/json',
-                   'X-Powered-By': f'Kili Playground/{__version__}'}
+                   'Content-Type': 'application/json'}
 
         if self.token is not None:
             headers[self.headername] = f'{self.token}'
