@@ -9,7 +9,9 @@ import warnings
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, infer_id_from_external_id
+from kili.utils import batch_iterators_builder
+
+from ...helpers import Compatible, GraphQLError, format_result, infer_id_from_external_id
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
                       GQL_CREATE_PREDICTIONS,
                       GQL_UPDATE_PROPERTIES_IN_LABEL)
@@ -59,12 +61,18 @@ class MutationsLabel:
         if len(external_id_array) == 0:
             warnings.warn("Empty IDs and prediction list")
 
-        variables = {
-            'data': {'modelNameArray': model_name_array,
-                     'jsonResponseArray': [dumps(elem) for elem in json_response_array]},
-            'where': {'externalIdStrictlyIn': external_id_array, 'project': {'id': project_id}}
-        }
-        result = self.auth.client.execute(GQL_CREATE_PREDICTIONS, variables)
+        for batch_number, (external_id_array_batch, model_name_array_batch, json_response_array_batch)\
+                in enumerate(batch_iterators_builder([external_id_array, model_name_array, json_response_array])):
+
+            variables = {
+                'data': {'modelNameArray': model_name_array_batch,
+                         'jsonResponseArray': [dumps(elem) for elem in json_response_array_batch]},
+                'where': {'externalIdStrictlyIn': external_id_array_batch, 'project': {'id': project_id}}
+            }
+            result = self.auth.client.execute(
+                GQL_CREATE_PREDICTIONS, variables)
+            if 'errors' in result:
+                raise GraphQLError('data', result['errors'], batch_number)
         return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])

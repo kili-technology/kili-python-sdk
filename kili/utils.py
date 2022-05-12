@@ -2,9 +2,9 @@
 Utils
 """
 from typing import List, Callable, Optional
-
 import time
 from tqdm import tqdm
+from .constants import MUTATION_BATCH_SIZE
 
 # pylint: disable=too-many-arguments,too-many-locals
 
@@ -71,11 +71,11 @@ def row_generator_from_paginated_calls(
                     break
 
 
-def batch_iterator_builder(iterable: List, batch_size=100):
+def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
     """Generate an paginated iterator from a list
 
     Args:
-        iterable: a list to paginate
+        iterable: a list to paginate.
         batch_size: the size of the batches to produce
     """
     iterable_length = len(iterable)
@@ -83,15 +83,17 @@ def batch_iterator_builder(iterable: List, batch_size=100):
         yield iterable[ndx:min(ndx + batch_size, iterable_length)]
 
 
-def batch_iterators_builder(arrays: List[Optional[List]], batch_size=100):
+def batch_iterators_builder(arrays: List[Optional[List]], batch_size=MUTATION_BATCH_SIZE):
     """Generate a paginated iterator for several variables
 
     Args:
-        arrays: a list of arrays to paginate
+        arrays: a list of arrays to paginate. Arrays can be None
         batch_size: the size of the batches to produce
     """
     if len(list(filter(None, arrays))) == 0:
         return arrays
+    if len(arrays) == 1:
+        return batch_iterator_builder(arrays[0], batch_size=batch_size)
     number_of_object = len(list(filter(None, arrays))[0])
     number_of_batch = len(range(0, number_of_object, batch_size))
     iterables = [batch_iterator_builder(array, batch_size) if array is not None else [

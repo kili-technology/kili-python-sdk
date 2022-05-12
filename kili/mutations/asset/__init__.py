@@ -4,11 +4,10 @@ Asset mutations
 
 from typing import List, Optional, Union
 from functools import partial
-from kili.utils import batch_iterator_builder, batch_iterators_builder
-
 from typeguard import typechecked
 
-from ...helpers import (Compatible, arrays_have_same_size,
+from ...utils import batch_iterator_builder, batch_iterators_builder
+from ...helpers import (Compatible, GraphQLError, arrays_have_same_size,
                         convert_to_list_of_none,
                         format_metadata,
                         format_result,
@@ -17,7 +16,7 @@ from ...queries.project import QueriesProject
 from .queries import (GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from .helpers import process_append_many_to_dataset_parameters
-from ...constants import NO_ACCESS_RIGHT
+from ...constants import NO_ACCESS_RIGHT, MUTATION_BATCH_SIZE
 from ...orm import Asset
 
 
@@ -94,19 +93,20 @@ class MutationsAsset:
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
         kili = QueriesProject(self.auth)
-        projects = kili.projects(project_id)
+        projects = kili.projects(project_id, disable_tqdm=True)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         properties_arrays = [content_array, external_id_array, is_honeypot_array,
                              status_array, json_content_array, json_metadata_array]
         assert arrays_have_same_size(
             properties_arrays), "All arrays do not have the same size"
         input_type = projects[0]['inputType']
-        for content_array_batch, \
-                external_id_array_batch, \
-                is_honeypot_array_batch, \
-                status_array_batch, \
-                json_content_array_batch, \
-                json_metadata_array_batch in batch_iterators_builder(properties_arrays, batch_size=100):
+        for batch_number, (content_array_batch,
+                           external_id_array_batch,
+                           is_honeypot_array_batch,
+                           status_array_batch,
+                           json_content_array_batch,
+                           json_metadata_array_batch) \
+                in enumerate(batch_iterators_builder(properties_arrays)):
             data, request = process_append_many_to_dataset_parameters(input_type,
                                                                       content_array_batch,
                                                                       external_id_array_batch,
@@ -119,7 +119,8 @@ class MutationsAsset:
                 'where': {'id': project_id}
             }
             result = self.auth.client.execute(request, variables)
-            print(format_result('data', result, Asset))
+            if 'errors' in result:
+                raise GraphQLError('data', result['errors'], batch_number)
         return format_result('data', result, Asset)
 
     @Compatible(['v2'])
@@ -136,7 +137,7 @@ class MutationsAsset:
                                     json_contents: Optional[List[str]] = None,
                                     status_array: Optional[List[str]] = None,
                                     is_used_for_consensus_array: Optional[List[bool]] = None,
-                                    is_honeypot_array: Optional[List[bool]] = None):
+                                    is_honeypot_array: Optional[List[bool]] = None) -> List[dict]:
         """Update the properties of one or more assets.
 
         Args:
@@ -206,8 +207,10 @@ class MutationsAsset:
             is_honeypot_array
         ]
         assert arrays_have_same_size(
-            asset_ids+list_of_properties), "All arrays do not have the same size"
-        for paginated_properties in batch_iterators_builder(asset_ids+list_of_properties, batch_size=100):
+            [asset_ids]+list_of_properties), "All arrays do not have the same size"
+        results = []
+        for batch_number, paginated_properties \
+                in enumerate(batch_iterators_builder([asset_ids]+list_of_properties)):
             asset_ids_batch = paginated_properties[0]
             list_of_properties_batch = paginated_properties[1:]
             where_array = [{'id': asset_id} for asset_id in asset_ids_batch]
@@ -240,12 +243,14 @@ class MutationsAsset:
                 'whereArray': where_array,
                 'dataArray': data_array
             }
-            try:
-                result = self.auth.client.execute(
-                    GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
-            except:
-
-        return format_result('data', result, Asset)
+            result = self.auth.client.execute(
+                GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
+            if 'errors' in result:
+                raise GraphQLError('data', result['errors'], batch_number)
+            results.append(result)
+            formated_results = [format_result(
+                'data', result, Asset) for result in results]
+        return [item for batch_list in formated_results for item in batch_list]
 
     @Compatible(['v1', 'v2'])
     @typechecked
@@ -259,8 +264,10 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        for asset_ids_batch in batch_iterator_builder(asset_ids, batch_size=100):
+        for batch_number, asset_ids_batch in enumerate(batch_iterator_builder(asset_ids)):
             variables = {'where': {'idIn': asset_ids_batch}}
             result = self.auth.client.execute(
                 GQL_DELETE_MANY_FROM_DATASET, variables)
+            if 'errors' in result:
+                raise GraphQLError('data', result['errors'], batch_number)
         return format_result('data', result, Asset)
