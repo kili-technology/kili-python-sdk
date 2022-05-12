@@ -4,7 +4,7 @@ Utils
 from typing import List, Callable, Optional
 import time
 from tqdm import tqdm
-from .constants import MUTATION_BATCH_SIZE
+from .constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 
 # pylint: disable=too-many-arguments,too-many-locals
 
@@ -40,7 +40,6 @@ def row_generator_from_paginated_calls(
         # dummy value that won't have any impact since tqdm is disabled
         count_rows_queried_total = 1 if first != 0 else 0
     count_rows_query_default = min(100, first or 100)
-    throttling_delay = 60 / 250
 
     if count_rows_queried_total == 0:
         yield from ()
@@ -56,8 +55,8 @@ def row_generator_from_paginated_calls(
                 )
                 query_time = time.time() - query_start
 
-                if query_time < throttling_delay:
-                    time.sleep(throttling_delay - query_time)
+                if query_time < THROTTLING_DELAY:
+                    time.sleep(THROTTLING_DELAY - query_time)
 
                 if rows is None or len(rows) == 0:
                     break
