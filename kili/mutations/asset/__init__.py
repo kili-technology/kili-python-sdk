@@ -7,7 +7,7 @@ from functools import partial
 from typeguard import typechecked
 
 from ...utils import batch_iterator_builder, batch_iterators_builder
-from ...helpers import (Compatible, GraphQLError, arrays_have_same_size,
+from ...helpers import (Compatible, GraphQLError,
                         convert_to_list_of_none,
                         format_metadata,
                         format_result,
@@ -97,8 +97,6 @@ class MutationsAsset:
         assert len(projects) == 1, NO_ACCESS_RIGHT
         properties_arrays = [content_array, external_id_array, is_honeypot_array,
                              status_array, json_content_array, json_metadata_array]
-        assert arrays_have_same_size(
-            properties_arrays), "All arrays do not have the same size"
         input_type = projects[0]['inputType']
         for batch_number, (content_array_batch,
                            external_id_array_batch,
@@ -206,8 +204,6 @@ class MutationsAsset:
             is_used_for_consensus_array,
             is_honeypot_array
         ]
-        assert arrays_have_same_size(
-            [asset_ids]+list_of_properties), "All arrays do not have the same size"
         results = []
         for batch_number, paginated_properties \
                 in enumerate(batch_iterators_builder([asset_ids]+list_of_properties)):
