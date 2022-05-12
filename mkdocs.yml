@@ -10,6 +10,7 @@ edit_uri: '' #disables edit button
 
 ## Site Architecture
 nav:
+  - Home: index.md
   - API Key: api_key.md
   - Asset: asset.md
   - Issue: issue.md
@@ -63,6 +64,7 @@ extra:
   analytics:
     provider: google
     property: G-HRVEXSEWL0
+  homepage: https://docs.kili-technology.com/reference
 
 ## Theme and Design
 theme:
@@ -74,5 +76,6 @@ theme:
   language: en
   font:
     text: Archia
+
 extra_css:
   - stylesheets/extra.css
