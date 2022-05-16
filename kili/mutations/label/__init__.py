@@ -9,7 +9,7 @@ import warnings
 
 from typeguard import typechecked
 
-from kili.utils import batch_iterators_builder
+from kili.utils import _mutate_from_paginated_call, batch_iterators_builder
 
 from ...helpers import Compatible, GraphQLError, format_result, infer_id_from_external_id
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
@@ -69,10 +69,8 @@ class MutationsLabel:
                          'jsonResponseArray': [dumps(elem) for elem in json_response_array_batch]},
                 'where': {'externalIdStrictlyIn': external_id_array_batch, 'project': {'id': project_id}}
             }
-            result = self.auth.client.execute(
-                GQL_CREATE_PREDICTIONS, variables)
-            if 'errors' in result:
-                raise GraphQLError('data', result['errors'], batch_number)
+            result = _mutate_from_paginated_call(
+                self, variables, GQL_CREATE_PREDICTIONS, batch_number)
         return format_result('data', result, Label)
 
     @Compatible(['v1', 'v2'])

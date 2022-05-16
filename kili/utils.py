@@ -4,6 +4,8 @@ Utils
 from typing import List, Callable, Optional
 import time
 from tqdm import tqdm
+
+from kili.helpers import GraphQLError
 from .constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 
 # pylint: disable=too-many-arguments,too-many-locals
@@ -98,3 +100,14 @@ def batch_iterators_builder(arrays: List[Optional[List]], batch_size=MUTATION_BA
     iterables = [batch_iterator_builder(array, batch_size) if array is not None else [
         None]*number_of_batch for array in arrays]
     return zip(*iterables)
+
+
+def _mutate_from_paginated_call(self, variables, request, batch_number):
+    mutation_start = time.time()
+    result = self.auth.client.execute(request, variables)
+    mutation_time = time.time() - mutation_start
+    if mutation_time < THROTTLING_DELAY:
+        time.sleep(THROTTLING_DELAY - mutation_time)
+    if 'errors' in result:
+        raise GraphQLError('data', result['errors'], batch_number)
+    return result

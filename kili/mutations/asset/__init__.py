@@ -7,7 +7,7 @@ import time
 from functools import partial
 from typeguard import typechecked
 
-from ...utils import batch_iterator_builder, batch_iterators_builder
+from ...utils import _mutate_from_paginated_call, batch_iterator_builder, batch_iterators_builder
 from ...helpers import (Compatible, GraphQLError,
                         convert_to_list_of_none,
                         format_metadata,
@@ -106,7 +106,6 @@ class MutationsAsset:
                            json_content_array_batch,
                            json_metadata_array_batch) \
                 in enumerate(batch_iterators_builder(properties_arrays)):
-            mutation_start = time.time()
             data, request = process_append_many_to_dataset_parameters(input_type,
                                                                       content_array_batch,
                                                                       external_id_array_batch,
@@ -118,12 +117,8 @@ class MutationsAsset:
                 'data': data,
                 'where': {'id': project_id}
             }
-            result = self.auth.client.execute(request, variables)
-            mutation_time = time.time() - mutation_start
-            if mutation_time < THROTTLING_DELAY:
-                time.sleep(THROTTLING_DELAY - mutation_time)
-            if 'errors' in result:
-                raise GraphQLError('data', result['errors'], batch_number)
+            result = _mutate_from_paginated_call(
+                self, variables, request, batch_number)
 
         return format_result('data', result, Asset)
 
@@ -198,6 +193,7 @@ class MutationsAsset:
                                 'Should be either a None or a list of None, string, list or dict')
 
         list_of_properties = [
+            asset_ids,
             external_ids,
             priorities,
             formatted_json_metadatas,
@@ -212,8 +208,7 @@ class MutationsAsset:
         ]
         results = []
         for batch_number, paginated_properties \
-                in enumerate(batch_iterators_builder([asset_ids]+list_of_properties)):
-            mutation_start = time.time()
+                in enumerate(batch_iterators_builder(list_of_properties)):
             asset_ids_batch = paginated_properties[0]
             list_of_properties_batch = paginated_properties[1:]
             where_array = [{'id': asset_id} for asset_id in asset_ids_batch]
@@ -246,13 +241,8 @@ class MutationsAsset:
                 'whereArray': where_array,
                 'dataArray': data_array
             }
-            result = self.auth.client.execute(
-                GQL_UPDATE_PROPERTIES_IN_ASSETS, variables)
-            mutation_time = time.time() - mutation_start
-            if mutation_time < THROTTLING_DELAY:
-                time.sleep(THROTTLING_DELAY - mutation_time)
-            if 'errors' in result:
-                raise GraphQLError('data', result['errors'], batch_number)
+            result = _mutate_from_paginated_call(
+                self, variables, GQL_UPDATE_PROPERTIES_IN_ASSETS, batch_number)
             results.append(result)
             formated_results = [format_result(
                 'data', result, Asset) for result in results]
@@ -271,13 +261,7 @@ class MutationsAsset:
                 or an error message.
         """
         for batch_number, asset_ids_batch in enumerate(batch_iterator_builder(asset_ids)):
-            mutation_start = time.time()
             variables = {'where': {'idIn': asset_ids_batch}}
-            result = self.auth.client.execute(
-                GQL_DELETE_MANY_FROM_DATASET, variables)
-            mutation_time = time.time() - mutation_start
-            if mutation_time < THROTTLING_DELAY:
-                time.sleep(THROTTLING_DELAY - mutation_time)
-            if 'errors' in result:
-                raise GraphQLError('data', result['errors'], batch_number)
+            result = _mutate_from_paginated_call(
+                self, variables, GQL_DELETE_MANY_FROM_DATASET, batch_number)
         return format_result('data', result, Asset)
