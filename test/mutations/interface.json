@@ -1,5 +1,4 @@
 {
-  "jobRendererWidth": 0.17,
   "jobs": {
     "JOB_0": {
       "mlTask": "CLASSIFICATION",
