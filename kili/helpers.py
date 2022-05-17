@@ -2,6 +2,7 @@
 Helpers for GraphQL Queries and Mutations
 """
 
+from typing import Optional
 import base64
 import functools
 from json import dumps, loads
@@ -215,18 +216,34 @@ def fragment_builder(fields, type_of_fields):
     return fragment
 
 
-def deprecate(msg, _type=DeprecationWarning):
+def deprecate(
+        msg: Optional[str] = None,
+        removed_in: Optional[str] = None,
+        _type=DeprecationWarning):
     """
-    Decorator that generates a deprecation message
+    Decorator factory that tag a deprecated function.
+    - To deprecated the whole function, you can give a message at the decorator level.
+    - For more sharp condition on the warning message, integrate this warning inside the function
+    but still tag the function with this decorator, without giving a message argument
 
     Args:
-        msg: string message
+        msg: string message that will be displayed whenever the function is called
+        removed_in: string version in the format "Major.Minor"
+            in which the deprecation element has to be removed
         type: DeprecationWarning by default
     """
     def decorator(func):
-        @functools.wraps(func)
+        if removed_in:
+            if len(removed_in.split('.')) != 2:
+                raise ValueError(
+                    f'"removed_in" argument in deprecate wrapper of the function {func.__name__}'
+                    'should have the format "Major.Minor"')
+            func.removed_in = removed_in
+
+        @ functools.wraps(func)
         def wrapper(*args, **kwargs):
-            warnings.warn(msg, _type, stacklevel=2)
+            if msg:
+                warnings.warn(msg, _type, stacklevel=2)
             return func(*args, **kwargs)
         return wrapper
     return decorator

@@ -5,7 +5,7 @@ import warnings
 from typeguard import typechecked
 
 
-from ...helpers import Compatible, format_result, fragment_builder
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_projects, GQL_PROJECTS_COUNT
 from ...types import Project
 from ...constants import NO_ACCESS_RIGHT
@@ -28,6 +28,7 @@ class QueriesProject:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.112")
     def projects(self,
                  project_id: Optional[str] = None,
                  search_query: Optional[str] = None,
