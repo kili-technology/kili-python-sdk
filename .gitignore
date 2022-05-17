@@ -11,6 +11,7 @@ build
 *.pt
 */runs/
 *.pyc
+.vscode
 
 # mkdocs documentation
 /site

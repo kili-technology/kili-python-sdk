@@ -9,7 +9,7 @@ from typeguard import typechecked
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_notifications, GQL_NOTIFICATIONS_COUNT
 from ...types import Notification
-from ...utils import row_generator_from_paginated_calls
+from ...utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesNotification:

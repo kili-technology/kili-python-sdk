@@ -10,7 +10,7 @@ from typeguard import typechecked
 from ...helpers import Compatible, format_result, fragment_builder
 from .queries import gql_api_keys, GQL_API_KEYS_COUNT
 from ...types import ApiKey as ApiKeyType
-from ...utils import row_generator_from_paginated_calls
+from ...utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesApiKey:
