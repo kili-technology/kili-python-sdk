@@ -86,11 +86,11 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
 
 def batch_object_builder(
         properties_to_batch: Dict[str, Optional[list]],
-        batch_size=MUTATION_BATCH_SIZE) -> Dict[str, Optional[list]]:
+        batch_size: int = MUTATION_BATCH_SIZE) -> Dict[str, Optional[list]]:
     """Generate a paginated iterator for several variables
 
     Args:
-        arrays: a list of arrays to paginate. Arrays can be None
+        properties_to_batch: a dictionnary of properties to be batched.
         batch_size: the size of the batches to produce
     """
     if len(list(filter(None, properties_to_batch.values()))) == 0:
@@ -109,9 +109,37 @@ def batch_object_builder(
         yield batch
 
 
-def _mutate_from_paginated_call(self, properties_to_batch, generate_variables, request):
+def _mutate_from_paginated_call(self,
+                                properties_to_batch: Dict[str, Optional[list]],
+                                generate_variables: Callable,
+                                request: str,
+                                batch_size: int = MUTATION_BATCH_SIZE):
+    """Run a mutation by making paginated calls
+    Args:
+        properties_to_batch: a dictionnary of properties to be batched.
+            constants across batch are defined in the generate_variables function
+        generate_variables: function that takes batched properties and return
+            a graphQL payload for request for this batch
+        request: the GraphQL request to call,
+        batch_size: the size of the batches to produce
+
+    Example:
+        '''
+        properties_to_batch={prop1: [0,1], prop2: ['a', 'b']}
+        def generate_variables(batched_properties):
+            return {
+                graphQL_prop1: batched_properties['prop1']
+                graphQL_prop2: batched_properties['prop2']
+            }
+        _mutate_from_paginated_call(
+                properties_to_batch=properties_to_batch,
+                generate_variables=generate_variables
+                request= APPEND_MANY_TO_DATASET
+                )
+        '''
+    """
     results = []
-    for batch_number, batch in enumerate(batch_object_builder(properties_to_batch)):
+    for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
         mutation_start = time.time()
         variables = generate_variables(batch)
         result = self.auth.client.execute(request, variables)
