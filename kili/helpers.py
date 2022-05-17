@@ -221,7 +221,7 @@ def deprecate(
         removed_in: Optional[str] = None,
         _type=DeprecationWarning):
     """
-    Decorator that tag a deprecated function.
+    Decorator factory that tag a deprecated function.
     - To deprecated the whole function, you can give a message at the decorator level.
     - For more sharp condition on the warning message, integrate this warning inside the function
     but still tag the function with this decorator, without giving a message argument
