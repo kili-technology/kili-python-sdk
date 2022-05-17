@@ -1,5 +1,5 @@
-from kili.utils import (row_generator_from_paginated_calls,
-                        batch_iterator_builder, batch_object_builder)
+from kili.utils.pagination import (row_generator_from_paginated_calls,
+                                   batch_iterator_builder, batch_object_builder)
 from .utils import (mocked_count_method, mocked_query_method)
 
 
