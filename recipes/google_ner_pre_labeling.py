@@ -98,7 +98,6 @@ ENTITY_TYPES_WITH_COLORS = [(n[0], n[1], c)
                             for n, c in zip(ENTITY_TYPES, cycle(COLORS))]
 
 JSON_INTERFACE = {
-    "jobRendererWidth": 0.25,
     "jobs": {
         "NAMED_ENTITIES_RECOGNITION_JOB": {
             "mlTask": "NAMED_ENTITIES_RECOGNITION",
