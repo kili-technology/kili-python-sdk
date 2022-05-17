@@ -242,10 +242,13 @@ def process_append_many_to_dataset_parameters(
         len(content_array) if not status_array else status_array
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array)
+    mime_type = get_file_mimetype(content_array, json_content_array)
     content_array = process_content(
         input_type, content_array, json_content_array)
     formatted_json_content_array = process_json_content(
         input_type, content_array, json_content_array)
+    request, upload_type = get_request_to_execute(
+        input_type, json_metadata_array, json_content_array, mime_type)
 
     properties = {
         'content_array': content_array,
@@ -256,7 +259,7 @@ def process_append_many_to_dataset_parameters(
         'json_metadata_array': formatted_json_metadata_array,
     }
 
-    return properties
+    return properties, upload_type, request
 
 
 def process_update_properties_in_assets_parameters(properties) -> dict:

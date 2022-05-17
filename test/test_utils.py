@@ -1,5 +1,6 @@
-from kili.utils import row_generator_from_paginated_calls, batch_iterator_builder, batch_iterators_builder
-from test.utils import mocked_count_method, mocked_query_method
+from kili.utils import (row_generator_from_paginated_calls,
+                        batch_iterator_builder, batch_object_builder)
+from .utils import (mocked_count_method, mocked_query_method)
 
 
 def test_row_generator_from_paginated_calls():
@@ -90,44 +91,50 @@ def test_batch_iterator_builder():
                    ), f"Test case \"{case_name}\" failed"
 
 
-def test_batch_iterators_builder():
+def test_batch_object_builder():
     """Test batch iterator builder for several arrays in the same time."""
     array1 = [i for i in range(10)]
     array2 = [i for i in range(10, 20)]
     array3 = [i for i in range(20, 30)]
     TEST_CASE = [{
-        'case': 'When I have one array I see that it return a paginated batches',
+        'case': 'When I have one property I see that it returns paginated batches',
         'batch_size': 3,
-        'arrays': [array1],
-        'expected_result': batch_iterator_builder(array1, batch_size=3)
+        'properties_to_batch': {'a1': array1},
+        'expected_result': (i for i in [{'a1': [0, 1, 2]},
+                                        {'a1': [3, 4, 5]},
+                                        {'a1': [6, 7, 8]},
+                                        {'a1': [9]}])
     },
         {
         'case': 'When I have several iterables I see it creates a common batch',
         'batch_size': 4,
-        'arrays': [array1, array2, array3],
-        'expected_result': (i for i in [([0, 1, 2, 3], [10, 11, 12, 13], [20, 21, 22, 23]),
-                                        ([4, 5, 6, 7], [14, 15, 16, 17],
-                                            [24, 25, 26, 27]),
-                                        ([8, 9], [18, 19], [28, 29])])
+        'properties_to_batch': {'a1': array1, 'a2': array2, 'a3': array3},
+        'expected_result': (i for i in [{'a1': [0, 1, 2, 3], 'a2':[10, 11, 12, 13],
+                                         'a3':[20, 21, 22, 23]},
+                                        {'a1': [4, 5, 6, 7], 'a2':[14, 15, 16, 17],
+                                         'a3':[24, 25, 26, 27]},
+                                        {'a1': [8, 9], 'a2':[18, 19], 'a3':[28, 29]}])
     },
         {
         'case': 'When I have None arrays, I see that it stays None in the batches',
         'batch_size': 4,
-        'arrays': [array1, None, array2, None],
-        'expected_result': (i for i in [([0, 1, 2, 3], None, [10, 11, 12, 13], None),
-                                        ([4, 5, 6, 7], None,  [
-                                            14, 15, 16, 17], None),
-                                        ([8, 9], None, [18, 19], None)])
+        'properties_to_batch': {'a1': array1, 'a2': None, 'a3': array2, 'a4': None},
+        'expected_result': (i for i in [{'a1': [0, 1, 2, 3], 'a2':None,
+                                         'a3':[10, 11, 12, 13], 'a4':None},
+                                        {'a1': [4, 5, 6, 7], 'a2':None,
+                                         'a3':[14, 15, 16, 17], 'a4':None},
+                                        {'a1': [8, 9], 'a2':None, 'a3':[18, 19], 'a4':None}])
     },
         {
-            'case': 'When I have only None, I see it return one batch of None',
-            'batch_size': 2,
-            'arrays': [None, None, None],
-            'expected_result': [None, None, None]
-    }]
+        'case': 'When I have only None, I see it return one batch of None',
+                'batch_size': 2,
+                'properties_to_batch': {'a1': None, 'a2': None, 'a3': None},
+                'expected_result': (i for i in [{'a1': None, 'a2': None, 'a3': None}])
+    }
+    ]
     for test_case in TEST_CASE:
-        actual = batch_iterators_builder(
-            test_case['arrays'], test_case['batch_size'])
+        actual = batch_object_builder(
+            test_case['properties_to_batch'], test_case['batch_size'])
         expected = test_case['expected_result']
         case_name = test_case['case']
         assert all(a == b for a, b in zip(actual, expected)

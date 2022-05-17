@@ -3,20 +3,17 @@ Asset mutations
 """
 
 from typing import List, Optional, Union
-from functools import partial
 from typeguard import typechecked
 
 from ...orm import Asset
 from ...constants import NO_ACCESS_RIGHT
-from ...utils import _mutate_from_paginated_call, batch_iterators_builder
+from ...utils import _mutate_from_paginated_call
 from ...helpers import (Compatible,
                         format_result)
 from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_MANY_FRAMES_TO_DATASET, GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
-from .helpers import (get_file_mimetype,
-                      get_request_to_execute,
-                      process_append_many_to_dataset_parameters,
+from .helpers import (process_append_many_to_dataset_parameters,
                       process_update_properties_in_assets_parameters)
 
 
@@ -96,17 +93,13 @@ class MutationsAsset:
         projects = kili.projects(project_id, disable_tqdm=True)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
-        properties_to_batch = process_append_many_to_dataset_parameters(input_type,
-                                                                        content_array,
-                                                                        external_id_array,
-                                                                        is_honeypot_array,
-                                                                        status_array,
-                                                                        json_content_array,
-                                                                        json_metadata_array)
-        mime_type = get_file_mimetype(
-            properties_to_batch['content_array'], properties_to_batch['json_content_array'])
-        request, upload_type = get_request_to_execute(
-            input_type, properties_to_batch['json_metadata_array'], properties_to_batch['json_content_array'], mime_type)
+        properties_to_batch, upload_type, request = process_append_many_to_dataset_parameters(input_type,
+                                                                                              content_array,
+                                                                                              external_id_array,
+                                                                                              is_honeypot_array,
+                                                                                              status_array,
+                                                                                              json_content_array,
+                                                                                              json_metadata_array)
 
         def generate_variables(batch):
             if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:

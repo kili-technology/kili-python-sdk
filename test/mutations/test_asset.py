@@ -23,6 +23,7 @@ kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
 
 tester = TestCase()
 
+
 @pytest.fixture
 def create_video_project():
     """
@@ -33,6 +34,7 @@ def create_video_project():
     project = kili.create_project(
         input_type='FRAME', json_interface=interface, title='Test project | video import')
     return project['id']
+
 
 class LocalDownloader():
 
@@ -63,7 +65,7 @@ BASE_TEST_CASES = [
     {
         'case': 'uploading a video as a list of image urls',
         'json_content': [["https://storage.googleapis.com/label-public-staging/video1/video1-img000001.jpg",
-                            "https://storage.googleapis.com/label-public-staging/video1/video1-img000002.jpg"]],
+                          "https://storage.googleapis.com/label-public-staging/video1/video1-img000002.jpg"]],
         'expected_processing_parameters': {
             'shouldKeepNativeFrameRate': False,
             'framesPlayedPerSecond': 30,
@@ -85,7 +87,7 @@ BASE_TEST_CASES = [
             }
         }],
     },
-    
+
 ]
 CUSTOM_VALUE_CASES = [
     {
@@ -126,14 +128,15 @@ def test_upload_video(create_video_project, tmpdir):
         json_metadata = test_case.get('json_metadata', None)
         json_content = test_case.get('json_content', None)
         local = test_case.get('local', False)
-        case = test_case.get('case', 'Unknown case') + f' | {"local" if local else "cloud"}'
+        case = test_case.get('case', 'Unknown case') + \
+            f' | {"local" if local else "cloud"}'
         print('case', case)
         if local:
             if content is not None:
                 content = list(map(downloader, content))
             else:
-                json_content = list(map(lambda jc: [downloader(x) for x in jc], json_content))
-
+                json_content = list(
+                    map(lambda jc: [downloader(x) for x in jc], json_content))
 
         kili.append_many_to_dataset(
             project_id=project_id,
@@ -153,7 +156,9 @@ def test_upload_video(create_video_project, tmpdir):
         asset_uploaded = kili.assets(
             project_id=project_id, external_id_contains=[external_id])
         processed_parameters = asset_uploaded[0]['jsonMetadata']['processingParameters']
-        tester.assertDictEqual(expected_parameters, processed_parameters), f'{case}, got {processed_parameters}, expected {expected_parameters}'
+        tester.assertDictEqual(
+            expected_parameters, processed_parameters), f'{case}, got {processed_parameters}, expected {expected_parameters}'
+
 
 class TestMimeType():
     """
@@ -167,13 +172,15 @@ class TestMimeType():
     def test_contents_empty(self):
         content_array = None
         json_content_array = None
-        self.should_have_right_mimetype(content_array, json_content_array, None)
+        self.should_have_right_mimetype(
+            content_array, json_content_array, None)
 
     def test_mimetype_url(self, tmpdir):
         url = 'https://storage.googleapis.com/label-public-staging/car/car_1.jpg'
         content_array = [url]
         json_content_array = None
-        self.should_have_right_mimetype(content_array, json_content_array, None)
+        self.should_have_right_mimetype(
+            content_array, json_content_array, None)
 
     def test_mimetype_image(self, tmpdir):
         url = 'https://storage.googleapis.com/label-public-staging/car/car_1.jpg'
@@ -181,7 +188,8 @@ class TestMimeType():
         path = downloader(url)
         content_array = [path]
         json_content_array = None
-        self.should_have_right_mimetype(content_array, json_content_array, 'image/jpeg')
+        self.should_have_right_mimetype(
+            content_array, json_content_array, 'image/jpeg')
 
     def test_mimetype_geotiff(self, tmpdir):
         url = 'https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif'
@@ -189,28 +197,32 @@ class TestMimeType():
         path = downloader(url)
         content_array = [path]
         json_content_array = None
-        self.should_have_right_mimetype(content_array, json_content_array, 'image/tiff')
-    
+        self.should_have_right_mimetype(
+            content_array, json_content_array, 'image/tiff')
+
     def test_cannot_upload_mp4_to_image_project(self):
         path = './test.mp4'
         content_array = [path]
         json_content_array = None
-        processed_content = process_content('IMAGE', content_array, json_content_array)
-        assert(processed_content==[None])
+        processed_content = process_content(
+            'IMAGE', content_array, json_content_array)
+        assert(processed_content == [None])
 
     def test_cannot_upload_png_to_frame_project(self):
         path = './test.png'
         content_array = [path]
         json_content_array = None
-        processed_content = process_content('FRAME', content_array, json_content_array)
-        assert(processed_content==[None])
+        processed_content = process_content(
+            'FRAME', content_array, json_content_array)
+        assert(processed_content == [None])
 
     def test_cannot_upload_text_to_pdf_project(self):
         path = 'Hello world'
         content_array = [path]
         json_content_array = None
-        processed_content = process_content('PDF', content_array, json_content_array)
-        assert(processed_content==[None])
+        processed_content = process_content(
+            'PDF', content_array, json_content_array)
+        assert(processed_content == [None])
 
     @pytest.mark.xfail(raises=FileNotFoundError)
     def test_can_upload_png_to_image_project(self):
@@ -233,7 +245,7 @@ class TestUploadTiff(unittest.TestCase):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
 
-    def test_geotiff_upload(self):
+    def test_geotiff_upload_parameters(self):
         url = 'https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif'
         downloader = LocalDownloader(self.test_dir)
         path = downloader(url)
@@ -244,21 +256,18 @@ class TestUploadTiff(unittest.TestCase):
         status_array = None
         json_content_array = None
         json_metadata_array = None
-        payload, request = process_append_many_to_dataset_parameters(
+        properties, upload_type, request = process_append_many_to_dataset_parameters(
             input_type,
             content_array,
             external_id_array,
             is_honeypot_array,
             status_array,
             json_content_array,
-            json_metadata_array,
-        )
-        payload_content = payload['contentArray']
-        del payload['contentArray']
-        expected_payload = {'externalIDArray': external_id_array,
-                        'jsonMetadataArray': ['{}'],
-                        'uploadType': 'GEO_SATELLITE'}
-        expected_request = GQL_APPEND_MANY_FRAMES_TO_DATASET
-        assert expected_request == request, 'Requests do not match'
-        assert payload_content[0].startswith('data:image/tiff;base64,SUkqAAgABABre')
-        self.assertEqual(expected_payload, payload, 'Payloads do not match')
+            json_metadata_array)
+
+        assert properties['json_metadata_array'] == ['{}']
+        assert properties['content_array'][0].startswith(
+            'data:image/tiff;base64,SUkqAAgABABre')
+        assert properties['external_id_array'] == ['bogota']
+        assert upload_type == 'GEO_SATELLITE', 'uploadType do not match'
+        assert request == GQL_APPEND_MANY_FRAMES_TO_DATASET, 'Requests do not match'

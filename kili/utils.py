@@ -1,7 +1,7 @@
 """
 Utils
 """
-from typing import List, Callable, Optional
+from typing import Dict, List, Callable, Optional
 import time
 from tqdm import tqdm
 
@@ -84,9 +84,9 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
         yield iterable[ndx:min(ndx + batch_size, iterable_length)]
 
 
-def batch_iterators_builder(
-        properties_to_batch: dict[Optional[List]],
-        batch_size=MUTATION_BATCH_SIZE) -> dict[Optional[List]]:
+def batch_object_builder(
+        properties_to_batch: Dict[str, Optional[list]],
+        batch_size=MUTATION_BATCH_SIZE) -> Dict[str, Optional[list]]:
     """Generate a paginated iterator for several variables
 
     Args:
@@ -94,20 +94,24 @@ def batch_iterators_builder(
         batch_size: the size of the batches to produce
     """
     if len(list(filter(None, properties_to_batch.values()))) == 0:
-        return properties_to_batch
+        print(properties_to_batch)
+        yield properties_to_batch
+        return
     number_of_objects = len([v for v in properties_to_batch.values(
     ) if v is not None][0])
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {k: (batch_iterator_builder(v, batch_size) if v is not None
                               else (item for item in [v]*number_of_batches))
                           for k, v in properties_to_batch.items()}
-    for _ in range(number_of_batches):
-        yield {k: next(v) for k, v in batched_properties.items()}
+    batch_object_iterator = [dict(zip(batched_properties, t))
+                             for t in zip(*batched_properties.values())]
+    for batch in batch_object_iterator:
+        yield batch
 
 
 def _mutate_from_paginated_call(self, properties_to_batch, generate_variables, request):
     results = []
-    for batch_number, batch in enumerate(batch_iterators_builder(properties_to_batch)):
+    for batch_number, batch in enumerate(batch_object_builder(properties_to_batch)):
         mutation_start = time.time()
         variables = generate_variables(batch)
         result = self.auth.client.execute(request, variables)
