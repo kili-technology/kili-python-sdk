@@ -2,7 +2,6 @@
 Helpers for the asset mutations
 """
 import csv
-from functools import partial
 import os
 from json import dumps
 from uuid import uuid4
@@ -10,7 +9,8 @@ from typing import List, Union
 import mimetypes
 
 from ...constants import mime_extensions_for_IV2
-from ...helpers import convert_to_list_of_none, encode_base64, format_metadata, get_data_type, is_none_or_empty, is_url
+from ...helpers import (convert_to_list_of_none, encode_base64,
+                        format_metadata, get_data_type, is_none_or_empty, is_url)
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_APPEND_MANY_FRAMES_TO_DATASET)
 
@@ -78,9 +78,12 @@ def process_content(input_type: str,
     Process the array of contents
     """
     if input_type in ['IMAGE', 'PDF']:
-        return [content if is_url(content) else (content
-                                                 if (json_content_array is not None and json_content_array[i] is not None)
-                                                 else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
+        return [content if is_url(content)
+                else (content
+                      if (json_content_array is not None and json_content_array[i] is not None)
+                      else (encode_base64(content)
+                            if check_file_mime_type(content, input_type)
+                            else None))
                 for i, content in enumerate(content_array)]
     if input_type == 'FRAME' and json_content_array is None:
         content_array = [encode_object_if_not_url(
@@ -222,7 +225,8 @@ def process_append_many_to_dataset_parameters(
         json_metadata_array: Union[List[dict], None]
 ) -> dict:
     """
-    Process arguments of the append_many_to_dataset method and return the data payload.
+    Process arguments of the append_many_to_dataset method
+    and return the properties for the paginated loop
     """
     if content_array is None and json_content_array is None:
         raise ValueError(
@@ -255,7 +259,11 @@ def process_append_many_to_dataset_parameters(
     return properties
 
 
-def process_update_properties_in_assets_parameters(properties):
+def process_update_properties_in_assets_parameters(properties) -> dict:
+    """
+    Process arguments of the update_properties_in_assets method
+    and return the properties for the paginated loop
+    """
     formatted_json_metadatas = None
     if properties['json_metadatas'] is None:
         formatted_json_metadatas = None
@@ -269,7 +277,7 @@ def process_update_properties_in_assets_parameters(properties):
     properties['json_metadatas'] = formatted_json_metadatas
     nb_assets_to_modify = len(properties['asset_ids'])
     properties = {k: convert_to_list_of_none(
-        v, length=nb_assets_to_modify) for k, v in properties}
-    properties['should_reset_to_be_labeled_by_array'] = is_none_or_empty(
-        properties['to_be_labeled_by_array'])
+        v, length=nb_assets_to_modify) for k, v in properties.items()}
+    properties['should_reset_to_be_labeled_by_array'] = list(map(
+        is_none_or_empty, properties['to_be_labeled_by_array']))
     return properties

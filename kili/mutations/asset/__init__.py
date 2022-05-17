@@ -4,23 +4,20 @@ Asset mutations
 
 from typing import List, Optional, Union
 from functools import partial
-from trax import Properties
 from typeguard import typechecked
 
 from ...orm import Asset
 from ...constants import NO_ACCESS_RIGHT
 from ...utils import _mutate_from_paginated_call, batch_iterators_builder
-from ...helpers import (Compatible, GraphQLError,
-                        convert_to_list_of_none,
-                        format_metadata,
-                        format_result,
-                        is_none_or_empty)
+from ...helpers import (Compatible,
+                        format_result)
 from ...queries.project import QueriesProject
 from .queries import (GQL_APPEND_MANY_FRAMES_TO_DATASET, GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from .helpers import (get_file_mimetype,
                       get_request_to_execute,
-                      process_append_many_to_dataset_parameters, process_update_properties_in_assets_parameters)
+                      process_append_many_to_dataset_parameters,
+                      process_update_properties_in_assets_parameters)
 
 
 class MutationsAsset:
@@ -109,7 +106,7 @@ class MutationsAsset:
         mime_type = get_file_mimetype(
             properties_to_batch['content_array'], properties_to_batch['json_content_array'])
         request, upload_type = get_request_to_execute(
-            input_type, properties_to_batch['json_metadata_array'], properties_to_batch[' json_content_array'], mime_type)
+            input_type, properties_to_batch['json_metadata_array'], properties_to_batch['json_content_array'], mime_type)
 
         def generate_variables(batch):
             if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
@@ -135,6 +132,7 @@ class MutationsAsset:
 
     @Compatible(['v2'])
     @typechecked
+    # pylint: disable=unused-argument
     def update_properties_in_assets(self,
                                     asset_ids: List[str],
                                     external_ids: Optional[List[str]] = None,
@@ -194,26 +192,26 @@ class MutationsAsset:
                         ['test+pierre@kili-technology.com'], None],
             )
         """
-
+        parameters = locals()
+        del parameters['self']
         properties_to_batch = process_update_properties_in_assets_parameters(
-            {k: v for k, v in locals() if k != 'self'})
+            parameters)
 
         def generate_variables(batch):
-            property_names = {
-                'external_ids': 'externalId',
-                'priorities': 'priority',
-                'json_metadatas': 'jsonMetadata',
-                'consensus_marks': 'consensusMark',
-                'honeypot_marks': 'honeypotMark',
-                'to_be_labeled_by_array': 'toBeLabeledBy',
-                'should_reset_to_be_labeled_by_array': 'shouldResetToBeLabeledBy',
-                'contents': 'content',
-                'json_contents': 'jsonContent',
-                'status_array': 'status',
-                'is_used_for_consensus_array': 'isUsedForConsensus',
-                'is_honeypot_array': 'isHoneypot'
+            data = {
+                'externalId': batch['external_ids'],
+                'priority': batch['priorities'],
+                'jsonMetadata': batch['json_metadatas'],
+                'consensusMark': batch['consensus_marks'],
+                'honeypotMark': batch['honeypot_marks'],
+                'toBeLabeledBy': batch['to_be_labeled_by_array'],
+                'shouldResetToBeLabeledBy': batch['should_reset_to_be_labeled_by_array'],
+                'content': batch['contents'],
+                'jsonContent': batch['json_contents'],
+                'status': batch['status_array'],
+                'isUsedForConsensus': batch['is_used_for_consensus_array'],
+                'isHoneypot': batch['is_honeypot_array']
             }
-            data = {property_names[k]: v for k, v in batch.items()}
             data_array = [dict(zip(data, t)) for t in zip(*data.values())]
             return {
                 'whereArray': [{'id': asset_id} for asset_id in batch['asset_ids']],
