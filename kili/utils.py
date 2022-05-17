@@ -84,30 +84,37 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
         yield iterable[ndx:min(ndx + batch_size, iterable_length)]
 
 
-def batch_iterators_builder(arrays: List[Optional[List]], batch_size=MUTATION_BATCH_SIZE):
+def batch_iterators_builder(
+        properties_to_batch: dict[Optional[List]],
+        batch_size=MUTATION_BATCH_SIZE) -> dict[Optional[List]]:
     """Generate a paginated iterator for several variables
 
     Args:
         arrays: a list of arrays to paginate. Arrays can be None
         batch_size: the size of the batches to produce
     """
-    if len(list(filter(None, arrays))) == 0:
-        return arrays
-    if len(arrays) == 1:
-        return batch_iterator_builder(arrays[0], batch_size=batch_size)
-    number_of_object = len(list(filter(None, arrays))[0])
-    number_of_batch = len(range(0, number_of_object, batch_size))
-    iterables = [batch_iterator_builder(array, batch_size) if array is not None else [
-        None]*number_of_batch for array in arrays]
-    return zip(*iterables)
+    if len(list(filter(None, properties_to_batch.values()))) == 0:
+        return properties_to_batch
+    number_of_objects = len([v for v in properties_to_batch.values(
+    ) if v is not None][0])
+    number_of_batches = len(range(0, number_of_objects, batch_size))
+    batched_properties = {k: (batch_iterator_builder(v, batch_size) if v is not None
+                              else (item for item in [v]*number_of_batches))
+                          for k, v in properties_to_batch.items()}
+    for _ in range(number_of_batches):
+        yield {k: next(v) for k, v in batched_properties.items()}
 
 
-def _mutate_from_paginated_call(self, variables, request, batch_number):
-    mutation_start = time.time()
-    result = self.auth.client.execute(request, variables)
-    mutation_time = time.time() - mutation_start
-    if mutation_time < THROTTLING_DELAY:
-        time.sleep(THROTTLING_DELAY - mutation_time)
-    if 'errors' in result:
-        raise GraphQLError('data', result['errors'], batch_number)
-    return result
+def _mutate_from_paginated_call(self, properties_to_batch, generate_variables, request):
+    results = []
+    for batch_number, batch in batch_iterators_builder(properties_to_batch):
+        mutation_start = time.time()
+        variables = generate_variables(batch)
+        result = self.auth.client.execute(request, variables)
+        mutation_time = time.time() - mutation_start
+        results.append(result)
+        if 'errors' in result:
+            raise GraphQLError('data', result['errors'], batch_number)
+        if mutation_time < THROTTLING_DELAY:
+            time.sleep(THROTTLING_DELAY - mutation_time)
+    return results

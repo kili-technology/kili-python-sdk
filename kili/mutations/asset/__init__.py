@@ -3,22 +3,24 @@ Asset mutations
 """
 
 from typing import List, Optional, Union
-import time
 from functools import partial
+from trax import Properties
 from typeguard import typechecked
 
-from ...utils import _mutate_from_paginated_call, batch_iterator_builder, batch_iterators_builder
+from ...orm import Asset
+from ...constants import NO_ACCESS_RIGHT
+from ...utils import _mutate_from_paginated_call, batch_iterators_builder
 from ...helpers import (Compatible, GraphQLError,
                         convert_to_list_of_none,
                         format_metadata,
                         format_result,
                         is_none_or_empty)
 from ...queries.project import QueriesProject
-from .queries import (GQL_DELETE_MANY_FROM_DATASET,
+from .queries import (GQL_APPEND_MANY_FRAMES_TO_DATASET, GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
-from .helpers import process_append_many_to_dataset_parameters
-from ...constants import NO_ACCESS_RIGHT, THROTTLING_DELAY
-from ...orm import Asset
+from .helpers import (get_file_mimetype,
+                      get_request_to_execute,
+                      process_append_many_to_dataset_parameters, process_update_properties_in_assets_parameters)
 
 
 class MutationsAsset:
@@ -96,31 +98,40 @@ class MutationsAsset:
         kili = QueriesProject(self.auth)
         projects = kili.projects(project_id, disable_tqdm=True)
         assert len(projects) == 1, NO_ACCESS_RIGHT
-        properties_arrays = [content_array, external_id_array, is_honeypot_array,
-                             status_array, json_content_array, json_metadata_array]
         input_type = projects[0]['inputType']
-        for batch_number, (content_array_batch,
-                           external_id_array_batch,
-                           is_honeypot_array_batch,
-                           status_array_batch,
-                           json_content_array_batch,
-                           json_metadata_array_batch) \
-                in enumerate(batch_iterators_builder(properties_arrays)):
-            data, request = process_append_many_to_dataset_parameters(input_type,
-                                                                      content_array_batch,
-                                                                      external_id_array_batch,
-                                                                      is_honeypot_array_batch,
-                                                                      status_array_batch,
-                                                                      json_content_array_batch,
-                                                                      json_metadata_array_batch)
-            variables = {
-                'data': data,
+        properties_to_batch = process_append_many_to_dataset_parameters(input_type,
+                                                                        content_array,
+                                                                        external_id_array,
+                                                                        is_honeypot_array,
+                                                                        status_array,
+                                                                        json_content_array,
+                                                                        json_metadata_array)
+        mime_type = get_file_mimetype(
+            properties_to_batch['content_array'], properties_to_batch['json_content_array'])
+        request, upload_type = get_request_to_execute(
+            input_type, properties_to_batch['json_metadata_array'], properties_to_batch[' json_content_array'], mime_type)
+
+        def generate_variables(batch):
+            if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
+                payload_data = {'contentArray': batch['content_array'],
+                                'externalIDArray': batch['external_id_array'],
+                                'jsonMetadataArray': batch['json_metadata_array'],
+                                'uploadType': upload_type}
+            else:
+                payload_data = {'contentArray': batch['content_array'],
+                                'externalIDArray': batch['external_id_array'],
+                                'isHoneypotArray': batch['is_honeypot_array'],
+                                'statusArray': batch['status_array'],
+                                'jsonContentArray': batch['json_content_array'],
+                                'jsonMetadataArray': batch['json_metadata_array']}
+            return {
+                'data': payload_data,
                 'where': {'id': project_id}
             }
-            result = _mutate_from_paginated_call(
-                self, variables, request, batch_number)
 
-        return format_result('data', result, Asset)
+        results = _mutate_from_paginated_call(
+            self, properties_to_batch, generate_variables, request)
+        return format_result('data', results[0], Asset)
 
     @Compatible(['v2'])
     @typechecked
@@ -168,88 +179,55 @@ class MutationsAsset:
 
         Examples:
             >>> kili.update_properties_in_assets(
-                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n"],
                     consensus_marks=[1, 0.7],
                     contents=[None, 'https://to/second/asset.png'],
-                    external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
+                    external_ids=['external-id-of-your-choice-1',
+                        'external-id-of-your-choice-2'],
                     honeypot_marks=[0.8, 0.5],
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
                     priorities=[None, 2],
                     status_array=['LABELED', 'REVIEWED'],
-                    to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
+                    to_be_labeled_by_array=[
+                        ['test+pierre@kili-technology.com'], None],
             )
         """
 
-        formatted_json_metadatas = None
-        if json_metadatas is None:
-            formatted_json_metadatas = None
-        else:
-            if isinstance(json_metadatas, list):
-                formatted_json_metadatas = list(
-                    map(format_metadata, json_metadatas))
-            else:
-                raise Exception('json_metadatas',
-                                'Should be either a None or a list of None, string, list or dict')
+        properties_to_batch = process_update_properties_in_assets_parameters(
+            {k: v for k, v in locals() if k != 'self'})
 
-        list_of_properties = [
-            asset_ids,
-            external_ids,
-            priorities,
-            formatted_json_metadatas,
-            consensus_marks,
-            honeypot_marks,
-            to_be_labeled_by_array,
-            contents,
-            json_contents,
-            status_array,
-            is_used_for_consensus_array,
-            is_honeypot_array
-        ]
-        results = []
-        for batch_number, paginated_properties \
-                in enumerate(batch_iterators_builder(list_of_properties)):
-            asset_ids_batch = paginated_properties[0]
-            list_of_properties_batch = paginated_properties[1:]
-            where_array = [{'id': asset_id} for asset_id in asset_ids_batch]
-            nb_assets_to_modify = len(where_array)
-            data_array = [{} for i in range(len(where_array))]
-            data = list(map(partial(convert_to_list_of_none,
-                                    length=nb_assets_to_modify), list_of_properties_batch))
-            property_names = [
-                'externalId',
-                'priority',
-                'jsonMetadata',
-                'consensusMark',
-                'honeypotMark',
-                'toBeLabeledBy',
-                'content',
-                'jsonContent',
-                'status',
-                'isUsedForConsensus',
-                'isHoneypot'
-            ]
-            to_be_labeled_by_array = data[5]
-            should_reset_to_be_labeled_by_array = list(
-                map(is_none_or_empty, to_be_labeled_by_array))
-            for i, properties in enumerate(zip(*data)):
-                for _property, property_value in zip(property_names, properties):
-                    data_array[i][_property] = property_value
-            for i in range(nb_assets_to_modify):
-                data_array[i]['shouldResetToBeLabeledBy'] = should_reset_to_be_labeled_by_array[i]
-            variables = {
-                'whereArray': where_array,
+        def generate_variables(batch):
+            property_names = {
+                'external_ids': 'externalId',
+                'priorities': 'priority',
+                'json_metadatas': 'jsonMetadata',
+                'consensus_marks': 'consensusMark',
+                'honeypot_marks': 'honeypotMark',
+                'to_be_labeled_by_array': 'toBeLabeledBy',
+                'should_reset_to_be_labeled_by_array': 'shouldResetToBeLabeledBy',
+                'contents': 'content',
+                'json_contents': 'jsonContent',
+                'status_array': 'status',
+                'is_used_for_consensus_array': 'isUsedForConsensus',
+                'is_honeypot_array': 'isHoneypot'
+            }
+            data = {property_names[k]: v for k, v in batch.items()}
+            data_array = [dict(zip(data, t)) for t in zip(*data.values())]
+            return {
+                'whereArray': [{'id': asset_id} for asset_id in batch['asset_ids']],
                 'dataArray': data_array
             }
-            result = _mutate_from_paginated_call(
-                self, variables, GQL_UPDATE_PROPERTIES_IN_ASSETS, batch_number)
-            results.append(result)
-            formated_results = [format_result(
-                'data', result, Asset) for result in results]
+
+        results = _mutate_from_paginated_call(
+            self, properties_to_batch, generate_variables, GQL_UPDATE_PROPERTIES_IN_ASSETS)
+        formated_results = [format_result(
+            'data', result, Asset) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
-    @Compatible(['v1', 'v2'])
-    @typechecked
+    @ Compatible(['v1', 'v2'])
+    @ typechecked
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """Delete assets from a project.
 
@@ -260,8 +238,13 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        for batch_number, asset_ids_batch in enumerate(batch_iterator_builder(asset_ids)):
-            variables = {'where': {'idIn': asset_ids_batch}}
-            result = _mutate_from_paginated_call(
-                self, variables, GQL_DELETE_MANY_FROM_DATASET, batch_number)
-        return format_result('data', result, Asset)
+        properties_to_batch = {'asset_ids': asset_ids}
+
+        def generate_variables(batch):
+            return {'where': {'idIn': batch['asset_ids']}}
+
+        results = _mutate_from_paginated_call(self,
+                                              properties_to_batch,
+                                              generate_variables,
+                                              GQL_DELETE_MANY_FROM_DATASET)
+        return format_result('data', results[0], Asset)

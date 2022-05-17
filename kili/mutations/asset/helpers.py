@@ -2,6 +2,7 @@
 Helpers for the asset mutations
 """
 import csv
+from functools import partial
 import os
 from json import dumps
 from uuid import uuid4
@@ -9,7 +10,7 @@ from typing import List, Union
 import mimetypes
 
 from ...constants import mime_extensions_for_IV2
-from ...helpers import encode_base64, get_data_type, is_url
+from ...helpers import convert_to_list_of_none, encode_base64, format_metadata, get_data_type, is_none_or_empty, is_url
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_APPEND_MANY_FRAMES_TO_DATASET)
 
@@ -33,7 +34,8 @@ def process_frame_json_content(json_content):
     if is_url(json_content):
         return json_content
     json_content_index = range(len(json_content))
-    json_content_urls = [encode_object_if_not_url(content, 'IMAGE') for content in json_content]
+    json_content_urls = [encode_object_if_not_url(
+        content, 'IMAGE') for content in json_content]
     return dumps(dict(zip(json_content_index, json_content_urls)))
 
 
@@ -77,14 +79,16 @@ def process_content(input_type: str,
     """
     if input_type in ['IMAGE', 'PDF']:
         return [content if is_url(content) else (content
-            if (json_content_array is not None and json_content_array[i] is not None)
-            else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
-            for i, content in enumerate(content_array)]
+                                                 if (json_content_array is not None and json_content_array[i] is not None)
+                                                 else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
+                for i, content in enumerate(content_array)]
     if input_type == 'FRAME' and json_content_array is None:
-        content_array = [encode_object_if_not_url(content, input_type) for content in content_array]
+        content_array = [encode_object_if_not_url(
+            content, input_type) for content in content_array]
     if input_type == 'TIME_SERIES':
         content_array = list(map(process_time_series, content_array))
     return content_array
+
 
 def process_time_series(content: str) -> Union[str, None]:
     """
@@ -102,14 +106,15 @@ def process_time_series(content: str) -> Union[str, None]:
     reader = csv.reader(content.split('\n'), delimiter=',')
     return process_csv_content(reader, delimiter=delimiter)
 
-def process_csv_content(reader, file_name = None, delimiter=',') -> bool:
+
+def process_csv_content(reader, file_name=None, delimiter=',') -> bool:
     """
     Process the content of csv for time_series and check if it corresponds to the expected format
     """
     first_row = True
     processed_lines = []
     for row in reader:
-        if not (len(row)==2 and (first_row or (not first_row and is_float(row[0])))):
+        if not (len(row) == 2 and (first_row or (not first_row and is_float(row[0])))):
             print(f"""The content {file_name if file_name else row} does not correspond to the \
 correct format: it should have only 2 columns, the first one being the timestamp \
 (an integer or a float) and the second one a numeric value (an integer or a float, \
@@ -121,6 +126,7 @@ of the 2 columns. The delimiter used should be ','.""")
         first_row = False
     return '\n'.join(processed_lines)
 
+
 def is_float(number: str) -> bool:
     """
     Check if a string can be converted to float
@@ -130,6 +136,7 @@ def is_float(number: str) -> bool:
         return True
     except ValueError:
         return False
+
 
 def check_file_mime_type(content: str, input_type: str) -> bool:
     """
@@ -145,10 +152,11 @@ def check_file_mime_type(content: str, input_type: str) -> bool:
 
     correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
     if not correct_mime_type:
-        print(f'File mime type for {content} is {mime_type} and does not correspond' \
-            'to the type of the project. '\
-            f'File mime type should be one of {mime_extensions_for_IV2[input_type]}')
+        print(f'File mime type for {content} is {mime_type} and does not correspond'
+              'to the type of the project. '
+              f'File mime type should be one of {mime_extensions_for_IV2[input_type]}')
     return correct_mime_type
+
 
 def add_video_parameters(json_metadata, should_use_native_video):
     """
@@ -230,25 +238,38 @@ def process_append_many_to_dataset_parameters(
         len(content_array) if not status_array else status_array
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array)
-    mime_type = get_file_mimetype(content_array, json_content_array)
     content_array = process_content(
         input_type, content_array, json_content_array)
     formatted_json_content_array = process_json_content(
         input_type, content_array, json_content_array)
 
-    request, upload_type = get_request_to_execute(
-        input_type, json_metadata_array, json_content_array, mime_type)
-    if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
-        payload_data = {'contentArray': content_array,
-                        'externalIDArray': external_id_array,
-                        'jsonMetadataArray': formatted_json_metadata_array,
-                        'uploadType': upload_type}
-    else:
-        payload_data = {'contentArray': content_array,
-                        'externalIDArray': external_id_array,
-                        'isHoneypotArray': is_honeypot_array,
-                        'statusArray': status_array,
-                        'jsonContentArray': formatted_json_content_array,
-                        'jsonMetadataArray': formatted_json_metadata_array}
+    properties = {
+        'content_array': content_array,
+        'external_id_array': external_id_array,
+        'is_honeypot_array': is_honeypot_array,
+        'status_array': status_array,
+        'json_content_array': formatted_json_content_array,
+        'json_metadata_array': formatted_json_metadata_array,
+    }
 
-    return payload_data, request
+    return properties
+
+
+def process_update_properties_in_assets_parameters(properties):
+    formatted_json_metadatas = None
+    if properties['json_metadatas'] is None:
+        formatted_json_metadatas = None
+    else:
+        if isinstance(properties['json_metadatas'], list):
+            formatted_json_metadatas = list(
+                map(format_metadata, properties['json_metadatas']))
+        else:
+            raise Exception('json_metadatas',
+                            'Should be either a None or a list of None, string, list or dict')
+    properties['json_metadatas'] = formatted_json_metadatas
+    nb_assets_to_modify = len(properties['asset_ids'])
+    properties = {k: convert_to_list_of_none(
+        v, length=nb_assets_to_modify) for k, v in properties}
+    properties['should_reset_to_be_labeled_by_array'] = is_none_or_empty(
+        properties['to_be_labeled_by_array'])
+    return properties

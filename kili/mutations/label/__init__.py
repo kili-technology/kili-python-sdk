@@ -61,17 +61,20 @@ class MutationsLabel:
         if len(external_id_array) == 0:
             warnings.warn("Empty IDs and prediction list")
 
-        for batch_number, (external_id_array_batch, model_name_array_batch, json_response_array_batch)\
-                in enumerate(batch_iterators_builder([external_id_array, model_name_array, json_response_array])):
+        properties_to_batch = {'external_id_array': external_id_array,
+                               'model_name_array': model_name_array,
+                               'json_response_array': json_response_array}
 
-            variables = {
-                'data': {'modelNameArray': model_name_array_batch,
-                         'jsonResponseArray': [dumps(elem) for elem in json_response_array_batch]},
-                'where': {'externalIdStrictlyIn': external_id_array_batch, 'project': {'id': project_id}}
+        def generate_variables(batch):
+            return {
+                'data': {'modelNameArray': batch['model_name_array'],
+                         'jsonResponseArray': [dumps(elem) for elem in batch['json_response_array']]},
+                'where': {'externalIdStrictlyIn': batch['external_id_array'], 'project': {'id': project_id}}
             }
-            result = _mutate_from_paginated_call(
-                self, variables, GQL_CREATE_PREDICTIONS, batch_number)
-        return format_result('data', result, Label)
+
+        results = _mutate_from_paginated_call(
+            self, properties_to_batch, generate_variables, GQL_CREATE_PREDICTIONS)
+        return format_result('data', results[0], Label)
 
     @Compatible(['v1', 'v2'])
     @typechecked
