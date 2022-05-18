@@ -7,7 +7,7 @@ from typeguard import typechecked
 
 from ...orm import Asset
 from ...constants import NO_ACCESS_RIGHT
-from ...utils import _mutate_from_paginated_call
+from ...utils.pagination import _mutate_from_paginated_call
 from ...helpers import (Compatible,
                         format_result)
 from ...queries.project import QueriesProject
@@ -185,8 +185,20 @@ class MutationsAsset:
                         ['test+pierre@kili-technology.com'], None],
             )
         """
-        parameters = locals()
-        del parameters['self']
+        saved_args = locals()
+        parameters = {k: v for (k, v) in saved_args.items() if k in
+                      ['asset_ids',
+                       'external_ids',
+                       'priorities',
+                       'json_metadatas',
+                       'consensus_marks',
+                       'honeypot_marks',
+                       'to_be_labeled_by_array',
+                       'contents',
+                       'json_contents',
+                       'status_array',
+                       'is_used_for_consensus_array',
+                       'is_honeypot_array']}
         properties_to_batch = process_update_properties_in_assets_parameters(
             parameters)
 

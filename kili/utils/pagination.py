@@ -1,12 +1,12 @@
 """
-Utils
+Utils function for pagination
 """
 from typing import Dict, List, Callable, Optional
 import time
 from tqdm import tqdm
 
-from .helpers import GraphQLError
-from .constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
+from ..helpers import GraphQLError
+from ..constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 
 # pylint: disable=too-many-arguments,too-many-locals
 
