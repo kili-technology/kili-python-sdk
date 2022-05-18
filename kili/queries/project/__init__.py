@@ -9,7 +9,7 @@ from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_projects, GQL_PROJECTS_COUNT
 from ...types import Project
 from ...constants import NO_ACCESS_RIGHT
-from ...utils.pagination import row_generator_from_paginated_calls
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesProject:
