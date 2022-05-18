@@ -14,7 +14,7 @@ from .queries import gql_labels, GQL_LABELS_COUNT
 from ...constants import NO_ACCESS_RIGHT
 from ...types import Label as LabelType
 from ...orm import Label
-from ...utils.pagination import row_generator_from_paginated_calls
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesLabel:

@@ -9,7 +9,7 @@ from typeguard import typechecked
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_project_users, GQL_PROJECT_USERS_COUNT
 from ...types import ProjectUser
-from ...utils.pagination import row_generator_from_paginated_calls
+from ...utils import row_generator_from_paginated_calls
 
 
 class QueriesProjectUser:

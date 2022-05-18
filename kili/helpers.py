@@ -72,13 +72,8 @@ class GraphQLError(Exception):
     GraphQLError
     """
 
-    def __init__(self, mutation, error, batch_number=None):
-        if batch_number is None:
-            super().__init__(
-                f'Mutation "{mutation}" failed with error: "{error}"')
-        else:
-            super().__init__(
-                f'Mutation "{mutation}" failed from index {100*batch_number} with error: "{error}"')
+    def __init__(self, mutation, error):
+        super().__init__(f'Mutation "{mutation}" failed with error: "{error}"')
 
 
 def format_result(name, result, _object=None):
