@@ -14,7 +14,7 @@ from .helpers import (process_append_many_to_dataset_parameters,
                       process_update_properties_in_assets_parameters)
 from ...constants import NO_ACCESS_RIGHT
 from ...orm import Asset
-from utils.pagination import _mutate_from_paginated_call
+from ...utils.pagination import _mutate_from_paginated_call
 
 
 class MutationsAsset:

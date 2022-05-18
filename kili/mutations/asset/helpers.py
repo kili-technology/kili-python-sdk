@@ -272,3 +272,4 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
     properties['should_reset_to_be_labeled_by_array'] = list(map(
         is_none_or_empty, properties['to_be_labeled_by_array']))
     return properties
+    

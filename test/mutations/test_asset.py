@@ -233,7 +233,7 @@ class TestUploadTiff(unittest.TestCase):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
 
-    def test_geotiff_upload(self):
+    def test_geotiff_upload_properties(self):
         url = 'https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif'
         downloader = LocalDownloader(self.test_dir)
         path = downloader(url)
@@ -244,7 +244,7 @@ class TestUploadTiff(unittest.TestCase):
         status_array = None
         json_content_array = None
         json_metadata_array = None
-        payload, request = process_append_many_to_dataset_parameters(
+        properties, upload_type, request = process_append_many_to_dataset_parameters(
             input_type,
             content_array,
             external_id_array,
@@ -253,12 +253,9 @@ class TestUploadTiff(unittest.TestCase):
             json_content_array,
             json_metadata_array,
         )
-        payload_content = payload['contentArray']
-        del payload['contentArray']
-        expected_payload = {'externalIDArray': external_id_array,
-                        'jsonMetadataArray': ['{}'],
-                        'uploadType': 'GEO_SATELLITE'}
-        expected_request = GQL_APPEND_MANY_FRAMES_TO_DATASET
-        assert expected_request == request, 'Requests do not match'
-        assert payload_content[0].startswith('data:image/tiff;base64,SUkqAAgABABre')
-        self.assertEqual(expected_payload, payload, 'Payloads do not match')
+        assert properties['json_metadata_array'] == ['{}']
+        assert properties['content_array'][0].startswith(
+            'data:image/tiff;base64,SUkqAAgABABre')
+        assert properties['external_id_array'] == ['bogota']
+        assert upload_type == 'GEO_SATELLITE', 'uploadType do not match'
+        assert request == GQL_APPEND_MANY_FRAMES_TO_DATASET, 'Requests do not match'
