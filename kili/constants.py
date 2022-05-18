@@ -29,3 +29,6 @@ mime_extensions_for_IV2 = {
   'URL': '',
   'VIDEO': mime_extensions['Csv'],
 }
+
+MUTATION_BATCH_SIZE = 100
+THROTTLING_DELAY = 60/250

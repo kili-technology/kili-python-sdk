@@ -3,17 +3,17 @@ Label mutations
 """
 
 from json import dumps
-from logging import warning
 from typing import List, Optional
 import warnings
-
 from typeguard import typechecked
+
 
 from ...helpers import Compatible, format_result, infer_id_from_external_id
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
                       GQL_CREATE_PREDICTIONS,
                       GQL_UPDATE_PROPERTIES_IN_LABEL)
 from ...orm import Label
+from ...utils.pagination import _mutate_from_paginated_call
 
 
 class MutationsLabel:
@@ -59,13 +59,20 @@ class MutationsLabel:
         if len(external_id_array) == 0:
             warnings.warn("Empty IDs and prediction list")
 
-        variables = {
-            'data': {'modelNameArray': model_name_array,
-                     'jsonResponseArray': [dumps(elem) for elem in json_response_array]},
-            'where': {'externalIdStrictlyIn': external_id_array, 'project': {'id': project_id}}
-        }
-        result = self.auth.client.execute(GQL_CREATE_PREDICTIONS, variables)
-        return format_result('data', result, Label)
+        properties_to_batch = {'external_id_array': external_id_array,
+                               'model_name_array': model_name_array,
+                               'json_response_array': json_response_array}
+
+        def generate_variables(batch):
+            return {
+                'data': {'modelNameArray': batch['model_name_array'],
+                         'jsonResponseArray': [dumps(elem) for elem in batch['json_response_array']]},
+                'where': {'externalIdStrictlyIn': batch['external_id_array'], 'project': {'id': project_id}}
+            }
+
+        results = _mutate_from_paginated_call(
+            self, properties_to_batch, generate_variables, GQL_CREATE_PREDICTIONS)
+        return format_result('data', results[0], Label)
 
     @Compatible(['v1', 'v2'])
     @typechecked
