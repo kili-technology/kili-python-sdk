@@ -12,7 +12,7 @@ from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...types import Asset as AssetType
 from ...orm import Asset
-from ...utils import row_generator_from_paginated_calls
+from ...utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesAsset:

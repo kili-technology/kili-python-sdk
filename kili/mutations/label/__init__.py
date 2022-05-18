@@ -7,13 +7,13 @@ from typing import List, Optional
 import warnings
 from typeguard import typechecked
 
-from kili.utils import _mutate_from_paginated_call
 
 from ...helpers import Compatible, format_result, infer_id_from_external_id
 from .queries import (GQL_APPEND_TO_LABELS, GQL_CREATE_HONEYPOT,
                       GQL_CREATE_PREDICTIONS,
                       GQL_UPDATE_PROPERTIES_IN_LABEL)
 from ...orm import Label
+from ...utils.pagination import _mutate_from_paginated_call
 
 
 class MutationsLabel:

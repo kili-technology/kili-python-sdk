@@ -1,4 +1,6 @@
-from kili.utils import row_generator_from_paginated_calls
+"""Tests for utils module"""
+
+from kili.utils.pagination import row_generator_from_paginated_calls
 from test.utils import mocked_count_method, mocked_query_method
 
 TEST_CASES = [
