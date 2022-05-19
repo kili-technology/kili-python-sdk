@@ -27,7 +27,6 @@ class QueriesProject:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.112")
     def projects(self,
                  project_id: Optional[str] = None,
                  search_query: Optional[str] = None,
@@ -63,9 +62,6 @@ class QueriesProject:
             skip: Number of projects to skip (they are ordered by their creation).
             fields: All the fields to request among the possible fields for the projects.
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project) for all possible fields.
-                Notice that the field "titleAndDescription" is deprecated since: 18/05/2022.
-                It will be removed after: 01/06/2022.
-                Fields "title" and "descritpion" have to be used instead.
             first: Maximum number of projects to return.
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the projects is returned.
@@ -81,15 +77,6 @@ class QueriesProject:
             >>> # List all my projects
             >>> kili.projects()
         """
-
-        if 'titleAndDescription' in fields:
-            message = """
-                The field "titleAndDescription" is deprecated since: 18/05/2022.
-                It will be removed after: 01/06/2022.
-                Please use "title" and "description" fields instead.
-                """
-            warnings.warn(message, DeprecationWarning)
-
         saved_args = locals()
         count_args = {
             k: v
