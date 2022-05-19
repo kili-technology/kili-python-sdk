@@ -27,7 +27,7 @@ class QueriesProject:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.112")
+    @deprecate(removed_in="2.113")
     def projects(self,
                  project_id: Optional[str] = None,
                  search_query: Optional[str] = None,
