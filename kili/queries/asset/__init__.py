@@ -6,7 +6,7 @@ from typing import Generator, List, Optional, Union
 from typeguard import typechecked
 import pandas as pd
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder, parse_category_search_query
+from ...helpers import Compatible, format_result, fragment_builder, parse_category_search_query
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...types import Asset as AssetType
 from ...orm import Asset
@@ -248,7 +248,8 @@ class QueriesAsset:
                      label_json_response_contains: Optional[List[str]] = None,
                      skipped: Optional[bool] = None,
                      updated_at_gte: Optional[str] = None,
-                     updated_at_lte: Optional[str] = None) -> int:
+                     updated_at_lte: Optional[str] = None,
+                     label_category_search: Optional[str] = None) -> int:
         """Count and return the number of assets with the given constraints.
 
         Parameters beginning with 'label_' apply to labels, others apply to assets.
@@ -314,6 +315,9 @@ class QueriesAsset:
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
+        if label_category_search:
+            parse_category_search_query(label_category_search)
+
         variables = {
             'where': {
                 'id': asset_id,
@@ -339,6 +343,7 @@ class QueriesAsset:
                     'honeypotMarkGte': label_honeypot_mark_gt,
                     'honeypotMarkLte': label_honeypot_mark_lt,
                     'jsonResponseContains': label_json_response_contains,
+                    'search': label_category_search
                 },
                 'skipped': skipped,
                 'updatedAtGte': updated_at_gte,

@@ -241,7 +241,8 @@ class QueriesLabel:
                      project_id: Optional[str] = None,
                      skipped: Optional[bool] = None,
                      type_in: Optional[List[str]] = None,
-                     user_id: Optional[str] = None) -> int:
+                     user_id: Optional[str] = None,
+                     category_search: Optional[str] = None) -> int:
         # pylint: disable=line-too-long
         """Get the number of labels for the given parameters.
 
@@ -270,6 +271,9 @@ class QueriesLabel:
         Returns:
             The number of labels with the parameters provided
         """
+        if category_search:
+            parse_category_search_query(category_search)
+
         variables = {
             'where': {
                 'id': label_id,
@@ -291,6 +295,7 @@ class QueriesLabel:
                 'honeypotMarkGte': honeypot_mark_gte,
                 'honeypotMarkLte': honeypot_mark_lte,
                 'jsonResponseContains': json_response_contains,
+                'search': category_search,
                 'skipped': skipped,
                 'typeIn': type_in,
             }

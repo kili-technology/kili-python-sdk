@@ -353,5 +353,5 @@ def parse_category_search_query(query):
     ])
     try:
         expr.parseString(query, parseAll=True)
-    except:
-        raise ValueError(f'Invalid category search query: {query}')
+    except pp.ParseException as error:
+        raise ValueError(f'Invalid category search query: {query}') from error
