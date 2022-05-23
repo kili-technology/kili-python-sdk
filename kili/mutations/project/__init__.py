@@ -307,21 +307,6 @@ class MutationsProject:
             GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
         return format_result('data', result)
 
-    @Compatible()
-    @typechecked
-    def force_project_kpis(self, project_id: str) -> None:
-        """
-        Compute KPIs for a project
-
-        Args:
-            project_id: Identifier of the project
-
-        Returns:
-            None
-        """
-        _ = QueriesAsset(self.auth).assets(project_id=project_id)
-        _ = QueriesProject(self.auth).projects(project_id=project_id)
-
     @Compatible(['v1', 'v2'])
     @typechecked
     def internal_delete_project(self, project_id: str):
