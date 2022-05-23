@@ -7,7 +7,7 @@ from typeguard import typechecked
 import pandas as pd
 
 
-from ...helpers import Compatible, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder, parse_category_search_query
 from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import gql_labels, GQL_LABELS_COUNT
@@ -56,6 +56,7 @@ class QueriesLabel:
                user_id: Optional[str] = None,
                disable_tqdm: bool = False,
                as_generator: bool = False,
+               category_search: Optional[str] = None,
                ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
@@ -95,6 +96,18 @@ class QueriesLabel:
         Examples:
             >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
             >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
+
+        !!! example "How to filter based on label categories"
+            The search query is composed of logic expressions following this format: `[Job_name].[Category_name].count [Comparaison operator] [Value]` where:
+            - Job_name is the name of the job in the interface
+            - Category_name is the name of the category in the interface for this job
+            - Comparaison operators can be : [`==`, `>=`, `<=`, `<`, `>`]
+            - Value is an interger that represent the count of such object of the given category in the label
+            These operations can be separated by OR and AND operators
+            Example:
+            - category_search: `JOB_0.OBJECT_A.count > 0`
+            - category_search: `JOB_0.OBJECT_A.count > 0 OR JOB_2.OBJECT_A.count > 0`
+            - category_search: `(JOB_0.OBJECT_A.count == 1 OR JOB_2.OBJECT_A.count > 0) AND JOB_1.OBJECT_A.count > 10`
         """
 
         saved_args = locals()
@@ -115,6 +128,9 @@ class QueriesLabel:
 
         # using tqdm with a generator is messy, so it is always disabled
         disable_tqdm = disable_tqdm or as_generator
+
+        if category_search:
+            parse_category_search_query(category_search)
 
         payload_query = {
             'where': {
@@ -138,6 +154,7 @@ class QueriesLabel:
                 'honeypotMarkLte': honeypot_mark_lte,
                 'idIn': id_contains,
                 'jsonResponseContains': json_response_contains,
+                'search': category_search,
                 'skipped': skipped,
                 'typeIn': type_in,
             },

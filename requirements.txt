@@ -1,4 +1,5 @@
 pandas
+pyparsing
 requests
 six
 tqdm
