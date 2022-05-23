@@ -2,11 +2,13 @@
 """Asset queries."""
 
 from typing import Generator, List, Optional, Union
+import warnings
 
 from typeguard import typechecked
 import pandas as pd
 
-from ...helpers import Compatible, format_result, fragment_builder, parse_category_search_query
+from ...helpers import (Compatible, deprecate, format_result,
+                        fragment_builder, parse_category_search_query)
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...types import Asset as AssetType
 from ...orm import Asset
@@ -30,6 +32,7 @@ class QueriesAsset:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def assets(self,
                asset_id: Optional[str] = None,
                project_id: Optional[str] = None,
@@ -226,6 +229,7 @@ class QueriesAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def count_assets(self, asset_id: Optional[str] = None,
                      project_id: Optional[str] = None,
                      asset_id_in: Optional[List[str]] = None,
@@ -315,6 +319,15 @@ class QueriesAsset:
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
+
+        if label_json_response_contains is not None:
+            message = """
+                The field `label_json_response_contains` is deprecated since: 2.113
+                It will be removed in: 2.115
+                Please use `label_category_search` to filter based on categories in labels
+                """
+            warnings.warn(message, DeprecationWarning)
+
         if label_category_search:
             parse_category_search_query(label_category_search)
 

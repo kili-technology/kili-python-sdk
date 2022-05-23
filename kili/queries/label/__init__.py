@@ -7,7 +7,8 @@ from typeguard import typechecked
 import pandas as pd
 
 
-from ...helpers import Compatible, format_result, fragment_builder, parse_category_search_query
+from ...helpers import (Compatible, deprecate, format_result,
+                        fragment_builder, parse_category_search_query)
 from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import gql_labels, GQL_LABELS_COUNT
@@ -33,6 +34,7 @@ class QueriesLabel:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def labels(self,
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,
@@ -226,6 +228,7 @@ class QueriesLabel:
 
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def count_labels(self,
                      asset_id: Optional[str] = None,
                      asset_status_in: Optional[List[str]] = None,
@@ -271,6 +274,15 @@ class QueriesLabel:
         Returns:
             The number of labels with the parameters provided
         """
+
+        if json_response_contains is not None:
+            message = """
+                The field `json_response_contains` is deprecated since: 2.113
+                It will be removed in: 2.115
+                Please use `category_search` to filter based on categories in labels
+                """
+            warnings.warn(message, DeprecationWarning)
+
         if category_search:
             parse_category_search_query(category_search)
 
