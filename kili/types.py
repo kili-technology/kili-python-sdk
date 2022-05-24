@@ -118,7 +118,6 @@ class ProjectWithoutDataset:
     roles = ProjectUserWithoutProject
     shouldRelaunchKpiComputation = 'shouldRelaunchKpiComputation'
     title = 'title'
-    titleAndDescription = 'titleAndDescription'
     updatedAt = 'updatedAt'
     useHoneyPot = 'useHoneyPot'
 
