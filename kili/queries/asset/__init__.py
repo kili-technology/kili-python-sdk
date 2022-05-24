@@ -140,17 +140,23 @@ class QueriesAsset:
                 have key "key2" with a value between 2 and 10.
 
         !!! example "How to filter based on label categories"
-            The search query is composed of logic expressions following this format:
-                `[Job_name].[Category_name].count [Comparaison operator] [Value]` where:
-            - Job_name is the name of the job in the interface
-            - Category_name is the name of the category in the interface for this job
-            - Comparaison operators can be : [`==`, `>=`, `<=`, `<`, `>`]
-            - Value is an interger that represent the count of such object of the given category in the label
+            The search query is composed of logical expressions following this format:
+
+                [job_name].[category_name].count [comparaison_operator] [value]
+            where:
+
+            - `[job_name]` is the name of the job in the interface
+            - `[category_name]` is the name of the category in the interface for this job
+            - `[comparaison_operator]` can be one of: [`==`, `>=`, `<=`, `<`, `>`]
+            - `[value]` is an integer that represents the count of such objects of the given category in the label
+
             These operations can be separated by OR and AND operators
+
             Example:
-            - label_category_search: `JOB_0.OBJECT_A.count > 0`
-            - label_category_search: `JOB_0.OBJECT_A.count > 0 OR JOB_2.OBJECT_A.count > 0`
-            - label_category_search: `(JOB_0.OBJECT_A.count == 1 OR JOB_2.OBJECT_A.count > 0) AND JOB_1.OBJECT_A.count > 10`
+
+                label_category_search = `JOB_0.OBJECT_A.count > 0`
+                label_category_search = `JOB_0.OBJECT_A.count > 0 OR JOB_2.OBJECT_A.count > 0`
+                label_category_search = `(JOB_0.OBJECT_A.count == 1 OR JOB_2.OBJECT_A.count > 0) AND JOB_1.OBJECT_A.count > 10`
         """
         if format == "pandas" and as_generator:
             raise ValueError(
