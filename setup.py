@@ -31,6 +31,7 @@ setup(
                       "six",
                       "tqdm",
                       "typeguard",
+                      "pyparsing",
                       "websocket-client"],
 
     # Taking into account MANIFEST.in
