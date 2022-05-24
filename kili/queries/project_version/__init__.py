@@ -47,7 +47,7 @@ class QueriesProjectVersion:
 
         Args:
             fields: All the fields to request among the possible fields for the project versions
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectVersions) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectVersions) for all possible fields.
             first: Number of project versions to query
             project_id: Filter on Id of project
             skip: Number of project versions to skip (they are ordered by their date

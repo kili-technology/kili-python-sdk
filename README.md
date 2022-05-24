@@ -15,7 +15,7 @@ Kili is a platform that empowers a data-centric approach to Machine Learning thr
 | :-----------------------------------------: | :---------------------------------: | :---------------------------------: |
 | ![](./recipes/img/relations-extraction.png) | ![](./recipes/img/pdf_classif.png)  | ![](./recipes/img/bounding-box.jpg) |
 
-and [many more](https://cloud.kili-technology.com/docs/labeling/labeling-overview/#available-labeling-job-types-per-asset-type-a-idjob-types-per-asset-typea).
+and [many more](https://docs.kili-technology.com/docs/labeling-overview).
 
 ## What is Kili Python SDK?
 
@@ -169,4 +169,4 @@ You can find all several recipes in this [folder](/recipes/). Among them:
 - [How to query data through the API](recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb))
 - [How to use AutoML for faster labeling with Kili](recipes/automl_text_classification.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/automl_text_classification.ipynb))
 
-For more details, read the [technical documentation](https://cloud.kili-technology.com/docs/python-graphql-api/python-api).
+For more details, read the [SDK reference](https://python-sdk-docs.kili-technology.com) or the [Kili documentation](https://docs.kili-technology.com/docs)

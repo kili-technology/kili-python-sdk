@@ -61,8 +61,7 @@ class KiliAuth:
             api_endpoint, self.session, verify=self.verify)
         if api_key is None:
             message = 'You need to provide an API KEY to connect.' \
-                ' Visit https://cloud.kili-technology.com/docs/python-graphql-api' \
-                '/authentication/#generate-an-api-key'
+                ' Visit https://docs.kili-technology.com/reference/creating-an-api-key'
             warnings.warn(message, UserWarning)
         self.client.inject_token('X-API-Key: ' + api_key)
 
