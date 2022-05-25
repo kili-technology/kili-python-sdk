@@ -47,7 +47,7 @@ class QueriesIssue:
 
         Args:
             fields: All the fields to request among the possible fields for the assets.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#issue) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#issue) for all possible fields.
             first: Maximum number of issues to return.
             project_id: Project ID the issue belongs to.
             skip: Number of issues to skip (they are ordered by their date of creation, first to last).

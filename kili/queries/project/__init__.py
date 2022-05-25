@@ -61,7 +61,7 @@ class QueriesProject:
             updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.
             skip: Number of projects to skip (they are ordered by their creation).
             fields: All the fields to request among the possible fields for the projects.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#project) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#project) for all possible fields.
             first: Maximum number of projects to return.
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the projects is returned.
