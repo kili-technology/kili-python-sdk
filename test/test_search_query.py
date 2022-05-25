@@ -1,6 +1,8 @@
+"""Tests for category search validation"""
+
 import pytest
 
-from kili.helpers import parse_category_search_query
+from kili.helpers import validate_category_search_query
 
 TEST_CASES = [
     {
@@ -46,6 +48,6 @@ def test_category_search_queries():
             'query'), test.get('raise_error'),
         if raise_error:
             with pytest.raises(ValueError):
-                parse_category_search_query(query)
+                validate_category_search_query(query)
         else:
-            parse_category_search_query(query)
+            validate_category_search_query(query)

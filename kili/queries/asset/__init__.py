@@ -8,7 +8,7 @@ from typeguard import typechecked
 import pandas as pd
 
 from ...helpers import (Compatible, deprecate, format_result,
-                        fragment_builder, parse_category_search_query)
+                        fragment_builder, validate_category_search_query)
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...types import Asset as AssetType
 from ...orm import Asset
@@ -154,9 +154,9 @@ class QueriesAsset:
 
             Example:
 
-                label_category_search = `JOB_0.OBJECT_A.count > 0`
-                label_category_search = `JOB_0.OBJECT_A.count > 0 OR JOB_2.OBJECT_A.count > 0`
-                label_category_search = `(JOB_0.OBJECT_A.count == 1 OR JOB_2.OBJECT_A.count > 0) AND JOB_1.OBJECT_A.count > 10`
+                label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0`
+                label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
+                label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
         if format == "pandas" and as_generator:
             raise ValueError(
@@ -169,7 +169,7 @@ class QueriesAsset:
         # using tqdm with a generator is messy, so it is always disabled
         disable_tqdm = disable_tqdm or as_generator
         if label_category_search:
-            parse_category_search_query(label_category_search)
+            validate_category_search_query(label_category_search)
 
         payload_query = {
             'where': {
@@ -312,9 +312,9 @@ class QueriesAsset:
                 or an error message.
 
         Examples:
-            >> > kili.count_assets(project_id=project_id)
+            >>> kili.count_assets(project_id=project_id)
             250
-            >> > kili.count_assets(asset_id=asset_id)
+            >>> kili.count_assets(asset_id=asset_id)
             1
 
         !!! example "How to filter based on Metadata"
@@ -335,7 +335,7 @@ class QueriesAsset:
             warnings.warn(message, DeprecationWarning)
 
         if label_category_search:
-            parse_category_search_query(label_category_search)
+            validate_category_search_query(label_category_search)
 
         variables = {
             'where': {

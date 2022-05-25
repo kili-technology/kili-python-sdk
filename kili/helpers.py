@@ -335,10 +335,13 @@ def infer_id_from_external_id(kili, asset_id: str, external_id: str, project_id:
     return assets[0]['id']
 
 
-def parse_category_search_query(query):
-    """Parse the category search query to assess its validity
+def validate_category_search_query(query):
+    """Validate the category search query
     Args:
         query: the query to parse
+
+    Raises:
+        ValueError: if `query` is invalid
     """
     operator = pp.oneOf(">= <= > < ==")
     number = pp.pyparsing_common.number()

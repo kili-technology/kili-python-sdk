@@ -8,7 +8,7 @@ import pandas as pd
 
 
 from ...helpers import (Compatible, deprecate, format_result,
-                        fragment_builder, parse_category_search_query)
+                        fragment_builder, validate_category_search_query)
 from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import gql_labels, GQL_LABELS_COUNT
@@ -114,9 +114,9 @@ class QueriesLabel:
 
             Example:
 
-                category_search = `JOB_0.OBJECT_A.count > 0`
-                category_search = `JOB_0.OBJECT_A.count > 0 OR JOB_2.OBJECT_A.count > 0`
-                category_search = `(JOB_0.OBJECT_A.count == 1 OR JOB_2.OBJECT_A.count > 0) AND JOB_1.OBJECT_A.count > 10`
+                category_search = `JOB_CLASSIF.CATEGORY_A.count > 0`
+                category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
+                category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
 
         saved_args = locals()
@@ -139,7 +139,7 @@ class QueriesLabel:
         disable_tqdm = disable_tqdm or as_generator
 
         if category_search:
-            parse_category_search_query(category_search)
+            validate_category_search_query(category_search)
 
         payload_query = {
             'where': {
@@ -291,7 +291,7 @@ class QueriesLabel:
             warnings.warn(message, DeprecationWarning)
 
         if category_search:
-            parse_category_search_query(category_search)
+            validate_category_search_query(category_search)
 
         variables = {
             'where': {
