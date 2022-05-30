@@ -2,11 +2,13 @@
 """Asset queries."""
 
 from typing import Generator, List, Optional, Union
+import warnings
 
 from typeguard import typechecked
 import pandas as pd
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import (Compatible, deprecate, format_result,
+                        fragment_builder, validate_category_search_query)
 from .queries import gql_assets, GQL_ASSETS_COUNT
 from ...types import Asset as AssetType
 from ...orm import Asset
@@ -30,6 +32,7 @@ class QueriesAsset:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def assets(self,
                asset_id: Optional[str] = None,
                project_id: Optional[str] = None,
@@ -72,6 +75,7 @@ class QueriesAsset:
                updated_at_gte: Optional[str] = None,
                updated_at_lte: Optional[str] = None,
                as_generator: bool = False,
+               label_category_search: Optional[str] = None,
                ) -> Union[List[dict], Generator[dict, None, None], pd.DataFrame]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
@@ -109,6 +113,7 @@ class QueriesAsset:
             format: If equal to 'pandas', returns a pandas DataFrame
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the assets is returned.
+            label_category_search: Returned assets should have a label that follows this category search query.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -119,9 +124,11 @@ class QueriesAsset:
 
         Example:
             ```
-            >>> kili.assets(project_id=project_id) # returns the assets list of the project
+            # returns the assets list of the project
+            >>> kili.assets(project_id=project_id)
             >>> kili.assets(asset_id=asset_id)
-            >>> kili.assets(project_id=project_id, as_generator=True) # returns a generator of the project assets
+            # returns a generator of the project assets
+            >>> kili.assets(project_id=project_id, as_generator=True)
             ```
 
         !!! example "How to filter based on Metadata"
@@ -132,6 +139,24 @@ class QueriesAsset:
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
 
+        !!! example "How to filter based on label categories"
+            The search query is composed of logical expressions following this format:
+
+                [job_name].[category_name].count [comparaison_operator] [value]
+            where:
+
+            - `[job_name]` is the name of the job in the interface
+            - `[category_name]` is the name of the category in the interface for this job
+            - `[comparaison_operator]` can be one of: [`==`, `>=`, `<=`, `<`, `>`]
+            - `[value]` is an integer that represents the count of such objects of the given category in the label
+
+            These operations can be separated by OR and AND operators
+
+            Example:
+
+                label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0`
+                label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
+                label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
         if format == "pandas" and as_generator:
             raise ValueError(
@@ -143,6 +168,8 @@ class QueriesAsset:
 
         # using tqdm with a generator is messy, so it is always disabled
         disable_tqdm = disable_tqdm or as_generator
+        if label_category_search:
+            validate_category_search_query(label_category_search)
 
         payload_query = {
             'where': {
@@ -169,6 +196,7 @@ class QueriesAsset:
                     'honeypotMarkGte': label_honeypot_mark_gt,
                     'honeypotMarkLte': label_honeypot_mark_lt,
                     'jsonResponseContains': label_json_response_contains,
+                    'search': label_category_search
                 },
                 'skipped': skipped,
                 'updatedAtGte': updated_at_gte,
@@ -207,6 +235,7 @@ class QueriesAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def count_assets(self, asset_id: Optional[str] = None,
                      project_id: Optional[str] = None,
                      asset_id_in: Optional[List[str]] = None,
@@ -229,7 +258,8 @@ class QueriesAsset:
                      label_json_response_contains: Optional[List[str]] = None,
                      skipped: Optional[bool] = None,
                      updated_at_gte: Optional[str] = None,
-                     updated_at_lte: Optional[str] = None) -> int:
+                     updated_at_lte: Optional[str] = None,
+                     label_category_search: Optional[str] = None) -> int:
         """Count and return the number of assets with the given constraints.
 
         Parameters beginning with 'label_' apply to labels, others apply to assets.
@@ -242,8 +272,8 @@ class QueriesAsset:
                 that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
             status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
-            consensus_mark_gt:Minimum amount of consensus for the asset.
+                Possible choices: `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
+            consensus_mark_gt: Minimum amount of consensus for the asset.
             consensus_mark_lt: Maximum amount of consensus for the asset.
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
             honeypot_mark_lt: Maximum amount of consensus for the asset.
@@ -295,6 +325,18 @@ class QueriesAsset:
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
+
+        if label_json_response_contains is not None:
+            message = """
+                The field `label_json_response_contains` is deprecated since: 2.113
+                It will be removed in: 2.115
+                Please use `label_category_search` to filter based on categories in labels
+                """
+            warnings.warn(message, DeprecationWarning)
+
+        if label_category_search:
+            validate_category_search_query(label_category_search)
+
         variables = {
             'where': {
                 'id': asset_id,
@@ -320,6 +362,7 @@ class QueriesAsset:
                     'honeypotMarkGte': label_honeypot_mark_gt,
                     'honeypotMarkLte': label_honeypot_mark_lt,
                     'jsonResponseContains': label_json_response_contains,
+                    'search': label_category_search
                 },
                 'skipped': skipped,
                 'updatedAtGte': updated_at_gte,

@@ -7,7 +7,8 @@ from typeguard import typechecked
 import pandas as pd
 
 
-from ...helpers import Compatible, format_result, fragment_builder
+from ...helpers import (Compatible, deprecate, format_result,
+                        fragment_builder, validate_category_search_query)
 from ..asset import QueriesAsset
 from ..project import QueriesProject
 from .queries import gql_labels, GQL_LABELS_COUNT
@@ -33,6 +34,7 @@ class QueriesLabel:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def labels(self,
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,
@@ -56,6 +58,7 @@ class QueriesLabel:
                user_id: Optional[str] = None,
                disable_tqdm: bool = False,
                as_generator: bool = False,
+               category_search: Optional[str] = None,
                ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
@@ -95,6 +98,25 @@ class QueriesLabel:
         Examples:
             >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
             >>> kili.labels(project_id=project_id, fields=['jsonResponse'], as_generator=True) # returns a generator of all labels of a project
+
+        !!! example "How to filter based on label categories"
+            The search query is composed of logical expressions following this format:
+
+                [job_name].[category_name].count [comparaison_operator] [value]
+            where:
+
+            - `[job_name]` is the name of the job in the interface
+            - `[category_name]` is the name of the category in the interface for this job
+            - `[comparaison_operator]` can be one of: [`==`, `>=`, `<=`, `<`, `>`]
+            - `[value]` is an integer that represents the count of such objects of the given category in the label
+
+            These operations can be separated by OR and AND operators
+
+            Example:
+
+                category_search = `JOB_CLASSIF.CATEGORY_A.count > 0`
+                category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
+                category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
 
         saved_args = locals()
@@ -115,6 +137,9 @@ class QueriesLabel:
 
         # using tqdm with a generator is messy, so it is always disabled
         disable_tqdm = disable_tqdm or as_generator
+
+        if category_search:
+            validate_category_search_query(category_search)
 
         payload_query = {
             'where': {
@@ -138,6 +163,7 @@ class QueriesLabel:
                 'honeypotMarkLte': honeypot_mark_lte,
                 'idIn': id_contains,
                 'jsonResponseContains': json_response_contains,
+                'search': category_search,
                 'skipped': skipped,
                 'typeIn': type_in,
             },
@@ -209,6 +235,7 @@ class QueriesLabel:
 
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.115")
     def count_labels(self,
                      asset_id: Optional[str] = None,
                      asset_status_in: Optional[List[str]] = None,
@@ -224,7 +251,8 @@ class QueriesLabel:
                      project_id: Optional[str] = None,
                      skipped: Optional[bool] = None,
                      type_in: Optional[List[str]] = None,
-                     user_id: Optional[str] = None) -> int:
+                     user_id: Optional[str] = None,
+                     category_search: Optional[str] = None) -> int:
         # pylint: disable=line-too-long
         """Get the number of labels for the given parameters.
 
@@ -253,6 +281,18 @@ class QueriesLabel:
         Returns:
             The number of labels with the parameters provided
         """
+
+        if json_response_contains is not None:
+            message = """
+                The field `json_response_contains` is deprecated since: 2.113
+                It will be removed in: 2.115
+                Please use `category_search` to filter based on categories in labels
+                """
+            warnings.warn(message, DeprecationWarning)
+
+        if category_search:
+            validate_category_search_query(category_search)
+
         variables = {
             'where': {
                 'id': label_id,
@@ -274,6 +314,7 @@ class QueriesLabel:
                 'honeypotMarkGte': honeypot_mark_gte,
                 'honeypotMarkLte': honeypot_mark_lte,
                 'jsonResponseContains': json_response_contains,
+                'search': category_search,
                 'skipped': skipped,
                 'typeIn': type_in,
             }

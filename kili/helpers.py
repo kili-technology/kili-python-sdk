@@ -9,6 +9,7 @@ from json import dumps, loads
 import re
 import warnings
 import mimetypes
+import pyparsing as pp
 
 import requests
 
@@ -332,3 +333,28 @@ def infer_id_from_external_id(kili, asset_id: str, external_id: str, project_id:
             f'Several assets found containing external ID "{external_id}":'
             f' {assets}. Please, use asset ID instead.')
     return assets[0]['id']
+
+
+def validate_category_search_query(query):
+    """Validate the category search query
+    Args:
+        query: the query to parse
+
+    Raises:
+        ValueError: if `query` is invalid
+    """
+    operator = pp.oneOf(">= <= > < ==")
+    number = pp.pyparsing_common.number()
+    dot = '.'
+    word = pp.Word(pp.alphas, pp.alphanums + "_-*")
+    identifier = word + dot + word + dot + 'count'
+    condition = identifier + operator + number
+
+    expr = pp.infixNotation(condition, [
+        ("AND", 2, pp.opAssoc.LEFT, ),
+        ("OR", 2, pp.opAssoc.LEFT, ),
+    ])
+    try:
+        expr.parseString(query, parseAll=True)
+    except pp.ParseException as error:
+        raise ValueError(f'Invalid category search query: {query}') from error
