@@ -1,0 +1,16 @@
+name: pyright
+
+on: [push, pull_request]
+
+jobs:
+  pyright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.7"
+      - name: Install pyright
+        run: pip install pyright && pip install -r requirements.txt -q
+      - name: Run pyright
+        run: pyright .
