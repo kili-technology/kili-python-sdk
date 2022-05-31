@@ -13,7 +13,7 @@ from kili.helpers import GraphQLError
 
 def row_generator_from_paginated_calls(
     skip: int,
-    first: int,
+    first: Optional[int],
     count_method: Callable[..., int],
     count_kwargs: dict,
     paged_call_method: Callable[..., List[dict]],
@@ -110,7 +110,7 @@ def batch_object_builder(
 
 
 def _mutate_from_paginated_call(self,
-                                properties_to_batch: Dict[str, Optional[list]],
+                                properties_to_batch: Dict[str, Optional[List[str]]],
                                 generate_variables: Callable,
                                 request: str,
                                 batch_size: int = MUTATION_BATCH_SIZE):

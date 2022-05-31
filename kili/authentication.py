@@ -3,6 +3,7 @@
 import os
 import warnings
 from datetime import datetime, timedelta
+from typing import List, cast
 
 import requests
 
@@ -54,7 +55,7 @@ class KiliAuth:
                 'mismatch or the app might be in deployment'
             warnings.warn(message, UserWarning)
 
-        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type: ignore
         self.session.mount('https://', adapter)
         self.session.mount('http://', adapter)
         self.client = GraphQLClient(
@@ -100,8 +101,8 @@ class KiliAuth:
         duration_days = 365
         warn_days = 30
         queries = QueriesApiKey(self)
-        key_object = queries.api_keys(api_key=api_key, fields=[
-                                      'createdAt'], disable_tqdm=True)
+        key_object = cast(List[dict], queries.api_keys(api_key=api_key, fields=[
+                                      'createdAt'], disable_tqdm=True))
         key_creation = datetime.strptime(
             key_object[0]['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
         key_expiry = key_creation + timedelta(days=duration_days)
@@ -113,7 +114,7 @@ Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
 You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning)
 
-    def get_user(self):
+    def get_user(self) -> dict:
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
         return format_result('data', result)

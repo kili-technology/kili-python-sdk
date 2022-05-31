@@ -2,7 +2,7 @@
 Asset mutations
 """
 
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict, cast
 from typeguard import typechecked
 
 
@@ -90,7 +90,7 @@ class MutationsAsset:
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
         kili = QueriesProject(self.auth)
-        projects = kili.projects(project_id, disable_tqdm=True)
+        projects = cast(List[Dict], kili.projects(project_id, disable_tqdm=True))
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
         properties_to_batch, upload_type, request = process_append_many_to_dataset_parameters(input_type,
@@ -245,7 +245,9 @@ class MutationsAsset:
             return {'where': {'idIn': batch['asset_ids']}}
 
         results = _mutate_from_paginated_call(self,
-                                              properties_to_batch,
+                                              cast(
+                                                  Dict[str, Optional[List[str]]],
+                                                  properties_to_batch),
                                               generate_variables,
                                               GQL_DELETE_MANY_FROM_DATASET)
         return format_result('data', results[0], Asset)

@@ -8,9 +8,10 @@ import random
 import string
 import threading
 import time
+from urllib import request as urllib_request
+from urllib import error as urllib_error
 import websocket
 
-from six.moves import urllib
 
 from . import __version__
 
@@ -61,6 +62,8 @@ class GraphQLClient:
                    'Content-Type': 'application/json'}
 
         if self.token is not None:
+            if self.headername is None:
+                raise Exception("Header name must be defined")
             headers[self.headername] = f'{self.token}'
 
         if self.session is not None:
@@ -79,13 +82,13 @@ class GraphQLClient:
                     raise Exception(req.content) from exception
                 raise exception
 
-        req = urllib.request.Request(
+        req = urllib_request.Request(
             self.endpoint, json.dumps(data).encode('utf-8'), headers)
         try:
-            with urllib.request.urlopen(req) as response:
+            with urllib_request.urlopen(req) as response:
                 str_json = response.read().decode('utf-8')
                 return json.loads(str_json)
-        except urllib.error.HTTPError as error:
+        except urllib_error.HTTPError as error:
             print((error.read()))
             print('')
             raise error

@@ -5,7 +5,7 @@ import csv
 import os
 from json import dumps
 from uuid import uuid4
-from typing import List, Union
+from typing import List, Union, Optional, Tuple, cast
 import mimetypes
 
 from ...constants import mime_extensions_for_IV2
@@ -15,7 +15,7 @@ from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_APPEND_MANY_FRAMES_TO_DATASET)
 
 
-def encode_object_if_not_url(content, input_type):
+def encode_object_if_not_url(content, input_type) -> Optional[str]:
     """
     Return the object if it is a url, else it should be a path to a file.
     In that case, the file is returned as a base64 string
@@ -72,22 +72,38 @@ def process_json_content(input_type: str,
 
 def process_content(input_type: str,
                     content_array: Union[List[str], None],
-                    json_content_array: Union[List[List[Union[dict, str]]], None]):
+                    json_content_array: Union[List[List[Union[dict, str]]], None]) \
+                        -> Optional[List[Optional[str]]]:
     """
     Process the array of contents
     """
-    if input_type in ['IMAGE', 'PDF']:
-        return [content if is_url(content) else (content
-            if (json_content_array is not None and json_content_array[i] is not None)
-            else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
-            for i, content in enumerate(content_array)]
-    if input_type == 'FRAME' and json_content_array is None:
-        content_array = [encode_object_if_not_url(content, input_type) for content in content_array]
-    if input_type == 'TIME_SERIES':
-        content_array = list(map(process_time_series, content_array))
-    return content_array
+    if content_array is None:
+        return None
 
-def process_time_series(content: str) -> Union[str, None]:
+    content_array_tmp: List[Optional[str]] = []
+    if input_type in ['IMAGE', 'PDF']:
+        for i, content in enumerate(content_array):
+            if is_url(content):
+                content_array_tmp.append(content)
+            else:
+                if (json_content_array is not None and json_content_array[i] is not None):
+                    content_array_tmp.append(content)
+                else:
+                    if check_file_mime_type(content, input_type):
+                        content_array_tmp.append(encode_base64(content))
+                    else:
+                        content_array_tmp.append(None)
+
+    if input_type == 'FRAME' and json_content_array is None:
+        for content in content_array:
+            encoded = encode_object_if_not_url(content, input_type)
+            content_array_tmp.append(encoded)
+
+    if input_type == 'TIME_SERIES':
+        content_array_tmp = list(map(process_time_series, content_array))
+    return content_array_tmp
+
+def process_time_series(content: str) -> Optional[str]:
     """
     Process the content for TIME_SERIES projects: if it is a file, read the content
     and also check if the content corresponds to the expected format, else return None
@@ -103,7 +119,7 @@ def process_time_series(content: str) -> Union[str, None]:
     reader = csv.reader(content.split('\n'), delimiter=',')
     return process_csv_content(reader, delimiter=delimiter)
 
-def process_csv_content(reader, file_name = None, delimiter=',') -> bool:
+def process_csv_content(reader, file_name = None, delimiter=',') -> Optional[str]:
     """
     Process the content of csv for time_series and check if it corresponds to the expected format
     """
@@ -164,14 +180,16 @@ def add_video_parameters(json_metadata, should_use_native_video):
     return {**json_metadata, 'processingParameters': processing_parameters}
 
 
-def process_metadata(input_type: str, content_array: Union[List[str], None],
+def process_metadata(input_type: str, content_array:  Union[List[str], None],
                      json_content_array: Union[List[List[Union[dict, str]]], None],
                      json_metadata_array: Union[List[dict], None]):
     """
     Process the metadata of each asset
     """
+
     json_metadata_array = [
-        {}] * len(content_array) if json_metadata_array is None else json_metadata_array
+        {}] * len(cast(List[str],content_array)) \
+            if json_metadata_array is None else json_metadata_array
     if input_type == 'FRAME':
         should_use_native_video = json_content_array is None
         json_metadata_array = [add_video_parameters(
@@ -184,7 +202,7 @@ def get_request_to_execute(
     json_metadata_array: Union[List[dict], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     mime_type: Union[str, None]
-) -> str:
+) -> Tuple[str, Optional[str]]:
     """
     Selects the right query to run versus the data given
     """
@@ -209,9 +227,9 @@ def process_append_many_to_dataset_parameters(
         input_type: str,
         content_array: Union[List[str], None],
         external_id_array: Union[List[str], None],
-        is_honeypot_array: Union[List[str], None],
+        is_honeypot_array: Union[List[bool], None],
         status_array: Union[List[str], None],
-        json_content_array: Union[List[List[Union[dict, str]]], None],
+        json_content_array: Union[List[Union[dict, str]], None], # wtf ?
         json_metadata_array: Union[List[dict], None]
 ):
     """
@@ -221,6 +239,7 @@ def process_append_many_to_dataset_parameters(
         raise ValueError(
             "Variables content_array and json_content_array cannot be both None.")
     if content_array is None:
+        json_content_array = cast(List[List[Union[dict, str]]], json_content_array)
         content_array = [''] * len(json_content_array)
     if external_id_array is None:
         external_id_array = [
@@ -232,7 +251,7 @@ def process_append_many_to_dataset_parameters(
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array)
     mime_type = get_file_mimetype(content_array, json_content_array)
-    content_array = process_content(
+    processed_content_array = process_content(
         input_type, content_array, json_content_array)
     formatted_json_content_array = process_json_content(
         input_type, content_array, json_content_array)
@@ -240,7 +259,7 @@ def process_append_many_to_dataset_parameters(
     request, upload_type = get_request_to_execute(
         input_type, json_metadata_array, json_content_array, mime_type)
     properties = {
-        'content_array': content_array,
+        'content_array': processed_content_array,
         'external_id_array': external_id_array,
         'is_honeypot_array': is_honeypot_array,
         'status_array': status_array,
@@ -272,4 +291,3 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
     properties['should_reset_to_be_labeled_by_array'] = list(map(
         is_none_or_empty, properties['to_be_labeled_by_array']))
     return properties
-    

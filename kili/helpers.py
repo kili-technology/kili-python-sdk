@@ -36,6 +36,7 @@ class Compatible():
         address_matched = self.address_extractor.search(endpoint)
         if not version_matched and not address_matched:
             return False
+        version = ''
         if address_matched:
             version = 'v1' if address_matched.group() == ':4000/' else 'v2'
         if version_matched:
@@ -134,14 +135,14 @@ def encode_base64(path):
             base64.b64encode(image_file.read()).decode('ascii')
 
 
-def is_url(path):
+def is_url(path) -> bool:
     """
     Check if the path is a url or something else
 
     Args:
         path: path of the file
     """
-    return isinstance(path, str) and re.match(r'^(http://|https://)', path.lower())
+    return isinstance(path, str) and bool(re.search(r'^(http://|https://)', path.lower()))
 
 
 def format_json_dict(result):
