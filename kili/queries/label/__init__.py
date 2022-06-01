@@ -1,6 +1,6 @@
 """Label queries."""
 
-from typing import Generator, List, Optional, Union
+from typing import Generator, List, Optional, Union, cast, Dict
 import warnings
 
 from typeguard import typechecked
@@ -231,7 +231,7 @@ class QueriesLabel:
         Returns:
             pandas DataFrame containing the labels.
         """
-        projects = QueriesProject(self.auth).projects(project_id)
+        projects = cast(List[Dict], QueriesProject(self.auth).projects(project_id))
         assert len(projects) == 1, NO_ACCESS_RIGHT
         assets = QueriesAsset(self.auth).assets(
             project_id=project_id,
