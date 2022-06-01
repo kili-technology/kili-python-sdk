@@ -76,7 +76,7 @@ json_interface = {
         }
     }
 }
-project = kili.create_project(
+project_id = kili.create_project(
         title="Color classification",
         description="Project ",
         input_type="IMAGE",
