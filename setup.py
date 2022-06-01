@@ -27,6 +27,7 @@ setup(
     long_description_content_type="text/markdown",
 
     install_requires=["pandas",
+                      "click",
                       "requests",
                       "six",
                       "tqdm",
@@ -72,8 +73,7 @@ setup(
     # created automatically.
     # The syntax is "nom-de-commande-a-creer = package.module:fonction".
     entry_points={
-        'console_scripts': [
-        ],
+        'console_scripts': ["kili=kili.cli:main"],
     },
 
 )
