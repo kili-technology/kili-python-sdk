@@ -130,7 +130,7 @@ class QueriesOrganization:
 
     @Compatible(['v2'])
     @typechecked
-    def organization_metrics(self, organization_id: str = None,
+    def organization_metrics(self, organization_id: Optional[str] = None,
                              start_date: datetime = datetime.now(),
                              end_date: datetime = datetime.now()):
         """Get organization metrics.
