@@ -91,7 +91,7 @@ class QueriesLock:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def count_locks(self: any) -> int:
+    def count_locks(self) -> int:
         """Get the number of locks
 
         Args:
