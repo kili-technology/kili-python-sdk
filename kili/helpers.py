@@ -38,6 +38,7 @@ class Compatible():
         address_matched = self.address_extractor.search(endpoint)
         if not version_matched and not address_matched:
             return False
+        version = ""
         if address_matched:
             version = 'v1' if address_matched.group() == ':4000/' else 'v2'
         if version_matched:
