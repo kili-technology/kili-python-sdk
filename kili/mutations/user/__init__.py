@@ -1,6 +1,6 @@
 """User mutations."""
 
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from typeguard import typechecked
 
@@ -26,9 +26,9 @@ class MutationsUser:
     @Compatible(['v1', 'v2'])
     @typechecked
     def create_user(self,
-                    email: str = None,
-                    password: str = None,
-                    organization_role: str = None,
+                    email: Optional[str] = None,
+                    password: Optional[str] = None,
+                    organization_role: Optional[str] = None,
                     firstname: Optional[str] = None,
                     lastname: Optional[str] = None):
         """Add a user to your organization.
@@ -126,7 +126,7 @@ class MutationsUser:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        variables = {
+        variables: Dict[str, Any] = {
             'email': email,
         }
         if firstname is not None:

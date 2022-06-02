@@ -216,7 +216,7 @@ def process_append_many_to_dataset_parameters(
         input_type: str,
         content_array: Union[List[str], None],
         external_id_array: Union[List[str], None],
-        is_honeypot_array: Union[List[str], None],
+        is_honeypot_array: Union[List[bool], None],
         status_array: Union[List[str], None],
         json_content_array: Union[List[List[Union[dict, str]]], None],
         json_metadata_array: Union[List[dict], None]

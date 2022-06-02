@@ -2,7 +2,7 @@
 Asset mutations
 """
 
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union, Dict, cast
 from typeguard import typechecked
 
 
@@ -92,7 +92,7 @@ class MutationsAsset:
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
         kili = QueriesProject(self.auth)
-        projects = kili.projects(project_id, disable_tqdm=True)
+        projects = cast(List[Dict], kili.projects(project_id, disable_tqdm=True))
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]['inputType']
         properties_to_batch, upload_type, request = process_append_many_to_dataset_parameters(input_type,
@@ -244,7 +244,7 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        properties_to_batch = {'asset_ids': asset_ids}
+        properties_to_batch: Dict[str, Optional[List[Any]]] = {'asset_ids': asset_ids}
 
         def generate_variables(batch):
             return {'where': {'idIn': batch['asset_ids']}}

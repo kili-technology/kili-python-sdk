@@ -1,7 +1,7 @@
 """
 Utils
 """
-from typing import Dict, List, Callable, Optional, Generator
+from typing import Dict, List, Callable, Optional, Generator, Any, cast
 import time
 from tqdm import tqdm
 
@@ -86,8 +86,9 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
 
 
 def batch_object_builder(
-        properties_to_batch: Dict[str, Optional[list]],
-        batch_size: int = MUTATION_BATCH_SIZE) -> Generator[Dict[str, Optional[list]], None, None]:
+        properties_to_batch: Dict[str, Optional[List[Any]]],
+        batch_size: int = MUTATION_BATCH_SIZE) \
+        -> Generator[Dict[str, Optional[List[Any]]], None, None]:
     """Generate a paginated iterator for several variables
     Args:
         properties_to_batch: a dictionnary of properties to be batched.
@@ -102,14 +103,14 @@ def batch_object_builder(
     batched_properties = {k: (batch_iterator_builder(v, batch_size) if v is not None
                               else (item for item in [v]*number_of_batches))
                           for k, v in properties_to_batch.items()}
-    batch_object_iterator = [dict(zip(batched_properties, t))
+    batch_object_iterator = [cast(Dict[str, Optional[List[Any]]], dict(zip(batched_properties, t)))
                              for t in zip(*batched_properties.values())]
     for batch in batch_object_iterator:
         yield batch
 
 
 def _mutate_from_paginated_call(self,
-                                properties_to_batch: Dict[str, Optional[list]],
+                                properties_to_batch: Dict[str, Optional[List[Any]]],
                                 generate_variables: Callable,
                                 request: str,
                                 batch_size: int = MUTATION_BATCH_SIZE):
