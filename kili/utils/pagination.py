@@ -12,13 +12,13 @@ from kili.exceptions import GraphQLError
 
 
 def row_generator_from_paginated_calls(
-    skip: int,
+    skip: Optional[int],
     first: Optional[int],
     count_method: Callable[..., int],
     count_kwargs: dict,
     paged_call_method: Callable[..., List[dict]],
     paged_call_payload: dict,
-    fields: List[str],
+    fields: Optional[List[str]],
     disable_tqdm: bool,
 ):
     """
@@ -52,7 +52,7 @@ def row_generator_from_paginated_calls(
             while True:
                 query_start = time.time()
                 rows = paged_call_method(
-                    count_rows_retrieved + skip,
+                    count_rows_retrieved + (skip if skip is not None else 0),
                     count_rows_query_default,
                     paged_call_payload,
                     fields,
