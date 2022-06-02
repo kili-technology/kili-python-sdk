@@ -66,12 +66,6 @@ setup(
                   'Implementation :: PyPy')
                  ],
 
-    # It's a plugin system, but we use it almost exclusively
-    # To create commands, like "django-admin".
-    # For example, if you want to create the fabulous "proclaim-sm" command, you
-    # will point this name to the proclaim() function. The order will be
-    # created automatically.
-    # The syntax is "nom-de-commande-a-creer = package.module:fonction".
     entry_points={
         'console_scripts': ["kili=kili.cli:main"],
     },
