@@ -1,3 +1,4 @@
+click
 pandas
 pyparsing
 requests
