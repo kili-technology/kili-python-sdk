@@ -28,12 +28,11 @@ class QueriesProjectUser:
     # pylint: disable=dangerous-default-value,invalid-name
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.116")
     def project_users(self,
+                      project_id: str,
                       email: Optional[str] = None,
                       id: Optional[str] = None,  # pylint: disable=redefined-builtin
                       organization_id: Optional[str] = None,
-                      project_id: Optional[str] = None,
                       fields: List[str] = ['activated', 'id', 'role',
                                            'starred', 'user.email', 'user.id'],
                       first: Optional[int] = None,
@@ -45,9 +44,9 @@ class QueriesProjectUser:
 
 
         Args:
+            project_id: Identifier of the project
             email: Email of the user
             organization_id: Identifier of the user's organization
-            project_id: Identifier of the project
             fields: All the fields to request among the possible fields for the projectUsers
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
             first: Maximum number of users to return
@@ -65,15 +64,6 @@ class QueriesProjectUser:
             >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
             ```
         """
-        if project_id is None:
-            message = """
-                The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.116
-                If your workflow involves getting these entities over several projects,
-                please iterate on your projects with .projects and concatenate the results.
-                """
-            warnings.warn(message, DeprecationWarning)
-
         count_args = {"email": email,
                       "id": id,
                       "organization_id": organization_id,
@@ -123,13 +113,13 @@ class QueriesProjectUser:
 
     # pylint: disable=invalid-name
     @typechecked
-    @deprecate(removed_in="2.116")
     def count_project_users(
             self,
+            project_id: str,
             email: Optional[str] = None,
             id: Optional[str] = None,  # pylint: disable=redefined-builtin
             organization_id: Optional[str] = None,
-            project_id: Optional[str] = None) -> int:
+            ) -> int:
         """
         Counts the number of projects and their users that match a set of criteria
 
@@ -141,14 +131,6 @@ class QueriesProjectUser:
         Returns:
             The number of project users with the parameters provided
         """
-        if project_id is None:
-            message = """
-                The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.116
-                If your workflow involves getting these entities over several projects,
-                please iterate on your projects with .projects and concatenate the results.
-                """
-            warnings.warn(message, DeprecationWarning)
         variables = {
             'where': {
                 'id': id,
