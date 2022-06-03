@@ -88,12 +88,12 @@ class Kili(  # pylint: disable=too-many-ancestors
         raise:
             NotFound if the given `project_id` does not correspond to an existing project
         """
-        query = self.projects(project_id=project_id,
-                              disable_tqdm=True, fields=['inputType', 'title'])
+        projects_response = self.projects(project_id=project_id,
+                                          disable_tqdm=True, fields=['inputType', 'title'])
 
-        if len(query) == 0:
+        if len(projects_response) == 0:
             raise NotFound(str(project_id))
-        project_fields = query[0]
+        project_fields = projects_response[0]
         title = project_fields['title']
         input_type = project_fields['inputType']
         return Project(client=self, project_id=project_id, input_type=input_type, title=title)

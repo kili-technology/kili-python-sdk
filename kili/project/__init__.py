@@ -3,7 +3,7 @@
 
 class Project:  # pylint: disable=too-few-public-methods
     """
-    Object that represents a project in the database.
+    Object that represents a project in Kili.
     It allows management operations such as uploading assets, uploading predictions,
     modifying the project's queue etc.
     It also allows queries from this project such as its assets, labels etc.
