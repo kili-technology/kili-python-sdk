@@ -125,10 +125,10 @@ class QueriesAsset:
         Example:
             ```
             # returns the assets list of the project
-            >>> kili.assets(project_id=project_id)
-            >>> kili.assets(asset_id=asset_id)
+            >>> kili.assets(project_id)
+            >>> kili.assets(project_id, asset_id=asset_id)
             # returns a generator of the project assets
-            >>> kili.assets(project_id=project_id, as_generator=True)
+            >>> kili.assets(project_id, as_generator=True)
             ```
 
         !!! example "How to filter based on Metadata"
