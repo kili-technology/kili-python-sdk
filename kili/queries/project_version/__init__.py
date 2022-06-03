@@ -30,6 +30,7 @@ class QueriesProjectVersion:
     @typechecked
     def project_version(
             self,
+            project_id: str,
             first: Optional[int] = 100,
             skip: Optional[int] = 0,
             fields: List[str] = [
@@ -39,17 +40,16 @@ class QueriesProjectVersion:
                 'name',
                 'project',
                 'projectId'],
-            project_id: str = None,
             disable_tqdm: bool = False,
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a generator or a list of project versions respecting a set of criteria.
 
         Args:
+            project_id: Filter on Id of project
             fields: All the fields to request among the possible fields for the project versions
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectVersions) for all possible fields.
             first: Number of project versions to query
-            project_id: Filter on Id of project
             skip: Number of project versions to skip (they are ordered by their date
                 of creation, first to last).
             disable_tqdm: If `True`, the progress bar will be disabled
