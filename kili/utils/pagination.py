@@ -6,7 +6,7 @@ import time
 from tqdm import tqdm
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
-from kili.helpers import GraphQLError
+from kili.exceptions import GraphQLError
 
 # pylint: disable=too-many-arguments,too-many-locals
 
