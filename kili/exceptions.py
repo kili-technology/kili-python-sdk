@@ -2,7 +2,7 @@
 
 
 class NotFound(Exception):
-    """Used when a given object is not found in the database."""
+    """Used when a given object is not found in Kili"""
 
     def __init__(self, name: str):
         super().__init__()
