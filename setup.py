@@ -29,7 +29,6 @@ setup(
     install_requires=["pandas",
                       "click",
                       "requests",
-                      "glob",
                       "six",
                       "tabulate",
                       "tqdm",
