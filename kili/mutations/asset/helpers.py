@@ -79,10 +79,11 @@ def process_content(input_type: str,
     Process the array of contents
     """
     if input_type in ['IMAGE', 'PDF']:
-        return [content
-                if is_url(content)
-                else (content if (json_content_array is not None and json_content_array[i] is not None)
-                      else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
+        return [content if is_url(content)
+                else (content
+                      if (json_content_array is not None and json_content_array[i] is not None)
+                      else (encode_base64(content) if check_file_mime_type(content, input_type)
+                            else None))
                 for i, content in enumerate(content_array)]
     if input_type == 'FRAME' and json_content_array is None:
         content_array = [encode_object_if_not_url(
@@ -307,10 +308,12 @@ def get_file_to_upload(files: List[str], input_type: str, exclude: List[str]):
             filter(lambda content: content not in exclude, files_path_to_upload))
     if len(files_path_to_upload) == 0:
         raise ValueError(
-            "No files to upload. Check that the paths exist and that the file types are compatible with the project")
+            "No files to upload."
+            "Check that the paths exist and that the file types are compatible with the project")
     if len(files_path_to_upload) != len(files_path):
         unuploaded_files_path = [
             path for path in files_path if path not in files_path_to_upload]
         print(
-            f'Files skipped: {unuploaded_files_path}. Paths either do not exist or point towards wrong data type for the project')
+            f'Files skipped: {unuploaded_files_path}.'
+            'Paths either do not exist or point towards wrong data type for the project')
     return files_path_to_upload

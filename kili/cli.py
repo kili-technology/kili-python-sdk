@@ -23,9 +23,11 @@ def project():
 @click.argument('files', type=str, nargs=-1)
 @click.option('--api-key', type=str, help='Your Api Key', envvar='KILI_API_KEY')
 @click.option('--project-id', type=str, help='Id of the project to import assets in')
-@click.option('--exclude', '-e', type=str, multiple=True, help="Files to exclude from the given files")
+@click.option('--exclude', '-e', type=str, multiple=True,
+              help="Files to exclude from the given files")
 @click.option('--frames', type=bool, help="Only for a frame project, import videos as frames")
 @click.option('--fps', type=int, help="Only for a frame project, import videos with this fps")
+#pylint: disable=too-many-arguments
 def import_assets(api_key, project_id, files, exclude, fps, frames):
     """
     Command for adding assets into a project.
@@ -51,8 +53,9 @@ def import_assets(api_key, project_id, files, exclude, fps, frames):
 
     files_to_upload = get_file_to_upload(files, input_type, exclude)
     if len(files_to_upload) == 0:
-        raise ValueError("""No files to upload.
-        Check that the paths exist and that the file types are compatible with the project""")
+        raise ValueError(
+            'No files to upload.'
+            'Check that the paths exist and that the file types are compatible with the project')
 
     external_ids = [path.split('/')[-1] for path in files_to_upload]
 
@@ -74,7 +77,7 @@ def import_assets(api_key, project_id, files, exclude, fps, frames):
 
 
 def main() -> None:
-    """Execute the main function of the command line"""
+    """Execute the main function of the command line."""
     cli()
 
 
