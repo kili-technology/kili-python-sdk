@@ -42,8 +42,8 @@ def test_import(mocker):
             'exclude': 'test_tree/image1.png'},
         'expected_mutation_payload': {
             'project_id': 'image_project',
-            'content_array': ['test_tree/image2.jpg', 'test_tree/leaf/image4.jpg', 'test_tree/leaf/image3.png'],
-            'external_id_array': ['image2.jpg', 'image4.jpg', 'image3.png'],
+            'content_array': ['test_tree/image2.jpg', 'test_tree/leaf/image3.png', 'test_tree/leaf/image4.jpg'],
+            'external_id_array': ['image2.jpg', 'image3.png', 'image4.jpg'],
             'json_metadata_array': None
         }
     },
@@ -55,8 +55,8 @@ def test_import(mocker):
             'exclude': 'test_tree/image1.png'},
         'expected_mutation_payload': {
             'project_id': 'text_project',
-            'content_array': ['test_tree/texte1.txt', 'test_tree/leaf/texte2.txt'],
-            'external_id_array': ['texte1.txt', 'texte2.txt'],
+            'content_array': ['test_tree/leaf/texte2.txt', 'test_tree/texte1.txt'],
+            'external_id_array': ['texte2.txt', 'texte1.txt'],
             'json_metadata_array': None
         }
     },

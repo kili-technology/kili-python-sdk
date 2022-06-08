@@ -304,8 +304,8 @@ def get_file_to_upload(files: List[str], input_type: str, exclude: List[str]):
     files_path_to_upload = list(
         filter(lambda content: check_file_mime_type(content, input_type, False), files_path))
     if exclude is not None:
-        files_path_to_upload = list(
-            filter(lambda content: content not in exclude, files_path_to_upload))
+        files_path_to_upload = sorted(list(
+            filter(lambda content: content not in exclude, files_path_to_upload)))
     if len(files_path_to_upload) == 0:
         raise ValueError(
             "No files to upload."
