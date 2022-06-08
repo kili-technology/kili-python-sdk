@@ -6,11 +6,12 @@ import os
 from json import dumps
 from uuid import uuid4
 from typing import List, Union
+import glob
 import mimetypes
 
 from ...constants import mime_extensions_for_IV2
-from ...helpers import (convert_to_list_of_none, encode_base64, format_metadata, \
-    get_data_type, is_none_or_empty, is_url)
+from ...helpers import (convert_to_list_of_none, encode_base64, format_metadata,
+                        get_data_type, is_none_or_empty, is_url)
 from .queries import (GQL_APPEND_MANY_TO_DATASET,
                       GQL_APPEND_MANY_FRAMES_TO_DATASET)
 
@@ -34,7 +35,8 @@ def process_frame_json_content(json_content):
     if is_url(json_content):
         return json_content
     json_content_index = range(len(json_content))
-    json_content_urls = [encode_object_if_not_url(content, 'IMAGE') for content in json_content]
+    json_content_urls = [encode_object_if_not_url(
+        content, 'IMAGE') for content in json_content]
     return dumps(dict(zip(json_content_index, json_content_urls)))
 
 
@@ -77,15 +79,18 @@ def process_content(input_type: str,
     Process the array of contents
     """
     if input_type in ['IMAGE', 'PDF']:
-        return [content if is_url(content) else (content
-            if (json_content_array is not None and json_content_array[i] is not None)
-            else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
-            for i, content in enumerate(content_array)]
+        return [content
+                if is_url(content)
+                else (content if (json_content_array is not None and json_content_array[i] is not None)
+                      else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
+                for i, content in enumerate(content_array)]
     if input_type == 'FRAME' and json_content_array is None:
-        content_array = [encode_object_if_not_url(content, input_type) for content in content_array]
+        content_array = [encode_object_if_not_url(
+            content, input_type) for content in content_array]
     if input_type == 'TIME_SERIES':
         content_array = list(map(process_time_series, content_array))
     return content_array
+
 
 def process_time_series(content: str) -> Union[str, None]:
     """
@@ -103,14 +108,15 @@ def process_time_series(content: str) -> Union[str, None]:
     reader = csv.reader(content.split('\n'), delimiter=',')
     return process_csv_content(reader, delimiter=delimiter)
 
-def process_csv_content(reader, file_name = None, delimiter=',') -> bool:
+
+def process_csv_content(reader, file_name=None, delimiter=',') -> bool:
     """
     Process the content of csv for time_series and check if it corresponds to the expected format
     """
     first_row = True
     processed_lines = []
     for row in reader:
-        if not (len(row)==2 and (first_row or (not first_row and is_float(row[0])))):
+        if not (len(row) == 2 and (first_row or (not first_row and is_float(row[0])))):
             print(f"""The content {file_name if file_name else row} does not correspond to the \
 correct format: it should have only 2 columns, the first one being the timestamp \
 (an integer or a float) and the second one a numeric value (an integer or a float, \
@@ -122,6 +128,7 @@ of the 2 columns. The delimiter used should be ','.""")
         first_row = False
     return '\n'.join(processed_lines)
 
+
 def is_float(number: str) -> bool:
     """
     Check if a string can be converted to float
@@ -132,12 +139,11 @@ def is_float(number: str) -> bool:
     except ValueError:
         return False
 
-def check_file_mime_type(content: str, input_type: str) -> bool:
+
+def check_file_mime_type(content: str, input_type: str, verbose: bool = True) -> bool:
     """
     Returns true if the mime type of the file corresponds to the allowed mime types of the project
     """
-    if input_type not in ['IMAGE', 'FRAME', 'PDF', 'TIME_SERIES']:
-        return True
 
     mime_type = get_data_type(content.lower())
 
@@ -145,11 +151,12 @@ def check_file_mime_type(content: str, input_type: str) -> bool:
         return False
 
     correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
-    if not correct_mime_type:
-        print(f'File mime type for {content} is {mime_type} and does not correspond' \
-            'to the type of the project. '\
-            f'File mime type should be one of {mime_extensions_for_IV2[input_type]}')
+    if verbose and not correct_mime_type:
+        print(f'File mime type for {content} is {mime_type} and does not correspond'
+              'to the type of the project. '
+              f'File mime type should be one of {mime_extensions_for_IV2[input_type]}')
     return correct_mime_type
+
 
 def add_video_parameters(json_metadata, should_use_native_video):
     """
@@ -250,6 +257,7 @@ def process_append_many_to_dataset_parameters(
 
     return properties, upload_type, request
 
+
 def process_update_properties_in_assets_parameters(properties) -> dict:
     """
     Process arguments of the update_properties_in_assets method
@@ -272,4 +280,37 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
     properties['should_reset_to_be_labeled_by_array'] = list(map(
         is_none_or_empty, properties['to_be_labeled_by_array']))
     return properties
-    
+
+
+def get_file_to_upload(files: List[str], input_type: str, exclude: List[str]):
+    """Get files to upload when giving a list of file or folder paths
+
+    Args:
+        files: a list path that can either be file paths, folder paths or unexisting paths
+        input_type: input type of the project to import data to.
+
+    Returns:
+        a list of existing files to upload, compatible with the project type.
+    """
+    files_path = [item for item in files if os.path.isfile(
+        item)]
+    folders_to_search_in = [item for item in files if os.path.isdir(item)]
+    for folder_path in folders_to_search_in:
+        # make sure that it ends with a backslash
+        folder_path = os.path.join(folder_path, '')
+        files_path.extend([item for item in glob.glob(folder_path + '*')
+                           if os.path.isfile(item)])
+    files_path_to_upload = list(
+        filter(lambda content: check_file_mime_type(content, input_type, False), files_path))
+    if exclude is not None:
+        files_path_to_upload = list(
+            filter(lambda content: content not in exclude, files_path_to_upload))
+    if len(files_path_to_upload) == 0:
+        raise ValueError(
+            "No files to upload. Check that the paths exist and that the file types are compatible with the project")
+    if len(files_path_to_upload) != len(files_path):
+        unuploaded_files_path = [
+            path for path in files_path if path not in files_path_to_upload]
+        print(
+            f'Files skipped: {unuploaded_files_path}. Paths either do not exist or point towards wrong data type for the project')
+    return files_path_to_upload

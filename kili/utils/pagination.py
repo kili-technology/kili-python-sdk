@@ -94,7 +94,6 @@ def batch_object_builder(
         batch_size: the size of the batches to produce
     """
     if len(list(filter(None, properties_to_batch.values()))) == 0:
-        print(properties_to_batch)
         yield properties_to_batch
         return
     number_of_objects = len([v for v in properties_to_batch.values(

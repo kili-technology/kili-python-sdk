@@ -29,6 +29,7 @@ setup(
     install_requires=["pandas",
                       "click",
                       "requests",
+                      "glob",
                       "six",
                       "tqdm",
                       "typeguard",
