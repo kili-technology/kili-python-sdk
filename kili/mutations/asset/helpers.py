@@ -5,7 +5,7 @@ import csv
 import os
 from json import dumps
 from uuid import uuid4
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 import glob
 import mimetypes
 
@@ -283,7 +283,9 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
     return properties
 
 
-def get_file_to_upload(files: List[str], input_type: str, exclude: List[str]):
+def get_file_to_upload(files: Tuple[str, ...],
+                       input_type: str,
+                       exclude: Optional[Tuple[str, ...]]) -> List[str]:
     """Get files to upload when giving a list of file or folder paths
 
     Args:
@@ -293,27 +295,27 @@ def get_file_to_upload(files: List[str], input_type: str, exclude: List[str]):
     Returns:
         a list of existing files to upload, compatible with the project type.
     """
-    files_path = [item for item in files if os.path.isfile(
-        item)]
+    files_path = [
+        item for item in files if os.path.isfile(item)]
     folders_to_search_in = [item for item in files if os.path.isdir(item)]
     for folder_path in folders_to_search_in:
         # make sure that it ends with a backslash
         folder_path = os.path.join(folder_path, '')
         files_path.extend([item for item in glob.glob(folder_path + '*')
                            if os.path.isfile(item)])
-    files_path_to_upload = list(
-        filter(lambda content: check_file_mime_type(content, input_type, False), files_path))
+    files_path_to_upload = [
+        path for path in files_path if check_file_mime_type(path, input_type, False)]
     if exclude is not None:
         files_path_to_upload = sorted(list(
             filter(lambda content: content not in exclude, files_path_to_upload)))
     if len(files_path_to_upload) == 0:
         raise ValueError(
-            "No files to upload."
+            "No files to upload. "
             "Check that the paths exist and that the file types are compatible with the project")
     if len(files_path_to_upload) != len(files_path):
         unuploaded_files_path = [
             path for path in files_path if path not in files_path_to_upload]
         print(
-            f'Files skipped: {unuploaded_files_path}.'
+            f'Files skipped: {unuploaded_files_path}. '
             'Paths either do not exist or point towards wrong data type for the project')
     return files_path_to_upload

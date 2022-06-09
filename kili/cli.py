@@ -1,5 +1,6 @@
 """Kili CLI"""
 
+from typing import Optional, Tuple
 import click
 from kili.client import Kili
 from kili import __version__
@@ -20,41 +21,57 @@ def project():
 
 
 @project.command(name='import')
-@click.argument('files', type=str, nargs=-1)
-@click.option('--api-key', type=str, help='Your Api Key', envvar='KILI_API_KEY')
-@click.option('--project-id', type=str, help='Id of the project to import assets in')
-@click.option('--exclude', '-e', type=str, multiple=True,
+@click.argument('files', type=click.Path(exists=True), nargs=-1)
+@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
+              help='Your Api Key')
+@click.option('--project-id', type=str, required=True,
+              help='Id of the project to import assets in')
+@click.option('--exclude', '-e', type=click.Path(exists=True), multiple=True,
               help="Files to exclude from the given files")
-@click.option('--frames', type=bool, help="Only for a frame project, import videos as frames")
-@click.option('--fps', type=int, help="Only for a frame project, import videos with this fps")
+@click.option('--frames', type=bool, default=False, is_flag=True,
+              help="Only for a frame project, import videos as frames. "
+              "The import time is longer with this option")
+@click.option('--fps', type=int,
+              help="Only for a frame project, import videos with this fps")
 #pylint: disable=too-many-arguments
-def import_assets(api_key, project_id, files, exclude, fps, frames):
+def import_assets(api_key: str,
+                  project_id: str,
+                  files: Tuple[str, ...],
+                  exclude: Optional[Tuple[str, ...]],
+                  fps: Optional[int],
+                  frames: bool):
     """
     Command for adding assets into a project.
 
-    Currently, this command does not support :
-        - The import of videos from local frames, rich text and time series assets.
+    Files can be paths to files or to folders. You can provide several paths separated by spaces.
+
+    Currently, this command does not support:
+
+        - the import of videos from local frames, rich text and time series assets
+
         - the import of assets with metadata or with a custom external_id
+
     For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
     if files is None:
         raise ValueError("No files or directory specified.")
     kili = Kili(api_key=api_key)
-    input_type = kili.projects(project_id, disable_tqdm=True, fields=[
-                               'inputType'])[0]['inputType']
+    input_type = kili.projects(project_id,
+                               disable_tqdm=True,
+                               fields=['inputType'])[0]['inputType']
 
-    if input_type != 'FRAME' and (fps is not None or frames is not None):
+    if input_type != 'FRAME' and (fps is not None or frames is True):
         illegal_option = 'fps and frames are'
-        if frames is None:
+        if frames is False:
             illegal_option = 'fps is'
-        if frames is None:
+        if fps is None:
             illegal_option = 'frames is'
         raise ValueError(f'{illegal_option} only valid for a FRAME project')
 
     files_to_upload = get_file_to_upload(files, input_type, exclude)
     if len(files_to_upload) == 0:
         raise ValueError(
-            'No files to upload.'
+            'No files to upload. '
             'Check that the paths exist and that the file types are compatible with the project')
 
     external_ids = [path.split('/')[-1] for path in files_to_upload]

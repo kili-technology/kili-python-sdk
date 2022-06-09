@@ -85,8 +85,8 @@ def test_import(mocker):
         'files': ['test_tree/'],
         'options': {
             'project-id': 'frame_project',
-            'frames': True
         },
+        'flags': ['frames'],
         'expected_mutation_payload': {
             'project_id': 'frame_project',
             'content_array': ['test_tree/video1.mp4', 'test_tree/video2.mp4'],
@@ -120,7 +120,9 @@ def test_import(mocker):
             for k, v in test_case['options'].items():
                 arguments.append('--'+k)
                 arguments.append(v)
+            if test_case.get('flags'):
+                arguments.extend(['--'+flag for flag in test_case['flags']])
             result = runner.invoke(import_assets, arguments)
-            assert result.exit_code == 0
+            assert result.exit_code == 0, f"Test case \"{test_case['case_name']}\" failed"
             mocked__append_many_to_dataset.assert_called_with(
                 **test_case['expected_mutation_payload'])
