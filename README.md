@@ -124,6 +124,7 @@ prediction_examples = [
             "CLASSIFICATION_JOB": {
                 "categories": [{"name": "GREY", "confidence": 46}]
             }
+        },
     },
     {
         "external_id": "example 2",
