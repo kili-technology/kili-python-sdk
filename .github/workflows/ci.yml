@@ -37,10 +37,11 @@ jobs:
           pip install jupyter nbconvert nbformat pytest mock pytest-mock
 
       - name: Run all tests and tested notebooks
-        run: pytest -s
+        run: pytest -sv
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
           KILI_USER_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
+          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
           KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
           KILI_USER_ID: ${{ secrets.KILI_USER_ID }}

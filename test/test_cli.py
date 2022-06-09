@@ -4,6 +4,8 @@ import os
 from kili.cli import import_assets
 from click.testing import CliRunner
 
+from test.utils import debug_subprocess_pytest
+
 
 def mocked__projects(project_id, **_):
     if project_id == 'text_project':
@@ -123,6 +125,6 @@ def test_import(mocker):
             if test_case.get('flags'):
                 arguments.extend(['--'+flag for flag in test_case['flags']])
             result = runner.invoke(import_assets, arguments)
-            assert result.exit_code == 0, f"Test case \"{test_case['case_name']}\" failed"
+            debug_subprocess_pytest(result)
             mocked__append_many_to_dataset.assert_called_with(
                 **test_case['expected_mutation_payload'])
