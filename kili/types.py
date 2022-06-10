@@ -254,25 +254,6 @@ class CommentsWithoutCommentsOf:
 
 
 @dataclass
-class Issue:
-    """
-    A wrapper for Issue GraphQL object.
-    """
-
-    id = "id"
-    assignee = ProjectUser
-    author = ProjectUser
-    comments = CommentsWithoutCommentsOf
-    createdAt = "createdAt"
-    hasBeenSeen = "hasBeenSeen"
-    issueNumber = "issueNumber"
-    project = ProjectWithoutDataset
-    status = "status"
-    type = "type"
-    updatedAt = "updatedAt"
-
-
-@dataclass
 class Asset:
     """
     A wrapper for Asset GraphQL object.
@@ -368,6 +349,7 @@ class ProjectVersion:
     project = Project
     projectId = "projectId"
 
+
 @dataclass
 class CommentWithoutIssue:
     """
@@ -410,6 +392,11 @@ class Issue:
 
 @dataclass
 class Comment(CommentWithoutIssue):
+    """
+    A wrapper for Comment GraphQL object.
+    """
+
     issue = Issue
+
 
 # pylint: enable=invalid-name

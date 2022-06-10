@@ -12,7 +12,7 @@ from .queries import GQL_APPEND_TO_ISSUES
 class MutationsIssue:
     """Set of Issue mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -29,7 +29,7 @@ class MutationsIssue:
         issue_number: int,
         label_id: str,
         object_mid: Optional[str],
-        type: str,
+        type_: str,
         external_id: str,
         project_id: str,
     ):
@@ -39,7 +39,7 @@ class MutationsIssue:
             issue_number :
             label_id :
             object_mid :
-            type :
+            type_ :
             external_id :
             project_id :
 
@@ -52,7 +52,7 @@ class MutationsIssue:
                 "issueNumber": issue_number,
                 "labelID": label_id,
                 "objectMid": object_mid,
-                "type": type,
+                "type": type_,
             },
             "where": {
                 "externalIdStrictlyIn": external_id,

@@ -57,6 +57,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     """
     Kili Client.
     """
+
     def __init__(
         self,
         api_key=None,
@@ -123,6 +124,4 @@ class Kili(  # pylint: disable=too-many-ancestors
         title = project_fields["title"]
         input_type = project_fields["inputType"]
 
-        return Project(
-            client=self, project_id=project_id, input_type=input_type, title=title
-        )
+        return Project(client=self, project_id=project_id, input_type=input_type, title=title)
