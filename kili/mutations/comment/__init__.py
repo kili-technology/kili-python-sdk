@@ -6,13 +6,13 @@ from typing import Optional
 from typeguard import typechecked
 
 from ...helpers import Compatible, format_result
-from ..issue.queries import GQL_APPEND_TO_COMMENTS
+from .queries import GQL_APPEND_TO_COMMENTS
 
 
 class MutationsComment:
     """Set of Comment mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
 
     def __init__(self, auth):
         """Initialize the subclass.

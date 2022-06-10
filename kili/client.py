@@ -8,7 +8,7 @@ from kili.exceptions import AuthenticationFailed, NotFound
 from kili.mutations.api_key import MutationsApiKey
 from kili.mutations.asset import MutationsAsset
 from kili.mutations.comment import MutationsComment
-from kili.mutations.comment import MutationsIssue
+from kili.mutations.issue import MutationsIssue
 from kili.mutations.label import MutationsLabel
 from kili.mutations.notification import MutationsNotification
 from kili.mutations.organization import MutationsOrganization
