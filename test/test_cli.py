@@ -50,6 +50,19 @@ def test_import(mocker):
         }
     },
         {
+            'case_name': 'AAU, when I import files with stars, I see a success',
+            'files': ['test_tree/**.jpg', 'test_tree/leaf/**.jpg'],
+            'options': {
+                'project-id': 'image_project',
+            },
+            'expected_mutation_payload': {
+                'project_id': 'image_project',
+                'content_array': ['test_tree/image2.jpg', 'test_tree/leaf/image4.jpg'],
+                'external_id_array': ['image2.jpg', 'image4.jpg'],
+                'json_metadata_array': None
+            }
+    },
+        {
         'case_name': 'AAU, when I import a files to a text project, I see a success',
         'files': ['test_tree/', 'test_tree/leaf'],
         'options': {

@@ -21,7 +21,7 @@ def project():
 
 
 @project.command(name='import')
-@click.argument('files', type=click.Path(exists=True), nargs=-1)
+@click.argument('files', type=click.Path(), nargs=-1)
 @click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
               help='Your Api Key')
 @click.option('--project-id', type=str, required=True,

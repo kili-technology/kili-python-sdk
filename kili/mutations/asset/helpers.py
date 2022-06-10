@@ -295,14 +295,21 @@ def get_file_to_upload(files: Tuple[str, ...],
     Returns:
         a list of existing files to upload, compatible with the project type.
     """
-    files_path = [
-        item for item in files if os.path.isfile(item)]
-    folders_to_search_in = [item for item in files if os.path.isdir(item)]
-    for folder_path in folders_to_search_in:
-        # make sure that it ends with a backslash
-        folder_path = os.path.join(folder_path, '')
-        files_path.extend([item for item in glob.glob(folder_path + '*')
-                           if os.path.isfile(item)])
+    files_path = []
+    for item in files:
+        if os.path.isfile(item):
+            files_path.append(item)
+            print(files_path)
+        elif os.path.isdir(item):
+            folder_path = os.path.join(item, '')
+            files_path.extend([sub_item for sub_item in glob.glob(folder_path + '*')
+                               if os.path.isfile(sub_item)])
+            print(files_path)
+        else:
+            files_path.extend([sub_item for sub_item in glob.glob(item)
+                               if os.path.isfile(sub_item)])
+            print(files_path)
+
     files_path_to_upload = [
         path for path in files_path if check_file_mime_type(path, input_type, False)]
     if exclude is not None:
