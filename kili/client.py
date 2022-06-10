@@ -7,6 +7,8 @@ from kili.authentication import KiliAuth
 from kili.exceptions import AuthenticationFailed, NotFound
 from kili.mutations.api_key import MutationsApiKey
 from kili.mutations.asset import MutationsAsset
+from kili.mutations.comment import MutationsComment
+from kili.mutations.comment import MutationsIssue
 from kili.mutations.label import MutationsLabel
 from kili.mutations.notification import MutationsNotification
 from kili.mutations.organization import MutationsOrganization
@@ -31,6 +33,8 @@ from kili.subscriptions.label import SubscriptionsLabel
 class Kili(  # pylint: disable=too-many-ancestors
     MutationsApiKey,
     MutationsAsset,
+    MutationsComment,
+    MutationsIssue,
     MutationsLabel,
     MutationsNotification,
     MutationsOrganization,
@@ -53,8 +57,12 @@ class Kili(  # pylint: disable=too-many-ancestors
     """
     Kili Client.
     """
-
-    def __init__(self, api_key=None, api_endpoint=None, verify=True):
+    def __init__(
+        self,
+        api_key=None,
+        api_endpoint=None,
+        verify=True,
+    ):
         """
         Args:
             api_key: User API key generated
@@ -114,4 +122,7 @@ class Kili(  # pylint: disable=too-many-ancestors
         project_fields = projects_response[0]
         title = project_fields["title"]
         input_type = project_fields["inputType"]
-        return Project(client=self, project_id=project_id, input_type=input_type, title=title)
+
+        return Project(
+            client=self, project_id=project_id, input_type=input_type, title=title
+        )

@@ -368,5 +368,48 @@ class ProjectVersion:
     project = Project
     projectId = "projectId"
 
+@dataclass
+class CommentWithoutIssue:
+    """
+    A wrapper for Comment GraphQL object.
+    """
+
+    id = "id"
+    author = ProjectUser
+    authorId = "authorId"
+    createdAt = "createdAt"
+    issueId = "issueId"
+    text = "text"
+    updatedAt = "updatedAt"
+
+
+@dataclass
+class Issue:
+    """
+    A wrapper for Issue GraphQL object.
+    """
+
+    id = "id"
+    asset = Asset
+    assetId = "assetId"
+    assignee = ProjectUser
+    assigneeId = "assigneeId"
+    author = ProjectUser
+    authorId = "authorId"
+    comments = CommentWithoutIssue
+    createdAt = "createdAt"
+    hasBeenSeen = "hasBeenSeen"
+    issueNumber = "issueNumber"
+    objectMid = "objectMid"
+    project: Project
+    projectId = "projectId"
+    status = "status"
+    type = "type"
+    updatedAt = "updatedAt"
+
+
+@dataclass
+class Comment(CommentWithoutIssue):
+    issue = Issue
 
 # pylint: enable=invalid-name
