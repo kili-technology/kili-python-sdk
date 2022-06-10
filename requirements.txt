@@ -3,6 +3,7 @@ pandas
 pyparsing
 requests
 six
+tabulate
 tqdm
 typeguard
 websocket-client

@@ -1,19 +1,37 @@
 """Tests the Kili CLI"""
 
 import os
-from kili.cli import import_assets
+from kili.cli import import_assets, list_project
 from click.testing import CliRunner
 
 from .utils import debug_subprocess_pytest
 
 
-def mocked__projects(project_id, **_):
+def mocked__projects(project_id=None, **_):
     if project_id == 'text_project':
         return [{'id': 'text_project', 'inputType': 'TEXT'}]
     if project_id == 'image_project':
-        return [{'id': 'text_project', 'inputType': 'IMAGE'}]
+        return [{'id': 'image_project', 'inputType': 'IMAGE'}]
     if project_id == 'frame_project':
-        return [{'id': 'text_project', 'inputType': 'FRAME'}]
+        return [{'id': 'frame_project', 'inputType': 'FRAME'}]
+    if project_id == None:
+        return [{'id': 'text_project', 'title': 'text_project', 'description': ' a project with text',
+                 'numberOfAssets': 10, 'numberOfRemainingAssets': 10},
+                {'id': 'image_project', 'title': 'image_project', 'description': ' a project with image',
+                 'numberOfAssets': 0, 'numberOfRemainingAssets': 0},
+                {'id': 'frame_project', 'title': 'frame_project', 'description': ' a project with fram',
+                 'numberOfAssets': 10, 'numberOfRemainingAssets': 0}]
+
+
+def test_list(mocker):
+    mocker.patch("kili.client.Kili.__init__", return_value=None)
+    mocker.patch("kili.client.Kili.projects",
+                 side_effect=mocked__projects)
+
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        result = runner.invoke(list_project)
+        assert result.exit_code == 0
 
 
 def test_import(mocker):
