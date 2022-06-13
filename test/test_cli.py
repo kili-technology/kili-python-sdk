@@ -12,14 +12,14 @@ def mocked__projects(project_id=None, **_):
         return [{'id': 'text_project', 'inputType': 'TEXT'}]
     if project_id == 'image_project':
         return [{'id': 'image_project', 'inputType': 'IMAGE'}]
-    if project_id == 'frame_project':
-        return [{'id': 'frame_project', 'inputType': 'FRAME'}]
+    if project_id == 'video':
+        return [{'id': 'frame_project', 'inputType': 'VIDEO'}]
     if project_id == None:
         return [{'id': 'text_project', 'title': 'text_project', 'description': ' a project with text',
                  'numberOfAssets': 10, 'numberOfRemainingAssets': 10},
                 {'id': 'image_project', 'title': 'image_project', 'description': ' a project with image',
                  'numberOfAssets': 0, 'numberOfRemainingAssets': 0},
-                {'id': 'frame_project', 'title': 'frame_project', 'description': ' a project with frame',
+                {'id': 'frame_project', 'title': 'frame_project', 'description': ' a project with video',
                  'numberOfAssets': 10, 'numberOfRemainingAssets': 0}]
 
 
@@ -111,7 +111,7 @@ def test_import(mocker):
         }
     },
         {
-        'case_name': 'AAU, when I import videos to a frame project, as native by changing the fps, I see a success',
+        'case_name': 'AAU, when I import videos to a video project, as native by changing the fps, I see a success',
         'files': ['test_tree/'],
         'options': {
             'project-id': 'frame_project',
@@ -131,7 +131,7 @@ def test_import(mocker):
         }
     },
         {
-        'case_name': 'AAU, when I import videos to a frame project, as frames with the native frame rate, I see a success',
+        'case_name': 'AAU, when I import videos to a video project, as frames with the native frame rate, I see a success',
         'files': ['test_tree/'],
         'options': {
             'project-id': 'frame_project',
