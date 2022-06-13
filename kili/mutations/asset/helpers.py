@@ -283,17 +283,18 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
     return properties
 
 
-def get_file_to_upload(files: Tuple[str, ...],
-                       input_type: str,
-                       exclude: Optional[Tuple[str, ...]]) -> List[str]:
-    """Get files to upload when giving a list of file or folder paths
+def get_files_path_to_upload(files: Tuple[str, ...],
+                             input_type: str,
+                             exclude: Optional[Tuple[str, ...]]) -> List[str]:
+    """Get a list of paths for the files to upload given a list of files or folder paths.
 
     Args:
         files: a list path that can either be file paths, folder paths or unexisting paths
         input_type: input type of the project to import data to.
+        exclude: a list path to exclude from the search
 
     Returns:
-        a list of existing files to upload, compatible with the project type.
+        a list of the paths of the files to upload, compatible with the project type.
     """
     files_path = []
     for item in files:
@@ -304,17 +305,16 @@ def get_file_to_upload(files: Tuple[str, ...],
             folder_path = os.path.join(item, '')
             files_path.extend([sub_item for sub_item in glob.glob(folder_path + '*')
                                if os.path.isfile(sub_item)])
-            print(files_path)
         else:
             files_path.extend([sub_item for sub_item in glob.glob(item)
                                if os.path.isfile(sub_item)])
-            print(files_path)
 
     files_path_to_upload = [
         path for path in files_path if check_file_mime_type(path, input_type, False)]
     if exclude is not None:
-        files_path_to_upload = sorted(list(
-            filter(lambda content: content not in exclude, files_path_to_upload)))
+        files_path_to_upload = [
+            path for path in files_path_to_upload if path not in exclude]
+    files_path_to_upload.sort()
     if len(files_path_to_upload) == 0:
         raise ValueError(
             "No files to upload. "
@@ -324,5 +324,29 @@ def get_file_to_upload(files: Tuple[str, ...],
             path for path in files_path if path not in files_path_to_upload]
         print(
             f'Files skipped: {unuploaded_files_path}. '
-            'Paths either do not exist or point towards wrong data type for the project')
+            'Paths either do not exist, are filtered out '
+            'or point towards wrong data type for the project')
     return files_path_to_upload
+
+
+def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
+    """Generate the json_metadata_array for input of the append_many_to_dataset resolver
+    when uploading from a list of path
+
+    Args:
+        as_frames: for a frame project, if videos should be split in frames
+        fps: for a frame project, import videos with this frame rate
+        nb_files: the number of files to upload in the call
+        input_type: the input type of the project to upload to
+    """
+
+    json_metadata_array = None
+    if input_type == 'FRAME':
+        json_metadata_array = [
+            {'processingParameters': {
+                'shouldKeepNativeFrameRate': fps is None,
+                'framesPlayedPerSecond': fps,
+                'shouldUseNativeVideo': not as_frames}
+             }
+        ] * nb_files
+    return json_metadata_array

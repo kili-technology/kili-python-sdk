@@ -4,7 +4,7 @@ import os
 from kili.cli import import_assets
 from click.testing import CliRunner
 
-from test.utils import debug_subprocess_pytest
+from .utils import debug_subprocess_pytest
 
 
 def mocked__projects(project_id, **_):
