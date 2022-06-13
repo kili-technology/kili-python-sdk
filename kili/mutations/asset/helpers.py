@@ -283,7 +283,7 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
     return properties
 
 
-def get_files_path_to_upload(files: Tuple[str, ...],
+def get_file_paths_to_upload(files: Tuple[str, ...],
                              input_type: str,
                              exclude: Optional[Tuple[str, ...]]) -> List[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.

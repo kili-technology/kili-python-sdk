@@ -6,7 +6,7 @@ from typeguard import typechecked
 from kili.client import Kili
 from kili import __version__
 from kili.exceptions import NotFound
-from kili.mutations.asset.helpers import generate_json_metadata_array, get_files_path_to_upload
+from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_paths_to_upload
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -53,10 +53,10 @@ def import_assets(api_key: str,
     Files can be paths to files or to folders. You can provide several paths separated by spaces.
 
     Examples:
-        $ kili import --project-id <project_id> dir1/dir2/ dir1/dir3/test1.png
+        $ kili project import --project-id <project_id> dir1/dir2/ dir1/dir3/test1.png
         --exclude dontimport.png
 
-        $ kili import --project-id <project_id> dir1/dir3/video.mp4 --frames --fps 24
+        $ kili project import --project-id <project_id> dir1/dir3/video.mp4 --frames --fps 24
 
 
     Currently, this command does not support:
@@ -84,7 +84,7 @@ def import_assets(api_key: str,
             illegal_option = 'frames is'
         raise ValueError(f'{illegal_option} only valid for a FRAME project')
 
-    files_to_upload = get_files_path_to_upload(files, input_type, exclude)
+    files_to_upload = get_file_paths_to_upload(files, input_type, exclude)
     if len(files_to_upload) == 0:
         raise ValueError(
             'No files to upload. '
