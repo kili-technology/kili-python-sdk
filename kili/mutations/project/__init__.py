@@ -95,7 +95,7 @@ class MutationsProject:
             honeypot_mark : Should be between 0 and 1
             instructions : Instructions of the project.
             interface_category: Always use 'IV2'.
-            input_type: Currently, one of `AUDIO`, `FRAME`, `IMAGE`, `PDF`, `TEXT`, `VIDEO`, `NA`.
+            input_type: Currently, one of `AUDIO`, `FRAME`, `IMAGE`, `PDF`, `TEXT`, `VIDEO_OLD`, `VIDEO`, `NA`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
