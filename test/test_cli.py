@@ -32,6 +32,9 @@ def test_list(mocker):
     with runner.isolated_filesystem():
         result = runner.invoke(list_project)
         assert result.exit_code == 0
+        assert ((result.output.count("100.0%") == 1) and
+                (result.output.count("0.0%") == 2) and
+                (result.output.count("nan") == 1))
 
 
 def test_import(mocker):

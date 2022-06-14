@@ -27,16 +27,20 @@ def project():
 @project.command(name="list")
 @click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
               help='Your Api Key')
+@click.option('--endpoint', type=str,
+              default='https://cloud.kili-technology.com/api/label/v2/graphql',
+              help='The API Endpoint')
 @click.option('--max', 'first', type=int, help='Maximum number of project to display', default=100)
-@click.option('—format', 'tablefmt', type=str, default='simple',
+@click.option('--format', 'tablefmt', type=str, default='simple',
               help='Defines how the table is formatted (see tabulate format).')
 def list_project(api_key: str,
+                 endpoint: str,
                  tablefmt: str,
                  first: int):
     """
-    Command to list projects.
+    Print a list of projects in a table format
     """
-    kili = Kili(api_key=api_key)
+    kili = Kili(api_key=api_key, api_endpoint=endpoint)
     projects = kili.projects(fields=['title', 'id', 'description', 'numberOfAssets',
                              'numberOfRemainingAssets', 'numberOfReviewedAssets'], first=first)
     projects = pd.DataFrame(projects)
