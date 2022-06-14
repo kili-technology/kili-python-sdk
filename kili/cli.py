@@ -1,6 +1,7 @@
 """Kili CLI"""
 
 from typing import Optional, Tuple
+import json
 import click
 from tabulate import tabulate
 from typeguard import typechecked
