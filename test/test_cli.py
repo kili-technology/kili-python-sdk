@@ -19,7 +19,7 @@ def mocked__projects(project_id=None, **_):
                  'numberOfAssets': 10, 'numberOfRemainingAssets': 10},
                 {'id': 'image_project', 'title': 'image_project', 'description': ' a project with image',
                  'numberOfAssets': 0, 'numberOfRemainingAssets': 0},
-                {'id': 'frame_project', 'title': 'frame_project', 'description': ' a project with fram',
+                {'id': 'frame_project', 'title': 'frame_project', 'description': ' a project with frame',
                  'numberOfAssets': 10, 'numberOfRemainingAssets': 0}]
 
 

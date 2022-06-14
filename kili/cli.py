@@ -50,8 +50,10 @@ def list_project(api_key: str,
     projects['progress'] = round(
         (1 - projects['numberOfRemainingAssets'] / projects['numberOfAssets']) * 100, 1)
     projects = projects[['title', 'id', 'progress', 'description']]
+    # Add '%' to progress if progress is not nan
     projects['progress'] = [(str(progress) + '%') if progress >=
                             0 else progress for progress in projects['progress']]
+    # If description or title has more than 50 characters, truncate after 47 and add '...'
     projects['description'] = [(description[:47] + '...') if len(description)
                                > 50 else description for description in projects['description']]
     projects['title'] = [(title[:47] + '...') if len(title) >
