@@ -38,7 +38,10 @@ def list_project(api_key: str,
                  tablefmt: str,
                  first: int):
     """
-    Print a list of projects in a table format
+    List your projects
+
+    Example:
+        $ kili project list --max 10 --format pretty
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     projects = kili.projects(fields=['title', 'id', 'description', 'numberOfAssets',

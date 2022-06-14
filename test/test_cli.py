@@ -25,16 +25,15 @@ def mocked__projects(project_id=None, **_):
 
 def test_list(mocker):
     mocker.patch("kili.client.Kili.__init__", return_value=None)
-    mocker.patch("kili.client.Kili.projects",
-                 side_effect=mocked__projects)
+    mock__projects = mocker.patch("kili.client.Kili.projects",
+                                  side_effect=mocked__projects)
 
     runner = CliRunner()
-    with runner.isolated_filesystem():
-        result = runner.invoke(list_project)
-        assert result.exit_code == 0
-        assert ((result.output.count("100.0%") == 1) and
-                (result.output.count("0.0%") == 2) and
-                (result.output.count("nan") == 1))
+    result = runner.invoke(list_project)
+    assert ((result.exit_code == 0) and
+            (result.output.count("100.0%") == 1) and
+            (result.output.count("0.0%") == 2) and
+            (result.output.count("nan") == 1))
 
 
 def test_import(mocker):
