@@ -26,7 +26,11 @@ def project():
 
 @project.command(name="list")
 @click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help='Your Api Key')
+              help=(
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable).'
+                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
+              )
+              )
 @click.option('--endpoint', type=str,
               default='https://cloud.kili-technology.com/api/label/v2/graphql',
               help='The API Endpoint')
@@ -65,7 +69,11 @@ def list_project(api_key: str,
 @project.command(name='import')
 @click.argument('files', type=click.Path(), nargs=-1, required=True)
 @click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help='Your Api Key')
+              help=(
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable).'
+                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
+              )
+              )
 @click.option('--endpoint', type=str,
               default='https://cloud.kili-technology.com/api/label/v2/graphql',
               help='The API Endpoint')
