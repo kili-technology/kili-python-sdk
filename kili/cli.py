@@ -3,6 +3,8 @@
 from typing import Optional, Tuple
 import click
 from typeguard import typechecked
+import pandas as pd
+from tabulate import tabulate
 from kili.client import Kili
 from kili import __version__
 from kili.exceptions import NotFound
@@ -22,10 +24,56 @@ def project():
     """Commands to interact with a Kili project"""
 
 
+@project.command(name="list")
+@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
+              help=(
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable).'
+                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
+              )
+              )
+@click.option('--endpoint', type=str,
+              default='https://cloud.kili-technology.com/api/label/v2/graphql',
+              help='The API Endpoint')
+@click.option('--max', 'first', type=int, help='Maximum number of project to display', default=100)
+@click.option('--format', 'tablefmt', type=str, default='simple',
+              help='Defines how the table is formatted (see tabulate format).')
+def list_project(api_key: str,
+                 endpoint: str,
+                 tablefmt: str,
+                 first: int):
+    """
+    List your projects
+
+    Example:
+        $ kili project list --max 10 --format pretty
+    """
+    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    projects = kili.projects(fields=['title', 'id', 'description', 'numberOfAssets',
+                             'numberOfRemainingAssets', 'numberOfReviewedAssets'], first=first)
+    projects = pd.DataFrame(projects)
+    projects['progress'] = round(
+        (1 - projects['numberOfRemainingAssets'] / projects['numberOfAssets']) * 100, 1)
+    projects = projects[['title', 'id', 'progress', 'description']]
+    # Add '%' to progress if progress is not nan
+    projects['progress'] = [(str(progress) + '%') if progress >=
+                            0 else progress for progress in projects['progress']]
+    # If description or title has more than 50 characters, truncate after 47 and add '...'
+    projects['description'] = [(description[:47] + '...') if len(description)
+                               > 50 else description for description in projects['description']]
+    projects['title'] = [(title[:47] + '...') if len(title) >
+                         50 else title for title in projects['title']]
+    print(tabulate(projects, headers='keys', tablefmt=tablefmt,
+          showindex=False, colalign=("left", "left", "right", "left")))
+
+
 @project.command(name='import')
 @click.argument('files', type=click.Path(), nargs=-1, required=True)
 @click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help='Your Api Key')
+              help=(
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable).'
+                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
+              )
+              )
 @click.option('--endpoint', type=str,
               default='https://cloud.kili-technology.com/api/label/v2/graphql',
               help='The API Endpoint')

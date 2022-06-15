@@ -30,6 +30,7 @@ setup(
                       "click",
                       "requests",
                       "six",
+                      "tabulate",
                       "tqdm",
                       "typeguard",
                       "pyparsing",
