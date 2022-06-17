@@ -29,7 +29,7 @@ def project():
 @project.command(name="list")
 @click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
               help=(
-                  'Your Kili API key (overrides the KILI_API_KEY environment variable).'
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
                   'If not passed, requires the KILI_API_KEY environment variable to be set.'
               )
               )
@@ -72,7 +72,7 @@ def list_project(api_key: str,
 @click.argument('files', type=click.Path(), nargs=-1, required=True)
 @click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
               help=(
-                  'Your Kili API key (overrides the KILI_API_KEY environment variable).'
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
                   'If not passed, requires the KILI_API_KEY environment variable to be set.'
               )
               )

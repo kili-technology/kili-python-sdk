@@ -312,10 +312,9 @@ def get_file_paths_to_upload(files: Tuple[str, ...],
     files_path_to_upload = [
         path for path in files_path if check_file_mime_type(path, input_type, False)]
     if exclude is not None:
-        files_path_to_upload = [
-            path for path in files_path_to_upload if path not in exclude]
-    files_path_to_upload.sort()
-    if len(files_path_to_upload) == 0:
+        file_paths_to_upload = [
+            path for path in file_paths_to_upload if path not in exclude]
+    if len(file_paths_to_upload) == 0:
         raise ValueError(
             "No files to upload. "
             "Check that the paths exist and that the file types are compatible with the project")
@@ -326,7 +325,8 @@ def get_file_paths_to_upload(files: Tuple[str, ...],
             f'Files skipped: {unuploaded_files_path}. '
             'Paths either do not exist, are filtered out '
             'or point towards wrong data type for the project')
-    return files_path_to_upload
+    file_paths_to_upload.sort()
+    return file_paths_to_upload
 
 
 def generate_json_metadata_array(as_frames, fps, nb_files, input_type):

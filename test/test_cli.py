@@ -46,7 +46,7 @@ def test_create_project(mocker):
                    '--title',
                    'Test project',
                    '--description',
-                   'desciption',
+                   'description',
                    '--input-type',
                    'IMAGE'])
 
