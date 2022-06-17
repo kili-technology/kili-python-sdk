@@ -5,7 +5,7 @@ import os
 from kili.client import Kili
 from test.utils import mocked_count_method, mocked_query_method
 
-api_key = os.getenv("KILI_USER_API_KEY")
+api_key = os.getenv("KILI_API_KEY")
 api_endpoint = os.getenv("KILI_API_ENDPOINT")
 kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
 

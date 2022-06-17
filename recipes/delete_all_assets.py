@@ -2,7 +2,7 @@ import os
 
 from kili.client import Kili
 
-api_key = os.getenv('KILI_USER_API_KEY')
+api_key = os.getenv('KILI_API_KEY')
 # If you use Kili SaaS, use the url 'https://cloud.kili-technology.com/api/label/v2/graphql'
 api_endpoint = os.getenv('KILI_API_ENDPOINT')
 
