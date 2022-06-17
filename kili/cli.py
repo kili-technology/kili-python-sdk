@@ -5,12 +5,11 @@ import click
 from tabulate import tabulate
 from typeguard import typechecked
 import pandas as pd
-from tabulate import tabulate
 from kili.client import Kili
 from kili import __version__
 from kili.exceptions import NotFound
 from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_paths_to_upload
-from kili.queries.project.helpers import get_project_statistics
+from kili.queries.project.helpers import get_project_metrics
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -181,7 +180,7 @@ def describe_project(api_key: str,
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
-    infos, dataset_statistics, quality_statistics = get_project_statistics(
+    infos, dataset_statistics, quality_statistics = get_project_metrics(
         projects[0])
 
     print(tabulate(infos, tablefmt='plain'), end='\n'*2)
