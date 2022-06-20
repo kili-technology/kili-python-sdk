@@ -1,5 +1,4 @@
 {
-    "jobRendererWidth": 0.2,
     "jobs": {
         "DETECTION": {
             "mlTask": "OBJECT_DETECTION",

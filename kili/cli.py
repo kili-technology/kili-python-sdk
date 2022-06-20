@@ -102,21 +102,23 @@ def create_project(api_key: str,
     with open(interface, encoding='utf-8') as interface_file:
         json_interface = json.load(interface_file)
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
-    kili.create_project(
+    result = kili.create_project(
         input_type=input_type,
         json_interface=json_interface,
         title=title,
         description=description)
+    project_id = result['id']
+    print(f'Project successfully created. Id: {project_id}')
 
 
-@project.command(name='import')
-@click.argument('files', type=click.Path(), nargs=-1, required=True)
-@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help=(
-                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
-              )
-              )
+@ project.command(name='import')
+@ click.argument('files', type=click.Path(), nargs=-1, required=True)
+@ click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
+               help=(
+                   'Your Kili API key (overrides the KILI_API_KEY environment variable). '
+                   'If not passed, requires the KILI_API_KEY environment variable to be set.'
+               )
+               )
 @click.option('--endpoint', type=str,
               default='https://cloud.kili-technology.com/api/label/v2/graphql',
               help='The API Endpoint')
