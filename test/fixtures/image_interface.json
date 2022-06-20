@@ -1,0 +1,30 @@
+{
+    "jobs": {
+        "DETECTION": {
+            "mlTask": "OBJECT_DETECTION",
+            "tools": [
+                "rectangle"
+            ],
+            "instruction": "Is there a defect ? Where ? What kind ?",
+            "required": 0,
+            "isChild": false,
+            "content": {
+                "categories": {
+                    "DEFECT_CLASS_1": {
+                        "name": "defect of class 1"
+                    },
+                    "DEFECT_CLASS_2": {
+                        "name": "defect of class 2"
+                    },
+                    "DEFECT_CLASS_3": {
+                        "name": "defect of class 3"
+                    },
+                    "DEFECT_CLASS_4": {
+                        "name": "defect of class 4"
+                    }
+                },
+                "input": "radio"
+            }
+        }
+    }
+}

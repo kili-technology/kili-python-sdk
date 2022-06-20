@@ -1,7 +1,7 @@
 """Tests the Kili CLI"""
 
 import os
-from kili.cli import describe_project, import_assets, list_project
+from kili.cli import describe_project, import_assets, list_project, create_project
 from click.testing import CliRunner
 
 from .utils import debug_subprocess_pytest
@@ -34,6 +34,21 @@ def test_list(mocker):
             (result.output.count("100.0%") == 1) and
             (result.output.count("0.0%") == 2) and
             (result.output.count("nan") == 1))
+
+
+def test_create_project(mocker):
+    mocker.patch("kili.client.Kili.__init__", return_value=None)
+    mocker.patch("kili.client.Kili.create_project")
+    runner = CliRunner()
+    runner.invoke(create_project,
+                  ['--interface',
+                   "test/fixtures/image_interface.json",
+                   '--title',
+                   'Test project',
+                   '--description',
+                   'description',
+                   '--input-type',
+                   'IMAGE'])
 
 
 def test_import(mocker):
