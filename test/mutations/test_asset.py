@@ -16,9 +16,8 @@ from kili.mutations.asset.helpers import get_file_mimetype, process_append_many_
 from kili.mutations.asset.queries import GQL_APPEND_MANY_FRAMES_TO_DATASET
 import requests
 
-api_key = os.getenv('KILI_API_KEY')
 api_endpoint = os.getenv('KILI_API_ENDPOINT')
-kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
+kili = Kili(api_endpoint=api_endpoint)
 
 
 tester = TestCase()

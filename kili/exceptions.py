@@ -12,6 +12,17 @@ class NotFound(Exception):
         return f"Not found: '{self.name}'"
 
 
+class AuthenticationFailed(Exception):
+    """
+    Used when the authentification fails
+    """
+
+    def __init__(self, api_key, api_endpoint):
+        super().__init__(
+            f'Connection to Kili endpoint {api_endpoint} failed with API key: {api_key}.'
+            ' Check your connection and API key.')
+
+
 class EndpointCompatibilityError(Exception):
     """
     Used when a resolver is called but is not compatible with the endpoint
