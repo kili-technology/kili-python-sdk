@@ -1,7 +1,7 @@
 """Tests the Kili CLI"""
 
 import os
-from kili.cli import import_assets, list_project
+from kili.cli import describe_project, import_assets, list_project
 from click.testing import CliRunner
 
 from .utils import debug_subprocess_pytest
@@ -161,3 +161,29 @@ def test_import(mocker):
             debug_subprocess_pytest(result)
             mocked__append_many_to_dataset.assert_called_with(
                 **test_case['expected_mutation_payload'])
+
+
+def test_describe_project(mocker):
+    mocker.patch("kili.client.Kili.__init__", return_value=None)
+    mocker.patch("kili.client.Kili.projects",
+                 side_effect=lambda **_: [{'title': 'project title',
+                                          'id': 'project_id',
+                                           'description': 'description test',
+                                           'numberOfAssets': 49,
+                                           'numberOfRemainingAssets': 29,
+                                           'numberOfReviewedAssets': 0,
+                                           'numberOfAssetsWithSkippedLabels': 0,
+                                           'numberOfOpenIssues': 3,
+                                           'numberOfSolvedIssues': 2,
+                                           'numberOfOpenQuestions': 0,
+                                           'numberOfSolvedQuestions': 2,
+                                           'honeypotMark': None,
+                                           'consensusMark': None}])
+    runner = CliRunner()
+    result = runner.invoke(describe_project, ['--project-id', "project_id"])
+    debug_subprocess_pytest(result)
+    assert (result.output.count('40.8%') == 1) and (
+        result.output.count('N/A') == 2) and (
+        result.output.count('49') == 1) and (
+        result.output.count('project title') == 1
+    )

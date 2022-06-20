@@ -2,13 +2,14 @@
 
 from typing import Optional, Tuple
 import click
+from tabulate import tabulate
 from typeguard import typechecked
 import pandas as pd
-from tabulate import tabulate
 from kili.client import Kili
 from kili import __version__
 from kili.exceptions import NotFound
 from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_paths_to_upload
+from kili.queries.project.helpers import get_project_metrics
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -87,7 +88,7 @@ def list_project(api_key: str,
 @click.option('--fps', type=int,
               help="Only for a frame project, import videos with a specific frame rate")
 @typechecked
-#pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments
 def import_assets(api_key: str,
                   endpoint: str,
                   project_id: str,
@@ -148,6 +149,45 @@ def import_assets(api_key: str,
         json_metadata_array=json_metadata_array)
 
     print(f'\n{len(files_to_upload)} files have been successfully imported')
+
+
+@project.command(name="describe")
+@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
+              help='Your Api Key')
+@click.option('--endpoint', type=str,
+              default='https://cloud.kili-technology.com/api/label/v2/graphql',
+              help='The API Endpoint')
+@click.option('--project-id', type=str, required=True,
+              help='Id of the project to import assets in')
+def describe_project(api_key: str,
+                     endpoint: str,
+                     project_id: str):
+    """Show Analytics of a project.
+
+    Examples:
+
+        $ kili project describe --project-id <project_id>
+    """
+    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    try:
+        projects = kili.projects(project_id=project_id,
+                                 fields=['title', 'id', 'description', 'numberOfAssets',
+                                         'numberOfRemainingAssets', 'numberOfReviewedAssets',
+                                         'numberOfAssetsWithSkippedLabels',
+                                         'honeypotMark', 'consensusMark',
+                                         'numberOfOpenIssues', 'numberOfSolvedIssues',
+                                         'numberOfOpenQuestions', 'numberOfSolvedQuestions'])
+    except:
+        # pylint: disable=raise-missing-from
+        raise NotFound(f'project ID: {project_id}')
+    infos, dataset_statistics, quality_statistics = get_project_metrics(
+        projects[0])
+
+    print(tabulate(infos, tablefmt='plain'), end='\n'*2)
+    print('Dataset KPIs', end='\n'+'-'*len('Dataset KPIs')+'\n')
+    print(tabulate(dataset_statistics, tablefmt='plain'), end='\n'*2)
+    print('Quality KPIs', end='\n'+'-'*len('Quality KPIs')+'\n')
+    print(tabulate(quality_statistics, tablefmt='plain'))
 
 
 def main() -> None:
