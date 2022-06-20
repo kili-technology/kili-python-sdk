@@ -296,21 +296,20 @@ def get_file_paths_to_upload(files: Tuple[str, ...],
     Returns:
         a list of the paths of the files to upload, compatible with the project type.
     """
-    files_path = []
+    file_paths = []
     for item in files:
         if os.path.isfile(item):
-            files_path.append(item)
-            print(files_path)
+            file_paths.append(item)
         elif os.path.isdir(item):
             folder_path = os.path.join(item, '')
-            files_path.extend([sub_item for sub_item in glob.glob(folder_path + '*')
+            file_paths.extend([sub_item for sub_item in glob.glob(folder_path + '*')
                                if os.path.isfile(sub_item)])
         else:
-            files_path.extend([sub_item for sub_item in glob.glob(item)
+            file_paths.extend([sub_item for sub_item in glob.glob(item)
                                if os.path.isfile(sub_item)])
 
-    files_path_to_upload = [
-        path for path in files_path if check_file_mime_type(path, input_type, False)]
+    file_paths_to_upload = [
+        path for path in file_paths if check_file_mime_type(path, input_type, False)]
     if exclude is not None:
         file_paths_to_upload = [
             path for path in file_paths_to_upload if path not in exclude]
@@ -318,11 +317,11 @@ def get_file_paths_to_upload(files: Tuple[str, ...],
         raise ValueError(
             "No files to upload. "
             "Check that the paths exist and that the file types are compatible with the project")
-    if len(files_path_to_upload) != len(files_path):
-        unuploaded_files_path = [
-            path for path in files_path if path not in files_path_to_upload]
+    if len(file_paths_to_upload) != len(file_paths):
+        unuploaded_file_paths = [
+            path for path in file_paths if path not in file_paths_to_upload]
         print(
-            f'Files skipped: {unuploaded_files_path}. '
+            f'Files skipped: {unuploaded_file_paths}. '
             'Paths either do not exist, are filtered out '
             'or point towards wrong data type for the project')
     file_paths_to_upload.sort()

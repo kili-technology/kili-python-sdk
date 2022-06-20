@@ -8,6 +8,7 @@ from typeguard import typechecked
 import pandas as pd
 from kili.client import Kili
 from kili import __version__
+from kili.constants import INPUT_TYPE
 from kili.exceptions import NotFound
 from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_paths_to_upload
 from kili.queries.project.helpers import get_project_metrics
@@ -66,6 +67,46 @@ def list_project(api_key: str,
                          50 else title for title in projects['title']]
     print(tabulate(projects, headers='keys', tablefmt=tablefmt,
           showindex=False, colalign=("left", "left", "right", "left")))
+
+
+@project.command(name='create')
+@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
+              help=(
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
+                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
+              ))
+@click.option('--endpoint',
+              type=str,
+              default='https://cloud.kili-technology.com/api/label/v2/graphql',
+              help='Your Api Enpoint')
+@click.option('--interface', type=click.Path(exists=True), required=True,
+              help='Path pointing to your json interface file')
+@click.option('--title', type=str, required=True,
+              help='Project Title')
+@click.option('--input-type', type=click.Choice(INPUT_TYPE), required=True,
+              help='Project input data type')
+@click.option('--description', type=str, default='',
+              help='Project description')
+# pylint: disable=too-many-arguments
+def create_project(api_key: str,
+                   endpoint: str,
+                   input_type,
+                   interface: str,
+                   title: str,
+                   description: str):
+    """Create a Kili project.
+    Examples:
+        $ kili project create --project-id <project_id> \
+        --interface path/to/interface.json --input-type TEXT --title "Invoice annotation project"
+    """
+    with open(interface, encoding='utf-8') as interface_file:
+        json_interface = json.load(interface_file)
+    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    kili.create_project(
+        input_type=input_type,
+        json_interface=json_interface,
+        title=title,
+        description=description)
 
 
 @project.command(name='import')
