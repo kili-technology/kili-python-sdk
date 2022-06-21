@@ -2,8 +2,8 @@
 
 ## What is the Kili CLI
 
-The Kili CLI has been designed to run key actions on your projects with one line of code.
-For the supported actions, the CLI offers a more compact way to manage your projects than the Python SDK. However the Python SDK offers more possibilities and must be used for more complex project management tasks.
+The Kili CLI has been designed to run key actions on your projects with with powerful commands.
+For the actions it supports, the CLI offers a more compact way to manage your projects than the Python SDK. However the Python SDK offers more possibilities and may still be used for more complex project management tasks.
 
 ## Authentification
 
@@ -15,7 +15,7 @@ For the supported actions, the CLI offers a more compact way to manage your proj
   ```
 
 !!! info
-    While launching commands, you can also inform you API key through the `--api-key` option. If have set your `KILI_API_KEY` environement variable and provide an API key through the `--api-key` option, it will used the one from the command's option.
+    While launching commands, you can also provide you API key through the `--api-key` option. If have set your `KILI_API_KEY` environment variable and provide an API key through the `--api-key` option, it will use the one passed as an option.
 
 ## Usage
 
