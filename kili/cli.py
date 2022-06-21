@@ -47,8 +47,11 @@ def list_project(api_key: str,
     """
     List your projects
 
-    Example:
-        $ kili project list --max 10 --format pretty
+    \b
+    !!! Examples
+        ```
+        kili project list --max 10 --format pretty
+        ```
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     projects = kili.projects(fields=['title', 'id', 'description', 'numberOfAssets',
@@ -95,9 +98,15 @@ def create_project(api_key: str,
                    title: str,
                    description: str):
     """Create a Kili project.
-    Examples:
-        $ kili project create --project-id <project_id> \
-        --interface path/to/interface.json --input-type TEXT --title "Invoice annotation project"
+
+    \b
+    !!! Examples
+        ```
+        kili project create \\
+            --interface path/to/interface.json \\
+            --input-type TEXT \\
+            --title "Invoice annotation project"
+        ```
     """
     with open(interface, encoding='utf-8') as interface_file:
         json_interface = json.load(interface_file)
@@ -145,20 +154,30 @@ def import_assets(api_key: str,
 
     Files can be paths to files or to folders. You can provide several paths separated by spaces.
 
-    Examples:
-        $ kili project import --project-id <project_id> dir1/dir2/ dir1/dir3/test1.png
-        --exclude dontimport.png
+    \b
+    !!! Examples
+        ```
+        kili project import \\
+            dir1/dir2/ dir1/dir3/test1.png \\
+            --project-id <project_id> \\
+            --exclude dontimport.png \\
+        ```
+        ```
+        kili project import \\
+            dir1/dir3/video.mp4 \\
+            --project-id <project_id> \\
+            --frames \\
+            --fps 24 \\
+        ```
 
-        $ kili project import --project-id <project_id> dir1/dir3/video.mp4 --frames --fps 24
-
-
-    Currently, this command does not support:
+    \b
+    !!! warning "Unsupported imports"
+        Currently, this command does not support:
 
         - the import of videos from local frames, rich text and time series assets
-
         - the import of assets with metadata or with a custom external_id
 
-    For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
+        For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     try:
@@ -208,9 +227,11 @@ def describe_project(api_key: str,
                      project_id: str):
     """Show Analytics of a project.
 
-    Examples:
-
-        $ kili project describe --project-id <project_id>
+    \b
+    !!! Examples
+        ```
+        kili project describe --project-id <project_id>
+        ```
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     try:
