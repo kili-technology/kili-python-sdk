@@ -74,6 +74,8 @@ class Kili(  # pylint: disable=too-many-ancestors
                 - your labels with: `kili.labels()`
                 - your projects with: `kili.projects()`
         """
+        if api_key is None:
+            raise AuthenticationFailed(api_key, api_endpoint)
         try:
             self.auth = KiliAuth(
                 api_key=api_key, api_endpoint=api_endpoint, verify=verify)
