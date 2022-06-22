@@ -1,25 +1,25 @@
-# Getting started with the Kili CLI
+# Getting started with Kili CLI
 
-## What is the Kili CLI
+## What is Kili CLI
 
-The Kili CLI has been designed to run key actions on your projects with with powerful commands.
-For the actions it supports, the CLI offers a more compact way to manage your projects than the Python SDK. However the Python SDK offers more possibilities and may still be used for more complex project management tasks.
+Kili CLI has been designed to run key actions on your projects with powerful commands.
+For the actions it supports, the CLI offers a more compact way to manage your projects than the Python SDK. Note that the Python SDK offers more options and may still be used for more complex project management tasks.
 
-## Authentification
+## Authentication
 
 - Create and copy a [Kili API key](https://docs.kili-technology.com/docs/creating-an-api-key)
-- Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
+- Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value that you copied earlier:
 
   ```bash
   export KILI_API_KEY='<you api key value here>'
   ```
 
 !!! info
-    While launching commands, you can also provide you API key through the `--api-key` option. If have set your `KILI_API_KEY` environment variable and provide an API key through the `--api-key` option, it will use the one passed as an option.
+    While launching commands, you can also provide you API key through the `--api-key` option. If you set your api key in the `KILI_API_KEY` environment variable and provide it once again through the `--api-key` option, Kili CLI will use the api key value provided in command options.
 
 ## Usage
 
-The main command is `kili`. It currently only have one subcommand `project` that gathers all the commands for project management :
+The main command is `kili`. It currently has only one subcommand `project` that entails all the commands for project management :
 
 ```
 kili project [COMMAND]
@@ -62,20 +62,23 @@ Defect detection                          cl4ljd3awc5gj0lpbb89nbcqg        0.0% 
 invoice NER                               cl3d43bzb0rl71mx4580mpbt1       92.5%  For intelligent document pro...
 ```
 
-### import data to your project
+### Import data to your project
 
-To import data, you can provide a list of files or folders
+To import data, provide a list of files or folders
 
 ```
 kili project import \\
     reference_image.png datasets/defect_detection/ \\
     --project-id cl4ljd3awc5gj0lpbb89nbcqg \\
+    --verbose
 ```
 
 Returns:
 
 ```
-Files skipped: [datasets/defect_detection/visit1.mp4, datasets/defect_detection/visit2.mp4]. Paths either do not exist, are filtered out or point towards wrong data type for the project
+datasets/defect_detection/visit1.mp4    SKIPPED
+datasets/defect_detection/visit2.mp4    SKIPPED
+Paths either do not exist, are filtered out or point towards wrong data type for the project
 
 567 files have been successfully imported
 ```
