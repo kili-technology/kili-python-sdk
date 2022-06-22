@@ -1,0 +1,3 @@
+external_id;json_response_path
+poules.png;test/fixtures/classification_json_response.json
+test.jpg;test/fixtures/classification_json_response.json

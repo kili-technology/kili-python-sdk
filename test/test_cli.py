@@ -1,8 +1,8 @@
 """Tests the Kili CLI"""
 
 import os
-from kili.cli import describe_project, import_assets, list_project, create_project
 from click.testing import CliRunner
+from kili.cli import describe_project, import_assets, import_labels, list_project, create_project
 
 from .utils import debug_subprocess_pytest
 
@@ -202,3 +202,76 @@ def test_describe_project(mocker):
         result.output.count('49') == 1) and (
         result.output.count('project title') == 1
     )
+
+
+def test_import_labels(mocker):
+    mocker.patch("kili.client.Kili.__init__", return_value=None)
+    mocked__append_to_labels = mocker.patch(
+        "kili.client.Kili.append_to_labels")
+    mocked__create_predictions = mocker.patch(
+        "kili.client.Kili.create_predictions")
+    mocker.patch("kili.client.Kili.count_projects", return_value=1)
+    TEST_CASES = [{
+        'case_name': 'AAU, when I import default labels from a CSV, I see a sucess',
+        'csv_file': 'test/fixtures/labels_to_import.csv',
+        'options': {
+            'project-id': 'project_id',
+        },
+        'flags': [],
+        'mutation_to_call': 'append_to_labels',
+        'expected_mutation_payload': {
+            'project_id': 'project_id',
+            'json_response': {
+                "JOB_0": {
+                    "categories": [
+                        {
+                            "name": "YES_IT_IS_SPAM",
+                            "confidence": 100
+                        }
+                    ]
+                }
+            },
+            'label_asset_external_id': 'poules.png',
+        }
+    },
+        {
+        'case_name': 'AAU, when I import predictions from a CSV, I see a sucess',
+        'csv_file': 'test/fixtures/labels_to_import.csv',
+        'options': {
+            'project-id': 'project_id',
+            'model-name': 'model_name'
+        },
+        'flags': ['prediction'],
+        'mutation_to_call': 'create_predictions',
+        'expected_mutation_payload': {
+            'project_id': 'project_id',
+            'json_response_array': [{
+                "JOB_0": {
+                    "categories": [
+                        {
+                            "name": "YES_IT_IS_SPAM",
+                            "confidence": 100
+                        }
+                    ]
+                }
+            }]*2,
+            'external_id_array': ['poules.png', 'test.jpg'],
+            'model_name_array': ['model_name']*2
+        }
+    }]
+    runner = CliRunner()
+    for test_case in TEST_CASES:
+        arguments = [test_case['csv_file']]
+        for k, v in test_case['options'].items():
+            arguments.append('--'+k)
+            arguments.append(v)
+        if test_case.get('flags'):
+            arguments.extend(['--'+flag for flag in test_case['flags']])
+        result = runner.invoke(import_labels, arguments)
+        debug_subprocess_pytest(result)
+        if test_case['mutation_to_call'] == 'append_to_labels':
+            mocked__append_to_labels.assert_any_call(
+                **test_case['expected_mutation_payload'])
+        else:
+            mocked__create_predictions.assert_called_with(
+                **test_case['expected_mutation_payload'])

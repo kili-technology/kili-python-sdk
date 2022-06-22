@@ -1,0 +1,10 @@
+{
+    "JOB_0": {
+        "categories": [
+            {
+                "name": "YES_IT_IS_SPAM",
+                "confidence": 100
+            }
+        ]
+    }
+}

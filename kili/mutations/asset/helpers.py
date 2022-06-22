@@ -284,7 +284,8 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
 
 def get_file_paths_to_upload(files: Tuple[str, ...],
                              input_type: str,
-                             exclude: Optional[Tuple[str, ...]]) -> List[str]:
+                             exclude: Optional[Tuple[str, ...]],
+                             verbose: bool) -> List[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.
 
     Args:
@@ -316,13 +317,13 @@ def get_file_paths_to_upload(files: Tuple[str, ...],
         raise ValueError(
             "No files to upload. "
             "Check that the paths exist and that the file types are compatible with the project")
-    if len(file_paths_to_upload) != len(file_paths):
-        unuploaded_file_paths = [
-            path for path in file_paths if path not in file_paths_to_upload]
-        print(
-            f'Files skipped: {unuploaded_file_paths}. '
-            'Paths either do not exist, are filtered out '
-            'or point towards wrong data type for the project')
+    if verbose:
+        for path in file_paths:
+            if path not in file_paths_to_upload:
+                print(f'{path:30} SKIPPED')
+        if len(file_paths_to_upload) != len(file_paths):
+            print('Paths skipped either do not exist, are filtered out '
+                  'or point towards wrong data type for the project')
     file_paths_to_upload.sort()
     return file_paths_to_upload
 
