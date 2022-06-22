@@ -15,8 +15,11 @@ def get_project_metrics(project: dict) -> Tuple[List[list], List[list], List[lis
         info, dataset_metrics, quality_metrics: arrays that contain
         the project infos and progress metrics
     """
-    progress = round(
-        (1 - project['numberOfRemainingAssets'] / project['numberOfAssets']) * 100, 1)
+    if project['numberOfAssets']:
+        progress = round(
+            (1 - project['numberOfRemainingAssets'] / project['numberOfAssets']) * 100, 1)
+    else:
+        progress = 0
 
     infos = [
         ['Title', project['title']],
