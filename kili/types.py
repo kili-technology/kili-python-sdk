@@ -6,6 +6,23 @@ GraphQL types
 
 from dataclasses import dataclass
 
+@dataclass
+class License:
+    """
+    A Wrapper for License GraphQL object.
+    """
+    api = 'api'
+    apiPriority = 'apiPriority'
+    enableSmartTools = 'enableSmartTools'
+    expiryDate = 'expiryDate'
+    inputType = 'inputType'
+    maxNumberOfLabeledAssets = 'maxNumberOfLabeledAssets'
+    publicProject = 'publicProject'
+    seats = 'seats'
+    startDate = 'startDate'
+    type = 'type'
+    uploadCloudData = 'uploadCloudData'
+    organizationId = 'organizationId'
 
 @dataclass
 class OrganizationWithoutUser:
@@ -18,7 +35,7 @@ class OrganizationWithoutUser:
     canSeeDataset = 'canSeeDataset'
     city = 'city'
     country = 'country'
-    license = 'license'
+    license = License
     name = 'name'
     numberOfAnnotations = 'numberOfAnnotations'
     numberOfLabeledAssets = 'numberOfLabeledAssets'
@@ -110,9 +127,7 @@ class ProjectWithoutDataset:
     numberOfAssets = 'numberOfAssets'
     numberOfAssetsWithSkippedLabels = 'numberOfAssetsWithSkippedLabels'
     numberOfOpenIssues = 'numberOfOpenIssues'
-    numberOfOpenQuestions = 'numberOfOpenQuestions'
     numberOfSolvedIssues = 'numberOfSolvedIssues'
-    numberOfSolvedQuestions = 'numberOfSolvedQuestions'
     numberOfReviewedAssets = 'numberOfReviewedAssets'
     readPermissionsForAssetsAndLabels = 'readPermissionsForAssetsAndLabels'
     reviewCoverage = 'reviewCoverage'
