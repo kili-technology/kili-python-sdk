@@ -10,16 +10,20 @@ edit_uri: '' #disables edit button
 
 ## Site Architecture
 nav:
-  - API Key: api_key.md
-  - Asset: asset.md
-  - Issue: issue.md
-  - Label: label.md
-  - Notification: notification.md
-  - Organization: organization.md
-  - Project: project.md
-  - Project User: project_user.md
-  - Project Version: project_version.md
-  - User: user.md
+  - Python SDK:
+      - API Key: api_key.md
+      - Asset: asset.md
+      - Issue: issue.md
+      - Label: label.md
+      - Notification: notification.md
+      - Organization: organization.md
+      - Project: project.md
+      - Project User: project_user.md
+      - Project Version: project_version.md
+      - User: user.md
+  - Command line interface:
+      - Getting Started: cli_getting_started.md
+      - Reference: cli_reference.md
 
 ## Configuration
 plugins:
@@ -48,6 +52,7 @@ plugins:
 markdown_extensions:
   - admonition
   - def_list
+  - mkdocs-click
   - attr_list
   - md_in_html
   - pymdownx.superfences:
@@ -73,5 +78,7 @@ theme:
   language: en
   font:
     text: Archia
+  features:
+    - navigation.tabs
 extra_css:
   - stylesheets/extra.css
