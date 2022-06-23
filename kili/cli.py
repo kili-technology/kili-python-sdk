@@ -160,14 +160,14 @@ def import_assets(api_key: str,
         kili project import \\
             dir1/dir2/ dir1/dir3/test1.png \\
             --project-id <project_id> \\
-            --exclude dontimport.png \\
+            --exclude dontimport.png
         ```
         ```
         kili project import \\
             dir1/dir3/video.mp4 \\
             --project-id <project_id> \\
             --frames \\
-            --fps 24 \\
+            --fps 24
         ```
 
     \b

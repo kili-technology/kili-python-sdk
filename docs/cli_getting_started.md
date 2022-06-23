@@ -37,14 +37,14 @@ To create an IMAGE project:
 kili project create \\
             --interface path/to/interface.json \\
             --input-type IMAGE \\
-            --title "Defect detection"
+            --title "Defect detection" \\
             --description "Bottle defects on production line"
 ```
 
-Returns:
+Ouputs:
 
 ```
-Project successfully created. Id: cl4ljd3awc5gj0lpbb89nbcqg'
+Project successfully created. Id: cl4ljd3awc5gj0lpbb89nbcqg
 ```
 
 ### List your projects
@@ -53,7 +53,7 @@ Project successfully created. Id: cl4ljd3awc5gj0lpbb89nbcqg'
 kili project list --max 10
 ```
 
-Returns:
+Ouputs:
 
 ```
 title                                     id                           progress  description
@@ -73,7 +73,7 @@ kili project import \\
     --verbose
 ```
 
-Returns:
+Ouputs:
 
 ```
 datasets/defect_detection/visit1.mp4    SKIPPED
@@ -87,10 +87,10 @@ Paths either do not exist, are filtered out or point towards wrong data type for
 
 ```
 kili project describe \\
-    --project-id cl4ljd3awc5gj0lpbb89nbcqg \\
+    --project-id cl4ljd3awc5gj0lpbb89nbcqg
 ```
 
-Returns:
+Ouputs:
 
 ```
 Title        Defect detection
