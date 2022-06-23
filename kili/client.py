@@ -2,6 +2,7 @@
 This script permits to initialize the Kili Python SDK client.
 """
 import os
+import signal
 
 from kili.exceptions import NotFound, AuthenticationFailed
 from kili.mutations.api_key import MutationsApiKey
@@ -76,12 +77,19 @@ class Kili(  # pylint: disable=too-many-ancestors
         """
         if api_key is None:
             raise AuthenticationFailed(api_key, api_endpoint)
+
+        def timeout_handler(signum, frame):
+            raise Exception
+
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(10)
         try:
             self.auth = KiliAuth(
                 api_key=api_key, api_endpoint=api_endpoint, verify=verify)
             super().__init__(self.auth)
         except Exception as exception:
             raise AuthenticationFailed(api_key, api_endpoint) from exception
+        signal.alarm(0)
 
     def get_project(self, project_id: str) -> Project:
         """Return a project object corresponding to the project_id given.

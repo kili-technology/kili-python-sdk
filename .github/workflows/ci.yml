@@ -20,6 +20,7 @@ jobs:
           pylint kili
   recipes:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     name: Recipes test
     steps:
       - name: Checkout repo
