@@ -125,7 +125,7 @@ class MutationsAsset:
 
     @Compatible(['v2'])
     @typechecked
-    #pylint: disable=unused-argument
+    # pylint: disable=unused-argument
     def update_properties_in_assets(self,
                                     asset_ids: List[str],
                                     external_ids: Optional[List[str]] = None,
@@ -170,16 +170,19 @@ class MutationsAsset:
 
         Examples:
             >>> kili.update_properties_in_assets(
-                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n"],
                     consensus_marks=[1, 0.7],
                     contents=[None, 'https://to/second/asset.png'],
-                    external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
+                    external_ids=['external-id-of-your-choice-1',
+                        'external-id-of-your-choice-2'],
                     honeypot_marks=[0.8, 0.5],
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
                     priorities=[None, 2],
                     status_array=['LABELED', 'REVIEWED'],
-                    to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
+                    to_be_labeled_by_array=[
+                        ['test+pierre@kili-technology.com'], None],
             )
         """
 
@@ -249,3 +252,37 @@ class MutationsAsset:
                                               generate_variables,
                                               GQL_DELETE_MANY_FROM_DATASET)
         return format_result('data', results[0], Asset)
+
+    @Compatible(['v1', 'v2'])
+    @typechecked
+    def add_assets_to_review(
+            self,
+            asset_ids: List[str]) -> List[dict]:
+        """Add assets to review.
+
+        Args:
+            asset_ids: The asset IDs to add to review
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.add_assets_to_review(
+                    asset_ids=[
+                        "ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n"
+                        ],
+        """
+        properties_to_batch = {'asset_ids': asset_ids}
+
+        def generate_variables(batch):
+            return {
+                'whereArray': [{'id': asset_id} for asset_id in batch['asset_ids']],
+                'dataArray': [{'isToReview': [True]*len(batch['asset_ids'])}]
+            }
+        results = _mutate_from_paginated_call(
+            self, properties_to_batch, generate_variables, GQL_UPDATE_PROPERTIES_IN_ASSETS)
+        formated_results = [format_result(
+            'data', result, Asset) for result in results]
+        return [item for batch_list in formated_results for item in batch_list]
