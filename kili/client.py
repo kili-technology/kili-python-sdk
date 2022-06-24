@@ -2,7 +2,6 @@
 This script permits to initialize the Kili Python SDK client.
 """
 import os
-import signal
 
 from kili.exceptions import NotFound, AuthenticationFailed
 from kili.mutations.api_key import MutationsApiKey
@@ -56,7 +55,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     Kili Client.
     """
 
-    def __init__(self, api_key=os.getenv('KILI_API_KEY'),
+    def __init__(self, api_key=None,
                  api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
                  verify=True):
         """
@@ -76,20 +75,19 @@ class Kili(  # pylint: disable=too-many-ancestors
                 - your projects with: `kili.projects()`
         """
         if api_key is None:
+            api_key = os.getenv('KILI_API_KEY')
+        if api_key is None:
             raise AuthenticationFailed(api_key, api_endpoint)
-
-        def timeout_handler(signum, frame):
-            raise Exception
-
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(10)
         try:
             self.auth = KiliAuth(
                 api_key=api_key, api_endpoint=api_endpoint, verify=verify)
             super().__init__(self.auth)
-        except Exception as exception:
-            raise AuthenticationFailed(api_key, api_endpoint) from exception
-        signal.alarm(0)
+        except Exception as exception:  # pylint: disable=W0703
+            exception_str = str(exception)
+            if "b'Unauthorized'" in exception_str:
+                raise AuthenticationFailed(
+                    api_key, api_endpoint) from exception
+            raise exception
 
     def get_project(self, project_id: str) -> Project:
         """Return a project object corresponding to the project_id given.

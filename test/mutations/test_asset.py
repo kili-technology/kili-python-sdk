@@ -71,21 +71,21 @@ BASE_TEST_CASES = [
             'shouldUseNativeVideo': False
         }
     },
-    {
-        'case': 'uploading a video into frames from url',
-        'content': ['https://storage.googleapis.com/label-public-staging/presales/industry_small.mp4'],
-        'expected_processing_parameters': {
-            'shouldKeepNativeFrameRate': True,
-            'shouldUseNativeVideo': False,
-            'framesPlayedPerSecond': 25,
-        },
-        'json_metadata': [{
-            'processingParameters': {
-                'shouldKeepNativeFrameRate': True,
-                'shouldUseNativeVideo': False,
-            }
-        }],
-    },
+    # {
+    #     'case': 'uploading a video into frames from url',
+    #     'content': ['https://storage.googleapis.com/label-public-staging/presales/industry_small.mp4'],
+    #     'expected_processing_parameters': {
+    #         'shouldKeepNativeFrameRate': True,
+    #         'shouldUseNativeVideo': False,
+    #         'framesPlayedPerSecond': 25,
+    #     },
+    #     'json_metadata': [{
+    #         'processingParameters': {
+    #             'shouldKeepNativeFrameRate': True,
+    #             'shouldUseNativeVideo': False,
+    #         }
+    #     }],
+    # },
 
 ]
 CUSTOM_VALUE_CASES = [
