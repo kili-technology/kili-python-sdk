@@ -30,6 +30,7 @@ class QueriesIssue:
     @Compatible(['v1', 'v2'])
     @typechecked
     def issues(self,
+               project_id: str,
                fields: Optional[List[str]] = [
                    'id',
                    'createdAt',
@@ -38,7 +39,6 @@ class QueriesIssue:
                    'status',
                    'type'],
                first: Optional[int] = 100,
-               project_id: Optional[str] = None,
                skip: Optional[int] = 0,
                disable_tqdm: bool = False,
                as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
@@ -46,10 +46,10 @@ class QueriesIssue:
         """Get a generator or a list of issues that match a set of criteria.
 
         Args:
+            project_id: Project ID the issue belongs to.
             fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#issue) for all possible fields.
             first: Maximum number of issues to return.
-            project_id: Project ID the issue belongs to.
             skip: Number of issues to skip (they are ordered by their date of creation, first to last).
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the issues is returned.

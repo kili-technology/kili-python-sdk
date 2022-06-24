@@ -29,10 +29,10 @@ class QueriesProjectUser:
     @Compatible(['v1', 'v2'])
     @typechecked
     def project_users(self,
+                      project_id: str,
                       email: Optional[str] = None,
                       id: Optional[str] = None,  # pylint: disable=redefined-builtin
                       organization_id: Optional[str] = None,
-                      project_id: Optional[str] = None,
                       fields: List[str] = ['activated', 'id', 'role',
                                            'starred', 'user.email', 'user.id'],
                       first: int = 100,
@@ -44,9 +44,9 @@ class QueriesProjectUser:
 
 
         Args:
+            project_id: Identifier of the project
             email: Email of the user
             organization_id: Identifier of the user's organization
-            project_id: Identifier of the project
             fields: All the fields to request among the possible fields for the projectUsers
                 See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
             first: Maximum number of users to return
@@ -116,10 +116,11 @@ class QueriesProjectUser:
     @typechecked
     def count_project_users(
             self,
+            project_id: str,
             email: Optional[str] = None,
             id: Optional[str] = None,  # pylint: disable=redefined-builtin
             organization_id: Optional[str] = None,
-            project_id: Optional[str] = None) -> int:
+            ) -> int:
         """
         Counts the number of projects and their users that match a set of criteria
 
