@@ -6,7 +6,7 @@ This script lists package constants.
 NO_ACCESS_RIGHT = '[noAccessRights] It seems you do not have access to this object.' \
     ' Please double check your credentials.'
 
-INPUT_TYPE = ['AUDIO', 'FRAME', 'IMAGE', 'PDF', 'TEXT', 'TIME_SERIES', 'VIDEO', 'VIDEO_OLD']
+INPUT_TYPE = ['FRAME', 'IMAGE', 'PDF', 'TEXT', 'VIDEO', 'VIDEO_OLD']
 
 mime_extensions = {
   'Audio': 'audio/x-flac,audio/mpeg,video/mp4',
