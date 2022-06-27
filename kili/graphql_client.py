@@ -72,6 +72,8 @@ class GraphQLClient:
                         data).encode('utf-8'), headers=headers)
                     if req.status_code == 200 and 'errors' not in req.json():
                         break
+                    if req.status_code == 401:
+                        raise Exception("Invalid API KEY")
                     time.sleep(1)
                 return req.json()
             except Exception as exception:
