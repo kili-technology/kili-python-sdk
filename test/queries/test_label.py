@@ -12,14 +12,14 @@ kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
 TEST_CASES = [
     {
         "case": "AAU, When I query labels with first=50, I get the first 50 labels",
-        "args": {"first": 50, "disable_tqdm": True},
+        "args": {"project_id": "abcdefgh", "first": 50, "disable_tqdm": True},
         "expected_result": [{"id": i} for i in range(50)],
         "expected_type": "list",
     },
     {
         "case": "AAU, When I query labels with first=3, skip=20 as_generator=True I get a "
         "generator that skips the 20 first labels and yield the 3 labels following",
-        "args": {"as_generator": True, "first": 3, "skip": 20},
+        "args": {"project_id": "abcdefgh", "as_generator": True, "first": 3, "skip": 20},
         "expected_result": [{"id": i} for i in range(20, 23)],
         "expected_type": "generator",
     },
