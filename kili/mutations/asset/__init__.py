@@ -13,7 +13,7 @@ from .queries import (GQL_APPEND_MANY_FRAMES_TO_DATASET, GQL_DELETE_MANY_FROM_DA
 from .helpers import (process_append_many_to_dataset_parameters,
                       process_update_properties_in_assets_parameters)
 from ...constants import NO_ACCESS_RIGHT
-from ...orm import Asset
+from ...orm import Asset, AssetStatus
 from ...utils.pagination import _mutate_from_paginated_call
 
 
@@ -279,7 +279,8 @@ class MutationsAsset:
         def generate_variables(batch):
             return {
                 'whereArray': [{'id': asset_id} for asset_id in batch['asset_ids']],
-                'dataArray': [{'isToReview': [True]*len(batch['asset_ids'])}]
+                'dataArray': [{'isToReview': True,
+                               'status': AssetStatus.ToReview}]*len(batch['asset_ids'])
             }
         results = _mutate_from_paginated_call(
             self, properties_to_batch, generate_variables, GQL_UPDATE_PROPERTIES_IN_ASSETS)
