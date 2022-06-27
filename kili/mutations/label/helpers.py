@@ -16,8 +16,8 @@ def read_import_label_csv(csv_path: PathLike) -> dict:
     with open(csv_path, encoding='utf-8') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=";")
         # pylint: disable=unnecessary-comprehension
-        row_dict = [row for row in reader]
-    if sorted(list(row_dict[0].keys())) != ['external_id', 'json_response_path']:
+        row_dict = list(reader)
+    if set(row_dict[0].keys()) != set(['external_id', 'json_response_path']):
         raise ValueError(
             "The given csv file should have two columns 'external_id' and 'json_response_path'. "
             "Type `kili project label --help` to see the documentation")
@@ -28,7 +28,7 @@ def generate_create_predictions_arguments(
         label_paths: List[PathLike],
         external_id_array: List[str],
         model_name: str,
-        project_id,
+        project_id: str,
         verbose: bool) -> dict:
     """
     Generate the arguments of create prediction mutation given
@@ -41,22 +41,27 @@ def generate_create_predictions_arguments(
         project_id: Project ID
         verbose: whether to show logs
     """
-    json_response_array = []
-    filtered_external_id_array = external_id_array.copy()
+    valid_json_response_array, valid_external_id_array = [], []
+    external_id_errors = {'json_decode_errors': [], 'not_found_errors': []}
     for index, path in enumerate(label_paths):
         external_id = external_id_array[index]
         try:
             with open(path, encoding='utf-8') as label_file:
                 json_response = json.load(label_file)
-                json_response_array.append(json_response)
-        except (json.decoder.JSONDecodeError, FileNotFoundError):
-            del filtered_external_id_array[index]
+                valid_json_response_array.append(json_response)
+                valid_external_id_array.append(external_id_array[index])
+        except json.decoder.JSONDecodeError:
+            external_id_errors['json_decode_errors'].append(
+                external_id_array[index])
             if verbose:
-                print(f'{external_id:30} SKIPPED')
-    if verbose and len(filtered_external_id_array) != len(external_id_array):
-        print(
-            "json response file for the above assets were not found or couldn't be decoded")
-    return {'project_id': project_id,
-            'json_response_array': json_response_array,
-            'model_name_array': [model_name]*len(filtered_external_id_array),
-            'external_id_array': filtered_external_id_array}
+                print(f'{external_id:30} JSON DECODE ERROR')
+        except FileNotFoundError:
+            external_id_errors['not_found_errors'].append(
+                external_id_array[index])
+            if verbose:
+                print(f'{external_id:30} JSON PATH NOT FOUND ERROR')
+    mutation_payload = {'project_id': project_id,
+                        'json_response_array': valid_json_response_array,
+                        'model_name_array': [model_name]*len(valid_external_id_array),
+                        'external_id_array': valid_external_id_array}
+    return mutation_payload, external_id_errors

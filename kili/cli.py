@@ -6,7 +6,6 @@ import json
 import warnings
 import click
 from tabulate import tabulate
-from tqdm import tqdm
 from typeguard import typechecked
 import pandas as pd
 from kili.client import Kili
@@ -18,6 +17,7 @@ from kili.mutations.asset.helpers import (
 from kili.mutations.label.helpers import (
     generate_create_predictions_arguments, read_import_label_csv)
 from kili.queries.project.helpers import get_project_metrics
+from kili.utils.function_logs import print_final_log_create_prediction
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -311,20 +311,19 @@ def describe_project(api_key: str,
 @project.command(name='label')
 @ click.argument('CSV_path', type=click.Path(exists=True), required=True)
 @ click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-               help=(
-                   'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-                   'If not passed, requires the KILI_API_KEY environment variable to be set.'
-               )
-               )
+               help='Your Kili API key (overrides the KILI_API_KEY environment variable). '
+               'If not passed, requires the KILI_API_KEY environment variable to be set.')
 @click.option('--endpoint', type=str,
               default='https://cloud.kili-technology.com/api/label/v2/graphql',
               help='The API Endpoint')
 @click.option('--project-id', type=str, required=True,
               help='Id of the project to import labels in')
-@click.option('--prediction', type=bool, is_flag=True, default=False,
-              help='whether to import labels as predictions')
+@click.option('--prediction', 'is_prediction', type=bool, is_flag=True, default=False,
+              help='Tells to import labels as predictions, which means that they will appear '
+              'as pre-annotations in the Kili interface')
 @click.option('--model-name', type=str,
-              help='name of the model that generated predictions')
+              help='Name of the model that generated predictions, '
+              'if labels are sent as predictions')
 @click.option('--verbose', type=bool, is_flag=True, default=False,
               help='Show logs')
 # pylint: disable=too-many-arguments, too-many-locals
@@ -333,16 +332,16 @@ def import_labels(
         api_key: str,
         endpoint: str,
         project_id: str,
-        prediction: bool,
+        is_prediction: bool,
         model_name: str,
         verbose: bool):
     """
     Import labels or predictions
 
     The labels to import have to be in the Kili format and stored in a json file.
-    Labels to import are provided in a CSV file with two columns:
+    Labels to import are provided in a CSV file with two columns, separated by a semi-column:
 
-        - external_id: external id of the assets on which you want to import labels.
+        - external_id: external id for which you want to import labels.
         - json_response_path: paths to the json files containing the json_response to upload.
 
     \b
@@ -370,30 +369,38 @@ def import_labels(
         ```
 
     """
-    if prediction and model_name is None:
+    if is_prediction and model_name is None:
         raise ValueError(
             'When importing labels as prediction, '
             'you must provide a model name with the --model-name option')
     row_dict = read_import_label_csv(csv_path)
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
-    if kili.count_projects(project_id=project_id) != 1:
+    if kili.count_projects(project_id=project_id) == 0:
         raise NotFound(f'project ID: {project_id}')
-    if prediction:
+    if is_prediction:
         label_paths = [row['json_response_path'] for row in row_dict]
         external_id_array = [row['external_id'] for row in row_dict]
-        create_predictions_arguments = generate_create_predictions_arguments(
+        create_predictions_arguments, errors = generate_create_predictions_arguments(
             label_paths, external_id_array, model_name, project_id, verbose)
         kili.create_predictions(**create_predictions_arguments)
+        nb_labels_uploaded = len(
+            create_predictions_arguments['external_id_array'])
+        print_final_log_create_prediction(nb_labels_uploaded, errors, verbose)
+
     else:
-        for row in tqdm(row_dict):
+        for row in row_dict:
             external_id = row['external_id']
             try:
                 path = row['json_response_path']
                 with open(path, encoding='utf-8') as label_file:
                     json_response = json.load(label_file)
-            except (json.decoder.JSONDecodeError, FileNotFoundError):
+            except FileNotFoundError:
                 if verbose:
-                    print(f'{external_id:30} SKIPPED')
+                    print(f'{external_id:30} NOT FOUND')
+                continue
+            except json.decoder.JSONDecodeError:
+                if verbose:
+                    print(f'{external_id:30} DECODING ERROR')
                 continue
             try:
                 kili.append_to_labels(
@@ -402,7 +409,7 @@ def import_labels(
                     project_id=project_id)
             except GraphQLError:
                 if verbose:
-                    print(f'{external_id:30} FAILED')
+                    print(f'{external_id:30} API ERROR')
 
 
 def main() -> None:
