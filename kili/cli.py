@@ -55,7 +55,9 @@ def list_project(api_key: str,
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     projects = kili.projects(fields=['title', 'id', 'description', 'numberOfAssets',
-                             'numberOfRemainingAssets', 'numberOfReviewedAssets'], first=first)
+                             'numberOfRemainingAssets', 'numberOfReviewedAssets'],
+                             first=first,
+                             disable_tqdm=True)
     projects = pd.DataFrame(projects)
     projects['progress'] = round(
         (1 - projects['numberOfRemainingAssets'] / projects['numberOfAssets']) * 100, 1)
