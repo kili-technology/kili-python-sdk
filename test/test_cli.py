@@ -212,7 +212,7 @@ def test_import_labels(mocker):
         "kili.client.Kili.create_predictions")
     mocker.patch("kili.client.Kili.count_projects", return_value=1)
     TEST_CASES = [{
-        'case_name': 'AAU, when I import default labels from a CSV, I see a sucess',
+        'case_name': 'AAU, when I import default labels from a CSV, I see a success',
         'csv_file': 'test/fixtures/labels_to_import.csv',
         'options': {
             'project-id': 'project_id',
