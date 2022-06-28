@@ -1,5 +1,6 @@
 """Kili CLI"""
 
+import os
 from typing import Optional, Tuple
 import json
 import warnings
@@ -17,20 +18,21 @@ from kili.queries.project.helpers import get_project_metrics
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 api_key_option = click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help=(
-                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
-              )
-              )
+                              help=(
+                                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
+                                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
+                              )
+                              )
 
 endpoint_option = click.option('--endpoint', type=str,
-              default='https://cloud.kili-technology.com/api/label/v2/graphql',
-              help='The API Endpoint.')
+                               default='https://cloud.kili-technology.com/api/label/v2/graphql',
+                               help='The API Endpoint.')
 
 
-tablefmt_option =click.option('--stdout-format', 'tablefmt', type=str, default='plain',
-              help='Defines how the output table is formatted '
-              '(see https://pypi.org/project/tabulate/, default: plain).')
+tablefmt_option = click.option('--stdout-format', 'tablefmt', type=str, default='plain',
+                               help='Defines how the output table is formatted '
+                               '(see https://pypi.org/project/tabulate/, default: plain).')
+
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(__version__)
@@ -39,6 +41,7 @@ def cli():
 
        To get all the available commands, please type: `kili project --help`.
     """
+
 
 @cli.group(context_settings=CONTEXT_SETTINGS)
 def project():
@@ -50,7 +53,6 @@ def project():
 @endpoint_option
 @tablefmt_option
 @click.option('--max', 'first', type=int, help='Maximum number of project to display.', default=100)
-
 def list_project(api_key: str,
                  endpoint: str,
                  tablefmt: str,
@@ -126,10 +128,22 @@ def create_project(api_key: str,
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
     if input_type == 'FRAME':
-        warnings.warn("FRAME input type is deprecated. Please use VIDEO instead")
+        warnings.warn(
+            "FRAME input type is deprecated. Please use VIDEO instead")
     with open(interface, encoding='utf-8') as interface_file:
         json_interface = json.load(interface_file)
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    if os.path.exists(interface):
+        with open(interface, encoding='utf-8') as interface_file:
+            json_interface = json.load(interface_file)
+    else:
+        try:
+            json_interface = kili.projects(project_id=interface)[
+                0]['jsonInterface']
+        except:
+            # pylint: disable=raise-missing-from
+            raise ValueError(
+                f'{interface} is not recognized as a json file path nor a Kili project_id')
     result = kili.create_project(
         input_type=input_type,
         json_interface=json_interface,
@@ -259,7 +273,7 @@ def describe_project(api_key: str,
                                          'honeypotMark', 'consensusMark',
                                          'numberOfOpenIssues', 'numberOfSolvedIssues',
                                          'numberOfOpenQuestions', 'numberOfSolvedQuestions'],
-                                         )
+                                 )
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
