@@ -265,7 +265,11 @@ def import_assets(api_key: str,
         external_id_array=external_ids,
         json_metadata_array=json_metadata_array)
 
-    print(f'{len(files_to_upload)} files have been successfully imported')
+    if as_frames:
+        print(f'The import of {len(files_to_upload)} files have just started, '
+              'you will receive a notification as soon as it is ready.')
+    else:
+        print(f'{len(files_to_upload)} files have been successfully imported')
 
 
 @project.command(name="describe")
