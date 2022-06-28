@@ -11,13 +11,12 @@ import pandas as pd
 from kili.client import Kili
 from kili import __version__
 from kili.constants import INPUT_TYPE
-from kili.exceptions import GraphQLError, NotFound
+from kili.exceptions import NotFound
 from kili.mutations.asset.helpers import (
     generate_json_metadata_array, get_file_paths_to_upload)
 from kili.mutations.label.helpers import (
     generate_create_predictions_arguments, read_import_label_csv)
 from kili.queries.project.helpers import get_project_metrics
-from kili.utils.function_logs import print_final_log_create_prediction
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -324,8 +323,6 @@ def describe_project(api_key: str,
 @click.option('--model-name', type=str,
               help='Name of the model that generated predictions, '
               'if labels are sent as predictions')
-@click.option('--verbose', type=bool, is_flag=True, default=False,
-              help='Show logs')
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
         csv_path: str,
@@ -333,8 +330,7 @@ def import_labels(
         endpoint: str,
         project_id: str,
         is_prediction: bool,
-        model_name: str,
-        verbose: bool):
+        model_name: str):
     """
     Import labels or predictions
 
@@ -357,8 +353,7 @@ def import_labels(
         ```
         kili project label \\
             path/to/file.csv \\
-            --project-id <project_id> \\
-            --verbose
+            --project-id <project_id>
         ```
         ```
         kili project label \\
@@ -380,36 +375,22 @@ def import_labels(
     if is_prediction:
         label_paths = [row['json_response_path'] for row in row_dict]
         external_id_array = [row['external_id'] for row in row_dict]
-        create_predictions_arguments, errors = generate_create_predictions_arguments(
-            label_paths, external_id_array, model_name, project_id, verbose)
+        create_predictions_arguments = generate_create_predictions_arguments(
+            label_paths, external_id_array, model_name, project_id)
         kili.create_predictions(**create_predictions_arguments)
-        nb_labels_uploaded = len(
-            create_predictions_arguments['external_id_array'])
-        print_final_log_create_prediction(nb_labels_uploaded, errors, verbose)
+        print(f"{len(external_id_array)} labels successfully uploaded")
 
     else:
         for row in row_dict:
             external_id = row['external_id']
-            try:
-                path = row['json_response_path']
-                with open(path, encoding='utf-8') as label_file:
-                    json_response = json.load(label_file)
-            except FileNotFoundError:
-                if verbose:
-                    print(f'{external_id:30} NOT FOUND')
-                continue
-            except json.decoder.JSONDecodeError:
-                if verbose:
-                    print(f'{external_id:30} DECODING ERROR')
-                continue
-            try:
-                kili.append_to_labels(
-                    label_asset_external_id=external_id,
-                    json_response=json_response,
-                    project_id=project_id)
-            except GraphQLError:
-                if verbose:
-                    print(f'{external_id:30} API ERROR')
+            path = row['json_response_path']
+            with open(path, encoding='utf-8') as label_file:
+                json_response = json.load(label_file)
+            kili.append_to_labels(
+                label_asset_external_id=external_id,
+                json_response=json_response,
+                project_id=project_id)
+        print(f"{len(row_dict)} labels successfully uploaded")
 
 
 def main() -> None:
