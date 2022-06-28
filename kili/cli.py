@@ -26,6 +26,11 @@ endpoint_option = click.option('--endpoint', type=str,
               default='https://cloud.kili-technology.com/api/label/v2/graphql',
               help='The API Endpoint.')
 
+
+tablefmt_option =click.option('--stdout-format', 'tablefmt', type=str, default='plain',
+              help='Defines how the output table is formatted '
+              '(see https://pypi.org/project/tabulate/, default: plain).')
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(__version__)
 def cli():
@@ -42,9 +47,9 @@ def project():
 @project.command(name="list")
 @api_key_option
 @endpoint_option
+@tablefmt_option
 @click.option('--max', 'first', type=int, help='Maximum number of project to display.', default=100)
-@click.option('--format', 'tablefmt', type=str, default='simple',
-              help='Defines how the table is formatted (see https://pypi.org/project/tabulate/).')
+
 def list_project(api_key: str,
                  endpoint: str,
                  tablefmt: str,
@@ -67,15 +72,18 @@ def list_project(api_key: str,
     projects = pd.DataFrame(projects)
     projects['progress'] = round(
         (1 - projects['numberOfRemainingAssets'] / projects['numberOfAssets']) * 100, 1)
-    projects = projects[['title', 'id', 'progress', 'description']]
-    # Add '%' to progress if progress is not nan
-    projects['progress'] = [(str(progress) + '%') if progress >=
+
+    # Add '%' to PROGRESS if PROGRESS is not nan
+    projects['PROGRESS'] = [(str(progress) + '%') if progress >=
                             0 else progress for progress in projects['progress']]
     # If description or title has more than 50 characters, truncate after 47 and add '...'
-    projects['description'] = [(description[:47] + '...') if len(description)
+    projects['DESCRIPTION'] = [(description[:47] + '...') if len(description)
                                > 50 else description for description in projects['description']]
-    projects['title'] = [(title[:47] + '...') if len(title) >
+    projects['TITLE'] = [(title[:47] + '...') if len(title) >
                          50 else title for title in projects['title']]
+    projects['ID'] = projects["id"]
+
+    projects = projects[['TITLE', 'ID', 'PROGRESS', 'DESCRIPTION']]
     print(tabulate(projects, headers='keys', tablefmt=tablefmt,
           showindex=False, colalign=("left", "left", "right", "left")))
 
@@ -91,13 +99,16 @@ def list_project(api_key: str,
               help='Project input data type.')
 @click.option('--description', type=str, default='',
               help='Project description.')
+@tablefmt_option
 # pylint: disable=too-many-arguments
 def create_project(api_key: str,
                    endpoint: str,
                    input_type,
                    interface: str,
                    title: str,
-                   description: str):
+                   description: str,
+                   tablefmt: str,
+                   ):
     """Create a Kili project
 
     \b
@@ -121,7 +132,15 @@ def create_project(api_key: str,
         title=title,
         description=description)
     project_id = result['id']
-    print(f'Project successfully created. Id: {project_id}')
+
+    domain = endpoint.replace("/api/label/v2/graphql", "")
+    print(
+        tabulate(
+            [[project_id, domain + f"/label/projects/{project_id}/"]],
+            headers=["ID", "URL"],
+            tablefmt=tablefmt
+        )
+    )
 
 
 @ project.command(name='import')
@@ -235,7 +254,8 @@ def describe_project(api_key: str,
                                          'numberOfAssetsWithSkippedLabels',
                                          'honeypotMark', 'consensusMark',
                                          'numberOfOpenIssues', 'numberOfSolvedIssues',
-                                         'numberOfOpenQuestions', 'numberOfSolvedQuestions'])
+                                         'numberOfOpenQuestions', 'numberOfSolvedQuestions'],
+                                         )
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')

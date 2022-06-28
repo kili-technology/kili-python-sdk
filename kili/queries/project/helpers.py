@@ -18,8 +18,10 @@ def get_project_metrics(project: dict) -> Tuple[List[list], List[list], List[lis
     progress = round(
         (1 - project['numberOfRemainingAssets'] / project['numberOfAssets']) * 100, 1)
 
-    infos = [['Title', project['title']], [
-        'Description', project['description']]]
+    infos = [
+        ['Title', project['title']],
+        ['Description', project['description']],
+    ]
     dataset_metrics = [['Total number of assets', project['numberOfAssets']],
                        ['Number of remaining assets',
                            project['numberOfRemainingAssets']],
