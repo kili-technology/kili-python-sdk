@@ -8,7 +8,9 @@ from typeguard import typechecked
 
 from ...helpers import (Compatible, format_result)
 from ...queries.project import QueriesProject
-from .queries import (GQL_APPEND_MANY_FRAMES_TO_DATASET, GQL_DELETE_MANY_FROM_DATASET,
+from .queries import (GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
+                      GQL_APPEND_MANY_FRAMES_TO_DATASET,
+                      GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from .helpers import (process_append_many_to_dataset_parameters,
                       process_update_properties_in_assets_parameters)
@@ -257,8 +259,11 @@ class MutationsAsset:
     @typechecked
     def add_assets_to_review(
             self,
-            asset_ids: List[str]) -> List[dict]:
+            asset_ids: List[str]) -> dict:
         """Add assets to review.
+
+        !!! warning
+            Assets without any label will be ignored.
 
         Args:
             asset_ids: The asset IDs to add to review
@@ -277,13 +282,10 @@ class MutationsAsset:
         properties_to_batch = {'asset_ids': asset_ids}
 
         def generate_variables(batch):
-            return {
-                'whereArray': [{'id': asset_id} for asset_id in batch['asset_ids']],
-                'dataArray': [{'isToReview': True,
-                               'status': AssetStatus.ToReview}]*len(batch['asset_ids'])
-            }
-        results = _mutate_from_paginated_call(
-            self, properties_to_batch, generate_variables, GQL_UPDATE_PROPERTIES_IN_ASSETS)
-        formated_results = [format_result(
-            'data', result, Asset) for result in results]
-        return [item for batch_list in formated_results for item in batch_list]
+            return {'where': {'idIn': batch['asset_ids']}}
+
+        results = _mutate_from_paginated_call(self,
+                                              properties_to_batch,
+                                              generate_variables,
+                                              GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW)
+        return format_result('data', results[0])
