@@ -184,8 +184,8 @@ def create_project(api_key: str,
 @click.option('--project-id', type=str, required=True,
               help='Id of the project to import assets into.')
 @click.option('--exclude', type=click.Path(exists=True), multiple=True,
-              help="Files to exclude from the input files.")
-@click.option('--frames', type=bool, default=False, is_flag=True,
+              help="Files to exclude from the given files")
+@click.option('--frames', 'as_frames', type=bool, default=False, is_flag=True,
               help="Only for a frame project, import videos as frames. "
               "The import time is longer with this option.")
 @click.option('--fps', type=int,
@@ -200,7 +200,7 @@ def import_assets(api_key: str,
                   files: Tuple[str, ...],
                   exclude: Optional[Tuple[str, ...]],
                   fps: Optional[int],
-                  frames: bool,
+                  as_frames: bool,
                   verbose: bool):
     """
     Add assets into a project
@@ -241,9 +241,9 @@ def import_assets(api_key: str,
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
 
-    if input_type not in ('FRAME', 'VIDEO') and (fps is not None or frames is True):
+    if input_type not in ('FRAME', 'VIDEO') and (fps is not None or as_frames is True):
         illegal_option = 'fps and frames are'
-        if frames is False:
+        if not as_frames:
             illegal_option = 'fps is'
         if fps is None:
             illegal_option = 'frames is'
@@ -257,7 +257,7 @@ def import_assets(api_key: str,
             'Check that the paths exist and that the file types are compatible with the project')
     external_ids = [path.split('/')[-1] for path in files_to_upload]
     json_metadata_array = generate_json_metadata_array(
-        frames, fps, len(files_to_upload), input_type)
+        as_frames, fps, len(files_to_upload), input_type)
 
     kili.append_many_to_dataset(
         project_id=project_id,
@@ -265,7 +265,7 @@ def import_assets(api_key: str,
         external_id_array=external_ids,
         json_metadata_array=json_metadata_array)
 
-    print(f'\n{len(files_to_upload)} files have been successfully imported')
+    print(f'{len(files_to_upload)} files have been successfully imported')
 
 
 @project.command(name="describe")
@@ -386,6 +386,7 @@ def import_labels(
             path = row['json_response_path']
             with open(path, encoding='utf-8') as label_file:
                 json_response = json.load(label_file)
+
             kili.append_to_labels(
                 label_asset_external_id=external_id,
                 json_response=json_response,
