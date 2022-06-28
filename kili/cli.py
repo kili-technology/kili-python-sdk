@@ -97,7 +97,8 @@ def list_project(api_key: str,
 @click.option('--title', type=str, required=True,
               help='Project Title.')
 @click.option('--input-type', type=click.Choice(INPUT_TYPE), required=True,
-              help='Project input data type. Please check your license to see which ones you have access to.')
+              help='Project input data type. '
+              'Please check your license to see which ones you have access to.')
 @click.option('--description', type=str, default='',
               help='Project description.')
 @tablefmt_option
