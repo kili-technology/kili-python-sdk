@@ -12,6 +12,7 @@ from kili.mutations.asset.helpers import get_file_mimetype, process_append_many_
 from kili.mutations.asset.queries import GQL_APPEND_MANY_FRAMES_TO_DATASET
 import requests
 
+
 class LocalDownloader():
 
     def __init__(self, directory):
@@ -25,9 +26,6 @@ class LocalDownloader():
             file.write(content.content)
         return path
 
-
-TIMEOUT = 10
-RETRY = 1
 
 class TestMimeType():
     """

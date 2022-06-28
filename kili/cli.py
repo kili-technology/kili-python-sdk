@@ -22,17 +22,26 @@ from kili.queries.project.helpers import get_project_metadata, get_project_metri
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 api_key_option = click.option(
-    '--api-key', type=str, envvar='KILI_API_KEY', required=True,
+    '--api-key', type=str, default=None,
     help=(
-        'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-        'If not passed, requires the KILI_API_KEY environment variable to be set.'
+        'Your Kili API key (overrides the "KILI_API_KEY" environment variable). '
+        'If not passed, requires the "KILI_API_KEY" environment variable to be set.'
+    ),
+    show_default=(
+        'current user ("KILI_API_KEY" environment variable)'
     )
 )
 
 endpoint_option = click.option(
-    '--endpoint', type=str,
-    default='https://cloud.kili-technology.com/api/label/v2/graphql',
-    help='The API Endpoint.'
+    '--endpoint', type=str, default=None,
+    help=(
+        'API Endpoint (overrides the "KILI_API_ENDPOINT" environment variable). '
+        'If not passed, If not passed, default to Kili SaaS: '
+        '"https://cloud.kili-technology.com/api/label/v2/graphql"'
+    ),
+    show_default=(
+        '"https://cloud.kili-technology.com/api/label/v2/graphql"'
+    )
 )
 
 tablefmt_option = click.option('--stdout-format', 'tablefmt', type=str, default='plain',
@@ -59,8 +68,8 @@ def project():
 @endpoint_option
 @tablefmt_option
 @click.option('--max', 'first', type=int, help='Maximum number of project to display.', default=100)
-def list_project(api_key: str,
-                 endpoint: str,
+def list_project(api_key: Optional[str],
+                 endpoint: Optional[str],
                  tablefmt: str,
                  first: int):
     """
@@ -84,7 +93,7 @@ def list_project(api_key: str,
             disable_tqdm=True))
     projects = pd.DataFrame(projects)
     projects['progress'] = projects.apply(lambda x: round(
-        (1 - x['numberOfRemainingAssets'] / x['numberOfAssets'])* 100 , 1)
+        (1 - x['numberOfRemainingAssets'] / x['numberOfAssets']) * 100, 1)
         if x['numberOfAssets'] != 0 else np.nan, axis=1)
 
     # Add '%' to PROGRESS if PROGRESS is not nan
@@ -120,8 +129,8 @@ def list_project(api_key: str,
               help='Project description.')
 @tablefmt_option
 # pylint: disable=too-many-arguments
-def create_project(api_key: str,
-                   endpoint: str,
+def create_project(api_key: Optional[str],
+                   endpoint: Optional[str],
                    input_type,
                    interface: str,
                    title: str,
@@ -200,8 +209,8 @@ def create_project(api_key: str,
               help='Show logs')
 @typechecked
 # pylint: disable=too-many-arguments
-def import_assets(api_key: str,
-                  endpoint: str,
+def import_assets(api_key: Optional[str],
+                  endpoint: Optional[str],
                   project_id: str,
                   files: Tuple[str, ...],
                   exclude: Optional[Tuple[str, ...]],
@@ -241,8 +250,8 @@ def import_assets(api_key: str,
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     try:
         input_type = cast(List[Dict], kili.projects(project_id,
-                                   disable_tqdm=True,
-                                   fields=['inputType']))[0]['inputType']
+                                                    disable_tqdm=True,
+                                                    fields=['inputType']))[0]['inputType']
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
@@ -282,8 +291,10 @@ def import_assets(api_key: str,
 @click.argument('project_id', type=str, required=True)
 @api_key_option
 @endpoint_option
-def describe_project(api_key: str,
-                     endpoint: str,
+@click.option('--project-id', type=str, required=True,
+              help='Id of the project to describe.')
+def describe_project(api_key: Optional[str],
+                     endpoint: Optional[str],
                      project_id: str):
     """Show project description and analytics
 
@@ -297,18 +308,18 @@ def describe_project(api_key: str,
     projects: List[Dict] = []
     try:
         projects = cast(List[Dict],
-            kili.projects(
-                project_id=project_id,
-                fields=[
-                    'title', 'id', 'description', 'numberOfAssets',
-                    'numberOfRemainingAssets', 'numberOfReviewedAssets',
-                    'numberOfAssetsWithSkippedLabels',
-                    'honeypotMark', 'consensusMark',
-                    'numberOfOpenIssues', 'numberOfSolvedIssues',
-                    'numberOfOpenQuestions', 'numberOfSolvedQuestions'],
-                disable_tqdm=True
-                ),
-            )
+                        kili.projects(
+            project_id=project_id,
+            fields=[
+                'title', 'id', 'description', 'numberOfAssets',
+                'numberOfRemainingAssets', 'numberOfReviewedAssets',
+                'numberOfAssetsWithSkippedLabels',
+                'honeypotMark', 'consensusMark',
+                'numberOfOpenIssues', 'numberOfSolvedIssues',
+                'numberOfOpenQuestions', 'numberOfSolvedQuestions'],
+            disable_tqdm=True
+        ),
+        )
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
@@ -340,9 +351,9 @@ def describe_project(api_key: str,
               'if labels are sent as predictions')
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
-        csv_path: os.PathLike,
-        api_key: str,
-        endpoint: str,
+        csv_path: str,
+        api_key: Optional[str],
+        endpoint: Optional[str],
         project_id: str,
         is_prediction: bool,
         model_name: str):

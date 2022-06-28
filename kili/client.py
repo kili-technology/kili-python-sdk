@@ -56,13 +56,18 @@ class Kili(  # pylint: disable=too-many-ancestors
     """
 
     def __init__(self, api_key=None,
-                 api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
+                 api_endpoint=None,
                  verify=True):
         """
         Args:
             api_key: User API key generated
                 from https://cloud.kili-technology.com/label/my-account/api-key
+                Default to  KILI_API_KEY environment variable).
+                If not passed, requires the KILI_API_KEY environment variable to be set.
             api_endpoint: Recipient of the HTTP operation
+                Default to  KILI_API_ENDPOINT environment variable).
+                If not passed, default to Kili SaaS:
+                'https://cloud.kili-technology.com/api/label/v2/graphql'
             verify: Verify certificate. Set to False on local deployment without SSL.
 
         Returns:
@@ -76,6 +81,12 @@ class Kili(  # pylint: disable=too-many-ancestors
         """
         if api_key is None:
             api_key = os.getenv('KILI_API_KEY')
+        if api_endpoint is None:
+            if os.getenv('KILI_API_ENDPOINT') is not None:
+                api_endpoint = os.getenv('KILI_API_ENDPOINT')
+            else:
+                api_endpoint = 'https://cloud.kili-technology.com/api/label/v2/graphql'
+
         if api_key is None:
             raise AuthenticationFailed(api_key, api_endpoint)
         try:

@@ -1,21 +1,25 @@
 import click
 from datetime import datetime
 import pandas as pd
-import getpass
 
 from kili.client import Kili
 
 
 @click.command()
-@click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/v2/graphql',
-              help='Endpoint of GraphQL client')
+@click.option('--api-endpoint', default=None,
+              help='Endpoint of GraphQL client',
+              show_default=(
+                  "'KILI_API_ENDPOINT' environment variable or "
+                  "'https://cloud.kili-technology.com/api/label/v2/graphql' if not set"
+              )
+              )
 def main(api_endpoint):
     api_key = input('Enter API KEY: ')
     source_project_id = input(
         'Enter project IDs (separate them by "," if you want to provide several): ')
 
     kili = Kili(api_key=api_key,
-                     api_endpoint=api_endpoint)
+                api_endpoint=api_endpoint)
 
     df = pd.DataFrame(columns=['Project', 'Date', 'Email'])
     for project_id in source_project_id.split(','):
