@@ -144,7 +144,6 @@ def test_upload_video(create_video_project, tmpdir):
             json_content_array=json_content,
             external_id_array=[external_id]
         )
-
         tstart = time.time()
         n_assets = kili.count_assets(project_id=project_id)
         while not n_assets == i+1 and time.time() - tstart < TIMEOUT:

@@ -17,16 +17,19 @@ from kili.queries.project.helpers import get_project_metrics
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-api_key_option = click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-                              help=(
-                                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-                                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
-                              )
-                              )
+api_key_option = click.option(
+    '--api-key', type=str, envvar='KILI_API_KEY', required=True,
+    help=(
+        'Your Kili API key (overrides the KILI_API_KEY environment variable). '
+        'If not passed, requires the KILI_API_KEY environment variable to be set.'
+    )
+)
 
-endpoint_option = click.option('--endpoint', type=str,
-                               default='https://cloud.kili-technology.com/api/label/v2/graphql',
-                               help='The API Endpoint.')
+endpoint_option = click.option(
+    '--endpoint', type=str,
+    default='https://cloud.kili-technology.com/api/label/v2/graphql',
+    help='The API Endpoint.'
+)
 
 
 tablefmt_option = click.option('--stdout-format', 'tablefmt', type=str, default='plain',
@@ -94,8 +97,12 @@ def list_project(api_key: str,
 @project.command(name='create')
 @api_key_option
 @endpoint_option
-@click.option('--interface', type=click.Path(exists=True), required=True,
-              help="Path pointing to your json interface file.")
+@click.option('--interface', type=str, required=True,
+              help=(
+                  "Path pointing to your json interface file."
+                  "of project_id of another Kili project"
+              )
+              )
 @click.option('--title', type=str, required=True,
               help='Project Title.')
 @click.option('--input-type', type=click.Choice(INPUT_TYPE), required=True,
@@ -123,7 +130,12 @@ def create_project(api_key: str,
             --input-type TEXT \\
             --title "Invoice annotation project"
         ```
-
+        ```
+        kili project create \\
+            --interface another_project_id \\
+            --input-type TEXT \\
+            --title "Invoice annotation project"
+        ```
     To build a Kili project interface, please visit: \n
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
@@ -138,7 +150,7 @@ def create_project(api_key: str,
             json_interface = json.load(interface_file)
     else:
         try:
-            json_interface = kili.projects(project_id=interface)[
+            json_interface = kili.projects(project_id=interface, disable_tqdm=True)[
                 0]['jsonInterface']
         except:
             # pylint: disable=raise-missing-from
