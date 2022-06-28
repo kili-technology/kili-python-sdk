@@ -22,8 +22,8 @@ nav:
       - Project Version: project_version.md
       - User: user.md
   - Command line interface:
-      - Getting Started: cli_getting_started.md
-      - Reference: cli_reference.md
+      - Getting Started: cli/index.md
+      - Reference: cli/reference.md
 
 ## Configuration
 plugins:
