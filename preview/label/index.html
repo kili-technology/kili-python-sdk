@@ -794,6 +794,7 @@
     <span class="nd">@typechecked</span>
     <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.115&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -809,7 +810,6 @@
                <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">json_response_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -822,6 +822,7 @@
         <span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project.</span>
 <span class="sd">            asset_id: Identifier of the asset.</span>
 <span class="sd">            asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
 <span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
@@ -839,7 +840,6 @@
 <span class="sd">            json_response_contains: Returned labels should have a substring of the jsonResponse that belongs</span>
 <span class="sd">                to that list, if given.</span>
 <span class="sd">            label_id: Identifier of the label.</span>
-<span class="sd">            project_id: Identifier of the project.</span>
 <span class="sd">            skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">            skipped: Returned labels should have a label which is skipped</span>
 <span class="sd">            type_in: Returned labels should have a label whose type belongs to that list, if given.</span>
@@ -995,6 +995,7 @@
     <span class="nd">@typechecked</span>
     <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.115&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                      <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1006,7 +1007,6 @@
                      <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">json_response_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1101,7 +1101,7 @@
 
 
 <h3 id="kili.queries.label.__init__.QueriesLabel.count_labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1191,9 +1191,9 @@ belongs to that list, if given.</p></td>
       </tr>
       <tr>
         <td><code>project_id</code></td>
-        <td><code>Optional[str]</code></td>
+        <td><code>str</code></td>
         <td><p>Identifier of the project.</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>skipped</code></td>
@@ -1240,6 +1240,7 @@ belongs to that list, if given.</p></td>
 <span class="nd">@typechecked</span>
 <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.115&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1251,7 +1252,6 @@ belongs to that list, if given.</p></td>
                  <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">json_response_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1446,7 +1446,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
 
 
 <h3 id="kili.queries.label.__init__.QueriesLabel.labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">,</span> <span class="s1">&#39;skipped&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">,</span> <span class="s1">&#39;skipped&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1466,6 +1466,12 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
     </tr>
   </thead>
   <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Identifier of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
       <tr>
         <td><code>asset_id</code></td>
         <td><code>Optional[str]</code></td>
@@ -1551,12 +1557,6 @@ to that list, if given.</p></td>
         <td><code>label_id</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Identifier of the label.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>project_id</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the project.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1646,6 +1646,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="nd">@typechecked</span>
 <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.115&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+           <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
            <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1661,7 +1662,6 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
            <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">json_response_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
            <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1674,6 +1674,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
     <span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project.</span>
 <span class="sd">        asset_id: Identifier of the asset.</span>
 <span class="sd">        asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
 <span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
@@ -1691,7 +1692,6 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">        json_response_contains: Returned labels should have a substring of the jsonResponse that belongs</span>
 <span class="sd">            to that list, if given.</span>
 <span class="sd">        label_id: Identifier of the label.</span>
-<span class="sd">        project_id: Identifier of the project.</span>
 <span class="sd">        skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">        skipped: Returned labels should have a label which is skipped</span>
 <span class="sd">        type_in: Returned labels should have a label whose type belongs to that list, if given.</span>

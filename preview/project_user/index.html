@@ -657,10 +657,10 @@
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                       <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                       <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
                       <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                      <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                       <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;activated&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">,</span>
                                            <span class="s1">&#39;starred&#39;</span><span class="p">,</span> <span class="s1">&#39;user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;user.id&#39;</span><span class="p">],</span>
                       <span class="n">first</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
@@ -672,9 +672,9 @@
 
 
 <span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project</span>
 <span class="sd">            email: Email of the user</span>
 <span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
-<span class="sd">            project_id: Identifier of the project</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the projectUsers</span>
 <span class="sd">                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.</span>
 <span class="sd">            first: Maximum number of users to return</span>
@@ -744,10 +744,11 @@
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_project_users</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
+            <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
             <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Counts the number of projects and their users that match a set of criteria</span>
 
@@ -797,7 +798,7 @@
 
 
 <h3 id="kili.queries.project_user.__init__.QueriesProjectUser.count_project_users" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">count_project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -831,9 +832,9 @@
       </tr>
       <tr>
         <td><code>project_id</code></td>
-        <td><code>Optional[str]</code></td>
+        <td><code>str</code></td>
         <td><p>Identifier of the project</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
       </tr>
   </tbody>
 </table>
@@ -857,10 +858,11 @@
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">count_project_users</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Counts the number of projects and their users that match a set of criteria</span>
 
@@ -902,7 +904,7 @@
 
 
 <h3 id="kili.queries.project_user.__init__.QueriesProjectUser.project_users" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;activated&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">,</span> <span class="s1">&#39;starred&#39;</span><span class="p">,</span> <span class="s1">&#39;user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;user.id&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;activated&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">,</span> <span class="s1">&#39;starred&#39;</span><span class="p">,</span> <span class="s1">&#39;user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;user.id&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -923,6 +925,12 @@
   </thead>
   <tbody>
       <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Identifier of the project</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
         <td><code>email</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Email of the user</p></td>
@@ -932,12 +940,6 @@
         <td><code>organization_id</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Identifier of the user's organization</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>project_id</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the project</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -999,10 +1001,10 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                  <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                   <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
                   <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                  <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;activated&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">,</span>
                                        <span class="s1">&#39;starred&#39;</span><span class="p">,</span> <span class="s1">&#39;user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;user.id&#39;</span><span class="p">],</span>
                   <span class="n">first</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
@@ -1014,9 +1016,9 @@ See <a href="https://cloud.kili-technology.com/docs/python-graphql-api/graphql-a
 
 
 <span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project</span>
 <span class="sd">        email: Email of the user</span>
 <span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
-<span class="sd">        project_id: Identifier of the project</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the projectUsers</span>
 <span class="sd">            See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.</span>
 <span class="sd">        first: Maximum number of users to return</span>

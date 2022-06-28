@@ -698,6 +698,7 @@
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">project_version</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
+            <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">skip</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -707,17 +708,16 @@
                 <span class="s1">&#39;name&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;project&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;projectId&#39;</span><span class="p">],</span>
-            <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
             <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot;Get a generator or a list of project versions respecting a set of criteria.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            project_id: Filter on Id of project</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the project versions</span>
 <span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectVersions) for all possible fields.</span>
 <span class="sd">            first: Number of project versions to query</span>
-<span class="sd">            project_id: Filter on Id of project</span>
 <span class="sd">            skip: Number of project versions to skip (they are ordered by their date</span>
 <span class="sd">                of creation, first to last).</span>
 <span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
@@ -875,7 +875,7 @@
 
 
 <h3 id="kili.queries.project_version.__init__.QueriesProjectVersion.project_version" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">project_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;projectId&#39;</span><span class="p">],</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">project_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;projectId&#39;</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -896,6 +896,12 @@
   </thead>
   <tbody>
       <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Filter on Id of project</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
         <td><code>fields</code></td>
         <td><code>List[str]</code></td>
         <td><p>All the fields to request among the possible fields for the project versions
@@ -907,12 +913,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#projectVersi
         <td><code>Optional[int]</code></td>
         <td><p>Number of project versions to query</p></td>
         <td><code>100</code></td>
-      </tr>
-      <tr>
-        <td><code>project_id</code></td>
-        <td><code>str</code></td>
-        <td><p>Filter on Id of project</p></td>
-        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>skip</code></td>
@@ -957,6 +957,7 @@ of creation, first to last).</p></td>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">project_version</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -966,17 +967,16 @@ of creation, first to last).</p></td>
             <span class="s1">&#39;name&#39;</span><span class="p">,</span>
             <span class="s1">&#39;project&#39;</span><span class="p">,</span>
             <span class="s1">&#39;projectId&#39;</span><span class="p">],</span>
-        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">&quot;&quot;&quot;Get a generator or a list of project versions respecting a set of criteria.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        project_id: Filter on Id of project</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the project versions</span>
 <span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectVersions) for all possible fields.</span>
 <span class="sd">        first: Number of project versions to query</span>
-<span class="sd">        project_id: Filter on Id of project</span>
 <span class="sd">        skip: Number of project versions to skip (they are ordered by their date</span>
 <span class="sd">            of creation, first to last).</span>
 <span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>

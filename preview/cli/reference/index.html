@@ -931,8 +931,8 @@
 <h3 id="label">label</h3>
 <p>Import labels or predictions</p>
 <p>The labels to import have to be in the Kili format and stored in a json file.
-Labels to import are provided in a CSV file with two columns:</p>
-<pre><code>- external_id: external id of the assets on which you want to import labels.
+Labels to import are provided in a CSV file with two columns, separated by a semi-column:</p>
+<pre><code>- external_id: external id for which you want to import labels.
 - json_response_path: paths to the json files containing the json_response to upload.
 </code></pre>
 <p>!!! Examples: "CSV file template"
@@ -943,8 +943,7 @@ asset2;./labels/label_asset2.json
 <p>!!! Examples:
     <div class="highlight"><pre><span></span><code>kili project label \
     path/to/file.csv \
-    --project-id &lt;project_id&gt; \
-    --verbose
+    --project-id &lt;project_id&gt;
 </code></pre></div>
     <div class="highlight"><pre><span></span><code>kili project label \
     path/to/file.csv \
@@ -987,20 +986,14 @@ asset2;./labels/label_asset2.json
 <tr>
 <td><code>--prediction</code></td>
 <td>boolean</td>
-<td>whether to import labels as predictions</td>
+<td>Tells to import labels as predictions, which means that they will appear as pre-annotations in the Kili interface</td>
 <td><code>False</code></td>
 </tr>
 <tr>
 <td><code>--model-name</code></td>
 <td>text</td>
-<td>name of the model that generated predictions</td>
+<td>Name of the model that generated predictions, if labels are sent as predictions</td>
 <td>None</td>
-</tr>
-<tr>
-<td><code>--verbose</code></td>
-<td>boolean</td>
-<td>Show logs</td>
-<td><code>False</code></td>
 </tr>
 <tr>
 <td><code>--help</code></td>

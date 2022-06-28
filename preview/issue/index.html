@@ -658,6 +658,7 @@
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
                    <span class="s1">&#39;id&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
@@ -666,7 +667,6 @@
                    <span class="s1">&#39;status&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;type&#39;</span><span class="p">],</span>
                <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-               <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">skip</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
@@ -674,10 +674,10 @@
         <span class="sd">&quot;&quot;&quot;Get a generator or a list of issues that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            project_id: Project ID the issue belongs to.</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the assets.</span>
 <span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#issue) for all possible fields.</span>
 <span class="sd">            first: Maximum number of issues to return.</span>
-<span class="sd">            project_id: Project ID the issue belongs to.</span>
 <span class="sd">            skip: Number of issues to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
 <span class="sd">            as_generator: If `True`, a generator on the issues is returned.</span>
@@ -848,7 +848,7 @@
 
 
 <h3 id="kili.queries.issue.__init__.QueriesIssue.issues" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;hasBeenSeen&#39;</span><span class="p">,</span> <span class="s1">&#39;issueNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;hasBeenSeen&#39;</span><span class="p">,</span> <span class="s1">&#39;issueNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -869,6 +869,12 @@
   </thead>
   <tbody>
       <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Project ID the issue belongs to.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
         <td><code>fields</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>All the fields to request among the possible fields for the assets.
@@ -880,12 +886,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
         <td><code>Optional[int]</code></td>
         <td><p>Maximum number of issues to return.</p></td>
         <td><code>100</code></td>
-      </tr>
-      <tr>
-        <td><code>project_id</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Project ID the issue belongs to.</p></td>
-        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>skip</code></td>
@@ -932,6 +932,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+           <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
            <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
                <span class="s1">&#39;id&#39;</span><span class="p">,</span>
                <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
@@ -940,7 +941,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
                <span class="s1">&#39;status&#39;</span><span class="p">,</span>
                <span class="s1">&#39;type&#39;</span><span class="p">],</span>
            <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-           <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">skip</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
            <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
            <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
@@ -948,10 +948,10 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
     <span class="sd">&quot;&quot;&quot;Get a generator or a list of issues that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        project_id: Project ID the issue belongs to.</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the assets.</span>
 <span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#issue) for all possible fields.</span>
 <span class="sd">        first: Maximum number of issues to return.</span>
-<span class="sd">        project_id: Project ID the issue belongs to.</span>
 <span class="sd">        skip: Number of issues to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
 <span class="sd">        as_generator: If `True`, a generator on the issues is returned.</span>
