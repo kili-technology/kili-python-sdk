@@ -341,11 +341,11 @@ def import_labels(
     The labels to import have to be in the Kili format and stored in a json file.
     Labels to import are provided in a CSV file with two columns, separated by a semi-column:
 
-        - external_id: external id for which you want to import labels.
-        - json_response_path: paths to the json files containing the json_response to upload.
+    - `external_id`: external id for which you want to import labels.
+    - `json_response_path`: paths to the json files containing the json_response to upload.
 
     \b
-    !!! Examples: "CSV file template"
+    !!! Examples "CSV file template"
         ```
         external_id;json_response_path
         asset1;./labels/label_asset1.json
@@ -353,12 +353,14 @@ def import_labels(
         ```
 
     \b
-    !!! Examples:
+    !!! Examples
+        To import default labels:
         ```
         kili project label \\
             path/to/file.csv \\
             --project-id <project_id>
         ```
+        To import labels as predictions:
         ```
         kili project label \\
             path/to/file.csv \\
@@ -382,7 +384,7 @@ def import_labels(
         create_predictions_arguments = generate_create_predictions_arguments(
             label_paths, external_id_array, model_name, project_id)
         kili.create_predictions(**create_predictions_arguments)
-        print(f"{len(external_id_array)} labels successfully uploaded")
+        print(f"{len(external_id_array)} labels have been successfully imported")
 
     else:
         for row in row_dict:
@@ -395,7 +397,7 @@ def import_labels(
                 label_asset_external_id=external_id,
                 json_response=json_response,
                 project_id=project_id)
-        print(f"{len(row_dict)} labels successfully uploaded")
+        print(f"{len(row_dict)} labels have been successfully imported")
 
 
 def main() -> None:
