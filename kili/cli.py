@@ -15,12 +15,24 @@ from kili.queries.project.helpers import get_project_metrics
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
+api_key_option = click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
+              help=(
+                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
+                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
+              )
+              )
+
+endpoint_option = click.option('--endpoint', type=str,
+              default='https://cloud.kili-technology.com/api/label/v2/graphql',
+              help='The API Endpoint.')
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(__version__)
 def cli():
-    """Kili Command line interface."""
+    """Kili Command line Interface
 
+       To get all the available commands, please type: `kili project --help`.
+    """
 
 @cli.group(context_settings=CONTEXT_SETTINGS)
 def project():
@@ -28,18 +40,11 @@ def project():
 
 
 @project.command(name="list")
-@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help=(
-                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
-              )
-              )
-@click.option('--endpoint', type=str,
-              default='https://cloud.kili-technology.com/api/label/v2/graphql',
-              help='The API Endpoint')
-@click.option('--max', 'first', type=int, help='Maximum number of project to display', default=100)
+@api_key_option
+@endpoint_option
+@click.option('--max', 'first', type=int, help='Maximum number of project to display.', default=100)
 @click.option('--format', 'tablefmt', type=str, default='simple',
-              help='Defines how the table is formatted (see tabulate format).')
+              help='Defines how the table is formatted (see https://pypi.org/project/tabulate/).')
 def list_project(api_key: str,
                  endpoint: str,
                  tablefmt: str,
@@ -52,6 +57,7 @@ def list_project(api_key: str,
         ```
         kili project list --max 10 --format pretty
         ```
+
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     projects = kili.projects(fields=['title', 'id', 'description', 'numberOfAssets',
@@ -75,23 +81,16 @@ def list_project(api_key: str,
 
 
 @project.command(name='create')
-@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help=(
-                  'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-                  'If not passed, requires the KILI_API_KEY environment variable to be set.'
-              ))
-@click.option('--endpoint',
-              type=str,
-              default='https://cloud.kili-technology.com/api/label/v2/graphql',
-              help='Your Api Enpoint')
+@api_key_option
+@endpoint_option
 @click.option('--interface', type=click.Path(exists=True), required=True,
-              help='Path pointing to your json interface file')
+              help="Path pointing to your json interface file.")
 @click.option('--title', type=str, required=True,
-              help='Project Title')
+              help='Project Title.')
 @click.option('--input-type', type=click.Choice(INPUT_TYPE), required=True,
-              help='Project input data type')
+              help='Project input data type.')
 @click.option('--description', type=str, default='',
-              help='Project description')
+              help='Project description.')
 # pylint: disable=too-many-arguments
 def create_project(api_key: str,
                    endpoint: str,
@@ -99,7 +98,7 @@ def create_project(api_key: str,
                    interface: str,
                    title: str,
                    description: str):
-    """Create a Kili project.
+    """Create a Kili project
 
     \b
     !!! Examples
@@ -109,6 +108,9 @@ def create_project(api_key: str,
             --input-type TEXT \\
             --title "Invoice annotation project"
         ```
+
+    To build a Kili project interface, please visit: \n
+    https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
     with open(interface, encoding='utf-8') as interface_file:
         json_interface = json.load(interface_file)
@@ -124,24 +126,17 @@ def create_project(api_key: str,
 
 @ project.command(name='import')
 @ click.argument('files', type=click.Path(), nargs=-1, required=True)
-@ click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-               help=(
-                   'Your Kili API key (overrides the KILI_API_KEY environment variable). '
-                   'If not passed, requires the KILI_API_KEY environment variable to be set.'
-               )
-               )
-@click.option('--endpoint', type=str,
-              default='https://cloud.kili-technology.com/api/label/v2/graphql',
-              help='The API Endpoint')
+@api_key_option
+@endpoint_option
 @click.option('--project-id', type=str, required=True,
-              help='Id of the project to import assets in')
+              help='Id of the project to import assets into.')
 @click.option('--exclude', type=click.Path(exists=True), multiple=True,
-              help="Files to exclude from the given files")
+              help="Files to exclude from the input files.")
 @click.option('--frames', type=bool, default=False, is_flag=True,
               help="Only for a frame project, import videos as frames. "
-              "The import time is longer with this option")
+              "The import time is longer with this option.")
 @click.option('--fps', type=int,
-              help="Only for a frame project, import videos with a specific frame rate")
+              help="Only for a frame project, import videos with a specific frame rate.")
 @typechecked
 # pylint: disable=too-many-arguments
 def import_assets(api_key: str,
@@ -152,7 +147,7 @@ def import_assets(api_key: str,
                   fps: Optional[int],
                   frames: bool):
     """
-    Add assets into a project.
+    Add assets into a project
 
     Files can be paths to files or to folders. You can provide several paths separated by spaces.
 
@@ -217,17 +212,14 @@ def import_assets(api_key: str,
 
 
 @project.command(name="describe")
-@click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-              help='Your Api Key')
-@click.option('--endpoint', type=str,
-              default='https://cloud.kili-technology.com/api/label/v2/graphql',
-              help='The API Endpoint')
+@api_key_option
+@endpoint_option
 @click.option('--project-id', type=str, required=True,
-              help='Id of the project to import assets in')
+              help='Id of the project to describe.')
 def describe_project(api_key: str,
                      endpoint: str,
                      project_id: str):
-    """Show Analytics of a project.
+    """Show project description and analytics
 
     \b
     !!! Examples
