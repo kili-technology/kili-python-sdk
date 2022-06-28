@@ -10,14 +10,14 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.114/cli/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.114/cli_reference/">
       
       <link rel="icon" href="../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
     
     
       
-        <title>Getting started with Kili CLI - Python SDK</title>
+        <title>Reference - Python SDK</title>
       
     
     
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started-with-kili-cli" class="md-skip">
+        <a href="#kili" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting started with Kili CLI
+              Reference
             
           </span>
         </div>
@@ -203,13 +203,15 @@
         
   
   
+    
+  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../cli_getting_started/" class="md-tabs__link">
+      <a href="../cli_getting_started/" class="md-tabs__link md-tabs__link--active">
         Command line interface
       </a>
     </li>
@@ -439,12 +441,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       
       
@@ -479,11 +483,86 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../cli_reference/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Reference
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project" class="md-nav__link">
+    project
+  </a>
+  
+    <nav class="md-nav" aria-label="project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe" class="md-nav__link">
+    describe
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import" class="md-nav__link">
+    import
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    list
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -522,58 +601,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-is-kili-cli" class="md-nav__link">
-    What is Kili CLI
+  <a href="#project" class="md-nav__link">
+    project
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#authentication" class="md-nav__link">
-    Authentication
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#workflow-example" class="md-nav__link">
-    Workflow example
-  </a>
-  
-    <nav class="md-nav" aria-label="Workflow example">
+    <nav class="md-nav" aria-label="project">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-a-project" class="md-nav__link">
-    Create a project
+  <a href="#create" class="md-nav__link">
+    create
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#list-your-projects" class="md-nav__link">
-    List your projects
+  <a href="#describe" class="md-nav__link">
+    describe
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#import-data-to-your-project" class="md-nav__link">
-    Import data to your project
+  <a href="#import" class="md-nav__link">
+    import
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#get-metrics-of-your-project" class="md-nav__link">
-    Get metrics of your project
+  <a href="#list" class="md-nav__link">
+    list
   </a>
   
 </li>
@@ -597,86 +655,312 @@
                 
 
 
-<h1 id="getting-started-with-kili-cli">Getting started with Kili CLI</h1>
-<h2 id="what-is-kili-cli">What is Kili CLI</h2>
-<p>Kili CLI has been designed to run key actions on your projects with powerful commands.
-For the actions it supports, the CLI offers a more compact way to manage your projects than the Python SDK. Note that the Python SDK offers more options and may still be used for more complex project management tasks.</p>
-<h2 id="authentication">Authentication</h2>
-<ul>
-<li>Create and copy a <a href="https://docs.kili-technology.com/docs/creating-an-api-key">Kili API key</a></li>
-<li>Add the <code>KILI_API_KEY</code> variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value that you copied earlier:</li>
-</ul>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">KILI_API_KEY</span><span class="o">=</span><span class="s1">&#39;&lt;you api key value here&gt;&#39;</span>
+<h1 id="kili">kili</h1>
+<p>Kili Command line interface.</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili [OPTIONS] COMMAND [ARGS]...
 </code></pre></div>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>While launching commands, you can also provide you API key through the <code>--api-key</code> option. If you set your api key in the <code>KILI_API_KEY</code> environment variable and provide it once again through the <code>--api-key</code> option, Kili CLI will use the api key value provided in command options.</p>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>boolean</td>
+<td>Show the version and exit.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="project">project</h2>
+<p>Commands to interact with a Kili project</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project [OPTIONS] COMMAND [ARGS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="create">create</h3>
+<p>Create a Kili project.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<div class="highlight"><pre><span></span><code>kili project create \
+    --interface path/to/interface.json \
+    --input-type TEXT \
+    --title &quot;Invoice annotation project&quot;
+</code></pre></div>
 </div>
-<h2 id="usage">Usage</h2>
-<p>The main command is <code>kili</code>. It currently has only one subcommand <code>project</code> that entails all the commands for project management :</p>
-<div class="highlight"><pre><span></span><code>kili project [COMMAND]
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project create [OPTIONS]
 </code></pre></div>
-<h2 id="workflow-example">Workflow example</h2>
-<p>Let's take an example where you want to start a project from scratch:</p>
-<h3 id="create-a-project">Create a project</h3>
-<p>To create an IMAGE project:</p>
-<div class="highlight"><pre><span></span><code>kili project create \\
-            --interface path/to/interface.json \\
-            --input-type IMAGE \\
-            --title &quot;Defect detection&quot; \\
-            --description &quot;Bottle defects on production line&quot;
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key (overrides the KILI_API_KEY environment variable). If not passed, requires the KILI_API_KEY environment variable to be set.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Your Api Enpoint</td>
+<td><code>https://cloud.kili-technology.com/api/label/v2/graphql</code></td>
+</tr>
+<tr>
+<td><code>--interface</code></td>
+<td>path</td>
+<td>Path pointing to your json interface file</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--title</code></td>
+<td>text</td>
+<td>Project Title</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--input-type</code></td>
+<td>choice (<code>AUDIO</code> &#x7C; <code>FRAME</code> &#x7C; <code>IMAGE</code> &#x7C; <code>PDF</code> &#x7C; <code>TEXT</code> &#x7C; <code>TIME_SERIES</code>)</td>
+<td>Project input data type</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--description</code></td>
+<td>text</td>
+<td>Project description</td>
+<td>``</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="describe">describe</h3>
+<p>Show Analytics of a project.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<div class="highlight"><pre><span></span><code>kili project describe --project-id &lt;project_id&gt;
 </code></pre></div>
-<p>Ouputs:</p>
-<div class="highlight"><pre><span></span><code>Project successfully created. Id: cl4ljd3awc5gj0lpbb89nbcqg
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project describe [OPTIONS]
 </code></pre></div>
-<h3 id="list-your-projects">List your projects</h3>
-<div class="highlight"><pre><span></span><code>kili project list --max 10
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Api Key</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>The API Endpoint</td>
+<td><code>https://cloud.kili-technology.com/api/label/v2/graphql</code></td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project to import assets in</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="import">import</h3>
+<p>Add assets into a project.</p>
+<p>Files can be paths to files or to folders. You can provide several paths separated by spaces.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project import \
+    dir1/dir2/ dir1/dir3/test1.png \
+    --project-id &lt;project_id&gt; \
+    --exclude dontimport.png
 </code></pre></div>
-<p>Ouputs:</p>
-<div class="highlight"><pre><span></span><code>title                                     id                           progress  description
-----------------------------------------  -------------------------  ----------  -------------------------------
-Defect detection                          cl4ljd3awc5gj0lpbb89nbcqg        0.0%  Bottle defects on production...
-invoice NER                               cl3d43bzb0rl71mx4580mpbt1       92.5%  For intelligent document pro...
+<div class="highlight"><pre><span></span><code>kili project import \
+    dir1/dir3/video.mp4 \
+    --project-id &lt;project_id&gt; \
+    --frames \
+    --fps 24
+</code></pre></div></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Unsupported imports</p>
+<p>Currently, this command does not support:</p>
+<ul>
+<li>the import of videos from local frames, rich text and time series assets</li>
+<li>the import of assets with metadata or with a custom external_id</li>
+</ul>
+<p>For such imports, please use the <code>append_many_to_dataset</code> method in the Kili SDK.</p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project import [OPTIONS] FILES...
 </code></pre></div>
-<h3 id="import-data-to-your-project">Import data to your project</h3>
-<p>To import data, provide a list of files or folders</p>
-<div class="highlight"><pre><span></span><code>kili project import \\
-    reference_image.png datasets/defect_detection/ \\
-    --project-id cl4ljd3awc5gj0lpbb89nbcqg \\
-    --verbose
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key (overrides the KILI_API_KEY environment variable). If not passed, requires the KILI_API_KEY environment variable to be set.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>The API Endpoint</td>
+<td><code>https://cloud.kili-technology.com/api/label/v2/graphql</code></td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project to import assets in</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--exclude</code></td>
+<td>path</td>
+<td>Files to exclude from the given files</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--frames</code></td>
+<td>boolean</td>
+<td>Only for a frame project, import videos as frames. The import time is longer with this option</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--fps</code></td>
+<td>integer</td>
+<td>Only for a frame project, import videos with a specific frame rate</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="list">list</h3>
+<p>List your projects</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<div class="highlight"><pre><span></span><code>kili project list --max 10 --format pretty
 </code></pre></div>
-<p>Ouputs:</p>
-<div class="highlight"><pre><span></span><code>datasets/defect_detection/visit1.mp4    SKIPPED
-datasets/defect_detection/visit2.mp4    SKIPPED
-Paths either do not exist, are filtered out or point towards wrong data type for the project
-
-567 files have been successfully imported
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project list [OPTIONS]
 </code></pre></div>
-<h3 id="get-metrics-of-your-project">Get metrics of your project</h3>
-<div class="highlight"><pre><span></span><code>kili project describe \\
-    --project-id cl4ljd3awc5gj0lpbb89nbcqg
-</code></pre></div>
-<p>Ouputs:</p>
-<div class="highlight"><pre><span></span><code>Title        Defect detection
-Description  Bottle defects on production line
-
-Dataset KPIs
-------------
-Total number of assets      567
-Number of remaining assets  82
-Skipped assets              0
-Progress                    14.5%
-
-Quality KPIs
-------------
-Project consensus           79
-Project honeypot            22
-Number of reviewed assets   76
-Number of open issues       5
-Number of solved issues     12
-Number of open questions    2
-Number of solved questions  9
-</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key (overrides the KILI_API_KEY environment variable). If not passed, requires the KILI_API_KEY environment variable to be set.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>The API Endpoint</td>
+<td><code>https://cloud.kili-technology.com/api/label/v2/graphql</code></td>
+</tr>
+<tr>
+<td><code>--max</code></td>
+<td>integer</td>
+<td>Maximum number of project to display</td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td><code>--format</code></td>
+<td>text</td>
+<td>Defines how the table is formatted (see tabulate format).</td>
+<td><code>simple</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
 
               
             </article>
@@ -686,6 +970,26 @@ Number of solved questions  9
       </main>
       
         <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../cli_getting_started/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Getting Started" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Getting Started
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

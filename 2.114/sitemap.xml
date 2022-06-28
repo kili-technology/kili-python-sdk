@@ -21,6 +21,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://python-sdk-docs.kili-technology.com/2.114/cli_reference/</loc>
+         <lastmod>2022-06-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.114/issue/</loc>
          <lastmod>2022-06-28</lastmod>
          <changefreq>daily</changefreq>
