@@ -1,6 +1,4 @@
 """API authentication module"""
-
-import os
 import warnings
 from datetime import datetime, timedelta
 
@@ -34,8 +32,8 @@ class KiliAuth:
     """
 
     def __init__(self,
-                 api_key=os.getenv('KILI_USER_API_KEY'),
-                 api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
+                 api_key,
+                 api_endpoint,
                  verify=True):
         self.session = requests.Session()
 
@@ -59,10 +57,6 @@ class KiliAuth:
         self.session.mount('http://', adapter)
         self.client = GraphQLClient(
             api_endpoint, self.session, verify=self.verify)
-        if api_key is None:
-            message = 'You need to provide an API KEY to connect.' \
-                ' Visit https://docs.kili-technology.com/reference/creating-an-api-key'
-            warnings.warn(message, UserWarning)
         self.client.inject_token('X-API-Key: ' + api_key)
 
         user = self.get_user()
