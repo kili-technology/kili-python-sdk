@@ -38,7 +38,6 @@ class QueriesProjectVersion:
                 'id',
                 'content',
                 'name',
-                'project',
                 'projectId'],
             disable_tqdm: bool = False,
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
