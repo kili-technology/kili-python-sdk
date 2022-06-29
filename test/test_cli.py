@@ -195,7 +195,7 @@ def test_describe_project(mocker):
                                            'honeypotMark': None,
                                            'consensusMark': None}])
     runner = CliRunner()
-    result = runner.invoke(describe_project, ['--project-id', "project_id"])
+    result = runner.invoke(describe_project, ["project_id"])
     debug_subprocess_pytest(result)
     assert (result.output.count('40.8%') == 1) and (
         result.output.count('N/A') == 2) and (
