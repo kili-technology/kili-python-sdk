@@ -1,13 +1,14 @@
 """Kili CLI"""
 
 import os
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List, Dict, cast
 import json
 import warnings
 import click
 from tabulate import tabulate
 from typeguard import typechecked
 import pandas as pd
+import numpy as np
 from kili.client import Kili
 from kili import __version__
 from kili.constants import INPUT_TYPE
@@ -16,7 +17,7 @@ from kili.mutations.asset.helpers import (
     generate_json_metadata_array, get_file_paths_to_upload)
 from kili.mutations.label.helpers import (
     generate_create_predictions_arguments, read_import_label_csv)
-from kili.queries.project.helpers import get_project_metrics
+from kili.queries.project.helpers import get_project_metadata, get_project_metrics, get_project_url
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -73,13 +74,18 @@ def list_project(api_key: str,
 
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
-    projects = kili.projects(fields=['title', 'id', 'description', 'numberOfAssets',
-                             'numberOfRemainingAssets', 'numberOfReviewedAssets'],
-                             first=first,
-                             disable_tqdm=True)
+    projects = cast(
+        List[Dict],
+        kili.projects(
+            fields=[
+                'title', 'id', 'description', 'numberOfAssets',
+                'numberOfRemainingAssets', 'numberOfReviewedAssets'],
+            first=first,
+            disable_tqdm=True))
     projects = pd.DataFrame(projects)
-    projects['progress'] = round(
-        (1 - projects['numberOfRemainingAssets'] / projects['numberOfAssets']) * 100, 1)
+    projects['progress'] = projects.apply(lambda x: round(
+        (1 - x['numberOfRemainingAssets'] / x['numberOfAssets'])* 100 , 1)
+        if x['numberOfAssets'] != 0 else np.nan, axis=1)
 
     # Add '%' to PROGRESS if PROGRESS is not nan
     projects['PROGRESS'] = [(str(progress) + '%') if progress >=
@@ -154,23 +160,23 @@ def create_project(api_key: str,
             json_interface = json.load(interface_file)
     else:
         try:
-            json_interface = kili.projects(project_id=interface)[
+            json_interface = cast(List[Dict], kili.projects(project_id=interface))[
                 0]['jsonInterface']
         except:
             # pylint: disable=raise-missing-from
             raise ValueError(
                 f'{interface} is not recognized as a json file path nor a Kili project_id')
-    result = kili.create_project(
+    result = cast(Dict, kili.create_project(
         input_type=input_type,
         json_interface=json_interface,
         title=title,
-        description=description)
+        description=description))
     project_id = result['id']
 
-    domain = endpoint.replace("/api/label/v2/graphql", "")
+    project_url = get_project_url(project_id, endpoint)
     print(
         tabulate(
-            [[project_id, domain + f"/label/projects/{project_id}/"]],
+            [[project_id, project_url]],
             headers=["ID", "URL"],
             tablefmt=tablefmt
         )
@@ -234,9 +240,9 @@ def import_assets(api_key: str,
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     try:
-        input_type = kili.projects(project_id,
+        input_type = cast(List[Dict], kili.projects(project_id,
                                    disable_tqdm=True,
-                                   fields=['inputType'])[0]['inputType']
+                                   fields=['inputType']))[0]['inputType']
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
@@ -273,10 +279,9 @@ def import_assets(api_key: str,
 
 
 @project.command(name="describe")
+@click.argument('project_id', type=str, required=True)
 @api_key_option
 @endpoint_option
-@click.option('--project-id', type=str, required=True,
-              help='Id of the project to describe.')
 def describe_project(api_key: str,
                      endpoint: str,
                      project_id: str):
@@ -289,26 +294,32 @@ def describe_project(api_key: str,
         ```
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    projects: List[Dict] = []
     try:
-        projects = kili.projects(project_id=project_id,
-                                 fields=['title', 'id', 'description', 'numberOfAssets',
-                                         'numberOfRemainingAssets', 'numberOfReviewedAssets',
-                                         'numberOfAssetsWithSkippedLabels',
-                                         'honeypotMark', 'consensusMark',
-                                         'numberOfOpenIssues', 'numberOfSolvedIssues',
-                                         'numberOfOpenQuestions', 'numberOfSolvedQuestions'],
-                                 )
+        projects = cast(List[Dict],
+            kili.projects(
+                project_id=project_id,
+                fields=[
+                    'title', 'id', 'description', 'numberOfAssets',
+                    'numberOfRemainingAssets', 'numberOfReviewedAssets',
+                    'numberOfAssetsWithSkippedLabels',
+                    'honeypotMark', 'consensusMark',
+                    'numberOfOpenIssues', 'numberOfSolvedIssues',
+                    'numberOfOpenQuestions', 'numberOfSolvedQuestions'],
+                disable_tqdm=True
+                ),
+            )
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
-    infos, dataset_statistics, quality_statistics = get_project_metrics(
-        projects[0])
+    metadata = get_project_metadata(projects[0], endpoint)
+    dataset_metrics, quality_metrics = get_project_metrics(projects[0])
 
-    print(tabulate(infos, tablefmt='plain'), end='\n'*2)
+    print(tabulate(metadata, tablefmt='plain'), end='\n'*2)
     print('Dataset KPIs', end='\n'+'-'*len('Dataset KPIs')+'\n')
-    print(tabulate(dataset_statistics, tablefmt='plain'), end='\n'*2)
+    print(tabulate(dataset_metrics, tablefmt='plain'), end='\n'*2)
     print('Quality KPIs', end='\n'+'-'*len('Quality KPIs')+'\n')
-    print(tabulate(quality_statistics, tablefmt='plain'))
+    print(tabulate(quality_metrics, tablefmt='plain'))
 
 
 @project.command(name='label')
@@ -329,7 +340,7 @@ def describe_project(api_key: str,
               'if labels are sent as predictions')
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
-        csv_path: str,
+        csv_path: os.PathLike,
         api_key: str,
         endpoint: str,
         project_id: str,
