@@ -24,23 +24,21 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 api_key_option = click.option(
     '--api-key', type=str, default=None,
     help=(
-        'Your Kili API key (overrides the "KILI_API_KEY" environment variable). '
-        'If not passed, requires the "KILI_API_KEY" environment variable to be set.'
+        'Your Kili API key. '
     ),
     show_default=(
-        'current user ("KILI_API_KEY" environment variable)'
+        '"KILI_API_KEY" environment variable'
     )
 )
 
 endpoint_option = click.option(
     '--endpoint', type=str, default=None,
     help=(
-        'API Endpoint (overrides the "KILI_API_ENDPOINT" environment variable). '
-        'If not passed, If not passed, default to Kili SaaS: '
-        '"https://cloud.kili-technology.com/api/label/v2/graphql"'
+        'Kili API Endpoint. '
     ),
     show_default=(
-        '"https://cloud.kili-technology.com/api/label/v2/graphql"'
+        '"KILI_API_ENDPOINT" environment variable,'
+        ' Kili SAAS: "https://cloud.kili-technology.com/api/label/v2/graphql"'
     )
 )
 
@@ -291,13 +289,10 @@ def import_assets(api_key: Optional[str],
 @click.argument('project_id', type=str, required=True)
 @api_key_option
 @endpoint_option
-@click.option('--project-id', type=str, required=True,
-              help='Id of the project to describe.')
 def describe_project(api_key: Optional[str],
                      endpoint: Optional[str],
                      project_id: str):
     """Show project description and analytics
-
     \b
     !!! Examples
         ```
@@ -335,12 +330,8 @@ def describe_project(api_key: Optional[str],
 
 @project.command(name='label')
 @ click.argument('CSV_path', type=click.Path(exists=True), required=True)
-@ click.option('--api-key', type=str, envvar='KILI_API_KEY', required=True,
-               help='Your Kili API key (overrides the KILI_API_KEY environment variable). '
-               'If not passed, requires the KILI_API_KEY environment variable to be set.')
-@click.option('--endpoint', type=str,
-              default='https://cloud.kili-technology.com/api/label/v2/graphql',
-              help='The API Endpoint')
+@api_key_option
+@endpoint_option
 @click.option('--project-id', type=str, required=True,
               help='Id of the project to import labels in')
 @click.option('--prediction', 'is_prediction', type=bool, is_flag=True, default=False,

@@ -82,10 +82,8 @@ class Kili(  # pylint: disable=too-many-ancestors
         if api_key is None:
             api_key = os.getenv('KILI_API_KEY')
         if api_endpoint is None:
-            if os.getenv('KILI_API_ENDPOINT') is not None:
-                api_endpoint = os.getenv('KILI_API_ENDPOINT')
-            else:
-                api_endpoint = 'https://cloud.kili-technology.com/api/label/v2/graphql'
+            api_endpoint = os.getenv(
+                'KILI_API_ENDPOINT', 'https://cloud.kili-technology.com/api/label/v2/graphql')
 
         if api_key is None:
             raise AuthenticationFailed(api_key, api_endpoint)
