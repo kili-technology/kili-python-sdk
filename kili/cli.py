@@ -31,7 +31,6 @@ endpoint_option = click.option(
     help='The API Endpoint.'
 )
 
-
 tablefmt_option = click.option('--stdout-format', 'tablefmt', type=str, default='plain',
                                help='Defines how the output table is formatted '
                                '(see https://pypi.org/project/tabulate/, default: plain).')
@@ -99,8 +98,8 @@ def list_project(api_key: str,
 @endpoint_option
 @click.option('--interface', type=str, required=True,
               help=(
-                  "Path pointing to your json interface file."
-                  "of project_id of another Kili project"
+                  "Path pointing to your json interface file "
+                  "or the project_id of another Kili project. "
               )
               )
 @click.option('--title', type=str, required=True,
@@ -122,6 +121,10 @@ def create_project(api_key: str,
                    ):
     """Create a Kili project
 
+    If --interface is the project_id of another Kili project,
+    it will create a new project with the same json_interface
+    (assets will not be copied).
+
     \b
     !!! Examples
         ```
@@ -142,15 +145,13 @@ def create_project(api_key: str,
     if input_type == 'FRAME':
         warnings.warn(
             "FRAME input type is deprecated. Please use VIDEO instead")
-    with open(interface, encoding='utf-8') as interface_file:
-        json_interface = json.load(interface_file)
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     if os.path.exists(interface):
         with open(interface, encoding='utf-8') as interface_file:
             json_interface = json.load(interface_file)
     else:
         try:
-            json_interface = kili.projects(project_id=interface, disable_tqdm=True)[
+            json_interface = kili.projects(project_id=interface)[
                 0]['jsonInterface']
         except:
             # pylint: disable=raise-missing-from
