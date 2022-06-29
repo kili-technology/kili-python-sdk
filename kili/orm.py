@@ -28,6 +28,17 @@ class AnnotationFormat:
     YoloV4 = 'yolo_v4'
     YoloV5 = 'yolo_v5'
 
+@dataclass
+class AssetStatus:
+    # pylint: disable=invalid-name
+    """
+    List of asset status
+    """
+    Labeled = 'LABELED'
+    Ongoing = 'ONGOING'
+    Reviewed = 'REVIEWED'
+    ToReview = 'TO_REVIEW'
+    Todo = 'TODO'
 
 @dataclass
 class JobMLTask:

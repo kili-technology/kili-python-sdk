@@ -2,6 +2,7 @@
 Queries of asset mutations
 """
 
+from kili.mutations.project.fragments import PROJECT_FRAGMENT_ID
 from .fragments import ASSET_FRAGMENT
 
 
@@ -14,7 +15,7 @@ mutation(
     data: $data,
     where: $where
   ) {{
-    {ASSET_FRAGMENT}
+    {PROJECT_FRAGMENT_ID}
   }}
 }}
 '''
@@ -28,7 +29,7 @@ mutation(
     data: $data,
     where: $where
   ) {{
-    {ASSET_FRAGMENT}
+    {PROJECT_FRAGMENT_ID}
   }}
 }}
 '''
@@ -51,7 +52,15 @@ mutation(
 GQL_DELETE_MANY_FROM_DATASET = f'''
 mutation($where: AssetWhere!) {{
   data: deleteManyFromDataset(where: $where) {{
-    {ASSET_FRAGMENT}
+    {PROJECT_FRAGMENT_ID}
+  }}
+}}
+'''
+
+GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW = f'''
+mutation($where: AssetWhere!) {{
+  data: addAllLabeledAssetsToReview(where: $where) {{
+    {PROJECT_FRAGMENT_ID}
   }}
 }}
 '''

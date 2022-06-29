@@ -8,12 +8,14 @@ from typeguard import typechecked
 
 from ...helpers import (Compatible, format_result)
 from ...queries.project import QueriesProject
-from .queries import (GQL_APPEND_MANY_FRAMES_TO_DATASET, GQL_DELETE_MANY_FROM_DATASET,
+from .queries import (GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
+                      GQL_APPEND_MANY_FRAMES_TO_DATASET,
+                      GQL_DELETE_MANY_FROM_DATASET,
                       GQL_UPDATE_PROPERTIES_IN_ASSETS)
 from .helpers import (process_append_many_to_dataset_parameters,
                       process_update_properties_in_assets_parameters)
 from ...constants import NO_ACCESS_RIGHT
-from ...orm import Asset
+from ...orm import Asset, AssetStatus
 from ...utils.pagination import _mutate_from_paginated_call
 
 
@@ -125,7 +127,7 @@ class MutationsAsset:
 
     @Compatible(['v2'])
     @typechecked
-    #pylint: disable=unused-argument
+    # pylint: disable=unused-argument
     def update_properties_in_assets(self,
                                     asset_ids: List[str],
                                     external_ids: Optional[List[str]] = None,
@@ -170,16 +172,19 @@ class MutationsAsset:
 
         Examples:
             >>> kili.update_properties_in_assets(
-                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n"],
                     consensus_marks=[1, 0.7],
                     contents=[None, 'https://to/second/asset.png'],
-                    external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
+                    external_ids=['external-id-of-your-choice-1',
+                        'external-id-of-your-choice-2'],
                     honeypot_marks=[0.8, 0.5],
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
                     priorities=[None, 2],
                     status_array=['LABELED', 'REVIEWED'],
-                    to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
+                    to_be_labeled_by_array=[
+                        ['test+pierre@kili-technology.com'], None],
             )
         """
 
@@ -249,3 +254,38 @@ class MutationsAsset:
                                               generate_variables,
                                               GQL_DELETE_MANY_FROM_DATASET)
         return format_result('data', results[0], Asset)
+
+    @Compatible(['v1', 'v2'])
+    @typechecked
+    def add_assets_to_review(
+            self,
+            asset_ids: List[str]) -> dict:
+        """Add assets to review.
+
+        !!! warning
+            Assets without any label will be ignored.
+
+        Args:
+            asset_ids: The asset IDs to add to review
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.add_assets_to_review(
+                    asset_ids=[
+                        "ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n"
+                        ],
+        """
+        properties_to_batch = {'asset_ids': asset_ids}
+
+        def generate_variables(batch):
+            return {'where': {'idIn': batch['asset_ids']}}
+
+        results = _mutate_from_paginated_call(self,
+                                              properties_to_batch,
+                                              generate_variables,
+                                              GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW)
+        return format_result('data', results[0])
