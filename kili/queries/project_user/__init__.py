@@ -36,7 +36,7 @@ class QueriesProjectUser:
                       project_id: Optional[str] = None,
                       fields: List[str] = ['activated', 'id', 'role',
                                            'starred', 'user.email', 'user.id'],
-                      first: int = 100,
+                      first: Optional[int] = None,
                       skip: int = 0,
                       disable_tqdm: bool = False,
                       as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:

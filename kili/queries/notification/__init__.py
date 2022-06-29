@@ -31,7 +31,7 @@ class QueriesNotification:
     def notifications(self,
                       fields: List[str] = ['createdAt', 'hasBeenSeen',
                                            'id', 'message', 'status', 'userID'],
-                      first: int = 100,
+                      first: Optional[int] = None,
                       has_been_seen: Optional[bool] = None,
                       notification_id: Optional[str] = None,
                       skip: int = 0,

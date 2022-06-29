@@ -32,7 +32,7 @@ class QueriesApiKey:
     def api_keys(self, api_key_id: Optional[str] = None, user_id: Optional[str] = None,
                  api_key: Optional[str] = None, skip: int = 0,
                  fields: List[str] = ['id', 'name', 'createdAt', 'revoked'],
-                 first: Optional[int] = 100,
+                 first: Optional[int] = None,
                  disable_tqdm: bool = False,
                  as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long

@@ -33,7 +33,7 @@ class QueriesLock:
     def locks(self,
               lock_id: Optional[str] = None,
               fields: List[str] = ['id', 'lockType'],
-              first: int = 100,
+              first: int = None,
               skip: int = 0,
               disable_tqdm: bool = False,
               as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
