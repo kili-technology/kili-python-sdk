@@ -2,6 +2,7 @@
 
 from typing import Optional, Tuple
 import json
+import warnings
 import click
 from tabulate import tabulate
 from typeguard import typechecked
@@ -96,7 +97,8 @@ def list_project(api_key: str,
 @click.option('--title', type=str, required=True,
               help='Project Title.')
 @click.option('--input-type', type=click.Choice(INPUT_TYPE), required=True,
-              help='Project input data type.')
+              help='Project input data type. '
+              'Please check your license to see which ones you have access to.')
 @click.option('--description', type=str, default='',
               help='Project description.')
 @tablefmt_option
@@ -123,6 +125,8 @@ def create_project(api_key: str,
     To build a Kili project interface, please visit: \n
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
+    if input_type == 'FRAME':
+        warnings.warn("FRAME input type is deprecated. Please use VIDEO instead")
     with open(interface, encoding='utf-8') as interface_file:
         json_interface = json.load(interface_file)
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
@@ -204,13 +208,13 @@ def import_assets(api_key: str,
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
 
-    if input_type != 'FRAME' and (fps is not None or frames is True):
+    if input_type not in ('FRAME', 'VIDEO') and (fps is not None or frames is True):
         illegal_option = 'fps and frames are'
         if frames is False:
             illegal_option = 'fps is'
         if fps is None:
             illegal_option = 'frames is'
-        raise ValueError(f'{illegal_option} only valid for a FRAME project')
+        raise ValueError(f'{illegal_option} only valid for a VIDEO project')
 
     files_to_upload = get_file_paths_to_upload(files, input_type, exclude)
     if len(files_to_upload) == 0:
