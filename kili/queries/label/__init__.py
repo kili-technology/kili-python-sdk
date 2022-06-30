@@ -36,7 +36,6 @@ class QueriesLabel:
     @typechecked
     @deprecate(removed_in="2.115")
     def labels(self,
-               project_id: str,
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,
                asset_external_id_in: Optional[List[str]] = None,
@@ -52,6 +51,7 @@ class QueriesLabel:
                id_contains: Optional[List[str]] = None,
                json_response_contains: Optional[List[str]] = None,
                label_id: Optional[str] = None,
+               project_id: Optional[str] = None,
                skip: int = 0,
                skipped: Optional[bool] = None,
                type_in: Optional[List[str]] = None,
@@ -64,7 +64,6 @@ class QueriesLabel:
         """Get a label list or a label generator from a project based on a set of criteria.
 
         Args:
-            project_id: Identifier of the project.
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
@@ -82,6 +81,7 @@ class QueriesLabel:
             json_response_contains: Returned labels should have a substring of the jsonResponse that belongs
                 to that list, if given.
             label_id: Identifier of the label.
+            project_id: Identifier of the project.
             skip: Number of labels to skip (they are ordered by their date of creation, first to last).
             skipped: Returned labels should have a label which is skipped
             type_in: Returned labels should have a label whose type belongs to that list, if given.
@@ -237,7 +237,6 @@ class QueriesLabel:
     @typechecked
     @deprecate(removed_in="2.115")
     def count_labels(self,
-                     project_id: str,
                      asset_id: Optional[str] = None,
                      asset_status_in: Optional[List[str]] = None,
                      asset_external_id_in: Optional[List[str]] = None,
@@ -249,6 +248,7 @@ class QueriesLabel:
                      honeypot_mark_lte: Optional[float] = None,
                      json_response_contains: Optional[List[str]] = None,
                      label_id: Optional[str] = None,
+                     project_id: Optional[str] = None,
                      skipped: Optional[bool] = None,
                      type_in: Optional[List[str]] = None,
                      user_id: Optional[str] = None,

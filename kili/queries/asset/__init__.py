@@ -34,8 +34,8 @@ class QueriesAsset:
     @typechecked
     @deprecate(removed_in="2.115")
     def assets(self,
-               project_id: str,
                asset_id: Optional[str] = None,
+               project_id: Optional[str] = None,
                skip: int = 0,
                fields: List[str] = ['content',
                                     'createdAt',
@@ -81,9 +81,9 @@ class QueriesAsset:
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
         Args:
-            project_id: Identifier of the project.
             asset_id: Identifier of the asset to retrieve.
             asset_id_in: A list of the IDs of the assets to retrieve.
+            project_id: Identifier of the project.
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
@@ -236,9 +236,8 @@ class QueriesAsset:
     @Compatible(['v1', 'v2'])
     @typechecked
     @deprecate(removed_in="2.115")
-    def count_assets(self,
-                     project_id: str,
-                     asset_id: Optional[str] = None,
+    def count_assets(self, asset_id: Optional[str] = None,
+                     project_id: Optional[str] = None,
                      asset_id_in: Optional[List[str]] = None,
                      external_id_contains: Optional[List[str]] = None,
                      metadata_where: Optional[dict] = None,
@@ -266,9 +265,9 @@ class QueriesAsset:
         Parameters beginning with 'label_' apply to labels, others apply to assets.
 
         Args:
-            project_id: Identifier of the project
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
+            project_id: Identifier of the project
             external_id_contains: Returned assets should have an external id
                 that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
