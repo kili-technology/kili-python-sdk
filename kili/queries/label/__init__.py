@@ -34,7 +34,7 @@ class QueriesLabel:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
+    @deprecate(removed_in="2.117")
     def labels(self,
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,

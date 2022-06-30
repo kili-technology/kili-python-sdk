@@ -235,7 +235,7 @@ class QueriesAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
+    @deprecate(removed_in="2.117")
     def count_assets(self, asset_id: Optional[str] = None,
                      project_id: Optional[str] = None,
                      asset_id_in: Optional[List[str]] = None,
