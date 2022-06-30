@@ -243,7 +243,7 @@ class QueriesLabel:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
+    @deprecate(removed_in="2.117")
     def count_labels(self,
                      asset_id: Optional[str] = None,
                      asset_status_in: Optional[List[str]] = None,
@@ -295,6 +295,15 @@ class QueriesLabel:
                 The field `json_response_contains` is deprecated since: 2.113
                 It will be removed in: 2.115
                 Please use `category_search` to filter based on categories in labels
+                """
+            warnings.warn(message, DeprecationWarning)
+
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
                 """
             warnings.warn(message, DeprecationWarning)
 

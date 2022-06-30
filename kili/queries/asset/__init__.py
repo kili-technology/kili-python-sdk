@@ -32,7 +32,7 @@ class QueriesAsset:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
+    @deprecate(removed_in="2.117")
     def assets(self,
                asset_id: Optional[str] = None,
                project_id: Optional[str] = None,
@@ -158,6 +158,14 @@ class QueriesAsset:
                 label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
         if format == "pandas" and as_generator:
             raise ValueError(
                 "Argument values as_generator==True and format==\"pandas\" are not compatible.")

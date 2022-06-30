@@ -6,7 +6,7 @@ import warnings
 from typeguard import typechecked
 
 
-from ...helpers import Compatible, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder, deprecate
 from .queries import gql_project_version, GQL_PROJECT_VERSION_COUNT
 from ...types import ProjectVersion as ProjectVersionType
 from ...utils.pagination import row_generator_from_paginated_calls
@@ -28,6 +28,7 @@ class QueriesProjectVersion:
     # pylint: disable=dangerous-default-value
     @Compatible(['v2'])
     @typechecked
+    @deprecate(removed_in="2.117")
     def project_version(
             self,
             first: Optional[int] = 100,
@@ -103,6 +104,7 @@ class QueriesProjectVersion:
 
     @Compatible(['v2'])
     @typechecked
+    @deprecate(removed_in="2.117")
     def count_project_versions(self, project_id: str) -> int:
         """Count the number of project versions.
 
@@ -112,6 +114,14 @@ class QueriesProjectVersion:
         Returns:
             The number of project versions with the parameters provided
         """
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
         variables = {
             'where': {'projectId': project_id},
         }

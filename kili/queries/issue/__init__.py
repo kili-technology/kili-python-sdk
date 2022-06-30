@@ -6,7 +6,7 @@ import warnings
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder, deprecate
 from .queries import GQL_ISSUES_COUNT, gql_issues
 from ...types import Issue as IssueType
 from ...utils.pagination import row_generator_from_paginated_calls
@@ -29,6 +29,7 @@ class QueriesIssue:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
+    @deprecate(removed_in="2.117")
     def issues(self,
                fields: Optional[List[str]] = [
                    'id',
@@ -61,6 +62,14 @@ class QueriesIssue:
         Examples:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
 
         count_args = {'project_id': project_id}
         disable_tqdm = disable_tqdm or as_generator
@@ -99,6 +108,7 @@ class QueriesIssue:
 
     @Compatible(['v2'])
     @typechecked
+    @deprecate(removed_in="2.117")
     def count_issues(self, project_id: Optional[str] = None) -> int:
         """Count and return the number of api keys with the given constraints.
 
@@ -109,6 +119,14 @@ class QueriesIssue:
             The number of issues with the parameters provided
 
         """
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
         variables = {
             'where': {
                 'project': {
