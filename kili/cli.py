@@ -98,7 +98,7 @@ def list_project(api_key: Optional[str],
     projects['PROGRESS'] = [(str(progress) + '%') if progress >=
                             0 else progress for progress in projects['progress']]
     # If description or title has more than 50 characters, truncate after 47 and add '...'
-    projects['DESCRIPTION'] = [(description[:47] + '...') if len(description)
+    projects['DESCRIPTION'] = [(description[:47] + '...').replace('\n', '') if len(description)
                                > 50 else description for description in projects['description']]
     projects['TITLE'] = [(title[:47] + '...') if len(title) >
                          50 else title for title in projects['title']]
@@ -318,7 +318,7 @@ def describe_project(api_key: Optional[str],
     except:
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
-    metadata = get_project_metadata(projects[0], endpoint)
+    metadata = get_project_metadata(projects[0], kili.auth.client.endpoint)
     dataset_metrics, quality_metrics = get_project_metrics(projects[0])
 
     print(tabulate(metadata, tablefmt='plain'), end='\n'*2)
