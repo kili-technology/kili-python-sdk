@@ -39,7 +39,7 @@ class QueriesProjectVersion:
                 'name',
                 'project',
                 'projectId'],
-            project_id: str = None,
+            project_id: Optional[str] = None,
             disable_tqdm: bool = False,
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
@@ -59,7 +59,14 @@ class QueriesProjectVersion:
             A result object which contains the query if it was successful,
                 or an error message.
         """
-
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
         count_args = {"project_id": project_id}
         disable_tqdm = disable_tqdm or as_generator
         payload_query = {
