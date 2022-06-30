@@ -41,7 +41,7 @@ kili project create \\
             --description "Bottle defects on production line"
 ```
 
-Ouputs:
+Ouput:
 
 ```
 Project successfully created. Id: cl4ljd3awc5gj0lpbb89nbcqg
@@ -53,7 +53,7 @@ Project successfully created. Id: cl4ljd3awc5gj0lpbb89nbcqg
 kili project list --max 10
 ```
 
-Ouputs:
+Ouput:
 
 ```
 title                                     id                           progress  description
@@ -73,7 +73,7 @@ kili project import \\
     --verbose
 ```
 
-Ouputs:
+Ouput:
 
 ```
 datasets/defect_detection/visit1.mp4    SKIPPED
@@ -133,7 +133,7 @@ kili project describe \\
     --project-id cl4ljd3awc5gj0lpbb89nbcqg
 ```
 
-Ouputs:
+Ouput:
 
 ```
 Title        Defect detection
