@@ -144,7 +144,7 @@ def _mutate_from_paginated_call(self,
         mutation_time = time.time() - mutation_start
         results.append(result)
         if 'errors' in result:
-            raise GraphQLError('data', result['errors'], batch_number)
+            raise GraphQLError(result['errors'], batch_number)
         if mutation_time < THROTTLING_DELAY:
             time.sleep(THROTTLING_DELAY - mutation_time)
     return results
