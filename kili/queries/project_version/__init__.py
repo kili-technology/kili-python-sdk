@@ -38,7 +38,6 @@ class QueriesProjectVersion:
                 'id',
                 'content',
                 'name',
-                'project',
                 'projectId'],
             project_id: Optional[str] = None,
             disable_tqdm: bool = False,
