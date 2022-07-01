@@ -4,6 +4,7 @@ Helpers for the project queries.
 
 from typing import List, Tuple
 
+
 def get_project_url(project_id: str, api_endpoint: str):
     """
     Get the project url from the project id and the api_endpoint
@@ -15,7 +16,8 @@ def get_project_url(project_id: str, api_endpoint: str):
     domain = api_endpoint.replace("/api/label/v2/graphql", "")
     return domain + f"/label/projects/{project_id}/"
 
-def get_project_metadata(project: dict, api_endpoint:str) -> List[Tuple]:
+
+def get_project_metadata(project: dict, api_endpoint: str) -> List[Tuple]:
     """Get project metadata.
 
     Args:
@@ -31,7 +33,6 @@ def get_project_metadata(project: dict, api_endpoint:str) -> List[Tuple]:
     ]
 
 
-
 def get_project_metrics(project: dict) -> Tuple[List[Tuple], List[Tuple]]:
     """Get project metrics.
 
@@ -43,8 +44,6 @@ def get_project_metrics(project: dict) -> Tuple[List[Tuple], List[Tuple]]:
         the project infos and progress metrics
     """
 
-
-
     if project['numberOfAssets']:
         progress = round(
             (1 - project['numberOfRemainingAssets'] / project['numberOfAssets']) * 100, 1)
@@ -54,13 +53,15 @@ def get_project_metrics(project: dict) -> Tuple[List[Tuple], List[Tuple]]:
     dataset_metrics = [('Total number of assets', project['numberOfAssets']),
                        ('Number of remaining assets',
                            project['numberOfRemainingAssets']),
-                       ('Skipped assets', project['numberOfAssetsWithSkippedLabels']),
+                       ('Skipped assets',
+                        project['numberOfAssetsWithSkippedLabels']),
                        ('Progress', str(progress)+'%')]
     quality_metrics = [('Project consensus', project['consensusMark'] or 'N/A'),
                        ('Project honeypot', project['honeypotMark'] or 'N/A'),
                        ('Number of reviewed assets',
                         project['numberOfReviewedAssets']),
-                       ('Number of open issues', project['numberOfOpenIssues']),
+                       ('Number of open issues',
+                        project['numberOfOpenIssues']),
                        ('Number of solved issues',
                         project['numberOfSolvedIssues']),
                        ('Number of open questions',

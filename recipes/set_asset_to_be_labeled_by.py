@@ -19,7 +19,13 @@ def get_asset_by_external_id(kili, project_id, external_id):
 
 
 @click.command()
-@click.option('--api_endpoint', default='https://cloud.kili-technology.com/api/label/v2/graphql', help='Endpoint of GraphQL client')
+@click.option('--api-endpoint', default=None,
+              help='Endpoint of GraphQL client',
+              show_default=(
+                  "'KILI_API_ENDPOINT' environment variable or "
+                  "'https://cloud.kili-technology.com/api/label/v2/graphql' if not set"
+              )
+              )
 def main(api_endpoint):
     api_key = input('Enter API KEY: ')
     project_id = input('Enter project id: ')
