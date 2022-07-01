@@ -34,9 +34,8 @@ class QueriesLabel:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
+    @deprecate(removed_in="2.117")
     def labels(self,
-               project_id: str,
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,
                asset_external_id_in: Optional[List[str]] = None,
@@ -52,6 +51,7 @@ class QueriesLabel:
                id_contains: Optional[List[str]] = None,
                json_response_contains: Optional[List[str]] = None,
                label_id: Optional[str] = None,
+               project_id: Optional[str] = None,
                skip: int = 0,
                skipped: Optional[bool] = None,
                type_in: Optional[List[str]] = None,
@@ -64,7 +64,6 @@ class QueriesLabel:
         """Get a label list or a label generator from a project based on a set of criteria.
 
         Args:
-            project_id: Identifier of the project.
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
@@ -82,6 +81,7 @@ class QueriesLabel:
             json_response_contains: Returned labels should have a substring of the jsonResponse that belongs
                 to that list, if given.
             label_id: Identifier of the label.
+            project_id: Identifier of the project.
             skip: Number of labels to skip (they are ordered by their date of creation, first to last).
             skipped: Returned labels should have a label which is skipped
             type_in: Returned labels should have a label whose type belongs to that list, if given.
@@ -118,6 +118,14 @@ class QueriesLabel:
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
 
         saved_args = locals()
         count_args = {
@@ -235,9 +243,8 @@ class QueriesLabel:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
+    @deprecate(removed_in="2.117")
     def count_labels(self,
-                     project_id: str,
                      asset_id: Optional[str] = None,
                      asset_status_in: Optional[List[str]] = None,
                      asset_external_id_in: Optional[List[str]] = None,
@@ -249,6 +256,7 @@ class QueriesLabel:
                      honeypot_mark_lte: Optional[float] = None,
                      json_response_contains: Optional[List[str]] = None,
                      label_id: Optional[str] = None,
+                     project_id: Optional[str] = None,
                      skipped: Optional[bool] = None,
                      type_in: Optional[List[str]] = None,
                      user_id: Optional[str] = None,
@@ -287,6 +295,15 @@ class QueriesLabel:
                 The field `json_response_contains` is deprecated since: 2.113
                 It will be removed in: 2.115
                 Please use `category_search` to filter based on categories in labels
+                """
+            warnings.warn(message, DeprecationWarning)
+
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
                 """
             warnings.warn(message, DeprecationWarning)
 

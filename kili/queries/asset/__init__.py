@@ -32,10 +32,10 @@ class QueriesAsset:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
+    @deprecate(removed_in="2.117")
     def assets(self,
-               project_id: str,
                asset_id: Optional[str] = None,
+               project_id: Optional[str] = None,
                skip: int = 0,
                fields: List[str] = ['content',
                                     'createdAt',
@@ -81,9 +81,9 @@ class QueriesAsset:
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
         Args:
-            project_id: Identifier of the project.
             asset_id: Identifier of the asset to retrieve.
             asset_id_in: A list of the IDs of the assets to retrieve.
+            project_id: Identifier of the project.
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
@@ -158,6 +158,14 @@ class QueriesAsset:
                 label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
         if format == "pandas" and as_generator:
             raise ValueError(
                 "Argument values as_generator==True and format==\"pandas\" are not compatible.")
@@ -235,10 +243,9 @@ class QueriesAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.115")
-    def count_assets(self,
-                     project_id: str,
-                     asset_id: Optional[str] = None,
+    @deprecate(removed_in="2.117")
+    def count_assets(self, asset_id: Optional[str] = None,
+                     project_id: Optional[str] = None,
                      asset_id_in: Optional[List[str]] = None,
                      external_id_contains: Optional[List[str]] = None,
                      metadata_where: Optional[dict] = None,
@@ -266,9 +273,9 @@ class QueriesAsset:
         Parameters beginning with 'label_' apply to labels, others apply to assets.
 
         Args:
-            project_id: Identifier of the project
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
+            project_id: Identifier of the project
             external_id_contains: Returned assets should have an external id
                 that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
@@ -326,6 +333,14 @@ class QueriesAsset:
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
+        if project_id is None:
+            message = """
+                The field `project_id` must be specified since: 2.115
+                It will be made mandatory in: 2.117
+                If your workflow involves getting these entities over several projects,
+                please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
 
         if label_json_response_contains is not None:
             message = """
