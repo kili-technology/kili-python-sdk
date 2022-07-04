@@ -30,7 +30,7 @@ def encode_object_if_not_url(content, input_type):
 
 def process_frame_json_content(json_content):
     """
-    Function to process individual json_content of VIDEO projects
+    Function to process individual json_content of FRAME projects
     """
     if is_url(json_content):
         return json_content
@@ -67,7 +67,7 @@ def process_json_content(input_type: str,
     """
     if json_content_array is None:
         return [''] * len(content_array)
-    if input_type in ('VIDEO', 'FRAME'):
+    if input_type == 'FRAME':
         return list(map(process_frame_json_content, json_content_array))
     return [element if is_url(element) else dumps(element) for element in json_content_array]
 
@@ -79,12 +79,15 @@ def process_content(input_type: str,
     Process the array of contents
     """
     if input_type in ['IMAGE', 'PDF']:
-        return [content if is_url(content) else (content
-            if (json_content_array is not None and json_content_array[i] is not None)
-            else (encode_base64(content) if check_file_mime_type(content, input_type) else None))
-            for i, content in enumerate(content_array)]
-    if input_type in ('VIDEO', 'FRAME') and json_content_array is None:
-        content_array = [encode_object_if_not_url(content, input_type) for content in content_array]
+        return [content if is_url(content)
+                else (content
+                      if (json_content_array is not None and json_content_array[i] is not None)
+                      else (encode_base64(content) if check_file_mime_type(content, input_type)
+                            else None))
+                for i, content in enumerate(content_array)]
+    if input_type == 'FRAME' and json_content_array is None:
+        content_array = [encode_object_if_not_url(
+            content, input_type) for content in content_array]
     if input_type == 'TIME_SERIES':
         content_array = list(map(process_time_series, content_array))
     return content_array
@@ -179,7 +182,7 @@ def process_metadata(input_type: str, content_array: Union[List[str], None],
     """
     json_metadata_array = [
         {}] * len(content_array) if json_metadata_array is None else json_metadata_array
-    if input_type in ('FRAME', 'VIDEO'):
+    if input_type == 'FRAME':
         should_use_native_video = json_content_array is None
         json_metadata_array = [add_video_parameters(
             json_metadata, should_use_native_video) for json_metadata in json_metadata_array]
@@ -197,7 +200,7 @@ def get_request_to_execute(
     """
     if json_content_array is not None:
         return GQL_APPEND_MANY_TO_DATASET, None
-    if input_type not in ('FRAME', 'VIDEO'):
+    if input_type != 'FRAME':
         if input_type == 'IMAGE' and mime_type == 'image/tiff':
             return GQL_APPEND_MANY_FRAMES_TO_DATASET, 'GEO_SATELLITE'
         return GQL_APPEND_MANY_TO_DATASET, None
@@ -340,7 +343,7 @@ def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
     """
 
     json_metadata_array = None
-    if input_type in ('FRAME', 'VIDEO'):
+    if input_type == 'FRAME':
         json_metadata_array = [
             {'processingParameters': {
                 'shouldKeepNativeFrameRate': fps is None,
