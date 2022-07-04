@@ -3,7 +3,6 @@
 import os
 from typing import Optional, Tuple, List, Dict, cast
 import json
-import warnings
 import click
 from tabulate import tabulate
 from typeguard import typechecked
@@ -158,7 +157,6 @@ def create_project(api_key: Optional[str],
     To build a Kili project interface, please visit: \n
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
-    
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     if os.path.exists(interface):
         with open(interface, encoding='utf-8') as interface_file:

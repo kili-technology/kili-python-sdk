@@ -189,8 +189,6 @@ class MutationsProject:
             For more detailed examples on how to create projects,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb).
         """
-
-        
         variables = {
             'data': {'description': description,
                      'inputType': input_type,
