@@ -140,6 +140,7 @@ class QueriesLabel:
                 'id_contains',
                 'self',
                 'skip',
+                'message',
             ]
         }
 
