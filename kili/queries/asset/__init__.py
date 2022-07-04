@@ -172,7 +172,7 @@ class QueriesAsset:
 
         saved_args = locals()
         count_args = {k: v for (k, v) in saved_args.items()
-                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self', 'as_generator']}
+                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self', 'as_generator', 'message']}
 
         # using tqdm with a generator is messy, so it is always disabled
         disable_tqdm = disable_tqdm or as_generator
