@@ -35,7 +35,7 @@ class QueriesOrganization:
             email: Optional[str] = None,
             organization_id: Optional[str] = None,
             fields: List[str] = ['id', 'name'],
-            first: int = 100,
+            first: Optional[int] = None,
             skip: int = 0,
             disable_tqdm: bool = False,
             as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:

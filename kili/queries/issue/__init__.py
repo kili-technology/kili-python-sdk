@@ -38,7 +38,7 @@ class QueriesIssue:
                    'issueNumber',
                    'status',
                    'type'],
-               first: Optional[int] = 100,
+               first: Optional[int] = None,
                project_id: Optional[str] = None,
                skip: Optional[int] = 0,
                disable_tqdm: bool = False,

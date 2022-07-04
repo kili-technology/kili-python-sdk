@@ -31,7 +31,7 @@ class QueriesProjectVersion:
     @deprecate(removed_in="2.117")
     def project_version(
             self,
-            first: Optional[int] = 100,
+            first: Optional[int] = None,
             skip: Optional[int] = 0,
             fields: List[str] = [
                 'createdAt',
