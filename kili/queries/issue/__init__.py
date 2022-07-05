@@ -29,7 +29,7 @@ class QueriesIssue:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def issues(self,
                fields: Optional[List[str]] = [
                    'id',
@@ -65,7 +65,7 @@ class QueriesIssue:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """
@@ -108,7 +108,7 @@ class QueriesIssue:
 
     @Compatible(['v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def count_issues(self, project_id: Optional[str] = None) -> int:
         """Count and return the number of api keys with the given constraints.
 
@@ -122,7 +122,7 @@ class QueriesIssue:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """

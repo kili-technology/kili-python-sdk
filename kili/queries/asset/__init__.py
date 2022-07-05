@@ -32,7 +32,7 @@ class QueriesAsset:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def assets(self,
                asset_id: Optional[str] = None,
                project_id: Optional[str] = None,
@@ -161,7 +161,7 @@ class QueriesAsset:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """
@@ -243,7 +243,7 @@ class QueriesAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def count_assets(self, asset_id: Optional[str] = None,
                      project_id: Optional[str] = None,
                      asset_id_in: Optional[List[str]] = None,
@@ -336,7 +336,7 @@ class QueriesAsset:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """

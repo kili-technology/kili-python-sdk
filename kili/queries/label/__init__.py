@@ -34,7 +34,7 @@ class QueriesLabel:
     # pylint: disable=dangerous-default-value
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def labels(self,
                asset_id: Optional[str] = None,
                asset_status_in: Optional[List[str]] = None,
@@ -121,7 +121,7 @@ class QueriesLabel:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """
@@ -244,7 +244,7 @@ class QueriesLabel:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def count_labels(self,
                      asset_id: Optional[str] = None,
                      asset_status_in: Optional[List[str]] = None,
@@ -302,7 +302,7 @@ class QueriesLabel:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """
