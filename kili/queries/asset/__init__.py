@@ -67,7 +67,6 @@ class QueriesAsset:
                label_created_at_lt: Optional[str] = None,
                label_honeypot_mark_gt: Optional[float] = None,
                label_honeypot_mark_lt: Optional[float] = None,
-               label_json_response_contains: Optional[List[str]] = None,
                label_type_in: Optional[List[str]] = None,
                metadata_where: Optional[dict] = None,
                skipped: Optional[bool] = None,
@@ -103,8 +102,6 @@ class QueriesAsset:
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
             label_created_at_gt: Returned assets should have a label whose creation date is greater than this date.
             label_created_at_lt: Returned assets should have a label whose creation date is lower than this date.
-            label_json_response_contains: Returned assets should have a substring of the label's jsonResponse
-                    that belongs to that list, if given.
             label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number
             label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number
             skipped: Returned assets should be skipped
@@ -203,7 +200,6 @@ class QueriesAsset:
                     'createdAtLte': label_created_at_lt,
                     'honeypotMarkGte': label_honeypot_mark_gt,
                     'honeypotMarkLte': label_honeypot_mark_lt,
-                    'jsonResponseContains': label_json_response_contains,
                     'search': label_category_search
                 },
                 'skipped': skipped,
@@ -263,7 +259,6 @@ class QueriesAsset:
                      label_created_at_lt: Optional[str] = None,
                      label_honeypot_mark_gt: Optional[float] = None,
                      label_honeypot_mark_lt: Optional[float] = None,
-                     label_json_response_contains: Optional[List[str]] = None,
                      skipped: Optional[bool] = None,
                      updated_at_gte: Optional[str] = None,
                      updated_at_lte: Optional[str] = None,
@@ -303,9 +298,6 @@ class QueriesAsset:
                 whose honeypot is greater than this number.
             label_honeypot_mark_lt: Returned assets should have a label
                 whose honeypot is lower than this number.
-            label_json_response_contains: Returned assets should have
-                a substring of the label's jsonResponse that belongs
-                to that list, if given.
             skipped: Returned assets should be skipped
             updated_at_gte: Returned assets should have a label
                 whose update date is greated or equal to this date.
@@ -342,14 +334,6 @@ class QueriesAsset:
                 """
             warnings.warn(message, DeprecationWarning)
 
-        if label_json_response_contains is not None:
-            message = """
-                The field `label_json_response_contains` is deprecated since: 2.113
-                It will be removed in: 2.115
-                Please use `label_category_search` to filter based on categories in labels
-                """
-            warnings.warn(message, DeprecationWarning)
-
         if label_category_search:
             validate_category_search_query(label_category_search)
 
@@ -377,7 +361,6 @@ class QueriesAsset:
                     'createdAtLte': label_created_at_lt,
                     'honeypotMarkGte': label_honeypot_mark_gt,
                     'honeypotMarkLte': label_honeypot_mark_lt,
-                    'jsonResponseContains': label_json_response_contains,
                     'search': label_category_search
                 },
                 'skipped': skipped,

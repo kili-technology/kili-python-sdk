@@ -49,7 +49,6 @@ class QueriesLabel:
                honeypot_mark_gte: Optional[float] = None,
                honeypot_mark_lte: Optional[float] = None,
                id_contains: Optional[List[str]] = None,
-               json_response_contains: Optional[List[str]] = None,
                label_id: Optional[str] = None,
                project_id: Optional[str] = None,
                skip: int = 0,
@@ -78,8 +77,6 @@ class QueriesLabel:
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
             id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.
-            json_response_contains: Returned labels should have a substring of the jsonResponse that belongs
-                to that list, if given.
             label_id: Identifier of the label.
             project_id: Identifier of the project.
             skip: Number of labels to skip (they are ordered by their date of creation, first to last).
@@ -171,7 +168,6 @@ class QueriesLabel:
                 'honeypotMarkGte': honeypot_mark_gte,
                 'honeypotMarkLte': honeypot_mark_lte,
                 'idIn': id_contains,
-                'jsonResponseContains': json_response_contains,
                 'search': category_search,
                 'skipped': skipped,
                 'typeIn': type_in,
@@ -255,7 +251,6 @@ class QueriesLabel:
                      created_at_lte: Optional[str] = None,
                      honeypot_mark_gte: Optional[float] = None,
                      honeypot_mark_lte: Optional[float] = None,
-                     json_response_contains: Optional[List[str]] = None,
                      label_id: Optional[str] = None,
                      project_id: Optional[str] = None,
                      skipped: Optional[bool] = None,
@@ -276,8 +271,6 @@ class QueriesLabel:
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
-            json_response_contains: Returned labels should have a substring of the jsonResponse that
-                belongs to that list, if given.
             label_id: Identifier of the label.
             project_id: Identifier of the project.
             skipped: Returned labels should have a label which is skipped
@@ -290,15 +283,6 @@ class QueriesLabel:
         Returns:
             The number of labels with the parameters provided
         """
-
-        if json_response_contains is not None:
-            message = """
-                The field `json_response_contains` is deprecated since: 2.113
-                It will be removed in: 2.115
-                Please use `category_search` to filter based on categories in labels
-                """
-            warnings.warn(message, DeprecationWarning)
-
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
@@ -331,7 +315,6 @@ class QueriesLabel:
                 'authorIn': author_in,
                 'honeypotMarkGte': honeypot_mark_gte,
                 'honeypotMarkLte': honeypot_mark_lte,
-                'jsonResponseContains': json_response_contains,
                 'search': category_search,
                 'skipped': skipped,
                 'typeIn': type_in,
