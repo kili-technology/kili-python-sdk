@@ -28,7 +28,7 @@ class QueriesProjectUser:
     # pylint: disable=dangerous-default-value,invalid-name
     @Compatible(['v1', 'v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def project_users(self,
                       email: Optional[str] = None,
                       id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -68,7 +68,7 @@ class QueriesProjectUser:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """
@@ -123,7 +123,7 @@ class QueriesProjectUser:
 
     # pylint: disable=invalid-name
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def count_project_users(
             self,
             email: Optional[str] = None,
@@ -144,7 +144,7 @@ class QueriesProjectUser:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """

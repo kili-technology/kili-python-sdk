@@ -28,7 +28,7 @@ class QueriesProjectVersion:
     # pylint: disable=dangerous-default-value
     @Compatible(['v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def project_version(
             self,
             first: Optional[int] = None,
@@ -62,7 +62,7 @@ class QueriesProjectVersion:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """
@@ -103,7 +103,7 @@ class QueriesProjectVersion:
 
     @Compatible(['v2'])
     @typechecked
-    @deprecate(removed_in="2.117")
+    @deprecate(removed_in="2.116")
     def count_project_versions(self, project_id: str) -> int:
         """Count the number of project versions.
 
@@ -116,7 +116,7 @@ class QueriesProjectVersion:
         if project_id is None:
             message = """
                 The field `project_id` must be specified since: 2.115
-                It will be made mandatory in: 2.117
+                It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
                 """
