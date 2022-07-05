@@ -258,7 +258,7 @@ class MutationsAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def add_assets_to_review(
+    def add_to_review(
             self,
             asset_ids: List[str]) -> dict:
         """Add assets to review.
@@ -274,7 +274,7 @@ class MutationsAsset:
                 or an error message.
 
         Examples:
-            >>> kili.add_assets_to_review(
+            >>> kili.add_to_review(
                     asset_ids=[
                         "ckg22d81r0jrg0885unmuswj8",
                         "ckg22d81s0jrh0885pdxfd03n"
@@ -293,13 +293,10 @@ class MutationsAsset:
 
     @Compatible(['v2'])
     @typechecked
-    def send_back_assets_to_queue(
+    def send_back_to_queue(
             self,
             asset_ids: List[str]):
         """Send assets back to queue.
-
-        !!! warning
-            Assets without status REVIEWED will be ignored
 
         Args:
             asset_ids: The asset IDs to add to review
