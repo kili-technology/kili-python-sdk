@@ -3,7 +3,6 @@
 import os
 from typing import Optional, Tuple, List, Dict, cast
 import json
-import warnings
 import click
 from tabulate import tabulate
 from typeguard import typechecked
@@ -158,9 +157,6 @@ def create_project(api_key: Optional[str],
     To build a Kili project interface, please visit: \n
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
-    if input_type == 'FRAME':
-        warnings.warn(
-            "FRAME input type is deprecated. Please use VIDEO instead")
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     if os.path.exists(interface):
         with open(interface, encoding='utf-8') as interface_file:
@@ -254,13 +250,13 @@ def import_assets(api_key: Optional[str],
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
 
-    if input_type not in ('FRAME', 'VIDEO') and (fps is not None or as_frames is True):
+    if input_type != 'FRAME' and (fps is not None or as_frames is True):
         illegal_option = 'fps and frames are'
         if not as_frames:
             illegal_option = 'fps is'
         if fps is None:
             illegal_option = 'frames is'
-        raise ValueError(f'{illegal_option} only valid for a VIDEO project')
+        raise ValueError(f'{illegal_option} only valid for a FRAME project')
 
     files_to_upload = get_file_paths_to_upload(
         files, input_type, exclude, verbose)
