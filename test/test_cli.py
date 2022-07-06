@@ -2,7 +2,11 @@
 
 import os
 from click.testing import CliRunner
-from kili.cli import describe_project, import_assets, import_labels, list_project, create_project
+from kili.cli.project.create import create_project
+from kili.cli.project.describe import describe_project
+from kili.cli.project.import_asset import import_assets
+from kili.cli.project.import_label import import_labels
+from kili.cli.project.list import list_project
 from unittest.mock import MagicMock, patch
 
 from .utils import debug_subprocess_pytest
