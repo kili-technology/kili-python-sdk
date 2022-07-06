@@ -84,7 +84,8 @@ class MutationsProject:
                                      review_coverage: Optional[int] = None,
                                      should_relaunch_kpi_computation: Optional[bool] = None,
                                      title: Optional[str] = None,
-                                     use_honeypot: Optional[bool] = None):
+                                     use_honeypot: Optional[bool] = None,
+                                     metadata_types: Optional[dict] = None):
         """Update properties of a project.
 
         Args:
@@ -112,6 +113,8 @@ class MutationsProject:
                 in honeypot or consensus settings
             title: Title of the project
             use_honeypot: Activate / Deactivate the use of honeypot in the project
+            metadata_types: Types of metadata of the project.
+                It defines how metadata are displayed in filters on Kili web platform
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -119,6 +122,27 @@ class MutationsProject:
 
         Examples:
             >>> kili.update_properties_in_project(project_id=project_id, title='New title')
+
+        !!! example "Change Metadata Types"
+            By default, in filters, for a metadata field, the different options are shown
+            as a list of checkboxes that you can check to filter your assets accordingly.
+            If some fields of your metadata have numeric values within a range,
+            you can specify that these metadata fields should be displayed as a slider when selecting your filters.
+            To do so, you can provide metadata_types when updating your project properties.
+            metadata_types is given as a dict of metadata field names as keys and metadata input type as values.`
+            ```
+            kili.update_properties_in_project(
+                project_id = project_id,
+                metadata_types = {
+                    'customConsensus': 'range,
+                    'sensitiveData': 'checkbox',
+                    'uploadedFromCloud': 'checkbox',
+                    'modelLabelErrorScore': 'range'
+                }
+            )
+            ```
+            Currently only 2 input types are handled: `checkbox` and `range`. More input types will be gradually added.
+            Not providing an input type for a metadata field or providing an unsupported one will result in displaying the field as a checkbox type by default.
         """
         verify_argument_ranges(consensus_tot_coverage,
                                min_consensus_size,
@@ -132,6 +156,7 @@ class MutationsProject:
             'instructions': instructions,
             'inputType': input_type,
             'jsonInterface': dumps(json_interface) if json_interface is not None else None,
+            'metadataTypes': metadata_types,
             'minConsensusSize': min_consensus_size,
             'numberOfAssets': number_of_assets,
             'numberOfAssetsWithSkippedLabels': number_of_assets_with_empty_labels,
