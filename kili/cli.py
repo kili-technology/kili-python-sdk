@@ -192,22 +192,27 @@ def create_project(api_key: Optional[str],
 @endpoint_option
 @click.option('--project-id', type=str, required=True,
               help='Id of the project to import assets into.')
-@click.option('--exclude', type=click.Path(exists=True), multiple=True,
-              help="Files to exclude from the given files")
-@click.option('--frames', 'as_frames', type=bool, default=False, is_flag=True,
-              help="Only for a frame project, import videos as frames. "
-              "The import time is longer with this option.")
-@click.option('--fps', type=int,
-              help="Only for a frame project, import videos with a specific frame rate")
-@click.option('--verbose', type=bool, is_flag=True, default=False,
-              help='Show logs')
-@typechecked
+@ click.option('--exclude',
+               callback=lambda _, __, x: x.split(",") if x else None,
+               help=(
+                   "Comma separated (without space) list of files to exclude from the given files."
+                   "Example: --exclude dontimport_1.png,dontimport_2.png"
+               )
+               )
+@ click.option('--frames', 'as_frames', type=bool, default=False, is_flag=True,
+               help="Only for a frame project, import videos as frames. "
+               "The import time is longer with this option.")
+@ click.option('--fps', type=int,
+               help="Only for a frame project, import videos with a specific frame rate")
+@ click.option('--verbose', type=bool, is_flag=True, default=False,
+               help='Show logs')
+@ typechecked
 # pylint: disable=too-many-arguments
 def import_assets(api_key: Optional[str],
                   endpoint: Optional[str],
                   project_id: str,
                   files: Tuple[str, ...],
-                  exclude: Optional[Tuple[str, ...]],
+                  exclude: Optional[List[str]],
                   fps: Optional[int],
                   as_frames: bool,
                   verbose: bool):
@@ -241,6 +246,7 @@ def import_assets(api_key: Optional[str],
 
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
+
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     try:
         input_type = cast(List[Dict], kili.projects(project_id,
@@ -281,10 +287,10 @@ def import_assets(api_key: Optional[str],
         print(f'{len(files_to_upload)} files have been successfully imported')
 
 
-@project.command(name="describe")
-@click.argument('project_id', type=str, required=True)
-@api_key_option
-@endpoint_option
+@ project.command(name="describe")
+@ click.argument('project_id', type=str, required=True)
+@ api_key_option
+@ endpoint_option
 def describe_project(api_key: Optional[str],
                      endpoint: Optional[str],
                      project_id: str):
@@ -324,18 +330,18 @@ def describe_project(api_key: Optional[str],
     print(tabulate(quality_metrics, tablefmt='plain'))
 
 
-@project.command(name='label')
+@ project.command(name='label')
 @ click.argument('CSV_path', type=click.Path(exists=True), required=True)
-@api_key_option
-@endpoint_option
-@click.option('--project-id', type=str, required=True,
-              help='Id of the project to import labels in')
-@click.option('--prediction', 'is_prediction', type=bool, is_flag=True, default=False,
-              help='Tells to import labels as predictions, which means that they will appear '
-              'as pre-annotations in the Kili interface')
-@click.option('--model-name', type=str,
-              help='Name of the model that generated predictions, '
-              'if labels are sent as predictions')
+@ api_key_option
+@ endpoint_option
+@ click.option('--project-id', type=str, required=True,
+               help='Id of the project to import labels in')
+@ click.option('--prediction', 'is_prediction', type=bool, is_flag=True, default=False,
+               help='Tells to import labels as predictions, which means that they will appear '
+               'as pre-annotations in the Kili interface')
+@ click.option('--model-name', type=str,
+               help='Name of the model that generated predictions, '
+               'if labels are sent as predictions')
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
         csv_path: str,

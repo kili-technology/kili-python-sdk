@@ -146,8 +146,6 @@ def check_file_mime_type(content: str, input_type: str, verbose: bool = True) ->
     Returns true if the mime type of the file corresponds to the allowed mime types of the project
     """
 
-
-
     mime_type = get_data_type(content.lower())
 
     if not (mime_extensions_for_IV2[input_type] and mime_type):
@@ -287,7 +285,7 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
 
 def get_file_paths_to_upload(files: Tuple[str, ...],
                              input_type: str,
-                             exclude: Optional[Tuple[str, ...]],
+                             exclude: Optional[List[str]],
                              verbose: bool) -> List[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.
 
