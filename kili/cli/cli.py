@@ -3,7 +3,7 @@ import click
 
 from kili import __version__
 from kili.cli.common_args import CONTEXT_SETTINGS
-from kili.cli.project import project_group
+from kili.cli.project import project
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -15,7 +15,7 @@ def cli():
     """
 
 
-cli.add_command(project_group, name="project")
+cli.add_command(project, name="project")
 
 
 def main() -> None:

@@ -24,7 +24,7 @@ from kili.mutations.label.helpers import generate_create_predictions_arguments, 
               help='Name of the model that generated predictions, '
               'if labels are sent as predictions')
 # pylint: disable=too-many-arguments, too-many-locals
-def import_labels(
+def label(
         csv_path: str,
         api_key: Optional[str],
         endpoint: Optional[str],

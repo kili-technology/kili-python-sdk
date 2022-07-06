@@ -14,10 +14,10 @@ from kili.cli.common_args import Options
 @Options.endpoint
 @Options.tablefmt
 @click.option('--max', 'first', type=int, help='Maximum number of project to display.', default=100)
-def list_project(api_key: Optional[str],
-                 endpoint: Optional[str],
-                 tablefmt: str,
-                 first: int):
+def list_(api_key: Optional[str],
+          endpoint: Optional[str],
+          tablefmt: str,
+          first: int):
     """
     List your projects
 

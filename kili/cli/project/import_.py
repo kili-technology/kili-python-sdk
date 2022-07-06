@@ -26,14 +26,14 @@ from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_
               help='Show logs')
 @typechecked
 # pylint: disable=too-many-arguments
-def import_assets(api_key: Optional[str],
-                  endpoint: Optional[str],
-                  project_id: str,
-                  files: Tuple[str, ...],
-                  exclude: Optional[Tuple[str, ...]],
-                  fps: Optional[int],
-                  as_frames: bool,
-                  verbose: bool):
+def import_(api_key: Optional[str],
+            endpoint: Optional[str],
+            project_id: str,
+            files: Tuple[str, ...],
+            exclude: Optional[Tuple[str, ...]],
+            fps: Optional[int],
+            as_frames: bool,
+            verbose: bool):
     """
     Add assets into a project
 
