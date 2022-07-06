@@ -176,7 +176,7 @@ def create_project(api_key: Optional[str],
         description=description))
     project_id = result['id']
 
-    project_url = get_project_url(project_id, endpoint)
+    project_url = get_project_url(project_id, kili.auth.client.endpoint)
     print(
         tabulate(
             [[project_id, project_url]],
