@@ -96,19 +96,6 @@ class TestCLIProject():
             }
         },
             {
-            'case_name': 'AAU, when I import a list of folder and files with excluded files to an image project, I see a success',
-            'files': ['test_tree/', 'test_tree/leaf'],
-            'options': {
-                'project-id': 'image_project',
-                'exclude': 'test_tree/image1.png'},
-            'expected_mutation_payload': {
-                'project_id': 'image_project',
-                'content_array': ['test_tree/image2.jpg', 'test_tree/leaf/image3.png', 'test_tree/leaf/image4.jpg'],
-                'external_id_array': ['image2.jpg', 'image3.png', 'image4.jpg'],
-                'json_metadata_array': None
-            }
-        },
-            {
                 'case_name': 'AAU, when I import files with stars, I see a success',
                 'files': ['test_tree/**.jpg', 'test_tree/leaf/**.jpg'],
                 'options': {
@@ -125,8 +112,8 @@ class TestCLIProject():
             'case_name': 'AAU, when I import a files to a text project, I see a success',
             'files': ['test_tree/', 'test_tree/leaf'],
             'options': {
-                'project-id': 'text_project',
-                'exclude': 'test_tree/image1.png'},
+                'project-id': 'text_project'
+            },
             'expected_mutation_payload': {
                 'project_id': 'text_project',
                 'content_array': ['test_tree/leaf/texte2.txt', 'test_tree/texte1.txt'],

@@ -15,8 +15,6 @@ from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_
 @Options.endpoint
 @click.option('--project-id', type=str, required=True,
               help='Id of the project to import assets into.')
-@click.option('--exclude', type=click.Path(exists=True), multiple=True,
-              help="Files to exclude from the given files")
 @click.option('--frames', 'as_frames', type=bool, default=False, is_flag=True,
               help="Only for a frame project, import videos as frames. "
               "The import time is longer with this option.")
@@ -30,7 +28,6 @@ def import_(api_key: Optional[str],
             endpoint: Optional[str],
             project_id: str,
             files: Tuple[str, ...],
-            exclude: Optional[Tuple[str, ...]],
             fps: Optional[int],
             as_frames: bool,
             verbose: bool):
@@ -44,8 +41,7 @@ def import_(api_key: Optional[str],
         ```
         kili project import \\
             dir1/dir2/ dir1/dir3/test1.png \\
-            --project-id <project_id> \\
-            --exclude dontimport.png
+            --project-id <project_id>
         ```
         ```
         kili project import \\
@@ -82,7 +78,7 @@ def import_(api_key: Optional[str],
         raise ValueError(f'{illegal_option} only valid for a FRAME project')
 
     files_to_upload = get_file_paths_to_upload(
-        files, input_type, exclude, verbose)
+        files, input_type, verbose)
     if len(files_to_upload) == 0:
         raise ValueError(
             'No files to upload. '
