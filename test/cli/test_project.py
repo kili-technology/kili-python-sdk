@@ -1,11 +1,15 @@
 """Tests the Kili CLI"""
 
-import os
-from click.testing import CliRunner
-from kili.cli import describe_project, import_assets, import_labels, list_project, create_project
 from unittest.mock import MagicMock, patch
+import os
 
-from .utils import debug_subprocess_pytest
+from click.testing import CliRunner
+from kili.cli.project.create import create_project
+from kili.cli.project.describe import describe_project
+from kili.cli.project.import_ import import_assets
+from kili.cli.project.label import import_labels
+from kili.cli.project.list_ import list_projects
+from ..utils import debug_subprocess_pytest
 
 
 def mocked__projects(project_id=None, **_):
@@ -52,14 +56,14 @@ kili.Kili = MagicMock(return_value=kili_client)
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
-class TestCLI():
+class TestCLIProject():
     """
-    test the CLI functions
+    test the CLI functions of the project command
     """
 
     def test_list(self, mocker):
         runner = CliRunner()
-        result = runner.invoke(list_project)
+        result = runner.invoke(list_projects)
         assert ((result.exit_code == 0) and
                 (result.output.count("100.0%") == 1) and
                 (result.output.count("0.0%") == 2) and
@@ -92,19 +96,6 @@ class TestCLI():
             }
         },
             {
-            'case_name': 'AAU, when I import a list of folder and files with excluded files to an image project, I see a success',
-            'files': ['test_tree/', 'test_tree/leaf'],
-            'options': {
-                'project-id': 'image_project',
-                'exclude': 'test_tree/image1.png'},
-            'expected_mutation_payload': {
-                'project_id': 'image_project',
-                'content_array': ['test_tree/image2.jpg', 'test_tree/leaf/image3.png', 'test_tree/leaf/image4.jpg'],
-                'external_id_array': ['image2.jpg', 'image3.png', 'image4.jpg'],
-                'json_metadata_array': None
-            }
-        },
-            {
                 'case_name': 'AAU, when I import files with stars, I see a success',
                 'files': ['test_tree/**.jpg', 'test_tree/leaf/**.jpg'],
                 'options': {
@@ -121,8 +112,8 @@ class TestCLI():
             'case_name': 'AAU, when I import a files to a text project, I see a success',
             'files': ['test_tree/', 'test_tree/leaf'],
             'options': {
-                'project-id': 'text_project',
-                'exclude': 'test_tree/image1.png'},
+                'project-id': 'text_project'
+            },
             'expected_mutation_payload': {
                 'project_id': 'text_project',
                 'content_array': ['test_tree/leaf/texte2.txt', 'test_tree/texte1.txt'],

@@ -5,7 +5,7 @@ import csv
 import os
 from json import dumps
 from uuid import uuid4
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple, Union
 import glob
 import mimetypes
 
@@ -146,8 +146,6 @@ def check_file_mime_type(content: str, input_type: str, verbose: bool = True) ->
     Returns true if the mime type of the file corresponds to the allowed mime types of the project
     """
 
-
-
     mime_type = get_data_type(content.lower())
 
     if not (mime_extensions_for_IV2[input_type] and mime_type):
@@ -287,14 +285,12 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
 
 def get_file_paths_to_upload(files: Tuple[str, ...],
                              input_type: str,
-                             exclude: Optional[Tuple[str, ...]],
                              verbose: bool) -> List[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.
 
     Args:
         files: a list path that can either be file paths, folder paths or unexisting paths
         input_type: input type of the project to import data to.
-        exclude: a list path to exclude from the search
 
     Returns:
         a list of the paths of the files to upload, compatible with the project type.
@@ -313,9 +309,6 @@ def get_file_paths_to_upload(files: Tuple[str, ...],
 
     file_paths_to_upload = [
         path for path in file_paths if check_file_mime_type(path, input_type, False)]
-    if exclude is not None:
-        file_paths_to_upload = [
-            path for path in file_paths_to_upload if path not in exclude]
     if len(file_paths_to_upload) == 0:
         raise ValueError(
             "No files to upload. "
@@ -325,7 +318,7 @@ def get_file_paths_to_upload(files: Tuple[str, ...],
             if path not in file_paths_to_upload:
                 print(f'{path:30} SKIPPED')
         if len(file_paths_to_upload) != len(file_paths):
-            print('Paths skipped either do not exist, are filtered out '
+            print('Paths skipped either do not exist '
                   'or point towards wrong data type for the project')
     file_paths_to_upload.sort()
     return file_paths_to_upload
