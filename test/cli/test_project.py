@@ -1,15 +1,15 @@
 """Tests the Kili CLI"""
 
+from unittest.mock import MagicMock, patch
 import os
+
 from click.testing import CliRunner
 from kili.cli.project.create import create
 from kili.cli.project.describe import describe
 from kili.cli.project.import_ import import_
 from kili.cli.project.label import label
 from kili.cli.project.list_ import list_
-from unittest.mock import MagicMock, patch
-
-from .utils import debug_subprocess_pytest
+from ..utils import debug_subprocess_pytest
 
 
 def mocked__projects(project_id=None, **_):
@@ -56,9 +56,9 @@ kili.Kili = MagicMock(return_value=kili_client)
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
-class TestCLI():
+class TestCLIProject():
     """
-    test the CLI functions
+    test the CLI functions of the project command
     """
 
     def test_list(self, mocker):
@@ -269,7 +269,7 @@ class TestCLI():
                 arguments.append(v)
             if test_case.get('flags'):
                 arguments.extend(['--'+flag for flag in test_case['flags']])
-            result = runner.invoke(import_, arguments)
+            result = runner.invoke(label, arguments)
             debug_subprocess_pytest(result)
             if test_case['mutation_to_call'] == 'append_to_labels':
                 append_to_labels_mock.assert_any_call(

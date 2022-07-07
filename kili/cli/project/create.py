@@ -67,7 +67,9 @@ def create(api_key: Optional[str],
             json_interface = json.load(interface_file)
     else:
         try:
-            json_interface = cast(List[Dict], kili.projects(project_id=interface))[
+            json_interface = cast(
+                List[Dict],
+                kili.projects(project_id=interface, disable_tqdm=True))[
                 0]['jsonInterface']
         except:
             # pylint: disable=raise-missing-from
