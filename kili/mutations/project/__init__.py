@@ -113,7 +113,8 @@ class MutationsProject:
                 in honeypot or consensus settings
             title: Title of the project
             use_honeypot: Activate / Deactivate the use of honeypot in the project
-            metadata_types: Types of metadata of the project.
+            metadata_types: Types of the project metadata.
+                Should be a `dict` of metadata fields name as keys and metadata types as values.
                 Currently, possible types are: `string`, `number`
 
         Returns:
@@ -126,14 +127,14 @@ class MutationsProject:
         !!! example "Change Metadata Types"
             Metadata fields are by default interpreted as `string` types. To change the type
             of a metadata field, you can use the `update_properties_in_project` function with the
-            metadata_types argument. metadata_types is given as a dict of metadata field names
+            metadata_types argument. `metadata_types` is given as a dict of metadata field names
             as keys and metadata types as values.
             Example:
             ```
             kili.update_properties_in_project(
                 project_id = project_id,
                 metadata_types = {
-                    'customConsensus': 'number,
+                    'customConsensus': 'number',
                     'sensitiveData': 'string',
                     'uploadedFromCloud': 'string',
                     'modelLabelErrorScore': 'number'
@@ -141,7 +142,7 @@ class MutationsProject:
             )
             ```
             Not providing a type for a metadata field or providing an unsupported one
-            will result in applying a `string` type.
+            will default to the `string` type.
         """
         verify_argument_ranges(consensus_tot_coverage,
                                min_consensus_size,
