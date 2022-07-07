@@ -1,3 +1,5 @@
+"""CLI's project list subcommand"""
+
 from typing import Dict, List, Optional, cast
 import click
 
@@ -14,10 +16,10 @@ from kili.cli.common_args import Options
 @Options.endpoint
 @Options.tablefmt
 @click.option('--max', 'first', type=int, help='Maximum number of project to display.', default=100)
-def list_(api_key: Optional[str],
-          endpoint: Optional[str],
-          tablefmt: str,
-          first: int):
+def list_projects(api_key: Optional[str],
+                  endpoint: Optional[str],
+                  tablefmt: str,
+                  first: int):
     """
     List your projects
 

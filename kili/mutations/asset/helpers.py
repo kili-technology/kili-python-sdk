@@ -5,7 +5,7 @@ import csv
 import os
 from json import dumps
 from uuid import uuid4
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple, Union
 import glob
 import mimetypes
 

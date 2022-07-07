@@ -1,9 +1,9 @@
-
+"""CLI's project import subcommand"""
 
 from typing import Dict, Optional, List, Tuple, cast
 import click
-from kili.cli.common_args import Options
 from typeguard import typechecked
+from kili.cli.common_args import Options
 from kili.client import Kili
 from kili.exceptions import NotFound
 from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_paths_to_upload
@@ -24,13 +24,13 @@ from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_
               help='Show logs')
 @typechecked
 # pylint: disable=too-many-arguments
-def import_(api_key: Optional[str],
-            endpoint: Optional[str],
-            project_id: str,
-            files: Tuple[str, ...],
-            fps: Optional[int],
-            as_frames: bool,
-            verbose: bool):
+def import_assets(api_key: Optional[str],
+                  endpoint: Optional[str],
+                  project_id: str,
+                  files: Tuple[str, ...],
+                  fps: Optional[int],
+                  as_frames: bool,
+                  verbose: bool):
     """
     Add assets into a project
 

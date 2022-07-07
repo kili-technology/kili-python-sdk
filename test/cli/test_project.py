@@ -4,11 +4,11 @@ from unittest.mock import MagicMock, patch
 import os
 
 from click.testing import CliRunner
-from kili.cli.project.create import create
-from kili.cli.project.describe import describe
-from kili.cli.project.import_ import import_
-from kili.cli.project.label import label
-from kili.cli.project.list_ import list_
+from kili.cli.project.create import create_project
+from kili.cli.project.describe import describe_project
+from kili.cli.project.import_ import import_assets
+from kili.cli.project.label import import_labels
+from kili.cli.project.list_ import list_projects
 from ..utils import debug_subprocess_pytest
 
 
@@ -63,7 +63,7 @@ class TestCLIProject():
 
     def test_list(self, mocker):
         runner = CliRunner()
-        result = runner.invoke(list_)
+        result = runner.invoke(list_projects)
         assert ((result.exit_code == 0) and
                 (result.output.count("100.0%") == 1) and
                 (result.output.count("0.0%") == 2) and
@@ -71,7 +71,7 @@ class TestCLIProject():
 
     def test_create_project(self, mocker):
         runner = CliRunner()
-        runner.invoke(create,
+        runner.invoke(create_project,
                       ['--interface',
                        "test/fixtures/image_interface.json",
                        '--title',
@@ -184,14 +184,14 @@ class TestCLIProject():
                 if test_case.get('flags'):
                     arguments.extend(
                         ['--'+flag for flag in test_case['flags']])
-                result = runner.invoke(import_, arguments)
+                result = runner.invoke(import_assets, arguments)
                 debug_subprocess_pytest(result)
                 append_many_to_dataset_mock.assert_called_with(
                     **test_case['expected_mutation_payload'])
 
     def test_describe_project(self, mocker):
         runner = CliRunner()
-        result = runner.invoke(describe, ["project_id"])
+        result = runner.invoke(describe_project, ["project_id"])
         debug_subprocess_pytest(result)
         assert (result.output.count('40.8%') == 1) and (
             result.output.count('N/A') == 2) and (
@@ -256,7 +256,7 @@ class TestCLIProject():
                 arguments.append(v)
             if test_case.get('flags'):
                 arguments.extend(['--'+flag for flag in test_case['flags']])
-            result = runner.invoke(label, arguments)
+            result = runner.invoke(import_labels, arguments)
             debug_subprocess_pytest(result)
             if test_case['mutation_to_call'] == 'append_to_labels':
                 append_to_labels_mock.assert_any_call(

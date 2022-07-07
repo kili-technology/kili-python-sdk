@@ -1,4 +1,4 @@
-
+"""CLI's project create subcommand"""
 
 import json
 import os
@@ -30,14 +30,14 @@ from kili.queries.project.helpers import get_project_url
               help='Project description.')
 @Options.tablefmt
 # pylint: disable=too-many-arguments
-def create(api_key: Optional[str],
-           endpoint: Optional[str],
-           input_type,
-           interface: str,
-           title: str,
-           description: str,
-           tablefmt: str,
-           ):
+def create_project(api_key: Optional[str],
+                   endpoint: Optional[str],
+                   input_type,
+                   interface: str,
+                   title: str,
+                   description: str,
+                   tablefmt: str,
+                   ):
     """Create a Kili project
 
     If --interface is the project_id of another Kili project,

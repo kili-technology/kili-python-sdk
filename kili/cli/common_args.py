@@ -1,10 +1,12 @@
+"""Common arguments and options for the CLI"""
 import click
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-class Options:
+class Options:  # pylint: disable=too-few-public-methods
+    """Common options for the CLI"""
 
     api_key = click.option(
         '--api-key', type=str, default=None,

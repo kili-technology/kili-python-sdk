@@ -1,4 +1,4 @@
-
+"""CLI's project label subcommand"""
 
 import json
 from typing import Optional
@@ -8,7 +8,8 @@ from kili.cli.common_args import Options
 from kili.client import Kili
 from kili.exceptions import NotFound
 
-from kili.mutations.label.helpers import generate_create_predictions_arguments, read_import_label_csv
+from kili.mutations.label.helpers import (
+    generate_create_predictions_arguments, read_import_label_csv)
 
 
 @click.command()
@@ -24,7 +25,7 @@ from kili.mutations.label.helpers import generate_create_predictions_arguments, 
               help='Name of the model that generated predictions, '
               'if labels are sent as predictions')
 # pylint: disable=too-many-arguments, too-many-locals
-def label(
+def import_labels(
         csv_path: str,
         api_key: Optional[str],
         endpoint: Optional[str],

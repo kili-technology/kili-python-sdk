@@ -1,3 +1,5 @@
+"""CLI's project describe command"""
+
 from typing import Dict, List, Optional, cast
 import click
 from tabulate import tabulate
@@ -13,10 +15,10 @@ from kili.cli.common_args import Options
 @click.argument('project_id', type=str, required=True)
 @Options.api_key
 @Options.endpoint
-def describe(api_key: Optional[str],
-             endpoint: Optional[str],
-             project_id: str):
-    """Show project description and analytics
+def describe_project(api_key: Optional[str],
+                     endpoint: Optional[str],
+                     project_id: str):
+    """Show project description and analytics.
     \b
     !!! Examples
         ```
