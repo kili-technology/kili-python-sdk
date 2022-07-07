@@ -64,3 +64,11 @@ mutation($where: AssetWhere!) {{
   }}
 }}
 '''
+
+GQL_SEND_BACK_ASSETS_TO_QUEUE = f'''
+mutation($where: AssetWhere!) {{
+  data: sendBackAssetsToQueue(where: $where) {{
+    {PROJECT_FRAGMENT_ID}
+  }}
+}}
+'''

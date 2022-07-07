@@ -11,11 +11,12 @@ from ...queries.project import QueriesProject
 from .queries import (GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
                       GQL_APPEND_MANY_FRAMES_TO_DATASET,
                       GQL_DELETE_MANY_FROM_DATASET,
-                      GQL_UPDATE_PROPERTIES_IN_ASSETS)
+                      GQL_UPDATE_PROPERTIES_IN_ASSETS,
+                      GQL_SEND_BACK_ASSETS_TO_QUEUE)
 from .helpers import (process_append_many_to_dataset_parameters,
                       process_update_properties_in_assets_parameters)
 from ...constants import NO_ACCESS_RIGHT
-from ...orm import Asset, AssetStatus
+from ...orm import Asset
 from ...utils.pagination import _mutate_from_paginated_call
 
 
@@ -257,7 +258,7 @@ class MutationsAsset:
 
     @Compatible(['v1', 'v2'])
     @typechecked
-    def add_assets_to_review(
+    def add_to_review(
             self,
             asset_ids: List[str]) -> dict:
         """Add assets to review.
@@ -273,7 +274,7 @@ class MutationsAsset:
                 or an error message.
 
         Examples:
-            >>> kili.add_assets_to_review(
+            >>> kili.add_to_review(
                     asset_ids=[
                         "ckg22d81r0jrg0885unmuswj8",
                         "ckg22d81s0jrh0885pdxfd03n"
@@ -288,4 +289,36 @@ class MutationsAsset:
                                               properties_to_batch,
                                               generate_variables,
                                               GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW)
+        return format_result('data', results[0])
+
+    @Compatible(['v2'])
+    @typechecked
+    def send_back_to_queue(
+            self,
+            asset_ids: List[str]):
+        """Send assets back to queue.
+
+        Args:
+            asset_ids: The asset IDs to add to review
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.send_back_to_queue(
+                    asset_ids=[
+                        "ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n"
+                        ],
+        """
+        properties_to_batch = {'asset_ids': asset_ids}
+
+        def generate_variables(batch):
+            return {'where': {'idIn': batch['asset_ids']}}
+
+        results = _mutate_from_paginated_call(self,
+                                              properties_to_batch,
+                                              generate_variables,
+                                              GQL_SEND_BACK_ASSETS_TO_QUEUE)
         return format_result('data', results[0])
