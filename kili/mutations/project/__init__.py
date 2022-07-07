@@ -114,7 +114,7 @@ class MutationsProject:
             title: Title of the project
             use_honeypot: Activate / Deactivate the use of honeypot in the project
             metadata_types: Types of metadata of the project.
-                It defines how metadata are displayed in filters on Kili web platform
+                Currently, possible types are: `string`, `number`
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -124,25 +124,24 @@ class MutationsProject:
             >>> kili.update_properties_in_project(project_id=project_id, title='New title')
 
         !!! example "Change Metadata Types"
-            By default, in filters, for a metadata field, the different options are shown
-            as a list of checkboxes that you can check to filter your assets accordingly.
-            If some fields of your metadata have numeric values within a range,
-            you can specify that these metadata fields should be displayed as a slider when selecting your filters.
-            To do so, you can provide metadata_types when updating your project properties.
-            metadata_types is given as a dict of metadata field names as keys and metadata input type as values.`
+            Metadata fields are by default interpreted as `string` types. To change the type
+            of a metadata field, you can use the `update_properties_in_project` function with the
+            metadata_types argument. metadata_types is given as a dict of metadata field names
+            as keys and metadata types as values.
+            Example:
             ```
             kili.update_properties_in_project(
                 project_id = project_id,
                 metadata_types = {
-                    'customConsensus': 'range,
-                    'sensitiveData': 'checkbox',
-                    'uploadedFromCloud': 'checkbox',
-                    'modelLabelErrorScore': 'range'
+                    'customConsensus': 'number,
+                    'sensitiveData': 'string',
+                    'uploadedFromCloud': 'string',
+                    'modelLabelErrorScore': 'number'
                 }
             )
             ```
-            Currently only 2 input types are handled: `checkbox` and `range`. More input types will be gradually added.
-            Not providing an input type for a metadata field or providing an unsupported one will result in displaying the field as a checkbox type by default.
+            Not providing a type for a metadata field or providing an unsupported one
+            will result in applying a `string` type.
         """
         verify_argument_ranges(consensus_tot_coverage,
                                min_consensus_size,
