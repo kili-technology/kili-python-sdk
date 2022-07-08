@@ -380,8 +380,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kili.mutations.asset.__init__.MutationsAsset.add_assets_to_review" class="md-nav__link">
-    add_assets_to_review()
+  <a href="#kili.mutations.asset.__init__.MutationsAsset.add_to_review" class="md-nav__link">
+    add_to_review()
   </a>
   
 </li>
@@ -396,6 +396,13 @@
           <li class="md-nav__item">
   <a href="#kili.mutations.asset.__init__.MutationsAsset.delete_many_from_dataset" class="md-nav__link">
     delete_many_from_dataset()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.mutations.asset.__init__.MutationsAsset.send_back_to_queue" class="md-nav__link">
+    send_back_to_queue()
   </a>
   
 </li>
@@ -663,8 +670,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kili.mutations.asset.__init__.MutationsAsset.add_assets_to_review" class="md-nav__link">
-    add_assets_to_review()
+  <a href="#kili.mutations.asset.__init__.MutationsAsset.add_to_review" class="md-nav__link">
+    add_to_review()
   </a>
   
 </li>
@@ -679,6 +686,13 @@
           <li class="md-nav__item">
   <a href="#kili.mutations.asset.__init__.MutationsAsset.delete_many_from_dataset" class="md-nav__link">
     delete_many_from_dataset()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.mutations.asset.__init__.MutationsAsset.send_back_to_queue" class="md-nav__link">
+    send_back_to_queue()
   </a>
   
 </li>
@@ -2172,7 +2186,7 @@ whose update date is lower or equal to this date.</p></td>
 
     <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">add_assets_to_review</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">add_to_review</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Add assets to review.</span>
@@ -2188,7 +2202,7 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.add_assets_to_review(</span>
+<span class="sd">            &gt;&gt;&gt; kili.add_to_review(</span>
 <span class="sd">                    asset_ids=[</span>
 <span class="sd">                        &quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
 <span class="sd">                        &quot;ckg22d81s0jrh0885pdxfd03n&quot;</span>
@@ -2203,6 +2217,38 @@ whose update date is lower or equal to this date.</p></td>
                                               <span class="n">properties_to_batch</span><span class="p">,</span>
                                               <span class="n">generate_variables</span><span class="p">,</span>
                                               <span class="n">GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span> <span class="nf">send_back_to_queue</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Send assets back to queue.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            asset_ids: The asset IDs to add to review</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which indicates if the mutation was successful,</span>
+<span class="sd">                or an error message.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.send_back_to_queue(</span>
+<span class="sd">                    asset_ids=[</span>
+<span class="sd">                        &quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
+<span class="sd">                        &quot;ckg22d81s0jrh0885pdxfd03n&quot;</span>
+<span class="sd">                        ],</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;asset_ids&#39;</span><span class="p">:</span> <span class="n">asset_ids</span><span class="p">}</span>
+
+        <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;asset_ids&#39;</span><span class="p">]}}</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                              <span class="n">properties_to_batch</span><span class="p">,</span>
+                                              <span class="n">generate_variables</span><span class="p">,</span>
+                                              <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </code></pre></div>
         </details>
@@ -2223,8 +2269,8 @@ whose update date is lower or equal to this date.</p></td>
 
 
 
-<h3 id="kili.mutations.asset.__init__.MutationsAsset.add_assets_to_review" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_assets_to_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">)</span></code>
+<h3 id="kili.mutations.asset.__init__.MutationsAsset.add_to_review" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_to_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2273,7 +2319,7 @@ whose update date is lower or equal to this date.</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">add_assets_to_review</span><span class="p">(</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">add_to_review</span><span class="p">(</span>
         <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span>
             <span class="s2">&quot;ckg22d81r0jrg0885unmuswj8&quot;</span><span class="p">,</span>
             <span class="s2">&quot;ckg22d81s0jrh0885pdxfd03n&quot;</span>
@@ -2284,7 +2330,7 @@ whose update date is lower or equal to this date.</p></td>
           <summary>Source code in <code>kili/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">add_assets_to_review</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">add_to_review</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Add assets to review.</span>
@@ -2300,7 +2346,7 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.add_assets_to_review(</span>
+<span class="sd">        &gt;&gt;&gt; kili.add_to_review(</span>
 <span class="sd">                asset_ids=[</span>
 <span class="sd">                    &quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
 <span class="sd">                    &quot;ckg22d81s0jrh0885pdxfd03n&quot;</span>
@@ -2621,6 +2667,104 @@ rich-text assets</a></li>
                                           <span class="n">generate_variables</span><span class="p">,</span>
                                           <span class="n">GQL_DELETE_MANY_FROM_DATASET</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Asset</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.mutations.asset.__init__.MutationsAsset.send_back_to_queue" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">send_back_to_queue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Send assets back to queue.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>asset_ids</code></td>
+        <td><code>List[str]</code></td>
+        <td><p>The asset IDs to add to review</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">send_back_to_queue</span><span class="p">(</span>
+        <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;ckg22d81r0jrg0885unmuswj8&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ckg22d81s0jrh0885pdxfd03n&quot;</span>
+            <span class="p">],</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/mutations/asset/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+<span class="nd">@typechecked</span>
+<span class="k">def</span> <span class="nf">send_back_to_queue</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">asset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Send assets back to queue.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asset_ids: The asset IDs to add to review</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.send_back_to_queue(</span>
+<span class="sd">                asset_ids=[</span>
+<span class="sd">                    &quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
+<span class="sd">                    &quot;ckg22d81s0jrh0885pdxfd03n&quot;</span>
+<span class="sd">                    ],</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;asset_ids&#39;</span><span class="p">:</span> <span class="n">asset_ids</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;asset_ids&#39;</span><span class="p">]}}</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                          <span class="n">properties_to_batch</span><span class="p">,</span>
+                                          <span class="n">generate_variables</span><span class="p">,</span>
+                                          <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </code></pre></div>
         </details>
     </div>
