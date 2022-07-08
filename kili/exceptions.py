@@ -1,5 +1,5 @@
 """Exceptions of the package."""
-
+import ast
 
 class NotFound(Exception):
     """Used when a given object is not found in Kili"""
@@ -43,11 +43,11 @@ class GraphQLError(Exception):
     """
     Used when the GraphQL call returns an error
     """
-
-    def __init__(self, mutation, error, batch_number=None):
+    def __init__(self, error: Exception, batch_number=None):
         if batch_number is None:
             super().__init__(
-                f'Mutation "{mutation}" failed with error: "{error}"')
+                f'error: "{ast.literal_eval(str(error))[0]["message"]}"')
         else:
             super().__init__(
-                f'Mutation "{mutation}" failed from index {100*batch_number} with error: "{error}"')
+                f'error at index {100*batch_number}: '
+                f'{ast.literal_eval(str(error))[0]["message"]}"')

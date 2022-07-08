@@ -69,7 +69,7 @@ def format_result(name, result, _object=None):
         result: query result to parse
     """
     if 'errors' in result:
-        raise GraphQLError(name, result['errors'])
+        raise GraphQLError(result['errors'])
     formatted_json = format_json(result['data'][name])
     if _object is None:
         return formatted_json
