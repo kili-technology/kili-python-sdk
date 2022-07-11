@@ -1,4 +1,4 @@
-"""CLI's project list subcommand"""
+"""CLI's project member list subcommand"""
 
 from typing import Dict, List, Optional, cast
 import click
@@ -17,10 +17,8 @@ ROLE_ORDER = {
 def role_order(col: pd.Series) -> pd.Series:
     """ordering pandas series by custom role order"""
     out = col
-    # apply custom sorting only to column one:
     if col.name == "ROLE":
         out = col.map(ROLE_ORDER)
-    # default text sorting is about to be applied
     return out
 
 
@@ -40,7 +38,7 @@ def list_members(api_key: Optional[str],
     \b
     !!! Examples
         ```
-        kili project member list --project-id <project_id> ----stdout-format pretty
+        kili project member list --project-id <project_id> --stdout-format pretty
         ```
 
     """
@@ -49,28 +47,27 @@ def list_members(api_key: Optional[str],
         List[Dict], kili.project_users(
             project_id=project_id,
             fields=[
-                'id', 'role', 'activated',
+                'role', 'activated',
                 'user.email', 'user.id',
                 'user.firstname', 'user.lastname',
                 'user.organization.name',
             ],
             disable_tqdm=True))
     users = pd.DataFrame(users)
-    users.rename(columns={'id': 'ROLE_ID', 'role': 'ROLE',
-                 'activated': 'ACTIVATED'}, inplace=True)
     users = pd.concat([users.drop(['user'], axis=1),
                       users['user'].apply(pd.Series)], axis=1)
     users = pd.concat([users.drop(['organization'], axis=1),
                       users['organization'].apply(pd.Series)], axis=1)
-    users['ORGANIZATION'] = users['name']
-    users['NAME'] = users['lastname'].str.title() + ' ' + \
-        users['firstname'].str.title()
-    users.rename(columns={'email': 'EMAIL', 'id': 'ID'}, inplace=True)
-    users = users[['ROLE', 'NAME', 'EMAIL', 'ID',
-                   'ORGANIZATION', 'ROLE_ID', 'ACTIVATED']]
+    users = users.loc[users['activated']]
+    users.rename(columns={'role': 'ROLE', 'email': 'EMAIL',
+                 'id': 'ID', 'name': 'ORGANIZATION'}, inplace=True)
     users = users.sort_values(
-        by=["ROLE", "NAME"],
+        by=["ROLE", "lastname"],
         ascending=True,
         key=role_order,
     )
+    users['NAME'] = users['firstname'].str.title() + ' ' + \
+        users['lastname'].str.title()
+    users = users[['ROLE', 'NAME', 'EMAIL', 'ID',
+                   'ORGANIZATION']]
     print(tabulate(users, headers='keys', tablefmt=tablefmt, showindex=False))
