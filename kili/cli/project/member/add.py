@@ -39,8 +39,9 @@ def extract_project_user(kili, project_id: str, emails: List[str], roles: List[s
                 ],
                 disable_tqdm=True))
         for user in users:
-            emails.append(user['user']['email'])
-            roles.append(user['role'])
+            if user['activated']:
+                emails.append(user['user']['email'])
+                roles.append(user['role'])
     except:
         # pylint: disable=raise-missing-from
         raise ValueError(
@@ -49,15 +50,19 @@ def extract_project_user(kili, project_id: str, emails: List[str], roles: List[s
 
 
 def add_list_of_users(kili, project_id: str, emails: List[str], roles: List[str]):
-    """extract user list from project_id and update emails and roles """
+    """add user listed in emails in project_id"""
+    count = 0
     for email, role in zip(emails, roles):
-        existing_user = kili.project_users(project_id=project_id, email=email)
+        existing_user = kili.project_users(
+            project_id=project_id, email=email, disable_tqdm=True)
         if (len(existing_user) > 0 and existing_user[0]['activated']):
             warnings.warn(f'{email} is already an active member of the project.'
                           ' Use kili project member update to update role.')
         else:
             kili.append_to_roles(project_id=project_id,
                                  user_email=email, role=role)
+            count += 1
+    return count
 
 
 @click.command()
@@ -78,12 +83,11 @@ def add_member(api_key: Optional[str],
                ):
     """Add members to a Kili project
 
-    Arguments can be:
-
-        - string (with email format)
-        - path to a csv file with email in the first column
-            + optional: role in the second column
-        - a project_id of another kili project
+    Arguments can be: \n
+        - string (with email format) \n
+        - path to a csv file with email in the first column \n
+            + optional: role in the second column \n 
+        - a project_id of another kili project \n
 
     If the argument is the project_id of another Kili project,
     copy the user from this project (and their role).
@@ -107,7 +111,6 @@ def add_member(api_key: Optional[str],
         ```
         kili project member add \\
             another_project_id \\
-            --input-type TEXT \\
             --project-id <project_id>
         ```
     """
@@ -136,4 +139,6 @@ def add_member(api_key: Optional[str],
             'number of roles identified does not match the number of email adresses'
             ', check the csv file')
 
-    add_list_of_users(kili, project_id, emails, roles)
+    count = add_list_of_users(kili, project_id, emails, roles)
+
+    print(f'{count} users have been successfully added to project: {project_id}')
