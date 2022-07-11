@@ -23,7 +23,7 @@ def mocked__project_users(**_):
                       'id': 'user_id',
                       'lastname': 'doe',
                       'organization': {'name': 'test'}}},
-            {'activated': False,
+            {'activated': True,
             'id': 'role_id_2',
              'role': 'LABELER',
              'user': {'email': 'jane.doe@test.com',
@@ -291,5 +291,5 @@ class TestCLIProject():
         runner = CliRunner()
         result = runner.invoke(list_members, ['--project-id', "project_id"])
         debug_subprocess_pytest(result)
-        assert ((result.output.count("Doe Jane") == 1) and
+        assert ((result.output.count("Jane Doe") == 1) and
                 (result.output.count("@test.com") == 2))
