@@ -3,7 +3,6 @@
 from typing import Dict, List, Optional, cast
 import click
 
-import numpy as np
 import pandas as pd
 from tabulate import tabulate
 
@@ -11,11 +10,12 @@ from kili.client import Kili
 from kili.cli.common_args import Options
 
 ROLE_ORDER = {
-    v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "LABELER", "REVIEWER"])
+    v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])
 }
 
 
 def role_order(col: pd.Series) -> pd.Series:
+    """ordering pandas series by custom role order"""
     out = col
     # apply custom sorting only to column one:
     if col.name == "ROLE":
@@ -40,20 +40,21 @@ def list_members(api_key: Optional[str],
     \b
     !!! Examples
         ```
-        kili project member list --project-id <project_id> --format pretty
+        kili project member list --project-id <project_id> ----stdout-format pretty
         ```
 
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
-    users = kili.project_users(
-        project_id=project_id,
-        fields=[
-            'id', 'role', 'activated',
-            'user.email', 'user.id',
-            'user.firstname', 'user.lastname',
-            'user.organization.name', 'user.organizationRole'
-        ]
-    )
+    users = cast(
+        List[Dict], kili.project_users(
+            project_id=project_id,
+            fields=[
+                'id', 'role', 'activated',
+                'user.email', 'user.id',
+                'user.firstname', 'user.lastname',
+                'user.organization.name',
+            ],
+            disable_tqdm=True))
     users = pd.DataFrame(users)
     users.rename(columns={'id': 'ROLE_ID', 'role': 'ROLE',
                  'activated': 'ACTIVATED'}, inplace=True)

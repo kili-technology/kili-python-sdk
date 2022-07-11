@@ -26,7 +26,7 @@ def list_projects(api_key: Optional[str],
     \b
     !!! Examples
         ```
-        kili project list --max 10 --format pretty
+        kili project list --max 10 ----stdout-format pretty
         ```
 
     """
