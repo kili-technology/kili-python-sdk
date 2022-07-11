@@ -1,5 +1,6 @@
 """Tests the Kili CLI"""
 
+import csv
 from unittest.mock import MagicMock, patch
 import os
 
@@ -10,27 +11,48 @@ from kili.cli.project.import_ import import_assets
 from kili.cli.project.label import import_labels
 from kili.cli.project.list_ import list_projects
 from kili.cli.project.member.list_ import list_members
+from kili.cli.project.member.add import add_member
 
 from ..utils import debug_subprocess_pytest
 
 
-def mocked__project_users(**_):
-    return [{'activated': True,
-            'id': 'role_id_1',
-             'role': 'ADMIN',
-             'user': {'email': 'john.doe@test.com',
-                      'firstname': 'john',
-                      'id': 'user_id',
-                      'lastname': 'doe',
-                      'organization': {'name': 'test'}}},
-            {'activated': True,
-            'id': 'role_id_2',
-             'role': 'LABELER',
-             'user': {'email': 'jane.doe@test.com',
-                      'firstname': 'jane',
-                      'id': 'user_id_2',
-                      'lastname': 'doe',
-                      'organization': {'name': 'test'}}}, ]
+def mocked__project_users(project_id=None, **_):
+    if project_id == 'project_id_source':
+        return [{'activated': True,
+                'id': 'role_id_1',
+                 'role': 'ADMIN',
+                 'user': {'email': 'alice@test.com',
+                          'firstname': 'alice',
+                          'id': 'user_id',
+                          'lastname': 'alice',
+                          'organization': {'name': 'test'}}},
+                {'activated': True,
+                'id': 'role_id_2',
+                 'role': 'LABELER',
+                 'user': {'email': 'bob@test.com',
+                          'firstname': 'bob',
+                          'id': 'user_id_2',
+                          'lastname': 'bob',
+                          'organization': {'name': 'test'}}}, ]
+    elif project_id == 'new_project':
+        return[]
+    else:
+        return [{'activated': True,
+                'id': 'role_id_1',
+                 'role': 'ADMIN',
+                 'user': {'email': 'john.doe@test.com',
+                          'firstname': 'john',
+                          'id': 'user_id',
+                          'lastname': 'doe',
+                          'organization': {'name': 'test'}}},
+                {'activated': True,
+                'id': 'role_id_2',
+                 'role': 'LABELER',
+                 'user': {'email': 'jane.doe@test.com',
+                          'firstname': 'jane',
+                          'id': 'user_id_2',
+                          'lastname': 'doe',
+                          'organization': {'name': 'test'}}}, ]
 
 
 def mocked__projects(project_id=None, **_):
@@ -73,6 +95,8 @@ kili_client.append_many_to_dataset = append_many_to_dataset_mock = MagicMock()
 kili_client.create_project = create_project_mock = MagicMock()
 kili_client.project_users = project_users_mock = MagicMock(
     side_effect=mocked__project_users)
+kili_client.append_to_roles = append_to_roles_mock = MagicMock()
+
 
 kili = MagicMock()
 kili.Kili = MagicMock(return_value=kili_client)
@@ -293,3 +317,62 @@ class TestCLIProject():
         debug_subprocess_pytest(result)
         assert ((result.output.count("Jane Doe") == 1) and
                 (result.output.count("@test.com") == 2))
+
+    def test_add_member(self, mocker):
+        TEST_CASES = [{
+            'case_name': 'AAU, when I add one user with email adress, I see a success',
+            'inputs': ['bob@test.com', 'alice@test.com'],
+            'options': {
+                'project-id': 'new_project',
+            },
+            'expected_mutation_payload': {
+                'project_id': 'new_project',
+                'user_email': 'alice@test.com',
+                'role': 'LABELER',
+            }
+        },
+            {
+            'case_name': 'AAU, when I add user from another project, I see a success',
+            'inputs': ['project_id_source'],
+            'options': {
+                'project-id': 'new_project',
+            },
+            'expected_mutation_payload': {
+                'project_id': 'new_project',
+                'user_email': 'bob@test.com',
+                'role': 'LABELER',
+            }
+        },
+            {
+            'case_name': 'AAU, when I add one user with csv file, I see a success',
+            'inputs': ['user_list.csv'],
+            'options': {
+                'project-id': 'new_project',
+                'role': 'REVIEWER'
+            },
+            'expected_mutation_payload': {
+                'project_id': 'new_project',
+                'user_email': 'bob@test.com',
+                'role': 'REVIEWER',
+            }
+        },
+        ]
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            # pylint: disable=unspecified-encodind
+            with open('user_list.csv', 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(['alice@test.com'])
+                writer.writerow(['bob@test.com'])
+
+            for i, test_case in enumerate(TEST_CASES):
+                print(test_case['case_name'])
+                arguments = test_case['inputs']
+                for k, v in test_case['options'].items():
+                    arguments.append('--'+k)
+                    arguments.append(v)
+                result = runner.invoke(add_member, arguments)
+                debug_subprocess_pytest(result)
+                assert append_to_roles_mock.call_count == 2 * (i+1)
+                append_to_roles_mock.assert_called_with(
+                    **test_case['expected_mutation_payload'])
