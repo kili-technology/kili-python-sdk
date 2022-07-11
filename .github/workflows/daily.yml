@@ -1,0 +1,32 @@
+name: Daily tests
+on:
+  schedule:
+    - cron: "0 20 * * 1-5"
+jobs:
+  recipes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    name: Recipes test
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install jupyter nbconvert nbformat pytest mock pytest-mock
+
+      - name: Test notebooks
+        run: pytest -sv test/test_notebooks.py
+        env:
+          KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
+          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
+          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
+          KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
+          KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
