@@ -196,8 +196,7 @@ class TestCLIProject():
         assert (result.output.count('40.8%') == 1) and (
             result.output.count('N/A') == 2) and (
             result.output.count('49') == 1) and (
-            result.output.count('project title') == 1
-        )
+            result.output.count('project title') == 1)
 
     def test_import_labels(self, mocker):
         TEST_CASES = [{
