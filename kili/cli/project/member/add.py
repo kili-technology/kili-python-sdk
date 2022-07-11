@@ -86,7 +86,7 @@ def add_member(api_key: Optional[str],
     Arguments can be: \n
         - string (with email format) \n
         - path to a csv file with email in the first column \n
-            + optional: role in the second column \n 
+            + optional: role in the second column \n
         - a project_id of another kili project \n
 
     If the argument is the project_id of another Kili project,

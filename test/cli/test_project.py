@@ -12,6 +12,7 @@ from kili.cli.project.label import import_labels
 from kili.cli.project.list_ import list_projects
 from kili.cli.project.member.list_ import list_members
 from kili.cli.project.member.add import add_member
+from kili.cli.project.member.remove import remove_member
 
 from ..utils import debug_subprocess_pytest
 
@@ -96,7 +97,7 @@ kili_client.create_project = create_project_mock = MagicMock()
 kili_client.project_users = project_users_mock = MagicMock(
     side_effect=mocked__project_users)
 kili_client.append_to_roles = append_to_roles_mock = MagicMock()
-
+kili_client.delete_from_roles = delete_from_roles_mock = MagicMock()
 
 kili = MagicMock()
 kili.Kili = MagicMock(return_value=kili_client)
@@ -320,7 +321,7 @@ class TestCLIProject():
 
     def test_add_member(self, mocker):
         TEST_CASES = [{
-            'case_name': 'AAU, when I add one user with email adress, I see a success',
+            'case_name': 'AAU, when I add one user with email adreses, I see a success',
             'inputs': ['bob@test.com', 'alice@test.com'],
             'options': {
                 'project-id': 'new_project',
@@ -344,7 +345,7 @@ class TestCLIProject():
             }
         },
             {
-            'case_name': 'AAU, when I add one user with csv file, I see a success',
+            'case_name': 'AAU, when I add user with csv file, I see a success',
             'inputs': ['user_list.csv'],
             'options': {
                 'project-id': 'new_project',
@@ -375,4 +376,56 @@ class TestCLIProject():
                 debug_subprocess_pytest(result)
                 assert append_to_roles_mock.call_count == 2 * (i+1)
                 append_to_roles_mock.assert_called_with(
+                    **test_case['expected_mutation_payload'])
+
+    def test_remove_member(self, mocker):
+        TEST_CASES = [{
+            'case_name': 'AAU, when I remove one user with email adresses, I see a success',
+            'inputs': ['bob@test.com', 'alice@test.com'],
+            'options': {
+                'project-id': 'project_id_source',
+            },
+            'expected_mutation_payload': {
+                'role_id': 'role_id_1',
+            }
+        },
+            {
+            'case_name': 'AAU, when I remove all users, I see a success',
+            'inputs': ['all'],
+            'options': {
+                'project-id': 'project_id_source',
+            },
+            'expected_mutation_payload': {
+                'role_id': 'role_id_1',
+            }
+        },
+            {
+            'case_name': 'AAU, when I remove user with csv file, I see a success',
+            'inputs': ['user_list.csv'],
+            'options': {
+                'project-id': 'project_id_source',
+            },
+            'expected_mutation_payload': {
+                'role_id': 'role_id_1',
+            }
+        },
+        ]
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            # pylint: disable=unspecified-encodind
+            with open('user_list.csv', 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(['alice@test.com'])
+                writer.writerow(['bob@test.com'])
+
+            for i, test_case in enumerate(TEST_CASES):
+                print(test_case['case_name'])
+                arguments = test_case['inputs']
+                for k, v in test_case['options'].items():
+                    arguments.append('--'+k)
+                    arguments.append(v)
+                result = runner.invoke(remove_member, arguments)
+                debug_subprocess_pytest(result)
+                assert delete_from_roles_mock.call_count == 2 * (i+1)
+                delete_from_roles_mock.assert_called_with(
                     **test_case['expected_mutation_payload'])

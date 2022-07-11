@@ -42,13 +42,16 @@ def extract_all_emails(kili, project_id: str, emails: List[str]):
 
 def remove_list_of_users(kili, project_id: str, emails: List[str]):
     """remove users listed in emails from project_id"""
+    count = 0
     for email in emails:
         user = kili.project_users(
             project_id=project_id, email=email, disable_tqdm=True)
         if (len(user) > 0 and user[0]['activated']):
             kili.delete_from_roles(role_id=user[0]['id'])
+            count += 1
         else:
             warnings.warn(f'{email} is not an active member of the project.')
+    return count
 
 
 @click.command()
@@ -65,11 +68,10 @@ def remove_member(api_key: Optional[str],
                   ):
     """Remove members to a Kili project
 
-    Arguments can be:
-
-        - string (with email format)
-        - path to a csv file with email in the first column
-        - all to remove all users
+    Arguments can be: \n
+        - string (with email format) \n
+        - path to a csv file with email in the first column \n
+        - all to remove all users \n
 
     You need to be an ADMIN of the organization or at
     least a TEAM_MANAGER in the project involved.
@@ -106,4 +108,5 @@ def remove_member(api_key: Optional[str],
                 f'{input_} is not recognized as a csv file path '
                 'nor an email adress nor "all"')
 
-    remove_list_of_users(kili, project_id, emails)
+    count = remove_list_of_users(kili, project_id, emails)
+    print(f'{count} users have been successfully removed from project: {project_id}')
