@@ -15,54 +15,43 @@ REGEX_EMAIL = re.compile(
 ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
 
 
+# pylint: disable=consider-using-f-string, too-many-branches
 def collect_members_from_csv(csv_path: str, role: Optional[str]):
     """read a csv with to collect members and role"""
-    rows = []
-    with open(csv_path, 'r', encoding="utf-8") as file:
-        csvreader = csv.reader(file)
-        header = next(csvreader)
-        for row in csvreader:
-            rows.append(row)
-
-    use_individual_role = (len(header) > 1)
-
-    if use_individual_role and role is not None:
-        raise ValueError(
-            '--role cannot be used if the argument passed is '
-            'a path to a csv file with roles')
-    if not use_individual_role and role is None:
-        role = 'LABELER'
-
     members_to_add = []
-
-    def get_member_from_row(row: List[str],
-                            use_individual_role: bool,
-                            is_header: bool,
-                            role: str):
-        if re.search(REGEX_EMAIL, row[0]):
-            if use_individual_role:
-                if row[1].strip().upper() in ROLES:
-                    members_to_add.append(
-                        {'email': row[0], 'role':  row[1]})
+    with open(csv_path, 'r', encoding='utf-8') as csv_file:
+        csvreader = csv.DictReader(csv_file)
+        headers = csvreader.fieldnames
+        if 'email' not in headers:
+            raise ValueError(
+                f"'email' must be a header of the csv file: {csv_path}")
+        if 'role' in headers:
+            if role is not None:
+                raise ValueError(
+                    '--role cannot be used if the argument passed is '
+                    'a path to a csv file with roles')
+            for row in csvreader:
+                if re.search(REGEX_EMAIL, row['email']):
+                    if row['role'].strip().upper() in ROLES:
+                        members_to_add.append(row)
+                    else:
+                        warnings.warn(
+                            '{} is not a valid role,{} will not be added.'.format(
+                                row['role'], row['email']
+                            ))
                 else:
                     warnings.warn(
-                        f'{row[1]} is not a valid role,'
-                        f'{row[0]} will not be added.')
-            else:
-                members_to_add.append(
-                    {'email': row[0], 'role':  role})
+                        '{} is not a valid email address,'.format(row['email']))
         else:
-            if not is_header:
-                warnings.warn(f'{row[0]} is not a valid email address,')
-
-    get_member_from_row(header, use_individual_role, True, role)
-    for row in rows:
-        get_member_from_row(row, use_individual_role, False, role)
-
-    if len(members_to_add) == 0:
-        raise ValueError(
-            f'No valid email address were found in csc {csv_path}')
-
+            if role is None:
+                role = 'LABELER'
+            for row in csvreader:
+                if re.search(REGEX_EMAIL, row['email']):
+                    row['role'] = role
+                    members_to_add.append(row)
+                else:
+                    warnings.warn(
+                        '{} is not a valid email address,'.format(row['email']))
     return members_to_add
 
 

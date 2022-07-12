@@ -364,6 +364,7 @@ class TestCLIProject():
             # pylint: disable=unspecified-encodind
             with open('user_list.csv', 'w') as f:
                 writer = csv.writer(f)
+                writer.writerow(['email'])
                 writer.writerow(['alice@test.com'])
                 writer.writerow(['bob@test.com'])
 
