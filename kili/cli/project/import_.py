@@ -69,13 +69,13 @@ def import_assets(api_key: Optional[str],
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
 
-    if input_type != 'FRAME' and (fps is not None or as_frames is True):
+    if input_type not in ('FRAME','VIDEO') and (fps is not None or as_frames is True):
         illegal_option = 'fps and frames are'
         if not as_frames:
             illegal_option = 'fps is'
         if fps is None:
             illegal_option = 'frames is'
-        raise ValueError(f'{illegal_option} only valid for a FRAME project')
+        raise ValueError(f'{illegal_option} only valid for a VIDEO project')
 
     files_to_upload = get_file_paths_to_upload(
         files, input_type, verbose)
