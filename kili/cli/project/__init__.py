@@ -9,6 +9,7 @@ from kili.cli.project.describe import describe_project
 from kili.cli.project.import_ import import_assets
 from kili.cli.project.label import import_labels
 from kili.cli.project.list_ import list_projects
+from kili.cli.project.member import member
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -21,3 +22,4 @@ project.add_command(describe_project, name="describe")
 project.add_command(import_assets, name="import")
 project.add_command(import_labels, name="label")
 project.add_command(list_projects, name="list")
+project.add_command(member, name="member")

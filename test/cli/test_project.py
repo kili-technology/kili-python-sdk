@@ -9,7 +9,28 @@ from kili.cli.project.describe import describe_project
 from kili.cli.project.import_ import import_assets
 from kili.cli.project.label import import_labels
 from kili.cli.project.list_ import list_projects
+from kili.cli.project.member.list_ import list_members
+
 from ..utils import debug_subprocess_pytest
+
+
+def mocked__project_users(**_):
+    return [{'activated': True,
+            'id': 'role_id_1',
+             'role': 'ADMIN',
+             'user': {'email': 'john.doe@test.com',
+                      'firstname': 'john',
+                      'id': 'user_id',
+                      'lastname': 'doe',
+                      'organization': {'name': 'test'}}},
+            {'activated': True,
+            'id': 'role_id_2',
+             'role': 'LABELER',
+             'user': {'email': 'jane.doe@test.com',
+                      'firstname': 'jane',
+                      'id': 'user_id_2',
+                      'lastname': 'doe',
+                      'organization': {'name': 'test'}}}, ]
 
 
 def mocked__projects(project_id=None, **_):
@@ -50,6 +71,8 @@ kili_client.create_predictions = create_predictions_mock = MagicMock()
 kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
 kili_client.append_many_to_dataset = append_many_to_dataset_mock = MagicMock()
 kili_client.create_project = create_project_mock = MagicMock()
+kili_client.project_users = project_users_mock = MagicMock(
+    side_effect=mocked__project_users)
 
 kili = MagicMock()
 kili.Kili = MagicMock(return_value=kili_client)
@@ -196,8 +219,7 @@ class TestCLIProject():
         assert (result.output.count('40.8%') == 1) and (
             result.output.count('N/A') == 2) and (
             result.output.count('49') == 1) and (
-            result.output.count('project title') == 1
-        )
+            result.output.count('project title') == 1)
 
     def test_import_labels(self, mocker):
         TEST_CASES = [{
@@ -264,3 +286,10 @@ class TestCLIProject():
             else:
                 create_predictions_mock.assert_called_with(
                     **test_case['expected_mutation_payload'])
+
+    def test_list_members(self, mocker):
+        runner = CliRunner()
+        result = runner.invoke(list_members, ['--project-id', "project_id"])
+        debug_subprocess_pytest(result)
+        assert ((result.output.count("Jane Doe") == 1) and
+                (result.output.count("@test.com") == 2))
