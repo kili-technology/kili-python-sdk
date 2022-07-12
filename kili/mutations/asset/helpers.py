@@ -208,7 +208,7 @@ def get_request_to_execute(
         len(json_metadata_array) > 0 and
         not json_metadata_array[0].get(
             'processingParameters', {}).get('shouldUseNativeVideo', True)):
-        return GQL_APPEND_MANY_FRAMES_TO_DATASET, 'VIDEO_LEGACY'
+        return GQL_APPEND_MANY_FRAMES_TO_DATASET, 'VIDEO'
     return GQL_APPEND_MANY_TO_DATASET, None
 
 
