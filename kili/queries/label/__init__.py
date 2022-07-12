@@ -73,6 +73,8 @@ class QueriesLabel:
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+                Notice that the field "skipped" is deprecated since: 20/07/2022.
+                It will be removed after: 31/08/2022.
             first: Maximum number of labels to return.
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
@@ -81,6 +83,8 @@ class QueriesLabel:
             project_id: Identifier of the project.
             skip: Number of labels to skip (they are ordered by their date of creation, first to last).
             skipped: Returned labels should have a label which is skipped
+                Notice that the field "skipped" is deprecated since: 20/07/2022.
+                It will be removed after: 31/08/2022.
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
             disable_tqdm: If `True`, the progress bar will be disabled
@@ -121,6 +125,13 @@ class QueriesLabel:
                 It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
+
+        if 'skipped' in fields or skipped is not None:
+            message = """
+                The field "skipped" is deprecated since: 20/07/2022.
+                It will be removed after: 31/08/2022.
                 """
             warnings.warn(message, DeprecationWarning)
 
@@ -202,6 +213,7 @@ class QueriesLabel:
 
     # pylint: disable=dangerous-default-value
     @typechecked
+    @deprecate(removed_in="2.118")
     def export_labels_as_df(self,
                             project_id: str,
                             fields: List[str] = [
@@ -210,7 +222,7 @@ class QueriesLabel:
                                 'createdAt',
                                 'id',
                                 'labelType',
-                                'skipped'
+                                'skipped',
                             ],
                             asset_fields: List[str] = [
                                 'externalId'
@@ -222,12 +234,21 @@ class QueriesLabel:
             project_id: Identifier of the project
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+                Notice that the field "skipped" is deprecated since: 20/07/2022.
+                It will be removed after: 31/08/2022.
             asset_fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
 
         Returns:
             pandas DataFrame containing the labels.
         """
+        if 'skipped' in fields:
+            message = """
+                The field "skipped" is deprecated since: 20/07/2022.
+                It will be removed after: 31/08/2022.
+                """
+            warnings.warn(message, DeprecationWarning)
+
         projects = QueriesProject(self.auth).projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         assets = QueriesAsset(self.auth).assets(
@@ -274,6 +295,8 @@ class QueriesLabel:
             label_id: Identifier of the label.
             project_id: Identifier of the project.
             skipped: Returned labels should have a label which is skipped
+                    Notice that the field "skipped" is deprecated since: 20/07/2022.
+                    It will be removed after: 31/08/2022.
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
 
@@ -289,6 +312,13 @@ class QueriesLabel:
                 It will be made mandatory in: 2.116
                 If your workflow involves getting these entities over several projects,
                 please iterate on your projects with .projects and concatenate the results.
+                """
+            warnings.warn(message, DeprecationWarning)
+
+        if skipped is not None:
+            message = """
+                The field "skipped" is deprecated since: 20/07/2022.
+                It will be removed after: 31/08/2022.
                 """
             warnings.warn(message, DeprecationWarning)
 
