@@ -333,9 +333,10 @@ class TestCLIProject():
         },
             {
             'case_name': 'AAU, when I add user from another project, I see a success',
-            'inputs': ['project_id_source'],
+            'inputs': [],
             'options': {
                 'project-id': 'new_project',
+                'from-project': 'project_id_source'
             },
             'expected_mutation_payload': {
                 'project_id': 'new_project',
@@ -345,9 +346,10 @@ class TestCLIProject():
         },
             {
             'case_name': 'AAU, when I add one user with csv file, I see a success',
-            'inputs': ['user_list.csv'],
+            'inputs': [],
             'options': {
                 'project-id': 'new_project',
+                'from-csv': 'user_list.csv',
                 'role': 'REVIEWER'
             },
             'expected_mutation_payload': {
