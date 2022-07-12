@@ -80,7 +80,7 @@ class TestMimeType():
         content_array = [path]
         json_content_array = None
         processed_content = process_content(
-            'FRAME', content_array, json_content_array)
+            'VIDEO', content_array, json_content_array)
         assert(processed_content == [None])
 
     def test_cannot_upload_text_to_pdf_project(self):

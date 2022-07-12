@@ -98,7 +98,7 @@ class MutationsProject:
             instructions : Instructions of the project.
             interface_category: Always use 'IV2'.
             input_type: Currently, one of `AUDIO`, `FRAME`, `IMAGE`, `PDF`, `TEXT`,
-                `VIDEO`.
+                `VIDEO`, `VIDEO_LEGACY`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
@@ -214,6 +214,8 @@ class MutationsProject:
             For more detailed examples on how to create projects,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb).
         """
+        if input_type == 'FRAME':
+            warnings.warn("FRAME input type is deprecated. Please use VIDEO instead")
         variables = {
             'data': {'description': description,
                      'inputType': input_type,
