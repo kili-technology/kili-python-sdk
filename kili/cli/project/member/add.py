@@ -1,109 +1,16 @@
 """CLI's project member add subcommand"""
 
-import csv
-import re
-from typing import Dict, List, Optional, cast
+from typing import Optional
 import warnings
 import click
+from kili.cli.project.member.helpers import (
+    ROLES,
+    collect_members_from_csv,
+    collect_members_from_emails,
+    collect_members_from_project)
 
 from kili.client import Kili
 from kili.cli.common_args import Options
-
-
-REGEX_EMAIL = re.compile(
-    r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
-ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
-
-
-# pylint: disable=consider-using-f-string, too-many-branches
-def collect_members_from_csv(csv_path: str, role: Optional[str]):
-    """read a csv with to collect members and role"""
-    members_to_add = []
-    with open(csv_path, 'r', encoding='utf-8') as csv_file:
-        csvreader = csv.DictReader(csv_file)
-        headers = csvreader.fieldnames
-        if 'email' not in headers:
-            raise ValueError(
-                f"'email' must be a header of the csv file: {csv_path}")
-        if 'role' in headers:
-            if role is not None:
-                raise ValueError(
-                    '--role cannot be used if the argument passed is '
-                    'a path to a csv file with roles')
-            for row in csvreader:
-                if re.search(REGEX_EMAIL, row['email']):
-                    if row['role'].strip().upper() in ROLES:
-                        members_to_add.append(row)
-                    else:
-                        warnings.warn(
-                            '{} is not a valid role,{} will not be added.'.format(
-                                row['role'], row['email']
-                            ))
-                else:
-                    warnings.warn(
-                        '{} is not a valid email address,'.format(row['email']))
-        else:
-            if role is None:
-                role = 'LABELER'
-            for row in csvreader:
-                if re.search(REGEX_EMAIL, row['email']):
-                    row['role'] = role
-                    members_to_add.append(row)
-                else:
-                    warnings.warn(
-                        '{} is not a valid email address,'.format(row['email']))
-    return members_to_add
-
-
-def collect_members_from_project(kili, project_id_source: str, role: Optional[str]):
-    """copy members from project of id project_id_source"""
-    members_to_add = []
-
-    if role is not None:
-        raise ValueError(
-            '--role cannot be used if the argument passed is a Kili project_id')
-
-    try:
-        users = cast(
-            List[Dict], kili.project_users(
-                project_id=project_id_source,
-                fields=[
-                    'role',
-                    'user.email',
-                    'activated'
-                ],
-                disable_tqdm=True))
-        for user in users:
-            if user['activated']:
-                members_to_add.append(
-                    {'email': user['user']['email'], 'role': user['role']})
-    except:
-        # pylint: disable=raise-missing-from
-        raise ValueError(
-            f'{project_id_source} is not recognized as a Kili project_id')
-
-    if len(members_to_add) == 0:
-        raise ValueError(
-            f'No active member were found in project with id {project_id_source}')
-
-    return members_to_add
-
-
-def collect_members_from_emails(emails: List[str], role: Optional[str]):
-    """collect members with email address from emails"""
-    if role is None:
-        role = 'LABELER'
-    members_to_add = []
-    for email in emails:
-        if re.search(REGEX_EMAIL, email):
-            members_to_add.append({'email': email, 'role': role})
-        else:
-            warnings.warn(f'{email} is not a valid email address,')
-
-    if len(members_to_add) == 0:
-        raise ValueError('No valid email adresses were provided')
-
-    return members_to_add
 
 
 # pylint: disable=too-many-arguments
@@ -117,8 +24,8 @@ def collect_members_from_emails(emails: List[str], role: Optional[str]):
               show_default='LABELER',
               help='Project role of the added user(s).')
 @ click.option('--from-csv', 'csv_path', type=click.Path(),
-               help=('path to a csv file with email in the first column.'
-               ' A second column can be used to use one-to-one role.')
+               help=("path to a csv file with 'email' header,"
+               " optionnal header 'role' can be use.")
                )
 @click.option('--from-project', 'project_id_src', type=str,
               help='project_id of another Kili project to copy the users from')
