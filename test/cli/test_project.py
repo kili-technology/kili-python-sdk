@@ -39,7 +39,7 @@ def mocked__projects(project_id=None, **_):
     if project_id == 'image_project':
         return [{'id': 'image_project', 'inputType': 'IMAGE'}]
     if project_id == 'frame_project':
-        return [{'id': 'frame_project', 'inputType': 'FRAME'}]
+        return [{'id': 'frame_project', 'inputType': 'VIDEO'}]
     if project_id == None:
         return [{'id': 'text_project', 'title': 'text_project', 'description': ' a project with text',
                  'numberOfAssets': 10, 'numberOfRemainingAssets': 10},
