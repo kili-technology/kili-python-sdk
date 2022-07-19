@@ -1,2 +1,1 @@
-- [ ] I opened a merge request on `kili` on a branch with the same name than the branch of the current pull request and forced security tests.
-- [ ] I opened a pull request on the Node playground if the changes are breaking.
+
