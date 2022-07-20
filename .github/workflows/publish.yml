@@ -28,7 +28,7 @@ jobs:
         run: |
           export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:3]))')
           git fetch origin gh-pages --depth=1
-          mike deploy --push $version
+          PYTHONPATH=$(pwd) mike deploy --push $version
 
       # - name: Build
       #   run: |
