@@ -1,3 +1,15 @@
+#tests
 pylint
 pytest
 pytest-mock
+
+#documentation
+mkdocs
+mkdocs-material
+mkdocstrings
+mkdocstrings-python-legacy
+mkdocs-click
+mike
+
+#release
+bump2version
