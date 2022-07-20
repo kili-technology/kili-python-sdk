@@ -3,18 +3,19 @@
 from typing import Dict, Optional, List, Tuple, cast
 import click
 from typeguard import typechecked
-from kili.cli.common_args import Options
+from kili.cli.common_args import Options, from_csv
 from kili.client import Kili
 from kili.exceptions import NotFound
 from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_paths_to_upload
+from kili.mutations.label.helpers import read_import_label_csv
 
 
 @click.command()
-@click.argument('files', type=click.Path(), nargs=-1, required=True)
+@click.argument('files', type=click.Path(), nargs=-1, required=False)
 @Options.api_key
 @Options.endpoint
-@click.option('--project-id', type=str, required=True,
-              help='Id of the project to import assets into.')
+@Options.project_id
+@from_csv(False, ['external_id', 'content'], [])
 @click.option('--frames', 'as_frames', type=bool, default=False, is_flag=True,
               help="Only for a frame project, import videos as frames. "
               "The import time is longer with this option.")
@@ -28,6 +29,7 @@ def import_assets(api_key: Optional[str],
                   endpoint: Optional[str],
                   project_id: str,
                   files: Tuple[str, ...],
+                  csv_path: Optional[str],
                   fps: Optional[int],
                   as_frames: bool,
                   verbose: bool):
@@ -69,7 +71,7 @@ def import_assets(api_key: Optional[str],
         # pylint: disable=raise-missing-from
         raise NotFound(f'project ID: {project_id}')
 
-    if input_type not in ('FRAME','VIDEO') and (fps is not None or as_frames is True):
+    if input_type not in ('FRAME', 'VIDEO') and (fps is not None or as_frames is True):
         illegal_option = 'fps and frames are'
         if not as_frames:
             illegal_option = 'fps is'
@@ -77,13 +79,32 @@ def import_assets(api_key: Optional[str],
             illegal_option = 'frames is'
         raise ValueError(f'{illegal_option} only valid for a VIDEO project')
 
-    files_to_upload = get_file_paths_to_upload(
-        files, input_type, verbose)
-    if len(files_to_upload) == 0:
+    if ((files is not None) + (csv_path is not None)) > 1:
         raise ValueError(
-            'No files to upload. '
-            'Check that the paths exist and that the file types are compatible with the project')
-    external_ids = [path.split('/')[-1] for path in files_to_upload]
+            'files arguments and option --from-csv are exclusive.')
+    if ((files is not None) + (csv_path is not None)) == 0:
+        raise ValueError(
+            'You must use either file arguments or option --from-csv')
+
+    if files is not None:
+        files_to_upload = get_file_paths_to_upload(
+            files, input_type, verbose)
+        if len(files_to_upload) == 0:
+            raise ValueError(
+                'No files to upload. '
+                'Check that the paths exist and file types are compatible with the project')
+        external_ids = [path.split('/')[-1] for path in files_to_upload]
+
+    elif csv_path is not None:
+        row_dict = read_import_label_csv(csv_path)
+        files_to_upload = [row['content'] for row in row_dict]
+
+        if len(files_to_upload) == 0:
+            raise ValueError(
+                'No files to upload. '
+                'Check your csv file')
+        external_ids = [row['external_id'] for row in row_dict]
+
     json_metadata_array = generate_json_metadata_array(
         as_frames, fps, len(files_to_upload), input_type)
 

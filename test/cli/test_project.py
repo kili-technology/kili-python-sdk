@@ -248,9 +248,9 @@ class TestCLIProject():
     def test_import_labels(self, mocker):
         TEST_CASES = [{
             'case_name': 'AAU, when I import default labels from a CSV, I see a success',
-            'csv_file': 'test/fixtures/labels_to_import.csv',
             'options': {
                 'project-id': 'project_id',
+                'from-csv': 'test/fixtures/labels_to_import.csv',
             },
             'flags': [],
             'mutation_to_call': 'append_to_labels',
@@ -271,10 +271,10 @@ class TestCLIProject():
         },
             {
             'case_name': 'AAU, when I import predictions from a CSV, I see a sucess',
-            'csv_file': 'test/fixtures/labels_to_import.csv',
             'options': {
                 'project-id': 'project_id',
-                'model-name': 'model_name'
+                'model-name': 'model_name',
+                'from-csv': 'test/fixtures/labels_to_import.csv',
             },
             'flags': ['prediction'],
             'mutation_to_call': 'create_predictions',
@@ -296,7 +296,7 @@ class TestCLIProject():
         }]
         runner = CliRunner()
         for test_case in TEST_CASES:
-            arguments = [test_case['csv_file']]
+            arguments = []
             for k, v in test_case['options'].items():
                 arguments.append('--'+k)
                 arguments.append(v)

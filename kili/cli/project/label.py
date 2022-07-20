@@ -4,7 +4,7 @@ import json
 from typing import Optional
 import click
 
-from kili.cli.common_args import Options
+from kili.cli.common_args import Options, from_csv
 from kili.client import Kili
 from kili.exceptions import NotFound
 
@@ -13,11 +13,10 @@ from kili.mutations.label.helpers import (
 
 
 @click.command()
-@click.argument('CSV_path', type=click.Path(exists=True), required=True)
 @Options.api_key
 @Options.endpoint
-@click.option('--project-id', type=str, required=True,
-              help='Id of the project to import labels in')
+@from_csv(True, ['external_id', 'json_response_path'], [])
+@Options.project_id
 @click.option('--prediction', 'is_prediction', type=bool, is_flag=True, default=False,
               help='Tells to import labels as predictions, which means that they will appear '
               'as pre-annotations in the Kili interface')
@@ -26,9 +25,9 @@ from kili.mutations.label.helpers import (
               'if labels are sent as predictions')
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
-        csv_path: str,
         api_key: Optional[str],
         endpoint: Optional[str],
+        csv_path: str,
         project_id: str,
         is_prediction: bool,
         model_name: str):
@@ -54,13 +53,13 @@ def import_labels(
         To import default labels:
         ```
         kili project label \\
-            path/to/file.csv \\
+            --from-csv path/to/file.csv \\
             --project-id <project_id>
         ```
         To import labels as predictions:
         ```
         kili project label \\
-            path/to/file.csv \\
+            --from-csv path/to/file.csv \\
             --project-id <project_id> \\
             --prediction \\
             --model-name YOLO-run-3

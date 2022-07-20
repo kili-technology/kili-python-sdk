@@ -1,4 +1,5 @@
 """Common arguments and options for the CLI"""
+from typing import List
 import click
 
 
@@ -29,6 +30,30 @@ class Options:  # pylint: disable=too-few-public-methods
         )
     )
 
+    project_id = click.option('--project-id', type=str, required=True,
+                              help='Id of the project to import labels in')
+
     tablefmt = click.option('--stdout-format', 'tablefmt', type=str, default='plain',
                             help='Defines how the output table is formatted '
                             '(see https://pypi.org/project/tabulate/, default: plain).')
+
+    from_project = click.option('--from-project', 'project_id_src', type=str,
+                                help='project_id of another Kili project')
+
+
+def from_csv(required: bool,
+             required_columns: List[str],
+             optionnal_columns: List[str]
+             ):
+    """ --from-csv shared click option """
+    help_ = (
+        "path to a csv file with required columns:" +
+        ", ".join(required_columns) +
+        " required columns: " +
+        ", ".join(optionnal_columns)
+    )
+
+    return click.option('--from-csv', 'csv_path', type=click.Path(),
+                        required=required,
+                        help=help_,
+                        )
