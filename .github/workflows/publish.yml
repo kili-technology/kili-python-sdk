@@ -1,7 +1,7 @@
 name: Release
 on:
   release:
-    types: [released]
+    types: [prereleased]
 
 jobs:
   publish:
@@ -19,15 +19,25 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools twine wheel
+          pip install -r requirements_dev.txt
 
-      - name: Build
-        run: |
-          python setup.py sdist bdist_wheel
-
-      - name: Publish
+      - name: Deploy technical documentation
         env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          GIT_COMMITTER_NAME: ci-bot
+          GIT_COMMITTER_EMAIL: ci-bot@example.com
         run: |
-          python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-          python -m twine upload dist/*
+          export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:3]))')
+          git fetch origin gh-pages --depth=1
+          mike deploy --push --update-aliases $version latest
+
+      # - name: Build
+      #   run: |
+      #     python setup.py sdist bdist_wheel
+
+      # - name: Publish
+      #   env:
+      #     TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+      #     TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      #   run: |
+      #     python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+      #     python -m twine upload dist/*
