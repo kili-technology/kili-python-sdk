@@ -56,7 +56,7 @@ def list_members(api_key: Optional[str],
     users['NAME'] = users['firstname'].str.title() + ' ' + \
         users['lastname'].str.title()
     users = users.sort_values(
-        by=["ROLE", "NAME"],
+        by=["ROLE", "lastname"],
         ascending=True,
         key=lambda column: column.map(
             ROLE_ORDER) if column.name == "ROLE" else column,
