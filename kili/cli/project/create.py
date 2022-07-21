@@ -36,9 +36,9 @@ def create_project(api_key: Optional[str],
                    ):
     """Create a Kili project
 
-    Argument must be a path pointing to your json interface file
+    interface must be a path pointing to your json interface file
 
-    If no argument are provided, --from-project can be used
+    If no interface is provided, --from-project can be used
     to create a new project with the json_interface of another project
     (assets will not be copied).
 
@@ -46,13 +46,13 @@ def create_project(api_key: Optional[str],
     !!! Examples
         ```
         kili project create \\
-            --interface path/to/interface.json \\
+             path/to/interface.json \\
             --input-type TEXT \\
             --title "Invoice annotation project"
         ```
         ```
         kili project create \\
-            --interface another_project_id \\
+            --from-project <project_id_src> \\
             --input-type TEXT \\
             --title "Invoice annotation project"
         ```

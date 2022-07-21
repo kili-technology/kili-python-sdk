@@ -128,6 +128,81 @@ class TestCLIProject():
                        '--input-type',
                        'IMAGE'])
 
+    def test_describe_project(self, mocker):
+        runner = CliRunner()
+        result = runner.invoke(describe_project, ["project_id"])
+        debug_subprocess_pytest(result)
+        assert (result.output.count('40.8%') == 1) and (
+            result.output.count('N/A') == 2) and (
+            result.output.count('49') == 1) and (
+            result.output.count('project title') == 1)
+
+    def test_import_labels(self, mocker):
+        TEST_CASES = [{
+            'case_name': 'AAU, when I import default labels from a CSV, I see a success',
+            'options': {
+                'project-id': 'project_id',
+                'from-csv': 'test/fixtures/labels_to_import.csv',
+            },
+            'flags': [],
+            'mutation_to_call': 'append_to_labels',
+            'expected_mutation_payload': {
+                'project_id': 'project_id',
+                'json_response': {
+                    "JOB_0": {
+                        "categories": [
+                            {
+                                "name": "YES_IT_IS_SPAM",
+                                "confidence": 100
+                            }
+                        ]
+                    }
+                },
+                'label_asset_external_id': 'poules.png',
+            }
+        },
+            {
+            'case_name': 'AAU, when I import predictions from a CSV, I see a sucess',
+            'options': {
+                'project-id': 'project_id',
+                'model-name': 'model_name',
+                'from-csv': 'test/fixtures/labels_to_import.csv',
+            },
+            'flags': ['prediction'],
+            'mutation_to_call': 'create_predictions',
+            'expected_mutation_payload': {
+                'project_id': 'project_id',
+                'json_response_array': [{
+                    "JOB_0": {
+                        "categories": [
+                            {
+                                "name": "YES_IT_IS_SPAM",
+                                "confidence": 100
+                            }
+                        ]
+                    }
+                }]*2,
+                'external_id_array': ['poules.png', 'test.jpg'],
+                'model_name_array': ['model_name']*2
+            }
+        }]
+        runner = CliRunner()
+        for test_case in TEST_CASES:
+            arguments = []
+            for k, v in test_case['options'].items():
+                arguments.append('--'+k)
+                arguments.append(v)
+            if test_case.get('flags'):
+                arguments.extend(['--'+flag for flag in test_case['flags']])
+            result = runner.invoke(import_labels, arguments)
+            debug_subprocess_pytest(result)
+            if test_case['mutation_to_call'] == 'append_to_labels':
+                append_to_labels_mock.assert_any_call(
+                    **test_case['expected_mutation_payload'])
+            else:
+                create_predictions_mock.assert_called_with(
+                    **test_case['expected_mutation_payload'])
+
     def test_import(self, mocker):
         TEST_CASES = [{
             'case_name': 'AAU, when I import a list of file to an image project, I see a success',
@@ -207,6 +282,21 @@ class TestCLIProject():
                      }
                 ] * 2
             }
+        },
+            {
+            'case_name': 'AAU, when I import assets from a csv file, I see a success',
+            'files': [],
+            'options': {
+                'project-id': 'image_project',
+                'from-csv': "assets_to_import.csv",
+            },
+            'expected_mutation_payload': {
+                'project_id': 'image_project',
+                'content_array': (['test_tree/leaf/image3.png',
+                                   'https://files.readme.io/cac9114-Kili_Wordmark_SoftWhite_RGB.svg']),
+                'external_id_array': ['image3s.png', 'test.svg'],
+                'json_metadata_array': None
+            }
         }
         ]
         runner = CliRunner()
@@ -222,6 +312,12 @@ class TestCLIProject():
             open('test_tree/leaf/image3.png', 'w')
             open('test_tree/leaf/image4.jpg', 'w')
             open('test_tree/leaf/texte2.txt', 'w')
+            with open('assets_to_import.csv', 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(['external_id', 'content'])
+                writer.writerow(['image3s.png', 'test_tree/leaf/image3.png'])
+                writer.writerow(
+                    ['test.svg', 'https://files.readme.io/cac9114-Kili_Wordmark_SoftWhite_RGB.svg'])
 
             for test_case in TEST_CASES:
                 arguments = test_case['files']
@@ -231,84 +327,10 @@ class TestCLIProject():
                 if test_case.get('flags'):
                     arguments.extend(
                         ['--'+flag for flag in test_case['flags']])
+                print(arguments)
                 result = runner.invoke(import_assets, arguments)
                 debug_subprocess_pytest(result)
                 append_many_to_dataset_mock.assert_called_with(
-                    **test_case['expected_mutation_payload'])
-
-    def test_describe_project(self, mocker):
-        runner = CliRunner()
-        result = runner.invoke(describe_project, ["project_id"])
-        debug_subprocess_pytest(result)
-        assert (result.output.count('40.8%') == 1) and (
-            result.output.count('N/A') == 2) and (
-            result.output.count('49') == 1) and (
-            result.output.count('project title') == 1)
-
-    def test_import_labels(self, mocker):
-        TEST_CASES = [{
-            'case_name': 'AAU, when I import default labels from a CSV, I see a success',
-            'options': {
-                'project-id': 'project_id',
-                'from-csv': 'test/fixtures/labels_to_import.csv',
-            },
-            'flags': [],
-            'mutation_to_call': 'append_to_labels',
-            'expected_mutation_payload': {
-                'project_id': 'project_id',
-                'json_response': {
-                    "JOB_0": {
-                        "categories": [
-                            {
-                                "name": "YES_IT_IS_SPAM",
-                                "confidence": 100
-                            }
-                        ]
-                    }
-                },
-                'label_asset_external_id': 'poules.png',
-            }
-        },
-            {
-            'case_name': 'AAU, when I import predictions from a CSV, I see a sucess',
-            'options': {
-                'project-id': 'project_id',
-                'model-name': 'model_name',
-                'from-csv': 'test/fixtures/labels_to_import.csv',
-            },
-            'flags': ['prediction'],
-            'mutation_to_call': 'create_predictions',
-            'expected_mutation_payload': {
-                'project_id': 'project_id',
-                'json_response_array': [{
-                    "JOB_0": {
-                        "categories": [
-                            {
-                                "name": "YES_IT_IS_SPAM",
-                                "confidence": 100
-                            }
-                        ]
-                    }
-                }]*2,
-                'external_id_array': ['poules.png', 'test.jpg'],
-                'model_name_array': ['model_name']*2
-            }
-        }]
-        runner = CliRunner()
-        for test_case in TEST_CASES:
-            arguments = []
-            for k, v in test_case['options'].items():
-                arguments.append('--'+k)
-                arguments.append(v)
-            if test_case.get('flags'):
-                arguments.extend(['--'+flag for flag in test_case['flags']])
-            result = runner.invoke(import_labels, arguments)
-            debug_subprocess_pytest(result)
-            if test_case['mutation_to_call'] == 'append_to_labels':
-                append_to_labels_mock.assert_any_call(
-                    **test_case['expected_mutation_payload'])
-            else:
-                create_predictions_mock.assert_called_with(
                     **test_case['expected_mutation_payload'])
 
     def test_list_members(self, mocker):

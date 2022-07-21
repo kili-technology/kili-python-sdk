@@ -31,7 +31,7 @@ class Options:  # pylint: disable=too-few-public-methods
     )
 
     project_id = click.option('--project-id', type=str, required=True,
-                              help='Id of the project to import labels in')
+                              help='Id of the project')
 
     tablefmt = click.option('--stdout-format', 'tablefmt', type=str, default='plain',
                             help='Defines how the output table is formatted '
