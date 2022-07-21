@@ -1,5 +1,5 @@
 
-"""CLI's Porject Member common functions"""
+"""CLI's Project Member common functions"""
 
 import csv
 import re
