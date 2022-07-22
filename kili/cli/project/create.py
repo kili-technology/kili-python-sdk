@@ -1,7 +1,6 @@
 """CLI's project create subcommand"""
 
 import json
-import os
 from typing import Dict, List, Optional, cast
 import click
 from tabulate import tabulate
@@ -15,12 +14,8 @@ from kili.queries.project.helpers import get_project_url
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.option('--interface', type=str, required=True,
-              help=(
-                  "Path pointing to your json interface file "
-                  "or the project_id of another Kili project. "
-              )
-              )
+@click.argument('interface', type=click.Path(exists=True), required=False)
+@Options.from_project
 @click.option('--title', type=str, required=True,
               help='Project Title.')
 @click.option('--input-type', type=click.Choice(INPUT_TYPE), required=True,
@@ -32,29 +27,32 @@ from kili.queries.project.helpers import get_project_url
 # pylint: disable=too-many-arguments
 def create_project(api_key: Optional[str],
                    endpoint: Optional[str],
-                   input_type,
                    interface: str,
+                   project_id_src: str,
+                   input_type,
                    title: str,
                    description: str,
                    tablefmt: str,
                    ):
     """Create a Kili project
 
-    If --interface is the project_id of another Kili project,
-    it will create a new project with the same json_interface
+    interface must be a path pointing to your json interface file
+
+    If no interface is provided, --from-project can be used
+    to create a new project with the json_interface of another project
     (assets will not be copied).
 
     \b
     !!! Examples
         ```
         kili project create \\
-            --interface path/to/interface.json \\
+             path/to/interface.json \\
             --input-type TEXT \\
             --title "Invoice annotation project"
         ```
         ```
         kili project create \\
-            --interface another_project_id \\
+            --from-project <project_id_src> \\
             --input-type TEXT \\
             --title "Invoice annotation project"
         ```
@@ -62,19 +60,29 @@ def create_project(api_key: Optional[str],
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
-    if os.path.exists(interface):
+
+    if ((interface is not None) + (project_id_src is not None)) > 1:
+        raise ValueError(
+            'interface argument and option --from-project are exclusive.')
+    if ((interface is not None) + (project_id_src is not None)) == 0:
+        raise ValueError(
+            'You must use either interface argument or option --from-project')
+
+    if interface is not None:
         with open(interface, encoding='utf-8') as interface_file:
             json_interface = json.load(interface_file)
-    else:
+
+    elif project_id_src is not None:
         try:
             json_interface = cast(
                 List[Dict],
-                kili.projects(project_id=interface, disable_tqdm=True))[
+                kili.projects(project_id=project_id_src, disable_tqdm=True))[
                 0]['jsonInterface']
         except:
             # pylint: disable=raise-missing-from
             raise ValueError(
-                f'{interface} is not recognized as a json file path nor a Kili project_id')
+                f'{project_id_src} is not recognized as a Kili project_id')
+
     result = cast(Dict, kili.create_project(
         input_type=input_type,
         json_interface=json_interface,
