@@ -5,8 +5,8 @@ from typing import Any, Callable
 
 from typeguard import typechecked
 
-from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 from ...graphql_client import SubscriptionGraphQLClient
+from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 
 
 @dataclass
@@ -40,17 +40,17 @@ class SubscriptionsLabel:
             For more detailed examples on how to use Webhooks,
             See [the related recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/webhooks.ipynb)
         """
-        ws_endpoint = self.auth.client.endpoint.replace('http', 'ws')
+        ws_endpoint = self.auth.client.endpoint.replace("http", "ws")
         websocket = SubscriptionGraphQLClient(ws_endpoint)
-        headers = {'Accept': 'application/json',
-                   'Content-Type': 'application/json'}
-        authorization = f'{self.auth.client.token}'
-        headers['Authorization'] = authorization
-        variables = {'projectID': project_id}
+        headers = {"Accept": "application/json", "Content-Type": "application/json"}
+        authorization = f"{self.auth.client.token}"
+        headers["Authorization"] = authorization
+        variables = {"projectID": project_id}
         websocket.subscribe(
             GQL_LABEL_CREATED_OR_UPDATED,
             variables=variables,
             callback=callback,
             headers=headers,
-            authorization=authorization)
+            authorization=authorization,
+        )
         return websocket

@@ -4,7 +4,7 @@ Queries of user mutations
 
 from .fragments import USER_FRAGMENT
 
-GQL_CREATE_USER = f'''
+GQL_CREATE_USER = f"""
 mutation(
     $data: CreateUserData!
 ) {{
@@ -14,9 +14,9 @@ mutation(
     {USER_FRAGMENT}
   }}
 }}
-'''
+"""
 
-GQL_UPDATE_PASSWORD = f'''
+GQL_UPDATE_PASSWORD = f"""
 mutation(
     $data: UpdatePasswordData!
     $where: UserWhere!
@@ -28,17 +28,17 @@ mutation(
     {USER_FRAGMENT}
   }}
 }}
-'''
+"""
 
-GQL_RESET_PASSWORD = f'''
+GQL_RESET_PASSWORD = f"""
 mutation($where: UserWhere!) {{
   data: resetPassword(where: $where) {{
     {USER_FRAGMENT}
   }}
 }}
-'''
+"""
 
-GQL_UPDATE_PROPERTIES_IN_USER = f'''
+GQL_UPDATE_PROPERTIES_IN_USER = f"""
 mutation(
     $email: String!
     $firstname: String
@@ -61,4 +61,4 @@ mutation(
     {USER_FRAGMENT}
   }}
 }}
-'''
+"""

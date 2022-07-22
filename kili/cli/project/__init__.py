@@ -3,7 +3,6 @@
 import click
 
 from kili.cli.common_args import CONTEXT_SETTINGS
-
 from kili.cli.project.create import create_project
 from kili.cli.project.describe import describe_project
 from kili.cli.project.import_ import import_assets

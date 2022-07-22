@@ -11,7 +11,7 @@ from kili.cli.project import project
 def cli():
     """Kili Command line Interface
 
-       To get all the available commands, please type: `kili project --help`.
+    To get all the available commands, please type: `kili project --help`.
     """
 
 

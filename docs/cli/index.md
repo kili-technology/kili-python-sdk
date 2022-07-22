@@ -92,8 +92,8 @@ To import labels, provide a CSV file with two columns, separated by a semi-colum
 
 !!! Examples "CSV file template"
     ```
-    external_id;json_response_path 
-    asset1;./labels/label_asset1.json 
+    external_id;json_response_path
+    asset1;./labels/label_asset1.json
     asset2;./labels/label_asset2.json
     ```
 
@@ -109,7 +109,7 @@ Outputs:
 82 labels have been successfully imported
 ```
 
-If you have run a pre-annotation model, you can also import labels as predictions. 
+If you have run a pre-annotation model, you can also import labels as predictions.
 These labels will be seen as pre-annotation in the labeling interface.
 
 ```

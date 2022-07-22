@@ -4,7 +4,7 @@ Queries of label mutations
 
 from .fragments import LABEL_FRAGMENT, LABEL_FRAGMENT_ID
 
-GQL_CREATE_PREDICTIONS = f'''
+GQL_CREATE_PREDICTIONS = f"""
 mutation(
     $data: CreatePredictionsData!
     $where: AssetWhere!
@@ -16,9 +16,9 @@ mutation(
       {LABEL_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
-GQL_APPEND_TO_LABELS = f'''
+GQL_APPEND_TO_LABELS = f"""
 mutation(
     $data: AppendToLabelsData!
     $where: AssetWhere!
@@ -30,10 +30,10 @@ mutation(
       {LABEL_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
 
-GQL_UPDATE_PROPERTIES_IN_LABEL = f'''
+GQL_UPDATE_PROPERTIES_IN_LABEL = f"""
 mutation(
     $labelID: ID!
     $secondsToLabel: Float
@@ -51,9 +51,9 @@ mutation(
     {LABEL_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
-GQL_CREATE_HONEYPOT = f'''
+GQL_CREATE_HONEYPOT = f"""
 mutation(
     $data: CreateHoneypotData!
     $where: AssetWhere!
@@ -65,4 +65,4 @@ mutation(
       {LABEL_FRAGMENT}
   }}
 }}
-'''
+"""

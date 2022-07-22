@@ -2,7 +2,7 @@
 Fragments of label subscription
 """
 
-LABEL_FRAGMENT = '''
+LABEL_FRAGMENT = """
 id
 jsonResponse
-'''
+"""

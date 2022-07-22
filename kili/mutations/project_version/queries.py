@@ -4,7 +4,7 @@ Queries of project version mutations
 
 from .fragments import PROJECT_VERSION_FRAGMENT
 
-GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION = f'''
+GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION = f"""
 mutation(
     $id: ID!
     $content: String
@@ -18,4 +18,4 @@ mutation(
     {PROJECT_VERSION_FRAGMENT}
   }}
 }}
-'''
+"""

@@ -1,6 +1,6 @@
+import traceback
 from datetime import datetime, timedelta
 from functools import wraps
-import traceback
 
 COUNT_SAMPLE_MAX = 26000
 
@@ -14,9 +14,8 @@ class burstthrottle(object):
             pass
     """
 
-    def __init__(self, max_hits, seconds=0, minutes=1, hours=0, error_message='TooManyCalls'):
-        self.burst_window = timedelta(
-            seconds=seconds, minutes=minutes, hours=hours)
+    def __init__(self, max_hits, seconds=0, minutes=1, hours=0, error_message="TooManyCalls"):
+        self.burst_window = timedelta(seconds=seconds, minutes=minutes, hours=hours)
         self.error_message = error_message
         self.hits = 0
         self.max_hits = max_hits

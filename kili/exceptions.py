@@ -1,6 +1,7 @@
 """Exceptions of the package."""
 import ast
 
+
 class NotFound(Exception):
     """Used when a given object is not found in Kili"""
 
@@ -20,13 +21,14 @@ class AuthenticationFailed(Exception):
     def __init__(self, api_key, api_endpoint):
         if api_key is None:
             super().__init__(
-                'You need to provide an API KEY to connect.'
-                ' Visit https://docs.kili-technology.com/reference/creating-an-api-key'
+                "You need to provide an API KEY to connect."
+                " Visit https://docs.kili-technology.com/reference/creating-an-api-key"
             )
         else:
             super().__init__(
-                f'Connection to Kili endpoint {api_endpoint} failed with API key: {api_key}.'
-                ' Check your connection and API key.')
+                f"Connection to Kili endpoint {api_endpoint} failed with API key: {api_key}."
+                " Check your connection and API key."
+            )
 
 
 class EndpointCompatibilityError(Exception):
@@ -36,18 +38,20 @@ class EndpointCompatibilityError(Exception):
 
     def __init__(self, resolver, endpoint):
         super().__init__(
-            f'Resolver {resolver} is not compatible with the following endpoint : {endpoint}')
+            f"Resolver {resolver} is not compatible with the following endpoint : {endpoint}"
+        )
 
 
 class GraphQLError(Exception):
     """
     Used when the GraphQL call returns an error
     """
+
     def __init__(self, error: Exception, batch_number=None):
         if batch_number is None:
-            super().__init__(
-                f'error: "{ast.literal_eval(str(error))[0]["message"]}"')
+            super().__init__(f'error: "{ast.literal_eval(str(error))[0]["message"]}"')
         else:
             super().__init__(
-                f'error at index {100*batch_number}: '
-                f'{ast.literal_eval(str(error))[0]["message"]}"')
+                f"error at index {100*batch_number}: "
+                f'{ast.literal_eval(str(error))[0]["message"]}"'
+            )

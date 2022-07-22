@@ -2,7 +2,7 @@
 Fragments of project mutations
 """
 
-PROJECT_FRAGMENT = '''
+PROJECT_FRAGMENT = """
 id
 jsonInterface
 title
@@ -13,21 +13,21 @@ roles {
     }
     role
 }
-'''
+"""
 
-PROJECT_FRAGMENT_ID = '''
+PROJECT_FRAGMENT_ID = """
 id
-'''
+"""
 
-PROJECT_FRAGMENT_PUBLIC_TOKEN = '''
+PROJECT_FRAGMENT_PUBLIC_TOKEN = """
 id
 publicToken
-'''
+"""
 
-ROLE_FRAGMENT = '''
+ROLE_FRAGMENT = """
 user {
   id
   email
 }
 role
-'''
+"""

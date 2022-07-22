@@ -2,6 +2,6 @@
 Fragments of asset mutations
 """
 
-ASSET_FRAGMENT = '''
+ASSET_FRAGMENT = """
 id
-'''
+"""

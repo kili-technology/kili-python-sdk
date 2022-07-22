@@ -1,15 +1,14 @@
 """Project version queries."""
 
-from typing import Generator, List, Optional, Union
 import warnings
+from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-
-from ...helpers import Compatible, format_result, fragment_builder, deprecate
-from .queries import gql_project_version, GQL_PROJECT_VERSION_COUNT
+from ...helpers import Compatible, deprecate, format_result, fragment_builder
 from ...types import ProjectVersion as ProjectVersionType
 from ...utils.pagination import row_generator_from_paginated_calls
+from .queries import GQL_PROJECT_VERSION_COUNT, gql_project_version
 
 
 class QueriesProjectVersion:
@@ -26,21 +25,17 @@ class QueriesProjectVersion:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(['v2'])
+    @Compatible(["v2"])
     @typechecked
     def project_version(
-            self,
-            project_id: str,
-            first: Optional[int] = None,
-            skip: Optional[int] = 0,
-            fields: List[str] = [
-                'createdAt',
-                'id',
-                'content',
-                'name',
-                'projectId'],
-            disable_tqdm: bool = False,
-            as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
+        self,
+        project_id: str,
+        first: Optional[int] = None,
+        skip: Optional[int] = 0,
+        fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
+        disable_tqdm: bool = False,
+        as_generator: bool = False,
+    ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a generator or a list of project versions respecting a set of criteria.
 
@@ -61,8 +56,8 @@ class QueriesProjectVersion:
         count_args = {"project_id": project_id}
         disable_tqdm = disable_tqdm or as_generator
         payload_query = {
-            'where': {
-                'projectId': project_id,
+            "where": {
+                "projectId": project_id,
             },
         }
         project_versions_generator = row_generator_from_paginated_calls(
@@ -73,26 +68,21 @@ class QueriesProjectVersion:
             self._query_project_versions,
             payload_query,
             fields,
-            disable_tqdm
+            disable_tqdm,
         )
 
         if as_generator:
             return project_versions_generator
         return list(project_versions_generator)
 
-    def _query_project_versions(self,
-                                skip: int,
-                                first: int,
-                                payload: dict,
-                                fields: List[str]):
+    def _query_project_versions(self, skip: int, first: int, payload: dict, fields: List[str]):
 
-        payload.update({'skip': skip, 'first': first})
-        _gql_project_version = gql_project_version(
-            fragment_builder(fields, ProjectVersionType))
+        payload.update({"skip": skip, "first": first})
+        _gql_project_version = gql_project_version(fragment_builder(fields, ProjectVersionType))
         result = self.auth.client.execute(_gql_project_version, payload)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v2'])
+    @Compatible(["v2"])
     @typechecked
     def count_project_versions(self, project_id: str) -> int:
         """Count the number of project versions.
@@ -104,8 +94,8 @@ class QueriesProjectVersion:
             The number of project versions with the parameters provided
         """
         variables = {
-            'where': {'projectId': project_id},
+            "where": {"projectId": project_id},
         }
         result = self.auth.client.execute(GQL_PROJECT_VERSION_COUNT, variables)
-        count = format_result('data', result)
+        count = format_result("data", result)
         return count

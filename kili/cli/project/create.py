@@ -14,26 +14,29 @@ from kili.queries.project.helpers import get_project_url
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.argument('interface', type=click.Path(exists=True), required=False)
+@click.argument("interface", type=click.Path(exists=True), required=False)
 @Options.from_project
-@click.option('--title', type=str, required=True,
-              help='Project Title.')
-@click.option('--input-type', type=click.Choice(INPUT_TYPE), required=True,
-              help='Project input data type. '
-              'Please check your license to see which ones you have access to.')
-@click.option('--description', type=str, default='',
-              help='Project description.')
+@click.option("--title", type=str, required=True, help="Project Title.")
+@click.option(
+    "--input-type",
+    type=click.Choice(INPUT_TYPE),
+    required=True,
+    help="Project input data type. "
+    "Please check your license to see which ones you have access to.",
+)
+@click.option("--description", type=str, default="", help="Project description.")
 @Options.tablefmt
 # pylint: disable=too-many-arguments
-def create_project(api_key: Optional[str],
-                   endpoint: Optional[str],
-                   interface: str,
-                   project_id_src: str,
-                   input_type,
-                   title: str,
-                   description: str,
-                   tablefmt: str,
-                   ):
+def create_project(
+    api_key: Optional[str],
+    endpoint: Optional[str],
+    interface: str,
+    project_id_src: str,
+    input_type,
+    title: str,
+    description: str,
+    tablefmt: str,
+):
     """Create a Kili project
 
     interface must be a path pointing to your json interface file
@@ -62,39 +65,33 @@ def create_project(api_key: Optional[str],
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
 
     if ((interface is not None) + (project_id_src is not None)) > 1:
-        raise ValueError(
-            'interface argument and option --from-project are exclusive.')
+        raise ValueError("interface argument and option --from-project are exclusive.")
     if ((interface is not None) + (project_id_src is not None)) == 0:
-        raise ValueError(
-            'You must use either interface argument or option --from-project')
+        raise ValueError("You must use either interface argument or option --from-project")
 
     if interface is not None:
-        with open(interface, encoding='utf-8') as interface_file:
+        with open(interface, encoding="utf-8") as interface_file:
             json_interface = json.load(interface_file)
 
     elif project_id_src is not None:
         try:
             json_interface = cast(
-                List[Dict],
-                kili.projects(project_id=project_id_src, disable_tqdm=True))[
-                0]['jsonInterface']
+                List[Dict], kili.projects(project_id=project_id_src, disable_tqdm=True)
+            )[0]["jsonInterface"]
         except:
             # pylint: disable=raise-missing-from
-            raise ValueError(
-                f'{project_id_src} is not recognized as a Kili project_id')
+            raise ValueError(f"{project_id_src} is not recognized as a Kili project_id")
 
-    result = cast(Dict, kili.create_project(
-        input_type=input_type,
-        json_interface=json_interface,
-        title=title,
-        description=description))
-    project_id = result['id']
+    result = cast(
+        Dict,
+        kili.create_project(
+            input_type=input_type,
+            json_interface=json_interface,
+            title=title,
+            description=description,
+        ),
+    )
+    project_id = result["id"]
 
     project_url = get_project_url(project_id, kili.auth.client.endpoint)
-    print(
-        tabulate(
-            [[project_id, project_url]],
-            headers=["ID", "URL"],
-            tablefmt=tablefmt
-        )
-    )
+    print(tabulate([[project_id, project_url]], headers=["ID", "URL"], tablefmt=tablefmt))

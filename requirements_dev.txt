@@ -1,3 +1,5 @@
+black
+pre-commit
 pylint
 pytest
 pytest-mock

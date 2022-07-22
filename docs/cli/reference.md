@@ -3,5 +3,3 @@
     :command: cli
     :prog_name: kili
     :style: table
-
-    

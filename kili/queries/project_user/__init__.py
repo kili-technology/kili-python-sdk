@@ -1,15 +1,14 @@
 """Project user queries."""
 
-from typing import Generator, List, Optional, Union
 import warnings
+from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
-from .queries import gql_project_users, GQL_PROJECT_USERS_COUNT
 from ...types import ProjectUser
 from ...utils.pagination import row_generator_from_paginated_calls
+from .queries import GQL_PROJECT_USERS_COUNT, gql_project_users
 
 
 class QueriesProjectUser:
@@ -26,19 +25,27 @@ class QueriesProjectUser:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value,invalid-name
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def project_users(self,
-                      project_id: str,
-                      email: Optional[str] = None,
-                      id: Optional[str] = None,  # pylint: disable=redefined-builtin
-                      organization_id: Optional[str] = None,
-                      fields: List[str] = ['activated', 'id', 'role',
-                                           'starred', 'user.email', 'user.id'],
-                      first: Optional[int] = None,
-                      skip: int = 0,
-                      disable_tqdm: bool = False,
-                      as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
+    def project_users(
+        self,
+        project_id: str,
+        email: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        organization_id: Optional[str] = None,
+        fields: List[str] = [
+            "activated",
+            "id",
+            "role",
+            "starred",
+            "user.email",
+            "user.id",
+        ],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        as_generator: bool = False,
+    ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Return project users (possibly with their KPIs) that match a set of criteria
 
@@ -64,22 +71,24 @@ class QueriesProjectUser:
             >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
             ```
         """
-        count_args = {"email": email,
-                      "id": id,
-                      "organization_id": organization_id,
-                      "project_id": project_id}
+        count_args = {
+            "email": email,
+            "id": id,
+            "organization_id": organization_id,
+            "project_id": project_id,
+        }
         disable_tqdm = disable_tqdm or as_generator
         payload_query = {
-            'where': {
-                'id': id,
-                'project': {
-                    'id': project_id,
+            "where": {
+                "id": id,
+                "project": {
+                    "id": project_id,
                 },
-                'user': {
-                    'email': email,
-                    'organization': {
-                        'id': organization_id,
-                    }
+                "user": {
+                    "email": email,
+                    "organization": {
+                        "id": organization_id,
+                    },
                 },
             }
         }
@@ -92,34 +101,29 @@ class QueriesProjectUser:
             self._query_project_users,
             payload_query,
             fields,
-            disable_tqdm
+            disable_tqdm,
         )
 
         if as_generator:
             return project_users_generator
         return list(project_users_generator)
 
-    def _query_project_users(self,
-                             skip: int,
-                             first: int,
-                             payload: dict,
-                             fields: List[str]):
+    def _query_project_users(self, skip: int, first: int, payload: dict, fields: List[str]):
 
-        payload.update({'skip': skip, 'first': first})
-        _gql_project_users = gql_project_users(
-            fragment_builder(fields, ProjectUser))
+        payload.update({"skip": skip, "first": first})
+        _gql_project_users = gql_project_users(fragment_builder(fields, ProjectUser))
         result = self.auth.client.execute(_gql_project_users, payload)
-        return format_result('data', result)
+        return format_result("data", result)
 
     # pylint: disable=invalid-name
     @typechecked
     def count_project_users(
-            self,
-            project_id: str,
-            email: Optional[str] = None,
-            id: Optional[str] = None,  # pylint: disable=redefined-builtin
-            organization_id: Optional[str] = None,
-            ) -> int:
+        self,
+        project_id: str,
+        email: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        organization_id: Optional[str] = None,
+    ) -> int:
         """
         Counts the number of projects and their users that match a set of criteria
 
@@ -132,19 +136,19 @@ class QueriesProjectUser:
             The number of project users with the parameters provided
         """
         variables = {
-            'where': {
-                'id': id,
-                'project': {
-                    'id': project_id,
+            "where": {
+                "id": id,
+                "project": {
+                    "id": project_id,
                 },
-                'user': {
-                    'email': email,
-                    'organization': {
-                        'id': organization_id,
-                    }
+                "user": {
+                    "email": email,
+                    "organization": {
+                        "id": organization_id,
+                    },
                 },
             }
         }
         result = self.auth.client.execute(GQL_PROJECT_USERS_COUNT, variables)
-        count = format_result('data', result)
+        count = format_result("data", result)
         return count

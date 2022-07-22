@@ -3,13 +3,14 @@ Api key mutations
 """
 
 from typeguard import typechecked
-from ...helpers import Compatible, deprecate, format_result
 
+from ...helpers import Compatible, deprecate, format_result
 from .queries import GQL_APPEND_TO_API_KEYS
 
 
 class MutationsApiKey:  # pylint: disable=too-few-public-methods
     """Set of User mutations."""
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
@@ -20,7 +21,7 @@ class MutationsApiKey:  # pylint: disable=too-few-public-methods
         """
         self.auth = auth
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def append_to_api_keys(self, api_key: str, name: str):
         """Create an api key to connect to the API.
@@ -34,9 +35,8 @@ class MutationsApiKey:  # pylint: disable=too-few-public-methods
                 or an error message.
         """
         variables = {
-            'data': {'key': api_key,
-                     'name': name},
-            'where': {'email': self.auth.user_email}
+            "data": {"key": api_key, "name": name},
+            "where": {"email": self.auth.user_email},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_API_KEYS, variables)
-        return format_result('data', result)
+        return format_result("data", result)

@@ -2,7 +2,7 @@
 Fragments of label mutations
 """
 
-LABEL_FRAGMENT = '''
+LABEL_FRAGMENT = """
 id
 author {
   id
@@ -14,9 +14,9 @@ createdAt
 secondsToLabel
 totalSecondsToLabel
 honeypotMark
-'''
+"""
 
 
-LABEL_FRAGMENT_ID = '''
+LABEL_FRAGMENT_ID = """
 id
-'''
+"""
