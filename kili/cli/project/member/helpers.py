@@ -123,15 +123,15 @@ def check_exclusive_options(
         raise ValueError(
             'Options --from-csv and emails are exclusive.')
 
-    if (csv_path is not None) and (all_members is not None) and (len(emails) > 0) > 1:
+    if (csv_path is not None) and all_members and (len(emails) > 0) > 1:
         raise ValueError(
             'Options --from-csv, --all and emails are exclusive.')
 
-    if (csv_path is not None) and (all_members is not None):
+    if (csv_path is not None) and all_members:
         raise ValueError(
             'Options --from-csv and --all are exclusive.')
 
-    if (all_members is not None) and (len(emails) > 0) > 1:
+    if all_members and (len(emails) > 0) > 1:
         raise ValueError(
             'Options --all and emails are exclusive.')
 

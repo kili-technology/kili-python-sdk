@@ -5,31 +5,32 @@ import warnings
 import click
 from kili.cli.project.member.helpers import (
     ROLES,
+    check_exclusive_options,
     collect_members_from_csv,
     collect_members_from_emails,
-    collect_members_from_project,
-    check_exclusive_options)
+    collect_members_from_project)
+
 
 from kili.client import Kili
 from kili.cli.common_args import Options
 
 
 # pylint: disable=too-many-arguments
-@click.command()
-@Options.api_key
-@Options.endpoint
-@click.argument('emails', type=str, required=False, nargs=-1)
-@click.option('--project-id', type=str, required=True,
-              help='Id of the project to add members to')
-@click.option('--role', type=click.Choice(ROLES), default=None,
-              show_default='LABELER',
-              help='Project role of the added user(s).')
+@ click.command()
+@ Options.api_key
+@ Options.endpoint
+@ click.argument('emails', type=str, required=False, nargs=-1)
+@ click.option('--project-id', type=str, required=True,
+               help='Id of the project to add members to')
+@ click.option('--role', type=click.Choice(ROLES), default=None,
+               show_default='LABELER',
+               help='Project role of the added user(s).')
 @ click.option('--from-csv', 'csv_path', type=click.Path(),
                help=("path to a csv file with 'email' header,"
                " optionnal header 'role' can be use.")
                )
-@click.option('--from-project', 'project_id_src', type=str,
-              help='project_id of another Kili project to copy the users from')
+@ click.option('--from-project', 'project_id_src', type=str,
+               help='project_id of another Kili project to copy the users from')
 def add_member(api_key: Optional[str],
                endpoint: Optional[str],
                emails: Optional[str],

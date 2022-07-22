@@ -13,6 +13,7 @@ from kili.cli.project.list_ import list_projects
 from kili.cli.project.member.list_ import list_members
 from kili.cli.project.member.add import add_member
 from kili.cli.project.member.update import update_member
+from kili.cli.project.member.remove import remove_member
 
 from ..utils import debug_subprocess_pytest
 
@@ -115,6 +116,7 @@ kili_client.project_users = project_users_mock = MagicMock(
     side_effect=mocked__project_users)
 kili_client.append_to_roles = append_to_roles_mock = MagicMock()
 kili_client.update_properties_in_role = update_properties_in_role_mock = MagicMock()
+kili_client.delete_from_roles = delete_from_roles_mock = MagicMock()
 
 kili = MagicMock()
 kili.Kili = MagicMock(return_value=kili_client)
@@ -484,4 +486,62 @@ class TestCLIProject():
                 debug_subprocess_pytest(result)
                 assert update_properties_in_role_mock.call_count == 2 * (i+1)
                 update_properties_in_role_mock.assert_called_with(
+                    **test_case['expected_mutation_payload'])
+
+    def test_remove_member(self, mocker):
+        TEST_CASES = [{
+            'case_name': 'AAU, when I remove users with email adress, I see a success',
+            'inputs': ['john.doe@test.com', 'jane.doe@test.com'],
+            'options': {
+                'project-id': 'project_id',
+            },
+            'expected_mutation_payload': {
+                'role_id': 'role_id_jane',
+            }
+        },
+            {
+            'case_name': 'AAU, when I remove all users, I see a success',
+            'inputs': [],
+            'options': {
+                'project-id': 'project_id',
+            },
+            'flags': ['all'],
+            'expected_mutation_payload': {
+                'role_id': 'role_id_jane',
+            }
+        },
+            {
+            'case_name': 'AAU, when I remove users with a  csv file, I see a success',
+            'inputs': [],
+            'options': {
+                'project-id': 'project_id',
+                'from-csv': 'user_list.csv',
+            },
+            'expected_mutation_payload': {
+                'role_id': 'role_id_jane',
+            }
+        },
+        ]
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            # pylint: disable=unspecified-encodind
+            with open('user_list.csv', 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(['email'])
+                writer.writerow(['john.doe@test.com'])
+                writer.writerow(['jane.doe@test.com'])
+
+            for i, test_case in enumerate(TEST_CASES):
+                print(test_case['case_name'])
+                arguments = test_case['inputs']
+                for k, v in test_case['options'].items():
+                    arguments.append('--'+k)
+                    arguments.append(v)
+                if test_case.get('flags'):
+                    arguments.extend(
+                        ['--'+flag for flag in test_case['flags']])
+                result = runner.invoke(remove_member, arguments)
+                debug_subprocess_pytest(result)
+                assert delete_from_roles_mock.call_count == 2 * (i+1)
+                delete_from_roles_mock.assert_called_with(
                     **test_case['expected_mutation_payload'])
