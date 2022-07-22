@@ -6,7 +6,7 @@ import click
 from kili.cli.project.member.helpers import (ROLES,
                                              collect_members_from_csv,
                                              collect_members_from_emails,
-                                             collect_members_from_project)
+                                             collect_members_from_project, exclusive_options)
 
 from kili.client import Kili
 from kili.cli.common_args import Options
@@ -62,9 +62,7 @@ def update_member(api_key: Optional[str],
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
 
-    if ((csv_path is not None) + (project_id_src is not None) + (len(emails) > 0)) > 1:
-        raise ValueError(
-            'Options --from-csv, --from-project and emails are exclusive.')
+    exclusive_options(csv_path, project_id_src, emails, None)
 
     if csv_path is not None:
         members_to_update = collect_members_from_csv(csv_path, role)
