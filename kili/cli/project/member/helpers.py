@@ -98,3 +98,43 @@ def collect_members_from_emails(emails: List[str], role: Optional[str]):
         raise ValueError('No valid email adresses were provided')
 
     return members_to_add
+
+
+def check_exclusive_options(
+        csv_path: Optional[str],
+        project_id_src: Optional[str],
+        emails: Optional[List[str]],
+        all_members: Optional[bool]):
+    """ Forbid mutual use of options and argument(s) """
+
+    if (csv_path is not None) and (project_id_src is not None) and (len(emails) > 0) > 1:
+        raise ValueError(
+            'Options --from-csv, --from-project and emails are exclusive.')
+
+    if (csv_path is not None) and (project_id_src is not None):
+        raise ValueError(
+            'Options --from-csv and --from-project are exclusive.')
+
+    if (project_id_src is not None) and (len(emails) > 0) > 1:
+        raise ValueError(
+            'Options --from-project and emails are exclusive.')
+
+    if (csv_path is not None) and (len(emails) > 0) > 1:
+        raise ValueError(
+            'Options --from-csv and emails are exclusive.')
+
+    if (csv_path is not None) and (all_members is not None) and (len(emails) > 0) > 1:
+        raise ValueError(
+            'Options --from-csv, --all and emails are exclusive.')
+
+    if (csv_path is not None) and (all_members is not None):
+        raise ValueError(
+            'Options --from-csv and --all are exclusive.')
+
+    if (all_members is not None) and (len(emails) > 0) > 1:
+        raise ValueError(
+            'Options --all and emails are exclusive.')
+
+    if (csv_path is not None) and (len(emails) > 0) > 1:
+        raise ValueError(
+            'Options --from-csv and emails are exclusive.')
