@@ -3,7 +3,7 @@
 from typing import Optional
 import warnings
 import click
-from kili.cli.project.member.helpers import (collect_members_from_csv,
+from kili.cli.project.member.helpers import (check_exclusive_options, collect_members_from_csv,
                                              collect_members_from_emails,
                                              collect_members_from_project)
 
@@ -45,7 +45,7 @@ def remove_member(api_key: Optional[str],
         ```
         kili project member rm \\
             --project-id <project_id> \\
-            path/to/members.csv
+            --from-csv path/to/members.csv
 
         ```
         ```
@@ -56,9 +56,7 @@ def remove_member(api_key: Optional[str],
     """
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
 
-    if ((csv_path is not None) + all_members + (len(emails) > 0)) > 1:
-        raise ValueError(
-            'Options --from-csv, --all and emails are exclusive.')
+    check_exclusive_options(csv_path, None, emails, all_members)
 
     if csv_path is not None:
         members_to_rm = collect_members_from_csv(csv_path, None)
@@ -81,4 +79,4 @@ def remove_member(api_key: Optional[str],
         else:
             warnings.warn(f'{email} is not an active member of the project.')
 
-    print(f'{count} users have been successfully added to project: {project_id}')
+    print(f'{count} users have been successfully removed from project: {project_id}')
