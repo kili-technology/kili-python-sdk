@@ -42,6 +42,14 @@ def collect_from_csv(
     return out
 
 
+def get_external_id_from_file_path(path: str):
+    """Return external_id from file's path
+    ex: 'tree/leaf/file_name.txt- -> file_name
+    """
+    file_path = path.split("/")[-1]
+    return ".".join(file_path.split(".")[:-1])
+
+
 def check_exclusive_options(csv_path: Optional[str], files: Optional[List[str]]):
     """Forbid mutual use of options and argument(s)"""
 

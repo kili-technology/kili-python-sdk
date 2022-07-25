@@ -7,7 +7,11 @@ import warnings
 import click
 
 from kili.cli.common_args import Arguments, Options, from_csv
-from kili.cli.helpers import check_exclusive_options, collect_from_csv
+from kili.cli.helpers import (
+    check_exclusive_options,
+    collect_from_csv,
+    get_external_id_from_file_path,
+)
 from kili.client import Kili
 from kili.exceptions import NotFound
 
@@ -117,9 +121,9 @@ def import_labels(
         label_paths = get_label_file_paths_to_upload(files, verbose)
         if len(label_paths) == 0:
             raise ValueError(
-                "No label's files to upload. " "Check that the paths exist and file types are .json"
+                "No label files to upload. " "Check that the paths exist and file types are .json"
             )
-        external_ids = [".".join(path.split("/")[-1].split(".")[:-1]) for path in label_paths]
+        external_ids = [get_external_id_from_file_path(path) for path in label_paths]
 
     elif csv_path is not None:
 
@@ -137,11 +141,11 @@ def import_labels(
         external_ids = [label["external_id"] for label in labels_to_add]
 
     assets = kili.assets(project_id=project_id, fields=["externalId"], disable_tqdm=True)
-    assets = [asset["externalId"] for asset in assets]
+    assets = set(asset["externalId"] for asset in assets)
 
-    label_index_to_import = [
+    label_index_to_import = set(
         i for i, external_id in enumerate(external_ids) if external_id in assets
-    ]
+    )
 
     for i, external_id in enumerate(external_ids):
         if i not in label_index_to_import:
