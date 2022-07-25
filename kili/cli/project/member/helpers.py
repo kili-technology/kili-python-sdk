@@ -2,12 +2,12 @@
 
 import re
 import warnings
-from typing import Dict, List, Optional, cast
+from kili.cli.common_args import ROLES
 
 from kili.cli.helpers import collect_from_csv
 
-REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
-ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
+REGEX_EMAIL = re.compile(
+    r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
 
 
 def type_check_member(key, value):
@@ -52,7 +52,8 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
     members = []
 
     if role is not None:
-        raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
+        raise ValueError(
+            "--role cannot be used if the argument passed is a Kili project_id")
 
     try:
         users = cast(
@@ -65,13 +66,16 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
         )
         for user in users:
             if user["activated"]:
-                members.append({"email": user["user"]["email"], "role": user["role"]})
+                members.append(
+                    {"email": user["user"]["email"], "role": user["role"]})
     except:
         # pylint: disable=raise-missing-from
-        raise ValueError(f"{project_id_source} is not recognized as a Kili project_id")
+        raise ValueError(
+            f"{project_id_source} is not recognized as a Kili project_id")
 
     if len(members) == 0:
-        raise ValueError(f"No active member were found in project with id {project_id_source}")
+        raise ValueError(
+            f"No active member were found in project with id {project_id_source}")
 
     return members
 
@@ -102,10 +106,12 @@ def check_exclusive_options(
     """Forbid mutual use of options and argument(s)"""
 
     if (csv_path is not None) and (project_id_src is not None) and (len(emails) > 0) > 1:
-        raise ValueError("Options --from-csv, --from-project and emails are exclusive.")
+        raise ValueError(
+            "Options --from-csv, --from-project and emails are exclusive.")
 
     if (csv_path is not None) and (project_id_src is not None):
-        raise ValueError("Options --from-csv and --from-project are exclusive.")
+        raise ValueError(
+            "Options --from-csv and --from-project are exclusive.")
 
     if (project_id_src is not None) and (len(emails) > 0) > 1:
         raise ValueError("Options --from-project and emails are exclusive.")

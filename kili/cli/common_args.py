@@ -3,7 +3,8 @@ from typing import List
 
 import click
 
-CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
 
 
 class Options:  # pylint: disable=too-few-public-methods
@@ -28,7 +29,8 @@ class Options:  # pylint: disable=too-few-public-methods
         ),
     )
 
-    project_id = click.option("--project-id", type=str, required=True, help="Id of the project")
+    project_id = click.option("--project-id", type=str,
+                              required=True, help="Id of the project")
 
     tablefmt = click.option(
         "--stdout-format",
@@ -46,9 +48,15 @@ class Options:  # pylint: disable=too-few-public-methods
         help="project_id of another Kili project",
     )
 
+    role = click.option('--role', type=click.Choice(ROLES), default=None,
+                        show_default='LABELER',
+                        help='Project role of the added user(s).')
 
-def from_csv(required: bool, required_columns: List[str], optionnal_columns: List[str]):
-    """--from-csv shared click option"""
+
+def from_csv(required_columns: List[str],
+             optionnal_columns: List[str]
+             ):
+    """ --from-csv shared click option """
     help_ = (
         "path to a csv file with required columns:"
         + ", ".join(required_columns)
@@ -56,10 +64,17 @@ def from_csv(required: bool, required_columns: List[str], optionnal_columns: Lis
         + ", ".join(optionnal_columns)
     )
 
-    return click.option(
-        "--from-csv",
-        "csv_path",
-        type=click.Path(),
-        required=required,
-        help=help_,
-    )
+    return click.option('--from-csv', 'csv_path', type=click.Path(),
+                        help=help_,
+                        )
+
+
+class Arguments:  # pylint: disable=too-few-public-methods
+    """Common arguments for the CLI"""
+
+    files = click.argument('files', type=click.Path(),
+                           required=False, nargs=-1)
+
+    emails = click.argument('emails', type=str, required=False, nargs=-1)
+
+    project_id = click.argument('project_id', type=str, required=True)

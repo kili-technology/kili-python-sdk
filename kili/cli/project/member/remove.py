@@ -13,27 +13,17 @@ from kili.cli.project.member.helpers import (
     collect_members_from_project,
 )
 from kili.client import Kili
+from kili.cli.common_args import Arguments, Options, from_csv
 
 
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.argument("emails", type=str, required=False, nargs=-1)
-@click.option("--project-id", type=str, required=True, help="Id of the project to add members to")
-@click.option(
-    "--from-csv",
-    "csv_path",
-    type=click.Path(),
-    help="path to a csv file with email in the first column",
-)
-@click.option(
-    "--all",
-    "all_members",
-    type=bool,
-    is_flag=True,
-    default=False,
-    help="Remove all users from project",
-)
+@Arguments.emails
+@Options.project_id
+@from_csv(['email'], ['role'])
+@click.option('--all', 'all_members', type=bool, is_flag=True, default=False,
+              help='Remove all users from project')
 # pylint: disable=too-many-arguments
 def remove_member(
     api_key: Optional[str],
@@ -79,7 +69,8 @@ def remove_member(
         members_to_rm = collect_members_from_emails(emails, None)
 
     count = 0
-    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
+    existing_members = kili.project_users(
+        project_id=project_id, disable_tqdm=True)
     existing_members = {
         member["user"]["email"]: member["id"] for member in existing_members if member["activated"]
     }

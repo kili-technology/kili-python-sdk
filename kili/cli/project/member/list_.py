@@ -6,16 +6,17 @@ import click
 import pandas as pd
 from tabulate import tabulate
 
-from kili.cli.common_args import Options
 from kili.client import Kili
+from kili.cli.common_args import Arguments, Options
 
-ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
+ROLE_ORDER = {v: i for i, v in enumerate(
+    ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 
 
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.option("--project-id", type=str, required=True, help="Id of the project to list members of")
+@Arguments.project_id
 @Options.tablefmt
 def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: str, tablefmt: str):
     """
@@ -46,21 +47,26 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         ),
     )
     users = pd.DataFrame(users)
-    users = pd.concat([users.drop(["user"], axis=1), users["user"].apply(pd.Series)], axis=1)
+    users = pd.concat([users.drop(["user"], axis=1),
+                      users["user"].apply(pd.Series)], axis=1)
     users = pd.concat(
-        [users.drop(["organization"], axis=1), users["organization"].apply(pd.Series)],
+        [users.drop(["organization"], axis=1),
+         users["organization"].apply(pd.Series)],
         axis=1,
     )
     users = users.loc[users["activated"]]
     users.rename(
-        columns={"role": "ROLE", "email": "EMAIL", "id": "ID", "name": "ORGANIZATION"},
+        columns={"role": "ROLE", "email": "EMAIL",
+                 "id": "ID", "name": "ORGANIZATION"},
         inplace=True,
     )
-    users["NAME"] = users["firstname"].str.title() + " " + users["lastname"].str.title()
+    users["NAME"] = users["firstname"].str.title() + " " + \
+        users["lastname"].str.title()
     users = users.sort_values(
         by=["ROLE", "lastname"],
         ascending=True,
-        key=lambda column: column.map(ROLE_ORDER) if column.name == "ROLE" else column,
+        key=lambda column: column.map(
+            ROLE_ORDER) if column.name == "ROLE" else column,
     )
     users = users[["ROLE", "NAME", "EMAIL", "ID", "ORGANIZATION"]]
     print(tabulate(users, headers="keys", tablefmt=tablefmt, showindex=False))

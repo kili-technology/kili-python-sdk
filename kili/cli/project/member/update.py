@@ -4,45 +4,23 @@ import warnings
 from typing import Optional
 
 import click
+from kili.cli.project.member.helpers import (collect_members_from_csv,
+                                             collect_members_from_emails,
+                                             collect_members_from_project,
+                                             check_exclusive_options)
 
-from kili.cli.common_args import Options
-from kili.cli.project.member.helpers import (
-    ROLES,
-    check_exclusive_options,
-    collect_members_from_csv,
-    collect_members_from_emails,
-    collect_members_from_project,
-)
 from kili.client import Kili
+from kili.cli.common_args import Arguments, Options, from_csv
 
 
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.argument("emails", type=str, required=False, nargs=-1)
-@click.option("--project-id", type=str, required=True, help="Id of the project to add members to")
-@click.option(
-    "--role",
-    type=click.Choice(ROLES),
-    default=None,
-    show_default="LABELER",
-    help="Project role of the added user(s).",
-)
-@click.option(
-    "--from-csv",
-    "csv_path",
-    type=click.Path(),
-    help=(
-        "path to a csv file with email in the first column."
-        " A second column can be used to use one-to-one role."
-    ),
-)
-@click.option(
-    "--from-project",
-    "project_id_src",
-    type=str,
-    help="project_id of another Kili project to copy the users from",
-)
+@Arguments.emails
+@Options.project_id
+@Options.role
+@from_csv(['email'], ['role'])
+@Options.from_project
 # pylint: disable=too-many-arguments
 def update_member(
     api_key: Optional[str],
@@ -84,13 +62,15 @@ def update_member(
     if csv_path is not None:
         members_to_update = collect_members_from_csv(csv_path, role)
     elif project_id_src is not None:
-        members_to_update = collect_members_from_project(kili, project_id_src, role)
+        members_to_update = collect_members_from_project(
+            kili, project_id_src, role)
     else:
         members_to_update = collect_members_from_emails(emails, role)
 
     count = 0
 
-    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
+    existing_members = kili.project_users(
+        project_id=project_id, disable_tqdm=True)
     existing_members = {
         member["user"]["email"]: {
             "role_id": member["id"],

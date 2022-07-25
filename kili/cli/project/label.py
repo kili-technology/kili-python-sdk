@@ -2,11 +2,10 @@
 
 import json
 import os
-from typing import Optional
-
+from typing import Optional, Tuple
 import click
 
-from kili.cli.common_args import Options, from_csv
+from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.helpers import collect_from_csv
 from kili.client import Kili
 from kili.exceptions import NotFound
@@ -24,7 +23,8 @@ def type_check_label(key, value):
 @click.command()
 @Options.api_key
 @Options.endpoint
-@from_csv(True, ["external_id", "json_response_path"], [])
+@Arguments.files
+@from_csv(['external_id', 'json_response_path'], [])
 @Options.project_id
 @click.option(
     "--prediction",
@@ -42,13 +42,13 @@ def type_check_label(key, value):
 )
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
-    api_key: Optional[str],
-    endpoint: Optional[str],
-    csv_path: str,
-    project_id: str,
-    is_prediction: bool,
-    model_name: str,
-):
+        api_key: Optional[str],
+        endpoint: Optional[str],
+        files: Optional[Tuple[str, ...]],
+        csv_path: str,
+        project_id: str,
+        is_prediction: bool,
+        model_name: str):
     """
     Import labels or predictions
 

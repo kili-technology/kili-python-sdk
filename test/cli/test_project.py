@@ -161,7 +161,8 @@ kili_client.create_predictions = create_predictions_mock = MagicMock()
 kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
 kili_client.append_many_to_dataset = append_many_to_dataset_mock = MagicMock()
 kili_client.create_project = create_project_mock = MagicMock()
-kili_client.project_users = project_users_mock = MagicMock(side_effect=mocked__project_users)
+kili_client.project_users = project_users_mock = MagicMock(
+    side_effect=mocked__project_users)
 kili_client.append_to_roles = append_to_roles_mock = MagicMock()
 kili_client.update_properties_in_role = update_properties_in_role_mock = MagicMock()
 kili_client.delete_from_roles = delete_from_roles_mock = MagicMock()
@@ -243,7 +244,8 @@ class TestCLIProject:
                 "expected_mutation_payload": {
                     "project_id": "project_id",
                     "json_response_array": [
-                        {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}}
+                        {"JOB_0": {"categories": [
+                            {"name": "YES_IT_IS_SPAM", "confidence": 100}]}}
                     ]
                     * 2,
                     "external_id_array": ["poules.png", "test.jpg"],
@@ -262,9 +264,11 @@ class TestCLIProject:
             result = runner.invoke(import_labels, arguments)
             debug_subprocess_pytest(result)
             if test_case["mutation_to_call"] == "append_to_labels":
-                append_to_labels_mock.assert_any_call(**test_case["expected_mutation_payload"])
+                append_to_labels_mock.assert_any_call(
+                    **test_case["expected_mutation_payload"])
             else:
-                create_predictions_mock.assert_called_with(**test_case["expected_mutation_payload"])
+                create_predictions_mock.assert_called_with(
+                    **test_case["expected_mutation_payload"])
 
     def test_import(self, mocker):
         TEST_CASES = [
@@ -410,7 +414,8 @@ class TestCLIProject:
                     arguments.append("--" + k)
                     arguments.append(v)
                 if test_case.get("flags"):
-                    arguments.extend(["--" + flag for flag in test_case["flags"]])
+                    arguments.extend(
+                        ["--" + flag for flag in test_case["flags"]])
                 print(arguments)
                 result = runner.invoke(import_assets, arguments)
                 debug_subprocess_pytest(result)
@@ -420,9 +425,10 @@ class TestCLIProject:
 
     def test_list_members(self, mocker):
         runner = CliRunner()
-        result = runner.invoke(list_members, ["--project-id", "project_id"])
+        result = runner.invoke(list_members, ["project_id"])
         debug_subprocess_pytest(result)
-        assert (result.output.count("Jane Doe") == 1) and (result.output.count("@test.com") == 2)
+        assert (result.output.count("Jane Doe") == 1) and (
+            result.output.count("@test.com") == 2)
 
     def test_add_member(self, mocker):
         TEST_CASES = [
@@ -481,7 +487,8 @@ class TestCLIProject:
                 result = runner.invoke(add_member, arguments)
                 debug_subprocess_pytest(result)
                 assert append_to_roles_mock.call_count == 2 * (i + 1)
-                append_to_roles_mock.assert_called_with(**test_case["expected_mutation_payload"])
+                append_to_roles_mock.assert_called_with(
+                    **test_case["expected_mutation_payload"])
 
     def test_update_member(self, mocker):
         TEST_CASES = [
@@ -599,8 +606,10 @@ class TestCLIProject:
                     arguments.append("--" + k)
                     arguments.append(v)
                 if test_case.get("flags"):
-                    arguments.extend(["--" + flag for flag in test_case["flags"]])
+                    arguments.extend(
+                        ["--" + flag for flag in test_case["flags"]])
                 result = runner.invoke(remove_member, arguments)
                 debug_subprocess_pytest(result)
                 assert delete_from_roles_mock.call_count == 2 * (i + 1)
-                delete_from_roles_mock.assert_called_with(**test_case["expected_mutation_payload"])
+                delete_from_roles_mock.assert_called_with(
+                    **test_case["expected_mutation_payload"])
