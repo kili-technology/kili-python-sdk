@@ -39,13 +39,17 @@ TEST_CASES = [
         "case": "user can have complex job and ategory name",
         "query": "JoB46_Hhzef*bzf66.class_Auzf657bdh----_.count > 0 ",
         "raise_error": False,
-    }]
+    },
+]
 
 
 def test_category_search_queries():
     for test in TEST_CASES:
-        case, query, raise_error = test.get('case'), test.get(
-            'query'), test.get('raise_error'),
+        case, query, raise_error = (
+            test.get("case"),
+            test.get("query"),
+            test.get("raise_error"),
+        )
         if raise_error:
             with pytest.raises(ValueError):
                 validate_category_search_query(query)

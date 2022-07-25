@@ -1,21 +1,25 @@
 """Label queries."""
 
-from typing import Generator, List, Optional, Union
 import warnings
+from typing import Generator, List, Optional, Union
 
-from typeguard import typechecked
 import pandas as pd
+from typeguard import typechecked
 
-
-from ...helpers import (Compatible, deprecate, format_result,
-                        fragment_builder, validate_category_search_query)
+from ...constants import NO_ACCESS_RIGHT
+from ...helpers import (
+    Compatible,
+    deprecate,
+    format_result,
+    fragment_builder,
+    validate_category_search_query,
+)
+from ...orm import Label
+from ...types import Label as LabelType
+from ...utils.pagination import row_generator_from_paginated_calls
 from ..asset import QueriesAsset
 from ..project import QueriesProject
-from .queries import gql_labels, GQL_LABELS_COUNT
-from ...constants import NO_ACCESS_RIGHT
-from ...types import Label as LabelType
-from ...orm import Label
-from ...utils.pagination import row_generator_from_paginated_calls
+from .queries import GQL_LABELS_COUNT, gql_labels
 
 
 class QueriesLabel:
@@ -32,33 +36,41 @@ class QueriesLabel:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     @deprecate(removed_in="2.118")
-    def labels(self,
-               project_id: str,
-               asset_id: Optional[str] = None,
-               asset_status_in: Optional[List[str]] = None,
-               asset_external_id_in: Optional[List[str]] = None,
-               author_in: Optional[List[str]] = None,
-               created_at: Optional[str] = None,
-               created_at_gte: Optional[str] = None,
-               created_at_lte: Optional[str] = None,
-               fields: List[str] = ['author.email', 'author.id', 'id',
-                                    'jsonResponse', 'labelType', 'secondsToLabel', 'skipped'],
-               first: Optional[int] = None,
-               honeypot_mark_gte: Optional[float] = None,
-               honeypot_mark_lte: Optional[float] = None,
-               id_contains: Optional[List[str]] = None,
-               label_id: Optional[str] = None,
-               skip: int = 0,
-               skipped: Optional[bool] = None,
-               type_in: Optional[List[str]] = None,
-               user_id: Optional[str] = None,
-               disable_tqdm: bool = False,
-               as_generator: bool = False,
-               category_search: Optional[str] = None,
-               ) -> Union[List[dict], Generator[dict, None, None]]:
+    def labels(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: List[str] = [
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "secondsToLabel",
+            "skipped",
+        ],
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        skipped: Optional[bool] = None,
+        type_in: Optional[List[str]] = None,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        as_generator: bool = False,
+        category_search: Optional[str] = None,
+    ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
 
@@ -119,7 +131,7 @@ class QueriesLabel:
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
-        if 'skipped' in fields or skipped is not None:
+        if "skipped" in fields or skipped is not None:
             message = """
                 The field "skipped" is deprecated since: 20/07/2022.
                 It will be removed after: 31/08/2022.
@@ -132,14 +144,14 @@ class QueriesLabel:
             for (k, v) in saved_args.items()
             if k
             not in [
-                'as_generator',
-                'disable_tqdm',
-                'fields',
-                'first',
-                'id_contains',
-                'self',
-                'skip',
-                'message',
+                "as_generator",
+                "disable_tqdm",
+                "fields",
+                "first",
+                "id_contains",
+                "self",
+                "skip",
+                "message",
             ]
         }
 
@@ -150,29 +162,29 @@ class QueriesLabel:
             validate_category_search_query(category_search)
 
         payload_query = {
-            'where': {
-                'id': label_id,
-                'asset': {
-                    'id': asset_id,
-                    'externalIdIn': asset_external_id_in,
-                    'statusIn': asset_status_in,
+            "where": {
+                "id": label_id,
+                "asset": {
+                    "id": asset_id,
+                    "externalIdIn": asset_external_id_in,
+                    "statusIn": asset_status_in,
                 },
-                'project': {
-                    'id': project_id,
+                "project": {
+                    "id": project_id,
                 },
-                'user': {
-                    'id': user_id,
+                "user": {
+                    "id": user_id,
                 },
-                'createdAt': created_at,
-                'createdAtGte': created_at_gte,
-                'createdAtLte': created_at_lte,
-                'authorIn': author_in,
-                'honeypotMarkGte': honeypot_mark_gte,
-                'honeypotMarkLte': honeypot_mark_lte,
-                'idIn': id_contains,
-                'search': category_search,
-                'skipped': skipped,
-                'typeIn': type_in,
+                "createdAt": created_at,
+                "createdAtGte": created_at_gte,
+                "createdAtLte": created_at_lte,
+                "authorIn": author_in,
+                "honeypotMarkGte": honeypot_mark_gte,
+                "honeypotMarkLte": honeypot_mark_lte,
+                "idIn": id_contains,
+                "search": category_search,
+                "skipped": skipped,
+                "typeIn": type_in,
             },
         }
 
@@ -184,40 +196,36 @@ class QueriesLabel:
             self._query_labels,
             payload_query,
             fields,
-            disable_tqdm
+            disable_tqdm,
         )
 
         if as_generator:
             return labels_generator
         return list(labels_generator)
 
-    def _query_labels(self,
-                      skip: int,
-                      first: int,
-                      payload: dict,
-                      fields: List[str]):
+    def _query_labels(self, skip: int, first: int, payload: dict, fields: List[str]):
 
-        payload.update({'skip': skip, 'first': first})
+        payload.update({"skip": skip, "first": first})
         _gql_labels = gql_labels(fragment_builder(fields, LabelType))
         result = self.auth.client.execute(_gql_labels, payload)
-        return format_result('data', result, Label)
+        return format_result("data", result, Label)
 
     # pylint: disable=dangerous-default-value
     @typechecked
     @deprecate(removed_in="2.118")
-    def export_labels_as_df(self,
-                            project_id: str,
-                            fields: List[str] = [
-                                'author.email',
-                                'author.id',
-                                'createdAt',
-                                'id',
-                                'labelType',
-                                'skipped',
-                            ],
-                            asset_fields: List[str] = [
-                                'externalId'
-                            ]) -> pd.DataFrame:
+    def export_labels_as_df(
+        self,
+        project_id: str,
+        fields: List[str] = [
+            "author.email",
+            "author.id",
+            "createdAt",
+            "id",
+            "labelType",
+            "skipped",
+        ],
+        asset_fields: List[str] = ["externalId"],
+    ) -> pd.DataFrame:
         # pylint: disable=line-too-long
         """Get the labels of a project as a pandas DataFrame.
 
@@ -233,7 +241,7 @@ class QueriesLabel:
         Returns:
             pandas DataFrame containing the labels.
         """
-        if 'skipped' in fields:
+        if "skipped" in fields:
             message = """
                 The field "skipped" is deprecated since: 20/07/2022.
                 It will be removed after: 31/08/2022.
@@ -244,31 +252,40 @@ class QueriesLabel:
         assert len(projects) == 1, NO_ACCESS_RIGHT
         assets = QueriesAsset(self.auth).assets(
             project_id=project_id,
-            fields=asset_fields + ['labels.' + field for field in fields])
-        labels = [dict(label, **dict((f'asset_{key}', asset[key]) for key in asset if key != 'labels'))
-                  for asset in assets for label in asset['labels']]
+            fields=asset_fields + ["labels." + field for field in fields],
+        )
+        labels = [
+            dict(
+                label,
+                **dict((f"asset_{key}", asset[key]) for key in asset if key != "labels"),
+            )
+            for asset in assets
+            for label in asset["labels"]
+        ]
         labels_df = pd.DataFrame(labels)
         return labels_df
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     @deprecate(removed_in="2.118")
-    def count_labels(self,
-                     project_id: str,
-                     asset_id: Optional[str] = None,
-                     asset_status_in: Optional[List[str]] = None,
-                     asset_external_id_in: Optional[List[str]] = None,
-                     author_in: Optional[List[str]] = None,
-                     created_at: Optional[str] = None,
-                     created_at_gte: Optional[str] = None,
-                     created_at_lte: Optional[str] = None,
-                     honeypot_mark_gte: Optional[float] = None,
-                     honeypot_mark_lte: Optional[float] = None,
-                     label_id: Optional[str] = None,
-                     skipped: Optional[bool] = None,
-                     type_in: Optional[List[str]] = None,
-                     user_id: Optional[str] = None,
-                     category_search: Optional[str] = None) -> int:
+    def count_labels(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        label_id: Optional[str] = None,
+        skipped: Optional[bool] = None,
+        type_in: Optional[List[str]] = None,
+        user_id: Optional[str] = None,
+        category_search: Optional[str] = None,
+    ) -> int:
         # pylint: disable=line-too-long
         """Get the number of labels for the given parameters.
 
@@ -308,30 +325,30 @@ class QueriesLabel:
             validate_category_search_query(category_search)
 
         variables = {
-            'where': {
-                'id': label_id,
-                'asset': {
-                    'id': asset_id,
-                    'externalIdIn': asset_external_id_in,
-                    'statusIn': asset_status_in,
+            "where": {
+                "id": label_id,
+                "asset": {
+                    "id": asset_id,
+                    "externalIdIn": asset_external_id_in,
+                    "statusIn": asset_status_in,
                 },
-                'project': {
-                    'id': project_id,
+                "project": {
+                    "id": project_id,
                 },
-                'user': {
-                    'id': user_id,
+                "user": {
+                    "id": user_id,
                 },
-                'createdAt': created_at,
-                'createdAtGte': created_at_gte,
-                'createdAtLte': created_at_lte,
-                'authorIn': author_in,
-                'honeypotMarkGte': honeypot_mark_gte,
-                'honeypotMarkLte': honeypot_mark_lte,
-                'search': category_search,
-                'skipped': skipped,
-                'typeIn': type_in,
+                "createdAt": created_at,
+                "createdAtGte": created_at_gte,
+                "createdAtLte": created_at_lte,
+                "authorIn": author_in,
+                "honeypotMarkGte": honeypot_mark_gte,
+                "honeypotMarkLte": honeypot_mark_lte,
+                "search": category_search,
+                "skipped": skipped,
+                "typeIn": type_in,
             }
         }
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
-        count = format_result('data', result)
+        count = format_result("data", result)
         return count

@@ -1,10 +1,10 @@
 """
     Imports a sample of a NER dataset processed with Google Natural Language NER into Kili.
 """
-from itertools import cycle
 import os
 import tarfile
 import urllib.request
+from itertools import cycle
 
 from google.cloud import language
 from google.protobuf.json_format import MessageToDict
@@ -42,12 +42,7 @@ def analyze_entities(text_content):
 
 
 def escape_text(str):
-    return (
-        str.replace("\\", "\\\\")
-        .replace('"', '\\"')
-        .replace("\r", "\\r")
-        .replace("\\$", "$")
-    )
+    return str.replace("\\", "\\\\").replace('"', '\\"').replace("\r", "\\r").replace("\\$", "$")
 
 
 def format_google_nl_to_kili(entities):
@@ -94,8 +89,7 @@ ENTITY_TYPES = [
     ("PRICE", "Price"),
 ]
 
-ENTITY_TYPES_WITH_COLORS = [(n[0], n[1], c)
-                            for n, c in zip(ENTITY_TYPES, cycle(COLORS))]
+ENTITY_TYPES_WITH_COLORS = [(n[0], n[1], c) for n, c in zip(ENTITY_TYPES, cycle(COLORS))]
 
 JSON_INTERFACE = {
     "jobs": {
@@ -103,8 +97,7 @@ JSON_INTERFACE = {
             "mlTask": "NAMED_ENTITIES_RECOGNITION",
             "content": {
                 "categories": {
-                    name: {"name": name_pretty,
-                           "children": [], "color": color}
+                    name: {"name": name_pretty, "children": [], "color": color}
                     for name, name_pretty, color in ENTITY_TYPES_WITH_COLORS
                 },
                 "input": "radio",
@@ -125,9 +118,7 @@ if __name__ == "__main__":
     path_dir = extract_dataset(path_gz)
 
     only_files = [
-        os.path.join(path, name)
-        for path, _, files in os.walk(path_dir)
-        for name in files
+        os.path.join(path, name) for path, _, files in os.walk(path_dir) for name in files
     ]
 
     kili = Kili()
@@ -159,7 +150,7 @@ if __name__ == "__main__":
                 "external_id": filepath,
                 "escaped_text": escaped_text,
                 "json_response": json_response,
-                "model_name": "google_natural_language_ner"
+                "model_name": "google_natural_language_ner",
             }
 
     print("Creating asset list")
@@ -169,7 +160,7 @@ if __name__ == "__main__":
     kili.append_many_to_dataset(
         project_id=project_id,
         content_array=[a["escaped_text"] for a in assets],
-        external_id_array=[a["external_id"] for a in assets]
+        external_id_array=[a["external_id"] for a in assets],
     )
 
     print("Import predictions into Kili")

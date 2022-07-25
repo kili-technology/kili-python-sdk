@@ -22,11 +22,12 @@ class AnnotationFormat:
     List of annotation formats
     """
 
-    Latest = 'latest'
-    Raw = 'raw'
-    Simple = 'simple'
-    YoloV4 = 'yolo_v4'
-    YoloV5 = 'yolo_v5'
+    Latest = "latest"
+    Raw = "raw"
+    Simple = "simple"
+    YoloV4 = "yolo_v4"
+    YoloV5 = "yolo_v5"
+
 
 @dataclass
 class AssetStatus:
@@ -34,11 +35,12 @@ class AssetStatus:
     """
     List of asset status
     """
-    Labeled = 'LABELED'
-    Ongoing = 'ONGOING'
-    Reviewed = 'REVIEWED'
-    ToReview = 'TO_REVIEW'
-    Todo = 'TODO'
+    Labeled = "LABELED"
+    Ongoing = "ONGOING"
+    Reviewed = "REVIEWED"
+    ToReview = "TO_REVIEW"
+    Todo = "TODO"
+
 
 @dataclass
 class JobMLTask:
@@ -47,16 +49,16 @@ class JobMLTask:
     """
     List of ML Tasks
     """
-    AssetAnnotation = 'ASSET_ANNOTATION'
-    Classification = 'CLASSIFICATION'
-    NamedEntitiesRecognition = 'NAMED_ENTITIES_RECOGNITION'
-    NamedEntitiesRelation = 'NAMED_ENTITIES_RELATION'
-    ObjectRelation = 'OBJECT_RELATION'
-    ObjectDetection = 'OBJECT_DETECTION'
-    PoseEstimation = 'POSE_ESTIMATION'
-    RegionDetection = 'REGION_DETECTION'
-    SpeechToText = 'SPEECH_TO_TEXT'
-    Transcription = 'TRANSCRIPTION'
+    AssetAnnotation = "ASSET_ANNOTATION"
+    Classification = "CLASSIFICATION"
+    NamedEntitiesRecognition = "NAMED_ENTITIES_RECOGNITION"
+    NamedEntitiesRelation = "NAMED_ENTITIES_RELATION"
+    ObjectRelation = "OBJECT_RELATION"
+    ObjectDetection = "OBJECT_DETECTION"
+    PoseEstimation = "POSE_ESTIMATION"
+    RegionDetection = "REGION_DETECTION"
+    SpeechToText = "SPEECH_TO_TEXT"
+    Transcription = "TRANSCRIPTION"
 
 
 @dataclass
@@ -65,13 +67,13 @@ class JobTool:
     """
     List of tools
     """
-    Marker = 'marker'
-    Polygon = 'polygon'
-    Polyline = 'polyline'
-    Range = 'range'
-    Rectangle = 'rectangle'
-    Semantic = 'semantic'
-    Vector = 'vector'
+    Marker = "marker"
+    Polygon = "polygon"
+    Polyline = "polyline"
+    Range = "range"
+    Rectangle = "rectangle"
+    Semantic = "semantic"
+    Vector = "vector"
 
 
 def get_polygon(annotation):
@@ -82,7 +84,7 @@ def get_polygon(annotation):
         annotation : Kili annotation
     """
     try:
-        return annotation['boundingPoly'][0]['normalizedVertices']
+        return annotation["boundingPoly"][0]["normalizedVertices"]
     except KeyError:
         return None
 
@@ -95,7 +97,7 @@ def get_category(annotation):
         annotation : Kili annotation
     """
     try:
-        return annotation['categories'][0]['name']
+        return annotation["categories"][0]["name"]
     except KeyError:
         return None
 
@@ -109,11 +111,11 @@ def get_named_entity(annotation):
     """
     try:
         return {
-            'beginId': annotation['beginId'],
-            'beginOffset': annotation['beginOffset'],
-            'content': annotation['content'],
-            'endId': annotation['endId'],
-            'endOffset': annotation['endOffset']
+            "beginId": annotation["beginId"],
+            "beginOffset": annotation["beginOffset"],
+            "content": annotation["content"],
+            "endId": annotation["endId"],
+            "endOffset": annotation["endOffset"],
         }
     except KeyError:
         return None
@@ -153,31 +155,34 @@ class Label(DictClass):
         Args:
             _format: expected format
         """
-        if 'jsonResponse' not in self:
+        if "jsonResponse" not in self:
             raise Exception(
-                'You did not fetch jsonResponse for' \
-                f' label "{self["id"] if "id" in self else self}"')
+                "You did not fetch jsonResponse for"
+                f' label "{self["id"] if "id" in self else self}"'
+            )
         if _format == AnnotationFormat.Raw:
             return self.jsonResponse
         if _format == AnnotationFormat.Simple:
             job_names = self.jsonResponse.keys()
             if len(job_names) > 1:
                 return {
-                    'error': 'Simple format is not adapted' \
-                    ' when there is more than one job.' \
-                    ' Please choose another annotation format.'}
+                    "error": "Simple format is not adapted"
+                    " when there is more than one job."
+                    " Please choose another annotation format."
+                }
             for job_name in job_names:
                 job_response = self.jsonResponse[job_name]
                 category = get_category(job_response)
                 if category is not None:
                     return category
-                if 'annotations' not in job_response:
+                if "annotations" not in job_response:
                     return None
-                return [format_image_annotation(annotation) \
-                    for annotation in job_response['annotations']]
+                return [
+                    format_image_annotation(annotation)
+                    for annotation in job_response["annotations"]
+                ]
             return None
-        raise Exception(
-            f'format "{_format}" is not a valid annotation format.')
+        raise Exception(f'format "{_format}" is not a valid annotation format.')
 
 
 class Asset(DictClass):
@@ -187,12 +192,12 @@ class Asset(DictClass):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'labels' in self:
+        if "labels" in self:
             labels = []
-            for label in self['labels']:
+            for label in self["labels"]:
                 labels.append(Label(label))
             self.labels = labels
-        if 'latestLabel' in self:
-            latest_label = self['latestLabel']
+        if "latestLabel" in self:
+            latest_label = self["latestLabel"]
             if latest_label is not None:
-                self.latestLabel = Label(latest_label) # pylint: disable=invalid-name
+                self.latestLabel = Label(latest_label)  # pylint: disable=invalid-name

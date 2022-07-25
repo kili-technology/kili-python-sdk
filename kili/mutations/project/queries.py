@@ -2,11 +2,14 @@
 Queries of project mutations
 """
 
-from .fragments import (PROJECT_FRAGMENT, PROJECT_FRAGMENT_ID,
-                        PROJECT_FRAGMENT_PUBLIC_TOKEN, ROLE_FRAGMENT)
+from .fragments import (
+    PROJECT_FRAGMENT,
+    PROJECT_FRAGMENT_ID,
+    PROJECT_FRAGMENT_PUBLIC_TOKEN,
+    ROLE_FRAGMENT,
+)
 
-
-GQL_APPEND_TO_ROLES = f'''
+GQL_APPEND_TO_ROLES = f"""
 mutation($data: AppendToRolesData!, $where: ProjectWhere!) {{
   data: appendToRoles(
     data: $data
@@ -15,9 +18,9 @@ mutation($data: AppendToRolesData!, $where: ProjectWhere!) {{
       {PROJECT_FRAGMENT}
   }}
 }}
-'''
+"""
 
-GQL_UPDATE_PROPERTIES_IN_PROJECT = f'''
+GQL_UPDATE_PROPERTIES_IN_PROJECT = f"""
 mutation(
     $consensusMark: Float
     $consensusTotCoverage: Int
@@ -63,9 +66,9 @@ mutation(
     {PROJECT_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
-GQL_CREATE_PROJECT = f'''
+GQL_CREATE_PROJECT = f"""
 mutation(
     $data: CreateProjectData!
   ) {{
@@ -75,17 +78,17 @@ mutation(
       {PROJECT_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
-GQL_MAKE_PROJECT_PUBLIC = f'''
+GQL_MAKE_PROJECT_PUBLIC = f"""
 mutation($where: ProjectWhere!) {{
   data: makeProjectPublic(where: $where) {{
     {PROJECT_FRAGMENT_PUBLIC_TOKEN}
   }}
 }}
-'''
+"""
 
-GQL_UPDATE_PROPERTIES_IN_ROLE = f'''
+GQL_UPDATE_PROPERTIES_IN_ROLE = f"""
 mutation(
     $roleID: ID!
     $projectID: ID!
@@ -102,17 +105,17 @@ mutation(
       {ROLE_FRAGMENT}
   }}
 }}
-'''
+"""
 
-GQL_DELETE_FROM_ROLES = f'''
+GQL_DELETE_FROM_ROLES = f"""
 mutation($where: ProjectUserWhere!) {{
   data: deleteFromRoles(where: $where) {{
     {PROJECT_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
-GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER = f'''
+GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER = f"""
 mutation(
     $projectUserID: ID!
     $totalDuration: Int
@@ -134,9 +137,9 @@ mutation(
     {PROJECT_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
-GQL_DELETE_PROJECT = f'''
+GQL_DELETE_PROJECT = f"""
 mutation($projectID: ID!) {{
   data: deleteProject(where: {{
       id: $projectID
@@ -145,10 +148,10 @@ mutation($projectID: ID!) {{
     {PROJECT_FRAGMENT_ID}
   }}
 }}
-'''
+"""
 
-GQL_PROJECT_DELETE_ASYNCHRONOUSLY = '''
+GQL_PROJECT_DELETE_ASYNCHRONOUSLY = """
 mutation($where: ProjectWhere!) {
   data: deleteProjectAsynchronously(where: $where)
 }
-'''
+"""

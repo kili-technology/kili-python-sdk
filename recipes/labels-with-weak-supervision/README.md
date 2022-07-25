@@ -35,7 +35,7 @@ Depending on your machine learning task, you will need to encode your prediction
 {
     "annotations":[
         {
-            "type":"OCR", 
+            "type":"OCR",
             "annotation": {
                 "score":null,
                 "description":[{"FIRSTNAME":100}],

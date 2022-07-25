@@ -1,24 +1,29 @@
-
 """Asset queries."""
 
-from typing import Generator, List, Optional, Union
 import warnings
+from typing import Generator, List, Optional, Union
 
-from typeguard import typechecked
 import pandas as pd
+from typeguard import typechecked
 
-from ...helpers import (Compatible, deprecate, format_result,
-                        fragment_builder, validate_category_search_query)
-from .queries import gql_assets, GQL_ASSETS_COUNT
-from ...types import Asset as AssetType
+from ...helpers import (
+    Compatible,
+    deprecate,
+    format_result,
+    fragment_builder,
+    validate_category_search_query,
+)
 from ...orm import Asset
+from ...types import Asset as AssetType
 from ...utils.pagination import row_generator_from_paginated_calls
+from .queries import GQL_ASSETS_COUNT, gql_assets
 
 
 class QueriesAsset:
     """
     Set of Asset queries
     """
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
@@ -30,51 +35,54 @@ class QueriesAsset:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def assets(self,
-               project_id: str,
-               asset_id: Optional[str] = None,
-               skip: int = 0,
-               fields: List[str] = ['content',
-                                    'createdAt',
-                                    'externalId',
-                                    'id',
-                                    'isHoneypot',
-                                    'jsonMetadata',
-                                    'labels.author.id',
-                                    'labels.author.email',
-                                    'labels.createdAt',
-                                    'labels.id',
-                                    'labels.jsonResponse',
-                                    'skipped',
-                                    'status'],
-               asset_id_in: Optional[List[str]] = None,
-               consensus_mark_gt: Optional[float] = None,
-               consensus_mark_lt: Optional[float] = None,
-               disable_tqdm: bool = False,
-               external_id_contains: Optional[List[str]] = None,
-               first: Optional[int] = None,
-               format: Optional[str] = None,  # pylint: disable=redefined-builtin
-               honeypot_mark_gt: Optional[float] = None,
-               honeypot_mark_lt: Optional[float] = None,
-               label_author_in: Optional[List[str]] = None,
-               label_consensus_mark_gt: Optional[float] = None,
-               label_consensus_mark_lt: Optional[float] = None,
-               label_created_at: Optional[str] = None,
-               label_created_at_gt: Optional[str] = None,
-               label_created_at_lt: Optional[str] = None,
-               label_honeypot_mark_gt: Optional[float] = None,
-               label_honeypot_mark_lt: Optional[float] = None,
-               label_type_in: Optional[List[str]] = None,
-               metadata_where: Optional[dict] = None,
-               skipped: Optional[bool] = None,
-               status_in: Optional[List[str]] = None,
-               updated_at_gte: Optional[str] = None,
-               updated_at_lte: Optional[str] = None,
-               as_generator: bool = False,
-               label_category_search: Optional[str] = None,
-               ) -> Union[List[dict], Generator[dict, None, None], pd.DataFrame]:
+    def assets(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        skip: int = 0,
+        fields: List[str] = [
+            "content",
+            "createdAt",
+            "externalId",
+            "id",
+            "isHoneypot",
+            "jsonMetadata",
+            "labels.author.id",
+            "labels.author.email",
+            "labels.createdAt",
+            "labels.id",
+            "labels.jsonResponse",
+            "skipped",
+            "status",
+        ],
+        asset_id_in: Optional[List[str]] = None,
+        consensus_mark_gt: Optional[float] = None,
+        consensus_mark_lt: Optional[float] = None,
+        disable_tqdm: bool = False,
+        external_id_contains: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        format: Optional[str] = None,  # pylint: disable=redefined-builtin
+        honeypot_mark_gt: Optional[float] = None,
+        honeypot_mark_lt: Optional[float] = None,
+        label_author_in: Optional[List[str]] = None,
+        label_consensus_mark_gt: Optional[float] = None,
+        label_consensus_mark_lt: Optional[float] = None,
+        label_created_at: Optional[str] = None,
+        label_created_at_gt: Optional[str] = None,
+        label_created_at_lt: Optional[str] = None,
+        label_honeypot_mark_gt: Optional[float] = None,
+        label_honeypot_mark_lt: Optional[float] = None,
+        label_type_in: Optional[List[str]] = None,
+        metadata_where: Optional[dict] = None,
+        skipped: Optional[bool] = None,
+        status_in: Optional[List[str]] = None,
+        updated_at_gte: Optional[str] = None,
+        updated_at_lte: Optional[str] = None,
+        as_generator: bool = False,
+        label_category_search: Optional[str] = None,
+    ) -> Union[List[dict], Generator[dict, None, None], pd.DataFrame]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
@@ -156,11 +164,25 @@ class QueriesAsset:
         """
         if format == "pandas" and as_generator:
             raise ValueError(
-                "Argument values as_generator==True and format==\"pandas\" are not compatible.")
+                'Argument values as_generator==True and format=="pandas" are not compatible.'
+            )
 
         saved_args = locals()
-        count_args = {k: v for (k, v) in saved_args.items()
-                      if k not in ['skip', 'first', 'disable_tqdm', 'format', 'fields', 'self', 'as_generator', 'message']}
+        count_args = {
+            k: v
+            for (k, v) in saved_args.items()
+            if k
+            not in [
+                "skip",
+                "first",
+                "disable_tqdm",
+                "format",
+                "fields",
+                "self",
+                "as_generator",
+                "message",
+            ]
+        }
 
         # using tqdm with a generator is messy, so it is always disabled
         disable_tqdm = disable_tqdm or as_generator
@@ -168,34 +190,34 @@ class QueriesAsset:
             validate_category_search_query(label_category_search)
 
         payload_query = {
-            'where': {
-                'id': asset_id,
-                'project': {
-                    'id': project_id,
+            "where": {
+                "id": asset_id,
+                "project": {
+                    "id": project_id,
                 },
-                'externalIdIn': external_id_contains,
-                'statusIn': status_in,
-                'consensusMarkGte': consensus_mark_gt,
-                'consensusMarkLte': consensus_mark_lt,
-                'honeypotMarkGte': honeypot_mark_gt,
-                'honeypotMarkLte': honeypot_mark_lt,
-                'idIn': asset_id_in,
-                'metadata': metadata_where,
-                'label': {
-                    'typeIn': label_type_in,
-                    'authorIn': label_author_in,
-                    'consensusMarkGte': label_consensus_mark_gt,
-                    'consensusMarkLte': label_consensus_mark_lt,
-                    'createdAt': label_created_at,
-                    'createdAtGte': label_created_at_gt,
-                    'createdAtLte': label_created_at_lt,
-                    'honeypotMarkGte': label_honeypot_mark_gt,
-                    'honeypotMarkLte': label_honeypot_mark_lt,
-                    'search': label_category_search
+                "externalIdIn": external_id_contains,
+                "statusIn": status_in,
+                "consensusMarkGte": consensus_mark_gt,
+                "consensusMarkLte": consensus_mark_lt,
+                "honeypotMarkGte": honeypot_mark_gt,
+                "honeypotMarkLte": honeypot_mark_lt,
+                "idIn": asset_id_in,
+                "metadata": metadata_where,
+                "label": {
+                    "typeIn": label_type_in,
+                    "authorIn": label_author_in,
+                    "consensusMarkGte": label_consensus_mark_gt,
+                    "consensusMarkLte": label_consensus_mark_lt,
+                    "createdAt": label_created_at,
+                    "createdAtGte": label_created_at_gt,
+                    "createdAtLte": label_created_at_lt,
+                    "honeypotMarkGte": label_honeypot_mark_gt,
+                    "honeypotMarkLte": label_honeypot_mark_lt,
+                    "search": label_category_search,
                 },
-                'skipped': skipped,
-                'updatedAtGte': updated_at_gte,
-                'updatedAtLte': updated_at_lte,
+                "skipped": skipped,
+                "updatedAtGte": updated_at_gte,
+                "updatedAtLte": updated_at_lte,
             },
         }
 
@@ -207,7 +229,7 @@ class QueriesAsset:
             self._query_assets,
             payload_query,
             fields,
-            disable_tqdm
+            disable_tqdm,
         )
 
         if format == "pandas":
@@ -216,44 +238,42 @@ class QueriesAsset:
             return asset_generator
         return list(asset_generator)
 
-    def _query_assets(self,
-                      skip: int,
-                      first: int,
-                      payload: dict,
-                      fields: List[str]):
+    def _query_assets(self, skip: int, first: int, payload: dict, fields: List[str]):
 
         payload.update({"skip": skip, "first": first})
         _gql_assets = gql_assets(fragment_builder(fields, AssetType))
         result = self.auth.client.execute(_gql_assets, payload)
-        assets = format_result('data', result, Asset)
+        assets = format_result("data", result, Asset)
         return assets
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def count_assets(self,
-                     project_id: str,
-                     asset_id: Optional[str] = None,
-                     asset_id_in: Optional[List[str]] = None,
-                     external_id_contains: Optional[List[str]] = None,
-                     metadata_where: Optional[dict] = None,
-                     status_in: Optional[List[str]] = None,
-                     consensus_mark_gt: Optional[float] = None,
-                     consensus_mark_lt: Optional[float] = None,
-                     honeypot_mark_gt: Optional[float] = None,
-                     honeypot_mark_lt: Optional[float] = None,
-                     label_type_in: Optional[List[str]] = None,
-                     label_author_in: Optional[List[str]] = None,
-                     label_consensus_mark_gt: Optional[float] = None,
-                     label_consensus_mark_lt: Optional[float] = None,
-                     label_created_at: Optional[str] = None,
-                     label_created_at_gt: Optional[str] = None,
-                     label_created_at_lt: Optional[str] = None,
-                     label_honeypot_mark_gt: Optional[float] = None,
-                     label_honeypot_mark_lt: Optional[float] = None,
-                     skipped: Optional[bool] = None,
-                     updated_at_gte: Optional[str] = None,
-                     updated_at_lte: Optional[str] = None,
-                     label_category_search: Optional[str] = None) -> int:
+    def count_assets(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        external_id_contains: Optional[List[str]] = None,
+        metadata_where: Optional[dict] = None,
+        status_in: Optional[List[str]] = None,
+        consensus_mark_gt: Optional[float] = None,
+        consensus_mark_lt: Optional[float] = None,
+        honeypot_mark_gt: Optional[float] = None,
+        honeypot_mark_lt: Optional[float] = None,
+        label_type_in: Optional[List[str]] = None,
+        label_author_in: Optional[List[str]] = None,
+        label_consensus_mark_gt: Optional[float] = None,
+        label_consensus_mark_lt: Optional[float] = None,
+        label_created_at: Optional[str] = None,
+        label_created_at_gt: Optional[str] = None,
+        label_created_at_lt: Optional[str] = None,
+        label_honeypot_mark_gt: Optional[float] = None,
+        label_honeypot_mark_lt: Optional[float] = None,
+        skipped: Optional[bool] = None,
+        updated_at_gte: Optional[str] = None,
+        updated_at_lte: Optional[str] = None,
+        label_category_search: Optional[str] = None,
+    ) -> int:
         """Count and return the number of assets with the given constraints.
 
         Parameters beginning with 'label_' apply to labels, others apply to assets.
@@ -320,36 +340,36 @@ class QueriesAsset:
             validate_category_search_query(label_category_search)
 
         variables = {
-            'where': {
-                'id': asset_id,
-                'project': {
-                    'id': project_id,
+            "where": {
+                "id": asset_id,
+                "project": {
+                    "id": project_id,
                 },
-                'externalIdIn': external_id_contains,
-                'statusIn': status_in,
-                'consensusMarkGte': consensus_mark_gt,
-                'consensusMarkLte': consensus_mark_lt,
-                'honeypotMarkGte': honeypot_mark_gt,
-                'honeypotMarkLte': honeypot_mark_lt,
-                'idIn': asset_id_in,
-                'metadata': metadata_where,
-                'label': {
-                    'typeIn': label_type_in,
-                    'authorIn': label_author_in,
-                    'consensusMarkGte': label_consensus_mark_gt,
-                    'consensusMarkLte': label_consensus_mark_lt,
-                    'createdAt': label_created_at,
-                    'createdAtGte': label_created_at_gt,
-                    'createdAtLte': label_created_at_lt,
-                    'honeypotMarkGte': label_honeypot_mark_gt,
-                    'honeypotMarkLte': label_honeypot_mark_lt,
-                    'search': label_category_search
+                "externalIdIn": external_id_contains,
+                "statusIn": status_in,
+                "consensusMarkGte": consensus_mark_gt,
+                "consensusMarkLte": consensus_mark_lt,
+                "honeypotMarkGte": honeypot_mark_gt,
+                "honeypotMarkLte": honeypot_mark_lt,
+                "idIn": asset_id_in,
+                "metadata": metadata_where,
+                "label": {
+                    "typeIn": label_type_in,
+                    "authorIn": label_author_in,
+                    "consensusMarkGte": label_consensus_mark_gt,
+                    "consensusMarkLte": label_consensus_mark_lt,
+                    "createdAt": label_created_at,
+                    "createdAtGte": label_created_at_gt,
+                    "createdAtLte": label_created_at_lt,
+                    "honeypotMarkGte": label_honeypot_mark_gt,
+                    "honeypotMarkLte": label_honeypot_mark_lt,
+                    "search": label_category_search,
                 },
-                'skipped': skipped,
-                'updatedAtGte': updated_at_gte,
-                'updatedAtLte': updated_at_lte,
+                "skipped": skipped,
+                "updatedAtGte": updated_at_gte,
+                "updatedAtLte": updated_at_lte,
             }
         }
         result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
-        count = format_result('data', result)
+        count = format_result("data", result)
         return count

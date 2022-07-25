@@ -2,21 +2,22 @@
 Lock queries
 """
 
-from typing import Generator, List, Optional, Union
 import warnings
+from typing import Generator, List, Optional, Union
+
 from typeguard import typechecked
 
-
 from ...helpers import Compatible, deprecate, format_result, fragment_builder
-from .queries import gql_locks, GQL_LOCKS_COUNT
 from ...types import Lock
 from ...utils.pagination import row_generator_from_paginated_calls
+from .queries import GQL_LOCKS_COUNT, gql_locks
 
 
 class QueriesLock:
     """
     Set of Lock queries
     """
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
@@ -28,15 +29,17 @@ class QueriesLock:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def locks(self,
-              lock_id: Optional[str] = None,
-              fields: List[str] = ['id', 'lockType'],
-              first: Optional[int] = None,
-              skip: int = 0,
-              disable_tqdm: bool = False,
-              as_generator: bool = False) -> Union[List[dict], Generator[dict, None, None]]:
+    def locks(
+        self,
+        lock_id: Optional[str] = None,
+        fields: List[str] = ["id", "lockType"],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        as_generator: bool = False,
+    ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a generator or a list of locks respecting a set of criteria.
 
@@ -55,11 +58,7 @@ class QueriesLock:
         """
 
         count_args = {}
-        payload_query = {
-            'where': {
-                'id': lock_id
-            }
-        }
+        payload_query = {"where": {"id": lock_id}}
 
         disable_tqdm = disable_tqdm or as_generator or lock_id is not None
 
@@ -71,25 +70,21 @@ class QueriesLock:
             self._query_locks,
             payload_query,
             fields,
-            disable_tqdm
+            disable_tqdm,
         )
 
         if as_generator:
             return locks_generator
         return list(locks_generator)
 
-    def _query_locks(self,
-                     skip: int,
-                     first: int,
-                     payload: dict,
-                     fields: List[str]):
+    def _query_locks(self, skip: int, first: int, payload: dict, fields: List[str]):
 
-        payload.update({'skip': skip, 'first': first})
+        payload.update({"skip": skip, "first": first})
         _gql_locks = gql_locks(fragment_builder(fields, Lock))
         result = self.auth.client.execute(_gql_locks, payload)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def count_locks(self: any) -> int:
         """Get the number of locks
@@ -99,11 +94,7 @@ class QueriesLock:
         Returns:
             The number of locks
         """
-        variables = {
-            'where': {
-                'id': None
-            }
-        }
+        variables = {"where": {"id": None}}
         result = self.auth.client.execute(GQL_LOCKS_COUNT, variables)
-        count = format_result('data', result)
+        count = format_result("data", result)
         return count

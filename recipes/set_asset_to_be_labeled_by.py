@@ -7,48 +7,49 @@ from kili.client import Kili
 
 def get(dic, key):
     if key not in dic:
-        return ''
+        return ""
     return dic[key]
 
 
 def get_asset_by_external_id(kili, project_id, external_id):
-    assets = kili.assets(
-        project_id=project_id, external_id_contains=[external_id])
+    assets = kili.assets(project_id=project_id, external_id_contains=[external_id])
     assert len(assets) == 1
     return assets[0]
 
 
 @click.command()
-@click.option('--api-endpoint', default=None,
-              help='Endpoint of GraphQL client',
-              show_default=(
-                  "'KILI_API_ENDPOINT' environment variable or "
-                  "'https://cloud.kili-technology.com/api/label/v2/graphql' if not set"
-              )
-              )
+@click.option(
+    "--api-endpoint",
+    default=None,
+    help="Endpoint of GraphQL client",
+    show_default=(
+        "'KILI_API_ENDPOINT' environment variable or "
+        "'https://cloud.kili-technology.com/api/label/v2/graphql' if not set"
+    ),
+)
 def main(api_endpoint):
-    api_key = input('Enter API KEY: ')
-    project_id = input('Enter project id: ')
+    api_key = input("Enter API KEY: ")
+    project_id = input("Enter project id: ")
 
-    with open('./conf/new_assets.yml', 'r') as f:
+    with open("./conf/new_assets.yml", "r") as f:
         configuration = yaml.safe_load(f)
 
-    assets = configuration['assets']
+    assets = configuration["assets"]
 
     kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
 
     project = kili.projects(project_id=project_id)[0]
-    roles = get(project, 'roles')
+    roles = get(project, "roles")
 
     for asset in tqdm(assets):
-        external_id = get(asset, 'externalId')
-        to_be_labeled_by = [get(user, 'email')
-                            for user in get(asset, 'toBeLabeledBy')]
+        external_id = get(asset, "externalId")
+        to_be_labeled_by = [get(user, "email") for user in get(asset, "toBeLabeledBy")]
         asset = get_asset_by_external_id(kili, project_id, external_id)
-        asset_id = get(asset, 'id')
+        asset_id = get(asset, "id")
         kili.update_properties_in_assets(
-            asset_ids=[asset_id], to_be_labeled_by_array=[to_be_labeled_by])
+            asset_ids=[asset_id], to_be_labeled_by_array=[to_be_labeled_by]
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

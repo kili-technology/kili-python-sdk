@@ -2,6 +2,6 @@
 Fragments of organization mutations
 """
 
-ORGANIZATION_FRAGMENT = '''
+ORGANIZATION_FRAGMENT = """
 id
-'''
+"""

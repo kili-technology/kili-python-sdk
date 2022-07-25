@@ -6,7 +6,7 @@ from typing import Optional
 from typeguard import typechecked
 
 from ...helpers import Compatible, format_result
-from .queries import (GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION)
+from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 
 
 @dataclass
@@ -23,12 +23,9 @@ class MutationsProjectVersion:
         """
         self.auth = auth
 
-    @Compatible(['v2'])
+    @Compatible(["v2"])
     @typechecked
-    def update_properties_in_project_version(
-            self,
-            project_version_id: str,
-            content: Optional[str]):
+    def update_properties_in_project_version(self, project_version_id: str, content: Optional[str]):
         """Update properties of a project version.
 
         Args:
@@ -44,9 +41,8 @@ class MutationsProjectVersion:
                     content='test')
         """
         variables = {
-            'content': content,
-            'id': project_version_id,
+            "content": content,
+            "id": project_version_id,
         }
-        result = self.auth.client.execute(
-            GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION, variables)
-        return format_result('data', result)
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION, variables)
+        return format_result("data", result)

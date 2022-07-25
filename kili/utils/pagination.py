@@ -1,8 +1,9 @@
 """
 Utils
 """
-from typing import Dict, List, Callable, Optional
 import time
+from typing import Callable, Dict, List, Optional
+
 from tqdm import tqdm
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
@@ -37,8 +38,9 @@ def row_generator_from_paginated_calls(
     count_rows_retrieved = 0
     if not disable_tqdm:
         count_rows_available = count_method(**count_kwargs)
-        count_rows_queried_total = min(count_rows_available,
-                                       first) if first is not None else count_rows_available
+        count_rows_queried_total = (
+            min(count_rows_available, first) if first is not None else count_rows_available
+        )
     else:
         # dummy value that won't have any impact since tqdm is disabled
         count_rows_queried_total = 1 if first != 0 else 0
@@ -82,12 +84,13 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
     """
     iterable_length = len(iterable)
     for ndx in range(0, iterable_length, batch_size):
-        yield iterable[ndx:min(ndx + batch_size, iterable_length)]
+        yield iterable[ndx : min(ndx + batch_size, iterable_length)]
 
 
 def batch_object_builder(
-        properties_to_batch: Dict[str, Optional[list]],
-        batch_size: int = MUTATION_BATCH_SIZE) -> Dict[str, Optional[list]]:
+    properties_to_batch: Dict[str, Optional[list]],
+    batch_size: int = MUTATION_BATCH_SIZE,
+) -> Dict[str, Optional[list]]:
     """Generate a paginated iterator for several variables
     Args:
         properties_to_batch: a dictionnary of properties to be batched.
@@ -96,23 +99,30 @@ def batch_object_builder(
     if len(list(filter(None, properties_to_batch.values()))) == 0:
         yield properties_to_batch
         return
-    number_of_objects = len([v for v in properties_to_batch.values(
-    ) if v is not None][0])
+    number_of_objects = len([v for v in properties_to_batch.values() if v is not None][0])
     number_of_batches = len(range(0, number_of_objects, batch_size))
-    batched_properties = {k: (batch_iterator_builder(v, batch_size) if v is not None
-                              else (item for item in [v]*number_of_batches))
-                          for k, v in properties_to_batch.items()}
-    batch_object_iterator = [dict(zip(batched_properties, t))
-                             for t in zip(*batched_properties.values())]
+    batched_properties = {
+        k: (
+            batch_iterator_builder(v, batch_size)
+            if v is not None
+            else (item for item in [v] * number_of_batches)
+        )
+        for k, v in properties_to_batch.items()
+    }
+    batch_object_iterator = [
+        dict(zip(batched_properties, t)) for t in zip(*batched_properties.values())
+    ]
     for batch in batch_object_iterator:
         yield batch
 
 
-def _mutate_from_paginated_call(self,
-                                properties_to_batch: Dict[str, Optional[list]],
-                                generate_variables: Callable,
-                                request: str,
-                                batch_size: int = MUTATION_BATCH_SIZE):
+def _mutate_from_paginated_call(
+    self,
+    properties_to_batch: Dict[str, Optional[list]],
+    generate_variables: Callable,
+    request: str,
+    batch_size: int = MUTATION_BATCH_SIZE,
+):
     """Run a mutation by making paginated calls
     Args:
         properties_to_batch: a dictionnary of properties to be batched.
@@ -143,8 +153,8 @@ def _mutate_from_paginated_call(self,
         result = self.auth.client.execute(request, variables)
         mutation_time = time.time() - mutation_start
         results.append(result)
-        if 'errors' in result:
-            raise GraphQLError(result['errors'], batch_number)
+        if "errors" in result:
+            raise GraphQLError(result["errors"], batch_number)
         if mutation_time < THROTTLING_DELAY:
             time.sleep(THROTTLING_DELAY - mutation_time)
     return results

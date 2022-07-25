@@ -5,8 +5,7 @@ Notification mutations
 from typeguard import typechecked
 
 from ...helpers import Compatible, format_result
-from .queries import (GQL_CREATE_NOTIFICATION,
-                      GQL_UPDATE_PROPERTIES_IN_NOTIFICATION)
+from .queries import GQL_CREATE_NOTIFICATION, GQL_UPDATE_PROPERTIES_IN_NOTIFICATION
 
 
 class MutationsNotification:
@@ -22,7 +21,7 @@ class MutationsNotification:
         """
         self.auth = auth
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def create_notification(self, message: str, status: str, url: str, user_id: str):
         """Create a notification.
@@ -40,24 +39,21 @@ class MutationsNotification:
                 or an error message.
         """
         variables = {
-            'data': {
-                'message': message,
-                'status': status,
-                'url': url,
-                'userID': user_id
+            "data": {
+                "message": message,
+                "status": status,
+                "url": url,
+                "userID": user_id,
             }
         }
         result = self.auth.client.execute(GQL_CREATE_NOTIFICATION, variables)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_notification(
-            self,
-            notification_id: str,
-            has_been_seen: bool,
-            status: str,
-            url: str):
+        self, notification_id: str, has_been_seen: bool, status: str, url: str
+    ):
         """Modify a notification.
 
         This method is currently only active for Kili administrators.
@@ -73,11 +69,10 @@ class MutationsNotification:
                 or an error message.
         """
         variables = {
-            'id': notification_id,
-            'hasBeenSeen': has_been_seen,
-            'status': status,
-            'url': url
+            "id": notification_id,
+            "hasBeenSeen": has_been_seen,
+            "status": status,
+            "url": url,
         }
-        result = self.auth.client.execute(
-            GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables)
-        return format_result('data', result)
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables)
+        return format_result("data", result)

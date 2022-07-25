@@ -10,19 +10,21 @@ from ...helpers import Compatible, format_result
 from ...queries.asset import QueriesAsset
 from ...queries.project import QueriesProject
 from .helpers import verify_argument_ranges
-from .queries import (GQL_APPEND_TO_ROLES,
-                      GQL_CREATE_PROJECT,
-                      GQL_DELETE_FROM_ROLES,
-                      GQL_DELETE_PROJECT,
-                      GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
-                      GQL_MAKE_PROJECT_PUBLIC,
-                      GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
-                      GQL_UPDATE_PROPERTIES_IN_PROJECT,
-                      GQL_UPDATE_PROPERTIES_IN_ROLE)
+from .queries import (
+    GQL_APPEND_TO_ROLES,
+    GQL_CREATE_PROJECT,
+    GQL_DELETE_FROM_ROLES,
+    GQL_DELETE_PROJECT,
+    GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
+    GQL_MAKE_PROJECT_PUBLIC,
+    GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
+    GQL_UPDATE_PROPERTIES_IN_PROJECT,
+    GQL_UPDATE_PROPERTIES_IN_ROLE,
+)
 
 
 class MutationsProject:
-    """ Set of Project mutations."""
+    """Set of Project mutations."""
 
     # pylint: disable=too-many-arguments,too-many-locals
 
@@ -34,9 +36,9 @@ class MutationsProject:
         """
         self.auth = auth
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def append_to_roles(self, project_id: str, user_email: str, role: str = 'LABELER'):
+    def append_to_roles(self, project_id: str, user_email: str, role: str = "LABELER"):
         """Add a user to a project.
 
         !!! info
@@ -59,33 +61,35 @@ class MutationsProject:
             >>> kili.append_to_roles(project_id=project_id, user_email='john@doe.com')
         """
         variables = {
-            'data': {'role': role,
-                     'userEmail': user_email},
-            'where': {'id': project_id}
+            "data": {"role": role, "userEmail": user_email},
+            "where": {"id": project_id},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def update_properties_in_project(self, project_id: str,
-                                     consensus_mark: Optional[float] = None,
-                                     consensus_tot_coverage: Optional[int] = None,
-                                     description: Optional[str] = None,
-                                     honeypot_mark: Optional[float] = None,
-                                     instructions: Optional[str] = None,
-                                     input_type: Optional[str] = None,
-                                     json_interface: Optional[dict] = None,
-                                     min_consensus_size: Optional[int] = None,
-                                     number_of_assets: Optional[int] = None,
-                                     number_of_assets_with_empty_labels: Optional[int] = None,
-                                     number_of_remaining_assets: Optional[int] = None,
-                                     number_of_reviewed_assets: Optional[int] = None,
-                                     review_coverage: Optional[int] = None,
-                                     should_relaunch_kpi_computation: Optional[bool] = None,
-                                     title: Optional[str] = None,
-                                     use_honeypot: Optional[bool] = None,
-                                     metadata_types: Optional[dict] = None):
+    def update_properties_in_project(
+        self,
+        project_id: str,
+        consensus_mark: Optional[float] = None,
+        consensus_tot_coverage: Optional[int] = None,
+        description: Optional[str] = None,
+        honeypot_mark: Optional[float] = None,
+        instructions: Optional[str] = None,
+        input_type: Optional[str] = None,
+        json_interface: Optional[dict] = None,
+        min_consensus_size: Optional[int] = None,
+        number_of_assets: Optional[int] = None,
+        number_of_assets_with_empty_labels: Optional[int] = None,
+        number_of_remaining_assets: Optional[int] = None,
+        number_of_reviewed_assets: Optional[int] = None,
+        review_coverage: Optional[int] = None,
+        should_relaunch_kpi_computation: Optional[bool] = None,
+        title: Optional[str] = None,
+        use_honeypot: Optional[bool] = None,
+        metadata_types: Optional[dict] = None,
+    ):
         """Update properties of a project.
 
         Args:
@@ -144,39 +148,41 @@ class MutationsProject:
             Not providing a type for a metadata field or providing an unsupported one
             will default to the `string` type.
         """
-        verify_argument_ranges(consensus_tot_coverage,
-                               min_consensus_size,
-                               review_coverage)
+        verify_argument_ranges(consensus_tot_coverage, min_consensus_size, review_coverage)
 
         variables = {
-            'consensusMark': consensus_mark,
-            'consensusTotCoverage': consensus_tot_coverage,
-            'description': description,
-            'honeypotMark': honeypot_mark,
-            'instructions': instructions,
-            'inputType': input_type,
-            'jsonInterface': dumps(json_interface) if json_interface is not None else None,
-            'metadataTypes': metadata_types,
-            'minConsensusSize': min_consensus_size,
-            'numberOfAssets': number_of_assets,
-            'numberOfAssetsWithSkippedLabels': number_of_assets_with_empty_labels,
-            'numberOfRemainingAssets': number_of_remaining_assets,
-            'numberOfReviewedAssets': number_of_reviewed_assets,
-            'projectID': project_id,
-            'reviewCoverage': review_coverage,
-            'shouldRelaunchKpiComputation': should_relaunch_kpi_computation,
-            'title': title,
-            'useHoneyPot': use_honeypot
+            "consensusMark": consensus_mark,
+            "consensusTotCoverage": consensus_tot_coverage,
+            "description": description,
+            "honeypotMark": honeypot_mark,
+            "instructions": instructions,
+            "inputType": input_type,
+            "jsonInterface": dumps(json_interface) if json_interface is not None else None,
+            "metadataTypes": metadata_types,
+            "minConsensusSize": min_consensus_size,
+            "numberOfAssets": number_of_assets,
+            "numberOfAssetsWithSkippedLabels": number_of_assets_with_empty_labels,
+            "numberOfRemainingAssets": number_of_remaining_assets,
+            "numberOfReviewedAssets": number_of_reviewed_assets,
+            "projectID": project_id,
+            "reviewCoverage": review_coverage,
+            "shouldRelaunchKpiComputation": should_relaunch_kpi_computation,
+            "title": title,
+            "useHoneyPot": use_honeypot,
         }
-        result = self.auth.client.execute(
-            GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        return format_result('data', result)
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+        return format_result("data", result)
 
-    @Compatible(endpoints=['v2'])
+    @Compatible(endpoints=["v2"])
     @typechecked
-    def create_project(self, input_type: str, json_interface: dict,
-                       title: str, description: str = '',
-                       project_type: Optional[str] = None):
+    def create_project(
+        self,
+        input_type: str,
+        json_interface: dict,
+        title: str,
+        description: str = "",
+        project_type: Optional[str] = None,
+    ):
         # pylint: disable=line-too-long
         """Create a project.
 
@@ -214,19 +220,21 @@ class MutationsProject:
             For more detailed examples on how to create projects,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb).
         """
-        if input_type == 'FRAME':
+        if input_type == "FRAME":
             warnings.warn("FRAME input type is deprecated. Please use VIDEO instead")
         variables = {
-            'data': {'description': description,
-                     'inputType': input_type,
-                     'jsonInterface': dumps(json_interface),
-                     'projectType': project_type,
-                     'title': title}
+            "data": {
+                "description": description,
+                "inputType": input_type,
+                "jsonInterface": dumps(json_interface),
+                "projectType": project_type,
+                "title": title,
+            }
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v2'])
+    @Compatible(["v2"])
     @typechecked
     def make_project_public(self, project_id: str):
         """
@@ -241,14 +249,13 @@ class MutationsProject:
         Returns:
             The public token to provide in the public URL
         """
-        variables = {'where': {'id': project_id}}
+        variables = {"where": {"id": project_id}}
         result = self.auth.client.execute(GQL_MAKE_PROJECT_PUBLIC, variables)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def update_properties_in_role(self, role_id: str,
-                                  project_id: str, user_id: str, role: str):
+    def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
         """Update properties of a role.
 
         !!! info
@@ -270,16 +277,15 @@ class MutationsProject:
                 or an error message.
         """
         variables = {
-            'roleID': role_id,
-            'projectID': project_id,
-            'userID': user_id,
-            'role': role
+            "roleID": role_id,
+            "projectID": project_id,
+            "userID": user_id,
+            "role": role,
         }
-        result = self.auth.client.execute(
-            GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
-        return format_result('data', result)
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
+        return format_result("data", result)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def delete_from_roles(self, role_id: str):
         """Delete users by their role_id.
@@ -291,18 +297,21 @@ class MutationsProject:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        variables = {'where': {'id': role_id}}
+        variables = {"where": {"id": role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v2'])
+    @Compatible(["v2"])
     @typechecked
-    def update_properties_in_project_user(self, project_user_id: str,
-                                          consensus_mark: Optional[float] = None,
-                                          honeypot_mark: Optional[float] = None,
-                                          number_of_labeled_assets: Optional[int] = None,
-                                          starred: Optional[bool] = None,
-                                          total_duration: Optional[int] = None):
+    def update_properties_in_project_user(
+        self,
+        project_user_id: str,
+        consensus_mark: Optional[float] = None,
+        honeypot_mark: Optional[float] = None,
+        number_of_labeled_assets: Optional[int] = None,
+        starred: Optional[bool] = None,
+        total_duration: Optional[int] = None,
+    ):
         """
         Update properties of a project-user tuple
 
@@ -325,18 +334,17 @@ class MutationsProject:
                         honeypot_mark=0)
         """
         variables = {
-            'consensusMark': consensus_mark,
-            'honeypotMark': honeypot_mark,
-            'numberOfLabeledAssets': number_of_labeled_assets,
-            'projectUserID': project_user_id,
-            'starred': starred,
-            'totalDuration': total_duration,
+            "consensusMark": consensus_mark,
+            "honeypotMark": honeypot_mark,
+            "numberOfLabeledAssets": number_of_labeled_assets,
+            "projectUserID": project_user_id,
+            "starred": starred,
+            "totalDuration": total_duration,
         }
-        result = self.auth.client.execute(
-            GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
-        return format_result('data', result)
+        result = self.auth.client.execute(GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
+        return format_result("data", result)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def internal_delete_project(self, project_id: str):
         """Delete project permanently.
@@ -349,11 +357,11 @@ class MutationsProject:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        variables = {'projectID': project_id}
+        variables = {"projectID": project_id}
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
-        return format_result('data', result)
+        return format_result("data", result)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def delete_project(self, project_id: str):
         """
@@ -366,7 +374,6 @@ class MutationsProject:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        variables = {'where': {'id': project_id}}
-        result = self.auth.client.execute(
-            GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
-        return format_result('data', result)
+        variables = {"where": {"id": project_id}}
+        result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
+        return format_result("data", result)

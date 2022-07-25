@@ -4,7 +4,7 @@ Queries of notification mutations
 
 from .fragments import NOTIFICATION_FRAGMENT
 
-GQL_CREATE_NOTIFICATION = f'''
+GQL_CREATE_NOTIFICATION = f"""
 mutation(
     $data: NotificationData!
 ) {{
@@ -14,9 +14,9 @@ mutation(
     {NOTIFICATION_FRAGMENT}
   }}
 }}
-'''
+"""
 
-GQL_UPDATE_PROPERTIES_IN_NOTIFICATION = f'''
+GQL_UPDATE_PROPERTIES_IN_NOTIFICATION = f"""
 mutation(
     $id: ID!
     $hasBeenSeen: Boolean
@@ -34,4 +34,4 @@ mutation(
     {NOTIFICATION_FRAGMENT}
   }}
 }}
-'''
+"""

@@ -2,6 +2,6 @@
 Fragments of notification mutations
 """
 
-NOTIFICATION_FRAGMENT = '''
+NOTIFICATION_FRAGMENT = """
 id
-'''
+"""

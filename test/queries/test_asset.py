@@ -2,8 +2,9 @@
     Tests assets query.
 """
 import os
-from kili.client import Kili
 from test.utils import mocked_count_method, mocked_query_method
+
+from kili.client import Kili
 
 api_endpoint = os.getenv("KILI_API_ENDPOINT")
 kili = Kili(api_endpoint=api_endpoint)
@@ -26,7 +27,12 @@ TEST_CASES = [
     {
         "case": 'AAU, When I query assets with first=50 with format="pandas", I get the '
         "first 50 assets as a pandas DataFrame",
-        "args": {"project_id": "abcdef", "format": "pandas", "first": 50, "disable_tqdm": True},
+        "args": {
+            "project_id": "abcdef",
+            "format": "pandas",
+            "first": 50,
+            "disable_tqdm": True,
+        },
         "expected_result": [{"id": i} for i in range(50)],
         "expected_type": "DataFrame",
     },
@@ -37,10 +43,8 @@ def test_assets(mocker):
     """
     Test return type of que assets method
     """
-    mocker.patch("kili.queries.asset.QueriesAsset._query_assets",
-                 side_effect=mocked_query_method)
-    mocker.patch("kili.queries.asset.QueriesAsset.count_assets",
-                 return_value=mocked_count_method)
+    mocker.patch("kili.queries.asset.QueriesAsset._query_assets", side_effect=mocked_query_method)
+    mocker.patch("kili.queries.asset.QueriesAsset.count_assets", return_value=mocked_count_method)
     for test_case in TEST_CASES:
         case_name = test_case["case"]
         expected = test_case["expected_result"]

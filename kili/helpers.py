@@ -2,30 +2,30 @@
 Helpers for GraphQL Queries and Mutations
 """
 
-from typing import Optional
 import base64
 import functools
-from json import dumps, loads
+import mimetypes
 import re
 import warnings
-import mimetypes
-import pyparsing as pp
+from json import dumps, loads
+from typing import Optional
 
+import pyparsing as pp
 import requests
 
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
 
 
-class Compatible():
+class Compatible:
     """
     Compatibility of Kili Python SDK version with Kili API version
     """
 
     # pylint: disable=dangerous-default-value
-    def __init__(self, endpoints=['v1']):
+    def __init__(self, endpoints=["v1"]):
         self.endpoints = endpoints
-        self.version_extractor = re.compile(r'\/v\d+/')
-        self.address_extractor = re.compile(r':400\d+/')
+        self.version_extractor = re.compile(r"\/v\d+/")
+        self.address_extractor = re.compile(r":400\d+/")
 
     def client_is_compatible(self, endpoint: str):
         """
@@ -39,9 +39,9 @@ class Compatible():
         if not version_matched and not address_matched:
             return False
         if address_matched:
-            version = 'v1' if address_matched.group() == ':4000/' else 'v2'
+            version = "v1" if address_matched.group() == ":4000/" else "v2"
         if version_matched:
-            version = 'v1' if version_matched.group() == '/v1/' else 'v2'
+            version = "v1" if version_matched.group() == "/v1/" else "v2"
         return version in self.endpoints
 
     def __call__(self, resolver, *args, **kwargs):
@@ -51,12 +51,13 @@ class Compatible():
                 client_endpoint = args[0].auth.client.endpoint
             except Exception as exception:
                 raise ValueError(
-                    'Cannot find client endpoint from resolver'
-                    f' {resolver.__name__} with arguments {args}') from exception
+                    "Cannot find client endpoint from resolver"
+                    f" {resolver.__name__} with arguments {args}"
+                ) from exception
             if self.client_is_compatible(client_endpoint):
                 return resolver(*args, **kwargs)
-            raise EndpointCompatibilityError(
-                resolver.__name__, client_endpoint)
+            raise EndpointCompatibilityError(resolver.__name__, client_endpoint)
+
         return checked_resolver
 
 
@@ -68,9 +69,9 @@ def format_result(name, result, _object=None):
         name: name of the field to extract, usually data
         result: query result to parse
     """
-    if 'errors' in result:
-        raise GraphQLError(result['errors'])
-    formatted_json = format_json(result['data'][name])
+    if "errors" in result:
+        raise GraphQLError(result["errors"])
+    formatted_json = format_json(result["data"][name])
     if _object is None:
         return formatted_json
     if isinstance(formatted_json, list):
@@ -85,7 +86,7 @@ def content_escape(content):
     Args:
         content: string to escape
     """
-    return content.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')
+    return content.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
 
 
 def get_data_type(path):
@@ -96,7 +97,7 @@ def get_data_type(path):
         path: path of the file
     """
     mime_type, _ = mimetypes.guess_type(path.lower())
-    return mime_type if mime_type else ''
+    return mime_type if mime_type else ""
 
 
 def encode_base64(path):
@@ -107,9 +108,8 @@ def encode_base64(path):
         path: path of the file
     """
     data_type = get_data_type(path)
-    with open(path, 'rb') as image_file:
-        return f'data:{data_type};base64,' + \
-            base64.b64encode(image_file.read()).decode('ascii')
+    with open(path, "rb") as image_file:
+        return f"data:{data_type};base64," + base64.b64encode(image_file.read()).decode("ascii")
 
 
 def is_url(path):
@@ -119,7 +119,7 @@ def is_url(path):
     Args:
         path: path of the file
     """
-    return isinstance(path, str) and re.match(r'^(http://|https://)', path.lower())
+    return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
 def format_json_dict(result):
@@ -130,9 +130,8 @@ def format_json_dict(result):
         result: result of a GraphQL query
     """
     for key, value in result.items():
-        if key in ['jsonInterface', 'jsonMetadata', 'jsonResponse']:
-            if (value == '' or value is None) \
-                    and not (is_url(value) and key == 'jsonInterface'):
+        if key in ["jsonInterface", "jsonMetadata", "jsonResponse"]:
+            if (value == "" or value is None) and not (is_url(value) and key == "jsonInterface"):
                 result[key] = {}
             elif isinstance(value, str):
                 try:
@@ -142,8 +141,8 @@ def format_json_dict(result):
                         result[key] = loads(value)
                 except Exception as exception:
                     raise ValueError(
-                        'Json Metadata / json response /'
-                        ' json interface should be valid jsons') from exception
+                        "Json Metadata / json response /" " json interface should be valid jsons"
+                    ) from exception
         else:
             result[key] = format_json(value)
     return result
@@ -173,37 +172,38 @@ def fragment_builder(fields, type_of_fields):
         fields
         type_of_fields
     """
-    fragment = ''
-    subfields = [field.split('.', 1) for field in fields if '.' in field]
+    fragment = ""
+    subfields = [field.split(".", 1) for field in fields if "." in field]
     if subfields:
         for subquery in {subfield[0] for subfield in subfields}:
             type_of_fields_subquery = getattr(type_of_fields, subquery)
             try:
                 if issubclass(type_of_fields_subquery, object):
-                    fields_subquery = [subfield[1]
-                                       for subfield in subfields if subfield[0] == subquery]
-                    new_fragment = fragment_builder(
-                        fields_subquery, type_of_fields_subquery)
-                    fragment += f' {subquery}{{{new_fragment}}}'
+                    fields_subquery = [
+                        subfield[1] for subfield in subfields if subfield[0] == subquery
+                    ]
+                    new_fragment = fragment_builder(fields_subquery, type_of_fields_subquery)
+                    fragment += f" {subquery}{{{new_fragment}}}"
             except ValueError:
-                print(f'{subquery} must be a valid subquery field')
-        fields = [field for field in fields if '.' not in field]
+                print(f"{subquery} must be a valid subquery field")
+        fields = [field for field in fields if "." not in field]
     for field in fields:
         try:
             getattr(type_of_fields, field)
         except ValueError:
-            print(f'{field} must be an instance of {type_of_fields}')
+            print(f"{field} must be an instance of {type_of_fields}")
         if isinstance(field, str):
-            fragment += f' {field}'
+            fragment += f" {field}"
         else:
-            raise Exception('Please provide the fields to query as strings')
+            raise Exception("Please provide the fields to query as strings")
     return fragment
 
 
 def deprecate(
-        msg: Optional[str] = None,
-        removed_in: Optional[str] = None,
-        _type=DeprecationWarning):
+    msg: Optional[str] = None,
+    removed_in: Optional[str] = None,
+    _type=DeprecationWarning,
+):
     """
     Decorator factory that tag a deprecated function.
     - To deprecated the whole function, you can give a message at the decorator level.
@@ -216,20 +216,24 @@ def deprecate(
             in which the deprecation element has to be removed
         type: DeprecationWarning by default
     """
+
     def decorator(func):
         if removed_in:
-            if len(removed_in.split('.')) != 2:
+            if len(removed_in.split(".")) != 2:
                 raise ValueError(
                     f'"removed_in" argument in deprecate wrapper of the function {func.__name__}'
-                    'should have the format "Major.Minor"')
+                    'should have the format "Major.Minor"'
+                )
             func.removed_in = removed_in
 
-        @ functools.wraps(func)
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             if msg:
                 warnings.warn(msg, _type, stacklevel=2)
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -247,8 +251,9 @@ def format_metadata(metadata):
     if isinstance(metadata, (dict, list)):
         return dumps(metadata)
     raise Exception(
-        f'Metadata {metadata} of type {type(metadata)} must either be None,'
-        ' a string a list or a dict.')
+        f"Metadata {metadata} of type {type(metadata)} must either be None,"
+        " a string a list or a dict."
+    )
 
 
 def convert_to_list_of_none(array, length):
@@ -261,7 +266,7 @@ def convert_to_list_of_none(array, length):
     """
     if isinstance(array, list):
         if len(array) != length:
-            raise Exception(f'array should have length {length}')
+            raise Exception(f"array should have length {length}")
         return array
     return [None] * length
 
@@ -297,20 +302,23 @@ def infer_id_from_external_id(kili, asset_id: str, external_id: str, project_id:
         project_id: project id
     """
     if asset_id is None and external_id is None:
-        raise Exception(
-            'Either provide asset_id or external_id and project_id')
+        raise Exception("Either provide asset_id or external_id and project_id")
     if asset_id is not None:
         return asset_id
     assets = kili.assets(
-        external_id_contains=[external_id], project_id=project_id, fields=['id'], disable_tqdm=True)
+        external_id_contains=[external_id],
+        project_id=project_id,
+        fields=["id"],
+        disable_tqdm=True,
+    )
     if len(assets) == 0:
-        raise Exception(
-            f'No asset found with external ID "{external_id}"')
+        raise Exception(f'No asset found with external ID "{external_id}"')
     if len(assets) > 1:
         raise Exception(
             f'Several assets found containing external ID "{external_id}":'
-            f' {assets}. Please, use asset ID instead.')
-    return assets[0]['id']
+            f" {assets}. Please, use asset ID instead."
+        )
+    return assets[0]["id"]
 
 
 def validate_category_search_query(query):
@@ -323,16 +331,27 @@ def validate_category_search_query(query):
     """
     operator = pp.oneOf(">= <= > < ==")
     number = pp.pyparsing_common.number()
-    dot = '.'
+    dot = "."
     word = pp.Word(pp.alphas, pp.alphanums + "_-*")
-    identifier = word + dot + word + dot + 'count'
+    identifier = word + dot + word + dot + "count"
     condition = identifier + operator + number
 
-    expr = pp.infixNotation(condition, [
-        ("AND", 2, pp.opAssoc.LEFT, ),
-        ("OR", 2, pp.opAssoc.LEFT, ),
-    ])
+    expr = pp.infixNotation(
+        condition,
+        [
+            (
+                "AND",
+                2,
+                pp.opAssoc.LEFT,
+            ),
+            (
+                "OR",
+                2,
+                pp.opAssoc.LEFT,
+            ),
+        ],
+    )
     try:
         expr.parseString(query, parseAll=True)
     except pp.ParseException as error:
-        raise ValueError(f'Invalid category search query: {query}') from error
+        raise ValueError(f"Invalid category search query: {query}") from error

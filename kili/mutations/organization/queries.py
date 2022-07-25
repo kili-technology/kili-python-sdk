@@ -4,7 +4,7 @@ Queries of organization mutations
 
 from .fragments import ORGANIZATION_FRAGMENT
 
-GQL_CREATE_ORGANIZATION = f'''
+GQL_CREATE_ORGANIZATION = f"""
 mutation(
     $data: CreateOrganizationData!
 ) {{
@@ -14,9 +14,9 @@ mutation(
     {ORGANIZATION_FRAGMENT}
   }}
 }}
-'''
+"""
 
-GQL_UPDATE_PROPERTIES_IN_ORGANIZATION = f'''
+GQL_UPDATE_PROPERTIES_IN_ORGANIZATION = f"""
 mutation(
     $id: ID!
     $name: String
@@ -40,4 +40,4 @@ mutation(
     {ORGANIZATION_FRAGMENT}
   }}
 }}
-'''
+"""

@@ -3,27 +3,32 @@ Asset mutations
 """
 
 from typing import List, Optional, Union
+
 from typeguard import typechecked
 
-
-from ...helpers import (Compatible, format_result)
-from ...queries.project import QueriesProject
-from .queries import (GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
-                      GQL_APPEND_MANY_FRAMES_TO_DATASET,
-                      GQL_DELETE_MANY_FROM_DATASET,
-                      GQL_UPDATE_PROPERTIES_IN_ASSETS,
-                      GQL_SEND_BACK_ASSETS_TO_QUEUE)
-from .helpers import (process_append_many_to_dataset_parameters,
-                      process_update_properties_in_assets_parameters)
 from ...constants import NO_ACCESS_RIGHT
+from ...helpers import Compatible, format_result
 from ...orm import Asset
+from ...queries.project import QueriesProject
 from ...utils.pagination import _mutate_from_paginated_call
+from .helpers import (
+    process_append_many_to_dataset_parameters,
+    process_update_properties_in_assets_parameters,
+)
+from .queries import (
+    GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
+    GQL_APPEND_MANY_FRAMES_TO_DATASET,
+    GQL_DELETE_MANY_FROM_DATASET,
+    GQL_SEND_BACK_ASSETS_TO_QUEUE,
+    GQL_UPDATE_PROPERTIES_IN_ASSETS,
+)
 
 
 class MutationsAsset:
     """
     Set of Asset mutations
     """
+
     # pylint: disable=too-many-arguments,too-many-locals
 
     def __init__(self, auth):
@@ -34,17 +39,18 @@ class MutationsAsset:
         """
         self.auth = auth
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def append_many_to_dataset(
-            self,
-            project_id: str,
-            content_array: Optional[List[str]] = None,
-            external_id_array: Optional[List[str]] = None,
-            is_honeypot_array: Optional[List[bool]] = None,
-            status_array: Optional[List[str]] = None,
-            json_content_array: Optional[List[List[Union[dict, str]]]] = None,
-            json_metadata_array: Optional[List[dict]] = None):
+        self,
+        project_id: str,
+        content_array: Optional[List[str]] = None,
+        external_id_array: Optional[List[str]] = None,
+        is_honeypot_array: Optional[List[bool]] = None,
+        status_array: Optional[List[str]] = None,
+        json_content_array: Optional[List[List[Union[dict, str]]]] = None,
+        json_metadata_array: Optional[List[dict]] = None,
+    ):
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -95,53 +101,59 @@ class MutationsAsset:
         kili = QueriesProject(self.auth)
         projects = kili.projects(project_id, disable_tqdm=True)
         assert len(projects) == 1, NO_ACCESS_RIGHT
-        input_type = projects[0]['inputType']
-        properties_to_batch, upload_type, request = process_append_many_to_dataset_parameters(input_type,
-                                                                                              content_array,
-                                                                                              external_id_array,
-                                                                                              is_honeypot_array,
-                                                                                              status_array,
-                                                                                              json_content_array,
-                                                                                              json_metadata_array)
+        input_type = projects[0]["inputType"]
+        (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
+            input_type,
+            content_array,
+            external_id_array,
+            is_honeypot_array,
+            status_array,
+            json_content_array,
+            json_metadata_array,
+        )
 
         def generate_variables(batch):
             if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
-                payload_data = {'contentArray': batch['content_array'],
-                                'externalIDArray': batch['external_id_array'],
-                                'jsonMetadataArray': batch['json_metadata_array'],
-                                'uploadType': upload_type}
+                payload_data = {
+                    "contentArray": batch["content_array"],
+                    "externalIDArray": batch["external_id_array"],
+                    "jsonMetadataArray": batch["json_metadata_array"],
+                    "uploadType": upload_type,
+                }
             else:
-                payload_data = {'contentArray': batch['content_array'],
-                                'externalIDArray': batch['external_id_array'],
-                                'isHoneypotArray': batch['is_honeypot_array'],
-                                'statusArray': batch['status_array'],
-                                'jsonContentArray': batch['json_content_array'],
-                                'jsonMetadataArray': batch['json_metadata_array']}
-            return {
-                'data': payload_data,
-                'where': {'id': project_id}
-            }
+                payload_data = {
+                    "contentArray": batch["content_array"],
+                    "externalIDArray": batch["external_id_array"],
+                    "isHoneypotArray": batch["is_honeypot_array"],
+                    "statusArray": batch["status_array"],
+                    "jsonContentArray": batch["json_content_array"],
+                    "jsonMetadataArray": batch["json_metadata_array"],
+                }
+            return {"data": payload_data, "where": {"id": project_id}}
 
         results = _mutate_from_paginated_call(
-            self, properties_to_batch, generate_variables, request)
-        return format_result('data', results[0], Asset)
+            self, properties_to_batch, generate_variables, request
+        )
+        return format_result("data", results[0], Asset)
 
-    @Compatible(['v2'])
+    @Compatible(["v2"])
     @typechecked
     # pylint: disable=unused-argument
-    def update_properties_in_assets(self,
-                                    asset_ids: List[str],
-                                    external_ids: Optional[List[str]] = None,
-                                    priorities: Optional[List[int]] = None,
-                                    json_metadatas: Optional[List[Union[dict, str]]] = None,
-                                    consensus_marks: Optional[List[float]] = None,
-                                    honeypot_marks: Optional[List[float]] = None,
-                                    to_be_labeled_by_array: Optional[List[List[str]]] = None,
-                                    contents: Optional[List[str]] = None,
-                                    json_contents: Optional[List[str]] = None,
-                                    status_array: Optional[List[str]] = None,
-                                    is_used_for_consensus_array: Optional[List[bool]] = None,
-                                    is_honeypot_array: Optional[List[bool]] = None) -> List[dict]:
+    def update_properties_in_assets(
+        self,
+        asset_ids: List[str],
+        external_ids: Optional[List[str]] = None,
+        priorities: Optional[List[int]] = None,
+        json_metadatas: Optional[List[Union[dict, str]]] = None,
+        consensus_marks: Optional[List[float]] = None,
+        honeypot_marks: Optional[List[float]] = None,
+        to_be_labeled_by_array: Optional[List[List[str]]] = None,
+        contents: Optional[List[str]] = None,
+        json_contents: Optional[List[str]] = None,
+        status_array: Optional[List[str]] = None,
+        is_used_for_consensus_array: Optional[List[bool]] = None,
+        is_honeypot_array: Optional[List[bool]] = None,
+    ) -> List[dict]:
         """Update the properties of one or more assets.
 
         Args:
@@ -190,50 +202,58 @@ class MutationsAsset:
         """
 
         saved_args = locals()
-        parameters = {k: v for (k, v) in saved_args.items() if k in
-                      ['asset_ids',
-                       'external_ids',
-                       'priorities',
-                       'json_metadatas',
-                       'consensus_marks',
-                       'honeypot_marks',
-                       'to_be_labeled_by_array',
-                       'contents',
-                       'json_contents',
-                       'status_array',
-                       'is_used_for_consensus_array',
-                       'is_honeypot_array']}
-        properties_to_batch = process_update_properties_in_assets_parameters(
-            parameters)
+        parameters = {
+            k: v
+            for (k, v) in saved_args.items()
+            if k
+            in [
+                "asset_ids",
+                "external_ids",
+                "priorities",
+                "json_metadatas",
+                "consensus_marks",
+                "honeypot_marks",
+                "to_be_labeled_by_array",
+                "contents",
+                "json_contents",
+                "status_array",
+                "is_used_for_consensus_array",
+                "is_honeypot_array",
+            ]
+        }
+        properties_to_batch = process_update_properties_in_assets_parameters(parameters)
 
         def generate_variables(batch):
             data = {
-                'externalId': batch['external_ids'],
-                'priority': batch['priorities'],
-                'jsonMetadata': batch['json_metadatas'],
-                'consensusMark': batch['consensus_marks'],
-                'honeypotMark': batch['honeypot_marks'],
-                'toBeLabeledBy': batch['to_be_labeled_by_array'],
-                'shouldResetToBeLabeledBy': batch['should_reset_to_be_labeled_by_array'],
-                'content': batch['contents'],
-                'jsonContent': batch['json_contents'],
-                'status': batch['status_array'],
-                'isUsedForConsensus': batch['is_used_for_consensus_array'],
-                'isHoneypot': batch['is_honeypot_array']
+                "externalId": batch["external_ids"],
+                "priority": batch["priorities"],
+                "jsonMetadata": batch["json_metadatas"],
+                "consensusMark": batch["consensus_marks"],
+                "honeypotMark": batch["honeypot_marks"],
+                "toBeLabeledBy": batch["to_be_labeled_by_array"],
+                "shouldResetToBeLabeledBy": batch["should_reset_to_be_labeled_by_array"],
+                "content": batch["contents"],
+                "jsonContent": batch["json_contents"],
+                "status": batch["status_array"],
+                "isUsedForConsensus": batch["is_used_for_consensus_array"],
+                "isHoneypot": batch["is_honeypot_array"],
             }
             data_array = [dict(zip(data, t)) for t in zip(*data.values())]
             return {
-                'whereArray': [{'id': asset_id} for asset_id in batch['asset_ids']],
-                'dataArray': data_array
+                "whereArray": [{"id": asset_id} for asset_id in batch["asset_ids"]],
+                "dataArray": data_array,
             }
 
         results = _mutate_from_paginated_call(
-            self, properties_to_batch, generate_variables, GQL_UPDATE_PROPERTIES_IN_ASSETS)
-        formated_results = [format_result(
-            'data', result, Asset) for result in results]
+            self,
+            properties_to_batch,
+            generate_variables,
+            GQL_UPDATE_PROPERTIES_IN_ASSETS,
+        )
+        formated_results = [format_result("data", result, Asset) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """Delete assets from a project.
@@ -245,22 +265,19 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        properties_to_batch = {'asset_ids': asset_ids}
+        properties_to_batch = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
-            return {'where': {'idIn': batch['asset_ids']}}
+            return {"where": {"idIn": batch["asset_ids"]}}
 
-        results = _mutate_from_paginated_call(self,
-                                              properties_to_batch,
-                                              generate_variables,
-                                              GQL_DELETE_MANY_FROM_DATASET)
-        return format_result('data', results[0], Asset)
+        results = _mutate_from_paginated_call(
+            self, properties_to_batch, generate_variables, GQL_DELETE_MANY_FROM_DATASET
+        )
+        return format_result("data", results[0], Asset)
 
-    @Compatible(['v1', 'v2'])
+    @Compatible(["v1", "v2"])
     @typechecked
-    def add_to_review(
-            self,
-            asset_ids: List[str]) -> dict:
+    def add_to_review(self, asset_ids: List[str]) -> dict:
         """Add assets to review.
 
         !!! warning
@@ -280,22 +297,22 @@ class MutationsAsset:
                         "ckg22d81s0jrh0885pdxfd03n"
                         ],
         """
-        properties_to_batch = {'asset_ids': asset_ids}
+        properties_to_batch = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
-            return {'where': {'idIn': batch['asset_ids']}}
+            return {"where": {"idIn": batch["asset_ids"]}}
 
-        results = _mutate_from_paginated_call(self,
-                                              properties_to_batch,
-                                              generate_variables,
-                                              GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW)
-        return format_result('data', results[0])
-
-    @Compatible(['v2'])
-    @typechecked
-    def send_back_to_queue(
+        results = _mutate_from_paginated_call(
             self,
-            asset_ids: List[str]):
+            properties_to_batch,
+            generate_variables,
+            GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
+        )
+        return format_result("data", results[0])
+
+    @Compatible(["v2"])
+    @typechecked
+    def send_back_to_queue(self, asset_ids: List[str]):
         """Send assets back to queue.
 
         Args:
@@ -312,13 +329,12 @@ class MutationsAsset:
                         "ckg22d81s0jrh0885pdxfd03n"
                         ],
         """
-        properties_to_batch = {'asset_ids': asset_ids}
+        properties_to_batch = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
-            return {'where': {'idIn': batch['asset_ids']}}
+            return {"where": {"idIn": batch["asset_ids"]}}
 
-        results = _mutate_from_paginated_call(self,
-                                              properties_to_batch,
-                                              generate_variables,
-                                              GQL_SEND_BACK_ASSETS_TO_QUEUE)
-        return format_result('data', results[0])
+        results = _mutate_from_paginated_call(
+            self, properties_to_batch, generate_variables, GQL_SEND_BACK_ASSETS_TO_QUEUE
+        )
+        return format_result("data", results[0])
