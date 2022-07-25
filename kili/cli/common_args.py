@@ -52,6 +52,9 @@ class Options:  # pylint: disable=too-few-public-methods
                         show_default='LABELER',
                         help='Project role of the added user(s).')
 
+    verbose = click.option('--verbose', type=bool, is_flag=True, default=False,
+                           help='Show logs')
+
 
 def from_csv(required_columns: List[str],
              optionnal_columns: List[str]

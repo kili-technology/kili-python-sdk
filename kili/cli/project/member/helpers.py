@@ -129,4 +129,9 @@ def check_exclusive_options(
         raise ValueError("Options --all and emails are exclusive.")
 
     if (csv_path is not None) and (len(emails) > 0) > 1:
-        raise ValueError("Options --from-csv and emails are exclusive.")
+        raise ValueError(
+            'Options --from-csv and emails are exclusive.')
+
+    if (csv_path is not None) and (project_id_src is not None) and (len(emails) > 0) == 0:
+        raise ValueError(
+            'Options --from-csv, --from-project and emails cannot all be empty.')

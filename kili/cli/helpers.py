@@ -40,3 +40,17 @@ def collect_from_csv(
             )
 
     return out
+
+
+def check_exclusive_options(
+        csv_path: Optional[str],
+        files: Optional[List[str]]):
+    """ Forbid mutual use of options and argument(s) """
+
+    if (csv_path is not None) and (len(files) > 0) > 1:
+        raise ValueError(
+            'files arguments and option --from-csv are exclusive.')
+
+    if (csv_path is not None) and (len(files) > 0) == 0:
+        raise ValueError(
+            'You must use either file arguments or option --from-csv')
