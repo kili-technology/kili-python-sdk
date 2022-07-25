@@ -4,10 +4,12 @@ import warnings
 from typing import Optional
 
 import click
-from kili.cli.project.member.helpers import (collect_members_from_csv,
-                                             collect_members_from_emails,
-                                             collect_members_from_project,
-                                             check_exclusive_options)
+from kili.cli.project.member.helpers import (
+    collect_members_from_csv,
+    collect_members_from_emails,
+    collect_members_from_project,
+    check_exclusive_options,
+)
 
 from kili.client import Kili
 from kili.cli.common_args import Arguments, Options, from_csv
@@ -19,7 +21,7 @@ from kili.cli.common_args import Arguments, Options, from_csv
 @Arguments.emails
 @Options.project_id
 @Options.role
-@from_csv(['email'], ['role'])
+@from_csv(["email"], ["role"])
 @Options.from_project
 # pylint: disable=too-many-arguments
 def update_member(
@@ -62,15 +64,13 @@ def update_member(
     if csv_path is not None:
         members_to_update = collect_members_from_csv(csv_path, role)
     elif project_id_src is not None:
-        members_to_update = collect_members_from_project(
-            kili, project_id_src, role)
+        members_to_update = collect_members_from_project(kili, project_id_src, role)
     else:
         members_to_update = collect_members_from_emails(emails, role)
 
     count = 0
 
-    existing_members = kili.project_users(
-        project_id=project_id, disable_tqdm=True)
+    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
     existing_members = {
         member["user"]["email"]: {
             "role_id": member["id"],

@@ -6,8 +6,7 @@ from kili.cli.common_args import ROLES
 
 from kili.cli.helpers import collect_from_csv
 
-REGEX_EMAIL = re.compile(
-    r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
+REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 
 
 def type_check_member(key, value):
@@ -52,8 +51,7 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
     members = []
 
     if role is not None:
-        raise ValueError(
-            "--role cannot be used if the argument passed is a Kili project_id")
+        raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
 
     try:
         users = cast(
@@ -66,16 +64,13 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
         )
         for user in users:
             if user["activated"]:
-                members.append(
-                    {"email": user["user"]["email"], "role": user["role"]})
+                members.append({"email": user["user"]["email"], "role": user["role"]})
     except:
         # pylint: disable=raise-missing-from
-        raise ValueError(
-            f"{project_id_source} is not recognized as a Kili project_id")
+        raise ValueError(f"{project_id_source} is not recognized as a Kili project_id")
 
     if len(members) == 0:
-        raise ValueError(
-            f"No active member were found in project with id {project_id_source}")
+        raise ValueError(f"No active member were found in project with id {project_id_source}")
 
     return members
 
@@ -105,33 +100,33 @@ def check_exclusive_options(
 ):
     """Forbid mutual use of options and argument(s)"""
 
-    if (csv_path is not None) and (project_id_src is not None) and (len(emails) > 0) > 1:
-        raise ValueError(
-            "Options --from-csv, --from-project and emails are exclusive.")
+    if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) > 1:
+        raise ValueError("Options --from-csv, --from-project and emails are exclusive.")
 
-    if (csv_path is not None) and (project_id_src is not None):
-        raise ValueError(
-            "Options --from-csv and --from-project are exclusive.")
+    if (csv_path is not None) + (project_id_src is not None) > 1:
+        raise ValueError("Options --from-csv and --from-project are exclusive.")
 
-    if (project_id_src is not None) and (len(emails) > 0) > 1:
+    if (project_id_src is not None) + (len(emails) > 0) > 1:
         raise ValueError("Options --from-project and emails are exclusive.")
 
-    if (csv_path is not None) and (len(emails) > 0) > 1:
+    if (csv_path is not None) + (len(emails) > 0) > 1:
         raise ValueError("Options --from-csv and emails are exclusive.")
 
-    if (csv_path is not None) and all_members and (len(emails) > 0) > 1:
+    if (csv_path is not None) + (all_members is True) + (len(emails) > 0) > 1:
         raise ValueError("Options --from-csv, --all and emails are exclusive.")
 
-    if (csv_path is not None) and all_members:
+    if (csv_path is not None) + (all_members is True) > 1:
         raise ValueError("Options --from-csv and --all are exclusive.")
 
-    if all_members and (len(emails) > 0) > 1:
+    if (all_members is True) + (len(emails) > 0) > 1:
         raise ValueError("Options --all and emails are exclusive.")
 
-    if (csv_path is not None) and (len(emails) > 0) > 1:
-        raise ValueError(
-            'Options --from-csv and emails are exclusive.')
+    if (csv_path is not None) + (len(emails) > 0) > 1:
+        raise ValueError("Options --from-csv and emails are exclusive.")
 
-    if (csv_path is not None) and (project_id_src is not None) and (len(emails) > 0) == 0:
+    if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) + (
+        all_members is True
+    ) == 0:
         raise ValueError(
-            'Options --from-csv, --from-project and emails cannot all be empty.')
+            "You must use either emails arguments or option -from-csv, --from-project, --all"
+        )

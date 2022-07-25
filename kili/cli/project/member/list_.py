@@ -9,8 +9,7 @@ from tabulate import tabulate
 from kili.client import Kili
 from kili.cli.common_args import Arguments, Options
 
-ROLE_ORDER = {v: i for i, v in enumerate(
-    ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
+ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 
 
 @click.command()
@@ -25,7 +24,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
     \b
     !!! Examples
         ```
-        kili project member list --project-id <project_id> --stdout-format pretty
+        kili project member list <project_id> --stdout-format pretty
         ```
 
     """
@@ -47,26 +46,21 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         ),
     )
     users = pd.DataFrame(users)
-    users = pd.concat([users.drop(["user"], axis=1),
-                      users["user"].apply(pd.Series)], axis=1)
+    users = pd.concat([users.drop(["user"], axis=1), users["user"].apply(pd.Series)], axis=1)
     users = pd.concat(
-        [users.drop(["organization"], axis=1),
-         users["organization"].apply(pd.Series)],
+        [users.drop(["organization"], axis=1), users["organization"].apply(pd.Series)],
         axis=1,
     )
     users = users.loc[users["activated"]]
     users.rename(
-        columns={"role": "ROLE", "email": "EMAIL",
-                 "id": "ID", "name": "ORGANIZATION"},
+        columns={"role": "ROLE", "email": "EMAIL", "id": "ID", "name": "ORGANIZATION"},
         inplace=True,
     )
-    users["NAME"] = users["firstname"].str.title() + " " + \
-        users["lastname"].str.title()
+    users["NAME"] = users["firstname"].str.title() + " " + users["lastname"].str.title()
     users = users.sort_values(
         by=["ROLE", "lastname"],
         ascending=True,
-        key=lambda column: column.map(
-            ROLE_ORDER) if column.name == "ROLE" else column,
+        key=lambda column: column.map(ROLE_ORDER) if column.name == "ROLE" else column,
     )
     users = users[["ROLE", "NAME", "EMAIL", "ID", "ORGANIZATION"]]
     print(tabulate(users, headers="keys", tablefmt=tablefmt, showindex=False))

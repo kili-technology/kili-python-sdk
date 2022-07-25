@@ -21,9 +21,15 @@ from kili.cli.common_args import Arguments, Options, from_csv
 @Options.endpoint
 @Arguments.emails
 @Options.project_id
-@from_csv(['email'], ['role'])
-@click.option('--all', 'all_members', type=bool, is_flag=True, default=False,
-              help='Remove all users from project')
+@from_csv(["email"], ["role"])
+@click.option(
+    "--all",
+    "all_members",
+    type=bool,
+    is_flag=True,
+    default=False,
+    help="Remove all users from project",
+)
 # pylint: disable=too-many-arguments
 def remove_member(
     api_key: Optional[str],
@@ -69,8 +75,7 @@ def remove_member(
         members_to_rm = collect_members_from_emails(emails, None)
 
     count = 0
-    existing_members = kili.project_users(
-        project_id=project_id, disable_tqdm=True)
+    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
     existing_members = {
         member["user"]["email"]: member["id"] for member in existing_members if member["activated"]
     }

@@ -23,16 +23,17 @@ from kili.cli.common_args import Arguments, Options, from_csv
 @Arguments.emails
 @Options.project_id
 @Options.role
-@from_csv(['email'], ['role'])
+@from_csv(["email"], ["role"])
 @Options.from_project
-def add_member(api_key: Optional[str],
-               endpoint: Optional[str],
-               emails: Optional[str],
-               project_id: str,
-               role: Optional[str],
-               csv_path: Optional[str],
-               project_id_src: Optional[str],
-               ):
+def add_member(
+    api_key: Optional[str],
+    endpoint: Optional[str],
+    emails: Optional[str],
+    project_id: str,
+    role: Optional[str],
+    csv_path: Optional[str],
+    project_id_src: Optional[str],
+):
     """Add members to a Kili project
 
     Emails can be passed directly as arguments.
@@ -63,14 +64,12 @@ def add_member(api_key: Optional[str],
     if csv_path is not None:
         members_to_add = collect_members_from_csv(csv_path, role)
     elif project_id_src is not None:
-        members_to_add = collect_members_from_project(
-            kili, project_id_src, role)
+        members_to_add = collect_members_from_project(kili, project_id_src, role)
     else:
         members_to_add = collect_members_from_emails(emails, role)
 
     count = 0
-    existing_members = kili.project_users(
-        project_id=project_id, disable_tqdm=True)
+    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
     existing_members = [
         member["user"]["email"] for member in existing_members if member["activated"]
     ]

@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, cast
 import click
 from tabulate import tabulate
 
-from kili.cli.common_args import Options
 from kili.client import Kili
 from kili.exceptions import NotFound
 from kili.queries.project.helpers import get_project_metadata, get_project_metrics
