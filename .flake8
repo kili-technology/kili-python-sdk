@@ -1,0 +1,11 @@
+[flake8]
+unused-arguments-ignore-abstract-functions = True
+unused-arguments-ignore-stub-functions = True
+; B006 Do not use mutable data structures for argument defaults (required for helps)
+; U100 Unused argument (handled by pylint)
+; E501 Line too long (handled by pylint)
+; W503 Line break before binary operator (conflict with black)
+; E203 whitespace before ':' (conflict with black)
+; B001, E722 do not use bare 'except' (hard to handle with Kili)
+ignore = B006, U100, E501, W503, E203, B001, E722
+exclude = test/*.py, recipes/*.py

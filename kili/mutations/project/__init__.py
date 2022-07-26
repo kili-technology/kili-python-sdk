@@ -7,8 +7,6 @@ from typing import Optional
 from typeguard import typechecked
 
 from ...helpers import Compatible, format_result
-from ...queries.asset import QueriesAsset
-from ...queries.project import QueriesProject
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,

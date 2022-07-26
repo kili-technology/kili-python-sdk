@@ -1,12 +1,11 @@
 """Issue queries."""
 
-import warnings
 from dataclasses import dataclass
 from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from ...types import Issue as IssueType
 from ...utils.pagination import row_generator_from_paginated_calls
 from .queries import GQL_ISSUES_COUNT, gql_issues

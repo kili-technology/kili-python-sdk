@@ -15,7 +15,7 @@ def type_check_member(key, value):
     if key == "email" and not re.search(REGEX_EMAIL, value):
         return f"{value} is not a valid email address, "
 
-    if key == "role" and not value in ROLES:
+    if key == "role" and value not in ROLES:
         return f"{value} is not a valid role, "
 
     return ""

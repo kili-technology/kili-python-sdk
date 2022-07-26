@@ -1,11 +1,10 @@
 """Project version queries."""
 
-import warnings
 from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from ...types import ProjectVersion as ProjectVersionType
 from ...utils.pagination import row_generator_from_paginated_calls
 from .queries import GQL_PROJECT_VERSION_COUNT, gql_project_version

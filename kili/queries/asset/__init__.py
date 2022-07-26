@@ -1,6 +1,5 @@
 """Asset queries."""
 
-import warnings
 from typing import Generator, List, Optional, Union
 
 import pandas as pd
@@ -8,7 +7,6 @@ from typeguard import typechecked
 
 from ...helpers import (
     Compatible,
-    deprecate,
     format_result,
     fragment_builder,
     validate_category_search_query,

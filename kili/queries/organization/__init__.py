@@ -1,12 +1,11 @@
 """Organization queries."""
 
-import warnings
 from datetime import datetime
 from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from ...types import Organization
 from ...utils.pagination import row_generator_from_paginated_calls
 from .queries import (
@@ -51,8 +50,7 @@ class QueriesOrganization:
             email : Email of a user of the organization
             organization_id : Identifier of the organization
             fields: All the fields to request among the possible fields for the organizations.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization)
-                    for all possible fields.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization) for all possible fields.
             first: Maximum number of organizations to return.
             Skip: Number of skipped organizations (they are ordered by creation date)
             disable_tqdm: If `True`, the progress bar will be disabled
@@ -131,9 +129,9 @@ class QueriesOrganization:
     @typechecked
     def organization_metrics(
         self,
-        organization_id: str = None,
-        start_date: datetime = datetime.now(),
-        end_date: datetime = datetime.now(),
+        organization_id: str,
+        start_date: datetime,
+        end_date: datetime,
     ):
         """Get organization metrics.
 
@@ -146,6 +144,10 @@ class QueriesOrganization:
             A result object which contains the query if it was successful,
                 or an error message.
         """
+        if start_date is None:
+            start_date = datetime.now()
+        if end_date is None:
+            end_date = datetime.now()
         variables = {
             "where": {
                 "organizationId": organization_id,

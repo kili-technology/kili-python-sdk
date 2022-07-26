@@ -3,3 +3,4 @@ pre-commit
 pylint
 pytest
 pytest-mock
+flake8-unused-arguments

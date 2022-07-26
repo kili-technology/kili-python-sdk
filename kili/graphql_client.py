@@ -12,8 +12,6 @@ from datetime import datetime
 import websocket
 from six.moves import urllib
 
-from . import __version__
-
 
 class GraphQLClient:
     """
