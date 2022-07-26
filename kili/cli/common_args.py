@@ -1,7 +1,7 @@
 """Common arguments and options for the CLI"""
 from typing import List
-import click
 
+import click
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 

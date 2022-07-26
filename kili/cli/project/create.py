@@ -2,11 +2,12 @@
 
 import json
 from typing import Dict, List, Optional, cast
+
 import click
 from tabulate import tabulate
 
-from kili.client import Kili
 from kili.cli.common_args import Options
+from kili.client import Kili
 from kili.constants import INPUT_TYPE
 from kili.queries.project.helpers import get_project_url
 

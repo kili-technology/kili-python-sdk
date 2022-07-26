@@ -1,8 +1,11 @@
 """CLI's project member add subcommand"""
 
-from typing import Optional
 import warnings
+from typing import Optional
+
 import click
+
+from kili.cli.common_args import Options
 from kili.cli.project.member.helpers import (
     ROLES,
     check_exclusive_options,
@@ -10,10 +13,7 @@ from kili.cli.project.member.helpers import (
     collect_members_from_emails,
     collect_members_from_project,
 )
-
-
 from kili.client import Kili
-from kili.cli.common_args import Options
 
 
 # pylint: disable=too-many-arguments

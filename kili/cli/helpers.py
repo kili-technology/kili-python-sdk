@@ -1,9 +1,8 @@
 """CLI's common helpers functions"""
 
 import csv
-from typing import Any, Dict, List, Optional
 import warnings
-
+from typing import Any, Dict, List, Optional
 
 # pylint: disable=consider-using-f-string
 

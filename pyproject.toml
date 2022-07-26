@@ -8,3 +8,6 @@ exclude = '''
   | \.mypy_cache
 )/
 '''
+[tool.isort]
+profile = "black"
+py_version=37

@@ -3,13 +3,13 @@
 import json
 import os
 from typing import Optional
+
 import click
 
 from kili.cli.common_args import Options, from_csv
 from kili.cli.helpers import collect_from_csv
 from kili.client import Kili
 from kili.exceptions import NotFound
-
 from kili.mutations.label.helpers import generate_create_predictions_arguments
 
 

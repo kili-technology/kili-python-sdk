@@ -1,8 +1,8 @@
 """CLI's Project Member common functions"""
 
 import re
-from typing import Dict, List, Optional, cast
 import warnings
+from typing import Dict, List, Optional, cast
 
 from kili.cli.helpers import collect_from_csv
 
