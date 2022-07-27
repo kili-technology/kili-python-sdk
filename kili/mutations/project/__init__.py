@@ -81,7 +81,7 @@ class MutationsProject:
         json_interface: Optional[dict] = None,
         min_consensus_size: Optional[int] = None,
         number_of_assets: Optional[int] = None,
-        number_of_assets_with_empty_labels: Optional[int] = None,
+        number_of_skipped_assets: Optional[int] = None,
         number_of_remaining_assets: Optional[int] = None,
         number_of_reviewed_assets: Optional[int] = None,
         review_coverage: Optional[int] = None,
@@ -107,7 +107,7 @@ class MutationsProject:
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
             number_of_assets: Defaults to 0
-            number_of_assets_with_empty_labels: Defaults to 0
+            number_of_skipped_assets: Defaults to 0
             number_of_remaining_assets: Defaults to 0
             number_of_reviewed_assets: Defaults to 0
             review_coverage: Allow to set the percentage of assets
@@ -161,7 +161,7 @@ class MutationsProject:
             "metadataTypes": metadata_types,
             "minConsensusSize": min_consensus_size,
             "numberOfAssets": number_of_assets,
-            "numberOfAssetsWithSkippedLabels": number_of_assets_with_empty_labels,
+            "numberOfSkippedAssets": number_of_skipped_assets,
             "numberOfRemainingAssets": number_of_remaining_assets,
             "numberOfReviewedAssets": number_of_reviewed_assets,
             "projectID": project_id,

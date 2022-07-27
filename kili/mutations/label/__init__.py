@@ -100,7 +100,6 @@ class MutationsLabel:
         label_type: str = "DEFAULT",
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
-        skipped: Optional[bool] = False,
     ):
         """Append a label to an asset.
 
@@ -112,7 +111,6 @@ class MutationsLabel:
             project_id: Identifier of the project
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`
             seconds_to_label: Time to create the label
-            skipped: Describe if the label is skipped or not
 
         !!! warning
             Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
@@ -137,7 +135,6 @@ class MutationsLabel:
                 "jsonResponse": dumps(json_response),
                 "labelType": label_type,
                 "secondsToLabel": seconds_to_label,
-                "skipped": skipped,
             },
             "where": {"id": label_asset_id},
         }

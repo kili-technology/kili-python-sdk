@@ -55,7 +55,7 @@ def get_project_metrics(project: dict) -> Tuple[List[Tuple], List[Tuple]]:
     dataset_metrics = [
         ("Total number of assets", project["numberOfAssets"]),
         ("Number of remaining assets", project["numberOfRemainingAssets"]),
-        ("Skipped assets", project["numberOfAssetsWithSkippedLabels"]),
+        ("Skipped assets", project["numberOfSkippedAssets"]),
         ("Progress", str(progress) + "%"),
     ]
     quality_metrics = [

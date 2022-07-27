@@ -37,7 +37,7 @@ def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id
                     "numberOfAssets",
                     "numberOfRemainingAssets",
                     "numberOfReviewedAssets",
-                    "numberOfAssetsWithSkippedLabels",
+                    "numberOfSkippedAssets",
                     "honeypotMark",
                     "consensusMark",
                     "numberOfOpenIssues",

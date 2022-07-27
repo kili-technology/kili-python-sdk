@@ -32,7 +32,7 @@ mutation(
     $metadataTypes: JSON
     $minConsensusSize: Int
     $numberOfAssets: Int
-    $numberOfAssetsWithSkippedLabels: Int
+    $numberOfSkippedAssets: Int
     $numberOfRemainingAssets: Int
     $numberOfReviewedAssets: Int
     $projectID: ID!
@@ -55,7 +55,7 @@ mutation(
       metadataTypes: $metadataTypes
       minConsensusSize: $minConsensusSize
       numberOfAssets: $numberOfAssets
-      numberOfAssetsWithSkippedLabels: $numberOfAssetsWithSkippedLabels
+      numberOfSkippedAssets: $numberOfSkippedAssets
       numberOfRemainingAssets: $numberOfRemainingAssets
       numberOfReviewedAssets: $numberOfReviewedAssets
       reviewCoverage: $reviewCoverage
