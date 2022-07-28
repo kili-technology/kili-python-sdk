@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.116/label/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.116.0/label/">
       
       <link rel="icon" href="../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
@@ -791,33 +791,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
     <span class="c1"># pylint: disable=dangerous-default-value</span>
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+    <span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.118&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-               <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-               <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-                                    <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">,</span> <span class="s1">&#39;skipped&#39;</span><span class="p">],</span>
-               <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-               <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-               <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-               <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
 
@@ -878,7 +886,7 @@
 <span class="sd">                category_search = `JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.count &gt; 0`</span>
 <span class="sd">                category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.count &gt; 0) AND JOB_BBOX.CATEGORY_C.count &gt; 10`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s1">&#39;skipped&#39;</span> <span class="ow">in</span> <span class="n">fields</span> <span class="ow">or</span> <span class="n">skipped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;skipped&quot;</span> <span class="ow">in</span> <span class="n">fields</span> <span class="ow">or</span> <span class="n">skipped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                The field &quot;skipped&quot; is deprecated since: 20/07/2022.</span>
 <span class="s2">                It will be removed after: 31/08/2022.</span>
@@ -891,14 +899,14 @@
             <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">saved_args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">k</span>
             <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="s1">&#39;as_generator&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;disable_tqdm&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;fields&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;first&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;id_contains&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;self&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;skip&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;message&#39;</span><span class="p">,</span>
+                <span class="s2">&quot;as_generator&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;first&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;id_contains&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;self&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">}</span>
 
@@ -909,29 +917,29 @@
             <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">category_search</span><span class="p">)</span>
 
         <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
-                <span class="s1">&#39;asset&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-                    <span class="s1">&#39;externalIdIn&#39;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
-                    <span class="s1">&#39;statusIn&#39;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
+                <span class="s2">&quot;asset&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
+                    <span class="s2">&quot;externalIdIn&quot;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
+                    <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+                <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+                <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s1">&#39;createdAt&#39;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
-                <span class="s1">&#39;createdAtGte&#39;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
-                <span class="s1">&#39;createdAtLte&#39;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
-                <span class="s1">&#39;authorIn&#39;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
-                <span class="s1">&#39;honeypotMarkGte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
-                <span class="s1">&#39;honeypotMarkLte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
-                <span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">id_contains</span><span class="p">,</span>
-                <span class="s1">&#39;search&#39;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
-                <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-                <span class="s1">&#39;typeIn&#39;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
+                <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
+                <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
+                <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
+                <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
+                <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
+                <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
+                <span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">id_contains</span><span class="p">,</span>
+                <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
+                <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
+                <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -943,40 +951,36 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query_labels</span><span class="p">,</span>
             <span class="n">payload_query</span><span class="p">,</span>
             <span class="n">fields</span><span class="p">,</span>
-            <span class="n">disable_tqdm</span>
+            <span class="n">disable_tqdm</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">labels_generator</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels_generator</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_query_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                      <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                      <span class="n">first</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                      <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-                      <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">_query_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 
-        <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;skip&#39;</span><span class="p">:</span> <span class="n">skip</span><span class="p">,</span> <span class="s1">&#39;first&#39;</span><span class="p">:</span> <span class="n">first</span><span class="p">})</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;skip&quot;</span><span class="p">:</span> <span class="n">skip</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">first</span><span class="p">})</span>
         <span class="n">_gql_labels</span> <span class="o">=</span> <span class="n">gql_labels</span><span class="p">(</span><span class="n">fragment_builder</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">LabelType</span><span class="p">))</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_gql_labels</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
 
     <span class="c1"># pylint: disable=dangerous-default-value</span>
     <span class="nd">@typechecked</span>
     <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.118&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">export_labels_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                            <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                            <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                                <span class="s1">&#39;author.email&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;author.id&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;labelType&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;skipped&#39;</span><span class="p">,</span>
-                            <span class="p">],</span>
-                            <span class="n">asset_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                                <span class="s1">&#39;externalId&#39;</span>
-                            <span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">export_labels_as_df</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">asset_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot;Get the labels of a project as a pandas DataFrame.</span>
 
@@ -992,7 +996,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas DataFrame containing the labels.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s1">&#39;skipped&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;skipped&quot;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                The field &quot;skipped&quot; is deprecated since: 20/07/2022.</span>
 <span class="s2">                It will be removed after: 31/08/2022.</span>
@@ -1003,31 +1007,40 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">projects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">NO_ACCESS_RIGHT</span>
         <span class="n">assets</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;labels.&#39;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">])</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="sa">f</span><span class="s1">&#39;asset_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">asset</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">asset</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;labels&#39;</span><span class="p">))</span>
-                  <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]]</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">label</span><span class="p">,</span>
+                <span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;asset_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">asset</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">asset</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;labels&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
         <span class="n">labels_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">labels_df</span>
 
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+    <span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.118&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                     <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">count_labels</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot;Get the number of labels for the given parameters.</span>
 
@@ -1067,32 +1080,32 @@
             <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">category_search</span><span class="p">)</span>
 
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
-                <span class="s1">&#39;asset&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-                    <span class="s1">&#39;externalIdIn&#39;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
-                    <span class="s1">&#39;statusIn&#39;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
+                <span class="s2">&quot;asset&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
+                    <span class="s2">&quot;externalIdIn&quot;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
+                    <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+                <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+                <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s1">&#39;createdAt&#39;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
-                <span class="s1">&#39;createdAtGte&#39;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
-                <span class="s1">&#39;createdAtLte&#39;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
-                <span class="s1">&#39;authorIn&#39;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
-                <span class="s1">&#39;honeypotMarkGte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
-                <span class="s1">&#39;honeypotMarkLte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
-                <span class="s1">&#39;search&#39;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
-                <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-                <span class="s1">&#39;typeIn&#39;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
+                <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
+                <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
+                <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
+                <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
+                <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
+                <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
+                <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
+                <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
+                <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_LABELS_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="n">count</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">count</span>
 </code></pre></div>
         </details>
@@ -1245,25 +1258,27 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/queries/label/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.118&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">count_labels</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">&quot;&quot;&quot;Get the number of labels for the given parameters.</span>
 
@@ -1303,32 +1318,32 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
         <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">category_search</span><span class="p">)</span>
 
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
-            <span class="s1">&#39;asset&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-                <span class="s1">&#39;externalIdIn&#39;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
-                <span class="s1">&#39;statusIn&#39;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
+            <span class="s2">&quot;asset&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
+                <span class="s2">&quot;externalIdIn&quot;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
+                <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+            <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s1">&#39;createdAt&#39;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
-            <span class="s1">&#39;createdAtGte&#39;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
-            <span class="s1">&#39;createdAtLte&#39;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
-            <span class="s1">&#39;authorIn&#39;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
-            <span class="s1">&#39;honeypotMarkGte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
-            <span class="s1">&#39;honeypotMarkLte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
-            <span class="s1">&#39;search&#39;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
-            <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-            <span class="s1">&#39;typeIn&#39;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
+            <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
+            <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
+            <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
+            <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
+            <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
+            <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
+            <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
+            <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
+            <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_LABELS_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">count</span>
 </code></pre></div>
         </details>
@@ -1406,19 +1421,19 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
           <summary>Source code in <code>kili/queries/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.118&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">export_labels_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                            <span class="s1">&#39;author.email&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;author.id&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;labelType&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;skipped&#39;</span><span class="p">,</span>
-                        <span class="p">],</span>
-                        <span class="n">asset_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                            <span class="s1">&#39;externalId&#39;</span>
-                        <span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">export_labels_as_df</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">asset_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">&quot;&quot;&quot;Get the labels of a project as a pandas DataFrame.</span>
 
@@ -1434,7 +1449,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
 <span class="sd">    Returns:</span>
 <span class="sd">        pandas DataFrame containing the labels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="s1">&#39;skipped&#39;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;skipped&quot;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            The field &quot;skipped&quot; is deprecated since: 20/07/2022.</span>
 <span class="s2">            It will be removed after: 31/08/2022.</span>
@@ -1445,9 +1460,16 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">projects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">NO_ACCESS_RIGHT</span>
     <span class="n">assets</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;labels.&#39;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">])</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="sa">f</span><span class="s1">&#39;asset_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">asset</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">asset</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;labels&#39;</span><span class="p">))</span>
-              <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]]</span>
+        <span class="n">fields</span><span class="o">=</span><span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">label</span><span class="p">,</span>
+            <span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;asset_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">asset</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">asset</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;labels&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+    <span class="p">]</span>
     <span class="n">labels_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">labels_df</span>
 </code></pre></div>
@@ -1656,33 +1678,41 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/label/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="nd">@deprecate</span><span class="p">(</span><span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;2.118&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-           <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-           <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">,</span> <span class="s1">&#39;skipped&#39;</span><span class="p">],</span>
-           <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-           <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-           <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-           <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+<span class="k">def</span> <span class="nf">labels</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
 
@@ -1743,7 +1773,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">            category_search = `JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.count &gt; 0`</span>
 <span class="sd">            category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.count &gt; 0) AND JOB_BBOX.CATEGORY_C.count &gt; 10`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="s1">&#39;skipped&#39;</span> <span class="ow">in</span> <span class="n">fields</span> <span class="ow">or</span> <span class="n">skipped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;skipped&quot;</span> <span class="ow">in</span> <span class="n">fields</span> <span class="ow">or</span> <span class="n">skipped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            The field &quot;skipped&quot; is deprecated since: 20/07/2022.</span>
 <span class="s2">            It will be removed after: 31/08/2022.</span>
@@ -1756,14 +1786,14 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
         <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">saved_args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">k</span>
         <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s1">&#39;as_generator&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;disable_tqdm&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;fields&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;first&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;id_contains&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;self&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;skip&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;message&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;as_generator&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fields&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;first&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id_contains&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;self&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">}</span>
 
@@ -1774,29 +1804,29 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
         <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">category_search</span><span class="p">)</span>
 
     <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
-            <span class="s1">&#39;asset&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-                <span class="s1">&#39;externalIdIn&#39;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
-                <span class="s1">&#39;statusIn&#39;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
+            <span class="s2">&quot;asset&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
+                <span class="s2">&quot;externalIdIn&quot;</span><span class="p">:</span> <span class="n">asset_external_id_in</span><span class="p">,</span>
+                <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+            <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s1">&#39;createdAt&#39;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
-            <span class="s1">&#39;createdAtGte&#39;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
-            <span class="s1">&#39;createdAtLte&#39;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
-            <span class="s1">&#39;authorIn&#39;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
-            <span class="s1">&#39;honeypotMarkGte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
-            <span class="s1">&#39;honeypotMarkLte&#39;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
-            <span class="s1">&#39;idIn&#39;</span><span class="p">:</span> <span class="n">id_contains</span><span class="p">,</span>
-            <span class="s1">&#39;search&#39;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
-            <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-            <span class="s1">&#39;typeIn&#39;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
+            <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
+            <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">created_at_gte</span><span class="p">,</span>
+            <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">created_at_lte</span><span class="p">,</span>
+            <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">author_in</span><span class="p">,</span>
+            <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gte</span><span class="p">,</span>
+            <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lte</span><span class="p">,</span>
+            <span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">id_contains</span><span class="p">,</span>
+            <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">category_search</span><span class="p">,</span>
+            <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
+            <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">type_in</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span>
 
@@ -1808,7 +1838,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
         <span class="bp">self</span><span class="o">.</span><span class="n">_query_labels</span><span class="p">,</span>
         <span class="n">payload_query</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">,</span>
-        <span class="n">disable_tqdm</span>
+        <span class="n">disable_tqdm</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
@@ -1844,6 +1874,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsLabel</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Set of Label mutations.&quot;&quot;&quot;</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
@@ -1854,14 +1885,15 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+    <span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">create_predictions</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">external_id_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">model_name_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">external_id_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">model_name_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="p">):</span>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot;Create predictions for specific assets.</span>
 
@@ -1879,34 +1911,50 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">            For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="n">json_response_array</span><span class="p">),</span> <span class="s2">&quot;IDs list and predictions list should have the same length&quot;</span>
+            <span class="n">json_response_array</span>
+        <span class="p">),</span> <span class="s2">&quot;IDs list and predictions list should have the same length&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="n">model_name_array</span><span class="p">),</span> <span class="s2">&quot;IDs list and model names list should have the same length&quot;</span>
+            <span class="n">model_name_array</span>
+        <span class="p">),</span> <span class="s2">&quot;IDs list and model names list should have the same length&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Empty IDs and prediction list&quot;</span><span class="p">)</span>
 
-        <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;external_id_array&#39;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
-                               <span class="s1">&#39;model_name_array&#39;</span><span class="p">:</span> <span class="n">model_name_array</span><span class="p">,</span>
-                               <span class="s1">&#39;json_response_array&#39;</span><span class="p">:</span> <span class="n">json_response_array</span><span class="p">}</span>
+        <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;external_id_array&quot;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
+            <span class="s2">&quot;model_name_array&quot;</span><span class="p">:</span> <span class="n">model_name_array</span><span class="p">,</span>
+            <span class="s2">&quot;json_response_array&quot;</span><span class="p">:</span> <span class="n">json_response_array</span><span class="p">,</span>
+        <span class="p">}</span>
 
         <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span>
-                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;modelNameArray&#39;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;model_name_array&#39;</span><span class="p">],</span>
-                         <span class="s1">&#39;jsonResponseArray&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">dumps</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;json_response_array&#39;</span><span class="p">]]},</span>
-                <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;externalIdStrictlyIn&#39;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;external_id_array&#39;</span><span class="p">],</span> <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;modelNameArray&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;model_name_array&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;jsonResponseArray&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">dumps</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;json_response_array&quot;</span><span class="p">]],</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;externalIdStrictlyIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;external_id_array&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
+                <span class="p">},</span>
             <span class="p">}</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_CREATE_PREDICTIONS</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Label</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_CREATE_PREDICTIONS</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Label</span><span class="p">)</span>
 
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+    <span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">append_to_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">author_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                         <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                         <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;DEFAULT&#39;</span><span class="p">,</span>
-                         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">append_to_labels</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">author_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Append a label to an asset.</span>
 
 <span class="sd">        Args:</span>
@@ -1934,25 +1982,30 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
         <span class="k">if</span> <span class="n">author_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">author_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">user_id</span>
         <span class="n">label_asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">label_asset_id</span><span class="p">,</span> <span class="n">label_asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">label_asset_id</span><span class="p">,</span> <span class="n">label_asset_external_id</span><span class="p">,</span> <span class="n">project_id</span>
+        <span class="p">)</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;authorID&#39;</span><span class="p">:</span> <span class="n">author_id</span><span class="p">,</span>
-                     <span class="s1">&#39;jsonResponse&#39;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">),</span>
-                     <span class="s1">&#39;labelType&#39;</span><span class="p">:</span> <span class="n">label_type</span><span class="p">,</span>
-                     <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
-                     <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">},</span>
-            <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">label_asset_id</span><span class="p">}</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;authorID&quot;</span><span class="p">:</span> <span class="n">author_id</span><span class="p">,</span>
+                <span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">),</span>
+                <span class="s2">&quot;labelType&quot;</span><span class="p">:</span> <span class="n">label_type</span><span class="p">,</span>
+                <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
+                <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">label_asset_id</span><span class="p">},</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_APPEND_TO_LABELS</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
 
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+    <span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">update_properties_in_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                   <span class="n">label_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                   <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                   <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                   <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">update_properties_in_label</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update properties of a label.</span>
 
 <span class="sd">        Args:</span>
@@ -1968,22 +2021,25 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.update_properties_in_label(label_id=label_id, json_response={...})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">formatted_json_response</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">json_response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dumps</span><span class="p">(</span>
-            <span class="n">json_response</span><span class="p">)</span>
+        <span class="n">formatted_json_response</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">json_response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">)</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;labelID&#39;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
-            <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
-            <span class="s1">&#39;modelName&#39;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
-            <span class="s1">&#39;jsonResponse&#39;</span><span class="p">:</span> <span class="n">formatted_json_response</span>
+            <span class="s2">&quot;labelID&quot;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
+            <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
+            <span class="s2">&quot;modelName&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
+            <span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">formatted_json_response</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-            <span class="n">GQL_UPDATE_PROPERTIES_IN_LABEL</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_LABEL</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
 
-    <span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+    <span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">create_honeypot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_honeypot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create honeypot for an asset.</span>
 
 <span class="sd">        !!! info</span>
@@ -2004,15 +2060,14 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
 <span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">)},</span>
-            <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">}</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">)},</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">},</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_HONEYPOT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -2129,13 +2184,19 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">append_to_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">author_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;DEFAULT&#39;</span><span class="p">,</span>
-                     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">append_to_labels</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Append a label to an asset.</span>
 
 <span class="sd">    Args:</span>
@@ -2163,17 +2224,20 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
     <span class="k">if</span> <span class="n">author_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">author_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">user_id</span>
     <span class="n">label_asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">label_asset_id</span><span class="p">,</span> <span class="n">label_asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">label_asset_id</span><span class="p">,</span> <span class="n">label_asset_external_id</span><span class="p">,</span> <span class="n">project_id</span>
+    <span class="p">)</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;authorID&#39;</span><span class="p">:</span> <span class="n">author_id</span><span class="p">,</span>
-                 <span class="s1">&#39;jsonResponse&#39;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">),</span>
-                 <span class="s1">&#39;labelType&#39;</span><span class="p">:</span> <span class="n">label_type</span><span class="p">,</span>
-                 <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
-                 <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">},</span>
-        <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">label_asset_id</span><span class="p">}</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;authorID&quot;</span><span class="p">:</span> <span class="n">author_id</span><span class="p">,</span>
+            <span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">),</span>
+            <span class="s2">&quot;labelType&quot;</span><span class="p">:</span> <span class="n">label_type</span><span class="p">,</span>
+            <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
+            <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">label_asset_id</span><span class="p">},</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_APPEND_TO_LABELS</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2260,10 +2324,15 @@ Either provide asset_id or asset_external_id and project_id</p></td>
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">create_honeypot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">create_honeypot</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">json_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create honeypot for an asset.</span>
 
 <span class="sd">    !!! info</span>
@@ -2284,15 +2353,14 @@ Either provide asset_id or asset_external_id and project_id</p></td>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
 <span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+    <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_id_from_external_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">)},</span>
-        <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">}</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">)},</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">},</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_HONEYPOT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2374,14 +2442,15 @@ see <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">create_predictions</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">external_id_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">model_name_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">external_id_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">model_name_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">json_response_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+<span class="p">):</span>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">&quot;&quot;&quot;Create predictions for specific assets.</span>
 
@@ -2399,26 +2468,36 @@ see <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
 <span class="sd">        For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-        <span class="n">json_response_array</span><span class="p">),</span> <span class="s2">&quot;IDs list and predictions list should have the same length&quot;</span>
+        <span class="n">json_response_array</span>
+    <span class="p">),</span> <span class="s2">&quot;IDs list and predictions list should have the same length&quot;</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-        <span class="n">model_name_array</span><span class="p">),</span> <span class="s2">&quot;IDs list and model names list should have the same length&quot;</span>
+        <span class="n">model_name_array</span>
+    <span class="p">),</span> <span class="s2">&quot;IDs list and model names list should have the same length&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Empty IDs and prediction list&quot;</span><span class="p">)</span>
 
-    <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;external_id_array&#39;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
-                           <span class="s1">&#39;model_name_array&#39;</span><span class="p">:</span> <span class="n">model_name_array</span><span class="p">,</span>
-                           <span class="s1">&#39;json_response_array&#39;</span><span class="p">:</span> <span class="n">json_response_array</span><span class="p">}</span>
+    <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;external_id_array&quot;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
+        <span class="s2">&quot;model_name_array&quot;</span><span class="p">:</span> <span class="n">model_name_array</span><span class="p">,</span>
+        <span class="s2">&quot;json_response_array&quot;</span><span class="p">:</span> <span class="n">json_response_array</span><span class="p">,</span>
+    <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;modelNameArray&#39;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;model_name_array&#39;</span><span class="p">],</span>
-                     <span class="s1">&#39;jsonResponseArray&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">dumps</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;json_response_array&#39;</span><span class="p">]]},</span>
-            <span class="s1">&#39;where&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;externalIdStrictlyIn&#39;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;external_id_array&#39;</span><span class="p">],</span> <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;modelNameArray&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;model_name_array&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;jsonResponseArray&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">dumps</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;json_response_array&quot;</span><span class="p">]],</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;externalIdStrictlyIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;external_id_array&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
+            <span class="p">},</span>
         <span class="p">}</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_CREATE_PREDICTIONS</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_CREATE_PREDICTIONS</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Label</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2500,13 +2579,15 @@ see <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@Compatible</span><span class="p">([</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;v2&quot;</span><span class="p">])</span>
 <span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">update_properties_in_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                               <span class="n">label_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                               <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                               <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                               <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">update_properties_in_label</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">label_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">json_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Update properties of a label.</span>
 
 <span class="sd">    Args:</span>
@@ -2522,17 +2603,15 @@ see <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.update_properties_in_label(label_id=label_id, json_response={...})</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">formatted_json_response</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">json_response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dumps</span><span class="p">(</span>
-        <span class="n">json_response</span><span class="p">)</span>
+    <span class="n">formatted_json_response</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">json_response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">)</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;labelID&#39;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
-        <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
-        <span class="s1">&#39;modelName&#39;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
-        <span class="s1">&#39;jsonResponse&#39;</span><span class="p">:</span> <span class="n">formatted_json_response</span>
+        <span class="s2">&quot;labelID&quot;</span><span class="p">:</span> <span class="n">label_id</span><span class="p">,</span>
+        <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
+        <span class="s2">&quot;modelName&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
+        <span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">formatted_json_response</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-        <span class="n">GQL_UPDATE_PROPERTIES_IN_LABEL</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_LABEL</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2591,19 +2670,19 @@ see <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
 <span class="sd">            For more detailed examples on how to use Webhooks,</span>
 <span class="sd">            See [the related recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/webhooks.ipynb)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;ws&#39;</span><span class="p">)</span>
+        <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">,</span> <span class="s2">&quot;ws&quot;</span><span class="p">)</span>
         <span class="n">websocket</span> <span class="o">=</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">(</span><span class="n">ws_endpoint</span><span class="p">)</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
-        <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Authorization&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;projectID&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
+        <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Authorization&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
         <span class="n">websocket</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
             <span class="n">GQL_LABEL_CREATED_OR_UPDATED</span><span class="p">,</span>
             <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span>
             <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-            <span class="n">authorization</span><span class="o">=</span><span class="n">authorization</span><span class="p">)</span>
+            <span class="n">authorization</span><span class="o">=</span><span class="n">authorization</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">websocket</span>
 </code></pre></div>
         </details>
@@ -2698,19 +2777,19 @@ See <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
 <span class="sd">        For more detailed examples on how to use Webhooks,</span>
 <span class="sd">        See [the related recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/webhooks.ipynb)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;ws&#39;</span><span class="p">)</span>
+    <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">,</span> <span class="s2">&quot;ws&quot;</span><span class="p">)</span>
     <span class="n">websocket</span> <span class="o">=</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">(</span><span class="n">ws_endpoint</span><span class="p">)</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
-    <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s1">&#39;</span>
-    <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Authorization&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span>
-    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;projectID&#39;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
+    <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Authorization&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
     <span class="n">websocket</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
         <span class="n">GQL_LABEL_CREATED_OR_UPDATED</span><span class="p">,</span>
         <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span>
         <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
         <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-        <span class="n">authorization</span><span class="o">=</span><span class="n">authorization</span><span class="p">)</span>
+        <span class="n">authorization</span><span class="o">=</span><span class="n">authorization</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">websocket</span>
 </code></pre></div>
         </details>

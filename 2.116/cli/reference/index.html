@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.116/cli/reference/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.116.0/cli/reference/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
@@ -571,8 +571,29 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#add-member" class="md-nav__link">
+    add-member
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#list-members" class="md-nav__link">
     list-members
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-member" class="md-nav__link">
+    remove-member
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-member" class="md-nav__link">
+    update-member
   </a>
   
 </li>
@@ -680,8 +701,29 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#add-member" class="md-nav__link">
+    add-member
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#list-members" class="md-nav__link">
     list-members
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-member" class="md-nav__link">
+    remove-member
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-member" class="md-nav__link">
+    update-member
   </a>
   
 </li>
@@ -767,18 +809,19 @@
 </table>
 <h3 id="create-project">create-project</h3>
 <p>Create a Kili project</p>
-<p>If --interface is the project_id of another Kili project,
-it will create a new project with the same json_interface
+<p>interface must be a path pointing to your json interface file</p>
+<p>If no interface is provided, --from-project can be used
+to create a new project with the json_interface of another project
 (assets will not be copied).</p>
 <div class="admonition examples">
 <p class="admonition-title">Examples</p>
 <p><div class="highlight"><pre><span></span><code>kili project create \
-    --interface path/to/interface.json \
+     path/to/interface.json \
     --input-type TEXT \
     --title &quot;Invoice annotation project&quot;
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>kili project create \
-    --interface another_project_id \
+    --from-project &lt;project_id_src&gt; \
     --input-type TEXT \
     --title &quot;Invoice annotation project&quot;
 </code></pre></div></p>
@@ -786,7 +829,7 @@ it will create a new project with the same json_interface
 <p>To build a Kili project interface, please visit: </p>
 <p>https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings</p>
 <p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>kili project create-project [OPTIONS]
+<div class="highlight"><pre><span></span><code>kili project create-project [OPTIONS] [INTERFACE]
 </code></pre></div>
 <p><strong>Options:</strong></p>
 <table>
@@ -812,10 +855,10 @@ it will create a new project with the same json_interface
 <td>None</td>
 </tr>
 <tr>
-<td><code>--interface</code></td>
+<td><code>--from-project</code></td>
 <td>text</td>
-<td>Path pointing to your json interface file or the project_id of another Kili project.</td>
-<td>_required</td>
+<td>project_id of another Kili project</td>
+<td>None</td>
 </tr>
 <tr>
 <td><code>--title</code></td>
@@ -893,6 +936,12 @@ it will create a new project with the same json_interface
 <h3 id="import-assets">import-assets</h3>
 <p>Add assets into a project</p>
 <p>Files can be paths to files or to folders. You can provide several paths separated by spaces.</p>
+<p>If no Files are provided, --from-csv can be used to import
+assets from a CSV file with two columns:</p>
+<ul>
+<li><code>external_id</code>: external id of the asset.</li>
+<li><code>content</code>: paths to the asset file or a url hosting the asset.</li>
+</ul>
 <div class="admonition examples">
 <p class="admonition-title">Examples</p>
 <p><div class="highlight"><pre><span></span><code>kili project import \
@@ -901,6 +950,12 @@ it will create a new project with the same json_interface
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>kili project import \
     dir1/dir3/video.mp4 \
+    --project-id &lt;project_id&gt; \
+    --frames \
+    --fps 24
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project import \
+    --from-csv assets_list.csv \
     --project-id &lt;project_id&gt; \
     --frames \
     --fps 24
@@ -916,7 +971,7 @@ it will create a new project with the same json_interface
 <p>For such imports, please use the <code>append_many_to_dataset</code> method in the Kili SDK.</p>
 </div>
 <p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>kili project import-assets [OPTIONS] FILES...
+<div class="highlight"><pre><span></span><code>kili project import-assets [OPTIONS] [FILES]...
 </code></pre></div>
 <p><strong>Options:</strong></p>
 <table>
@@ -944,8 +999,14 @@ it will create a new project with the same json_interface
 <tr>
 <td><code>--project-id</code></td>
 <td>text</td>
-<td>Id of the project to import assets into.</td>
+<td>Id of the project</td>
 <td>_required</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with required columns:external_id, content required columns:</td>
+<td>None</td>
 </tr>
 <tr>
 <td><code>--frames</code></td>
@@ -976,35 +1037,33 @@ it will create a new project with the same json_interface
 <h3 id="import-labels">import-labels</h3>
 <p>Import labels or predictions</p>
 <p>The labels to import have to be in the Kili format and stored in a json file.
-Labels to import are provided in a CSV file with two columns, separated by a semi-column:</p>
-<ul>
-<li><code>external_id</code>: external id for which you want to import labels.</li>
-<li><code>json_response_path</code>: paths to the json files containing the json_response to upload.</li>
-</ul>
+Labels to import are provided in a CSV file with two columns:
+- <code>external_id</code>: external id for which you want to import labels.
+- <code>json_response_path</code>: paths to the json files containing the json_response to upload.</p>
 <div class="admonition examples">
 <p class="admonition-title">CSV file template</p>
-<div class="highlight"><pre><span></span><code>external_id;json_response_path
-asset1;./labels/label_asset1.json
-asset2;./labels/label_asset2.json
+<div class="highlight"><pre><span></span><code>external_id,json_response_path
+asset1,./labels/label_asset1.json
+asset2,./labels/label_asset2.json
 </code></pre></div>
 </div>
 <div class="admonition examples">
 <p class="admonition-title">Examples</p>
 <p>To import default labels:
 <div class="highlight"><pre><span></span><code>kili project label \
-    path/to/file.csv \
+    --from-csv path/to/file.csv \
     --project-id &lt;project_id&gt;
 </code></pre></div>
 To import labels as predictions:
 <div class="highlight"><pre><span></span><code>kili project label \
-    path/to/file.csv \
+    --from-csv path/to/file.csv \
     --project-id &lt;project_id&gt; \
     --prediction \
     --model-name YOLO-run-3
 </code></pre></div></p>
 </div>
 <p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>kili project import-labels [OPTIONS] CSV_PATH
+<div class="highlight"><pre><span></span><code>kili project import-labels [OPTIONS]
 </code></pre></div>
 <p><strong>Options:</strong></p>
 <table>
@@ -1030,9 +1089,15 @@ To import labels as predictions:
 <td>None</td>
 </tr>
 <tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with required columns:external_id, json_response_path required columns:</td>
+<td>_required</td>
+</tr>
+<tr>
 <td><code>--project-id</code></td>
 <td>text</td>
-<td>Id of the project to import labels in</td>
+<td>Id of the project</td>
 <td>_required</td>
 </tr>
 <tr>
@@ -1132,6 +1197,84 @@ To import labels as predictions:
 </tr>
 </tbody>
 </table>
+<h4 id="add-member">add-member</h4>
+<p>Add members to a Kili project</p>
+<p>Emails can be passed directly as arguments.
+You can provide several emails separated by spaces.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project member add \
+    --project-id &lt;project_id&gt; \
+    --role REVIEWER \
+    john.doe@test.com jane.doe@test.com
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member add \
+    --project-id &lt;project_id&gt; \
+    --from-csv path/to/members.csv
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member add \
+    --project-id &lt;project_id&gt; \
+    --from-project &lt;project_id_scr&gt;
+</code></pre></div></p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member add-member [OPTIONS] [EMAILS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project to add members to</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--role</code></td>
+<td>choice (<code>ADMIN</code> &#x7C; <code>TEAM_MANAGER</code> &#x7C; <code>REVIEWER</code> &#x7C; <code>LABELER</code>)</td>
+<td>Project role of the added user(s).</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with 'email' header, optionnal header 'role' can be use.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-project</code></td>
+<td>text</td>
+<td>project_id of another Kili project to copy the users from</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
 <h4 id="list-members">list-members</h4>
 <p>List the members of the project</p>
 <div class="admonition examples">
@@ -1176,6 +1319,155 @@ To import labels as predictions:
 <td>text</td>
 <td>Defines how the output table is formatted (see https://pypi.org/project/tabulate/, default: plain).</td>
 <td><code>plain</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="remove-member">remove-member</h4>
+<p>Remove members from a Kili project</p>
+<p>Emails can be passed directly as arguments.
+You can provide several emails separated by spaces.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project member rm \
+    --project-id &lt;project_id&gt; \
+    john.doe@test.com
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member rm \
+    --project-id &lt;project_id&gt; \
+    --from-csv path/to/members.csv
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member rm \
+    --project-id &lt;project_id&gt; \
+    --all
+</code></pre></div></p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member remove-member [OPTIONS] [EMAILS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project to add members to</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with email in the first column</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--all</code></td>
+<td>boolean</td>
+<td>Remove all users from project</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="update-member">update-member</h4>
+<p>Update member's role of a Kili project</p>
+<p>Emails can be passed directly as arguments.
+You can provide several emails separated by spaces.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project member update\
+    --project-id &lt;project_id&gt; \
+    --role REVIEWER \
+    john.doe@test.com
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member update \
+    --project-id &lt;project_id&gt; \
+    --from-csv path/to/members.csv
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member update \
+    --project-id &lt;project_id&gt; \
+    --from-project &lt;project_id_scr&gt;
+</code></pre></div></p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member update-member [OPTIONS] [EMAILS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project to add members to</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--role</code></td>
+<td>choice (<code>ADMIN</code> &#x7C; <code>TEAM_MANAGER</code> &#x7C; <code>REVIEWER</code> &#x7C; <code>LABELER</code>)</td>
+<td>Project role of the added user(s).</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with email in the first column. A second column can be used to use one-to-one role.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-project</code></td>
+<td>text</td>
+<td>project_id of another Kili project to copy the users from</td>
+<td>None</td>
 </tr>
 <tr>
 <td><code>--help</code></td>
