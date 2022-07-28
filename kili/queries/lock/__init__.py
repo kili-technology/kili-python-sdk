@@ -2,12 +2,11 @@
 Lock queries
 """
 
-import warnings
 from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from ...types import Lock
 from ...utils.pagination import row_generator_from_paginated_calls
 from .queries import GQL_LOCKS_COUNT, gql_locks
@@ -46,7 +45,8 @@ class QueriesLock:
         Args:
             lock_id: The id of the lock to request. If None, all locks are returned
             fields: All the fields to request among the possible fields for the locks.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks) for all possible fields.
+                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks)
+                for all possible fields.
             first: Maximum number of locks to return.
             skip: Number of skipped locks (they are ordered by creation date)
             disable_tqdm: If `True`, the progress bar will be disabled

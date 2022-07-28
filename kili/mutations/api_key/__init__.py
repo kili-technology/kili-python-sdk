@@ -4,7 +4,7 @@ Api key mutations
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result
+from ...helpers import Compatible, format_result
 from .queries import GQL_APPEND_TO_API_KEYS
 
 

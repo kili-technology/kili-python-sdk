@@ -1,11 +1,10 @@
 """Project user queries."""
 
-import warnings
 from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, deprecate, format_result, fragment_builder
+from ...helpers import Compatible, format_result, fragment_builder
 from ...types import ProjectUser
 from ...utils.pagination import row_generator_from_paginated_calls
 from .queries import GQL_PROJECT_USERS_COUNT, gql_project_users

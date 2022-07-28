@@ -1,7 +1,7 @@
 """Label subscription."""
 
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Callable
 
 from typeguard import typechecked
 

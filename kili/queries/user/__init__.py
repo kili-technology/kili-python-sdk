@@ -1,6 +1,5 @@
 """User queries."""
 
-import warnings
 from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
