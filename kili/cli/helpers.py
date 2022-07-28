@@ -57,4 +57,4 @@ def check_exclusive_options(csv_path: Optional[str], files: Optional[List[str]])
         raise ValueError("files arguments and option --from-csv are exclusive.")
 
     if (csv_path is not None) + (len(files) > 0) == 0:
-        raise ValueError("You must use either file arguments or option --from-csv")
+        raise ValueError("You must either provide file arguments or use the option --from-csv")

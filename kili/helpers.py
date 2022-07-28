@@ -4,16 +4,20 @@ Helpers for GraphQL Queries and Mutations
 
 import base64
 import functools
+import glob
 import mimetypes
+import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Optional
+from typing import List, Optional, Tuple
 
 import pyparsing as pp
 import requests
 
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
+
+from .constants import mime_extensions_for_IV2
 
 
 class Compatible:
@@ -355,3 +359,77 @@ def validate_category_search_query(query):
         expr.parseString(query, parseAll=True)
     except pp.ParseException as error:
         raise ValueError(f"Invalid category search query: {query}") from error
+
+
+def get_file_paths_to_upload(files: Tuple[str, ...], input_type: str, verbose: bool) -> List[str]:
+    """Get a list of paths for the files to upload given a list of files or folder paths.
+
+    Args:
+        files: a list path that can either be file paths, folder paths or unexisting paths
+        input_type: input type of the project to import data to.
+
+    Returns:
+        a list of the paths of the files to upload, compatible with the project type.
+    """
+    file_paths = []
+    for item in files:
+        if os.path.isfile(item):
+            file_paths.append(item)
+        elif os.path.isdir(item):
+            folder_path = os.path.join(item, "")
+            file_paths.extend(
+                [sub_item for sub_item in glob.glob(folder_path + "*") if os.path.isfile(sub_item)]
+            )
+        else:
+            file_paths.extend(
+                [sub_item for sub_item in glob.glob(item) if os.path.isfile(sub_item)]
+            )
+
+    if input_type == "LABEL":
+
+        file_paths_to_upload = [path for path in file_paths if path.endswith(".json")]
+
+        if len(file_paths_to_upload) == 0:
+            raise ValueError(
+                "No files to upload. Check that the paths exist and that the file type is .json"
+            )
+
+    else:
+        file_paths_to_upload = [
+            path for path in file_paths if check_file_mime_type(path, input_type, False)
+        ]
+        if len(file_paths_to_upload) == 0:
+            raise ValueError(
+                "No files to upload. "
+                "Check that the paths exist and that the file types are compatible with the project"
+            )
+
+    if verbose:
+        for path in file_paths:
+            if path not in file_paths_to_upload:
+                print(f"{path:30} SKIPPED")
+        if len(file_paths_to_upload) != len(file_paths):
+            print("Paths skipped either do not exist or point towards a non -json file")
+    file_paths_to_upload.sort()
+
+    return file_paths_to_upload
+
+
+def check_file_mime_type(content: str, input_type: str, verbose: bool = True) -> bool:
+    """
+    Returns true if the mime type of the file corresponds to the allowed mime types of the project
+    """
+
+    mime_type = get_data_type(content.lower())
+
+    if not (mime_extensions_for_IV2[input_type] and mime_type):
+        return False
+
+    correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
+    if verbose and not correct_mime_type:
+        print(
+            f"File mime type for {content} is {mime_type} and does not correspond"
+            "to the type of the project. "
+            f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
+        )
+    return correct_mime_type

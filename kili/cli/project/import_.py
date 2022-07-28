@@ -15,10 +15,8 @@ from kili.cli.helpers import (
 )
 from kili.client import Kili
 from kili.exceptions import NotFound
-from kili.mutations.asset.helpers import (
-    generate_json_metadata_array,
-    get_file_paths_to_upload,
-)
+from kili.helpers import get_file_paths_to_upload
+from kili.mutations.asset.helpers import generate_json_metadata_array
 
 # pylint: disable=consider-using-with
 

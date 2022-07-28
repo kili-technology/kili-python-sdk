@@ -2,19 +2,17 @@
 Helpers for the asset mutations
 """
 import csv
-import glob
 import mimetypes
 import os
 from json import dumps
-from typing import List, Tuple, Union
+from typing import List, Union
 from uuid import uuid4
 
-from ...constants import mime_extensions_for_IV2
 from ...helpers import (
+    check_file_mime_type,
     convert_to_list_of_none,
     encode_base64,
     format_metadata,
-    get_data_type,
     is_none_or_empty,
     is_url,
 )
@@ -155,26 +153,6 @@ def is_float(number: str) -> bool:
         return False
 
 
-def check_file_mime_type(content: str, input_type: str, verbose: bool = True) -> bool:
-    """
-    Returns true if the mime type of the file corresponds to the allowed mime types of the project
-    """
-
-    mime_type = get_data_type(content.lower())
-
-    if not (mime_extensions_for_IV2[input_type] and mime_type):
-        return False
-
-    correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
-    if verbose and not correct_mime_type:
-        print(
-            f"File mime type for {content} is {mime_type} and does not correspond"
-            "to the type of the project. "
-            f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
-        )
-    return correct_mime_type
-
-
 def add_video_parameters(json_metadata, should_use_native_video):
     """
     Add necessary video parameters to the metadata of the video
@@ -311,51 +289,6 @@ def process_update_properties_in_assets_parameters(properties) -> dict:
         map(is_none_or_empty, properties["to_be_labeled_by_array"])
     )
     return properties
-
-
-def get_file_paths_to_upload(files: Tuple[str, ...], input_type: str, verbose: bool) -> List[str]:
-    """Get a list of paths for the files to upload given a list of files or folder paths.
-
-    Args:
-        files: a list path that can either be file paths, folder paths or unexisting paths
-        input_type: input type of the project to import data to.
-
-    Returns:
-        a list of the paths of the files to upload, compatible with the project type.
-    """
-    file_paths = []
-    for item in files:
-        if os.path.isfile(item):
-            file_paths.append(item)
-        elif os.path.isdir(item):
-            folder_path = os.path.join(item, "")
-            file_paths.extend(
-                [sub_item for sub_item in glob.glob(folder_path + "*") if os.path.isfile(sub_item)]
-            )
-        else:
-            file_paths.extend(
-                [sub_item for sub_item in glob.glob(item) if os.path.isfile(sub_item)]
-            )
-
-    file_paths_to_upload = [
-        path for path in file_paths if check_file_mime_type(path, input_type, False)
-    ]
-    if len(file_paths_to_upload) == 0:
-        raise ValueError(
-            "No files to upload. "
-            "Check that the paths exist and that the file types are compatible with the project"
-        )
-    if verbose:
-        for path in file_paths:
-            if path not in file_paths_to_upload:
-                print(f"{path:30} SKIPPED")
-        if len(file_paths_to_upload) != len(file_paths):
-            print(
-                "Paths skipped either do not exist "
-                "or point towards wrong data type for the project"
-            )
-    file_paths_to_upload.sort()
-    return file_paths_to_upload
 
 
 def generate_json_metadata_array(as_frames, fps, nb_files, input_type):

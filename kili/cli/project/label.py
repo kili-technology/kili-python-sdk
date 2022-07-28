@@ -15,10 +15,8 @@ from kili.cli.helpers import (
 )
 from kili.client import Kili
 from kili.exceptions import NotFound
-from kili.mutations.label.helpers import (
-    generate_create_predictions_arguments,
-    get_label_file_paths_to_upload,
-)
+from kili.helpers import get_file_paths_to_upload
+from kili.mutations.label.helpers import generate_create_predictions_arguments
 
 
 def type_check_label(key, value):
@@ -65,8 +63,8 @@ def import_labels(
     Import labels or predictions
 
     Files can be paths to files or to folders. You can provide several paths separated by spaces.
-    The labels to import have to be in the Kili format and stored in a json file.
-    File's name must be equal to asset's external_id.
+    The labels to import have to be in the Kili format and stored in a json file,
+    file's name must be equal to asset's external_id.
 
     If no Files are provided, --from-csv can be used to import
     assets from a CSV file with two columns:
@@ -118,7 +116,7 @@ def import_labels(
         raise NotFound(f"project ID: {project_id}")
 
     if len(files) > 0:
-        label_paths = get_label_file_paths_to_upload(files, verbose)
+        label_paths = get_file_paths_to_upload(files, "LABEL", verbose)
         if len(label_paths) == 0:
             raise ValueError(
                 "No label files to upload. " "Check that the paths exist and file types are .json"
@@ -140,15 +138,18 @@ def import_labels(
         label_paths = [label["json_response_path"] for label in labels_to_add]
         external_ids = [label["external_id"] for label in labels_to_add]
 
-    assets = kili.assets(project_id=project_id, fields=["externalId"], disable_tqdm=True)
-    assets = set(asset["externalId"] for asset in assets)
-
-    label_index_to_import = set(
-        i for i, external_id in enumerate(external_ids) if external_id in assets
+    asset_in_project_external_ids = kili.assets(
+        project_id=project_id, fields=["externalId"], disable_tqdm=True
+    )
+    asset_in_project_external_ids = set(
+        asset["externalId"] for asset in asset_in_project_external_ids
     )
 
+    label_index_to_import = []
     for i, external_id in enumerate(external_ids):
-        if i not in label_index_to_import:
+        if external_id in asset_in_project_external_ids:
+            label_index_to_import.append(i)
+        else:
             warnings.warn(f"{external_id} is not an asset of project ID: {project_id}.")
 
     if is_prediction:
