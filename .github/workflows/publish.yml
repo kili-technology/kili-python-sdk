@@ -23,6 +23,7 @@ jobs:
           pip install -r requirements_dev.txt
 
       - name: Deploy technical documentation
+        uses: actions/setup-python@v2
         with:
           committer_name: ci-bot
           committer_email: ci-bot@example.com
