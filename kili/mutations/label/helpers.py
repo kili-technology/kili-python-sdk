@@ -2,8 +2,8 @@
 Helpers for the label mutations
 """
 import json
-from typing import List
 from os import PathLike
+from typing import List
 
 
 def generate_create_predictions_arguments(

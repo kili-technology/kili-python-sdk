@@ -2,9 +2,11 @@
 
 import os
 import urllib.request
-from typing import Dict, Optional, List, Tuple, cast
+from typing import Dict, List, Optional, Tuple, cast
+
 import click
 from typeguard import typechecked
+
 from kili.cli.common_args import Options, from_csv
 from kili.cli.helpers import collect_from_csv
 from kili.client import Kili

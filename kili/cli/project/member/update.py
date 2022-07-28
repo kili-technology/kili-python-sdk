@@ -1,18 +1,19 @@
 """CLI's project member update subcommand"""
 
-from typing import Optional
 import warnings
+from typing import Optional
+
 import click
+
+from kili.cli.common_args import Options
 from kili.cli.project.member.helpers import (
     ROLES,
+    check_exclusive_options,
     collect_members_from_csv,
     collect_members_from_emails,
     collect_members_from_project,
-    check_exclusive_options,
 )
-
 from kili.client import Kili
-from kili.cli.common_args import Options
 
 
 @click.command()
