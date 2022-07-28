@@ -28,67 +28,100 @@ kili project [COMMAND]
 ## Workflow example
 
 Let's take an example where you want to start a project from scratch:
-
+You can download ressources to run this example [here](https://storage.googleapis.com/kili-machine-learning-web/cli/CLI_Demo_Ressources.zip).
+Once in the current directory where all files are stored, you can run the following commands:
 ### Create a project
 
 To create an IMAGE project:
 
 ```
-kili project create \\
-            --interface path/to/interface.json \\
-            --input-type IMAGE \\
-            --title "Defect detection" \\
-            --description "Bottle defects on production line"
+kili project create \
+            json_interface.json \
+            --title "Quality inspection" \
+            --input-type IMAGE \
+            --description "Steel defects on production line"
 ```
 
 Ouput:
 
 ```
-Project successfully created. Id: cl4ljd3awc5gj0lpbb89nbcqg
+ID                         URL
+<project_id>               https://cloud.kili-technology.com/label/projects/<project_id>/
 ```
 
 ### List your projects
 
 ```
-kili project list --max 10
+kili project list --max 10 --stdout-format default
 ```
 
 Ouput:
 
 ```
-title                                     id                           progress  description
-----------------------------------------  -------------------------  ----------  -------------------------------
-Defect detection                          cl4ljd3awc5gj0lpbb89nbcqg        0.0%  Bottle defects on production...
-invoice NER                               cl3d43bzb0rl71mx4580mpbt1       92.5%  For intelligent document pro...
+TITLE                                ID                      PROGRESS  DESCRIPTION
+-----------------------------------  --------------------  ----------  --------------------------------------------------
+Quality inspection                   <project_id>                0.0%  Steel defects on production line
+...
+```
+
+### Recover your <project_id>
+
+```
+project_id=$(kili project list --stdout-format "tsv" \
+              | grep -m1 "Quality inspection" \
+              | awk 'BEGIN {FS="\t"}; {print $2}')
+```
+
+### Add a member to your project
+
+```
+kili project member add \
+                <email_adress> \
+                --project-id $project_id \
+                --role REVIEWER
+```
+
+Ouput:
+
+```
+1 member(s) have been successfully added to project: <project_id>
+```
+
+### List the project's members
+
+```
+kili project member list $project_id
+```
+
+Ouput:
+
+```
+ROLE      NAME            EMAIL                ID                         ORGANIZATION
+ADMIN     <your_name>     <your_email>         <your_member_id>           <your_organization>
+REVIEWER  <reviewer_name> <email_adress>       <member_id>                <your_organization>
 ```
 
 ### Import data to your project
 
-To import data, provide a list of files or folders
+To import data, provide a list of files or folders (you can also procide a csv file external_id and file's paths)
 
 ```
-kili project import \\
-    reference_image.png datasets/defect_detection/ \\
-    --project-id cl4ljd3awc5gj0lpbb89nbcqg \\
-    --verbose
+kili project import \
+    assets \
+    --project-id $project_id
 ```
 
 Ouput:
 
 ```
-datasets/defect_detection/visit1.mp4    SKIPPED
-datasets/defect_detection/visit2.mp4    SKIPPED
-Paths either do not exist, are filtered out or point towards wrong data type for the project
-
-567 files have been successfully imported
+40 files have been successfully imported
 ```
 
 ### Import labels to your project
 
-To import labels, provide a CSV file with two columns, separated by a semi-column:
+To import labels, provide a list of files or folders (you can also procide a csv file external_id and label's paths).
 
-- `external_id`: external id for which you want to import labels.
-- `json_response_path`: paths to the json files containing the json_response to upload.
+Label's files are json with the json_response to upload
 
 !!! Examples "CSV file template"
     ```
@@ -98,61 +131,60 @@ To import labels, provide a CSV file with two columns, separated by a semi-colum
     ```
 
 ```
-kili project label \\
-    datasets/defect_detection/labels.csv \\
-    --project-id cl4ljd3awc5gj0lpbb89nbcqg
+kili project label \
+    --project-id $project_id \
+    --from-csv labels.csv
 ```
 
 Outputs:
 
 ```
-82 labels have been successfully imported
+10 labels have been successfully imported
 ```
 
 If you have run a pre-annotation model, you can also import labels as predictions.
 These labels will be seen as pre-annotation in the labeling interface.
 
 ```
-kili project label \\
-    datasets/defect_detection/predictions.csv \\
-    --project-id cl4ljd3awc5gj0lpbb89nbcqg \\
-    --prediction \\
+kili project label \
+    --project-id $project_id \
+    --from-csv labels.csv \
+    --prediction \
     --model-name YOLO-run-3
 ```
 
 Outputs:
 
 ```
-82 labels have been successfully imported
+10 labels have been successfully imported
 ```
 
 ### Get metrics of your project
 
 ```
-kili project describe \\
-    --project-id cl4ljd3awc5gj0lpbb89nbcqg
+kili project describe $project_id
 ```
 
 Ouput:
 
 ```
-Title        Defect detection
-Description  Bottle defects on production line
+Title        Quality inspection
+Description  Steel defects on production line
 
 Dataset KPIs
 ------------
-Total number of assets      567
-Number of remaining assets  485
+Total number of assets      40
+Number of remaining assets  10
 Skipped assets              0
-Progress                    14.5%
+Progress                    25.0%
 
 Quality KPIs
 ------------
-Project consensus           79
-Project honeypot            22
-Number of reviewed assets   76
-Number of open issues       5
-Number of solved issues     12
-Number of open questions    2
-Number of solved questions  9
+Project consensus           N/A
+Project honeypot            N/A
+Number of reviewed assets   0
+Number of open issues       0
+Number of solved issues     0
+Number of open questions    0
+Number of solved questions  0
 ```

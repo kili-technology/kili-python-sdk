@@ -103,4 +103,4 @@ def add_member(
             )
             count += 1
 
-    print(f"{count} users have been successfully added to project: {project_id}")
+    print(f"{count} member(s) have been successfully added to project: {project_id}")

@@ -121,4 +121,4 @@ def update_member(
                 " Use kili project member add to add member."
             )
 
-    print(f"{count} user's role have been successfully updated in project: {project_id}")
+    print(f"{count} member's role(s) have been successfully updated in project: {project_id}")
