@@ -23,10 +23,9 @@ jobs:
           pip install -r requirements_dev.txt
 
       - name: Deploy technical documentation
-        env:
-          GIT_COMMITTER_NAME: ci-bot
-          GIT_COMMITTER_EMAIL: ci-bot@example.com
-          PYTHONPATH: .
+        with:
+          committer_name: ci-bot
+          committer_email: ci-bot@example.com
         run: |
           export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:3]))')
           git fetch origin gh-pages --depth=1
