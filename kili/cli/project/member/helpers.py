@@ -2,8 +2,9 @@
 
 import re
 import warnings
-from kili.cli.common_args import ROLES
+from typing import Dict, List, Optional, cast
 
+from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
 
 REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")

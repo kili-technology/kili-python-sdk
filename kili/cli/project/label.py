@@ -2,8 +2,9 @@
 
 import json
 import os
-from typing import Optional, Tuple
 import warnings
+from typing import Optional, Tuple
+
 import click
 
 from kili.cli.common_args import Arguments, Options, from_csv
@@ -14,7 +15,6 @@ from kili.cli.helpers import (
 )
 from kili.client import Kili
 from kili.exceptions import NotFound
-
 from kili.mutations.label.helpers import (
     generate_create_predictions_arguments,
     get_label_file_paths_to_upload,

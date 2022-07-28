@@ -4,9 +4,8 @@ Helpers for the label mutations
 import glob
 import json
 import os
-from typing import List, Tuple
 from os import PathLike
-from typing import List
+from typing import List, Tuple
 
 
 def generate_create_predictions_arguments(

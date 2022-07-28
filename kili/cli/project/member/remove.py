@@ -5,7 +5,7 @@ from typing import Optional
 
 import click
 
-from kili.cli.common_args import Options
+from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.project.member.helpers import (
     check_exclusive_options,
     collect_members_from_csv,
@@ -13,7 +13,6 @@ from kili.cli.project.member.helpers import (
     collect_members_from_project,
 )
 from kili.client import Kili
-from kili.cli.common_args import Arguments, Options, from_csv
 
 
 @click.command()

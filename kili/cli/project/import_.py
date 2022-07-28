@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Tuple, cast
 
 import click
 from typeguard import typechecked
+
 from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.helpers import (
     check_exclusive_options,
@@ -14,7 +15,10 @@ from kili.cli.helpers import (
 )
 from kili.client import Kili
 from kili.exceptions import NotFound
-from kili.mutations.asset.helpers import generate_json_metadata_array, get_file_paths_to_upload
+from kili.mutations.asset.helpers import (
+    generate_json_metadata_array,
+    get_file_paths_to_upload,
+)
 
 # pylint: disable=consider-using-with
 

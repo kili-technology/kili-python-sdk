@@ -6,8 +6,8 @@ import click
 import pandas as pd
 from tabulate import tabulate
 
-from kili.client import Kili
 from kili.cli.common_args import Arguments, Options
+from kili.client import Kili
 
 ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 

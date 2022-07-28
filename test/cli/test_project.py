@@ -2,8 +2,8 @@
 
 import csv
 import json
-from unittest.mock import MagicMock, patch
 import os
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 

@@ -1,14 +1,15 @@
 """Tests the Kili CLI project member commands"""
 
 import csv
-from unittest.mock import MagicMock, patch
 import os
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
-from kili.cli.project.member.list_ import list_members
+
 from kili.cli.project.member.add import add_member
-from kili.cli.project.member.update import update_member
+from kili.cli.project.member.list_ import list_members
 from kili.cli.project.member.remove import remove_member
+from kili.cli.project.member.update import update_member
 
 from ..utils import debug_subprocess_pytest
 
