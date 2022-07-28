@@ -44,6 +44,7 @@ plugins:
               - '!^__' # exclude all members starting with __
             docstring_options:
               replace_admonitions: yes
+            new_path_syntax: true
       watch:
         - kili
   - mike:
