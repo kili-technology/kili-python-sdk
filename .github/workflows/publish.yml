@@ -23,11 +23,9 @@ jobs:
           pip install -r requirements_dev.txt
 
       - name: Deploy technical documentation
-        uses: actions/setup-python@v2
-        with:
-          committer_name: ci-bot
-          committer_email: ci-bot@example.com
         run: |
+          git config user.name ci-bot
+          git config user.email ci-bot@example.com
           export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:3]))')
           git fetch origin gh-pages --depth=1
           mike deploy --push $version
