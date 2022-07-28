@@ -15,7 +15,7 @@ from kili.cli.helpers import (
 )
 from kili.client import Kili
 from kili.exceptions import NotFound
-from kili.helpers import get_file_paths_to_upload
+from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
 from kili.mutations.asset.helpers import generate_json_metadata_array
 
 # pylint: disable=consider-using-with
@@ -125,7 +125,9 @@ def import_assets(
     check_exclusive_options(csv_path, files)
 
     if len(files) > 0:
-        files_to_upload = get_file_paths_to_upload(files, input_type, verbose)
+        files_to_upload = get_file_paths_to_upload(
+            files, file_check_function_from_input_type(input_type), verbose
+        )
         if len(files_to_upload) == 0:
             raise ValueError(
                 "No files to upload. "

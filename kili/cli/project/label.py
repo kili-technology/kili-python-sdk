@@ -63,10 +63,10 @@ def import_labels(
     Import labels or predictions
 
     Files can be paths to files or to folders. You can provide several paths separated by spaces.
-    The labels to import have to be in the Kili format and stored in a json file,
-    file's name must be equal to asset's external_id.
+    The labels to import have to be in the Kili format and stored in a json file.
+    File's name must be equal to asset's external_id.
 
-    If no Files are provided, --from-csv can be used to import
+    If no files are provided, --from-csv can be used to import
     assets from a CSV file with two columns:
     - `external_id`: external id for which you want to import labels.
     - `json_response_path`: paths to the json files containing the json_response to upload.
@@ -116,7 +116,7 @@ def import_labels(
         raise NotFound(f"project ID: {project_id}")
 
     if len(files) > 0:
-        label_paths = get_file_paths_to_upload(files, "LABEL", verbose)
+        label_paths = get_file_paths_to_upload(files, lambda path: path.endswith(".json"), verbose)
         if len(label_paths) == 0:
             raise ValueError(
                 "No label files to upload. " "Check that the paths exist and file types are .json"
