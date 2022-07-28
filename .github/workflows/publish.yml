@@ -26,6 +26,7 @@ jobs:
         run: |
           git config user.name ci-bot
           git config user.email ci-bot@example.com
+          pip install -e .
           export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:3]))')
           git fetch origin gh-pages --depth=1
           mike deploy --push $version
