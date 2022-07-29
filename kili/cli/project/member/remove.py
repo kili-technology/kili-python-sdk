@@ -5,7 +5,7 @@ from typing import Optional
 
 import click
 
-from kili.cli.common_args import Options
+from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.project.member.helpers import (
     check_exclusive_options,
     collect_members_from_csv,
@@ -18,14 +18,9 @@ from kili.client import Kili
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.argument("emails", type=str, required=False, nargs=-1)
-@click.option("--project-id", type=str, required=True, help="Id of the project to add members to")
-@click.option(
-    "--from-csv",
-    "csv_path",
-    type=click.Path(),
-    help="path to a csv file with email in the first column",
-)
+@Arguments.emails
+@Options.project_id
+@from_csv(["email"], ["role"])
 @click.option(
     "--all",
     "all_members",

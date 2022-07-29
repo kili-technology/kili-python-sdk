@@ -5,14 +5,14 @@ from typing import Dict, List, Optional, cast
 import click
 from tabulate import tabulate
 
-from kili.cli.common_args import Options
+from kili.cli.common_args import Arguments, Options
 from kili.client import Kili
 from kili.exceptions import NotFound
 from kili.queries.project.helpers import get_project_metadata, get_project_metrics
 
 
 @click.command()
-@click.argument("project_id", type=str, required=True)
+@Arguments.project_id
 @Options.api_key
 @Options.endpoint
 def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id: str):

@@ -6,7 +6,7 @@ import click
 import pandas as pd
 from tabulate import tabulate
 
-from kili.cli.common_args import Options
+from kili.cli.common_args import Arguments, Options
 from kili.client import Kili
 
 ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
@@ -15,7 +15,7 @@ ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.option("--project-id", type=str, required=True, help="Id of the project to list members of")
+@Arguments.project_id
 @Options.tablefmt
 def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: str, tablefmt: str):
     """
@@ -24,7 +24,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
     \b
     !!! Examples
         ```
-        kili project member list --project-id <project_id> --stdout-format pretty
+        kili project member list <project_id> --stdout-format pretty
         ```
 
     """

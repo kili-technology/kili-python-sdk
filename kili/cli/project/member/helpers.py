@@ -4,10 +4,10 @@ import re
 import warnings
 from typing import Dict, List, Optional, cast
 
+from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
 
 REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
-ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
 
 
 def type_check_member(key, value):
@@ -101,26 +101,21 @@ def check_exclusive_options(
 ):
     """Forbid mutual use of options and argument(s)"""
 
-    if (csv_path is not None) and (project_id_src is not None) and (len(emails) > 0) > 1:
-        raise ValueError("Options --from-csv, --from-project and emails are exclusive.")
+    if all_members is None:
+        if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) > 1:
+            raise ValueError(
+                "emails arguments and options --from-csv and --from-project are exclusive."
+            )
+        if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) == 0:
+            raise ValueError(
+                "You must either provide emails arguments or use one option from "
+                "--from-csv or --from-project"
+            )
 
-    if (csv_path is not None) and (project_id_src is not None):
-        raise ValueError("Options --from-csv and --from-project are exclusive.")
-
-    if (project_id_src is not None) and (len(emails) > 0) > 1:
-        raise ValueError("Options --from-project and emails are exclusive.")
-
-    if (csv_path is not None) and (len(emails) > 0) > 1:
-        raise ValueError("Options --from-csv and emails are exclusive.")
-
-    if (csv_path is not None) and all_members and (len(emails) > 0) > 1:
-        raise ValueError("Options --from-csv, --all and emails are exclusive.")
-
-    if (csv_path is not None) and all_members:
-        raise ValueError("Options --from-csv and --all are exclusive.")
-
-    if all_members and (len(emails) > 0) > 1:
-        raise ValueError("Options --all and emails are exclusive.")
-
-    if (csv_path is not None) and (len(emails) > 0) > 1:
-        raise ValueError("Options --from-csv and emails are exclusive.")
+    else:
+        if (csv_path is not None) + (all_members is True) + (len(emails) > 0) > 1:
+            raise ValueError("emails arguments and options --from-csv and --all are exclusive.")
+        if (csv_path is not None) + (all_members is not None) + (len(emails) > 0) == 0:
+            raise ValueError(
+                "You must either provide emails arguments or use one option --from-csv or --all"
+            )

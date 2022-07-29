@@ -4,6 +4,7 @@ from typing import List
 import click
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
 
 
 class Options:  # pylint: disable=too-few-public-methods
@@ -46,8 +47,20 @@ class Options:  # pylint: disable=too-few-public-methods
         help="project_id of another Kili project",
     )
 
+    role = click.option(
+        "--role",
+        type=click.Choice(ROLES),
+        default=None,
+        show_default="LABELER",
+        help="Project role of the added user(s).",
+    )
 
-def from_csv(required: bool, required_columns: List[str], optionnal_columns: List[str]):
+    verbose = click.option(
+        "--verbose", type=bool, is_flag=True, default=False, help="Show more logs"
+    )
+
+
+def from_csv(required_columns: List[str], optionnal_columns: List[str]):
     """--from-csv shared click option"""
     help_ = (
         "path to a csv file with required columns:"
@@ -60,6 +73,15 @@ def from_csv(required: bool, required_columns: List[str], optionnal_columns: Lis
         "--from-csv",
         "csv_path",
         type=click.Path(),
-        required=required,
         help=help_,
     )
+
+
+class Arguments:  # pylint: disable=too-few-public-methods
+    """Common arguments for the CLI"""
+
+    files = click.argument("files", type=click.Path(), required=False, nargs=-1)
+
+    emails = click.argument("emails", type=str, required=False, nargs=-1)
+
+    project_id = click.argument("project_id", type=str, required=True)

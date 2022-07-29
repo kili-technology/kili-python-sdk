@@ -7,14 +7,16 @@ from typing import Dict, List, Optional, Tuple, cast
 import click
 from typeguard import typechecked
 
-from kili.cli.common_args import Options, from_csv
-from kili.cli.helpers import collect_from_csv
+from kili.cli.common_args import Arguments, Options, from_csv
+from kili.cli.helpers import (
+    check_exclusive_options,
+    collect_from_csv,
+    get_external_id_from_file_path,
+)
 from kili.client import Kili
 from kili.exceptions import NotFound
-from kili.mutations.asset.helpers import (
-    generate_json_metadata_array,
-    get_file_paths_to_upload,
-)
+from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
+from kili.mutations.asset.helpers import generate_json_metadata_array
 
 # pylint: disable=consider-using-with
 
@@ -32,11 +34,11 @@ def type_check_asset(key, value):
 
 
 @click.command()
-@click.argument("files", type=click.Path(), required=False, nargs=-1)
+@Arguments.files
 @Options.api_key
 @Options.endpoint
 @Options.project_id
-@from_csv(False, ["external_id", "content"], [])
+@from_csv(["external_id", "content"], [])
 @click.option(
     "--frames",
     "as_frames",
@@ -47,11 +49,9 @@ def type_check_asset(key, value):
     "The import time is longer with this option.",
 )
 @click.option(
-    "--fps",
-    type=int,
-    help="Only for a frame project, import videos with a specific frame rate",
+    "--fps", type=int, help="Only for a frame project, import videos with a specific frame rate"
 )
-@click.option("--verbose", type=bool, is_flag=True, default=False, help="Show logs")
+@Options.verbose
 @typechecked
 # pylint: disable=too-many-arguments
 def import_assets(
@@ -108,8 +108,7 @@ def import_assets(
     kili = Kili(api_key=api_key, api_endpoint=endpoint)
     try:
         input_type = cast(
-            List[Dict],
-            kili.projects(project_id, disable_tqdm=True, fields=["inputType"]),
+            List[Dict], kili.projects(project_id, disable_tqdm=True, fields=["inputType"])
         )[0]["inputType"]
     except:
         # pylint: disable=raise-missing-from
@@ -123,19 +122,18 @@ def import_assets(
             illegal_option = "frames is"
         raise ValueError(f"{illegal_option} only valid for a VIDEO project")
 
-    if ((len(files) > 0) + (csv_path is not None)) > 1:
-        raise ValueError("files arguments and option --from-csv are exclusive.")
-    if ((len(files) > 0) + (csv_path is not None)) == 0:
-        raise ValueError("You must use either file arguments or option --from-csv")
+    check_exclusive_options(csv_path, files)
 
     if len(files) > 0:
-        files_to_upload = get_file_paths_to_upload(files, input_type, verbose)
+        files_to_upload = get_file_paths_to_upload(
+            files, file_check_function_from_input_type(input_type), verbose
+        )
         if len(files_to_upload) == 0:
             raise ValueError(
                 "No files to upload. "
                 "Check that the paths exist and file types are compatible with the project"
             )
-        external_ids = [path.split("/")[-1] for path in files_to_upload]
+        external_ids = [get_external_id_from_file_path(path) for path in files_to_upload]
 
     elif csv_path is not None:
         row_dict = collect_from_csv(

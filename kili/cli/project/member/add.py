@@ -5,9 +5,8 @@ from typing import Optional
 
 import click
 
-from kili.cli.common_args import Options
+from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.project.member.helpers import (
-    ROLES,
     check_exclusive_options,
     collect_members_from_csv,
     collect_members_from_emails,
@@ -20,27 +19,11 @@ from kili.client import Kili
 @click.command()
 @Options.api_key
 @Options.endpoint
-@click.argument("emails", type=str, required=False, nargs=-1)
-@click.option("--project-id", type=str, required=True, help="Id of the project to add members to")
-@click.option(
-    "--role",
-    type=click.Choice(ROLES),
-    default=None,
-    show_default="LABELER",
-    help="Project role of the added user(s).",
-)
-@click.option(
-    "--from-csv",
-    "csv_path",
-    type=click.Path(),
-    help=("path to a csv file with 'email' header," " optionnal header 'role' can be use."),
-)
-@click.option(
-    "--from-project",
-    "project_id_src",
-    type=str,
-    help="project_id of another Kili project to copy the users from",
-)
+@Arguments.emails
+@Options.project_id
+@Options.role
+@from_csv(["email"], ["role"])
+@Options.from_project
 def add_member(
     api_key: Optional[str],
     endpoint: Optional[str],
