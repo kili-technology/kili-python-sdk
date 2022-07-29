@@ -67,7 +67,7 @@ Quality inspection                   <project_id>                0.0%  Steel def
 ### Recover your <project_id>
 
 ```
-project_id=$(kili project list --stdout-format "tsv" \
+export project_id=$(kili project list --stdout-format "tsv" \
               | grep -m1 "Quality inspection" \
               | awk 'BEGIN {FS="\t"}; {print $2}')
 ```
