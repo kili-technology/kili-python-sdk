@@ -11,7 +11,7 @@ from kili.cli.common_args import Options
 from kili.client import Kili
 
 
-@click.command()
+@click.command(name="list")
 @Options.api_key
 @Options.endpoint
 @Options.tablefmt

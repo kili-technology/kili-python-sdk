@@ -15,7 +15,7 @@ from kili.cli.project.member.helpers import (
 from kili.client import Kili
 
 
-@click.command()
+@click.command(name="rm")
 @Options.api_key
 @Options.endpoint
 @Arguments.emails

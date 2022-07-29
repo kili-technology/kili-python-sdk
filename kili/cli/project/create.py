@@ -12,7 +12,7 @@ from kili.constants import INPUT_TYPE
 from kili.queries.project.helpers import get_project_url
 
 
-@click.command()
+@click.command(name="create")
 @Options.api_key
 @Options.endpoint
 @click.argument("interface", type=click.Path(exists=True), required=False)
