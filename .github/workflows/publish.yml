@@ -1,7 +1,7 @@
 name: Release
 on:
   release:
-    types: [prereleased]
+    types: [released]
 
 jobs:
   publish:
@@ -27,18 +27,18 @@ jobs:
           git config user.name ci-bot
           git config user.email ci-bot@example.com
           pip install -e .
-          export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:3]))')
+          export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:2]))')
           git fetch origin gh-pages --depth=1
           mike deploy --push $version
 
-      # - name: Build
-      #   run: |
-      #     python setup.py sdist bdist_wheel
+      - name: Build
+        run: |
+          python setup.py sdist bdist_wheel
 
-      # - name: Publish
-      #   env:
-      #     TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-      #     TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      #   run: |
-      #     python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-      #     python -m twine upload dist/*
+      - name: Publish
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+          python -m twine upload dist/*
