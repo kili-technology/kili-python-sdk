@@ -11,7 +11,7 @@ from kili.exceptions import NotFound
 from kili.queries.project.helpers import get_project_metadata, get_project_metrics
 
 
-@click.command()
+@click.command(name="describe")
 @Arguments.project_id
 @Options.api_key
 @Options.endpoint

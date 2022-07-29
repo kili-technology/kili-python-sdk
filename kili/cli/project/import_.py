@@ -33,7 +33,7 @@ def type_check_asset(key, value):
     return ""
 
 
-@click.command()
+@click.command(name="import")
 @Arguments.files
 @Options.api_key
 @Options.endpoint

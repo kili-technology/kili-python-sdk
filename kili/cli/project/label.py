@@ -27,7 +27,7 @@ def type_check_label(key, value):
     return ""
 
 
-@click.command()
+@click.command(name="label")
 @Options.api_key
 @Options.endpoint
 @Arguments.files

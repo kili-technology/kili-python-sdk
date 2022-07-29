@@ -12,7 +12,7 @@ from kili.client import Kili
 ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 
 
-@click.command()
+@click.command(name="list")
 @Options.api_key
 @Options.endpoint
 @Arguments.project_id

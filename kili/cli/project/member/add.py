@@ -16,7 +16,7 @@ from kili.client import Kili
 
 
 # pylint: disable=too-many-arguments
-@click.command()
+@click.command(name="add")
 @Options.api_key
 @Options.endpoint
 @Arguments.emails
