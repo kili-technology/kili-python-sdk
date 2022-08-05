@@ -56,7 +56,6 @@ class QueriesLabel:
             "jsonResponse",
             "labelType",
             "secondsToLabel",
-            "skipped",
         ],
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
@@ -64,7 +63,6 @@ class QueriesLabel:
         id_contains: Optional[List[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        skipped: Optional[bool] = None,
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
@@ -86,17 +84,12 @@ class QueriesLabel:
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
-                Notice that the field "skipped" is deprecated since: 20/07/2022.
-                It will be removed after: 31/08/2022.
             first: Maximum number of labels to return.
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
             id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.
             label_id: Identifier of the label.
             skip: Number of labels to skip (they are ordered by their date of creation, first to last).
-            skipped: Returned labels should have a label which is skipped
-                Notice that the field "skipped" is deprecated since: 20/07/2022.
-                It will be removed after: 31/08/2022.
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
             disable_tqdm: If `True`, the progress bar will be disabled
@@ -131,12 +124,6 @@ class QueriesLabel:
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
-        if "skipped" in fields or skipped is not None:
-            message = """
-                The field "skipped" is deprecated since: 20/07/2022.
-                It will be removed after: 31/08/2022.
-                """
-            warnings.warn(message, DeprecationWarning)
 
         saved_args = locals()
         count_args = {
@@ -183,7 +170,6 @@ class QueriesLabel:
                 "honeypotMarkLte": honeypot_mark_lte,
                 "idIn": id_contains,
                 "search": category_search,
-                "skipped": skipped,
                 "typeIn": type_in,
             },
         }
@@ -222,7 +208,6 @@ class QueriesLabel:
             "createdAt",
             "id",
             "labelType",
-            "skipped",
         ],
         asset_fields: List[str] = ["externalId"],
     ) -> pd.DataFrame:
@@ -233,20 +218,12 @@ class QueriesLabel:
             project_id: Identifier of the project
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
-                Notice that the field "skipped" is deprecated since: 20/07/2022.
-                It will be removed after: 31/08/2022.
             asset_fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
 
         Returns:
             pandas DataFrame containing the labels.
         """
-        if "skipped" in fields:
-            message = """
-                The field "skipped" is deprecated since: 20/07/2022.
-                It will be removed after: 31/08/2022.
-                """
-            warnings.warn(message, DeprecationWarning)
 
         projects = QueriesProject(self.auth).projects(project_id)
         assert len(projects) == 1, NO_ACCESS_RIGHT
@@ -281,7 +258,6 @@ class QueriesLabel:
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
         label_id: Optional[str] = None,
-        skipped: Optional[bool] = None,
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
         category_search: Optional[str] = None,
@@ -302,9 +278,6 @@ class QueriesLabel:
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
             label_id: Identifier of the label.
             project_id: Identifier of the project.
-            skipped: Returned labels should have a label which is skipped
-                    Notice that the field "skipped" is deprecated since: 20/07/2022.
-                    It will be removed after: 31/08/2022.
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
 
@@ -314,12 +287,6 @@ class QueriesLabel:
         Returns:
             The number of labels with the parameters provided
         """
-        if skipped is not None:
-            message = """
-                The field "skipped" is deprecated since: 20/07/2022.
-                It will be removed after: 31/08/2022.
-                """
-            warnings.warn(message, DeprecationWarning)
 
         if category_search:
             validate_category_search_query(category_search)
@@ -345,7 +312,6 @@ class QueriesLabel:
                 "honeypotMarkGte": honeypot_mark_gte,
                 "honeypotMarkLte": honeypot_mark_lte,
                 "search": category_search,
-                "skipped": skipped,
                 "typeIn": type_in,
             }
         }

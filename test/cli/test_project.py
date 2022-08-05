@@ -58,7 +58,7 @@ def mocked__projects(project_id=None, **_):
                 "numberOfAssets": 49,
                 "numberOfRemainingAssets": 29,
                 "numberOfReviewedAssets": 0,
-                "numberOfAssetsWithSkippedLabels": 0,
+                "numberOfSkippedAssets": 0,
                 "numberOfOpenIssues": 3,
                 "numberOfSolvedIssues": 2,
                 "numberOfOpenQuestions": 0,
