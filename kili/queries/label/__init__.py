@@ -1,6 +1,5 @@
 """Label queries."""
 
-import warnings
 from typing import Generator, List, Optional, Union
 
 import pandas as pd
