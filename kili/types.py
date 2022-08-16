@@ -19,7 +19,6 @@ class License:
     expiryDate = "expiryDate"
     inputType = "inputType"
     maxNumberOfLabeledAssets = "maxNumberOfLabeledAssets"
-    publicProject = "publicProject"
     seats = "seats"
     startDate = "startDate"
     type = "type"
