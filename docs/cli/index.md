@@ -27,9 +27,10 @@ kili project [COMMAND]
 
 ## Workflow example
 
-Let's take an example where you want to start a project from scratch:
-You can download ressources to run this example [here](https://storage.googleapis.com/kili-machine-learning-web/cli/CLI_Demo_Ressources.zip).
+Let's take an example where you want to start a project from scratch <br>
+You can download ressources to run this example [here](https://storage.googleapis.com/kili-machine-learning-web/cli/CLI_Demo_Ressources.zip).<br>
 Once in the current directory where all files are stored, you can run the following commands:
+
 ### Create a project
 
 To create an IMAGE project:
@@ -52,24 +53,22 @@ ID                         URL
 ### List your projects
 
 ```
-kili project list --max 10 --stdout-format default
+kili project list --max 10
 ```
 
 Ouput:
 
 ```
 TITLE                                ID                      PROGRESS  DESCRIPTION
------------------------------------  --------------------  ----------  --------------------------------------------------
-Quality inspection                   <project_id>                0.0%  Steel defects on production line
-...
+Quality inspection                   <project_id>                0.0%  Steel defects on production line...
 ```
 
-### Recover your <project_id>
+### Recover your project ID
 
 ```
-export project_id=$(kili project list --stdout-format "tsv" \
+export project_id=$(kili project list \
               | grep -m1 "Quality inspection" \
-              | awk 'BEGIN {FS="\t"}; {print $2}')
+              | awk '{print $3}')
 ```
 
 ### Add a member to your project
@@ -90,7 +89,7 @@ Ouput:
 ### List the project's members
 
 ```
-kili project member list $project_id
+kili project member list --project-id $project_id
 ```
 
 Ouput:
@@ -126,7 +125,7 @@ Label's files are json with the json_response to upload
 !!! Examples "CSV file template"
     ```
     external_id;json_response_path
-    asset1;./labels/label_asset1.json
+    asset1; ./labels/label_asset1.json
     asset2;./labels/label_asset2.json
     ```
 
