@@ -87,4 +87,4 @@ def remove_member(
         else:
             warnings.warn(f"{email} is not an active member of the project.")
 
-    print(f"{count} users have been successfully removed from project: {project_id}")
+    print(f"{count} member(s) have been successfully removed from project: {project_id}")
