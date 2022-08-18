@@ -1,5 +1,5 @@
 """
-Fragments of notification mutations
+Fragments of issue mutations
 """
 
 ISSUE_FRAGMENT = """

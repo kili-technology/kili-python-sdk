@@ -1,5 +1,5 @@
 """
-Queries of notification mutations
+Queries of comment mutations
 """
 
 from .fragments import COMMENT_FRAGMENT
