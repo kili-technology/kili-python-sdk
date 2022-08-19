@@ -4,10 +4,10 @@ Issue mutations
 
 from typing import Literal, Optional
 from typeguard import typechecked
-from ..comment import MutationsComment
 from .helpers import get_issue_number
 from ...helpers import Compatible, format_result
 from .queries import GQL_APPEND_TO_ISSUES
+from ..comment.queries import GQL_APPEND_TO_COMMENTS
 
 
 class MutationsIssue:
@@ -61,8 +61,15 @@ class MutationsIssue:
         issue_id = formated_result["id"]
 
         if text:
-            MutationsComment(self.auth).append_to_comments(
-                text=text, in_review=False, issue_id=issue_id
-            )
+            variables = {
+                "data": {
+                    "text": text,
+                    "inReview": False,
+                },
+                "where": {
+                    "id": issue_id,
+                },
+            }
+            result = self.auth.client.execute(GQL_APPEND_TO_COMMENTS, variables)
 
         return formated_result
