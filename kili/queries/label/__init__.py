@@ -8,7 +8,6 @@ from typeguard import typechecked
 from ...constants import NO_ACCESS_RIGHT
 from ...helpers import (
     Compatible,
-    deprecate,
     format_result,
     fragment_builder,
     validate_category_search_query,
@@ -37,7 +36,6 @@ class QueriesLabel:
     # pylint: disable=dangerous-default-value
     @Compatible(["v1", "v2"])
     @typechecked
-    @deprecate(removed_in="2.118")
     def labels(
         self,
         project_id: str,
@@ -197,7 +195,6 @@ class QueriesLabel:
 
     # pylint: disable=dangerous-default-value
     @typechecked
-    @deprecate(removed_in="2.118")
     def export_labels_as_df(
         self,
         project_id: str,
@@ -243,7 +240,6 @@ class QueriesLabel:
 
     @Compatible(["v1", "v2"])
     @typechecked
-    @deprecate(removed_in="2.118")
     def count_labels(
         self,
         project_id: str,
