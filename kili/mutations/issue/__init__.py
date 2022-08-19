@@ -32,7 +32,7 @@ class MutationsIssue:
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
         type_: Literal["ISSUE", "QUESTION"] = "ISSUE",
-    ):
+    ) -> dict:
         """Create an issue.
 
         Args:
