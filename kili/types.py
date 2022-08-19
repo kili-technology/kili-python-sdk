@@ -254,6 +254,46 @@ class CommentsWithoutCommentsOf:
 
 
 @dataclass
+class CommentWithoutIssue:
+    """
+    A wrapper for Comment GraphQL object.
+    """
+
+    id = "id"
+    author = ProjectUser
+    authorId = "authorId"
+    createdAt = "createdAt"
+    issueId = "issueId"
+    text = "text"
+    updatedAt = "updatedAt"
+
+
+@dataclass
+class IssueWithoutAsset:
+    """
+    A wrapper for Issue GraphQL object.
+    Defined in two steps to avoid cyclical dependencies.
+    """
+
+    id = "id"
+    assetId = "assetId"
+    assignee = ProjectUser
+    assigneeId = "assigneeId"
+    author = ProjectUser
+    authorId = "authorId"
+    comments = CommentWithoutIssue
+    createdAt = "createdAt"
+    hasBeenSeen = "hasBeenSeen"
+    issueNumber = "issueNumber"
+    objectMid = "objectMid"
+    project: ProjectWithoutDataset
+    projectId = "projectId"
+    status = "status"
+    type = "type"
+    updatedAt = "updatedAt"
+
+
+@dataclass
 class Asset:
     """
     A wrapper for Asset GraphQL object.
@@ -276,7 +316,7 @@ class Asset:
     inferenceMarkCompute = "inferenceMarkCompute"
     isHoneypot = "isHoneypot"
     isToBeLabeledBy = "isToBeLabeledBy"
-    issues = Issue
+    issues = IssueWithoutAsset
     isUsedForConsensus = "isUsedForConsensus"
     jsonContent = "jsonContent"
     jsonMetadata = "jsonMetadata"
@@ -351,43 +391,12 @@ class ProjectVersion:
 
 
 @dataclass
-class CommentWithoutIssue:
-    """
-    A wrapper for Comment GraphQL object.
-    """
-
-    id = "id"
-    author = ProjectUser
-    authorId = "authorId"
-    createdAt = "createdAt"
-    issueId = "issueId"
-    text = "text"
-    updatedAt = "updatedAt"
-
-
-@dataclass
-class Issue:
+class Issue(IssueWithoutAsset):
     """
     A wrapper for Issue GraphQL object.
     """
 
-    id = "id"
-    asset = Asset
-    assetId = "assetId"
-    assignee = ProjectUser
-    assigneeId = "assigneeId"
-    author = ProjectUser
-    authorId = "authorId"
-    comments = CommentWithoutIssue
-    createdAt = "createdAt"
-    hasBeenSeen = "hasBeenSeen"
-    issueNumber = "issueNumber"
-    objectMid = "objectMid"
-    project: Project
-    projectId = "projectId"
-    status = "status"
-    type = "type"
-    updatedAt = "updatedAt"
+    asset: Asset
 
 
 @dataclass
