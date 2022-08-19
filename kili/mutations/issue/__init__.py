@@ -54,7 +54,7 @@ class MutationsIssue:
                 "objectMid": object_mid,
                 "type": type_,
             },
-            "where": {"label": {"id": label_id}},
+            "where": {"label": {"id": label_id}, "project": {"id": project_id}},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_ISSUES, variables)
         formated_result = format_result("data", result)
