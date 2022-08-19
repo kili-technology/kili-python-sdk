@@ -8,6 +8,7 @@ from .helpers import get_issue_number
 from ...helpers import Compatible, format_result
 from .queries import GQL_APPEND_TO_ISSUES
 from ..comment.queries import GQL_APPEND_TO_COMMENTS
+from ...queries.label import QueriesLabel
 
 
 class MutationsIssue:
@@ -47,6 +48,15 @@ class MutationsIssue:
                 or an error message.
         """
         issue_number = get_issue_number(self.auth, project_id, type_)
+        try:
+            asset_id = QueriesLabel(self.auth).labels(
+                project_id=project_id, label_id=label_id, fields=["labelOf.id"], disable_tqdm=True
+            )[0]["labelOf"]["id"]
+        except:
+            # pylint: disable=raise-missing-from
+            raise ValueError(
+                f"Label ID {label_id} does not exist in the project of ID {project_id}"
+            )
         variables = {
             "data": {
                 "issueNumber": issue_number,
@@ -54,7 +64,7 @@ class MutationsIssue:
                 "objectMid": object_mid,
                 "type": type_,
             },
-            "where": {"label": {"id": label_id}, "project": {"id": project_id}},
+            "where": {"id": asset_id},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_ISSUES, variables)
         formated_result = format_result("data", result)
