@@ -2,13 +2,15 @@
 Issue mutations
 """
 
-from typing import Literal, Optional
+from typing import Dict, List, Literal, Optional, cast
+
 from typeguard import typechecked
-from .helpers import get_issue_number
-from ...helpers import Compatible, format_result
-from .queries import GQL_APPEND_TO_ISSUES
-from ..comment.queries import GQL_APPEND_TO_COMMENTS
+
+from ...helpers import format_result
 from ...queries.label import QueriesLabel
+from ..comment.queries import GQL_APPEND_TO_COMMENTS
+from .helpers import get_issue_number
+from .queries import GQL_APPEND_TO_ISSUES
 
 
 class MutationsIssue:
@@ -24,7 +26,6 @@ class MutationsIssue:
         """
         self.auth = auth
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def append_to_issues(
         self,
@@ -49,9 +50,15 @@ class MutationsIssue:
         """
         issue_number = get_issue_number(self.auth, project_id, type_)
         try:
-            asset_id = QueriesLabel(self.auth).labels(
-                project_id=project_id, label_id=label_id, fields=["labelOf.id"], disable_tqdm=True
-            )[0]["labelOf"]["id"]
+            asset_id = cast(
+                List[Dict],
+                QueriesLabel(self.auth).labels(
+                    project_id=project_id,
+                    label_id=label_id,
+                    fields=["labelOf.id"],
+                    disable_tqdm=True,
+                )[0]["labelOf"]["id"],
+            )
         except:
             # pylint: disable=raise-missing-from
             raise ValueError(
