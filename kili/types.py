@@ -254,19 +254,40 @@ class CommentsWithoutCommentsOf:
 
 
 @dataclass
-class Issue:
+class CommentWithoutIssue:
     """
-    A wrapper for Issue GraphQL object.
+    A wrapper for Comment GraphQL object.
     """
 
     id = "id"
-    assignee = ProjectUser
     author = ProjectUser
-    comments = CommentsWithoutCommentsOf
+    authorId = "authorId"
+    createdAt = "createdAt"
+    issueId = "issueId"
+    text = "text"
+    updatedAt = "updatedAt"
+
+
+@dataclass
+class IssueWithoutAsset:
+    """
+    A wrapper for Issue GraphQL object.
+    Defined in two steps to avoid cyclical dependencies.
+    """
+
+    id = "id"
+    assetId = "assetId"
+    assignee = ProjectUser
+    assigneeId = "assigneeId"
+    author = ProjectUser
+    authorId = "authorId"
+    comments = CommentWithoutIssue
     createdAt = "createdAt"
     hasBeenSeen = "hasBeenSeen"
     issueNumber = "issueNumber"
-    project = ProjectWithoutDataset
+    objectMid = "objectMid"
+    project: ProjectWithoutDataset
+    projectId = "projectId"
     status = "status"
     type = "type"
     updatedAt = "updatedAt"
@@ -295,7 +316,7 @@ class Asset:
     inferenceMarkCompute = "inferenceMarkCompute"
     isHoneypot = "isHoneypot"
     isToBeLabeledBy = "isToBeLabeledBy"
-    issues = Issue
+    issues = IssueWithoutAsset
     isUsedForConsensus = "isUsedForConsensus"
     jsonContent = "jsonContent"
     jsonMetadata = "jsonMetadata"
@@ -367,6 +388,24 @@ class ProjectVersion:
     name = "name"
     project = Project
     projectId = "projectId"
+
+
+@dataclass
+class Issue(IssueWithoutAsset):
+    """
+    A wrapper for Issue GraphQL object.
+    """
+
+    asset: Asset
+
+
+@dataclass
+class Comment(CommentWithoutIssue):
+    """
+    A wrapper for Comment GraphQL object.
+    """
+
+    issue = Issue
 
 
 # pylint: enable=invalid-name
