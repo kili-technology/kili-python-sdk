@@ -8,26 +8,6 @@ import subprocess
 import nbformat
 from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
 
-RECIPES_DIR = "./recipes"
-RECIPES_TESTED = [
-    "create_project.ipynb",
-    "export_labels.ipynb",
-    "frame_dicom_data.ipynb",
-    "import_assets.ipynb",
-    "import_predictions.ipynb",
-    "import_text_assets.ipynb",
-    "inference_labels.ipynb",
-    "medical_imaging.ipynb",
-    "ocr_pre_annotations.ipynb",
-    "pixel_level_masks.ipynb",
-    "query_methods.ipynb",
-    "webhooks.ipynb",
-    "getting-started/getting_started-image_bounding_box_detection.ipynb",
-    "getting-started/getting_started-image_classification.ipynb",
-    "getting-started/getting_started-image_semantic_segmentation.ipynb",
-    "getting-started/getting_started-named-entity-recognition.ipynb",
-]
-
 
 def process_notebook(notebook_filename):
     """
@@ -52,8 +32,24 @@ def test_all_recipes():
     """
     Runs `process_notebook` on all notebooks in the git repository.
     """
-    notebooks = [os.path.join(RECIPES_DIR, recipe) for recipe in RECIPES_TESTED]
-    for notebook in notebooks:
+    for notebook in [
+        "test/integration/create_project.ipynb",
+        "test/integration/export_labels.ipynb",
+        "recipes/frame_dicom_data.ipynb",
+        "test/integration/import_assets.ipynb",
+        "test/integration/import_predictions.ipynb",
+        "recipes/import_text_assets.ipynb",
+        "recipes/inference_labels.ipynb",
+        "recipes/medical_imaging.ipynb",
+        "recipes/ocr_pre_annotations.ipynb",
+        "recipes/pixel_level_masks.ipynb",
+        "recipes/query_methods.ipynb",
+        "recipes/webhooks.ipynb",
+        "recipes/getting-started/getting_started-image_bounding_box_detection.ipynb",
+        "recipes/getting-started/getting_started-image_classification.ipynb",
+        "recipes/getting-started/getting_started-image_semantic_segmentation.ipynb",
+        "recipes/getting-started/getting_started-named-entity-recognition.ipynb",
+    ]:
         print("Testing", notebook)
         process_notebook(notebook)
 
