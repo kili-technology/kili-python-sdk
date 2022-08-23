@@ -30,3 +30,25 @@ jobs:
           KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
           KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
           KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
+
+      - name: Slack notification if failure
+        if: failure()
+        id: slack
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "Daily integration tests: ${{ job.status }}\n${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
