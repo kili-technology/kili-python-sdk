@@ -135,6 +135,8 @@ class MutationsLabel:
                 "jsonResponse": dumps(json_response),
                 "labelType": label_type,
                 "secondsToLabel": seconds_to_label,
+                "skipped": False,  # this is a deprecated field but kept here for compatibility
+                # with deployed backends.
             },
             "where": {"id": label_asset_id},
         }
