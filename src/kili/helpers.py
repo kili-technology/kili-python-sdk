@@ -16,7 +16,7 @@ import pyparsing as pp
 import requests
 from typing_extensions import TypedDict, get_args, get_origin, is_typeddict
 
-from kili.constants import mime_extensions_for_IV2
+from kili.constants import mime_extensions_for_IV2, mime_extensions_for_py_scripts
 from kili.exceptions import GraphQLError, NonExistingFieldError
 
 T = TypeVar("T")
@@ -56,7 +56,7 @@ def content_escape(content):
     return content.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
 
 
-def get_data_type(path):
+def get_data_type(path: str):
     """
     Get the data type, either image/png or application/pdf
 
@@ -397,5 +397,25 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
             f"File mime type for {path} is {mime_type} and does not correspond "
             "to the type of the project. "
             f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
+        )
+    return correct_mime_type
+
+
+def check_file_is_py(path: str, verbose: bool = True) -> bool:
+    """
+    Returns true if the mime type of the file corresponds to a python file
+    """
+    mime_type = get_data_type(path)
+
+    if not (mime_extensions_for_py_scripts and mime_type):
+        return False
+
+    correct_mime_type = mime_type in mime_extensions_for_py_scripts
+
+    if verbose and not correct_mime_type:
+        print(
+            f"File mime type for {path} is {mime_type} and does not correspond"
+            "to the type of the project. "
+            f"File mime type should be one of {mime_extensions_for_py_scripts}"
         )
     return correct_mime_type
