@@ -12,6 +12,8 @@ from datetime import datetime
 import websocket
 from six.moves import urllib
 
+from . import __version__
+
 
 class GraphQLClient:
     """
@@ -54,7 +56,12 @@ class GraphQLClient:
             variables
         """
         data = {"query": query, "variables": variables}
-        headers = {"Accept": "application/json", "Content-Type": "application/json"}
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "apollographql-client-name": "python-sdk",
+            "apollographql-client-version": __version__,
+        }
 
         if self.token is not None:
             headers[self.headername] = f"{self.token}"
