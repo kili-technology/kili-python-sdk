@@ -82,6 +82,8 @@ class Arguments:  # pylint: disable=too-few-public-methods
 
     files = click.argument("files", type=click.Path(), required=False, nargs=-1)
 
+    file_path = click.argument("file_path", type=str, required=False, nargs=1)
+
     emails = click.argument("emails", type=str, required=False, nargs=-1)
 
     project_id = click.argument("project_id", type=str, required=True)

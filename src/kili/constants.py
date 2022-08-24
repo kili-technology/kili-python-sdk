@@ -44,5 +44,7 @@ mime_extensions_for_IV2 = {
     "VIDEO_LEGACY": mime_extensions["Csv"],
 }
 
+mime_extensions_for_py_scripts = ["text/x-python"]
+
 MUTATION_BATCH_SIZE = 100
 THROTTLING_DELAY = 60 / 250
