@@ -12,7 +12,7 @@ if [[ "$1" == "bump:"* ]]
     #create or reset release branch
     git checkout master
     git pull
-    git checkout -B release/bump-version
+    git checkout -B release/bump-version-$(date +%s)
 
     # increment version in the kili/__init__.py file and in setup.cfg
     new_version=`bump2version \
