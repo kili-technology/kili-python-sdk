@@ -15,8 +15,8 @@ from six.moves import urllib
 from . import __version__
 
 
-class GraphQLClientName:
-    """GraphQL client name"""
+class GraphQLClientName:  # pylint: disable=too-few-public-methods
+    """GraphQL client name."""
 
     SDK = "python-sdk"
     CLI = "python-cli"
