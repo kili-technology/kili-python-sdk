@@ -9,6 +9,7 @@ from tabulate import tabulate
 
 from kili.cli.common_args import Options
 from kili.client import Kili
+from kili.graphql_client import GraphQLClientName
 
 
 @click.command(name="list")
@@ -33,7 +34,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
         ```
 
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    kili = Kili(api_key=api_key, api_endpoint=endpoint, client_name=GraphQLClientName.CLI)
     projects = cast(
         List[Dict],
         kili.projects(

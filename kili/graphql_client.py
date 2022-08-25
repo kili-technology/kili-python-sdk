@@ -8,6 +8,7 @@ import string
 import threading
 import time
 from datetime import datetime
+from enum import Enum
 
 import websocket
 from six.moves import urllib
@@ -15,13 +16,25 @@ from six.moves import urllib
 from . import __version__
 
 
+class GraphQLClientName(Enum):
+    SDK = "python-sdk"
+    CLI = "python-cli"
+
+
 class GraphQLClient:
     """
     A simple GraphQL client
     """
 
-    def __init__(self, endpoint, session=None, verify=True):
+    def __init__(
+        self,
+        endpoint,
+        client_name,
+        session=None,
+        verify=True,
+    ):
         self.endpoint = endpoint
+        self.client_name = client_name
         self.headername = None
         self.session = session
         self.token = None
@@ -59,7 +72,7 @@ class GraphQLClient:
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "apollographql-client-name": "python-sdk",
+            "apollographql-client-name": self.client_name,
             "apollographql-client-version": __version__,
         }
 

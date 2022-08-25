@@ -13,6 +13,7 @@ from kili.cli.project.member.helpers import (
     collect_members_from_project,
 )
 from kili.client import Kili
+from kili.graphql_client import GraphQLClientName
 
 
 @click.command(name="update")
@@ -57,7 +58,7 @@ def update_member(
             --from-project <project_id_scr>
         ```
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    kili = Kili(api_key=api_key, api_endpoint=endpoint, client_name=GraphQLClientName.CLI)
 
     check_exclusive_options(csv_path, project_id_src, emails, None)
 

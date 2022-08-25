@@ -8,6 +8,7 @@ from tabulate import tabulate
 
 from kili.cli.common_args import Arguments, Options
 from kili.client import Kili
+from kili.graphql_client import GraphQLClientName
 
 ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 
@@ -28,7 +29,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         ```
 
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    kili = Kili(api_key=api_key, api_endpoint=endpoint, client_name=GraphQLClientName.CLI)
     users = cast(
         List[Dict],
         kili.project_users(
