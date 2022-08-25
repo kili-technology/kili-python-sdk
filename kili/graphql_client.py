@@ -8,7 +8,6 @@ import string
 import threading
 import time
 from datetime import datetime
-from enum import Enum
 
 import websocket
 from six.moves import urllib
@@ -16,7 +15,9 @@ from six.moves import urllib
 from . import __version__
 
 
-class GraphQLClientName(Enum):
+class GraphQLClientName:
+    """GraphQL client name"""
+
     SDK = "python-sdk"
     CLI = "python-cli"
 
