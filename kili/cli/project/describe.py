@@ -6,9 +6,8 @@ import click
 from tabulate import tabulate
 
 from kili.cli.common_args import Arguments, Options
-from kili.client import Kili
+from kili.cli.helpers import get_cli_client
 from kili.exceptions import NotFound
-from kili.graphql_client import GraphQLClientName
 from kili.queries.project.helpers import get_project_metadata, get_project_metrics
 
 
@@ -24,7 +23,7 @@ def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id
         kili project describe --project-id <project_id>
         ```
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint, client_name=GraphQLClientName.CLI)
+    kili = get_cli_client(api_key=api_key, api_endpoint=endpoint)
     projects: List[Dict] = []
     try:
         projects = cast(

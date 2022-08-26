@@ -7,9 +7,8 @@ import click
 from tabulate import tabulate
 
 from kili.cli.common_args import Options
-from kili.client import Kili
+from kili.cli.helpers import get_cli_client
 from kili.constants import INPUT_TYPE
-from kili.graphql_client import GraphQLClientName
 from kili.queries.project.helpers import get_project_url
 
 
@@ -64,7 +63,7 @@ def create_project(
     To build a Kili project interface, please visit: \n
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint, client_name=GraphQLClientName.CLI)
+    kili = get_cli_client(api_key=api_key, api_endpoint=endpoint)
 
     if ((interface is not None) + (project_id_src is not None)) > 1:
         raise ValueError("interface argument and option --from-project are exclusive.")

@@ -8,6 +8,7 @@ import string
 import threading
 import time
 from datetime import datetime
+from enum import Enum
 
 import websocket
 from six.moves import urllib
@@ -15,7 +16,7 @@ from six.moves import urllib
 from . import __version__
 
 
-class GraphQLClientName:  # pylint: disable=too-few-public-methods
+class GraphQLClientName(Enum):  # pylint: disable=too-few-public-methods
     """GraphQL client name."""
 
     SDK = "python-sdk"

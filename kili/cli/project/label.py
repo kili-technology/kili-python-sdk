@@ -11,11 +11,10 @@ from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.helpers import (
     check_exclusive_options,
     collect_from_csv,
+    get_cli_client,
     get_external_id_from_file_path,
 )
-from kili.client import Kili
 from kili.exceptions import NotFound
-from kili.graphql_client import GraphQLClientName
 from kili.helpers import get_file_paths_to_upload
 from kili.mutations.label.helpers import generate_create_predictions_arguments
 
@@ -111,7 +110,7 @@ def import_labels(
 
     check_exclusive_options(csv_path, files)
 
-    kili = Kili(api_key=api_key, api_endpoint=endpoint, client_name=GraphQLClientName.CLI)
+    kili = get_cli_client(api_key=api_key, api_endpoint=endpoint)
 
     if kili.count_projects(project_id=project_id) == 0:
         raise NotFound(f"project ID: {project_id}")
