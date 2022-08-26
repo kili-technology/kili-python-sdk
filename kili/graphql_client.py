@@ -31,7 +31,7 @@ class GraphQLClient:
     def __init__(
         self,
         endpoint,
-        client_name,
+        client_name: GraphQLClientName,
         session=None,
         verify=True,
     ):
@@ -74,7 +74,7 @@ class GraphQLClient:
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "apollographql-client-name": self.client_name,
+            "apollographql-client-name": self.client_name.value,
             "apollographql-client-version": __version__,
         }
 

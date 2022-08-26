@@ -58,7 +58,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     """
 
     def __init__(
-        self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK.value
+        self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK
     ):
         """
         Args:

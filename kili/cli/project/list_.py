@@ -8,8 +8,7 @@ import pandas as pd
 from tabulate import tabulate
 
 from kili.cli.common_args import Options
-from kili.client import Kili
-from kili.graphql_client import GraphQLClientName
+from kili.cli.helpers import get_cli_client
 
 
 @click.command(name="list")
@@ -34,7 +33,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
         ```
 
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint, client_name=GraphQLClientName.CLI)
+    kili = get_cli_client(api_key=api_key, api_endpoint=endpoint)
     projects = cast(
         List[Dict],
         kili.projects(
