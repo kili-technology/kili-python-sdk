@@ -6,7 +6,7 @@ from typing import Optional
 import click
 
 from kili.cli.common_args import Arguments, Options, from_csv
-from kili.cli.helpers import get_cli_client
+from kili.cli.helpers import get_kili_client
 from kili.cli.project.member.helpers import (
     check_exclusive_options,
     collect_members_from_csv,
@@ -57,7 +57,7 @@ def add_member(
             --from-project <project_id_scr>
         ```
     """
-    kili = get_cli_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     check_exclusive_options(csv_path, project_id_src, emails, None)
 
     if csv_path is not None:
