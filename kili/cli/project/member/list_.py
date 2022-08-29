@@ -7,7 +7,7 @@ import pandas as pd
 from tabulate import tabulate
 
 from kili.cli.common_args import Arguments, Options
-from kili.client import Kili
+from kili.cli.helpers import get_kili_client
 
 ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 
@@ -28,7 +28,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         ```
 
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     users = cast(
         List[Dict],
         kili.project_users(

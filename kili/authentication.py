@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import requests
 
 from . import __version__
-from .graphql_client import GraphQLClient
+from .graphql_client import GraphQLClient, GraphQLClientName
 from .helpers import format_result
 from .queries.api_key import QueriesApiKey
 from .queries.user.queries import GQL_ME
@@ -31,8 +31,11 @@ class KiliAuth:
     assets = kili.assets(project_id=project_id)
     """
 
-    def __init__(self, api_key, api_endpoint, verify=True):
+    def __init__(
+        self, api_key: str, api_endpoint: str, client_name: GraphQLClientName, verify=True
+    ):
         self.session = requests.Session()
+        self.client_name = client_name
 
         self.verify = verify
 
@@ -56,7 +59,12 @@ class KiliAuth:
         adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
-        self.client = GraphQLClient(api_endpoint, self.session, verify=self.verify)
+        self.client = GraphQLClient(
+            api_endpoint,
+            client_name,
+            self.session,
+            verify=self.verify,
+        )
         self.client.inject_token("X-API-Key: " + api_key)
 
         user = self.get_user()

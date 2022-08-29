@@ -12,8 +12,8 @@ from kili.cli.helpers import (
     check_exclusive_options,
     collect_from_csv,
     get_external_id_from_file_path,
+    get_kili_client,
 )
-from kili.client import Kili
 from kili.exceptions import NotFound
 from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
 from kili.mutations.asset.helpers import generate_json_metadata_array
@@ -105,7 +105,7 @@ def import_assets(
 
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     try:
         input_type = cast(
             List[Dict], kili.projects(project_id, disable_tqdm=True, fields=["inputType"])

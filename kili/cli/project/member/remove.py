@@ -6,13 +6,13 @@ from typing import Optional
 import click
 
 from kili.cli.common_args import Arguments, Options, from_csv
+from kili.cli.helpers import get_kili_client
 from kili.cli.project.member.helpers import (
     check_exclusive_options,
     collect_members_from_csv,
     collect_members_from_emails,
     collect_members_from_project,
 )
-from kili.client import Kili
 
 
 @click.command(name="rm")
@@ -62,7 +62,7 @@ def remove_member(
             --all
         ```
     """
-    kili = Kili(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
     check_exclusive_options(csv_path, None, emails, all_members)
 

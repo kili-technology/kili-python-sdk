@@ -5,6 +5,7 @@ import os
 
 from kili.authentication import KiliAuth
 from kili.exceptions import AuthenticationFailed, NotFound
+from kili.graphql_client import GraphQLClientName
 from kili.mutations.api_key import MutationsApiKey
 from kili.mutations.asset import MutationsAsset
 from kili.mutations.issue import MutationsIssue
@@ -57,10 +58,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     """
 
     def __init__(
-        self,
-        api_key=None,
-        api_endpoint=None,
-        verify=True,
+        self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK
     ):
         """
         Args:
@@ -73,6 +71,8 @@ class Kili(  # pylint: disable=too-many-ancestors
                 If not passed, default to Kili SaaS:
                 'https://cloud.kili-technology.com/api/label/v2/graphql'
             verify: Verify certificate. Set to False on local deployment without SSL.
+            client_name: For internal use only.
+                Define the name of the graphQL client whith which graphQL calls will be sent.
 
         Returns:
             Object container your API session
@@ -94,7 +94,12 @@ class Kili(  # pylint: disable=too-many-ancestors
         if api_key is None:
             raise AuthenticationFailed(api_key, api_endpoint)
         try:
-            self.auth = KiliAuth(api_key=api_key, api_endpoint=api_endpoint, verify=verify)
+            self.auth = KiliAuth(
+                api_key=api_key,
+                api_endpoint=api_endpoint,
+                client_name=client_name,
+                verify=verify,
+            )
             super().__init__(self.auth)
         except Exception as exception:  # pylint: disable=W0703
             exception_str = str(exception)

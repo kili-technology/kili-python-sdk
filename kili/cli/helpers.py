@@ -4,7 +4,16 @@ import csv
 import warnings
 from typing import Any, Dict, List, Optional
 
+from kili.graphql_client import GraphQLClientName
+
+from ..client import Kili
+
 # pylint: disable=consider-using-f-string
+
+
+def get_kili_client(api_key: str, api_endpoint: str):
+    """Instantiate a kili client for the CLI functions"""
+    return Kili(api_key=api_key, api_endpoint=api_endpoint, client_name=GraphQLClientName.CLI)
 
 
 def dict_type_check(dict_: Dict[str, Any], type_check):
