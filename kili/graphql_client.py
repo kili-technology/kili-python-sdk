@@ -3,6 +3,7 @@ GraphQL Client
 """
 
 import json
+import os
 import random
 import string
 import threading
@@ -83,7 +84,10 @@ class GraphQLClient:
 
         if self.session is not None:
             try:
-                number_of_trials = 10
+                try:
+                    number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
+                except ValueError:
+                    number_of_trials = 10
                 for _ in range(number_of_trials):
                     self.session.verify = self.verify
                     req = self.session.post(
