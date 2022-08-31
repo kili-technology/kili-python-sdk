@@ -2,9 +2,10 @@
 Issue mutations
 """
 
-from typing import Dict, List, Literal, Optional, cast
+from typing import Dict, List, Optional, cast
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from ...helpers import format_result
 from ...queries.label import QueriesLabel
