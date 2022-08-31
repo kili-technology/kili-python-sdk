@@ -7,3 +7,4 @@ tabulate
 tqdm
 typeguard
 websocket-client
+typing_extensions
