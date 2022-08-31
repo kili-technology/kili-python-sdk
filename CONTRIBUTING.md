@@ -1,5 +1,7 @@
 # Contributing
+
 ## Development environment
+
 To install the development environment, please follow these steps:
 
 ```bash
