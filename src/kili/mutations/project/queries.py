@@ -152,11 +152,13 @@ mutation($where: ProjectWhere!) {
 GQL_UPLOAD_PLUGIN = f"""
 mutation(
   $projectID: ID!
-  $script: String!
+  $scriptName: String!
+  $scriptSrc: String!
   ) {{
-  data: uploadScriptPlugin(
+  data: uploadPluginScript(
     data: {{
-      script: $script
+      scriptName: $scriptName
+      scriptSrc: $scriptSrc
     }}
     where: {{
       id: $projectID
