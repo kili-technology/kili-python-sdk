@@ -358,6 +358,7 @@ class MutationsProject:
         self,
         project_id: str,
         file_path: str,
+        script_name: Optional[str],
         verbose: bool = True,
     ):
         # pylint: disable=line-too-long
@@ -390,6 +391,9 @@ class MutationsProject:
         exec(source_code)
         print(f"Done executing {path.name}!")
 
-        variables = {"projectID": project_id, "script": source_code}
+        if script_name is None:
+            script_name = path.name
+
+        variables = {"projectID": project_id, "scriptName": script_name, "scriptSrc": source_code}
         result = self.auth.client.execute(GQL_UPLOAD_PLUGIN, variables)
         return format_result("data", result)
