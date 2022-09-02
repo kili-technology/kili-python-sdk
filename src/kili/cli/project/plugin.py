@@ -16,6 +16,7 @@ from kili.exceptions import NotFound
 @Options.api_key
 @Options.endpoint
 @Options.project_id
+@Options.script_name
 @Options.verbose
 @typechecked
 # pylint: disable=too-many-arguments
@@ -24,6 +25,7 @@ def upload_plugin(
     endpoint: Optional[str],
     project_id: str,
     file_path: str,
+    script_name: Optional[str],
     verbose: bool,
 ):
     """
@@ -58,6 +60,8 @@ def upload_plugin(
             "Check that the path exists and file types are compatible with the project"
         )
 
-    kili.upload_plugin(project_id=project_id, file_path=file_path, verbose=verbose)
+    kili.upload_plugin(
+        project_id=project_id, file_path=file_path, script_name=script_name, verbose=verbose
+    )
 
     print(f"{file_path} script has been successfully uploaded")

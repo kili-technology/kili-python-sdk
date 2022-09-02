@@ -55,6 +55,16 @@ class Options:  # pylint: disable=too-few-public-methods
         help="Project role of the added user(s).",
     )
 
+    script_name = click.option(
+        "--script-name",
+        type=str,
+        default=None,
+        help=(
+            "Script's name in Kili database."
+            "If not provided, it will be the file name on your machine"
+        ),
+    )
+
     verbose = click.option(
         "--verbose", type=bool, is_flag=True, default=False, help="Show more logs"
     )
