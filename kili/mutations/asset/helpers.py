@@ -84,7 +84,6 @@ def process_and_store_json_content(
         return json_content_array
 
     if input_type in ("FRAME", "VIDEO"):
-        print("Uploading frames to bucket...")
         json_content_array = list(map(process_frame_json_content, json_content_array))
     signed_urls = request_signed_urls(auth, project_id, len(json_content_array))
     json_content_array = list(map(dumps, json_content_array))
@@ -101,11 +100,9 @@ def upload_content(content_array: List[str], input_type, auth, project_id):
         signed_url: a signed_url to possibily use to upload the content
         input_type: input type of the project
     """
-    print("Uploading content to bucket...")
     data_array = []
     content_type_array = []
     for content in content_array:
-        print(f"uploading {content}")
         if os.path.exists(content) and check_file_mime_type(content, input_type):
             data_array.append(open(content, "rb"))
             content_type_array.append(get_data_type(content))
@@ -113,7 +110,7 @@ def upload_content(content_array: List[str], input_type, auth, project_id):
             data_array.append(content)
             content_type_array.append("text/plain")
         else:
-            raise ValueError("File: {content} not found")
+            raise ValueError(f"File: {content} not found")
     signed_urls = request_signed_urls(auth, project_id, len(content_array))
     urls_uploaded_content = upload_data_via_REST(signed_urls, data_array, content_type_array)
     return urls_uploaded_content
@@ -302,7 +299,6 @@ def process_append_many_to_dataset_parameters(
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,
     }
-    print(properties)
 
     return (properties, upload_type, request, is_uploading_local_data)
 
@@ -383,7 +379,7 @@ def upload_data_via_REST(signed_urls, data_array: List[str], content_type_array:
         content_type: mimetype of the data. It will be infered if not given
     """
     responses = []
-    for index, data in tqdm.tqdm(enumerate(data_array)):
+    for index, data in tqdm.tqdm(enumerate(data_array), total=len(data_array)):
         content_type = content_type_array[index]
         headers = {"Content-type": content_type}
         url_with_id = signed_urls[index]

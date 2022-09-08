@@ -98,11 +98,6 @@ class MutationsAsset:
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
-        if content_array is not None and json_content_array is not None:
-            print(
-                "FROM LABEL-IMPORT!!!!!!!!!======================================================"
-            )
-
         kili = QueriesProject(self.auth)
         projects = kili.projects(project_id, disable_tqdm=True)
         assert len(projects) == 1, NO_ACCESS_RIGHT
@@ -145,7 +140,6 @@ class MutationsAsset:
                 }
             return {"data": payload_data, "where": {"id": project_id}}
 
-        print("Importing assets to kili...")
         results = _mutate_from_paginated_call(
             self, properties_to_batch, generate_variables, request
         )

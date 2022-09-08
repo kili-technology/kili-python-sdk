@@ -428,7 +428,7 @@ def check_file_mime_type(path: str, input_type: str) -> bool:
     correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
     if not correct_mime_type:
         raise ValueError(
-            f"File mime type for {path} is {mime_type} and does not correspond"
+            f"File mime type for {path} is {mime_type} and does not correspond "
             "to the type of the project. "
             f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
         )
