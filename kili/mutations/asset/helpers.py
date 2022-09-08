@@ -80,14 +80,14 @@ def process_and_store_json_content(
     """
     if json_content_array is None:
         return [""] * len(content_array)
-    if all([is_url(element) for element in json_content_array]):
+    if all(is_url(element) for element in json_content_array):
         return json_content_array
 
     if input_type in ("FRAME", "VIDEO"):
         json_content_array = list(map(process_frame_json_content, json_content_array))
     signed_urls = request_signed_urls(auth, project_id, len(json_content_array))
     json_content_array = list(map(dumps, json_content_array))
-    return upload_data_via_REST(
+    return upload_data_via_rest(
         signed_urls, json_content_array, ["text/plain"] * len(json_content_array)
     )
 
@@ -104,7 +104,8 @@ def upload_content(content_array: List[str], input_type, auth, project_id):
     content_type_array = []
     for content in content_array:
         if os.path.exists(content) and check_file_mime_type(content, input_type):
-            data_array.append(open(content, "rb"))
+            with open(content, "rb") as binary_data:
+                data_array.append(binary_data)
             content_type_array.append(get_data_type(content))
         elif input_type == "TEXT":
             data_array.append(content)
@@ -112,10 +113,11 @@ def upload_content(content_array: List[str], input_type, auth, project_id):
         else:
             raise ValueError(f"File: {content} not found")
     signed_urls = request_signed_urls(auth, project_id, len(content_array))
-    urls_uploaded_content = upload_data_via_REST(signed_urls, data_array, content_type_array)
+    urls_uploaded_content = upload_data_via_rest(signed_urls, data_array, content_type_array)
     return urls_uploaded_content
 
 
+# pylint: disable=too-many-arguments
 def process_and_store_content(
     input_type: str,
     content_array: Union[List[str], None],
@@ -133,8 +135,7 @@ def process_and_store_content(
         return content_array
     if not is_uploading_local_data:
         return content_array
-    else:
-        return upload_content(content_array, input_type, auth, project_id)
+    return upload_content(content_array, input_type, auth, project_id)
 
 
 def process_time_series(content: str) -> Union[str, None]:
@@ -251,7 +252,7 @@ def get_request_to_execute(
     return GQL_APPEND_MANY_TO_DATASET, None
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-locals
 def process_append_many_to_dataset_parameters(
     auth,
     input_type: str,
@@ -371,7 +372,7 @@ def request_signed_urls(auth, project_id: str, size: int):
     return urls_response["data"]["urls"]
 
 
-def upload_data_via_REST(signed_urls, data_array: List[str], content_type_array: List[str]):
+def upload_data_via_rest(signed_urls, data_array: List[str], content_type_array: List[str]):
     """upload data in buckets' signed URL via REST
     Args:
         signed_urls: Bucket signed URLs to upload local files to
@@ -401,9 +402,8 @@ def check_if_uploading_local_content(content_array, json_content_array):
     """
     if json_content_array:
         return False
-    elif all([is_url(content) for content in content_array]):
+    if all(is_url(content) for content in content_array):
         return False
-    elif all([not is_url(content) for content in content_array]):
+    if all(not is_url(content) for content in content_array):
         return True
-    else:
-        raise ValueError("Content to append should either be all hosted file or all local files")
+    raise ValueError("Content to append should either be all hosted file or all local files")
