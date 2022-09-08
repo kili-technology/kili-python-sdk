@@ -279,7 +279,7 @@ def process_append_many_to_dataset_parameters(
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array
     )
-    is_uploading_local_data = check_if_uploading_local_data(content_array, json_content_array)
+    is_uploading_local_data = check_if_uploading_local_content(content_array, json_content_array)
     mime_type = get_file_mimetype(content_array, json_content_array)
     content_array = process_and_store_content(
         input_type, content_array, json_content_array, is_uploading_local_data, project_id, auth
@@ -395,12 +395,12 @@ def upload_data_via_REST(signed_urls, data_array: List[str], content_type_array:
     return responses
 
 
-def check_if_uploading_local_data(content_array, json_content_array):
+def check_if_uploading_local_content(content_array, json_content_array):
     """Determine if all data to append is hosted data or local data.
     If it is a mix of both, return an error
     """
     if json_content_array:
-        return True if not content_array else False
+        return False
     elif all([is_url(content) for content in content_array]):
         return False
     elif all([not is_url(content) for content in content_array]):
