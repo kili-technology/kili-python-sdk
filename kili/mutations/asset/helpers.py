@@ -8,11 +8,17 @@ from json import dumps
 from typing import List, Union
 from uuid import uuid4
 
+import requests
+import tqdm
+
+from kili.queries.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
+
 from ...helpers import (
     check_file_mime_type,
     convert_to_list_of_none,
     encode_base64,
     format_metadata,
+    get_data_type,
     is_none_or_empty,
     is_url,
 )
@@ -39,7 +45,7 @@ def process_frame_json_content(json_content):
         return json_content
     json_content_index = range(len(json_content))
     json_content_urls = [encode_object_if_not_url(content, "IMAGE") for content in json_content]
-    return dumps(dict(zip(json_content_index, json_content_urls)))
+    return dict(zip(json_content_index, json_content_urls))
 
 
 def get_file_mimetype(
@@ -62,45 +68,76 @@ def get_file_mimetype(
     return None
 
 
-def process_json_content(
+def process_and_store_json_content(
     input_type: str,
     content_array: List[str],
     json_content_array: Union[List[str], None],
+    project_id,
+    auth,
 ):
     """
-    Process the array of json_contents
+    Process the array of json_contents and upload json if not already hosted
     """
     if json_content_array is None:
         return [""] * len(content_array)
+    if all([is_url(element) for element in json_content_array]):
+        return json_content_array
+
     if input_type in ("FRAME", "VIDEO"):
-        return list(map(process_frame_json_content, json_content_array))
-    return [element if is_url(element) else dumps(element) for element in json_content_array]
+        print("Uploading frames to bucket...")
+        json_content_array = list(map(process_frame_json_content, json_content_array))
+    signed_urls = request_signed_urls(auth, project_id, len(json_content_array))
+    json_content_array = list(map(dumps, json_content_array))
+    return upload_data_via_REST(
+        signed_urls, json_content_array, ["text/plain"] * len(json_content_array)
+    )
 
 
-def process_content(
+def upload_content(content_array: List[str], input_type, auth, project_id):
+    """
+    Upload the content to a bucket if it is either a local file or raw text given for a TEXT project
+    Args:
+        content: the content to process, can be a local file or raw text
+        signed_url: a signed_url to possibily use to upload the content
+        input_type: input type of the project
+    """
+    print("Uploading content to bucket...")
+    data_array = []
+    content_type_array = []
+    for content in content_array:
+        print(f"uploading {content}")
+        if os.path.exists(content) and check_file_mime_type(content, input_type):
+            data_array.append(open(content, "rb"))
+            content_type_array.append(get_data_type(content))
+        elif input_type == "TEXT":
+            data_array.append(content)
+            content_type_array.append("text/plain")
+        else:
+            raise ValueError("File: {content} not found")
+    signed_urls = request_signed_urls(auth, project_id, len(content_array))
+    urls_uploaded_content = upload_data_via_REST(signed_urls, data_array, content_type_array)
+    return urls_uploaded_content
+
+
+def process_and_store_content(
     input_type: str,
     content_array: Union[List[str], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
+    is_uploading_local_data: bool,
+    project_id,
+    auth,
 ):
     """
-    Process the array of contents
+    Process the array of contents and upload content if not already hosted
     """
-    if input_type in ["IMAGE", "PDF"]:
-        return [
-            content
-            if is_url(content)
-            else (
-                content
-                if (json_content_array is not None and json_content_array[i] is not None)
-                else (encode_base64(content) if check_file_mime_type(content, input_type) else None)
-            )
-            for i, content in enumerate(content_array)
-        ]
-    if input_type in ("FRAME", "VIDEO") and json_content_array is None:
-        content_array = [encode_object_if_not_url(content, input_type) for content in content_array]
     if input_type == "TIME_SERIES":
-        content_array = list(map(process_time_series, content_array))
-    return content_array
+        return list(map(process_time_series, content_array))
+    if json_content_array is not None:
+        return content_array
+    if not is_uploading_local_data:
+        return content_array
+    else:
+        return upload_content(content_array, input_type, auth, project_id)
 
 
 def process_time_series(content: str) -> Union[str, None]:
@@ -219,6 +256,7 @@ def get_request_to_execute(
 
 # pylint: disable=too-many-arguments
 def process_append_many_to_dataset_parameters(
+    auth,
     input_type: str,
     content_array: Union[List[str], None],
     external_id_array: Union[List[str], None],
@@ -226,6 +264,7 @@ def process_append_many_to_dataset_parameters(
     status_array: Union[List[str], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     json_metadata_array: Union[List[dict], None],
+    project_id: str,
 ):
     """
     Process arguments of the append_many_to_dataset method and return the data payload.
@@ -243,10 +282,13 @@ def process_append_many_to_dataset_parameters(
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array
     )
+    is_uploading_local_data = check_if_uploading_local_data(content_array, json_content_array)
     mime_type = get_file_mimetype(content_array, json_content_array)
-    content_array = process_content(input_type, content_array, json_content_array)
-    formatted_json_content_array = process_json_content(
-        input_type, content_array, json_content_array
+    content_array = process_and_store_content(
+        input_type, content_array, json_content_array, is_uploading_local_data, project_id, auth
+    )
+    formatted_json_content_array = process_and_store_json_content(
+        input_type, content_array, json_content_array, project_id, auth
     )
 
     request, upload_type = get_request_to_execute(
@@ -260,8 +302,9 @@ def process_append_many_to_dataset_parameters(
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,
     }
+    print(properties)
 
-    return properties, upload_type, request
+    return (properties, upload_type, request, is_uploading_local_data)
 
 
 def process_update_properties_in_assets_parameters(properties) -> dict:
@@ -314,3 +357,57 @@ def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
             }
         ] * nb_files
     return json_metadata_array
+
+
+def request_signed_urls(auth, project_id: str, size: int):
+    """
+    Get upload signed URLs
+    Args:
+        auth: Kili Auth
+        project_id: the project Id
+        size: the amount of upload signed URL to query
+    """
+    payload = {
+        "projectID": project_id,
+        "size": size,
+    }
+    urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
+    return urls_response["data"]["urls"]
+
+
+def upload_data_via_REST(signed_urls, data_array: List[str], content_type_array: List[str]):
+    """upload data in buckets' signed URL via REST
+    Args:
+        signed_urls: Bucket signed URLs to upload local files to
+        path_array: a list of file paths, json or text to upload
+        content_type: mimetype of the data. It will be infered if not given
+    """
+    responses = []
+    for index, data in tqdm.tqdm(enumerate(data_array)):
+        content_type = content_type_array[index]
+        headers = {"Content-type": content_type}
+        url_with_id = signed_urls[index]
+        url_to_use_for_upload = url_with_id.split("&id=")[0]
+        if "blob.core.windows.net" in url_to_use_for_upload:
+            headers["x-ms-blob-type"] = "BlockBlob"
+
+        response = requests.put(url_to_use_for_upload, data=data, headers=headers)
+        if response.status_code >= 300:
+            responses.append("")
+            continue
+        responses.append(url_with_id)
+    return responses
+
+
+def check_if_uploading_local_data(content_array, json_content_array):
+    """Determine if all data to append is hosted data or local data.
+    If it is a mix of both, return an error
+    """
+    if json_content_array:
+        return True if not content_array else False
+    elif all([is_url(content) for content in content_array]):
+        return False
+    elif all([not is_url(content) for content in content_array]):
+        return True
+    else:
+        raise ValueError("Content to append should either be all hosted file or all local files")

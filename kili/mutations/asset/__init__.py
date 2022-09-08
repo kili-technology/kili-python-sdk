@@ -98,11 +98,22 @@ class MutationsAsset:
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
+        if content_array is not None and json_content_array is not None:
+            print(
+                "FROM LABEL-IMPORT!!!!!!!!!======================================================"
+            )
+
         kili = QueriesProject(self.auth)
         projects = kili.projects(project_id, disable_tqdm=True)
         assert len(projects) == 1, NO_ACCESS_RIGHT
         input_type = projects[0]["inputType"]
-        (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
+        (
+            properties_to_batch,
+            upload_type,
+            request,
+            is_uploading_local_data,
+        ) = process_append_many_to_dataset_parameters(
+            self.auth,
             input_type,
             content_array,
             external_id_array,
@@ -110,6 +121,7 @@ class MutationsAsset:
             status_array,
             json_content_array,
             json_metadata_array,
+            project_id,
         )
 
         def generate_variables(batch):
@@ -119,6 +131,7 @@ class MutationsAsset:
                     "externalIDArray": batch["external_id_array"],
                     "jsonMetadataArray": batch["json_metadata_array"],
                     "uploadType": upload_type,
+                    "isUploadingSignedUrl": is_uploading_local_data,
                 }
             else:
                 payload_data = {
@@ -128,9 +141,11 @@ class MutationsAsset:
                     "statusArray": batch["status_array"],
                     "jsonContentArray": batch["json_content_array"],
                     "jsonMetadataArray": batch["json_metadata_array"],
+                    "isUploadingSignedUrl": is_uploading_local_data,
                 }
             return {"data": payload_data, "where": {"id": project_id}}
 
+        print("Importing assets to kili...")
         results = _mutate_from_paginated_call(
             self, properties_to_batch, generate_variables, request
         )
