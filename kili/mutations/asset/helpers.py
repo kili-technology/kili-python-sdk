@@ -5,12 +5,13 @@ import csv
 import mimetypes
 import os
 from json import dumps
-from typing import List, Union
+from typing import List, Optional, Union
 from uuid import uuid4
 
 import requests
 import tqdm
 
+from kili.authentication import KiliAuth
 from kili.queries.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
 
 from ...helpers import (
@@ -72,8 +73,8 @@ def process_and_store_json_content(
     input_type: str,
     content_array: List[str],
     json_content_array: Union[List[str], None],
-    project_id,
-    auth,
+    project_id: str,
+    auth: KiliAuth,
 ):
     """
     Process the array of json_contents and upload json if not already hosted
@@ -92,7 +93,7 @@ def process_and_store_json_content(
     )
 
 
-def upload_content(content_array: List[str], input_type, auth, project_id):
+def upload_content(content_array: List[str], input_type: str, auth: KiliAuth, project_id: str):
     """
     Upload the content to a bucket if it is either a local file or raw text given for a TEXT project
     Args:
@@ -123,8 +124,8 @@ def process_and_store_content(
     content_array: Union[List[str], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     is_uploading_local_data: bool,
-    project_id,
-    auth,
+    project_id: str,
+    auth: KiliAuth,
 ):
     """
     Process the array of contents and upload content if not already hosted
@@ -254,7 +255,7 @@ def get_request_to_execute(
 
 # pylint: disable=too-many-arguments, too-many-locals
 def process_append_many_to_dataset_parameters(
-    auth,
+    auth: KiliAuth,
     input_type: str,
     content_array: Union[List[str], None],
     external_id_array: Union[List[str], None],
@@ -300,7 +301,7 @@ def process_append_many_to_dataset_parameters(
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,
     }
-
+    print(properties["content_array"], properties["json_content_array"], is_uploading_local_data)
     return (properties, upload_type, request, is_uploading_local_data)
 
 
@@ -356,7 +357,7 @@ def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
     return json_metadata_array
 
 
-def request_signed_urls(auth, project_id: str, size: int):
+def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
     """
     Get upload signed URLs
     Args:
@@ -372,7 +373,9 @@ def request_signed_urls(auth, project_id: str, size: int):
     return urls_response["data"]["urls"]
 
 
-def upload_data_via_rest(signed_urls, data_array: List[str], content_type_array: List[str]):
+def upload_data_via_rest(
+    signed_urls: List[str], data_array: List[str], content_type_array: List[str]
+):
     """upload data in buckets' signed URL via REST
     Args:
         signed_urls: Bucket signed URLs to upload local files to
@@ -396,7 +399,7 @@ def upload_data_via_rest(signed_urls, data_array: List[str], content_type_array:
     return responses
 
 
-def check_if_uploading_local_content(content_array, json_content_array):
+def check_if_uploading_local_content(content_array: List[str], json_content_array: Optional[list]):
     """Determine if all data to append is hosted data or local data.
     If it is a mix of both, return an error
     """

@@ -6,16 +6,20 @@ import shutil
 import tempfile
 import unittest
 import uuid
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 import requests
 
+from kili.helpers import check_file_mime_type
 from kili.mutations.asset.helpers import (
     get_file_mimetype,
+    process_and_store_content,
     process_append_many_to_dataset_parameters,
-    process_content,
+    upload_content,
 )
 from kili.mutations.asset.queries import GQL_APPEND_MANY_FRAMES_TO_DATASET
+from kili.queries import project
 
 
 class LocalDownloader:
@@ -36,6 +40,8 @@ class TestMimeType:
     Tests if the mime type is the correct one
     """
 
+    project_id = "project_id"
+
     def should_have_right_mimetype(self, content_array, json_content_array, expected_mimetype):
         mimetype = get_file_mimetype(content_array, json_content_array)
         assert mimetype == expected_mimetype, f"Bad mimetype {mimetype}"
@@ -45,7 +51,7 @@ class TestMimeType:
         json_content_array = None
         self.should_have_right_mimetype(content_array, json_content_array, None)
 
-    def test_mimetype_url(self, tmpdir):
+    def test_mimetype_url(self):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         content_array = [url]
         json_content_array = None
@@ -69,31 +75,33 @@ class TestMimeType:
 
     def test_cannot_upload_mp4_to_image_project(self):
         path = "./test.mp4"
-        content_array = [path]
-        json_content_array = None
-        processed_content = process_content("IMAGE", content_array, json_content_array)
-        assert processed_content == [None]
+        with pytest.raises(ValueError):
+            check_file_mime_type(path, "IMAGE")
 
     def test_cannot_upload_png_to_frame_project(self):
         path = "./test.png"
-        content_array = [path]
-        json_content_array = None
-        processed_content = process_content("VIDEO", content_array, json_content_array)
-        assert processed_content == [None]
+        with pytest.raises(ValueError):
+            check_file_mime_type(path, "VIDEO")
 
     def test_cannot_upload_text_to_pdf_project(self):
         path = "Hello world"
         content_array = [path]
-        json_content_array = None
-        processed_content = process_content("PDF", content_array, json_content_array)
-        assert processed_content == [None]
+        auth = Mock()
+        project_id = "project_id"
+        with pytest.raises(ValueError):
+            upload_content(content_array, "PDF", auth, project_id)
 
     def test_can_upload_png_to_image_project(self):
-        with pytest.raises(FileNotFoundError):
-            path = "./test.png"
-            content_array = [path]
-            json_content_array = None
-            process_content("IMAGE", content_array, json_content_array)
+        path = "./test.png"
+        assert check_file_mime_type(path, "IMAGE")
+
+
+def mocked_request_signed_urls(size, **_):
+    return [f"uplaod_signed_urls {i}" for i in range(size)]
+
+
+def mocked_upload_data_via_rest(signed_urls, **_):
+    return [signed_urls]
 
 
 class TestUploadTiff(unittest.TestCase):
@@ -105,11 +113,18 @@ class TestUploadTiff(unittest.TestCase):
         # Create a temporary directory
         self.test_dir = tempfile.mkdtemp()
 
-    def tearDown(self):
+    def tearDown(self, mocker):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
 
-    def test_geotiff_upload_properties(self):
+        mocker.patch(
+            "kili.mutations.asset.helpers.request_signed_urls",
+            side_effect=mocked_request_signed_urls,
+        )
+        mocker.patch(
+            "kili.mutations.asset.helpers.upload_data_via_rest",
+            side_effect=mocked_upload_data_via_rest,
+        )
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         downloader = LocalDownloader(self.test_dir)
         path = downloader(url)
@@ -120,7 +135,15 @@ class TestUploadTiff(unittest.TestCase):
         status_array = None
         json_content_array = None
         json_metadata_array = None
-        properties, upload_type, request = process_append_many_to_dataset_parameters(
+        project_id = "projectr_id"
+        auth = None
+        (
+            properties,
+            upload_type,
+            request,
+            is_uploading_local_file,
+        ) = process_append_many_to_dataset_parameters(
+            auth,
             input_type,
             content_array,
             external_id_array,
@@ -128,9 +151,13 @@ class TestUploadTiff(unittest.TestCase):
             status_array,
             json_content_array,
             json_metadata_array,
+            project_id,
         )
         assert properties["json_metadata_array"] == ["{}"]
-        assert properties["content_array"][0].startswith("data:image/tiff;base64,SUkqAAgABABre")
+        assert properties["content_array"][0] == ["upload_signed_url"]
+        assert (
+            is_uploading_local_file == True
+        ), "did not detect that it was uploading from a local file"
         assert properties["external_id_array"] == ["bogota"]
         assert upload_type == "GEO_SATELLITE", "uploadType do not match"
         assert request == GQL_APPEND_MANY_FRAMES_TO_DATASET, "Requests do not match"
