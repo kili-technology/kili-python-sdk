@@ -6,9 +6,9 @@ from typing import Dict, List, Set
 
 from tqdm.autonotebook import tqdm
 
-from ...repository import AbstractContentRepository, DownloadError
-from ...typing import JobCategory, LabelFormat, YoloAnnotation
-from ..base import BaseExporter
+from kili.services.export.repository import AbstractContentRepository, DownloadError
+from kili.services.export.typing import JobCategory, LabelFormat, YoloAnnotation
+from kili.services.export.format.base import BaseExporter
 
 
 class LabelFrames:

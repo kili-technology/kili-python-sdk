@@ -4,8 +4,10 @@ Transfer Learning
 
 import subprocess
 import time
+from typing import List
 
 from kili.client import Kili
+from kili.types import Asset
 
 SECONDS_TO_WAIT = 1
 LABEL_FIELDS = ["isLatestLabelForUser", "labelType", "jsonResponse", "createdAt"]
@@ -59,7 +61,7 @@ class TransferLearning:
         """
         Collects the assets to train on
         """
-        assets = self.kili.assets(project_id=self.project_id, fields=FIELDS)
+        assets : List[Asset] = self.kili.assets(project_id=self.project_id, fields=FIELDS) # type:ignore
         assets_to_train = []
         for asset in assets:
             default_labels = get_labels_of_types(asset, ["DEFAULT"])
@@ -154,7 +156,8 @@ class TransferLearning:
         """
         print("Starting Tensorboard...")
         with subprocess.Popen(["tensorboard", "--logdir=runs"]) as proc:
-            print(proc.stdout.read())
+            if proc.stdout:
+                print(proc.stdout.read())
 
     def launch(self):
         """

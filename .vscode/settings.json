@@ -1,0 +1,15 @@
+{
+  "python.formatting.provider": "black",
+  "python.linting.mypyEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "python.formatting.blackArgs": ["--preview"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.languageServer": "Pylance",
+  "python.linting.pylintEnabled": false,
+  "python.analysis.diagnosticMode": "workspace",
+  //   "python.analysis.typeCheckingMode": "basic",
+  "editor.showUnused": true
+}

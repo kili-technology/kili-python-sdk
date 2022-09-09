@@ -6,10 +6,10 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, fragment_builder
-from ...types import ApiKey as ApiKeyType
-from ...utils.pagination import row_generator_from_paginated_calls
-from .queries import GQL_API_KEYS_COUNT, gql_api_keys
+from kili.helpers import Compatible, format_result, fragment_builder
+from kili.types import ApiKey as ApiKeyType
+from kili.utils.pagination import row_generator_from_paginated_calls
+from kili.queries.api_key.queries import GQL_API_KEYS_COUNT, gql_api_keys
 
 
 class QueriesApiKey:
@@ -98,7 +98,6 @@ class QueriesApiKey:
         return list(api_keys_generator)
 
     def _query_api_keys(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_api_keys = gql_api_keys(fragment_builder(fields, ApiKeyType))
         result = self.auth.client.execute(_gql_api_keys, payload)
@@ -137,4 +136,4 @@ class QueriesApiKey:
         }
         result = self.auth.client.execute(GQL_API_KEYS_COUNT, variables)
         count = format_result("data", result)
-        return count
+        return int(count)  # type:ignore
