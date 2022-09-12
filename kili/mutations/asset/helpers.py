@@ -73,8 +73,6 @@ def process_and_store_json_content(
     input_type: str,
     content_array: List[str],
     json_content_array: Union[List[str], None],
-    project_id: str,
-    auth: KiliAuth,
 ):
     """
     Process the array of json_contents and upload json if not already hosted
@@ -283,7 +281,7 @@ def process_append_many_to_dataset_parameters(
         input_type, content_array, json_content_array, is_uploading_local_data, project_id, auth
     )
     formatted_json_content_array = process_and_store_json_content(
-        input_type, content_array, json_content_array, project_id, auth
+        input_type, content_array, json_content_array
     )
 
     request, upload_type = get_request_to_execute(
