@@ -3,7 +3,7 @@ from typing_extensions import TypedDict
 import warnings
 from datetime import datetime, timedelta
 
-import requests 
+import requests
 
 from kili import __version__
 from kili.graphql_client import GraphQLClient, GraphQLClientName
@@ -59,7 +59,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             )
             warnings.warn(message, UserWarning)
 
-        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES) # type:ignore
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type:ignore
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
         self.client = GraphQLClient(
@@ -119,11 +119,10 @@ You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning)
 
     class UserEmail(TypedDict):
-        id : str
-        email : str
+        id: str
+        email: str
 
-    
     def get_user(self) -> UserEmail:
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
-        return format_result("data", result) # type:ignore
+        return format_result("data", result)  # type:ignore

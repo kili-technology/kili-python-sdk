@@ -61,7 +61,9 @@ class TransferLearning:
         """
         Collects the assets to train on
         """
-        assets : List[Asset] = self.kili.assets(project_id=self.project_id, fields=FIELDS) # type:ignore
+        assets: List[Asset] = self.kili.assets(
+            project_id=self.project_id, fields=FIELDS
+        )  # type:ignore
         assets_to_train = []
         for asset in assets:
             default_labels = get_labels_of_types(asset, ["DEFAULT"])

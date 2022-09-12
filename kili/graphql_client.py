@@ -109,12 +109,14 @@ class GraphQLClient:
                     raise Exception(req.content) from exception
                 raise exception
 
-        req = urllib.request.Request(self.endpoint, json.dumps(data).encode("utf-8"), headers) # type:ignore
+        req = urllib.request.Request(
+            self.endpoint, json.dumps(data).encode("utf-8"), headers
+        )  # type:ignore
         try:
-            with urllib.request.urlopen(req) as response: # type:ignore
+            with urllib.request.urlopen(req) as response:  # type:ignore
                 str_json = response.read().decode("utf-8")
                 return json.loads(str_json)
-        except urllib.error.HTTPError as error: # type:ignore
+        except urllib.error.HTTPError as error:  # type:ignore
             print((error.read()))
             print("")
             raise error
