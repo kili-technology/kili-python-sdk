@@ -86,11 +86,7 @@ def process_and_store_json_content(
 
     if input_type in ("FRAME", "VIDEO"):
         json_content_array = list(map(process_frame_json_content, json_content_array))
-    signed_urls = request_signed_urls(auth, project_id, len(json_content_array))
-    json_content_array = list(map(dumps, json_content_array))
-    return upload_data_via_rest(
-        signed_urls, json_content_array, ["text/plain"] * len(json_content_array)
-    )
+    return list(map(dumps, json_content_array))
 
 
 def upload_content(content_array: List[str], input_type: str, auth: KiliAuth, project_id: str):
@@ -105,8 +101,8 @@ def upload_content(content_array: List[str], input_type: str, auth: KiliAuth, pr
     content_type_array = []
     for content in content_array:
         if os.path.exists(content) and check_file_mime_type(content, input_type):
-            with open(content, "rb") as binary_data:
-                data_array.append(binary_data)
+            with open(content, "rb") as file:
+                data_array.append(file.read())
             content_type_array.append(get_data_type(content))
         elif input_type == "TEXT":
             data_array.append(content)
@@ -301,7 +297,6 @@ def process_append_many_to_dataset_parameters(
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,
     }
-    print(properties["content_array"], properties["json_content_array"], is_uploading_local_data)
     return (properties, upload_type, request, is_uploading_local_data)
 
 
