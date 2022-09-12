@@ -410,12 +410,12 @@ def file_check_function_from_input_type(input_type: str):
     """
 
     def output_function(path: str):
-        return check_file_mime_type(path, input_type)
+        return check_file_mime_type(path, input_type, raise_error=False)
 
     return output_function
 
 
-def check_file_mime_type(path: str, input_type: str) -> bool:
+def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
     """
     Returns true if the mime type of the file corresponds to the allowed mime types of the project
     """
@@ -426,7 +426,7 @@ def check_file_mime_type(path: str, input_type: str) -> bool:
         return False
 
     correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
-    if not correct_mime_type:
+    if not correct_mime_type and raise_error:
         raise ValueError(
             f"File mime type for {path} is {mime_type} and does not correspond "
             "to the type of the project. "
