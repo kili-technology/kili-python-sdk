@@ -22,7 +22,7 @@ from kili.mutations.asset.queries import (
 from kili.orm import Asset
 from kili.utils.pagination import _mutate_from_paginated_call
 
-from .signed_urls import request_signed_urls, upload_data_via_rest
+from ...utils.signed_urls import request_signed_urls, upload_data_via_rest
 from .typing import AssetToImport
 
 
