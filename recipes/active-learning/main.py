@@ -13,25 +13,18 @@ logging.basicConfig(format="%(levelname)s:%(asctime)s %(message)s", level=loggin
 def read_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-e",
-        "--email",
-        type=str,
-        default=os.environ.get("EMAIL", None),
-        help="your email, part of your kili credentials",
-    )
-    parser.add_argument(
-        "-p",
-        "--password",
-        type=str,
-        default=os.environ.get("PASSWORD", None),
-        help="your password, part of your kili credentials",
-    )
-    parser.add_argument(
         "-i",
         "--project_id",
         type=str,
         default=os.environ.get("PROJECT_ID", None),
         help="your kili project id",
+    )
+    parser.add_argument(
+        "-i",
+        "--api_key",
+        type=str,
+        default=os.environ.get("KILI_API_KEY", None),
+        help="your kili api key",
     )
     parser.add_argument(
         "-a",
@@ -49,8 +42,8 @@ def read_arguments():
 
 
 class ActiveLearner:
-    def __init__(self, email, password, api_endpoint, project_id):
-        self.kili = Kili(email, password, api_endpoint=api_endpoint)
+    def __init__(self, api_key, api_endpoint, project_id):
+        self.kili = Kili(api_key=api_key, api_endpoint=api_endpoint)
         self.project_id = project_id
 
     def get_assets_to_evaluate(self):
@@ -73,7 +66,7 @@ class ActiveLearner:
     def update_assets_priority(self, assets):
         for i, asset in enumerate(tqdm(assets)):
             asset_id = asset["id"]
-            self.kili.update_properties_in_assets(asset_id=[asset_id], priorities=[i])
+            self.kili.update_properties_in_assets(asset_ids=[asset_id], priorities=[i])
         return True
 
 
@@ -86,7 +79,7 @@ def main():
     args = read_arguments()
 
     logging.info("Connecting to Kili...")
-    active_learner = ActiveLearner(args.email, args.password, args.api_endpoint, args.project_id)
+    active_learner = ActiveLearner(args.api_key, args.api_endpoint, args.project_id)
 
     logging.info("Getting unlabeled assets...")
     to_evaluate_assets = active_learner.get_assets_to_evaluate()
