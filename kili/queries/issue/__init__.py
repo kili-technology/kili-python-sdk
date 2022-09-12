@@ -31,7 +31,7 @@ class QueriesIssue:
     def issues(
         self,
         project_id: str,
-        fields: Optional[List[str]] = [
+        fields: List[str] = [
             "id",
             "createdAt",
             "hasBeenSeen",
@@ -40,7 +40,7 @@ class QueriesIssue:
             "type",
         ],
         first: Optional[int] = None,
-        skip: Optional[int] = 0,
+        skip: int = 0,
         disable_tqdm: bool = False,
         as_generator: bool = False,
     ) -> Union[List[dict], Generator[dict, None, None]]:

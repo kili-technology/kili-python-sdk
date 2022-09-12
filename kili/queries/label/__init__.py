@@ -222,7 +222,7 @@ class QueriesLabel:
         """
 
         projects = QueriesProject(self.auth).projects(project_id)
-        assert len(projects) == 1, NO_ACCESS_RIGHT
+        assert len(list(projects)) == 1, NO_ACCESS_RIGHT
         assets = QueriesAsset(self.auth).assets(
             project_id=project_id,
             fields=asset_fields + ["labels." + field for field in fields],
@@ -312,4 +312,4 @@ class QueriesLabel:
         }
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
         count = format_result("data", result)
-        return count
+        return int(count) # type:ignore

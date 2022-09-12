@@ -296,7 +296,7 @@ def list_is_not_none_else_none(_object):
     return [_object] if _object is not None else None
 
 
-def infer_id_from_external_id(kili, asset_id: str, external_id: str, project_id: str):
+def infer_id_from_external_id(kili, asset_id: Optional[str], external_id: str, project_id: str):
     """
     Infer asset id from external id
 
@@ -362,7 +362,7 @@ def validate_category_search_query(query):
 
 
 def get_file_paths_to_upload(
-    files: Tuple[str, ...], file_check_function, verbose: bool
+    files: List[str], file_check_function, verbose: bool
 ) -> List[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.
 

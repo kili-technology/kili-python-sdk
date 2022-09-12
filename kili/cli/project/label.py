@@ -171,6 +171,7 @@ def import_labels(
                 label_asset_external_id=external_ids[i],
                 json_response=json_response,
                 project_id=project_id,
+                label_asset_id=None,
             )
 
     print(f"{len(label_index_to_import)} labels have been successfully imported")
