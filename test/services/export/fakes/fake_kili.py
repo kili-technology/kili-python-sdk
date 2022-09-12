@@ -2,12 +2,11 @@
 Fake Kili object
 """
 
-from test.services.export.fakes.fake_data import asset_image
+from test.services.export.fakes.fake_data import asset_image  # type:ignore
 from typing import List, Optional
 
 
 class FakeAuth:
-
     api_key = ""
     api_endpoint = "http://content-repository"
 

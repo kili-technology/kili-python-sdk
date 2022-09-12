@@ -10,6 +10,7 @@ import pytest
 from kili.client import Kili
 from kili.exceptions import NotFound
 from kili.project import Project
+from kili.services.export.typing import ProjectId
 
 
 def mocked__projects(project_id, **_):
@@ -33,13 +34,13 @@ class TestGetProject:
         mocker.patch("kili.client.Kili.projects", side_effect=mocked__projects)
         kili = Kili()
         with pytest.raises(NotFound):
-            kili.get_project("this_project_id_do_not_exist")
+            kili.get_project(ProjectId("this_project_id_do_not_exist"))
 
     def test_get_existing_project(self, mocker):
         """Test that get_project on an existing project_id return a Project with the right id."""
         mocker.patch("kili.client.Kili.__init__", return_value=None)
         mocker.patch("kili.client.Kili.projects", side_effect=mocked__projects)
         kili = Kili()
-        project = kili.get_project("cl0wihlop3rwc0mtj9np28ti2")
+        project = kili.get_project(ProjectId("cl0wihlop3rwc0mtj9np28ti2"))
         assert isinstance(project, Project)
         assert project.project_id == "cl0wihlop3rwc0mtj9np28ti2"

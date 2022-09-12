@@ -62,14 +62,15 @@ def main():
     kili = Kili(api_key=args.api_key, api_endpoint=args.api_endpoint)
 
     logging.info("Getting predictions")
-    external_id_array = [get(prediction, "externalId") for prediction in predictions]
-    json_response_array = [json.loads(get(prediction, "response")) for prediction in predictions]
+    external_id_array = [prediction["externalId"] for prediction in predictions]
+    json_response_array = [json.loads(prediction["response"]) for prediction in predictions]
 
     logging.info("Uploading to Kili")
     kili.create_predictions(
         project_id=args.project_id,
         external_id_array=external_id_array,
         json_response_array=json_response_array,
+        model_name_array=["Kili SDK"] * len(external_id_array),
     )
 
 
