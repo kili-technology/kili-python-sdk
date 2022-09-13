@@ -8,4 +8,3 @@ tqdm
 typeguard
 websocket-client
 typing_extensions
-google-cloud

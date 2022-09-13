@@ -27,7 +27,6 @@ from kili.queries.project import QueriesProject
 from kili.queries.project_user import QueriesProjectUser
 from kili.queries.project_version import QueriesProjectVersion
 from kili.queries.user import QueriesUser
-from kili.services.export.typing import ProjectId
 from kili.subscriptions.label import SubscriptionsLabel
 
 
@@ -108,7 +107,7 @@ class Kili(  # pylint: disable=too-many-ancestors
                 raise AuthenticationFailed(api_key, api_endpoint) from exception
             raise exception
 
-    def get_project(self, project_id: ProjectId) -> Project:
+    def get_project(self, project_id: str) -> Project:
         """Return a project object corresponding to the project_id given.
         The returned project object inherit from many methods for project management
 

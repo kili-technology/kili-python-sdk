@@ -6,29 +6,24 @@ GraphQL types
 
 from dataclasses import dataclass
 
-from typing_extensions import TypedDict
 
-from kili.enums import InputType, LicenseType
-
-
-class License(TypedDict):
+@dataclass
+class License:
     """
     A Wrapper for License GraphQL object.
     """
 
-    _: bool
-    api: bool
-    apiPriority: bool
-    enableSmartTools: bool
-    expiryDate: str
-    inputType: InputType
-    maxNumberOfLabeledAssets: int
-    organizationId: str
-    publicProject: bool
-    seats: int
-    startDate: str
-    type: LicenseType
-    uploadCloudData: bool
+    api = "api"
+    apiPriority = "apiPriority"
+    enableSmartTools = "enableSmartTools"
+    expiryDate = "expiryDate"
+    inputType = "inputType"
+    maxNumberOfLabeledAssets = "maxNumberOfLabeledAssets"
+    seats = "seats"
+    startDate = "startDate"
+    type = "type"
+    uploadCloudData = "uploadCloudData"
+    organizationId = "organizationId"
 
 
 @dataclass

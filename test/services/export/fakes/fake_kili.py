@@ -2,7 +2,7 @@
 Fake Kili object
 """
 
-from test.services.export.fakes.fake_data import asset_image  # type:ignore
+from test.services.export.fakes.fake_data import asset_image
 from typing import List, Optional
 
 

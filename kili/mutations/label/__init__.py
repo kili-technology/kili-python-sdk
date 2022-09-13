@@ -94,11 +94,11 @@ class MutationsLabel:
     def append_to_labels(
         self,
         json_response: dict,
-        project_id: str,
-        label_asset_external_id: str,
-        label_asset_id: Optional[str],
         author_id: Optional[str] = None,
+        label_asset_external_id: Optional[str] = None,
+        label_asset_id: Optional[str] = None,
         label_type: str = "DEFAULT",
+        project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ):
         """Append a label to an asset.
