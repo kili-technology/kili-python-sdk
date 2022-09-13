@@ -8,6 +8,8 @@ from dataclasses import dataclass
 
 from typing_extensions import TypedDict
 
+from kili.enums import InputType, LicenseType
+
 
 class License(TypedDict):
     """
@@ -19,7 +21,7 @@ class License(TypedDict):
     apiPriority: bool
     enableSmartTools: bool
     expiryDate: str
-    inputType: Input
+    inputType: InputType
     maxNumberOfLabeledAssets: int
     organizationId: str
     publicProject: bool
