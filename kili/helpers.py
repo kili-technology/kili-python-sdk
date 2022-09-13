@@ -10,14 +10,13 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 import pyparsing as pp
 import requests
 
+from kili.constants import mime_extensions_for_IV2
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
-
-from .constants import mime_extensions_for_IV2
 
 
 class Compatible:
