@@ -14,7 +14,7 @@ from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.queries.project import QueriesProject
-from kili.services.import_assets import import_assets
+from kili.services.import_assets import import_assets_service
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
@@ -39,7 +39,7 @@ class ImageTestCase(TestCase):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local image"}]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets_service(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
@@ -58,7 +58,7 @@ class ImageTestCase(TestCase):
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets_service(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
@@ -77,7 +77,7 @@ class ImageTestCase(TestCase):
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local tiff image"}]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets_service(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
