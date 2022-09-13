@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.services.import_assets import import_assets
+from kili.services.import_assets import import_assets_service
 
 from ...helpers import Compatible, format_result
 from ...orm import Asset
@@ -111,7 +111,7 @@ class MutationsAsset:
             for i in range(nb_data)
         ]
 
-        import_assets(self.auth, project_id=project_id, assets=assets)
+        import_assets_service(self.auth, project_id=project_id, assets=assets)
 
     @Compatible(["v2"])
     @typechecked

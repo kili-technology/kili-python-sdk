@@ -9,7 +9,7 @@ from kili.services.import_assets.legacy import LegacyImporter
 from kili.services.import_assets.typing import AssetToImport
 
 
-def import_assets(
+def import_assets_service(
     auth: KiliAuth,
     project_id: str,
     assets: List[AssetToImport],
