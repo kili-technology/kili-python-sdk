@@ -12,9 +12,9 @@ from kili.helpers import (
     validate_category_search_query,
 )
 from kili.orm import Asset
+from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 from kili.types import Asset as AssetType
 from kili.utils.pagination import row_generator_from_paginated_calls
-from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 
 
 class QueriesAsset:

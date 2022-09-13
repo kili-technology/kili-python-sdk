@@ -9,14 +9,14 @@ from typing import List, Optional
 from typeguard import typechecked
 
 from kili.helpers import Compatible, format_result, infer_id_from_external_id
-from kili.orm import Label
-from kili.utils.pagination import _mutate_from_paginated_call
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
     GQL_CREATE_PREDICTIONS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
+from kili.orm import Label
+from kili.utils.pagination import _mutate_from_paginated_call
 
 
 class MutationsLabel:
@@ -94,9 +94,9 @@ class MutationsLabel:
     def append_to_labels(
         self,
         json_response: dict,
-        project_id: str ,
-        label_asset_external_id: str ,
-        label_asset_id: Optional[str] ,
+        project_id: str,
+        label_asset_external_id: str,
+        label_asset_id: Optional[str],
         author_id: Optional[str] = None,
         label_type: str = "DEFAULT",
         seconds_to_label: Optional[int] = 0,

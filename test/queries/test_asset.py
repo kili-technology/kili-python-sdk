@@ -3,7 +3,9 @@
 """
 import os
 from test.utils import mocked_count_method, mocked_query_method
+
 import pandas as pd
+
 from kili.client import Kili
 
 api_endpoint = os.getenv("KILI_API_ENDPOINT")

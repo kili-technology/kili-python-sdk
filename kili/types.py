@@ -6,24 +6,27 @@ GraphQL types
 
 from dataclasses import dataclass
 
+from typing_extensions import TypedDict
 
-@dataclass
-class License:
+
+class License(TypedDict):
     """
     A Wrapper for License GraphQL object.
     """
 
-    api = "api"
-    apiPriority = "apiPriority"
-    enableSmartTools = "enableSmartTools"
-    expiryDate = "expiryDate"
-    inputType = "inputType"
-    maxNumberOfLabeledAssets = "maxNumberOfLabeledAssets"
-    seats = "seats"
-    startDate = "startDate"
-    type = "type"
-    uploadCloudData = "uploadCloudData"
-    organizationId = "organizationId"
+    _: bool
+    api: bool
+    apiPriority: bool
+    enableSmartTools: bool
+    expiryDate: str
+    inputType: Input
+    maxNumberOfLabeledAssets: int
+    organizationId: str
+    publicProject: bool
+    seats: int
+    startDate: str
+    type: LicenseType
+    uploadCloudData: bool
 
 
 @dataclass

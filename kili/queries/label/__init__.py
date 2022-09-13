@@ -13,11 +13,11 @@ from kili.helpers import (
     validate_category_search_query,
 )
 from kili.orm import Label
+from kili.queries.asset import QueriesAsset
+from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
+from kili.queries.project import QueriesProject
 from kili.types import Label as LabelType
 from kili.utils.pagination import row_generator_from_paginated_calls
-from kili.queries.asset import QueriesAsset
-from kili.queries.project import QueriesProject
-from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 
 
 class QueriesLabel:
@@ -312,4 +312,4 @@ class QueriesLabel:
         }
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
         count = format_result("data", result)
-        return int(count) # type:ignore
+        return int(count)  # type:ignore

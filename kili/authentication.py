@@ -1,9 +1,9 @@
 """API authentication module"""
-from typing_extensions import TypedDict
 import warnings
 from datetime import datetime, timedelta
 
 import requests
+from typing_extensions import TypedDict
 
 from kili import __version__
 from kili.graphql_client import GraphQLClient, GraphQLClientName
