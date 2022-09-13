@@ -9,7 +9,7 @@ from test.utils import LocalDownloader
 from unittest import TestCase
 from unittest.mock import ANY, patch
 
-from kili.graphQL.resolvers.asset.mutations import (
+from kili.graphQL.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )
