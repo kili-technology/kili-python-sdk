@@ -3,13 +3,12 @@ import warnings
 from datetime import datetime, timedelta
 
 import requests
-from typing_extensions import TypedDict
 
-from kili import __version__
-from kili.graphql_client import GraphQLClient, GraphQLClientName
-from kili.helpers import format_result
-from kili.queries.api_key import QueriesApiKey
-from kili.queries.user.queries import GQL_ME
+from . import __version__
+from .graphql_client import GraphQLClient, GraphQLClientName
+from .helpers import format_result
+from .queries.api_key import QueriesApiKey
+from .queries.user.queries import GQL_ME
 
 MAX_RETRIES = 20
 
@@ -59,7 +58,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             )
             warnings.warn(message, UserWarning)
 
-        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type:ignore
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
         self.client = GraphQLClient(
@@ -108,7 +107,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         warn_days = 30
         queries = QueriesApiKey(self)
         key_object = queries.api_keys(api_key=api_key, fields=["createdAt"], disable_tqdm=True)
-        key_creation = datetime.strptime(list(key_object)[0]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        key_creation = datetime.strptime(key_object[0]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
         key_expiry = key_creation + timedelta(days=duration_days)
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
@@ -118,11 +117,7 @@ Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
 You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning)
 
-    class UserEmail(TypedDict):
-        id: str
-        email: str
-
-    def get_user(self) -> UserEmail:
+    def get_user(self):
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
-        return format_result("data", result)  # type:ignore
+        return format_result("data", result)
