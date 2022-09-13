@@ -6,12 +6,10 @@ from typing import List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.services.import_asset import import_assets
+from kili.services.import_assets import import_assets
 
-from ...constants import NO_ACCESS_RIGHT
 from ...helpers import Compatible, format_result
 from ...orm import Asset
-from ...queries.project import QueriesProject
 from ...utils.pagination import _mutate_from_paginated_call
 from .helpers import process_update_properties_in_assets_parameters
 from .queries import (
@@ -96,10 +94,6 @@ class MutationsAsset:
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
-        kili = QueriesProject(self.auth)
-        projects = kili.projects(project_id, disable_tqdm=True)
-        assert len(projects) == 1, NO_ACCESS_RIGHT
-        input_type = projects[0]["inputType"]
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
@@ -117,7 +111,7 @@ class MutationsAsset:
             for i in range(nb_data)
         ]
 
-        import_assets(self.auth, input_type=input_type, project_id=project_id, assets=assets)
+        import_assets(self.auth, project_id=project_id, assets=assets)
 
     @Compatible(["v2"])
     @typechecked
