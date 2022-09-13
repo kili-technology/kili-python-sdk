@@ -4,7 +4,7 @@ import csv
 import mimetypes
 import os
 from json import dumps
-from typing import List, Optional, Union
+from typing import List, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
@@ -59,12 +59,7 @@ class LegacyImporter:
         ]
 
     def import_assets(self):
-        (
-            properties_to_batch,
-            upload_type,
-            request,
-            is_uploading_local_data,
-        ) = process_append_many_to_dataset_parameters(
+        (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
             self.auth,
             self.input_type,
             self.content_array,
@@ -83,7 +78,6 @@ class LegacyImporter:
                     "externalIDArray": batch["external_id_array"],
                     "jsonMetadataArray": batch["json_metadata_array"],
                     "uploadType": upload_type,
-                    "isUploadingSignedUrl": is_uploading_local_data,
                 }
             else:
                 payload_data = {
@@ -93,14 +87,12 @@ class LegacyImporter:
                     "statusArray": batch["status_array"],
                     "jsonContentArray": batch["json_content_array"],
                     "jsonMetadataArray": batch["json_metadata_array"],
-                    "isUploadingSignedUrl": is_uploading_local_data,
                 }
             return {"data": payload_data, "where": {"id": self.project_id}}
 
         results = pagination._mutate_from_paginated_call(
             self, properties_to_batch, generate_variables, request
         )
-        print(results, results[0])
         return format_result("data", results[0], Asset)
 
 
@@ -147,7 +139,7 @@ def get_file_mimetype(
     return None
 
 
-def process_and_store_json_content(
+def process_json_content(
     input_type: str,
     content_array: List[str],
     json_content_array: Union[List[str], None],
@@ -157,15 +149,18 @@ def process_and_store_json_content(
     """
     if json_content_array is None:
         return [""] * len(content_array)
-    if all(is_url(element) for element in json_content_array):
-        return json_content_array
+    processed_json_content_array = []
+    for json_content in json_content_array:
+        if is_url(json_content):
+            processed_json_content_array.append(json_content)
+        else:
+            if input_type in ("FRAME", "VIDEO"):
+                json_content = process_frame_json_content(json_content)
+            processed_json_content_array.append(dumps(json_content))
+    return processed_json_content_array
 
-    if input_type in ("FRAME", "VIDEO"):
-        json_content_array = list(map(process_frame_json_content, json_content_array))
-    return list(map(dumps, json_content_array))
 
-
-def upload_content(content_array: List[str], input_type: str, auth: KiliAuth, project_id: str):
+def uplaod_content(signed_url: str, content: str, input_type: str):
     """
     Upload the content to a bucket if it is either a local file or raw text given for a TEXT project
     Args:
@@ -173,21 +168,19 @@ def upload_content(content_array: List[str], input_type: str, auth: KiliAuth, pr
         signed_url: a signed_url to possibily use to upload the content
         input_type: input type of the project
     """
-    data_array = []
-    content_type_array = []
-    for content in content_array:
-        if os.path.exists(content) and check_file_mime_type(content, input_type):
-            with open(content, "rb") as file:
-                data_array.append(file.read())
-            content_type_array.append(get_data_type(content))
-        elif input_type == "TEXT":
-            data_array.append(content)
-            content_type_array.append("text/plain")
-        else:
-            raise ValueError(f"File: {content} not found")
-    signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
-    urls_uploaded_content = bucket.upload_data_via_rest(signed_urls, data_array, content_type_array)
-    return urls_uploaded_content
+    if os.path.exists(content) and check_file_mime_type(content, input_type):
+        with open(content, "rb") as file:
+            data = file.read()
+        content_type = get_data_type(content)
+        uploaded_content_url = bucket.upload_data_via_rest([signed_url], [data], [content_type])[0]
+        return uploaded_content_url
+    elif not os.path.exists(content) and input_type == "TEXT":
+        data = content
+        content_type = "text/plain"
+        uploaded_content_url = bucket.upload_data_via_rest([signed_url], [data], [content_type])[0]
+        return uploaded_content_url
+    else:
+        raise ValueError(f"File: {content} not found")
 
 
 # pylint: disable=too-many-arguments
@@ -195,7 +188,6 @@ def process_and_store_content(
     input_type: str,
     content_array: Union[List[str], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
-    is_uploading_local_data: bool,
     project_id: str,
     auth: KiliAuth,
 ):
@@ -206,9 +198,16 @@ def process_and_store_content(
         return list(map(process_time_series, content_array))
     if json_content_array is not None:
         return content_array
-    if not is_uploading_local_data:
-        return content_array
-    return upload_content(content_array, input_type, auth, project_id)
+    has_local_files = any(not is_url(content) for content in content_array)
+    url_content_array = []
+    if has_local_files:
+        signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
+    for i, content in enumerate(content_array):
+        url_content = (is_url(content) and content) or uplaod_content(
+            signed_urls[i], content, input_type
+        )
+        url_content_array.append(url_content)
+    return url_content_array
 
 
 def process_time_series(content: str) -> Union[str, None]:
@@ -294,7 +293,6 @@ def process_metadata(
             add_video_parameters(json_metadata, should_use_native_video)
             for json_metadata in json_metadata_array
         ]
-    print(list(map(dumps, json_metadata_array)))
     return list(map(dumps, json_metadata_array))
 
 
@@ -352,12 +350,11 @@ def process_append_many_to_dataset_parameters(
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array
     )
-    is_uploading_local_data = check_if_uploading_local_content(content_array, json_content_array)
     mime_type = get_file_mimetype(content_array, json_content_array)
     content_array = process_and_store_content(
-        input_type, content_array, json_content_array, is_uploading_local_data, project_id, auth
+        input_type, content_array, json_content_array, project_id, auth
     )
-    formatted_json_content_array = process_and_store_json_content(
+    formatted_json_content_array = process_json_content(
         input_type,
         content_array,
         json_content_array,
@@ -374,17 +371,4 @@ def process_append_many_to_dataset_parameters(
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,
     }
-    return (properties, upload_type, request, is_uploading_local_data)
-
-
-def check_if_uploading_local_content(content_array: List[str], json_content_array: Optional[list]):
-    """Determine if all data to append is hosted data or local data.
-    If it is a mix of both, return an error
-    """
-    if json_content_array:
-        return False
-    if all(is_url(content) for content in content_array):
-        return False
-    if all(not is_url(content) for content in content_array):
-        return True
-    raise ValueError("Content to append should either be all hosted file or all local files")
+    return (properties, upload_type, request)

@@ -1,11 +1,14 @@
 import shutil
 import tempfile
+from test.services.import_asset.mocks import mocked_request_signed_urls
 from test.utils import LocalDownloader
 from unittest import TestCase
+from unittest.mock import patch
 
 from kili.services.import_asset import import_assets
 
 
+@patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 class TestContentType(TestCase):
     def setUp(self):
         self.project_id = "project_id"
@@ -23,7 +26,7 @@ class TestContentType(TestCase):
         with self.assertRaises(ValueError):
             import_assets(self.auth, "VIDEO", self.project_id, assets)
 
-    def test_cannot_files_not_found_to_an_image_project(self):
+    def test_cannot_import_files_not_found_to_an_image_project(self):
         path = "./doesnotexist.pdf"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(ValueError):
