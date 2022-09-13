@@ -1,6 +1,8 @@
 """Import service types"""
 
-from typing import List, Optional, TypedDict, Union
+from typing import List, Optional, Union
+
+from typing_extensions import TypedDict
 
 from kili.utils.typing import Status
 
