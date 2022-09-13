@@ -8,7 +8,7 @@ from typing import List, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
-from kili.graphQL.operations.asset.mutations import (
+from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )

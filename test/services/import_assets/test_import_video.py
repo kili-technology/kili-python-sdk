@@ -1,33 +1,38 @@
 import json
 import shutil
 import tempfile
-from test.services.import_asset.mocks import (
+from test.services.import_assets.mocks import (
     mocked__mutate_from_paginated_call,
     mocked_request_signed_urls,
     mocked_upload_data_via_rest,
 )
 from test.utils import LocalDownloader
 from unittest import TestCase
-from unittest.mock import ANY, patch
+from unittest.mock import ANY, MagicMock, patch
 
-from kili.graphQL.operations.asset.mutations import (
+from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.helpers import encode_base64
-from kili.services.import_asset import import_assets
+from kili.queries.project import QueriesProject
+from kili.services.import_assets import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.pagination._mutate_from_paginated_call", mocked__mutate_from_paginated_call)
+@patch.object(
+    QueriesProject,
+    "projects",
+    MagicMock(return_value=[{"inputType": "VIDEO"}]),
+)
 class VideoTestCase(TestCase):
     def setUp(self):
-        self.input_type = "VIDEO"
-        self.project_id = "video_project_id"
-        self.auth = None
+        self.project_id = "project_id"
         self.test_dir = tempfile.mkdtemp()
         self.downloader = LocalDownloader(self.test_dir)
+        self.auth = None
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
@@ -36,7 +41,7 @@ class VideoTestCase(TestCase):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -64,7 +69,7 @@ class VideoTestCase(TestCase):
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -102,7 +107,7 @@ class VideoTestCase(TestCase):
                 },
             }
         ]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -138,7 +143,7 @@ class VideoTestCase(TestCase):
                 },
             }
         ]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -175,7 +180,7 @@ class VideoTestCase(TestCase):
                 "json_content": [path_frame1, path_frame2, path_frame3],
             }
         ]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -220,7 +225,7 @@ class VideoTestCase(TestCase):
                 "json_content": [url_frame1, url_frame2, url_frame3],
             }
         ]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -263,7 +268,7 @@ class VideoTestCase(TestCase):
                 "json_content": [url_frame1, url_frame2, url_frame3],
             }
         ]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -303,7 +308,7 @@ class VideoTestCase(TestCase):
                 "json_metadata": {"fromBucket": True, "score": 10},
             }
         ]
-        import_assets(self.auth, self.input_type, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "fromBucket": True,

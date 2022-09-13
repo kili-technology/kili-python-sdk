@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 
 from typing_extensions import TypedDict
 
-from kili.utils.typing import Status
+from kili.typing import Status
 
 
 class AssetToImport(TypedDict):
