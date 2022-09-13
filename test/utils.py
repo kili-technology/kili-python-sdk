@@ -1,6 +1,13 @@
+"""
+Common utils functions for tests
+"""
+import os
 import traceback
+import uuid
 from datetime import datetime, timedelta
 from functools import wraps
+
+import requests
 
 COUNT_SAMPLE_MAX = 26000
 
@@ -66,3 +73,16 @@ def debug_subprocess_pytest(result):
         traceback.print_tb(result.exception.__traceback__)
         print(result.exception)
     assert result.exit_code == 0
+
+
+class LocalDownloader:
+    def __init__(self, directory):
+        self.directory = directory
+
+    def __call__(self, url):
+        content = requests.get(url)
+        name = os.path.basename(url)
+        path = os.path.join(self.directory, f"{str(uuid.uuid4())}-{name}")
+        with open(path, "wb") as file:
+            file.write(content.content)
+        return path

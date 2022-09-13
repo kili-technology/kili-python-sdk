@@ -8,6 +8,10 @@ from typing import List, Optional, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
+from kili.graphQL.resolvers.asset.mutations import (
+    GQL_APPEND_MANY_FRAMES_TO_DATASET,
+    GQL_APPEND_MANY_TO_DATASET,
+)
 from kili.helpers import (
     check_file_mime_type,
     encode_base64,
@@ -15,14 +19,9 @@ from kili.helpers import (
     get_data_type,
     is_url,
 )
-from kili.mutations.asset.queries import (
-    GQL_APPEND_MANY_FRAMES_TO_DATASET,
-    GQL_APPEND_MANY_TO_DATASET,
-)
 from kili.orm import Asset
-from kili.utils.pagination import _mutate_from_paginated_call
+from kili.utils import bucket, pagination
 
-from ...utils.signed_urls import request_signed_urls, upload_data_via_rest
 from .typing import AssetToImport
 
 
@@ -98,9 +97,10 @@ class LegacyImporter:
                 }
             return {"data": payload_data, "where": {"id": self.project_id}}
 
-        results = _mutate_from_paginated_call(
+        results = pagination._mutate_from_paginated_call(
             self, properties_to_batch, generate_variables, request
         )
+        print(results, results[0])
         return format_result("data", results[0], Asset)
 
 
@@ -185,8 +185,8 @@ def upload_content(content_array: List[str], input_type: str, auth: KiliAuth, pr
             content_type_array.append("text/plain")
         else:
             raise ValueError(f"File: {content} not found")
-    signed_urls = request_signed_urls(auth, project_id, len(content_array))
-    urls_uploaded_content = upload_data_via_rest(signed_urls, data_array, content_type_array)
+    signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
+    urls_uploaded_content = bucket.upload_data_via_rest(signed_urls, data_array, content_type_array)
     return urls_uploaded_content
 
 
@@ -294,6 +294,7 @@ def process_metadata(
             add_video_parameters(json_metadata, should_use_native_video)
             for json_metadata in json_metadata_array
         ]
+    print(list(map(dumps, json_metadata_array)))
     return list(map(dumps, json_metadata_array))
 
 
