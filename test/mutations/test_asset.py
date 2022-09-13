@@ -117,6 +117,7 @@ class TestUploadTiff(unittest.TestCase):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
 
+    def test_geotiff_upload_properties(self, mocker):
         mocker.patch(
             "kili.mutations.asset.helpers.request_signed_urls",
             side_effect=mocked_request_signed_urls,
