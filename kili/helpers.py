@@ -10,7 +10,7 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import pyparsing as pp
 import requests
@@ -360,7 +360,9 @@ def validate_category_search_query(query):
         raise ValueError(f"Invalid category search query: {query}") from error
 
 
-def get_file_paths_to_upload(files: List[str], file_check_function, verbose: bool) -> List[str]:
+def get_file_paths_to_upload(
+    files: Tuple[str, ...], file_check_function, verbose: bool
+) -> List[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.
 
     Args:
