@@ -1,5 +1,5 @@
 """
-Fragments of asset mutations and queries
+Fragments of asset related mutations and queries
 """
 
 ASSET_FRAGMENT = """
