@@ -1,4 +1,4 @@
-"""Module for managing bucket signed urls"""
+"""Module for managing bucket's signed urls"""
 
 from typing import List
 
@@ -6,12 +6,7 @@ import requests
 from tqdm import tqdm
 
 from kili.authentication import KiliAuth
-
-GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS = """
-query($projectID: ID!, $size: Int) {
-  urls: createUploadBucketSignedUrls(projectID: $projectID, size: $size)
-}
-"""
+from kili.graphQL.operations.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
 
 
 def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
