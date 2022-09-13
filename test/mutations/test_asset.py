@@ -96,11 +96,11 @@ class TestMimeType:
         assert check_file_mime_type(path, "IMAGE")
 
 
-def mocked_request_signed_urls(size, **_):
-    return [f"uplaod_signed_urls {i}" for i in range(size)]
+def mocked_request_signed_urls(_a, _b, size):
+    return ["upload_signed_url"] * size
 
 
-def mocked_upload_data_via_rest(signed_urls, **_):
+def mocked_upload_data_via_rest(signed_urls, *_):
     return [signed_urls]
 
 
@@ -113,19 +113,19 @@ class TestUploadTiff(unittest.TestCase):
         # Create a temporary directory
         self.test_dir = tempfile.mkdtemp()
 
-    def tearDown(self, mocker):
+    def tearDown(self):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
 
-    def test_geotiff_upload_properties(self, mocker):
-        mocker.patch(
-            "kili.mutations.asset.helpers.request_signed_urls",
-            side_effect=mocked_request_signed_urls,
-        )
-        mocker.patch(
-            "kili.mutations.asset.helpers.upload_data_via_rest",
-            side_effect=mocked_upload_data_via_rest,
-        )
+    @patch(
+        "kili.mutations.asset.helpers.request_signed_urls",
+        MagicMock(side_effect=mocked_request_signed_urls),
+    )
+    @patch(
+        "kili.mutations.asset.helpers.upload_data_via_rest",
+        MagicMock(side_effect=mocked_upload_data_via_rest),
+    )
+    def test_geotiff_upload_properties(self):
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         downloader = LocalDownloader(self.test_dir)
         path = downloader(url)
