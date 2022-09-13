@@ -30,7 +30,7 @@ class ImageTestCase(TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_upload_from_one_local_images(self):
+    def test_upload_from_one_local_image(self):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local image"}]
@@ -49,7 +49,7 @@ class ImageTestCase(TestCase):
             GQL_APPEND_MANY_TO_DATASET,
         )
 
-    def test_upload_from_one_hosted_images(
+    def test_upload_from_one_hosted_image(
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
@@ -68,7 +68,7 @@ class ImageTestCase(TestCase):
             GQL_APPEND_MANY_TO_DATASET,
         )
 
-    def test_upload_from_one_local_tiff_images(self):
+    def test_upload_from_one_local_tiff_image(self):
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local tiff image"}]

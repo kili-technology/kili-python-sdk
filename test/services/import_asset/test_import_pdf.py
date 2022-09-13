@@ -30,7 +30,7 @@ class PDFTestCase(TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_upload_from_one_local_pdf_file(self):
+    def test_upload_from_one_local_pdf(self):
         url = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/pdfs/sample.pdf"
         )
@@ -51,7 +51,7 @@ class PDFTestCase(TestCase):
             GQL_APPEND_MANY_TO_DATASET,
         )
 
-    def test_upload_from_one_hosted_pdf_file(
+    def test_upload_from_one_hosted_pdf(
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
