@@ -10,7 +10,8 @@ from kili import services
 from kili.cli.common_args import Options
 from kili.cli.helpers import get_kili_client
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.typing import LabelFormat, SplitOption
+from kili.services.export.types import SplitOption
+from kili.services.types import LabelFormat
 
 
 @click.command(name="export")

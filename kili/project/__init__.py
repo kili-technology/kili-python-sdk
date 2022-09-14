@@ -3,15 +3,9 @@ from typing import List, Optional, cast
 
 from typeguard import typechecked
 
-from kili.services import export_labels
-from kili.services.export.typing import (
-    AssetId,
-    InputType,
-    LabelFormat,
-    LogLevel,
-    ProjectId,
-    SplitOption,
-)
+from kili import services
+from kili.services.export.types import SplitOption
+from kili.services.types import AssetId, InputType, LabelFormat, LogLevel, ProjectId
 
 
 class Project:  # pylint: disable=too-few-public-methods
@@ -60,7 +54,7 @@ class Project:  # pylint: disable=too-few-public-methods
             disable_tqdm: Disable the progress bar if True.
             log_level: Level of debugging.
         """
-        export_labels(
+        services.export_labels(
             self.client,
             asset_ids=cast(Optional[List[str]], asset_ids),
             project_id=self.project_id,

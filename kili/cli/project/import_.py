@@ -8,15 +8,14 @@ import click
 from typeguard import typechecked
 
 from kili.cli.common_args import Arguments, Options, from_csv
-from kili.cli.helpers import (
-    check_exclusive_options,
-    collect_from_csv,
-    get_external_id_from_file_path,
-    get_kili_client,
-)
+from kili.cli.helpers import collect_from_csv, get_kili_client
 from kili.exceptions import NotFound
 from kili.helpers import get_file_paths_to_upload
 from kili.services import asset_import
+from kili.services.helpers import (
+    check_exclusive_options,
+    get_external_id_from_file_path,
+)
 
 
 def check_asset_type(key, value):

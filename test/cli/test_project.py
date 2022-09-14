@@ -5,6 +5,7 @@ import json
 import os
 from unittest.mock import ANY, MagicMock, patch
 
+import pytest
 from click.testing import CliRunner
 
 from kili.cli.project.create import create_project
@@ -206,64 +207,81 @@ class TestCLIProject:
             and (result.output.count("project title") == 1)
         )
 
-    def test_import_labels(self, mocker):
-        TEST_CASES = [
-            {
-                "case_name": "AAU, when I import a list of label's file to project, I see a success",
-                "files": ["test_tree/leaf_1/", "test_tree/asset1.json", "test_tree/leaf_2/**.json"],
-                "options": {
-                    "project-id": "project_id",
-                },
-                "flags": [],
-                "mutation_to_call": "append_to_labels",
-                "expected_mutation_payload": {
-                    "project_id": "project_id",
-                    "json_response": {
-                        "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
+    @pytest.mark.parametrize(
+        "name,test_case",
+        [
+            (
+                "AAU, when I import a list of label's file to project, I see a success",
+                {
+                    "files": [
+                        "test_tree/leaf_1/",
+                        "test_tree/asset1.json",
+                        "test_tree/leaf_2/**.json",
+                    ],
+                    "options": {
+                        "project-id": "project_id",
                     },
-                    "label_asset_external_id": "asset6",
-                },
-                "expected_mutation_call_count": 5,
-            },
-            {
-                "case_name": "AAU, when I import default labels from a CSV, I see a success",
-                "files": [],
-                "options": {
-                    "project-id": "project_id",
-                    "from-csv": "labels_to_import.csv",
-                },
-                "flags": [],
-                "mutation_to_call": "append_to_labels",
-                "expected_mutation_payload": {
-                    "project_id": "project_id",
-                    "json_response": {
-                        "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
+                    "flags": [],
+                    "mutation_to_call": "append_to_labels",
+                    "expected_mutation_payload": {
+                        "project_id": "project_id",
+                        "json_response": {
+                            "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
+                        },
+                        "label_asset_external_id": "asset6",
                     },
-                    "label_asset_external_id": "asset6",
+                    "expected_mutation_call_count": 5,
                 },
-                "expected_mutation_call_count": 2,
-            },
-            {
-                "case_name": "AAU, when I import predictions from a CSV, I see a sucess",
-                "files": [],
-                "options": {
-                    "project-id": "project_id",
-                    "model-name": "model_name",
-                    "from-csv": "labels_to_import.csv",
+            ),
+            (
+                "AAU, when I import default labels from a CSV, I see a success",
+                {
+                    "files": [],
+                    "options": {
+                        "project-id": "project_id",
+                        "from-csv": "labels_to_import.csv",
+                    },
+                    "flags": [],
+                    "mutation_to_call": "append_to_labels",
+                    "expected_mutation_payload": {
+                        "project_id": "project_id",
+                        "json_response": {
+                            "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
+                        },
+                        "label_asset_external_id": "asset6",
+                    },
+                    "expected_mutation_call_count": 2,
                 },
-                "flags": ["prediction"],
-                "mutation_to_call": "create_predictions",
-                "expected_mutation_payload": {
-                    "project_id": "project_id",
-                    "json_response_array": [
-                        {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}}
-                    ]
-                    * 2,
-                    "external_id_array": ["asset1", "asset6"],
-                    "model_name_array": ["model_name"] * 2,
+            ),
+            (
+                "AAU, when I import predictions from a CSV, I see a success",
+                {
+                    "files": [],
+                    "options": {
+                        "project-id": "project_id",
+                        "model-name": "model_name",
+                        "from-csv": "labels_to_import.csv",
+                    },
+                    "flags": ["prediction"],
+                    "mutation_to_call": "create_predictions",
+                    "expected_mutation_payload": {
+                        "project_id": "project_id",
+                        "json_response_array": [
+                            {
+                                "JOB_0": {
+                                    "categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]
+                                }
+                            }
+                        ]
+                        * 2,
+                        "external_id_array": ["asset1", "asset6"],
+                        "model_name_array": ["model_name"] * 2,
+                    },
                 },
-            },
-        ]
+            ),
+        ],
+    )
+    def test_import_labels(self, mocker, name, test_case):
         runner = CliRunner()
         with runner.isolated_filesystem():
 
@@ -285,30 +303,24 @@ class TestCLIProject:
                 json.dump(mock_label, outfile)
             with open("labels_to_import.csv", "w") as f:
                 writer = csv.writer(f)
-                writer.writerow(["external_id", "json_response_path"])
+                writer.writerow(["label_asset_external_id", "path"])
                 writer.writerow(["asset1", "test_tree/asset1.json"])
                 writer.writerow(["asset6", "test_tree/leaf_2/asset6.json"])
 
-            for i, test_case in enumerate(TEST_CASES):
-                kili_client.append_to_labels = append_to_labels_mock = MagicMock()
-                arguments = test_case["files"]
-                for k, v in test_case["options"].items():
-                    arguments.append("--" + k)
-                    arguments.append(v)
-                if test_case.get("flags"):
-                    arguments.extend(["--" + flag for flag in test_case["flags"]])
-                result = runner.invoke(import_labels, arguments)
-                debug_subprocess_pytest(result)
-                if test_case["mutation_to_call"] == "append_to_labels":
-                    assert (
-                        append_to_labels_mock.call_count
-                        == test_case["expected_mutation_call_count"]
-                    )
-                    append_to_labels_mock.assert_any_call(**test_case["expected_mutation_payload"])
-                else:
-                    create_predictions_mock.assert_called_with(
-                        **test_case["expected_mutation_payload"]
-                    )
+            kili_client.append_to_labels = append_to_labels_mock = MagicMock()
+            arguments = test_case["files"]
+            for k, v in test_case["options"].items():
+                arguments.append("--" + k)
+                arguments.append(v)
+            if test_case.get("flags"):
+                arguments.extend(["--" + flag for flag in test_case["flags"]])
+            result = runner.invoke(import_labels, arguments)
+            debug_subprocess_pytest(result)
+            if test_case["mutation_to_call"] == "append_to_labels":
+                assert append_to_labels_mock.call_count == test_case["expected_mutation_call_count"]
+                append_to_labels_mock.assert_any_call(**test_case["expected_mutation_payload"])
+            else:
+                create_predictions_mock.assert_called_with(**test_case["expected_mutation_payload"])
 
     def test_import(self, mocker):
 
