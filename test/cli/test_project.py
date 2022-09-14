@@ -157,7 +157,6 @@ kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
 kili_client.append_to_labels = append_to_labels_mock = MagicMock()
 kili_client.create_predictions = create_predictions_mock = MagicMock()
 kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
-# kili_client.append_many_to_dataset = append_many_to_dataset_mock = MagicMock()
 kili_client.create_project = create_project_mock = MagicMock()
 kili_client.assets = assets_mock = MagicMock(side_effect=mocked__project_assets)
 
