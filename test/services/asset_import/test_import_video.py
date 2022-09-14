@@ -1,7 +1,7 @@
 import json
 import shutil
 import tempfile
-from test.services.import_assets.mocks import (
+from test.services.asset_import.mocks import (
     mocked__mutate_from_paginated_call,
     mocked_request_signed_urls,
     mocked_upload_data_via_rest,
@@ -16,7 +16,7 @@ from kili.graphql.operations.asset.mutations import (
 )
 from kili.helpers import encode_base64
 from kili.queries.project import QueriesProject
-from kili.services.import_assets import import_assets
+from kili.services.asset_import import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
