@@ -315,6 +315,7 @@ class Asset:
     inferenceMark = "inferenceMark"
     inferenceMarkCompute = "inferenceMarkCompute"
     isHoneypot = "isHoneypot"
+    isProcessingAuthorized = "isProcessingAuthorized"
     isToBeLabeledBy = "isToBeLabeledBy"
     issues = IssueWithoutAsset
     isUsedForConsensus = "isUsedForConsensus"
