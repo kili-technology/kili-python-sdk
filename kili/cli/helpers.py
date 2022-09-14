@@ -11,7 +11,7 @@ from ..client import Kili
 # pylint: disable=consider-using-f-string
 
 
-def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
+def get_kili_client(api_key: str, api_endpoint: str):
     """Instantiate a kili client for the CLI functions"""
     return Kili(api_key=api_key, api_endpoint=api_endpoint, client_name=GraphQLClientName.CLI)
 

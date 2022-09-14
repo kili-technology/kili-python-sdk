@@ -9,7 +9,6 @@ from click.testing import CliRunner
 
 from kili.cli.project.create import create_project
 from kili.cli.project.describe import describe_project
-from kili.cli.project.export import export_labels
 from kili.cli.project.import_ import import_assets
 from kili.cli.project.label import import_labels
 from kili.cli.project.list_ import list_projects
@@ -24,38 +23,6 @@ def mocked__projects(project_id=None, **_):
         return [{"id": "text_project", "inputType": "TEXT"}]
     if project_id == "image_project":
         return [{"id": "image_project", "inputType": "IMAGE"}]
-    if project_id == "object_detection":
-        job_payload = {
-            "mlTask": "OBJECT_DETECTION",
-            "tools": ["rectangle"],
-            "instruction": "Categories",
-            "required": 1,
-            "isChild": False,
-            "content": {
-                "categories": {
-                    "OBJECT_A": {
-                        "name": "OBJECT A",
-                    },
-                    "OBJECT_B": {
-                        "name": "OBJECT B",
-                    },
-                },
-                "input": "radio",
-            },
-        }
-        json_interface = {
-            "jobs": {
-                "JOB_0": job_payload,
-            }
-        }
-        return [
-            {
-                "title": "test OD project",
-                "id": "object_detection",
-                "description": "This is a test project",
-                "jsonInterface": json_interface,
-            }
-        ]
     if project_id == "frame_project":
         return [{"id": "frame_project", "inputType": "VIDEO"}]
     if project_id == None:
@@ -102,57 +69,19 @@ def mocked__projects(project_id=None, **_):
         ]
 
 
-def mocked__project_assets(project_id=None, **_):
-    if project_id == "object_detection":
-        job_object_detection = {
-            "JOB_0": {
-                "annotations": [
-                    {
-                        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-                        "jobName": "JOB_0",
-                        "mid": "2022040515434712-7532",
-                        "mlTask": "OBJECT_DETECTION",
-                        "boundingPoly": [
-                            {
-                                "normalizedVertices": [
-                                    {"x": 0.16504140348233334, "y": 0.7986938935103378},
-                                    {"x": 0.16504140348233334, "y": 0.2605618833516984},
-                                    {"x": 0.8377886490672706, "y": 0.2605618833516984},
-                                    {"x": 0.8377886490672706, "y": 0.7986938935103378},
-                                ]
-                            }
-                        ],
-                        "type": "rectangle",
-                        "children": {},
-                    }
-                ]
-            }
-        }
-
-        return [
-            {
-                "latestLabel": {
-                    "jsonResponse": job_object_detection,
-                    "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-                },
-                "externalId": "car_1",
-                "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
-                "jsonContent": "",
-            }
-        ]
-    else:
-        return [
-            {"externalId": "asset1"},
-            {"externalId": "asset2"},
-            {"externalId": "asset3"},
-            {"externalId": "asset4"},
-            {"externalId": "asset5"},
-            {"externalId": "asset6"},
-        ]
+def mocked__project_assets(**_):
+    return [
+        {"externalId": "asset1"},
+        {"externalId": "asset2"},
+        {"externalId": "asset3"},
+        {"externalId": "asset4"},
+        {"externalId": "asset5"},
+        {"externalId": "asset6"},
+    ]
 
 
 kili_client = MagicMock()
-kili_client.auth.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+kili_client.auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
 kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
 kili_client.append_to_labels = append_to_labels_mock = MagicMock()
 kili_client.create_predictions = create_predictions_mock = MagicMock()
@@ -307,7 +236,6 @@ class TestCLIProject:
                     )
 
     def test_import(self, mocker):
-
         TEST_CASES = [
             {
                 "case_name": "AAU, when I import a list of file to an image project, I see a success",
@@ -452,33 +380,9 @@ class TestCLIProject:
                     arguments.append(v)
                 if test_case.get("flags"):
                     arguments.extend(["--" + flag for flag in test_case["flags"]])
+                print(arguments)
                 result = runner.invoke(import_assets, arguments)
                 debug_subprocess_pytest(result)
                 append_many_to_dataset_mock.assert_called_with(
                     **test_case["expected_mutation_payload"]
                 )
-
-    def test_export(self, mocker):
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-
-            result = runner.invoke(
-                export_labels,
-                [
-                    "--output-format",
-                    "yolo_v4",
-                    "--output-file",
-                    "export.zip",
-                    "--project-id",
-                    "object_detection",
-                    "--layout",
-                    "split",
-                    "--verbose",
-                    "--api-key",
-                    "toto",
-                    "--endpoint",
-                    "localhost",
-                ],
-            )
-            debug_subprocess_pytest(result)
-            assert result.output.count("export.zip")
