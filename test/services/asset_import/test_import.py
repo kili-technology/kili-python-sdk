@@ -1,12 +1,12 @@
 import shutil
 import tempfile
-from test.services.import_assets.mocks import mocked_request_signed_urls
+from test.services.asset_import.mocks import mocked_request_signed_urls
 from test.utils import LocalDownloader
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from kili.queries.project import QueriesProject
-from kili.services.import_assets import import_assets
+from kili.services.asset_import import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)

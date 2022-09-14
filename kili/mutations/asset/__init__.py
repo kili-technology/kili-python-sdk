@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.services.import_assets import import_assets
+from kili.services.asset_import import import_assets
 
 from ...helpers import Compatible, format_result
 from ...orm import Asset

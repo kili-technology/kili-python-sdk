@@ -16,7 +16,7 @@ from kili.cli.helpers import (
 )
 from kili.exceptions import NotFound
 from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
-from kili.services.import_assets import import_assets as import_assets_service
+from kili.services.asset_import import import_assets as import_assets_service
 
 # pylint: disable=consider-using-with
 
