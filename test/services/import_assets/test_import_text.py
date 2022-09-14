@@ -9,7 +9,7 @@ from test.utils import LocalDownloader
 from unittest import TestCase
 from unittest.mock import ANY, MagicMock, patch
 
-from kili.graphQL.operations.asset.mutations import GQL_APPEND_MANY_TO_DATASET
+from kili.graphql.operations.asset.mutations import GQL_APPEND_MANY_TO_DATASET
 from kili.queries.project import QueriesProject
 from kili.services.import_assets import import_assets_service
 

@@ -6,7 +6,7 @@ from kili.authentication import KiliAuth
 from kili.constants import NO_ACCESS_RIGHT
 from kili.queries.project import QueriesProject
 from kili.services.import_assets.legacy import LegacyImporter
-from kili.services.import_assets.typing import AssetToImport
+from kili.services.import_assets.types import AssetToImport
 
 
 def import_assets_service(
