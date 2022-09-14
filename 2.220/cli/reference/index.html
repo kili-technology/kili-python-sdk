@@ -544,13 +544,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#export" class="md-nav__link">
-    export
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#import" class="md-nav__link">
     import
   </a>
@@ -676,13 +669,6 @@
           <li class="md-nav__item">
   <a href="#describe" class="md-nav__link">
     describe
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#export" class="md-nav__link">
-    export
   </a>
   
 </li>
@@ -941,98 +927,6 @@ to create a new project with the json_interface of another project
 <td>text</td>
 <td>Kili API Endpoint.</td>
 <td>None</td>
-</tr>
-<tr>
-<td><code>--help</code></td>
-<td>boolean</td>
-<td>Show this message and exit.</td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="export">export</h3>
-<p>Export the Kili labels of a project to a given format.</p>
-<p>The supported formats are:
-- Yolo V4 for object detection (bounding box) tasks.
-- Yolo V5 for object detection (bounding box) tasks.
-- Kili (coming soon) for all tasks.
-- COCO (coming soon) for object detection tasks.
-- Pascal VOC (coming soon) for object detection tasks.</p>
-<div class="admonition examples">
-<p class="admonition-title">Examples</p>
-<p><div class="highlight"><pre><span></span><code>kili project export \
-    --project-id &lt;project_id&gt; \
-    --output-format yolo_v5 \
-    --output-file /tmp/export.zip
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>kili project export \
-    --project-id &lt;project_id&gt; \
-    --output-format yolo_v4 \
-    --output-file /tmp/export_split.zip \
-    --layout split
-</code></pre></div></p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Unsupported exports</p>
-<p>Currently, this command does not support the export of videos that have not
-been cut into separated frames.</p>
-<p>For such exports, please use the Kili UI.</p>
-</div>
-<p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>kili project export [OPTIONS]
-</code></pre></div>
-<p><strong>Options:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--output-format</code></td>
-<td>choice (<code>yolo_v4</code> &#x7C; <code>yolo_v5</code>)</td>
-<td>Format into which the label data will be converted</td>
-<td>_required</td>
-</tr>
-<tr>
-<td><code>--layout</code></td>
-<td>choice (<code>split</code> &#x7C; <code>merged</code>)</td>
-<td>Layout of the label files</td>
-<td><code>merged</code></td>
-</tr>
-<tr>
-<td><code>--output-file</code></td>
-<td>text</td>
-<td>File into which the labels are saved.</td>
-<td>_required</td>
-</tr>
-<tr>
-<td><code>--api-key</code></td>
-<td>text</td>
-<td>Your Kili API key.</td>
-<td>None</td>
-</tr>
-<tr>
-<td><code>--endpoint</code></td>
-<td>text</td>
-<td>Kili API Endpoint.</td>
-<td>None</td>
-</tr>
-<tr>
-<td><code>--project-id</code></td>
-<td>text</td>
-<td>Id of the project</td>
-<td>_required</td>
-</tr>
-<tr>
-<td><code>--verbose</code></td>
-<td>boolean</td>
-<td>Show more logs</td>
-<td><code>False</code></td>
 </tr>
 <tr>
 <td><code>--help</code></td>
