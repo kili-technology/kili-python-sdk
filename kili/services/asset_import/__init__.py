@@ -22,7 +22,5 @@ def import_assets(
     assert len(projects) == 1, NO_ACCESS_RIGHT
     input_type = projects[0]["inputType"]
 
-    legacy_importer = LegacyImporter(
-        auth=auth, project_id=project_id, input_type=input_type, assets=assets
-    )
-    legacy_importer.import_assets()
+    legacy_importer = LegacyImporter(auth=auth, project_id=project_id, input_type=input_type)
+    legacy_importer.import_assets(assets=assets)

@@ -35,40 +35,39 @@ class LegacyImporter:
         auth: KiliAuth,
         project_id: str,
         input_type: str,
-        assets: List[AssetToImport],
     ):
         self.input_type = input_type
         self.project_id = project_id
         self.auth = auth
-        self.content_array = assets[0].get("content", None) and [
+
+    def import_assets(self, assets: List[AssetToImport]):
+        content_array = assets[0].get("content", None) and [
             asset.get("content", "") for asset in assets
         ]
-        self.json_content_array = assets[0].get("json_content", None) and [
+        json_content_array = assets[0].get("json_content", None) and [
             asset.get("json_content", "") for asset in assets
         ]
-        self.external_id_array = assets[0].get("external_id", None) and [
+        external_id_array = assets[0].get("external_id", None) and [
             asset.get("external_id", uuid4().hex) for asset in assets
         ]
-        self.status_array = assets[0].get("status", None) and [
+        status_array = assets[0].get("status", None) and [
             asset.get("status", "TODO") for asset in assets
         ]
-        self.is_honeypot_array = assets[0].get("is_honeypot", None) and [
+        is_honeypot_array = assets[0].get("is_honeypot", None) and [
             asset.get("is_honeypot", False) for asset in assets
         ]
-        self.json_metadata_array = assets[0].get("json_metadata", None) and [
+        json_metadata_array = assets[0].get("json_metadata", None) and [
             asset.get("json_metadata", {}) for asset in assets
         ]
-
-    def import_assets(self):
         (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
             self.auth,
             self.input_type,
-            self.content_array,
-            self.external_id_array,
-            self.is_honeypot_array,
-            self.status_array,
-            self.json_content_array,
-            self.json_metadata_array,
+            content_array,
+            external_id_array,
+            is_honeypot_array,
+            status_array,
+            json_content_array,
+            json_metadata_array,
             self.project_id,
         )
 
@@ -161,7 +160,7 @@ def process_json_content(
     return processed_json_content_array
 
 
-def uplaod_content(signed_url: str, content: str, input_type: str):
+def upload_content(signed_url: str, content: str, input_type: str):
     """
     Upload the content to a bucket if it is either a local file or raw text given for a TEXT project
     Args:
@@ -204,7 +203,7 @@ def process_and_store_content(
     if has_local_files:
         signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
     for i, content in enumerate(content_array):
-        url_content = (is_url(content) and content) or uplaod_content(
+        url_content = (is_url(content) and content) or upload_content(
             signed_urls[i], content, input_type
         )
         url_content_array.append(url_content)
