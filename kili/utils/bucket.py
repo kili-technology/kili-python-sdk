@@ -3,7 +3,6 @@
 from typing import List
 
 import requests
-from tqdm import tqdm
 
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
@@ -35,7 +34,7 @@ def upload_data_via_rest(
         content_type: mimetype of the data. It will be infered if not given
     """
     responses = []
-    for index, data in tqdm(enumerate(data_array), total=len(data_array)):
+    for index, data in enumerate(data_array):
         content_type = content_type_array[index]
         headers = {"Content-type": content_type}
         url_with_id = signed_urls[index]

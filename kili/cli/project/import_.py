@@ -16,6 +16,7 @@ from kili.cli.helpers import (
 )
 from kili.exceptions import NotFound
 from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
+from kili.services.import_assets import import_assets as import_assets_service
 
 # pylint: disable=consider-using-with
 
@@ -177,12 +178,15 @@ def import_assets(
         as_frames, fps, len(files_to_upload), input_type
     )
 
-    kili.append_many_to_dataset(
-        project_id=project_id,
-        content_array=files_to_upload,
-        external_id_array=external_ids,
-        json_metadata_array=json_metadata_array,
-    )
+    assets_to_import = [
+        {
+            "content": files_to_upload[i],
+            "external_id": external_ids[i],
+            "json_metadata": json_metadata_array and json_metadata_array[i],
+        }
+        for i in range(len(files_to_upload))
+    ]
+    import_assets_service(kili.auth, project_id, assets_to_import)
 
     if as_frames:
         print(
