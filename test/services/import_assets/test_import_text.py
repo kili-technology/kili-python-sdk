@@ -11,7 +11,7 @@ from unittest.mock import ANY, MagicMock, patch
 
 from kili.graphql.operations.asset.mutations import GQL_APPEND_MANY_TO_DATASET
 from kili.queries.project import QueriesProject
-from kili.services.import_assets import import_assets_service
+from kili.services.import_assets import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
@@ -36,7 +36,7 @@ class TextTestCase(TestCase):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local text file"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
@@ -55,7 +55,7 @@ class TextTestCase(TestCase):
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
@@ -72,7 +72,7 @@ class TextTestCase(TestCase):
 
     def test_upload_from_raw_text(self):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
@@ -100,7 +100,7 @@ class TextTestCase(TestCase):
             }
         ]
         assets = [{"json_content": json_content, "external_id": "rich text"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         stringify_json_content = (
             '[{"children": [{"id": "1", "underline": true, "text": "A rich text asset"}]}]'
         )

@@ -16,7 +16,7 @@ from kili.graphql.operations.asset.mutations import (
 )
 from kili.helpers import encode_base64
 from kili.queries.project import QueriesProject
-from kili.services.import_assets import import_assets_service
+from kili.services.import_assets import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
@@ -41,7 +41,7 @@ class VideoTestCase(TestCase):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -69,7 +69,7 @@ class VideoTestCase(TestCase):
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -107,7 +107,7 @@ class VideoTestCase(TestCase):
                 },
             }
         ]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -143,7 +143,7 @@ class VideoTestCase(TestCase):
                 },
             }
         ]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -180,7 +180,7 @@ class VideoTestCase(TestCase):
                 "json_content": [path_frame1, path_frame2, path_frame3],
             }
         ]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -225,7 +225,7 @@ class VideoTestCase(TestCase):
                 "json_content": [url_frame1, url_frame2, url_frame3],
             }
         ]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -268,7 +268,7 @@ class VideoTestCase(TestCase):
                 "json_content": [url_frame1, url_frame2, url_frame3],
             }
         ]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -308,7 +308,7 @@ class VideoTestCase(TestCase):
                 "json_metadata": {"fromBucket": True, "score": 10},
             }
         ]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         expected_called_json_metadata = json.dumps(
             {
                 "fromBucket": True,

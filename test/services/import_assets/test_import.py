@@ -6,7 +6,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from kili.queries.project import QueriesProject
-from kili.services.import_assets import import_assets_service
+from kili.services.import_assets import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
@@ -31,7 +31,7 @@ class TestContentType(TestCase):
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
         with self.assertRaises(ValueError):
-            import_assets_service(self.auth, self.project_id, assets)
+            import_assets(self.auth, self.project_id, assets)
 
     @patch.object(
         QueriesProject,
@@ -42,7 +42,7 @@ class TestContentType(TestCase):
         path = "./doesnotexist.pdf"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(ValueError):
-            import_assets_service(self.auth, self.project_id, assets)
+            import_assets(self.auth, self.project_id, assets)
 
     @patch.object(
         QueriesProject,
@@ -53,4 +53,4 @@ class TestContentType(TestCase):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(ValueError):
-            import_assets_service(self.auth, self.project_id, assets)
+            import_assets(self.auth, self.project_id, assets)

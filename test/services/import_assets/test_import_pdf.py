@@ -11,7 +11,7 @@ from unittest.mock import ANY, MagicMock, patch
 
 from kili.graphql.operations.asset.mutations import GQL_APPEND_MANY_TO_DATASET
 from kili.queries.project import QueriesProject
-from kili.services.import_assets import import_assets_service
+from kili.services.import_assets import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
@@ -38,7 +38,7 @@ class PDFTestCase(TestCase):
         )
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local pdf file"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
@@ -57,7 +57,7 @@ class PDFTestCase(TestCase):
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
-        import_assets_service(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets)
         mocked__mutate_from_paginated_call.assert_called_with(
             ANY,
             {
