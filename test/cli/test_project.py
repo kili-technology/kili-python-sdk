@@ -3,7 +3,7 @@
 import csv
 import json
 import os
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 from click.testing import CliRunner
 
@@ -157,7 +157,7 @@ kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
 kili_client.append_to_labels = append_to_labels_mock = MagicMock()
 kili_client.create_predictions = create_predictions_mock = MagicMock()
 kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
-kili_client.append_many_to_dataset = append_many_to_dataset_mock = MagicMock()
+# kili_client.append_many_to_dataset = append_many_to_dataset_mock = MagicMock()
 kili_client.create_project = create_project_mock = MagicMock()
 kili_client.assets = assets_mock = MagicMock(side_effect=mocked__project_assets)
 
@@ -315,15 +315,22 @@ class TestCLIProject:
                 "options": {
                     "project-id": "image_project",
                 },
-                "expected_mutation_payload": {
-                    "project_id": "image_project",
-                    "content_array": [
-                        "test_tree/image1.png",
-                        "test_tree/leaf/image3.png",
+                "expected_service_payload": (
+                    ANY,
+                    "image_project",
+                    [
+                        {
+                            "content": "test_tree/image1.png",
+                            "external_id": "image1",
+                            "json_metadata": None,
+                        },
+                        {
+                            "content": "test_tree/leaf/image3.png",
+                            "external_id": "image3",
+                            "json_metadata": None,
+                        },
                     ],
-                    "external_id_array": ["image1", "image3"],
-                    "json_metadata_array": None,
-                },
+                ),
             },
             {
                 "case_name": "AAU, when I import files with stars, I see a success",
@@ -331,29 +338,43 @@ class TestCLIProject:
                 "options": {
                     "project-id": "image_project",
                 },
-                "expected_mutation_payload": {
-                    "project_id": "image_project",
-                    "content_array": [
-                        "test_tree/image2.jpg",
-                        "test_tree/leaf/image4.jpg",
+                "expected_service_payload": (
+                    ANY,
+                    "image_project",
+                    [
+                        {
+                            "content": "test_tree/image2.jpg",
+                            "external_id": "image2",
+                            "json_metadata": None,
+                        },
+                        {
+                            "content": "test_tree/leaf/image4.jpg",
+                            "external_id": "image4",
+                            "json_metadata": None,
+                        },
                     ],
-                    "external_id_array": ["image2", "image4"],
-                    "json_metadata_array": None,
-                },
+                ),
             },
             {
                 "case_name": "AAU, when I import a files to a text project, I see a success",
                 "files": ["test_tree/", "test_tree/leaf"],
                 "options": {"project-id": "text_project"},
-                "expected_mutation_payload": {
-                    "project_id": "text_project",
-                    "content_array": [
-                        "test_tree/leaf/texte2.txt",
-                        "test_tree/texte1.txt",
+                "expected_service_payload": (
+                    ANY,
+                    "text_project",
+                    [
+                        {
+                            "content": "test_tree/leaf/texte2.txt",
+                            "external_id": "texte2",
+                            "json_metadata": None,
+                        },
+                        {
+                            "content": "test_tree/texte1.txt",
+                            "external_id": "texte1",
+                            "json_metadata": None,
+                        },
                     ],
-                    "external_id_array": ["texte2", "texte1"],
-                    "json_metadata_array": None,
-                },
+                ),
             },
             {
                 "case_name": "AAU, when I import videos to a video project, as native by changing the fps, I see a success",
@@ -362,21 +383,34 @@ class TestCLIProject:
                     "project-id": "frame_project",
                     "fps": "10",
                 },
-                "expected_mutation_payload": {
-                    "project_id": "frame_project",
-                    "content_array": ["test_tree/video1.mp4", "test_tree/video2.mp4"],
-                    "external_id_array": ["video1", "video2"],
-                    "json_metadata_array": [
+                "expected_service_payload": (
+                    ANY,
+                    "frame_project",
+                    [
                         {
-                            "processingParameters": {
-                                "shouldKeepNativeFrameRate": False,
-                                "framesPlayedPerSecond": 10,
-                                "shouldUseNativeVideo": True,
-                            }
-                        }
-                    ]
-                    * 2,
-                },
+                            "content": "test_tree/video1.mp4",
+                            "external_id": "video1",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": False,
+                                    "framesPlayedPerSecond": 10,
+                                    "shouldUseNativeVideo": True,
+                                }
+                            },
+                        },
+                        {
+                            "content": "test_tree/video2.mp4",
+                            "external_id": "video2",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": False,
+                                    "framesPlayedPerSecond": 10,
+                                    "shouldUseNativeVideo": True,
+                                }
+                            },
+                        },
+                    ],
+                ),
             },
             {
                 "case_name": "AAU, when I import videos to a video project, as frames with the native frame rate, I see a success",
@@ -385,21 +419,34 @@ class TestCLIProject:
                     "project-id": "frame_project",
                 },
                 "flags": ["frames"],
-                "expected_mutation_payload": {
-                    "project_id": "frame_project",
-                    "content_array": ["test_tree/video1.mp4", "test_tree/video2.mp4"],
-                    "external_id_array": ["video1", "video2"],
-                    "json_metadata_array": [
+                "expected_service_payload": (
+                    ANY,
+                    "frame_project",
+                    [
                         {
-                            "processingParameters": {
-                                "shouldKeepNativeFrameRate": True,
-                                "framesPlayedPerSecond": None,
-                                "shouldUseNativeVideo": False,
-                            }
-                        }
-                    ]
-                    * 2,
-                },
+                            "content": "test_tree/video1.mp4",
+                            "external_id": "video1",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": True,
+                                    "framesPlayedPerSecond": None,
+                                    "shouldUseNativeVideo": False,
+                                }
+                            },
+                        },
+                        {
+                            "content": "test_tree/video2.mp4",
+                            "external_id": "video2",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": True,
+                                    "framesPlayedPerSecond": None,
+                                    "shouldUseNativeVideo": False,
+                                }
+                            },
+                        },
+                    ],
+                ),
             },
             {
                 "case_name": "AAU, when I import assets from a csv file, I see a success",
@@ -408,17 +455,22 @@ class TestCLIProject:
                     "project-id": "image_project",
                     "from-csv": "assets_to_import.csv",
                 },
-                "expected_mutation_payload": {
-                    "project_id": "image_project",
-                    "content_array": (
-                        [
-                            "test_tree/leaf/image3.png",
-                            "https://files.readme.io/cac9114-Kili_Wordmark_SoftWhite_RGB.svg",
-                        ]
-                    ),
-                    "external_id_array": ["image3", "test"],
-                    "json_metadata_array": None,
-                },
+                "expected_service_payload": (
+                    ANY,
+                    "image_project",
+                    [
+                        {
+                            "content": "test_tree/leaf/image3.png",
+                            "external_id": "image3",
+                            "json_metadata": None,
+                        },
+                        {
+                            "content": "https://files.readme.io/cac9114-Kili_Wordmark_SoftWhite_RGB.svg",
+                            "external_id": "test",
+                            "json_metadata": None,
+                        },
+                    ],
+                ),
             },
         ]
         runner = CliRunner()
@@ -452,11 +504,14 @@ class TestCLIProject:
                     arguments.append(v)
                 if test_case.get("flags"):
                     arguments.extend(["--" + flag for flag in test_case["flags"]])
-                result = runner.invoke(import_assets, arguments)
-                debug_subprocess_pytest(result)
-                append_many_to_dataset_mock.assert_called_with(
-                    **test_case["expected_mutation_payload"]
-                )
+                with patch(
+                    "kili.services.asset_import.import_assets"
+                ) as mocked_import_assets_service:
+                    result = runner.invoke(import_assets, arguments)
+                    debug_subprocess_pytest(result)
+                    mocked_import_assets_service.assert_called_with(
+                        *test_case["expected_service_payload"]
+                    )
 
     def test_export(self, mocker):
         runner = CliRunner()
