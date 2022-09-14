@@ -78,7 +78,7 @@ def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
 )
 @Options.verbose
 @typechecked
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-locals
 def import_assets(
     api_key: Optional[str],
     endpoint: Optional[str],

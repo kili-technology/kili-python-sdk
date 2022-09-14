@@ -1,3 +1,4 @@
+# pylint: skip-file
 """Legacy code for importing assets, to be removed soon"""
 
 import csv
