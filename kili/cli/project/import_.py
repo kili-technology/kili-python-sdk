@@ -16,7 +16,7 @@ from kili.cli.helpers import (
 )
 from kili.exceptions import NotFound
 from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
-from kili.services.asset_import import import_assets as import_assets_service
+from kili.services import asset_import
 
 # pylint: disable=consider-using-with
 
@@ -188,7 +188,7 @@ def import_assets(
         }
         for i in range(len(files_to_upload))
     ]
-    import_assets_service(kili.auth, project_id, assets_to_import)
+    asset_import.import_assets(kili.auth, project_id, assets_to_import)
 
     if as_frames:
         print(
