@@ -16,7 +16,7 @@ from kili.cli.helpers import (
 )
 from kili.exceptions import NotFound
 from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
-from kili.mutations.asset.helpers import generate_json_metadata_array
+from kili.services import asset_import
 
 # pylint: disable=consider-using-with
 
@@ -31,6 +31,31 @@ def type_check_asset(key, value):
         return f"{value} is not a valid url or path to a file."
 
     return ""
+
+
+def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
+    """Generate the json_metadata_array for input of the append_many_to_dataset resolver
+    when uploading from a list of path
+
+    Args:
+        as_frames: for a frame project, if videos should be split in frames
+        fps: for a frame project, import videos with this frame rate
+        nb_files: the number of files to upload in the call
+        input_type: the input type of the project to upload to
+    """
+
+    json_metadata_array = None
+    if input_type in ("FRAME", "VIDEO"):
+        json_metadata_array = [
+            {
+                "processingParameters": {
+                    "shouldKeepNativeFrameRate": fps is None,
+                    "framesPlayedPerSecond": fps,
+                    "shouldUseNativeVideo": not as_frames,
+                }
+            }
+        ] * nb_files
+    return json_metadata_array
 
 
 @click.command(name="import")
@@ -53,7 +78,7 @@ def type_check_asset(key, value):
 )
 @Options.verbose
 @typechecked
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-locals
 def import_assets(
     api_key: Optional[str],
     endpoint: Optional[str],
@@ -155,12 +180,15 @@ def import_assets(
         as_frames, fps, len(files_to_upload), input_type
     )
 
-    kili.append_many_to_dataset(
-        project_id=project_id,
-        content_array=files_to_upload,
-        external_id_array=external_ids,
-        json_metadata_array=json_metadata_array,
-    )
+    assets_to_import = [
+        {
+            "content": files_to_upload[i],
+            "external_id": external_ids[i],
+            "json_metadata": json_metadata_array and json_metadata_array[i],
+        }
+        for i in range(len(files_to_upload))
+    ]
+    asset_import.import_assets(kili.auth, project_id, assets_to_import)
 
     if as_frames:
         print(

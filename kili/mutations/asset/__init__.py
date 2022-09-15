@@ -6,18 +6,14 @@ from typing import List, Optional, Union
 
 from typeguard import typechecked
 
-from ...constants import NO_ACCESS_RIGHT
+from kili.services.asset_import import import_assets
+
 from ...helpers import Compatible, format_result
 from ...orm import Asset
-from ...queries.project import QueriesProject
 from ...utils.pagination import _mutate_from_paginated_call
-from .helpers import (
-    process_append_many_to_dataset_parameters,
-    process_update_properties_in_assets_parameters,
-)
+from .helpers import process_update_properties_in_assets_parameters
 from .queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
-    GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_DELETE_MANY_FROM_DATASET,
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
@@ -98,43 +94,24 @@ class MutationsAsset:
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
-        kili = QueriesProject(self.auth)
-        projects = kili.projects(project_id, disable_tqdm=True)
-        assert len(projects) == 1, NO_ACCESS_RIGHT
-        input_type = projects[0]["inputType"]
-        (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
-            input_type,
-            content_array,
-            external_id_array,
-            is_honeypot_array,
-            status_array,
-            json_content_array,
-            json_metadata_array,
-        )
 
-        def generate_variables(batch):
-            if request == GQL_APPEND_MANY_FRAMES_TO_DATASET:
-                payload_data = {
-                    "contentArray": batch["content_array"],
-                    "externalIDArray": batch["external_id_array"],
-                    "jsonMetadataArray": batch["json_metadata_array"],
-                    "uploadType": upload_type,
-                }
-            else:
-                payload_data = {
-                    "contentArray": batch["content_array"],
-                    "externalIDArray": batch["external_id_array"],
-                    "isHoneypotArray": batch["is_honeypot_array"],
-                    "statusArray": batch["status_array"],
-                    "jsonContentArray": batch["json_content_array"],
-                    "jsonMetadataArray": batch["json_metadata_array"],
-                }
-            return {"data": payload_data, "where": {"id": project_id}}
+        if content_array is None and json_content_array is None:
+            raise ValueError("Variables content_array and json_content_array cannot be both None.")
+        nb_data = len(content_array) if content_array is not None else len(json_content_array)
 
-        results = _mutate_from_paginated_call(
-            self, properties_to_batch, generate_variables, request
-        )
-        return format_result("data", results[0], Asset)
+        assets = [
+            {
+                "content": content_array and content_array[i],
+                "json_content": json_content_array and json_content_array[i],
+                "external_id": external_id_array and external_id_array[i],
+                "status": status_array and status_array[i],
+                "json_metadata": json_metadata_array and json_metadata_array[i],
+                "is_honeypot": is_honeypot_array and is_honeypot_array[i],
+            }
+            for i in range(nb_data)
+        ]
+
+        import_assets(self.auth, project_id=project_id, assets=assets)
 
     @Compatible(["v2"])
     @typechecked
