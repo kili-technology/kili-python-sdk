@@ -1,3 +1,7 @@
+"""
+Common code for the yolo exporter.
+"""
+
 import csv
 import json
 import logging
@@ -66,6 +70,10 @@ class LabelFrames:
 
 
 class YoloExporter(BaseExporter):
+    """
+    Common code for Yolo exporters.
+    """
+
     def write_labels_into_single_folder(
         self,
         assets: List[Dict],
@@ -73,7 +81,10 @@ class YoloExporter(BaseExporter):
         labels_folder: str,
         images_folder: str,
         base_folder: str,
-    ):
+    ):  # pylint: disable=too-many-arguments
+        """
+        Write all the labels into a single folder.
+        """
         _write_class_file(base_folder, categories_id, self.label_format)
 
         remote_content = []
@@ -179,7 +190,7 @@ def _process_asset(
                     )
                 except DownloadError as download_error:
                     asset_id = asset["id"]
-                    logging.warning(f"for asset {asset_id}" + str(download_error))
+                    logging.warning("for asset %s: %s", asset_id, str(download_error))
         else:
             asset_remote_content.append([asset["externalId"], content_frame, f"{filename}.txt"])
 
