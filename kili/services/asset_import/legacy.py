@@ -23,7 +23,7 @@ from kili.helpers import (
 from kili.orm import Asset
 from kili.utils import bucket, pagination
 
-from .base import ProjectParams
+from .base import ProcessingParams, ProjectParams
 from .types import AssetToImport
 
 
@@ -35,6 +35,7 @@ class LegacyDataImporter:
         self,
         auth: KiliAuth,
         project_params: ProjectParams,
+        processing_params: ProcessingParams,
     ):
         self.auth = auth
         self.project_id = project_params.project_id
