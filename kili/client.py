@@ -120,6 +120,7 @@ class Kili(  # pylint: disable=too-many-ancestors
         projects_response = self.projects(
             project_id=project_id, disable_tqdm=True, fields=["inputType", "title"]
         )
+        projects_response = list(projects_response)
 
         if len(projects_response) == 0:
             raise NotFound(str(project_id))

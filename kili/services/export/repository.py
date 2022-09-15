@@ -24,16 +24,20 @@ class AbstractContentRepository(ABC):
 
     @abstractmethod
     def get_frames(self, content_url: str) -> List[str]:
-        pass
+        """
+        Get asset content frames.
+        """
 
     @abstractmethod
     def get_content_stream(self, content_url: str, block_size: int) -> Iterator[Any]:
-        pass
+        """
+        Get asset content stream.
+        """
 
     def get_content_frames_paths(self, asset: Dict) -> List[str]:
         """
-        Get list of links to frames from the file located at asset[jsonContent]. Returns an empty list
-        if `content` in the asset exists.
+        Get list of links to frames from the file located at asset[jsonContent].
+        Returns an empty list if `content` in the asset exists.
         """
         content_frames = []
 

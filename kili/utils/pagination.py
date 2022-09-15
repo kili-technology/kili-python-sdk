@@ -2,7 +2,7 @@
 Utils
 """
 import time
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, Iterator, List, Optional
 
 from tqdm import tqdm
 
@@ -14,7 +14,7 @@ from kili.exceptions import GraphQLError
 
 def row_generator_from_paginated_calls(
     skip: int,
-    first: int,
+    first: Optional[int],
     count_method: Callable[..., int],
     count_kwargs: dict,
     paged_call_method: Callable[..., List[dict]],
@@ -90,7 +90,7 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
 def batch_object_builder(
     properties_to_batch: Dict[str, Optional[list]],
     batch_size: int = MUTATION_BATCH_SIZE,
-) -> Dict[str, Optional[list]]:
+) -> Iterator[Dict[str, Optional[list]]]:
     """Generate a paginated iterator for several variables
     Args:
         properties_to_batch: a dictionnary of properties to be batched.

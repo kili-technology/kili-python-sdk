@@ -2,11 +2,12 @@
 Test notebooks with pytest
 """
 
-import os
-import subprocess
 
-import nbformat
-from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
+import nbformat  # type:ignore
+from nbconvert.preprocessors import (  # type:ignore
+    CellExecutionError,
+    ExecutePreprocessor,
+)
 
 
 def process_notebook(notebook_filename):

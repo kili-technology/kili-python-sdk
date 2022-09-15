@@ -15,9 +15,8 @@ from typing import List, Optional, Tuple
 import pyparsing as pp
 import requests
 
+from kili.constants import mime_extensions_for_IV2
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
-
-from .constants import mime_extensions_for_IV2
 
 
 class Compatible:
@@ -296,7 +295,7 @@ def list_is_not_none_else_none(_object):
     return [_object] if _object is not None else None
 
 
-def infer_id_from_external_id(kili, asset_id: str, external_id: str, project_id: str):
+def infer_id_from_external_id(kili, asset_id: Optional[str], external_id: str, project_id: str):
     """
     Infer asset id from external id
 

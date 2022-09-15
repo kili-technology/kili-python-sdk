@@ -198,7 +198,6 @@ class YoloTestCase(TestCase):
         for use_case in use_cases:
             with TemporaryDirectory() as export_folder:
                 with TemporaryDirectory() as extract_folder:
-
                     path_zipfile = Path(export_folder) / "export.zip"
                     path_zipfile.parent.mkdir(parents=True, exist_ok=True)
 
@@ -230,7 +229,6 @@ class YoloTestCase(TestCase):
                     assert file_tree_result == file_tree_expected
 
     def test_conversion_service_errors(self):
-
         use_cases = [
             {
                 "export_kwargs": {
@@ -243,7 +241,6 @@ class YoloTestCase(TestCase):
 
         for use_case in use_cases:
             with TemporaryDirectory() as export_folder:
-
                 path_zipfile = Path(export_folder) / "export.zip"
                 path_zipfile.parent.mkdir(parents=True, exist_ok=True)
 

@@ -2,6 +2,7 @@
 GraphQL Client
 """
 
+
 import json
 import os
 import random
@@ -14,7 +15,7 @@ from enum import Enum
 import websocket
 from six.moves import urllib
 
-from . import __version__
+from kili import __version__
 
 
 class GraphQLClientName(Enum):  # pylint: disable=too-few-public-methods
@@ -83,6 +84,7 @@ class GraphQLClient:
             headers[self.headername] = f"{self.token}"
 
         if self.session is not None:
+            req = None
             try:
                 try:
                     number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
@@ -101,18 +103,20 @@ class GraphQLClient:
                     if trial_number == number_of_trials - 1 and errors_in_response:
                         break
                     time.sleep(1)
-                return req.json()
+                return req.json()  # type:ignore
             except Exception as exception:
                 if req is not None:
                     raise Exception(req.content) from exception
                 raise exception
 
-        req = urllib.request.Request(self.endpoint, json.dumps(data).encode("utf-8"), headers)
+        req = urllib.request.Request(
+            self.endpoint, json.dumps(data).encode("utf-8"), headers
+        )  # type:ignore
         try:
-            with urllib.request.urlopen(req) as response:
+            with urllib.request.urlopen(req) as response:  # type:ignore
                 str_json = response.read().decode("utf-8")
                 return json.loads(str_json)
-        except urllib.error.HTTPError as error:
+        except urllib.error.HTTPError as error:  # type:ignore
             print((error.read()))
             print("")
             raise error

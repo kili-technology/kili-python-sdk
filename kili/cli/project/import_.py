@@ -2,7 +2,7 @@
 
 import os
 import urllib.request
-from typing import Dict, List, Optional, Tuple, cast
+from typing import Dict, List, Optional, cast
 
 import click
 from typeguard import typechecked
@@ -83,7 +83,7 @@ def import_assets(
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
-    files: Optional[Tuple[str, ...]],
+    files: List[str],
     csv_path: Optional[str],
     fps: Optional[int],
     as_frames: bool,
@@ -173,6 +173,8 @@ def import_assets(
 
         if len(files_to_upload) == 0:
             raise ValueError(f"No valid asset files or url were found in csv: {csv_path}")
+    else:
+        raise ValueError("You must provide either the file argument of the csv_path.")
 
     json_metadata_array = generate_json_metadata_array(
         as_frames, fps, len(files_to_upload), input_type

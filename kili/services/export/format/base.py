@@ -72,7 +72,7 @@ class BaseExporter(ABC):
 
     def __init__(
         self, project_id, export_type, label_format, disable_tqdm, kili, logger, content_repository
-    ):
+    ):  # pylint: disable=too-many-arguments
         self.project_id = project_id
         self.export_type = export_type
         self.label_format = label_format

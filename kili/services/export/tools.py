@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from kili.orm import AnnotationFormat
 
-DEFAULT_FIELDS = [  # TODO: check if this is still relevant
+DEFAULT_FIELDS = [
     "id",
     "content",
     "externalId",
@@ -56,7 +56,7 @@ def attach_name_to_assets_labels_author(assets, export_type):
             label["author"]["name"] = f"{firstname} {lastname}"
 
 
-def fetch_assets(
+def fetch_assets(  # pylint: disable=too-many-arguments
     kili,
     project_id: str,
     asset_ids: Optional[List[str]],

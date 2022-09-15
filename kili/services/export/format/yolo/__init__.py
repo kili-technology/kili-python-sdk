@@ -75,6 +75,7 @@ class YoloExporterSelector(BaseExporterSelector):
 
     @staticmethod
     def get_logger(level: LogLevel):
+        """Gets the export logger"""
         logger = logging.getLogger("kili.services.export")
         logger.setLevel(level)
         if logger.hasHandlers():
