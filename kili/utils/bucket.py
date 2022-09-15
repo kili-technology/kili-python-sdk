@@ -1,6 +1,5 @@
 """Module for managing bucket's signed urls"""
 
-from typing import List
 
 import requests
 
@@ -24,27 +23,18 @@ def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
     return urls_response["data"]["urls"]
 
 
-def upload_data_via_rest(
-    signed_urls: List[str], data_array: List[str], content_type_array: List[str]
-):
+def upload_data_via_rest(url_with_id: str, data: str, content_type: str):
     """upload data in buckets' signed URL via REST
     Args:
         signed_urls: Bucket signed URLs to upload local files to
         path_array: a list of file paths, json or text to upload
         content_type: mimetype of the data. It will be infered if not given
     """
-    responses = []
-    for index, data in enumerate(data_array):
-        content_type = content_type_array[index]
-        headers = {"Content-type": content_type}
-        url_with_id = signed_urls[index]
-        url_to_use_for_upload = url_with_id.split("&id=")[0]
-        if "blob.core.windows.net" in url_to_use_for_upload:
-            headers["x-ms-blob-type"] = "BlockBlob"
+    headers = {"Content-type": content_type}
+    url_to_use_for_upload = url_with_id.split("&id=")[0]
+    if "blob.core.windows.net" in url_to_use_for_upload:
+        headers["x-ms-blob-type"] = "BlockBlob"
 
-        response = requests.put(url_to_use_for_upload, data=data, headers=headers)
-        if response.status_code >= 300:
-            responses.append("")
-            continue
-        responses.append(url_with_id)
-    return responses
+    response = requests.put(url_to_use_for_upload, data=data, headers=headers)
+    response.raise_for_status()
+    return url_with_id

@@ -23,22 +23,22 @@ from kili.helpers import (
 from kili.orm import Asset
 from kili.utils import bucket, pagination
 
+from .base import ProjectParams
 from .types import AssetToImport
 
 
-class LegacyImporter:
+class LegacyDataImporter:
     """Legacy Asset importer
     First switch form new list of dict paradigm to the old set of list one, then import assets"""
 
     def __init__(
         self,
         auth: KiliAuth,
-        project_id: str,
-        input_type: str,
+        project_params: ProjectParams,
     ):
-        self.input_type = input_type
-        self.project_id = project_id
         self.auth = auth
+        self.project_id = project_params.project_id
+        self.input_type = project_params.input_type
 
     def import_assets(self, assets: List[AssetToImport]):
         content_array = assets[0].get("content", None) and [
@@ -172,12 +172,12 @@ def upload_content(signed_url: str, content: str, input_type: str):
         with open(content, "rb") as file:
             data = file.read()
         content_type = get_data_type(content)
-        uploaded_content_url = bucket.upload_data_via_rest([signed_url], [data], [content_type])[0]
+        uploaded_content_url = bucket.upload_data_via_rest(signed_url, data, content_type)
         return uploaded_content_url
     elif not os.path.exists(content) and input_type == "TEXT":
         data = content
         content_type = "text/plain"
-        uploaded_content_url = bucket.upload_data_via_rest([signed_url], [data], [content_type])[0]
+        uploaded_content_url = bucket.upload_data_via_rest(signed_url, data, content_type)
         return uploaded_content_url
     else:
         raise ValueError(f"File: {content} not found")
