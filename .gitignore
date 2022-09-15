@@ -14,3 +14,10 @@ build
 
 # mkdocs documentation
 /site
+
+# vscode
+launch.json
+
+# testing
+.coverage
+cov.xml
