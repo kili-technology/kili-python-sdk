@@ -5,19 +5,19 @@ from typing import Generator, List, Optional, Union
 import pandas as pd
 from typeguard import typechecked
 
-from ...constants import NO_ACCESS_RIGHT
-from ...helpers import (
+from kili.constants import NO_ACCESS_RIGHT
+from kili.helpers import (
     Compatible,
     format_result,
     fragment_builder,
     validate_category_search_query,
 )
-from ...orm import Label
-from ...types import Label as LabelType
-from ...utils.pagination import row_generator_from_paginated_calls
-from ..asset import QueriesAsset
-from ..project import QueriesProject
-from .queries import GQL_LABELS_COUNT, gql_labels
+from kili.orm import Label
+from kili.queries.asset import QueriesAsset
+from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
+from kili.queries.project import QueriesProject
+from kili.types import Label as LabelType
+from kili.utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesLabel:
@@ -222,7 +222,7 @@ class QueriesLabel:
         """
 
         projects = QueriesProject(self.auth).projects(project_id)
-        assert len(projects) == 1, NO_ACCESS_RIGHT
+        assert len(list(projects)) == 1, NO_ACCESS_RIGHT
         assets = QueriesAsset(self.auth).assets(
             project_id=project_id,
             fields=asset_fields + ["labels." + field for field in fields],
@@ -312,4 +312,4 @@ class QueriesLabel:
         }
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
         count = format_result("data", result)
-        return count
+        return int(count)  # type:ignore

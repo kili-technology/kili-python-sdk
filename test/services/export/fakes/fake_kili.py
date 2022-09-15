@@ -7,7 +7,6 @@ from typing import List, Optional
 
 
 class FakeAuth:
-
     api_key = ""
     api_endpoint = "http://content-repository"
 

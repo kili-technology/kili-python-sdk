@@ -1,11 +1,11 @@
 """User mutations."""
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result
-from .queries import (
+from kili.helpers import Compatible, format_result
+from kili.mutations.user.queries import (
     GQL_CREATE_USER,
     GQL_RESET_PASSWORD,
     GQL_UPDATE_PASSWORD,
@@ -30,9 +30,9 @@ class MutationsUser:
     @typechecked
     def create_user(
         self,
-        email: str = None,
-        password: str = None,
-        organization_role: str = None,
+        email: str,
+        password: str,
+        organization_role: str,
         firstname: Optional[str] = None,
         lastname: Optional[str] = None,
     ):
@@ -138,7 +138,7 @@ class MutationsUser:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        variables = {
+        variables: Dict[str, Any] = {
             "email": email,
         }
         if firstname is not None:

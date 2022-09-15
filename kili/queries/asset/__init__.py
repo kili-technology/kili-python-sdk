@@ -5,16 +5,16 @@ from typing import Generator, List, Optional, Union
 import pandas as pd
 from typeguard import typechecked
 
-from ...helpers import (
+from kili.helpers import (
     Compatible,
     format_result,
     fragment_builder,
     validate_category_search_query,
 )
-from ...orm import Asset
-from ...types import Asset as AssetType
-from ...utils.pagination import row_generator_from_paginated_calls
-from .queries import GQL_ASSETS_COUNT, gql_assets
+from kili.orm import Asset
+from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
+from kili.types import Asset as AssetType
+from kili.utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesAsset:
@@ -237,7 +237,6 @@ class QueriesAsset:
         return list(asset_generator)
 
     def _query_assets(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_assets = gql_assets(fragment_builder(fields, AssetType))
         result = self.auth.client.execute(_gql_assets, payload)
@@ -370,4 +369,4 @@ class QueriesAsset:
         }
         result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
         count = format_result("data", result)
-        return count
+        return int(count)  # type:ignore
