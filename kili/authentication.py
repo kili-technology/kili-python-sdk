@@ -24,7 +24,7 @@ def get_version_without_patch(version):
     return ".".join(version.split(".")[:-1])
 
 
-class KiliAuth:
+class KiliAuth:  # pylint: disable=too-many-instance-attributes
     """
     from kili.client import Kili
     kili = Kili(api_key=api_key)
@@ -36,6 +36,8 @@ class KiliAuth:
     ):
         self.session = requests.Session()
         self.client_name = client_name
+        self.api_key = api_key
+        self.api_endpoint = api_endpoint
 
         self.verify = verify
 
