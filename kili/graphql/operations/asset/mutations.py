@@ -1,7 +1,7 @@
 """
 Assets related mutations
 """
-from kili.graphQL.operations.asset.fragments import PROJECT_FRAGMENT_ID
+from kili.graphql.operations.asset.fragments import PROJECT_FRAGMENT_ID
 
 GQL_APPEND_MANY_TO_DATASET = f"""
 mutation(
