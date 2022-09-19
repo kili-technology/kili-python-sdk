@@ -1,3 +1,6 @@
+"""
+Functions to import files into an IMAGE project
+"""
 import mimetypes
 import os
 from typing import List
@@ -15,7 +18,7 @@ class ImageDataImporter(BaseAssetImporter):
     def import_assets(self, assets: List[AssetLike]):
         is_hosted = self.is_hosted_data(assets)
         if not is_hosted:
-            self.filter_local_assets(assets, self.raise_error)
+            assets = self.filter_local_assets(assets, self.raise_error)
         sync_assets, async_assets = self.split_asset_by_upload_type(assets, is_hosted)
         if len(sync_assets) > 0:
             sync_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
@@ -31,7 +34,8 @@ class ImageDataImporter(BaseAssetImporter):
             result = self.import_assets_by_batch(async_assets, batch_importer)
         return result
 
-    def split_asset_by_upload_type(self, assets: List[AssetLike], is_hosted: bool):
+    @staticmethod
+    def split_asset_by_upload_type(assets: List[AssetLike], is_hosted: bool):
         """
         Split assets into two groups, assets to to imported synchronously or asynchronously
         """

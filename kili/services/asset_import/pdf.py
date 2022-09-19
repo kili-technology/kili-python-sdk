@@ -1,3 +1,6 @@
+"""
+Functions to import files into an PDF project
+"""
 from typing import List
 
 from .base import BaseAssetImporter, BaseBatchImporter, BatchParams

@@ -1,3 +1,6 @@
+"""
+Common and generic functions to import files into a project
+"""
 import mimetypes
 import pathlib
 import time
@@ -60,7 +63,7 @@ class LoggerParams(NamedTuple):
     disable_tqdm: bool
 
 
-class AbstractAssetImporter(ABC):
+class AbstractAssetImporter(ABC):  # pylint: disable=too-few-public-methods
     """
     Abstract class for a data importer
     """
@@ -80,11 +83,11 @@ class AbstractAssetImporter(ABC):
     @abstractmethod
     def import_assets(self, assets: List[AssetLike]):
         """
-        Import the assets in Kili
+        Import the assets in Kili.
         """
 
 
-class AbstractBatchImporter(ABC):
+class AbstractBatchImporter(ABC):  # pylint: disable=too-few-public-methods
     """
     Abstract class for a batch importer
     """
@@ -166,7 +169,8 @@ class BaseBatchImporter(AbstractBatchImporter):
             with open(path, "rb") as file:
                 data = file.read()
             content_type, _ = mimetypes.guess_type(path.lower())
-            uploaded_content_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)  # type: ignore
+            assert content_type
+            uploaded_content_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)
             uploaded_assets.append({**asset, "content": uploaded_content_url})
         return uploaded_assets
 
@@ -211,8 +215,7 @@ class BaseBatchImporter(AbstractBatchImporter):
         """
         if self.is_asynchronous:
             return self.async_import_to_kili(assets)
-        else:
-            return self.sync_import_to_kili(assets)
+        return self.sync_import_to_kili(assets)
 
 
 class BaseAssetImporter(AbstractAssetImporter):
@@ -220,7 +223,8 @@ class BaseAssetImporter(AbstractAssetImporter):
     Base class for data importers
     """
 
-    def is_hosted_data(self, assets: List[AssetLike]):
+    @staticmethod
+    def is_hosted_data(assets: List[AssetLike]):
         """
         Determine if the assets to upload are from local files or hosted data
         Raise an error if a mix of both
@@ -228,15 +232,14 @@ class BaseAssetImporter(AbstractAssetImporter):
         contents = [asset.get("content") for asset in assets]
         if all(is_url(content) for content in contents):
             return True
-        elif any(is_url(content) for content in contents):
+        if any(is_url(content) for content in contents):
             raise ImportValidationError(
                 """
                 Cannot upload hosted data and local files at the same time.
                 Please separete the assets into 2 calls
                 """
             )
-        else:
-            return False
+        return False
 
     def filter_local_assets(self, assets: List[AssetLike], raise_error: bool):
         """
@@ -280,14 +283,15 @@ class BaseAssetImporter(AbstractAssetImporter):
             if raise_error:
                 raise MimeTypeError(f"The mime type of the asset {path} has not been found")
 
-        if mime_type not in mime_extensions_for_IV2[self.project_params.input_type]:  # type: ignore
+        input_type = self.project_params.input_type
+        if mime_type not in mime_extensions_for_IV2[input_type]:  # type: ignore
             correct_mime_type = False
             if raise_error:
                 raise MimeTypeError(
                     f"""
                     File mime type for {path} is {mime_type} and does not correspond
                     to the type of the project.
-                    File mime type should be one of {mime_extensions_for_IV2[self.project_params.input_type]}
+                    File mime type should be one of {mime_extensions_for_IV2[input_type]}
                     """
                 )
 
