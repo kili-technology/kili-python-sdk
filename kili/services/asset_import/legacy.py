@@ -23,8 +23,8 @@ from kili.helpers import (
 from kili.orm import Asset
 from kili.utils import bucket, pagination
 
-from .base import ProcessingParams, ProjectParams
-from .types import AssetToImport
+from .base import LoggerParams, ProcessingParams, ProjectParams
+from .types import AssetLike
 
 
 class LegacyDataImporter:
@@ -36,12 +36,13 @@ class LegacyDataImporter:
         auth: KiliAuth,
         project_params: ProjectParams,
         processing_params: ProcessingParams,
+        logger_params: LoggerParams,
     ):
         self.auth = auth
         self.project_id = project_params.project_id
         self.input_type = project_params.input_type
 
-    def import_assets(self, assets: List[AssetToImport]):
+    def import_assets(self, assets: List[AssetLike]):
         content_array = assets[0].get("content", None) and [
             asset.get("content", "") for asset in assets
         ]

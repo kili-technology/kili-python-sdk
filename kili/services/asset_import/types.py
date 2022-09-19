@@ -5,12 +5,22 @@ from typing import List, Optional, Union
 from typing_extensions import TypedDict
 
 
-class AssetToImport(TypedDict):
-    """Asset to import."""
+class AssetLike(TypedDict, total=False):
 
     content: Optional[str]
-    json_content: Optional[Union[List[list], dict]]
+    json_content: Optional[Union[List[str], dict, str]]
     external_id: Optional[str]
     status: Optional[str]
-    json_metadata: Optional[dict]
+    json_metadata: Optional[Union[str, dict]]
     is_honeypot: Optional[bool]
+
+
+class KiliResolverAsset(TypedDict, total=True):
+    """Asset to import."""
+
+    content: str
+    json_content: str
+    external_id: str
+    status: str
+    json_metadata: str
+    is_honeypot: bool

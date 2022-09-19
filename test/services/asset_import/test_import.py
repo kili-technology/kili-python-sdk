@@ -39,9 +39,9 @@ class TestContentType(TestCase):
         MagicMock(return_value=[{"inputType": "IMAGE"}]),
     )
     def test_cannot_import_files_not_found_to_an_image_project(self):
-        path = "./doesnotexist.pdf"
+        path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
-        with self.assertRaises(ValueError):
+        with self.assertRaises(FileNotFoundError):
             import_assets(self.auth, self.project_id, assets)
 
     @patch.object(
@@ -52,5 +52,5 @@ class TestContentType(TestCase):
     def test_cannot_upload_raw_text_to_pdf_project(self):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
-        with self.assertRaises(ValueError):
+        with self.assertRaises(FileNotFoundError):
             import_assets(self.auth, self.project_id, assets)

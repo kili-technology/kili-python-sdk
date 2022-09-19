@@ -4,12 +4,14 @@ Constants for the asset_improt services
 
 from uuid import uuid4
 
-ASSET_FIELDS_DEFAULT_VALUE = {
+from .types import AssetLike
+
+ASSET_FIELDS_DEFAULT_VALUE: AssetLike = {
     "content": "",
     "json_content": "",
     "external_id": uuid4().hex,
     "status": "TODO",
-    "json_metadata": {},
+    "json_metadata": "{}",
     "is_honeypot": False,
 }
 
@@ -39,3 +41,6 @@ mime_extensions_for_IV2 = {
 }
 
 IMPORT_BATCH_SIZE = 10
+
+MB_SIZE = 1024**2
+LARGE_IMAGE_THRESHOLD_SIZE = 30 * MB_SIZE
