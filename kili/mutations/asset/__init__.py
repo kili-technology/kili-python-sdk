@@ -111,7 +111,8 @@ class MutationsAsset:
             for i in range(nb_data)
         ]
 
-        import_assets(self.auth, project_id=project_id, assets=assets)
+        result = import_assets(self.auth, project_id=project_id, assets=assets)
+        return result
 
     @Compatible(["v2"])
     @typechecked
