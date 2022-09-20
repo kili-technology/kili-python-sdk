@@ -29,7 +29,7 @@ from .types import AssetLike, KiliResolverAsset
 
 class BatchParams(NamedTuple):
     """
-    Contains all parameters related the batch to import
+    Contains all parameters related to the batch to import
     """
 
     is_asynchronous: bool
@@ -38,7 +38,7 @@ class BatchParams(NamedTuple):
 
 class ProcessingParams(NamedTuple):
     """
-    Contains all parameters related the assets processing
+    Contains all parameters related to the assets processing
     """
 
     raise_error: bool
@@ -46,7 +46,7 @@ class ProcessingParams(NamedTuple):
 
 class ProjectParams(NamedTuple):
     """
-    Contains all parameters related the batch to import
+    Contains all parameters related to the batch to import
     """
 
     project_id: str
@@ -55,7 +55,7 @@ class ProjectParams(NamedTuple):
 
 class LoggerParams(NamedTuple):
     """
-    Contains all parameters related the logging
+    Contains all parameters related to logging
     """
 
     disable_tqdm: bool
@@ -63,7 +63,7 @@ class LoggerParams(NamedTuple):
 
 class BaseBatchImporter:  # pylint: disable=too-few-public-methods
     """
-    Base class for a batch importer
+    Base class for BatchImporters
     """
 
     def __init__(
@@ -79,7 +79,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike]):
         """
-        Common actions to import a batch of asset
+        Base actions to import a batch of asset
         """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
         assets = self.loop_on_batch(self.fill_empty_fields)(assets)
@@ -90,7 +90,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
     @staticmethod
     def stringify_metadata(asset: AssetLike) -> AssetLike:
         """
-        Process the metadata field
+        Stringify the metadata
         """
         json_metadata = asset.get("json_metadata", {})
         if not isinstance(json_metadata, str):
@@ -110,7 +110,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
     @staticmethod
     def loop_on_batch(func: Callable):
         """
-        Apply a function that takes an asset as input on the whole batch
+        Apply a function, that takes a single asset as input, on the whole batch
         """
 
         def loop_func(assets: list):
@@ -164,13 +164,13 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
 
 class ContentBatchImporter(BaseBatchImporter):
     """
-    Base class defining the import of a batch of assets that have content
+    Class defining the methods to import of a batch of assets with content
     """
 
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike]):
         """
-        Base method to import a batch of asset
+        Method to import a batch of asset with content
         """
         if not self.is_hosted:
             assets = self.upload_local_content_to_bucket(assets)
@@ -178,7 +178,7 @@ class ContentBatchImporter(BaseBatchImporter):
 
     def upload_local_content_to_bucket(self, assets: List[AssetLike]):
         """
-        Upload local data to a bucket
+        Upload local content to a bucket
         """
         signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
         uploaded_assets = []
@@ -196,13 +196,13 @@ class ContentBatchImporter(BaseBatchImporter):
 
 class JsonContentBatchImporter(BaseBatchImporter):
     """
-    Base class defining the import of a batch of assets that have json_content
+    Class defining the import methods for a batch of assets twith json_content
     """
 
     @staticmethod
     def stringify_json_content(asset) -> AssetLike:
         """
-        Stringify the json content if not a str
+        Stringify the json content if not a str.
         """
         json_content = asset.get("json_content", {})
         if not isinstance(json_content, str):
@@ -226,7 +226,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike]):
         """
-        Base method to import a batch of asset with json content
+        Method to import a batch of asset with json content
         """
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets = self.upload_json_content_to_bucket(assets)
@@ -235,7 +235,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
 
 class BaseAssetImporter:
     """
-    Base class for data importers
+    Base class for DataImporters classes
     """
 
     def __init__(
@@ -294,7 +294,10 @@ class BaseAssetImporter:
     def check_mime_type_compatibility(self, path: str):
         """
         Check that the mimetype of a local file is compatible with the project input type.
-        Return an error if the asset is not compatible and raise_error is True.
+
+        Raise:
+             FileNotFoundError: if path do not exists
+             MimeTypeError: if the asset is not compatible with the project type
         """
         if not os.path.isfile(path):
             raise FileNotFoundError(f"file {path} does not exist")
@@ -314,6 +317,7 @@ class BaseAssetImporter:
         return True
 
     def filter_duplicate_external_ids(self, assets):
+        """Filter out assets whose external_id is already in the project."""
         if not len(assets):
             raise ImportValidationError("No assets to import")
         assets_in_project = QueriesAsset(self.auth).assets(
@@ -330,9 +334,7 @@ class BaseAssetImporter:
         return filetered_assets
 
     def import_assets_by_batch(self, assets: List[AssetLike], batch_importer: BaseBatchImporter):
-        """
-        import assets by batch with a given batch importer
-        """
+        """Split assets by batch and import them with a given batch importer."""
         batch_generator = pagination.batch_iterator_builder(assets, IMPORT_BATCH_SIZE)
         self.pbar.total = len(assets)
         self.pbar.refresh()

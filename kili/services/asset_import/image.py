@@ -12,10 +12,13 @@ from .types import AssetLike
 
 class ImageDataImporter(BaseAssetImporter):
     """
-    class for importing assets into an IMAGE project
+    Class for importing assets into an IMAGE project
     """
 
     def import_assets(self, assets: List[AssetLike]):
+        """
+        Import IMAGE assets into Kili.
+        """
         is_hosted = self.is_hosted_content(assets)
         if not is_hosted:
             assets = self.filter_local_assets(assets, self.raise_error)

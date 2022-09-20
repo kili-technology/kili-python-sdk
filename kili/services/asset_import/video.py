@@ -21,7 +21,7 @@ from .types import AssetLike
 
 class VideoDataType(Enum):
     """
-    Video type of data choices
+    Video data type
     """
 
     LOCAL_FRAMES = "LOCAL_FRAMES"
@@ -67,7 +67,7 @@ class VideoMixin:
 
 class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
     """
-    class for importing a batch of video assets from content into a VIDEO project
+    Class for importing a batch of video assets from content into a VIDEO project
     """
 
     def add_video_processing_parameters(self, asset):
@@ -81,7 +81,7 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
 
     def import_batch(self, assets: List[AssetLike]):
         """
-        Import a batch of video from content.
+        Import a batch of video assets from content into Kili.
         """
         assets = self.loop_on_batch(self.add_video_processing_parameters)(assets)
         return super().import_batch(assets)
@@ -89,7 +89,7 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
 
 class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
     """
-    class for importing a batch of video assets from frames into a VIDEO project
+    Class for importing a batch of video assets from frames into a VIDEO project
     """
 
     def add_video_processing_parameters(self, asset):
@@ -103,7 +103,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
 
     def import_batch(self, assets: List[AssetLike]):
         """
-        Import a batch of video from frames
+        Import a batch of video assets from frames
         """
         if not self.is_hosted:
             assets = self.loop_on_batch(self.upload_frames_to_bucket)(assets)
@@ -132,7 +132,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
 
 class VideoDataImporter(BaseAssetImporter):
     """
-    class for importing data into a VIDEO project
+    Class for importing data into a VIDEO project
     """
 
     @staticmethod

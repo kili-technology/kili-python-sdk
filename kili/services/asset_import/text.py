@@ -20,7 +20,7 @@ from .types import AssetLike
 
 class TextDataType(Enum):
     """
-    Text type of data choices
+    Text data type
     """
 
     RICH_TEXT = "RICH_TEXT"
@@ -50,7 +50,7 @@ class RawTextBatchImporter(ContentBatchImporter):
 
 class TextDataImporter(BaseAssetImporter):
     """
-    class for importing data into a TEXT project
+    Class for importing data into a TEXT project
     """
 
     @staticmethod
@@ -83,7 +83,7 @@ class TextDataImporter(BaseAssetImporter):
 
     def import_assets(self, assets: List[AssetLike]):
         """
-        Import text assets into Kili.
+        Import TEXT assets into Kili.
         """
         data_type = self.get_data_type(assets)
         assets = self.filter_duplicate_external_ids(assets)
