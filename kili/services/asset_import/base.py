@@ -3,15 +3,13 @@ Common and generic functions to import files into a project
 """
 import mimetypes
 import pathlib
-import time
 from abc import ABC, abstractmethod
 from json import dumps
-from typing import List, NamedTuple
+from typing import Callable, List, NamedTuple
 
 from tqdm import tqdm
 
 from kili.authentication import KiliAuth
-from kili.constants import THROTTLING_DELAY
 from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
@@ -23,7 +21,7 @@ from kili.utils import bucket, pagination
 from .constants import (
     ASSET_FIELDS_DEFAULT_VALUE,
     IMPORT_BATCH_SIZE,
-    mime_extensions_for_IV2,
+    project_compatible_mimetypes,
 )
 from .exceptions import ImportValidationError, MimeTypeError
 from .types import AssetLike, KiliResolverAsset
@@ -87,7 +85,7 @@ class AbstractAssetImporter(ABC):  # pylint: disable=too-few-public-methods
         """
 
 
-class AbstractBatchImporter(ABC):  # pylint: disable=too-few-public-methods
+class BaseBatchImporter:  # pylint: disable=too-few-public-methods
     """
     Abstract class for a batch importer
     """
@@ -102,50 +100,26 @@ class AbstractBatchImporter(ABC):  # pylint: disable=too-few-public-methods
         self.is_asynchronous = batch_params.is_asynchronous
         self.pbar = pbar
 
-    @abstractmethod
+    @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike]):
         """
-        Import the batch of assets in Kili
+        Common actions to import a batch of asset
         """
-
-
-class BaseBatchImporter(AbstractBatchImporter):
-    """
-    Base class defining the import of a batch of assets.
-    """
-
-    def import_batch(self, assets: List[AssetLike]):
-        """
-        Base method to import a batch of asset
-        """
-        batch_start = time.time()
-        if not self.is_hosted:
-            assets = self.upload_local_contents_to_bucket(assets)
-
-        asset_batch_to_import = []
-        for asset in assets:
-            asset = self.stringify_json_variables(asset)
-            asset = self.fill_empty_fields(asset)
-            asset_batch_to_import.append(asset)
-        result_batch = self.import_to_kili(asset_batch_to_import)
+        assets = self.loop_on_batch(self.process_metadata)(assets)
+        assets = self.loop_on_batch(self.fill_empty_fields)(assets)
+        result_batch = self.import_to_kili(assets)
         self.pbar.update(n=len(assets))
-        batch_time = time.time() - batch_start
-        if batch_time < THROTTLING_DELAY:
-            time.sleep(THROTTLING_DELAY - batch_time)
         return result_batch
 
     @staticmethod
-    def stringify_json_variables(asset: AssetLike) -> AssetLike:
+    def process_metadata(asset: AssetLike) -> AssetLike:
         """
-        Stringify the json content and the json metadata
+        Process the metadata field
         """
-        json_metadata = asset.get("json_metadata")
-        json_content = asset.get("json_content")
-        if isinstance(json_metadata, dict):
+        json_metadata = asset.get("json_metadata", {})
+        if not isinstance(json_metadata, str):
             json_metadata = dumps(json_metadata)
-        if isinstance(json_content, dict):
-            json_content = dumps(json_content)
-        return {**asset, "json_content": json_content, "json_metadata": json_metadata}
+        return {**asset, "json_metadata": json_metadata}
 
     @staticmethod
     def fill_empty_fields(asset: AssetLike):
@@ -157,24 +131,14 @@ class BaseBatchImporter(AbstractBatchImporter):
             field: asset.get(field) or ASSET_FIELDS_DEFAULT_VALUE[field] for field in field_names
         }
 
-    def upload_local_contents_to_bucket(self, assets: List[AssetLike]):
-        """
-        Upload local data to a bucket
-        """
-        signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
-        uploaded_assets = []
-        for i, asset in enumerate(assets):
-            path = asset.get("content")
-            assert path
-            with open(path, "rb") as file:
-                data = file.read()
-            content_type, _ = mimetypes.guess_type(path.lower())
-            assert content_type
-            uploaded_content_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)
-            uploaded_assets.append({**asset, "content": uploaded_content_url})
-        return uploaded_assets
+    @staticmethod
+    def loop_on_batch(func: Callable):
+        def loop_func(assets: List[AssetLike]):
+            return [func(asset) for asset in assets]
 
-    def async_import_to_kili(self, assets: List[KiliResolverAsset]):
+        return loop_func
+
+    def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
         """
         Import assets with asynchronous resolver.
         """
@@ -191,7 +155,7 @@ class BaseBatchImporter(AbstractBatchImporter):
         results = self.auth.client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
         return format_result("data", results, Asset)
 
-    def sync_import_to_kili(self, assets: List[KiliResolverAsset]):
+    def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """
         Import assets with synchronous resolver
         """
@@ -214,8 +178,72 @@ class BaseBatchImporter(AbstractBatchImporter):
         Import assets to Kili with the right resolver
         """
         if self.is_asynchronous:
-            return self.async_import_to_kili(assets)
-        return self.sync_import_to_kili(assets)
+            return self._async_import_to_kili(assets)
+        return self._sync_import_to_kili(assets)
+
+
+class ContentBatchImporter(BaseBatchImporter):
+    """
+    Base class defining the import of a batch of assets that have content
+    """
+
+    @pagination.api_throttle
+    def import_batch(self, assets: List[AssetLike]):
+        """
+        Base method to import a batch of asset
+        """
+        if not self.is_hosted:
+            assets = self.upload_local_content_to_bucket(assets)
+        return super().import_batch(assets)
+
+    def upload_local_content_to_bucket(self, assets: List[AssetLike]):
+        """
+        Upload local data to a bucket
+        """
+        signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
+        uploaded_assets = []
+        for i, asset in enumerate(assets):
+            path = asset.get("content")
+            assert path
+            with open(path, "rb") as file:
+                data = file.read()
+            content_type, _ = mimetypes.guess_type(path)
+            assert content_type
+            uploaded_content_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)
+            uploaded_assets.append({**asset, "content": uploaded_content_url})
+        return uploaded_assets
+
+
+class JsonContentBatchImporter(BaseBatchImporter):
+    """
+    Base class defining the import of a batch of assets that have json_content
+    """
+
+    def stringify_json_content(self, asset) -> AssetLike:
+        json_content = asset.get("json_content", {})
+        if not isinstance(json_content, str):
+            json_content = dumps(json_content)
+        return {**asset, "json_content": json_content}
+
+    def upload_json_content_to_bucket(self, assets):
+        signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
+        uploaded_assets = []
+        for i, asset in enumerate(assets):
+            json_content = asset.get("json_content")
+            uploaded_json_content_url = bucket.upload_data_via_rest(
+                signed_urls[i], json_content, "text/plain"
+            )
+            uploaded_assets.append({**asset, "json_content": uploaded_json_content_url})
+        return uploaded_assets
+
+    @pagination.api_throttle
+    def import_batch(self, assets: List[AssetLike]):
+        """
+        Base method to import a batch of asset with json content
+        """
+        assets = self.loop_on_batch(self.stringify_json_content)(assets)
+        assets = self.upload_json_content_to_bucket(assets)
+        return super().import_batch(assets)
 
 
 class BaseAssetImporter(AbstractAssetImporter):
@@ -224,7 +252,7 @@ class BaseAssetImporter(AbstractAssetImporter):
     """
 
     @staticmethod
-    def is_hosted_data(assets: List[AssetLike]):
+    def is_hosted_content(assets: List[AssetLike]):
         """
         Determine if the assets to upload are from local files or hosted data
         Raise an error if a mix of both
@@ -284,22 +312,20 @@ class BaseAssetImporter(AbstractAssetImporter):
                 raise MimeTypeError(f"The mime type of the asset {path} has not been found")
 
         input_type = self.project_params.input_type
-        if mime_type not in mime_extensions_for_IV2[input_type]:  # type: ignore
+        if mime_type not in project_compatible_mimetypes[input_type]:  # type: ignore
             correct_mime_type = False
             if raise_error:
                 raise MimeTypeError(
                     f"""
                     File mime type for {path} is {mime_type} and does not correspond
                     to the type of the project.
-                    File mime type should be one of {mime_extensions_for_IV2[input_type]}
+                    File mime type should be one of {project_compatible_mimetypes[input_type]}
                     """
                 )
 
         return correct_mime_type
 
-    def import_assets_by_batch(
-        self, assets: List[AssetLike], batch_importer: AbstractBatchImporter
-    ):
+    def import_assets_by_batch(self, assets: List[AssetLike], batch_importer: BaseBatchImporter):
         """
         import assets by batch with a given batch importer
         """

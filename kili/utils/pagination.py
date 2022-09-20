@@ -1,6 +1,7 @@
 """
 Utils
 """
+import functools
 import time
 from typing import Callable, Dict, Iterator, List, Optional
 
@@ -116,16 +117,21 @@ def batch_object_builder(
         yield batch
 
 
-def execute_throttle_call(auth, request: str, payload: dict):
+def api_throttle(func):
     """
-    Execute one call to the API and sleep if the response is received too quickly
+    Define a decorator that throttle a function call to meet the API limitation
     """
-    mutation_start = time.time()
-    result = auth.client.execute(request, payload)
-    mutation_time = time.time() - mutation_start
-    if mutation_time < THROTTLING_DELAY:
-        time.sleep(THROTTLING_DELAY - mutation_time)
-    return result
+
+    @functools.wraps(func)
+    def throttled_wrapper(*args, **kwargs):
+        call_start = time.time()
+        result = func(*args, **kwargs)
+        call_duration = time.time() - call_start
+        if call_duration < THROTTLING_DELAY:
+            time.sleep(THROTTLING_DELAY - call_duration)
+        return result
+
+    return throttled_wrapper
 
 
 def _mutate_from_paginated_call(
@@ -160,8 +166,8 @@ def _mutate_from_paginated_call(
     """
     results = []
     for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
-        variables = generate_variables(batch)
-        result = execute_throttle_call(self.auth, request, variables)
+        payload = generate_variables(batch)
+        result = api_throttle(self.auth.client.execute)(request, payload)
         results.append(result)
         if "errors" in result:
             raise GraphQLError(result["errors"], batch_number)

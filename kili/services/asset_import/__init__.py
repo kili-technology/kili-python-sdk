@@ -8,6 +8,7 @@ from kili.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.legacy import LegacyDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
+from kili.services.asset_import.text import TextDataImporter
 from kili.services.asset_import.types import AssetLike
 
 from .base import LoggerParams, ProcessingParams, ProjectParams
@@ -32,6 +33,8 @@ def import_assets(
         data_importer = PdfDataImporter(*importer_params)
     elif input_type == "IMAGE":
         data_importer = ImageDataImporter(*importer_params)
+    elif input_type == "TEXT":
+        data_importer = TextDataImporter(*importer_params)
     else:
         data_importer = LegacyDataImporter(*importer_params)
 

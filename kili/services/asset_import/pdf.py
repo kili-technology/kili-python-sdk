@@ -1,9 +1,9 @@
 """
-Functions to import files into an PDF project
+Functions to import files into a PDF project
 """
 from typing import List
 
-from .base import BaseAssetImporter, BaseBatchImporter, BatchParams
+from .base import BaseAssetImporter, BatchParams, ContentBatchImporter
 from .types import AssetLike
 
 
@@ -16,10 +16,12 @@ class PdfDataImporter(BaseAssetImporter):
         """
         Import PDF assets into Kili.
         """
-        is_hosted = self.is_hosted_data(assets)
+        is_hosted = self.is_hosted_content(assets)
         batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
-        batch_importer = BaseBatchImporter(self.auth, self.project_params, batch_params, self.pbar)
+        batch_importer = ContentBatchImporter(
+            self.auth, self.project_params, batch_params, self.pbar
+        )
         if not is_hosted:
-            self.filter_local_assets(assets, self.raise_error)
+            assets = self.filter_local_assets(assets, self.raise_error)
         result = self.import_assets_by_batch(assets, batch_importer)
         return result

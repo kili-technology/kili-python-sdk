@@ -27,7 +27,7 @@ mime_extensions = {
     "TimeSeries": "text/csv",
 }
 
-mime_extensions_for_IV2 = {
+project_compatible_mimetypes = {
     "AUDIO": mime_extensions["Audio"],
     "FRAME": mime_extensions["Video"],
     "IMAGE": mime_extensions["Image"],

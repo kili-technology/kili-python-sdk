@@ -5,7 +5,7 @@ import mimetypes
 import os
 from typing import List
 
-from .base import BaseAssetImporter, BaseBatchImporter, BatchParams
+from .base import BaseAssetImporter, BatchParams, ContentBatchImporter
 from .constants import LARGE_IMAGE_THRESHOLD_SIZE
 from .types import AssetLike
 
@@ -16,19 +16,19 @@ class ImageDataImporter(BaseAssetImporter):
     """
 
     def import_assets(self, assets: List[AssetLike]):
-        is_hosted = self.is_hosted_data(assets)
+        is_hosted = self.is_hosted_content(assets)
         if not is_hosted:
             assets = self.filter_local_assets(assets, self.raise_error)
         sync_assets, async_assets = self.split_asset_by_upload_type(assets, is_hosted)
         if len(sync_assets) > 0:
             sync_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
-            batch_importer = BaseBatchImporter(
+            batch_importer = ContentBatchImporter(
                 self.auth, self.project_params, sync_batch_params, self.pbar
             )
             result = result = self.import_assets_by_batch(sync_assets, batch_importer)
         if len(async_assets) > 0:
             async_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=True)
-            batch_importer = BaseBatchImporter(
+            batch_importer = ContentBatchImporter(
                 self.auth, self.project_params, async_batch_params, self.pbar
             )
             result = self.import_assets_by_batch(async_assets, batch_importer)

@@ -1,8 +1,5 @@
-import shutil
-import tempfile
+from test.services.asset_import.base import ImportTestCase
 from test.services.asset_import.mocks import mocked_request_signed_urls
-from test.utils import LocalDownloader
-from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from kili.queries.project import QueriesProject
@@ -10,17 +7,7 @@ from kili.services.asset_import import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
-class TestContentType(TestCase):
-    def setUp(self):
-        self.project_id = "project_id"
-        self.auth = None
-        self.test_dir = tempfile.mkdtemp()
-        self.downloader = LocalDownloader(self.test_dir)
-        self.auth = None
-
-    def tearDown(self):
-        shutil.rmtree(self.test_dir)
-
+class TestContentType(ImportTestCase):
     @patch.object(
         QueriesProject,
         "projects",
