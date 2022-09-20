@@ -15,7 +15,7 @@ from kili.cli.helpers import (
     get_kili_client,
 )
 from kili.exceptions import NotFound
-from kili.helpers import file_check_function_from_input_type, get_file_paths_to_upload
+from kili.helpers import get_file_paths_to_upload
 from kili.services import asset_import
 
 # pylint: disable=consider-using-with
@@ -33,29 +33,22 @@ def type_check_asset(key, value):
     return ""
 
 
-def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
-    """Generate the json_metadata_array for input of the append_many_to_dataset resolver
+def generate_json_metadata(as_frames, fps):
+    """Generate the json_metadata for input of the import_assets service
     when uploading from a list of path
 
     Args:
         as_frames: for a frame project, if videos should be split in frames
         fps: for a frame project, import videos with this frame rate
-        nb_files: the number of files to upload in the call
-        input_type: the input type of the project to upload to
     """
 
-    json_metadata_array = None
-    if input_type in ("FRAME", "VIDEO"):
-        json_metadata_array = [
-            {
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": fps is None,
-                    "framesPlayedPerSecond": fps,
-                    "shouldUseNativeVideo": not as_frames,
-                }
-            }
-        ] * nb_files
-    return json_metadata_array
+    return {
+        "processingParameters": {
+            "shouldKeepNativeFrameRate": fps is None,
+            "framesPlayedPerSecond": fps,
+            "shouldUseNativeVideo": not as_frames,
+        }
+    }
 
 
 @click.command(name="import")
@@ -152,9 +145,7 @@ def import_assets(
     check_exclusive_options(csv_path, files)
 
     if len(files) > 0:
-        files_to_upload = get_file_paths_to_upload(
-            files, file_check_function_from_input_type(input_type), verbose
-        )
+        files_to_upload = get_file_paths_to_upload(files)
         if len(files_to_upload) == 0:
             raise ValueError(
                 "No files to upload. "
@@ -178,24 +169,18 @@ def import_assets(
     else:
         raise ValueError("You must provide either the file argument of the csv_path.")
 
-    json_metadata_array = generate_json_metadata_array(
-        as_frames, fps, len(files_to_upload), input_type
-    )
-
     assets_to_import = [
         {
             "content": files_to_upload[i],
             "external_id": external_ids[i],
-            "json_metadata": json_metadata_array and json_metadata_array[i],
         }
         for i in range(len(files_to_upload))
     ]
-    asset_import.import_assets(kili.auth, project_id, assets_to_import)
+    if input_type in ("FRAME", "VIDEO"):
+        json_metadata = generate_json_metadata(as_frames, fps)
+        assets_to_import = [
+            {**assets_to_import[i], "json_metadata": json_metadata}
+            for i in range(len(assets_to_import))
+        ]
 
-    if as_frames:
-        print(
-            f"The import of {len(files_to_upload)} files have just started, "
-            "you will receive a notification as soon as it is ready."
-        )
-    else:
-        print(f"{len(files_to_upload)} files have been successfully imported")
+    asset_import.import_assets(kili.auth, project_id, assets_to_import, False)

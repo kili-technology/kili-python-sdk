@@ -12,7 +12,7 @@ from .types import AssetLike
 
 class ImageDataImporter(BaseAssetImporter):
     """
-    class for importing data into an IMAGE project
+    class for importing assets into an IMAGE project
     """
 
     def import_assets(self, assets: List[AssetLike]):

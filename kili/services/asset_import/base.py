@@ -277,7 +277,7 @@ class BaseAssetImporter(ABC):
             try:
                 self.check_file_exists(path)
                 self.check_mime_type_compatibility(path)
-                filtered_assets.append({**asset, "content": path})
+                filtered_assets.append(asset)
             except Exception as err:
                 if raise_error:
                     raise err

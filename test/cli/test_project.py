@@ -326,14 +326,13 @@ class TestCLIProject:
                         {
                             "content": "test_tree/image1.png",
                             "external_id": "image1",
-                            "json_metadata": None,
                         },
                         {
                             "content": "test_tree/leaf/image3.png",
                             "external_id": "image3",
-                            "json_metadata": None,
                         },
                     ],
+                    ANY,
                 ),
             },
             {
@@ -349,14 +348,13 @@ class TestCLIProject:
                         {
                             "content": "test_tree/image2.jpg",
                             "external_id": "image2",
-                            "json_metadata": None,
                         },
                         {
                             "content": "test_tree/leaf/image4.jpg",
                             "external_id": "image4",
-                            "json_metadata": None,
                         },
                     ],
+                    ANY,
                 ),
             },
             {
@@ -367,17 +365,16 @@ class TestCLIProject:
                     ANY,
                     "text_project",
                     [
-                        {
-                            "content": "test_tree/leaf/texte2.txt",
-                            "external_id": "texte2",
-                            "json_metadata": None,
-                        },
-                        {
-                            "content": "test_tree/texte1.txt",
-                            "external_id": "texte1",
-                            "json_metadata": None,
-                        },
+                        {"content": "test_tree/image1.png", "external_id": "image1"},
+                        {"content": "test_tree/image2.jpg", "external_id": "image2"},
+                        {"content": "test_tree/leaf/image3.png", "external_id": "image3"},
+                        {"content": "test_tree/leaf/image4.jpg", "external_id": "image4"},
+                        {"content": "test_tree/leaf/texte2.txt", "external_id": "texte2"},
+                        {"content": "test_tree/texte1.txt", "external_id": "texte1"},
+                        {"content": "test_tree/video1.mp4", "external_id": "video1"},
+                        {"content": "test_tree/video2.mp4", "external_id": "video2"},
                     ],
+                    ANY,
                 ),
             },
             {
@@ -392,6 +389,39 @@ class TestCLIProject:
                     "frame_project",
                     [
                         {
+                            "content": "test_tree/image1.png",
+                            "external_id": "image1",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": False,
+                                    "framesPlayedPerSecond": 10,
+                                    "shouldUseNativeVideo": True,
+                                }
+                            },
+                        },
+                        {
+                            "content": "test_tree/image2.jpg",
+                            "external_id": "image2",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": False,
+                                    "framesPlayedPerSecond": 10,
+                                    "shouldUseNativeVideo": True,
+                                }
+                            },
+                        },
+                        {
+                            "content": "test_tree/texte1.txt",
+                            "external_id": "texte1",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": False,
+                                    "framesPlayedPerSecond": 10,
+                                    "shouldUseNativeVideo": True,
+                                }
+                            },
+                        },
+                        {
                             "content": "test_tree/video1.mp4",
                             "external_id": "video1",
                             "json_metadata": {
@@ -414,6 +444,7 @@ class TestCLIProject:
                             },
                         },
                     ],
+                    ANY,
                 ),
             },
             {
@@ -428,6 +459,39 @@ class TestCLIProject:
                     "frame_project",
                     [
                         {
+                            "content": "test_tree/image1.png",
+                            "external_id": "image1",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": True,
+                                    "framesPlayedPerSecond": None,
+                                    "shouldUseNativeVideo": False,
+                                }
+                            },
+                        },
+                        {
+                            "content": "test_tree/image2.jpg",
+                            "external_id": "image2",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": True,
+                                    "framesPlayedPerSecond": None,
+                                    "shouldUseNativeVideo": False,
+                                }
+                            },
+                        },
+                        {
+                            "content": "test_tree/texte1.txt",
+                            "external_id": "texte1",
+                            "json_metadata": {
+                                "processingParameters": {
+                                    "shouldKeepNativeFrameRate": True,
+                                    "framesPlayedPerSecond": None,
+                                    "shouldUseNativeVideo": False,
+                                }
+                            },
+                        },
+                        {
                             "content": "test_tree/video1.mp4",
                             "external_id": "video1",
                             "json_metadata": {
@@ -450,6 +514,7 @@ class TestCLIProject:
                             },
                         },
                     ],
+                    ANY,
                 ),
             },
             {
@@ -466,14 +531,13 @@ class TestCLIProject:
                         {
                             "content": "test_tree/leaf/image3.png",
                             "external_id": "image3",
-                            "json_metadata": None,
                         },
                         {
                             "content": "https://files.readme.io/cac9114-Kili_Wordmark_SoftWhite_RGB.svg",
                             "external_id": "test",
-                            "json_metadata": None,
                         },
                     ],
+                    ANY,
                 ),
             },
         ]

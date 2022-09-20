@@ -116,10 +116,13 @@ def import_labels(
         raise NotFound(f"project ID: {project_id}")
 
     if len(files) > 0:
-        label_paths = get_file_paths_to_upload(files, lambda path: path.endswith(".json"), verbose)
+        label_paths = get_file_paths_to_upload(files)
+        label_paths = [path for path in label_paths if path.endswith(".json")]
         if len(label_paths) == 0:
             raise ValueError(
-                "No label files to upload. " "Check that the paths exist and file types are .json"
+                """No label files to upload.
+                Check that the paths exist and file types are .json
+                """
             )
         external_ids = [get_external_id_from_file_path(path) for path in label_paths]
 
