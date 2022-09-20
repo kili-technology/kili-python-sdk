@@ -19,6 +19,7 @@ class ImageDataImporter(BaseAssetImporter):
         is_hosted = self.is_hosted_content(assets)
         if not is_hosted:
             assets = self.filter_local_assets(assets, self.raise_error)
+        assets = self.filter_duplicate_external_ids(assets)
         sync_assets, async_assets = self.split_asset_by_upload_type(assets, is_hosted)
         if len(sync_assets) > 0:
             sync_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)

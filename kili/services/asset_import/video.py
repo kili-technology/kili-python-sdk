@@ -199,6 +199,7 @@ class VideoDataImporter(BaseAssetImporter):
         Import video assets into Kili.
         """
         data_type = self.get_data_type(assets)
+        assets = self.filter_duplicate_external_ids(assets)
         if data_type == VideoDataType.LOCAL_FILE:
             assets = self.filter_local_assets(assets, self.raise_error)
             as_frames = self.should_cut_into_frames(assets)

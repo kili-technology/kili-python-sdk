@@ -6,6 +6,7 @@ from test.services.asset_import.mocks import (
 )
 from unittest.mock import MagicMock, patch
 
+from kili.queries.asset import QueriesAsset
 from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 
@@ -16,6 +17,11 @@ from kili.services.asset_import import import_assets
     QueriesProject,
     "projects",
     MagicMock(return_value=[{"inputType": "VIDEO"}]),
+)
+@patch.object(
+    QueriesAsset,
+    "assets",
+    MagicMock(return_value=[]),
 )
 class VideoTestCase(ImportTestCase):
     def test_upload_from_one_local_video_file_to_native(self):

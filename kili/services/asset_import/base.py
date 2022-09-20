@@ -2,8 +2,7 @@
 Common and generic functions to import files into a project
 """
 import mimetypes
-import pathlib
-from abc import ABC, abstractmethod
+import os
 from json import dumps
 from typing import Callable, List, NamedTuple
 
@@ -16,6 +15,7 @@ from kili.graphql.operations.asset.mutations import (
 )
 from kili.helpers import format_result, is_url
 from kili.orm import Asset
+from kili.queries.asset import QueriesAsset
 from kili.utils import bucket, pagination
 
 from .constants import (
@@ -63,7 +63,7 @@ class LoggerParams(NamedTuple):
 
 class BaseBatchImporter:  # pylint: disable=too-few-public-methods
     """
-    Abstract class for a batch importer
+    Base class for a batch importer
     """
 
     def __init__(
@@ -233,7 +233,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
         return super().import_batch(assets)
 
 
-class BaseAssetImporter(ABC):
+class BaseAssetImporter:
     """
     Base class for data importers
     """
@@ -249,12 +249,6 @@ class BaseAssetImporter(ABC):
         self.project_params = project_params
         self.raise_error = processing_params.raise_error
         self.pbar = tqdm(disable=logger_params.disable_tqdm)
-
-    @abstractmethod
-    def import_assets(self, assets: List[AssetLike]):
-        """
-        Import the assets in Kili.
-        """
 
     @staticmethod
     def is_hosted_content(assets: List[AssetLike]):
@@ -282,11 +276,7 @@ class BaseAssetImporter(ABC):
         filtered_assets = []
         for asset in assets:
             path = asset.get("content")
-            if path is None:
-                continue
-            path = pathlib.Path(path)
             try:
-                self.check_file_exists(path)
                 self.check_mime_type_compatibility(path)
                 filtered_assets.append(asset)
             except (FileNotFoundError, MimeTypeError) as err:
@@ -301,21 +291,13 @@ class BaseAssetImporter(ABC):
             )
         return filtered_assets
 
-    @staticmethod
-    def check_file_exists(path: pathlib.Path):
-        """
-        Check that the local file exists
-        Return an error if it doesn't exist and raise_error is True
-        """
-        if not path.is_file():
-            raise FileNotFoundError(f"file {path} does not exist")
-        return True
-
-    def check_mime_type_compatibility(self, path: pathlib.Path):
+    def check_mime_type_compatibility(self, path: str):
         """
         Check that the mimetype of a local file is compatible with the project input type.
         Return an error if the asset is not compatible and raise_error is True.
         """
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"file {path} does not exist")
         mime_type, _ = mimetypes.guess_type(path)
         if mime_type is None:
             raise MimeTypeError(f"The mime type of the asset {path} has not been found")
@@ -330,6 +312,22 @@ class BaseAssetImporter(ABC):
                 """
             )
         return True
+
+    def filter_duplicate_external_ids(self, assets):
+        if not len(assets):
+            raise ImportValidationError("No assets to import")
+        assets_in_project = QueriesAsset(self.auth).assets(
+            project_id=self.project_params.project_id, fields=["externalId"], disable_tqdm=True
+        )
+        external_ids_in_project = [asset["externalId"] for asset in assets_in_project]
+        filetered_assets = [
+            asset for asset in assets if asset.get("external_id") not in external_ids_in_project
+        ]
+        if not len(filetered_assets):
+            raise ImportValidationError(
+                "No assets to import, all given external_ids already exist in the project"
+            )
+        return filetered_assets
 
     def import_assets_by_batch(self, assets: List[AssetLike], batch_importer: BaseBatchImporter):
         """

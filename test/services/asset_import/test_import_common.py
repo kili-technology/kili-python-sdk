@@ -2,11 +2,18 @@ from test.services.asset_import.base import ImportTestCase
 from test.services.asset_import.mocks import mocked_request_signed_urls
 from unittest.mock import MagicMock, patch
 
+from kili.queries.asset import QueriesAsset
 from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
+from kili.services.asset_import.exceptions import MimeTypeError
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
+@patch.object(
+    QueriesAsset,
+    "assets",
+    MagicMock(return_value=[]),
+)
 class TestContentType(ImportTestCase):
     @patch.object(
         QueriesProject,
@@ -17,7 +24,7 @@ class TestContentType(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MimeTypeError):
             import_assets(self.auth, self.project_id, assets)
 
     @patch.object(

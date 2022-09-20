@@ -86,6 +86,7 @@ class TextDataImporter(BaseAssetImporter):
         Import text assets into Kili.
         """
         data_type = self.get_data_type(assets)
+        assets = self.filter_duplicate_external_ids(assets)
         if data_type == TextDataType.LOCAL_FILE:
             assets = self.filter_local_assets(assets, self.raise_error)
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
