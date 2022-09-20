@@ -107,9 +107,9 @@ class MutationsAsset:
             "is_honeypot": is_honeypot_array,
         }
         assets = [{}] * nb_data
-        for k, v in field_mapping.items():
-            if v is not None:
-                assets = [{**assets[i], k: v[i]} for i in range(nb_data)]
+        for key, value in field_mapping.items():
+            if value is not None:
+                assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         import_assets(self.auth, project_id=project_id, assets=assets)
 
     @Compatible(["v2"])

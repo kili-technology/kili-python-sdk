@@ -8,8 +8,6 @@ from kili.graphql_client import GraphQLClientName
 
 from ..client import Kili
 
-# pylint: disable=consider-using-f-string
-
 
 def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
     """Instantiate a kili client for the CLI functions"""

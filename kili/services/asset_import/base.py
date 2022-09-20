@@ -109,6 +109,10 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def loop_on_batch(func: Callable):
+        """
+        Apply a function that takes an asset as input on the whole batch
+        """
+
         def loop_func(assets: list):
             return [func(asset) for asset in assets]
 
@@ -195,13 +199,20 @@ class JsonContentBatchImporter(BaseBatchImporter):
     Base class defining the import of a batch of assets that have json_content
     """
 
-    def stringify_json_content(self, asset) -> AssetLike:
+    @staticmethod
+    def stringify_json_content(asset) -> AssetLike:
+        """
+        Stringify the json content if not a str
+        """
         json_content = asset.get("json_content", {})
         if not isinstance(json_content, str):
             json_content = dumps(json_content)
         return {**asset, "json_content": json_content}
 
     def upload_json_content_to_bucket(self, assets):
+        """
+        Upload the json_contents to a bucket with signed urls
+        """
         signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
         uploaded_assets = []
         for i, asset in enumerate(assets):
@@ -278,7 +289,7 @@ class BaseAssetImporter(ABC):
                 self.check_file_exists(path)
                 self.check_mime_type_compatibility(path)
                 filtered_assets.append(asset)
-            except Exception as err:
+            except (FileNotFoundError, MimeTypeError) as err:
                 if raise_error:
                     raise err
         if len(filtered_assets) == 0:

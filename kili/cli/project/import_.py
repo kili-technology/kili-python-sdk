@@ -18,8 +18,6 @@ from kili.exceptions import NotFound
 from kili.helpers import get_file_paths_to_upload
 from kili.services import asset_import
 
-# pylint: disable=consider-using-with
-
 
 def type_check_asset(key, value):
     """type check value based on key"""

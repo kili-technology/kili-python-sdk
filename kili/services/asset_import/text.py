@@ -19,6 +19,10 @@ from .types import AssetLike
 
 
 class TextDataType(Enum):
+    """
+    Text type of data choices
+    """
+
     RICH_TEXT = "RICH_TEXT"
     LOCAL_FILE = "LOCAL_FILE"
     HOSTED_FILE = "HOSTED_FILE"
@@ -26,6 +30,10 @@ class TextDataType(Enum):
 
 
 class RawTextBatchImporter(ContentBatchImporter):
+    """
+    class for importing a batch of raw text assets into a TEXT project
+    """
+
     def upload_local_content_to_bucket(self, assets: List[AssetLike]):
         """
         Overwrite the base function in order to be able to upload raw text
@@ -45,7 +53,8 @@ class TextDataImporter(BaseAssetImporter):
     class for importing data into a TEXT project
     """
 
-    def get_data_type(self, assets: List[AssetLike]) -> TextDataType:
+    @staticmethod
+    def get_data_type(assets: List[AssetLike]) -> TextDataType:
         """
         Determine the type of data to upload from the service payload
         """
@@ -59,19 +68,18 @@ class TextDataImporter(BaseAssetImporter):
                     "Cannot import content when importing a Rich Text asset"
                 )
             return TextDataType.RICH_TEXT
-        elif has_local_file and has_hosted_file:
+        if has_local_file and has_hosted_file:
             raise ImportValidationError(
                 """
                 Cannot upload hosted data and local files at the same time.
                 Please separate the assets into 2 calls
                 """
             )
-        elif has_local_file:
+        if has_local_file:
             return TextDataType.LOCAL_FILE
-        elif has_hosted_file:
+        if has_hosted_file:
             return TextDataType.HOSTED_FILE
-        else:
-            return TextDataType.RAW_TEXT
+        return TextDataType.RAW_TEXT
 
     def import_assets(self, assets: List[AssetLike]):
         """

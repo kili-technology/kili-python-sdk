@@ -53,6 +53,9 @@ GCP_STRING_PUBLIC = "storage.cloud.google.com"
 
 
 def clean_signed_url(url: str):
+    """
+    Remove the signature from a signed URL
+    """
     if AZURE_STRING in url:
         return url.split("?")[0]
     if GCP_STRING in url:

@@ -20,6 +20,10 @@ from .types import AssetLike
 
 
 class VideoDataType(Enum):
+    """
+    Video type of data choices
+    """
+
     LOCAL_FRAMES = "LOCAL_FRAMES"
     HOSTED_FRAMES = "HOSTED_FRAMES"
     LOCAL_FILE = "LOCAL_FILE"
@@ -27,8 +31,12 @@ class VideoDataType(Enum):
 
 
 class VideoMixin:
+    """
+    Helping functions for importing Video assets
+    """
+
     @staticmethod
-    def add_video_processing_parameters(asset: AssetLike, from_frames: bool) -> AssetLike:
+    def get_video_processing_parameters(asset: AssetLike, from_frames: bool):
         """
         Base method for adding video processing parameters
         """
@@ -41,8 +49,9 @@ class VideoMixin:
         ]
         for (key, default_value) in video_parameters:
             processing_parameters[key] = processing_parameters.get(key, default_value)
-        json_metadata = {**json_metadata, "processingParameters": processing_parameters}
-        return {**asset, "json_metadata": json_metadata}
+        return processing_parameters
+        # json_metadata = {**json_metadata, "processingParameters": processing_parameters}
+        # return {**asset, "json_metadata": json_metadata}
 
     @staticmethod
     def map_frame_urls_to_index(asset: AssetLike):
@@ -57,26 +66,40 @@ class VideoMixin:
 
 
 class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
-    def add_video_processing_parameters(self, asset: AssetLike):
+    """
+    class for importing a batch of video assets from content into a VIDEO project
+    """
+
+    def add_video_processing_parameters(self, asset):
         """
         Add video processing parameters for a content upload
         """
-        return VideoMixin.add_video_processing_parameters(asset, from_frames=False)
+        json_metadata = asset.get("json_metadata", {})
+        processing_parameters = self.get_video_processing_parameters(asset, from_frames=False)
+        json_metadata = {**json_metadata, "processingParameters": processing_parameters}
+        return {**asset, "json_metadata": json_metadata}
 
     def import_batch(self, assets: List[AssetLike]):
         """
-        Import a batch of video from content
+        Import a batch of video from content.
         """
         assets = self.loop_on_batch(self.add_video_processing_parameters)(assets)
         return super().import_batch(assets)
 
 
 class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
-    def add_video_processing_parameters(self, asset: AssetLike):
+    """
+    class for importing a batch of video assets from frames into a VIDEO project
+    """
+
+    def add_video_processing_parameters(self, asset):
         """
         Add video processing parameters for a frames upload
         """
-        return VideoMixin.add_video_processing_parameters(asset, from_frames=True)
+        json_metadata = asset.get("json_metadata", {})
+        processing_parameters = self.get_video_processing_parameters(asset, from_frames=True)
+        json_metadata = {**json_metadata, "processingParameters": processing_parameters}
+        return {**asset, "json_metadata": json_metadata}
 
     def import_batch(self, assets: List[AssetLike]):
         """
@@ -142,12 +165,10 @@ class VideoDataImporter(BaseAssetImporter):
             if all(self.is_hosted_frames(asset) for asset in assets):
                 return VideoDataType.HOSTED_FRAMES
             return VideoDataType.LOCAL_FRAMES
-        else:
-            is_hosted_content = self.is_hosted_content(assets)
-            if is_hosted_content:
-                return VideoDataType.HOSTED_FILE
-            else:
-                return VideoDataType.LOCAL_FILE
+        is_hosted_content = self.is_hosted_content(assets)
+        if is_hosted_content:
+            return VideoDataType.HOSTED_FILE
+        return VideoDataType.LOCAL_FILE
 
     @staticmethod
     def should_cut_into_frames(assets):
@@ -163,15 +184,15 @@ class VideoDataImporter(BaseAssetImporter):
             )
         if all(should_use_native_video_array):
             return False
-        elif all(not b for b in should_use_native_video_array):
+        if all(not b for b in should_use_native_video_array):
             return True
-        else:
-            raise ImportValidationError(
-                """
-                Cannot upload videos to split into frames and video to keep as native in the same time.
-                Please separate the assets into 2 calls
-                """
-            )
+        raise ImportValidationError(
+            """
+            Cannot upload videos to split into frames
+            and video to keep as native in the same time.
+            Please separate the assets into 2 calls
+            """
+        )
 
     def import_assets(self, assets: List[AssetLike]):
         """
