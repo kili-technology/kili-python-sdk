@@ -154,7 +154,6 @@ def mocked__project_assets(project_id=None, **_):
 kili_client = MagicMock()
 kili_client.auth.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
 kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
-kili_client.append_to_labels = append_to_labels_mock = MagicMock()
 kili_client.create_predictions = create_predictions_mock = MagicMock()
 kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
 kili_client.create_project = create_project_mock = MagicMock()
@@ -224,6 +223,7 @@ class TestCLIProject:
                     },
                     "label_asset_external_id": "asset6",
                 },
+                "expected_mutation_call_count": 5,
             },
             {
                 "case_name": "AAU, when I import default labels from a CSV, I see a success",
@@ -241,6 +241,7 @@ class TestCLIProject:
                     },
                     "label_asset_external_id": "asset6",
                 },
+                "expected_mutation_call_count": 2,
             },
             {
                 "case_name": "AAU, when I import predictions from a CSV, I see a sucess",
@@ -265,6 +266,7 @@ class TestCLIProject:
         ]
         runner = CliRunner()
         with runner.isolated_filesystem():
+
             os.mkdir("test_tree")
             # pylint: disable=unspecified-encoding
             with open("test_tree/asset1.json", "w") as outfile:
@@ -288,17 +290,20 @@ class TestCLIProject:
                 writer.writerow(["asset6", "test_tree/leaf_2/asset6.json"])
 
             for i, test_case in enumerate(TEST_CASES):
+                kili_client.append_to_labels = append_to_labels_mock = MagicMock()
                 arguments = test_case["files"]
                 for k, v in test_case["options"].items():
                     arguments.append("--" + k)
                     arguments.append(v)
                 if test_case.get("flags"):
                     arguments.extend(["--" + flag for flag in test_case["flags"]])
-                print(arguments)
                 result = runner.invoke(import_labels, arguments)
                 debug_subprocess_pytest(result)
                 if test_case["mutation_to_call"] == "append_to_labels":
-                    assert append_to_labels_mock.call_count == 5 + 2 * i
+                    assert (
+                        append_to_labels_mock.call_count
+                        == test_case["expected_mutation_call_count"]
+                    )
                     append_to_labels_mock.assert_any_call(**test_case["expected_mutation_payload"])
                 else:
                     create_predictions_mock.assert_called_with(
