@@ -23,4 +23,4 @@ def import_assets(
     input_type = projects[0]["inputType"]
 
     legacy_importer = LegacyImporter(auth=auth, project_id=project_id, input_type=input_type)
-    legacy_importer.import_assets(assets=assets)
+    return legacy_importer.import_assets(assets=assets)
