@@ -17,11 +17,12 @@ class PdfDataImporter(BaseAssetImporter):
         Import PDF assets into Kili.
         """
         is_hosted = self.is_hosted_content(assets)
+        if not is_hosted:
+            assets = self.filter_local_assets(assets, self.raise_error)
+
         batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
         batch_importer = ContentBatchImporter(
             self.auth, self.project_params, batch_params, self.pbar
         )
-        if not is_hosted:
-            assets = self.filter_local_assets(assets, self.raise_error)
         result = self.import_assets_by_batch(assets, batch_importer)
         return result

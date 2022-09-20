@@ -109,7 +109,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def loop_on_batch(func: Callable):
-        def loop_func(assets: List[AssetLike]):
+        def loop_func(assets: list):
             return [func(asset) for asset in assets]
 
         return loop_func
@@ -274,50 +274,51 @@ class BaseAssetImporter(ABC):
             if path is None:
                 continue
             path = pathlib.Path(path)
-            file_exists = self.check_file_exists(path, raise_error)
-            has_right_mime_type = self.check_mime_type_compatibility(path, raise_error)
-            if path and file_exists and has_right_mime_type:
+            try:
+                self.check_file_exists(path)
+                self.check_mime_type_compatibility(path)
                 filtered_assets.append({**asset, "content": path})
+            except Exception as err:
+                if raise_error:
+                    raise err
+        if len(filtered_assets) == 0:
+            raise ImportValidationError(
+                """
+                No files to upload.
+                Check that the paths exist and file types are compatible with the project
+                """
+            )
         return filtered_assets
 
     @staticmethod
-    def check_file_exists(path: pathlib.Path, raise_error: bool):
+    def check_file_exists(path: pathlib.Path):
         """
         Check that the local file exists
         Return an error if it doesn't exist and raise_error is True
         """
-        file_exists = True
         if not path.is_file():
-            file_exists = False
-            if raise_error:
-                raise FileNotFoundError(f"file {path} does not exist")
-        return file_exists
+            raise FileNotFoundError(f"file {path} does not exist")
+        return True
 
-    def check_mime_type_compatibility(self, path: pathlib.Path, raise_error: bool):
+    def check_mime_type_compatibility(self, path: pathlib.Path):
         """
         Check that the mimetype of a local file is compatible with the project input type.
         Return an error if the asset is not compatible and raise_error is True.
         """
         mime_type, _ = mimetypes.guess_type(path)
-        correct_mime_type = True
         if mime_type is None:
-            correct_mime_type = False
-            if raise_error:
-                raise MimeTypeError(f"The mime type of the asset {path} has not been found")
+            raise MimeTypeError(f"The mime type of the asset {path} has not been found")
 
         input_type = self.project_params.input_type
         if mime_type not in project_compatible_mimetypes[input_type]:  # type: ignore
-            correct_mime_type = False
-            if raise_error:
-                raise MimeTypeError(
-                    f"""
-                    File mime type for {path} is {mime_type} and does not correspond
-                    to the type of the project.
-                    File mime type should be one of {project_compatible_mimetypes[input_type]}
-                    """
-                )
-
-        return correct_mime_type
+            raise MimeTypeError(
+                f"""
+                File mime type for {path} is {mime_type} and does not correspond
+                to the type of the project.
+                File mime type should be one of {project_compatible_mimetypes[input_type]}
+                """
+            )
+        return True
 
     def import_assets_by_batch(self, assets: List[AssetLike], batch_importer: BaseBatchImporter):
         """

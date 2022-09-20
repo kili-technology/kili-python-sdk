@@ -14,6 +14,14 @@ from kili.services.asset_import.video import VideoDataImporter
 
 from .base import LoggerParams, ProcessingParams, ProjectParams
 
+importer_by_type = {
+    "PDF": PdfDataImporter,
+    "IMAGE": ImageDataImporter,
+    "TEXT": TextDataImporter,
+    "VIDEO": VideoDataImporter,
+    "FRAMES": VideoDataImporter,
+}
+
 
 def import_assets(
     auth: KiliAuth, project_id: str, assets: List[AssetLike], raise_error=True, disable_tqdm=False
@@ -25,20 +33,11 @@ def import_assets(
     projects = kili.projects(project_id, disable_tqdm=True)
     assert len(projects) == 1, NO_ACCESS_RIGHT
     input_type = projects[0]["inputType"]
+
     project_params = ProjectParams(project_id=project_id, input_type=input_type)
     processing_params = ProcessingParams(raise_error=raise_error)
     logger_params = LoggerParams(disable_tqdm=disable_tqdm)
-
     importer_params = (auth, project_params, processing_params, logger_params)
-    if input_type == "PDF":
-        data_importer = PdfDataImporter(*importer_params)
-    elif input_type == "IMAGE":
-        data_importer = ImageDataImporter(*importer_params)
-    elif input_type == "TEXT":
-        data_importer = TextDataImporter(*importer_params)
-    elif input_type in ("VIDEO", "FRAMES"):
-        data_importer = VideoDataImporter(*importer_params)
-    else:
-        data_importer = LegacyDataImporter(*importer_params)
 
-    data_importer.import_assets(assets=assets)
+    asset_importer = importer_by_type.get(input_type, LegacyDataImporter)(*importer_params)
+    return asset_importer.import_assets(assets=assets)
