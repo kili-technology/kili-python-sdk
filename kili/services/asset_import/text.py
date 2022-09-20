@@ -1,5 +1,5 @@
 """
-Functions to import files into a TEXT project
+Functions to import assets into a TEXT project
 """
 import os
 from enum import Enum
@@ -42,10 +42,13 @@ class RawTextBatchImporter(ContentBatchImporter):
 
 class TextDataImporter(BaseAssetImporter):
     """
-    class for importing data into a PDF project
+    class for importing data into a TEXT project
     """
 
     def get_data_type(self, assets: List[AssetLike]) -> TextDataType:
+        """
+        Determine the type of data to upload from the service payload
+        """
         content_array = [asset.get("content", "") for asset in assets]
         has_local_file = any(os.path.exists(content) for content in content_array)
         has_hosted_file = any(is_url(content) for content in content_array)
@@ -60,7 +63,7 @@ class TextDataImporter(BaseAssetImporter):
             raise ImportValidationError(
                 """
                 Cannot upload hosted data and local files at the same time.
-                Please separete the assets into 2 calls
+                Please separate the assets into 2 calls
                 """
             )
         elif has_local_file:

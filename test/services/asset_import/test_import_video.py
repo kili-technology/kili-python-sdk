@@ -1,48 +1,29 @@
 import json
-import shutil
-import tempfile
+from test.services.asset_import.base import ImportTestCase
 from test.services.asset_import.mocks import (
-    mocked__mutate_from_paginated_call,
     mocked_request_signed_urls,
     mocked_upload_data_via_rest,
 )
-from test.utils import LocalDownloader
-from unittest import TestCase
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
-from kili.graphql.operations.asset.mutations import (
-    GQL_APPEND_MANY_FRAMES_TO_DATASET,
-    GQL_APPEND_MANY_TO_DATASET,
-)
-from kili.helpers import encode_base64
 from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
-@patch("kili.utils.pagination._mutate_from_paginated_call", mocked__mutate_from_paginated_call)
 @patch.object(
     QueriesProject,
     "projects",
     MagicMock(return_value=[{"inputType": "VIDEO"}]),
 )
-class VideoTestCase(TestCase):
-    def setUp(self):
-        self.project_id = "project_id"
-        self.test_dir = tempfile.mkdtemp()
-        self.downloader = LocalDownloader(self.test_dir)
-        self.auth = None
-
-    def tearDown(self):
-        shutil.rmtree(self.test_dir)
-
+class VideoTestCase(ImportTestCase):
     def test_upload_from_one_local_video_file_to_native(self):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+        expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
                     "shouldKeepNativeFrameRate": True,
@@ -51,26 +32,22 @@ class VideoTestCase(TestCase):
                 }
             }
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://signed_url"],
-                "external_id_array": ["local video file to native"],
-                "is_honeypot_array": [False],
-                "json_content_array": [""],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
+        expected_parameters = self.get_expected_sync_call(
+            ["https://signed_url"],
+            ["local video file to native"],
+            [False],
+            [""],
+            [expected_json_metadata],
+            ["TODO"],
         )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_one_hosted_video_file_to_native(
         self,
     ):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+        expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
                     "shouldKeepNativeFrameRate": True,
@@ -79,19 +56,15 @@ class VideoTestCase(TestCase):
                 }
             }
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://hosted-data"],
-                "external_id_array": ["hosted file"],
-                "is_honeypot_array": [False],
-                "json_content_array": [""],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
+        expected_parameters = self.get_expected_sync_call(
+            ["https://hosted-data"],
+            ["hosted file"],
+            [False],
+            [""],
+            [expected_json_metadata],
+            ["TODO"],
         )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_one_local_video_to_frames(self):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
@@ -108,7 +81,7 @@ class VideoTestCase(TestCase):
             }
         ]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+        expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
                     "shouldUseNativeVideo": False,
@@ -117,19 +90,10 @@ class VideoTestCase(TestCase):
                 }
             }
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://signed_url"],
-                "external_id_array": ["local video to frames"],
-                "is_honeypot_array": [False],
-                "json_content_array": [""],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_FRAMES_TO_DATASET,
+        expected_parameters = self.get_expected_async_call(
+            ["https://signed_url"], ["local video to frames"], [expected_json_metadata], "VIDEO"
         )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_one_hosted_video_to_frames(self):
         assets = [
@@ -144,7 +108,8 @@ class VideoTestCase(TestCase):
             }
         ]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+
+        expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
                     "shouldUseNativeVideo": False,
@@ -153,19 +118,10 @@ class VideoTestCase(TestCase):
                 }
             }
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://hosted-data"],
-                "external_id_array": ["changing fps"],
-                "is_honeypot_array": [False],
-                "json_content_array": [""],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_FRAMES_TO_DATASET,
+        expected_parameters = self.get_expected_async_call(
+            ["https://hosted-data"], ["changing fps"], [expected_json_metadata], "VIDEO"
         )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_one_video_from_local_frames(self):
         hosted_frame_folder = (
@@ -181,7 +137,7 @@ class VideoTestCase(TestCase):
             }
         ]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+        expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
                     "shouldKeepNativeFrameRate": False,
@@ -190,30 +146,15 @@ class VideoTestCase(TestCase):
                 }
             }
         )
-        expected_called_json_content = json.dumps(
-            dict(
-                zip(
-                    [0, 1, 2],
-                    [
-                        encode_base64(frame_path)
-                        for frame_path in [path_frame1, path_frame2, path_frame3]
-                    ],
-                )
-            )
+        expected_parameters = self.get_expected_sync_call(
+            [""],
+            ["from local frames"],
+            [False],
+            ["https://signed_url"],
+            [expected_json_metadata],
+            ["TODO"],
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": [""],
-                "external_id_array": ["from local frames"],
-                "is_honeypot_array": [False],
-                "json_content_array": [expected_called_json_content],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
-        )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_one_video_from_hosted_frames(self):
         url_frame1 = "https://frame1"
@@ -226,7 +167,7 @@ class VideoTestCase(TestCase):
             }
         ]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+        expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
                     "shouldKeepNativeFrameRate": False,
@@ -235,27 +176,15 @@ class VideoTestCase(TestCase):
                 }
             }
         )
-        expected_called_json_content = json.dumps(
-            dict(
-                zip(
-                    [0, 1, 2],
-                    [url_frame1, url_frame2, url_frame3],
-                )
-            )
+        expected_parameters = self.get_expected_sync_call(
+            [""],
+            ["from hosted frames"],
+            [False],
+            ["https://signed_url"],
+            [expected_json_metadata],
+            ["TODO"],
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": [""],
-                "external_id_array": ["from hosted frames"],
-                "is_honeypot_array": [False],
-                "json_content_array": [expected_called_json_content],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
-        )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_frames_call_from_label_import(self):
         url_frame1 = "https://frame1"
@@ -269,7 +198,7 @@ class VideoTestCase(TestCase):
             }
         ]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+        expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
                     "shouldKeepNativeFrameRate": False,
@@ -278,27 +207,15 @@ class VideoTestCase(TestCase):
                 }
             }
         )
-        expected_called_json_content = json.dumps(
-            dict(
-                zip(
-                    [0, 1, 2],
-                    [url_frame1, url_frame2, url_frame3],
-                )
-            )
+        expected_parameters = self.get_expected_sync_call(
+            ["https://reading_signed_url_content"],
+            ["from label-import"],
+            [False],
+            ["https://signed_url"],
+            [expected_json_metadata],
+            ["TODO"],
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://reading_signed_url_content"],
-                "external_id_array": ["from label-import"],
-                "is_honeypot_array": [False],
-                "json_content_array": [expected_called_json_content],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
-        )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_import_one_video_with_metadata(self):
         assets = [
@@ -309,7 +226,7 @@ class VideoTestCase(TestCase):
             }
         ]
         import_assets(self.auth, self.project_id, assets)
-        expected_called_json_metadata = json.dumps(
+        expected_json_metadata = json.dumps(
             {
                 "fromBucket": True,
                 "score": 10,
@@ -320,16 +237,12 @@ class VideoTestCase(TestCase):
                 },
             }
         )
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://hosted-data"],
-                "external_id_array": ["with metadata"],
-                "is_honeypot_array": [False],
-                "json_content_array": [""],
-                "json_metadata_array": [expected_called_json_metadata],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
+        expected_parameters = self.get_expected_sync_call(
+            ["https://hosted-data"],
+            ["with metadata"],
+            [False],
+            [""],
+            [expected_json_metadata],
+            ["TODO"],
         )
+        self.auth.client.execute.assert_called_with(*expected_parameters)

@@ -10,6 +10,7 @@ from kili.services.asset_import.legacy import LegacyDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
 from kili.services.asset_import.types import AssetLike
+from kili.services.asset_import.video import VideoDataImporter
 
 from .base import LoggerParams, ProcessingParams, ProjectParams
 
@@ -35,6 +36,8 @@ def import_assets(
         data_importer = ImageDataImporter(*importer_params)
     elif input_type == "TEXT":
         data_importer = TextDataImporter(*importer_params)
+    elif input_type in ("VIDEO", "FRAMES"):
+        data_importer = VideoDataImporter(*importer_params)
     else:
         data_importer = LegacyDataImporter(*importer_params)
 

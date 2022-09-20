@@ -2,11 +2,16 @@
 
 
 from typing import Union
+from urllib.parse import urlparse
 
 import requests
 
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
+
+AZURE_STRING = "blob.core.windows.net"
+GCP_STRING = "storage.googleapis.com"
+GCP_STRING_PUBLIC = "storage.cloud.google.com"
 
 
 def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
@@ -40,3 +45,17 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
     response = requests.put(url_to_use_for_upload, data=data, headers=headers)
     response.raise_for_status()
     return url_with_id
+
+
+AZURE_STRING = "blob.core.windows.net"
+GCP_STRING = "storage.googleapis.com"
+GCP_STRING_PUBLIC = "storage.cloud.google.com"
+
+
+def clean_signed_url(url: str):
+    if AZURE_STRING in url:
+        return url.split("?")[0]
+    if GCP_STRING in url:
+        url_path = urlparse(url).path
+        return f"https://{GCP_STRING_PUBLIC}{url_path}"
+    return url

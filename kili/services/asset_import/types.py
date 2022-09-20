@@ -1,6 +1,6 @@
 """Import service types"""
 
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from typing_extensions import TypedDict
 
@@ -11,7 +11,7 @@ class AssetLike(TypedDict, total=False):
     """
 
     content: Optional[str]
-    json_content: Optional[Union[List[str], dict, str]]
+    json_content: Optional[Union[dict, str, list]]
     external_id: Optional[str]
     status: Optional[str]
     json_metadata: Optional[Union[str, dict]]

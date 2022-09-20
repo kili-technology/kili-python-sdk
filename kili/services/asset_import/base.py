@@ -61,30 +61,6 @@ class LoggerParams(NamedTuple):
     disable_tqdm: bool
 
 
-class AbstractAssetImporter(ABC):  # pylint: disable=too-few-public-methods
-    """
-    Abstract class for a data importer
-    """
-
-    def __init__(
-        self,
-        auth: KiliAuth,
-        project_params: ProjectParams,
-        processing_params: ProcessingParams,
-        logger_params: LoggerParams,
-    ):
-        self.auth = auth
-        self.project_params = project_params
-        self.raise_error = processing_params.raise_error
-        self.pbar = tqdm(disable=logger_params.disable_tqdm)
-
-    @abstractmethod
-    def import_assets(self, assets: List[AssetLike]):
-        """
-        Import the assets in Kili.
-        """
-
-
 class BaseBatchImporter:  # pylint: disable=too-few-public-methods
     """
     Abstract class for a batch importer
@@ -105,14 +81,14 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         """
         Common actions to import a batch of asset
         """
-        assets = self.loop_on_batch(self.process_metadata)(assets)
+        assets = self.loop_on_batch(self.stringify_metadata)(assets)
         assets = self.loop_on_batch(self.fill_empty_fields)(assets)
         result_batch = self.import_to_kili(assets)
         self.pbar.update(n=len(assets))
         return result_batch
 
     @staticmethod
-    def process_metadata(asset: AssetLike) -> AssetLike:
+    def stringify_metadata(asset: AssetLike) -> AssetLike:
         """
         Process the metadata field
         """
@@ -246,10 +222,28 @@ class JsonContentBatchImporter(BaseBatchImporter):
         return super().import_batch(assets)
 
 
-class BaseAssetImporter(AbstractAssetImporter):
-    """ "
+class BaseAssetImporter(ABC):
+    """
     Base class for data importers
     """
+
+    def __init__(
+        self,
+        auth: KiliAuth,
+        project_params: ProjectParams,
+        processing_params: ProcessingParams,
+        logger_params: LoggerParams,
+    ):
+        self.auth = auth
+        self.project_params = project_params
+        self.raise_error = processing_params.raise_error
+        self.pbar = tqdm(disable=logger_params.disable_tqdm)
+
+    @abstractmethod
+    def import_assets(self, assets: List[AssetLike]):
+        """
+        Import the assets in Kili.
+        """
 
     @staticmethod
     def is_hosted_content(assets: List[AssetLike]):
@@ -264,7 +258,7 @@ class BaseAssetImporter(AbstractAssetImporter):
             raise ImportValidationError(
                 """
                 Cannot upload hosted data and local files at the same time.
-                Please separete the assets into 2 calls
+                Please separate the assets into 2 calls
                 """
             )
         return False

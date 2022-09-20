@@ -1,5 +1,5 @@
 """
-Functions to import files into an IMAGE project
+Functions to import assets into an IMAGE project
 """
 import mimetypes
 import os
