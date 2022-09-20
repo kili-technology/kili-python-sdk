@@ -40,4 +40,5 @@ def import_assets(
     importer_params = (auth, project_params, processing_params, logger_params)
 
     asset_importer = importer_by_type.get(input_type, LegacyDataImporter)(*importer_params)
-    return asset_importer.import_assets(assets=assets)
+    result = asset_importer.import_assets(assets=assets)
+    return result
