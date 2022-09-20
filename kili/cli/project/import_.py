@@ -2,7 +2,7 @@
 
 import os
 import urllib.request
-from typing import Dict, List, Optional, cast
+from typing import Dict, List, Optional, Tuple, Union, cast
 
 import click
 from typeguard import typechecked
@@ -70,8 +70,10 @@ def generate_json_metadata_array(as_frames, fps, nb_files, input_type):
     type=bool,
     default=False,
     is_flag=True,
-    help="Only for a frame project, import videos as frames. "
-    "The import time is longer with this option.",
+    help=(
+        "Only for a frame project, import videos as frames. "
+        "The import time is longer with this option."
+    ),
 )
 @click.option(
     "--fps", type=int, help="Only for a frame project, import videos with a specific frame rate"
@@ -83,7 +85,7 @@ def import_assets(
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
-    files: List[str],
+    files: Optional[Union[Tuple[str, ...], List[str]]],
     csv_path: Optional[str],
     fps: Optional[int],
     as_frames: bool,
