@@ -279,8 +279,8 @@ class SubscriptionGraphQLClient:
                         _cc(_id, response)
                     time.sleep(1)
                 except (
-                    websocket._exceptions.WebSocketConnectionClosedException
-                ) as error:  # pylint: disable=no-member,protected-access
+                    websocket._exceptions.WebSocketConnectionClosedException  # pylint: disable=no-member,protected-access
+                ) as error:
                     self.failed_connection_attempts += 1
                     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                     error_message = str(error)
