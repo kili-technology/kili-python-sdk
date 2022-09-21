@@ -102,7 +102,9 @@ def batch_object_builder(
     if len(list(filter(None, properties_to_batch.values()))) == 0:  # type: ignore
         yield properties_to_batch
         return
-    number_of_objects = len([v for v in properties_to_batch.values() if v is not None][0])  # type: ignore
+    number_of_objects = len(
+        [v for v in properties_to_batch.values() if v is not None][0]  # type: ignore
+    )
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {
         k: (

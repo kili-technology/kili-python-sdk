@@ -46,7 +46,7 @@ class Compatible:
             version = "v1" if address_matched.group() == ":4000/" else "v2"
         if version_matched:
             version = "v1" if version_matched.group() == "/v1/" else "v2"
-        return version in self.endpoints
+        return version in self.endpoints  # type:ignore
 
     def __call__(self, resolver, *args, **kwargs):
         @functools.wraps(resolver)
