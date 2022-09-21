@@ -93,7 +93,6 @@ class QueriesOrganization:
         return list(organizations_generator)
 
     def _query_organizations(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_organizations = gql_organizations(fragment_builder(fields, Organization))
         result = self.auth.client.execute(_gql_organizations, payload)
@@ -123,8 +122,8 @@ class QueriesOrganization:
             }
         }
         result = self.auth.client.execute(GQL_ORGANIZATIONS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        count = format_result("data", result, int)
+        return count
 
     @Compatible(["v2"])
     @typechecked

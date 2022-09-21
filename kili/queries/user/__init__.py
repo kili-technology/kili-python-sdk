@@ -117,5 +117,5 @@ class QueriesUser:
             }
         }
         result = self.auth.client.execute(GQL_USERS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        count = format_result("data", result, int)
+        return count

@@ -37,16 +37,18 @@ def collect_from_csv(
     out = []
     with open(csv_path, "r", encoding="utf-8") as csv_file:
         csvreader = csv.DictReader(csv_file)
-        headers = csvreader.fieldnames
-        if not headers:
-            headers = []
+        headers = csvreader.fieldnames or []
 
         missing_columns = list(set(required_columns) - set(headers))
         if len(missing_columns) > 0:
             raise ValueError(f"{missing_columns} must be headers of the csv file: {csv_path}")
         for row in csvreader:
             out += dict_type_check(
-                dict_={k: v for k, v in row.items() if k in required_columns + optional_columns},
+                dict_={
+                    k: v
+                    for k, v in row.items()
+                    if optional_columns and k in required_columns + optional_columns
+                },
                 type_check=type_check_function,
             )
 
@@ -64,8 +66,8 @@ def get_external_id_from_file_path(path: str):
 def check_exclusive_options(csv_path: Optional[str], files: Optional[List[str]]):
     """Forbid mutual use of options and argument(s)"""
 
-    if (csv_path is not None) + (len(files) > 0) > 1:
+    if (csv_path is not None) + int(bool((files))) > 1:
         raise ValueError("files arguments and option --from-csv are exclusive.")
 
-    if (csv_path is not None) + (len(files) > 0) == 0:
+    if (csv_path is not None) + int(bool((files))) == 0:
         raise ValueError("You must either provide file arguments or use the option --from-csv")

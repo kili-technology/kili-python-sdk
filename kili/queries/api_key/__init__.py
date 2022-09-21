@@ -101,7 +101,7 @@ class QueriesApiKey:
         payload.update({"skip": skip, "first": first})
         _gql_api_keys = gql_api_keys(fragment_builder(fields, ApiKeyType))
         result = self.auth.client.execute(_gql_api_keys, payload)
-        return format_result("data", result)
+        return format_result("data", result, None)
 
     @Compatible(["v2"])
     @typechecked
@@ -135,5 +135,5 @@ class QueriesApiKey:
             },
         }
         result = self.auth.client.execute(GQL_API_KEYS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        count = format_result("data", result, int)
+        return int(count)

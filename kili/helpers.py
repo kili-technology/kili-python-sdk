@@ -10,11 +10,11 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import List, Optional, Tuple, Type
+from typing import List, Optional, Tuple, Type, TypeVar
 
 import pyparsing as pp
 import requests
-from typing_extensions import TypedDict, is_typeddict
+from typing_extensions import TypedDict, get_args, get_origin, is_typeddict
 
 from kili.constants import mime_extensions_for_IV2
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
@@ -65,7 +65,10 @@ class Compatible:
         return checked_resolver
 
 
-def format_result(name, result, _object=None):
+T = TypeVar("T")
+
+
+def format_result(name, result, _object: Optional[Type[T]] = None) -> T:
     """
     Formats the result of the GraphQL queries.
 
@@ -79,7 +82,10 @@ def format_result(name, result, _object=None):
     if _object is None:
         return formatted_json
     if isinstance(formatted_json, list):
-        return [_object(element) for element in formatted_json]
+        assert get_origin(_object) is list
+        cls = get_args(_object)[0]
+        assert get_origin(cls) is not list
+        return [cls(element) for element in formatted_json]
     return _object(formatted_json)
 
 
@@ -174,7 +180,7 @@ def fragment_builder(fields: List[str], typed_dict_class: Type[TypedDict]):
 
     Args:
         fields
-        type_of_fields
+        typed_dict_class
     """
     type_of_fields = typed_dict_class.__annotations__
     fragment = ""

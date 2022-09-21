@@ -2,7 +2,7 @@
 Utils
 """
 import time
-from typing import Callable, Dict, Iterator, List, Optional
+from typing import Callable, Dict, Iterator, List, Optional, TypeVar
 
 from tqdm import tqdm
 
@@ -87,19 +87,22 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
         yield iterable[ndx : min(ndx + batch_size, iterable_length)]
 
 
+T = TypeVar("T")
+
+
 def batch_object_builder(
-    properties_to_batch: Dict[str, Optional[list]],
+    properties_to_batch: T,
     batch_size: int = MUTATION_BATCH_SIZE,
-) -> Iterator[Dict[str, Optional[list]]]:
+) -> Iterator[T]:
     """Generate a paginated iterator for several variables
     Args:
         properties_to_batch: a dictionnary of properties to be batched.
         batch_size: the size of the batches to produce
     """
-    if len(list(filter(None, properties_to_batch.values()))) == 0:
+    if len(list(filter(None, properties_to_batch.values()))) == 0:  # type: ignore
         yield properties_to_batch
         return
-    number_of_objects = len([v for v in properties_to_batch.values() if v is not None][0])
+    number_of_objects = len([v for v in properties_to_batch.values() if v is not None][0])  # type: ignore
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {
         k: (
@@ -107,13 +110,13 @@ def batch_object_builder(
             if v is not None
             else (item for item in [v] * number_of_batches)
         )
-        for k, v in properties_to_batch.items()
+        for k, v in properties_to_batch.items()  # type: ignore
     }
     batch_object_iterator = [
         dict(zip(batched_properties, t)) for t in zip(*batched_properties.values())
     ]
     for batch in batch_object_iterator:
-        yield batch
+        yield batch  # type: ignore
 
 
 def _mutate_from_paginated_call(

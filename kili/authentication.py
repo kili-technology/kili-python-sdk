@@ -121,4 +121,4 @@ You should generate a new one on My account > API KEY."""
     def get_user(self) -> User:
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
-        return format_result("data", result)  # type:ignore
+        return format_result("data", result, User)

@@ -97,7 +97,7 @@ class MutationsAsset:
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
-        nb_data = len(content_array) if content_array is not None else len(json_content_array)
+        nb_data = len(content_array) if content_array is not None else len(json_content_array)  # type: ignore
 
         assets: List[AssetToImport] = [
             AssetToImport(
@@ -132,7 +132,7 @@ class MutationsAsset:
         status_array: Optional[List[str]] = None,
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
-    ) -> List[dict]:
+    ) -> List[Asset]:
         """Update the properties of one or more assets.
 
         Args:
@@ -287,7 +287,7 @@ class MutationsAsset:
             generate_variables,
             GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
         )
-        return format_result("data", results[0])
+        return format_result("data", results[0], None)
 
     @Compatible(["v2"])
     @typechecked
@@ -308,6 +308,7 @@ class MutationsAsset:
                         "ckg22d81s0jrh0885pdxfd03n"
                         ],
         """
+
         properties_to_batch = {"asset_ids": asset_ids}
 
         def generate_variables(batch):

@@ -78,7 +78,6 @@ class QueriesLock:
         return list(locks_generator)
 
     def _query_locks(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_locks = gql_locks(fragment_builder(fields, Lock))
         result = self.auth.client.execute(_gql_locks, payload)
@@ -96,5 +95,5 @@ class QueriesLock:
         """
         variables = {"where": {"id": None}}
         result = self.auth.client.execute(GQL_LOCKS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        count = format_result("data", result, int)
+        return count

@@ -171,7 +171,7 @@ class MutationsProject:
             "useHoneyPot": use_honeypot,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        return format_result("data", result)
+        return format_result("data", result, Project)
 
     @Compatible(endpoints=["v2"])
     @typechecked
@@ -232,7 +232,7 @@ class MutationsProject:
             }
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
-        return format_result("data", result)  # type: ignore
+        return format_result("data", result, Project)
 
     @Compatible(["v2"])
     @typechecked
@@ -251,7 +251,7 @@ class MutationsProject:
         """
         variables = {"where": {"id": project_id}}
         result = self.auth.client.execute(GQL_MAKE_PROJECT_PUBLIC, variables)
-        return format_result("data", result)
+        return format_result("data", result, None)
 
     @Compatible(["v1", "v2"])
     @typechecked
@@ -283,7 +283,7 @@ class MutationsProject:
             "role": role,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
-        return format_result("data", result)
+        return format_result("data", result, None)
 
     @Compatible(["v1", "v2"])
     @typechecked
@@ -299,7 +299,7 @@ class MutationsProject:
         """
         variables = {"where": {"id": role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
-        return format_result("data", result)
+        return format_result("data", result, None)
 
     @Compatible(["v2"])
     @typechecked
@@ -342,7 +342,7 @@ class MutationsProject:
             "totalDuration": total_duration,
         }
         result = self.auth.client.execute(GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
-        return format_result("data", result)
+        return format_result("data", result, None)
 
     @Compatible(["v1", "v2"])
     @typechecked
@@ -359,7 +359,7 @@ class MutationsProject:
         """
         variables = {"projectID": project_id}
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
-        return format_result("data", result)
+        return format_result("data", result, None)
 
     @Compatible(["v1", "v2"])
     @typechecked
@@ -376,4 +376,4 @@ class MutationsProject:
         """
         variables = {"where": {"id": project_id}}
         result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
-        return format_result("data", result)
+        return format_result("data", result, None)

@@ -1,6 +1,6 @@
 """Label queries."""
 
-from typing import Generator, Iterable, List, Optional, Union
+from typing import Iterable, List, Optional
 
 import pandas as pd
 from typeguard import typechecked
@@ -65,7 +65,7 @@ class QueriesLabel:
         disable_tqdm: bool = False,
         as_generator: bool = False,
         category_search: Optional[str] = None,
-    ) -> Union[List[dict], Generator[dict, None, None]]:
+    ) -> Iterable[LabelType]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
 
@@ -312,5 +312,5 @@ class QueriesLabel:
             }
         }
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        count = format_result("data", result, int)
+        return count
