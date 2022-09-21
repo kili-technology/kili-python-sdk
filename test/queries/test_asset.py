@@ -1,15 +1,15 @@
 """
     Tests assets query.
 """
-import os
 from test.utils import mocked_count_method, mocked_query_method
+from unittest.mock import MagicMock
 
 import pandas as pd
 
-from kili.client import Kili
+from kili.queries.asset import QueriesAsset
 
-api_endpoint = os.getenv("KILI_API_ENDPOINT")
-kili = Kili(api_endpoint=api_endpoint)
+mocked_auth = MagicMock()
+mocked_auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
 
 TEST_CASES = [
     {
@@ -56,7 +56,7 @@ def test_assets(mocker):
     for test_case in TEST_CASES:
         case_name = test_case["case"]
         expected = test_case["expected_result"]
-        actual = kili.assets(**test_case["args"])
+        actual = QueriesAsset(mocked_auth).assets(**test_case["args"])
         assert (
             type(actual).__name__ == test_case["expected_type"]
         ), f'Test case "{case_name}" failed'
