@@ -3,6 +3,7 @@ Functions to import assets into a VIDEO project
 """
 import mimetypes
 import os
+from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from typing import List
 
@@ -15,6 +16,7 @@ from .base import (
     ContentBatchImporter,
     JsonContentBatchImporter,
 )
+from .constants import FRAME_IMPORT_BATCH_SIZE, IMPORT_BATCH_SIZE
 from .exceptions import ImportValidationError
 from .types import AssetLike
 
@@ -118,16 +120,19 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         frames = asset.get("json_content")
         assert frames
         signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(frames))
-        uploaded_frames = []
-        for i, frame_path in enumerate(frames):
+        data_array = []
+        content_type_array = []
+        for frame_path in frames:
             with open(frame_path, "rb") as file:
-                data = file.read()
+                data_array.append(file.read())
             content_type, _ = mimetypes.guess_type(frame_path)
-            assert content_type
-            uploaded_frame_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)
-            cleaned_url = bucket.clean_signed_url(uploaded_frame_url, self.auth.api_endpoint)
-            uploaded_frames.append(cleaned_url)
-        return {**asset, "json_content": uploaded_frames}
+            content_type_array.append(content_type)
+        with ThreadPoolExecutor() as threads:
+            url_gen = threads.map(
+                bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
+            )
+        cleaned_urls = (bucket.clean_signed_url(url, self.auth.api_endpoint) for url in url_gen)
+        return {**asset, "json_content": list(cleaned_urls)}
 
 
 class VideoDataImporter(BaseAssetImporter):
@@ -207,21 +212,25 @@ class VideoDataImporter(BaseAssetImporter):
             batch_importer = VideoContentBatchImporter(
                 self.auth, self.project_params, batch_params, self.pbar
             )
+            batch_size = IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.HOSTED_FILE:
             as_frames = self.should_cut_into_frames(assets)
             batch_params = BatchParams(is_hosted=True, is_asynchronous=as_frames)
             batch_importer = VideoContentBatchImporter(
                 self.auth, self.project_params, batch_params, self.pbar
             )
+            batch_size = IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.LOCAL_FRAMES:
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = FrameBatchImporter(
                 self.auth, self.project_params, batch_params, self.pbar
             )
+            batch_size = FRAME_IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.HOSTED_FRAMES:
             batch_params = BatchParams(is_hosted=True, is_asynchronous=False)
             batch_importer = FrameBatchImporter(
                 self.auth, self.project_params, batch_params, self.pbar
             )
-        result = self.import_assets_by_batch(assets, batch_importer)
+            batch_size = IMPORT_BATCH_SIZE
+        result = self.import_assets_by_batch(assets, batch_importer, batch_size)
         return result

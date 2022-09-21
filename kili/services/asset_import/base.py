@@ -3,6 +3,7 @@ Common and generic functions to import files into a project
 """
 import mimetypes
 import os
+from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from typing import Callable, List, NamedTuple
 
@@ -181,17 +182,20 @@ class ContentBatchImporter(BaseBatchImporter):
         Upload local content to a bucket
         """
         signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
-        uploaded_assets = []
-        for i, asset in enumerate(assets):
+        data_array = []
+        content_type_array = []
+        for asset in assets:
             path = asset.get("content")
             assert path
             with open(path, "rb") as file:
-                data = file.read()
+                data_array.append(file.read())
             content_type, _ = mimetypes.guess_type(path)
-            assert content_type
-            uploaded_content_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)
-            uploaded_assets.append({**asset, "content": uploaded_content_url})
-        return uploaded_assets
+            content_type_array.append(content_type)
+        with ThreadPoolExecutor() as threads:
+            url_gen = threads.map(
+                bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
+            )
+        return [{**asset, "content": url} for asset, url in zip(assets, url_gen)]
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -214,14 +218,15 @@ class JsonContentBatchImporter(BaseBatchImporter):
         Upload the json_contents to a bucket with signed urls
         """
         signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
-        uploaded_assets = []
-        for i, asset in enumerate(assets):
-            json_content = asset.get("json_content")
-            uploaded_json_content_url = bucket.upload_data_via_rest(
-                signed_urls[i], json_content, "text/plain"
+        json_content_array = [asset.get("json_content") for asset in assets]
+        with ThreadPoolExecutor() as threads:
+            url_gen = threads.map(
+                bucket.upload_data_via_rest,
+                signed_urls,
+                json_content_array,
+                ["text/plain"] * len(assets),
             )
-            uploaded_assets.append({**asset, "json_content": uploaded_json_content_url})
-        return uploaded_assets
+        return [{**asset, "json_content": url} for asset, url in zip(assets, url_gen)]
 
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike]):
@@ -333,9 +338,14 @@ class BaseAssetImporter:
             )
         return filetered_assets
 
-    def import_assets_by_batch(self, assets: List[AssetLike], batch_importer: BaseBatchImporter):
+    def import_assets_by_batch(
+        self,
+        assets: List[AssetLike],
+        batch_importer: BaseBatchImporter,
+        batch_size=IMPORT_BATCH_SIZE,
+    ):
         """Split assets by batch and import them with a given batch importer."""
-        batch_generator = pagination.batch_iterator_builder(assets, IMPORT_BATCH_SIZE)
+        batch_generator = pagination.batch_iterator_builder(assets, batch_size)
         self.pbar.total = len(assets)
         self.pbar.refresh()
         for batch_assets in batch_generator:

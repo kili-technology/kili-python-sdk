@@ -41,6 +41,7 @@ project_compatible_mimetypes = {
 }
 
 IMPORT_BATCH_SIZE = 10
+FRAME_IMPORT_BATCH_SIZE = 1
 
 MB_SIZE = 1024**2
 LARGE_IMAGE_THRESHOLD_SIZE = 30 * MB_SIZE
