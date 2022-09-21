@@ -1,6 +1,6 @@
 """Asset queries."""
 
-from typing import Generator, List, Optional, Union
+from typing import Iterable, List, Optional
 
 import pandas as pd
 from typeguard import typechecked
@@ -80,7 +80,7 @@ class QueriesAsset:
         updated_at_lte: Optional[str] = None,
         as_generator: bool = False,
         label_category_search: Optional[str] = None,
-    ) -> Union[List[dict], Generator[dict, None, None], pd.DataFrame]:
+    ) -> Iterable[Asset]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
@@ -231,10 +231,10 @@ class QueriesAsset:
         )
 
         if format == "pandas":
-            return pd.DataFrame(list(asset_generator))
+            return pd.DataFrame(list(asset_generator))  # type: ignore
         if as_generator:
-            return asset_generator
-        return list(asset_generator)
+            return asset_generator  # type: ignore
+        return list(asset_generator)  # type: ignore
 
     def _query_assets(self, skip: int, first: int, payload: dict, fields: List[str]):
         payload.update({"skip": skip, "first": first})

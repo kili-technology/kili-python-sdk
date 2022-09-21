@@ -6,18 +6,18 @@ from typing import List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.services.asset_import import import_assets
-
-from ...helpers import Compatible, format_result
-from ...orm import Asset
-from ...utils.pagination import _mutate_from_paginated_call
-from .helpers import process_update_properties_in_assets_parameters
-from .queries import (
+from kili.helpers import Compatible, format_result
+from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
+from kili.mutations.asset.queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
     GQL_DELETE_MANY_FROM_DATASET,
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
+from kili.orm import Asset
+from kili.services.asset_import import import_assets
+from kili.services.asset_import.types import AssetToImport
+from kili.utils.pagination import _mutate_from_paginated_call
 
 
 class MutationsAsset:
@@ -99,15 +99,17 @@ class MutationsAsset:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
         nb_data = len(content_array) if content_array is not None else len(json_content_array)
 
-        assets = [
-            {
-                "content": content_array and content_array[i],
-                "json_content": json_content_array and json_content_array[i],
-                "external_id": external_id_array and external_id_array[i],
-                "status": status_array and status_array[i],
-                "json_metadata": json_metadata_array and json_metadata_array[i],
-                "is_honeypot": is_honeypot_array and is_honeypot_array[i],
-            }
+        assets: List[AssetToImport] = [
+            AssetToImport(
+                **{
+                    "content": content_array and content_array[i],
+                    "json_content": json_content_array and json_content_array[i],
+                    "external_id": external_id_array and external_id_array[i],
+                    "status": status_array and status_array[i],
+                    "json_metadata": json_metadata_array and json_metadata_array[i],
+                    "is_honeypot": is_honeypot_array and is_honeypot_array[i],
+                }
+            )
             for i in range(nb_data)
         ]
 

@@ -9,7 +9,7 @@ from typing import List, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
-from kili.graphql.operations.asset.mutations import (
+from kili.graphQL.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )
@@ -270,7 +270,7 @@ def add_video_parameters(json_metadata, should_use_native_video):
         ("framesPlayedPerSecond", 30),
         ("shouldUseNativeVideo", should_use_native_video),
     ]
-    for (key, default_value) in video_parameters:
+    for key, default_value in video_parameters:
         processing_parameters[key] = processing_parameters.get(key, default_value)
     return {**json_metadata, "processingParameters": processing_parameters}
 
