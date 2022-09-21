@@ -86,7 +86,7 @@ If you prefer, you can directly query GraphQL API without using [Apollo Studio](
 
 1. Generate an API key in Kili interface in [My account](https://cloud.kili-technology.com/label/my-account), under the tab API KEY. Store it in some place secured.
 
-2. Go to http://cloud.kili-technology.com/api/label/v2/graphql
+2. Go to http://cloud.kili-technology.com/api/label/v2/graphql <!-- markdown-link-check-disable -->
 
 3. In the bottom left corner of the screen, click on `HTTP headers` and write
    the retrieved token in the authorization headers:
