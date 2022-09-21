@@ -168,4 +168,4 @@ class QueriesProject:
         }
         result = self.auth.client.execute(GQL_PROJECTS_COUNT, variables)
         count = format_result("data", result)
-        return count
+        return int(count)  # type:ignore
