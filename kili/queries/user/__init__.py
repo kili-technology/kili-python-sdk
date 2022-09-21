@@ -92,7 +92,6 @@ class QueriesUser:
         return list(users_generator)
 
     def _query_users(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_users = gql_users(fragment_builder(fields, User))
         result = self.auth.client.execute(_gql_users, payload)
