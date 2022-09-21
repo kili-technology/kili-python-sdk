@@ -21,9 +21,12 @@ from kili.services import asset_import
 
 def type_check_asset(key, value):
     """type check value based on key"""
-    with urllib.request.urlopen(value) as http_response:
-        if key == "content" and not os.path.isfile(value) and not http_response.getcode() == 200:
-            return f"{value} is not a valid url or path to a file."
+    if (
+        key == "content"
+        and not os.path.isfile(value)
+        and not urllib.request.urlopen(value).getcode() == 200
+    ):
+        return f"{value} is not a valid url or path to a file."
 
     return ""
 
