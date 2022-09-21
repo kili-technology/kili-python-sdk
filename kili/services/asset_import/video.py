@@ -141,7 +141,7 @@ class VideoDataImporter(BaseAssetImporter):
     """
 
     @staticmethod
-    def is_hosted_frames(asset):
+    def is_hosted_frames(asset) -> bool:
         """
         Determine if the frames to import are hosted
         """
@@ -149,7 +149,7 @@ class VideoDataImporter(BaseAssetImporter):
         return all(is_url(frame) for frame in frames)
 
     @staticmethod
-    def has_any_local_frame(asset):
+    def has_any_local_frame(asset) -> bool:
         """
         Determine if at least one frame to import is a local file
         """
@@ -176,7 +176,7 @@ class VideoDataImporter(BaseAssetImporter):
         return VideoDataType.LOCAL_FILE
 
     @staticmethod
-    def should_cut_into_frames(assets):
+    def should_cut_into_frames(assets) -> bool:
         """
         Determine if assets should be imported asynchronously and cut into frames
         """

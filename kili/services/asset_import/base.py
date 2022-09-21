@@ -329,14 +329,14 @@ class BaseAssetImporter:
             project_id=self.project_params.project_id, fields=["externalId"], disable_tqdm=True
         )
         external_ids_in_project = [asset["externalId"] for asset in assets_in_project]
-        filetered_assets = [
+        filtered_assets = [
             asset for asset in assets if asset.get("external_id") not in external_ids_in_project
         ]
-        if len(filetered_assets) == 0:
+        if len(filtered_assets) == 0:
             raise ImportValidationError(
                 "No assets to import, all given external_ids already exist in the project"
             )
-        return filetered_assets
+        return filtered_assets
 
     def import_assets_by_batch(
         self,
