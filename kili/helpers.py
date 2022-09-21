@@ -189,7 +189,7 @@ def fragment_builder(fields: List[str], typedDictClass: Type[TypedDict]):
                     ]
                     new_fragment = fragment_builder(
                         fields_subquery,
-                        type_of_fields_subquery,  # type: ignore
+                        type_of_fields_subquery,
                     )
                     fragment += f" {subquery}{{{new_fragment}}}"
             except ValueError:
