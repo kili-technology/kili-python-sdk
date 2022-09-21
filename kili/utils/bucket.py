@@ -5,6 +5,9 @@ from typing import Union
 from urllib.parse import parse_qs, urlparse
 
 import requests
+from tenacity import retry
+from tenacity.stop import stop_after_attempt
+from tenacity.wait import wait_random
 
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
@@ -30,7 +33,8 @@ def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
     return urls_response["data"]["urls"]
 
 
-def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str):
+@retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2))
+def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str, max_retry=3):
     """upload data in buckets' signed URL via REST
     Args:
         signed_urls: Bucket signed URLs to upload local files to
