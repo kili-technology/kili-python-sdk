@@ -6,7 +6,7 @@ jobs:
     name: Pylint test
     strategy:
       matrix:
-        python-version: ["3.7", "3.10"]
+        python-version: ['3.7', '3.10']
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -27,7 +27,7 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        python-version: ["3.7", "3.10"]
+        python-version: ['3.7', '3.10']
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -51,3 +51,27 @@ jobs:
           KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
           KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
           KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
+  linkcheckmd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    name: Unit tests
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.10']
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirementstxt
+          pip install linkcheckmd==1.4.0
+
+      - name: Dead links
+        run: python -m linkcheckmd -r .
