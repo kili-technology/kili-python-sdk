@@ -125,7 +125,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
             content_type, _ = mimetypes.guess_type(frame_path)
             assert content_type
             uploaded_frame_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)
-            cleaned_url = bucket.clean_signed_url(uploaded_frame_url)
+            cleaned_url = bucket.clean_signed_url(uploaded_frame_url, self.auth.api_endpoint)
             uploaded_frames.append(cleaned_url)
         return {**asset, "json_content": uploaded_frames}
 

@@ -2,7 +2,7 @@
 
 
 from typing import Union
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 import requests
 
@@ -47,18 +47,11 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
     return url_with_id
 
 
-AZURE_STRING = "blob.core.windows.net"
-GCP_STRING = "storage.googleapis.com"
-GCP_STRING_PUBLIC = "storage.cloud.google.com"
-
-
-def clean_signed_url(url: str):
+def clean_signed_url(url: str, endpoint: str):
     """
-    Remove the signature from a signed URL
+    return a cleaned sined url for frame upload
     """
-    if AZURE_STRING in url:
-        return url.split("?")[0]
-    if GCP_STRING in url:
-        url_path = urlparse(url).path
-        return f"https://{GCP_STRING_PUBLIC}{url_path}"
-    return url
+    query = urlparse(url).query
+    id = parse_qs(query)["id"][0]
+    base_path = endpoint.replace("/graphql", "/files").replace("http://", "https://")
+    return f"{base_path}?id={id}"

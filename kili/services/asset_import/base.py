@@ -318,7 +318,7 @@ class BaseAssetImporter:
 
     def filter_duplicate_external_ids(self, assets):
         """Filter out assets whose external_id is already in the project."""
-        if not len(assets):
+        if len(assets) == 0:
             raise ImportValidationError("No assets to import")
         assets_in_project = QueriesAsset(self.auth).assets(
             project_id=self.project_params.project_id, fields=["externalId"], disable_tqdm=True
@@ -327,7 +327,7 @@ class BaseAssetImporter:
         filetered_assets = [
             asset for asset in assets if asset.get("external_id") not in external_ids_in_project
         ]
-        if not len(filetered_assets):
+        if len(filetered_assets) == 0:
             raise ImportValidationError(
                 "No assets to import, all given external_ids already exist in the project"
             )

@@ -22,7 +22,7 @@ def dict_type_check(dict_: Dict[str, Any], type_check):
     if len(warnings_message) == 0:
         return [dict_]
 
-    warnings.warn(warnings_message + "{} will not be added.".format(list(dict_.values())[0]))
+    warnings.warn(f"{warnings_message} {list(dict_.values())[0]}  will not be added.")
     return []
 
 
