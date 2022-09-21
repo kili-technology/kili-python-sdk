@@ -3,7 +3,7 @@
 ## How to create a project
 
 You can refer to the following [documentation](https://docs.kili-technology.com/docs/creating-a-new-project).
-You can also refer to [our recipe on how to create a project](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb))
+You can also refer to [our recipe on how to create a project](https://docs.kili-technology.com/recipes/creating-a-project)
 
 ## How to update interface settings
 
@@ -29,7 +29,7 @@ python add_users.py
 
 ## How to import assets
 
-Check out [our recipe on how to import assets](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb))
+Check out [our recipe on how to import assets](https://docs.kili-technology.com/recipes/importing-data)
 
 ## How to delete all assets
 
@@ -41,11 +41,11 @@ python delete_all_assets.py
 
 ## How to push pre-annotation to existing assets
 
-Check out [our recipe on how to import predictions](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb))
+Check out [our recipe on how to import predictions](https://docs.kili-technology.com/recipes/importing-labels-and-predictions)
 
 ## How to export and parse labels
 
-Check out [our recipe on how to export labels](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb))
+Check out [our recipe on how to get your labels](https://docs.kili-technology.com/recipes/exporting-assets-and-labels)
 
 ## How to do Named-Entity Recognition with Google
 
