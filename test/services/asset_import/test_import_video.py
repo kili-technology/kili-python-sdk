@@ -39,7 +39,7 @@ class VideoTestCase(ImportTestCase):
             }
         )
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url"],
+            ["https://signed_url?id=id"],
             ["local video file to native"],
             [False],
             [""],
@@ -97,7 +97,10 @@ class VideoTestCase(ImportTestCase):
             }
         )
         expected_parameters = self.get_expected_async_call(
-            ["https://signed_url"], ["local video to frames"], [expected_json_metadata], "VIDEO"
+            ["https://signed_url?id=id"],
+            ["local video to frames"],
+            [expected_json_metadata],
+            "VIDEO",
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -156,7 +159,7 @@ class VideoTestCase(ImportTestCase):
             [""],
             ["from local frames"],
             [False],
-            ["https://signed_url"],
+            ["https://signed_url?id=id"],
             [expected_json_metadata],
             ["TODO"],
         )
@@ -186,7 +189,7 @@ class VideoTestCase(ImportTestCase):
             [""],
             ["from hosted frames"],
             [False],
-            ["https://signed_url"],
+            ["https://signed_url?id=id"],
             [expected_json_metadata],
             ["TODO"],
         )
@@ -217,7 +220,7 @@ class VideoTestCase(ImportTestCase):
             ["https://reading_signed_url_content"],
             ["from label-import"],
             [False],
-            ["https://signed_url"],
+            ["https://signed_url?id=id"],
             [expected_json_metadata],
             ["TODO"],
         )

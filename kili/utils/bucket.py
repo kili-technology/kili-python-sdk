@@ -52,6 +52,6 @@ def clean_signed_url(url: str, endpoint: str):
     return a cleaned sined url for frame upload
     """
     query = urlparse(url).query
-    id = parse_qs(query)["id"][0]
+    id_param = parse_qs(query)["id"][0]
     base_path = endpoint.replace("/graphql", "/files").replace("http://", "https://")
-    return f"{base_path}?id={id}"
+    return f"{base_path}?id={id_param}"

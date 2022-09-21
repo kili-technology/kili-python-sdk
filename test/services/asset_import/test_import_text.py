@@ -29,7 +29,7 @@ class TextTestCase(ImportTestCase):
         assets = [{"content": path, "external_id": "local text file"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url"], ["local text file"], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"], ["local text file"], [False], [""], ["{}"], ["TODO"]
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -47,7 +47,7 @@ class TextTestCase(ImportTestCase):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url"], ["raw text"], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"], ["raw text"], [False], [""], ["{}"], ["TODO"]
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -66,7 +66,7 @@ class TextTestCase(ImportTestCase):
         assets = [{"json_content": json_content, "external_id": "rich text"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            [""], ["rich text"], [False], ["https://signed_url"], ["{}"], ["TODO"]
+            [""], ["rich text"], [False], ["https://signed_url?id=id"], ["{}"], ["TODO"]
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 

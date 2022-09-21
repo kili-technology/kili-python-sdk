@@ -31,7 +31,7 @@ class PDFTestCase(ImportTestCase):
         assets = [{"content": path, "external_id": "local pdf file"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url"], ["local pdf file"], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"], ["local pdf file"], [False], [""], ["{}"], ["TODO"]
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 

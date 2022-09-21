@@ -29,7 +29,7 @@ class PDFTestCase(ImportTestCase):
         assets = [{"content": path_image, "external_id": "local image"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url"], ["local image"], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"], ["local image"], [False], [""], ["{}"], ["TODO"]
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -49,7 +49,7 @@ class PDFTestCase(ImportTestCase):
         assets = [{"content": path_image, "external_id": "local tiff image"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_async_call(
-            ["https://signed_url"], ["local tiff image"], ["{}"], "GEO_SATELLITE"
+            ["https://signed_url?id=id"], ["local tiff image"], ["{}"], "GEO_SATELLITE"
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -64,10 +64,10 @@ class PDFTestCase(ImportTestCase):
         ]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters_sync = self.get_expected_sync_call(
-            ["https://signed_url"], ["local basic image"], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"], ["local basic image"], [False], [""], ["{}"], ["TODO"]
         )
         expected_parameters_async = self.get_expected_async_call(
-            ["https://signed_url"], ["local tiff image"], ["{}"], "GEO_SATELLITE"
+            ["https://signed_url?id=id"], ["local tiff image"], ["{}"], "GEO_SATELLITE"
         )
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
         self.auth.client.execute.assert_has_calls(calls, any_order=True)
