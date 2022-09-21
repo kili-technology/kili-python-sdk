@@ -26,7 +26,7 @@ TEST_CASES = [
             "skip": 20,
         },
         "expected_result": [{"id": i} for i in range(20, 23)],
-        "expected_type": "generator",
+        "expected_type": "TypeCheckedGenerator",
     },
 ]
 
