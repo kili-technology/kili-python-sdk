@@ -2,7 +2,7 @@
 Queries of asset mutations
 """
 
-from kili.graphql.operations.asset.fragments import ASSET_FRAGMENT
+from kili.graphQL.operations.asset.fragments import ASSET_FRAGMENT
 from kili.mutations.project.fragments import PROJECT_FRAGMENT_ID
 
 GQL_UPDATE_PROPERTIES_IN_ASSETS = f"""
