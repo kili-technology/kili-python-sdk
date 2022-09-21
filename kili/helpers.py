@@ -168,7 +168,7 @@ def format_json(result):
     return result
 
 
-def fragment_builder(fields: List[str], typedDictClass: Type[TypedDict]):
+def fragment_builder(fields: List[str], typed_dict_class: Type[TypedDict]):
     """
     Builds a GraphQL fragment for a list of fields to query
 
@@ -176,7 +176,7 @@ def fragment_builder(fields: List[str], typedDictClass: Type[TypedDict]):
         fields
         type_of_fields
     """
-    type_of_fields = typedDictClass.__annotations__
+    type_of_fields = typed_dict_class.__annotations__
     fragment = ""
     subfields = [field.split(".", 1) for field in fields if "." in field]
     if subfields:
