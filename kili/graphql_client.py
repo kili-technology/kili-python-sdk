@@ -81,7 +81,10 @@ class GraphQLClient:
         }
 
         if self.token is not None:
-            headers[self.headername] = f"{self.token}"
+            if self.headername:
+                headers[self.headername] = f"{self.token}"
+            else:
+                raise ValueError("headername must be defined.")
 
         if self.session is not None:
             req = None
@@ -276,7 +279,7 @@ class SubscriptionGraphQLClient:
                         self._stop_subscribe(_id)
                         break
                     if response["type"] != "ka" and not self._paused:
-                        _cc(_id, response)
+                        _cc(_id, response)  # type:ignore
                     time.sleep(1)
                 except (
                     websocket._exceptions.WebSocketConnectionClosedException  # pylint: disable=no-member,protected-access
