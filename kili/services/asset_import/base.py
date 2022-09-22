@@ -83,8 +83,8 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         Base actions to import a batch of asset
         """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
-        assets = self.loop_on_batch(self.fill_empty_fields)(assets)
-        result_batch = self.import_to_kili(assets)
+        assets = self.loop_on_batch(self.fill_empty_fields)(assets)  # type: ignore
+        result_batch = self.import_to_kili(assets)  # type: ignore
         self.pbar.update(n=len(assets))
         return result_batch
 
@@ -104,17 +104,17 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         fill empty fields with their default value
         """
         field_names = ASSET_FIELDS_DEFAULT_VALUE.keys()
-        return {
-            field: asset.get(field) or ASSET_FIELDS_DEFAULT_VALUE[field] for field in field_names
-        }
+        return KiliResolverAsset(
+            **{field: asset.get(field, ASSET_FIELDS_DEFAULT_VALUE[field]) for field in field_names}
+        )
 
     @staticmethod
-    def loop_on_batch(func: Callable):
+    def loop_on_batch(func: Callable[[AssetLike], AssetLike]):
         """
         Apply a function, that takes a single asset as input, on the whole batch
         """
 
-        def loop_func(assets: list):
+        def loop_func(assets: List[AssetLike]):
             return [func(asset) for asset in assets]
 
         return loop_func
@@ -195,7 +195,7 @@ class ContentBatchImporter(BaseBatchImporter):
             url_gen = threads.map(
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
-        return [{**asset, "content": url} for asset, url in zip(assets, url_gen)]
+        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -204,16 +204,16 @@ class JsonContentBatchImporter(BaseBatchImporter):
     """
 
     @staticmethod
-    def stringify_json_content(asset) -> AssetLike:
+    def stringify_json_content(asset: AssetLike):
         """
         Stringify the json content if not a str.
         """
         json_content = asset.get("json_content", {})
         if not isinstance(json_content, str):
             json_content = dumps(json_content)
-        return {**asset, "json_content": json_content}
+        return AssetLike(**{**asset, "json_content": json_content})
 
-    def upload_json_content_to_bucket(self, assets):
+    def upload_json_content_to_bucket(self, assets: List[AssetLike]):
         """
         Upload the json_contents to a bucket with signed urls
         """
@@ -226,7 +226,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 json_content_array,
                 ["text/plain"] * len(assets),
             )
-        return [{**asset, "json_content": url} for asset, url in zip(assets, url_gen)]
+        return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]
 
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike]):
@@ -281,6 +281,7 @@ class BaseAssetImporter:
         filtered_assets = []
         for asset in assets:
             path = asset.get("content")
+            assert path
             try:
                 self.check_mime_type_compatibility(path)
                 filtered_assets.append(asset)
@@ -348,6 +349,7 @@ class BaseAssetImporter:
         batch_generator = pagination.batch_iterator_builder(assets, batch_size)
         self.pbar.total = len(assets)
         self.pbar.refresh()
+        responses = []
         for batch_assets in batch_generator:
-            response = batch_importer.import_batch(batch_assets)
-        return response
+            responses.append(batch_importer.import_batch(batch_assets))
+        return responses[-1]

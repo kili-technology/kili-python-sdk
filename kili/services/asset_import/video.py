@@ -43,7 +43,7 @@ class VideoMixin:
         Base method for adding video processing parameters
         """
         json_metadata = asset.get("json_metadata", {})
-        processing_parameters = json_metadata.get("processingParameters", {})
+        processing_parameters = json_metadata.get("processingParameters", {})  # type: ignore
         video_parameters = [
             ("shouldKeepNativeFrameRate", not from_frames),
             ("framesPlayedPerSecond", 30),
@@ -52,8 +52,6 @@ class VideoMixin:
         for (key, default_value) in video_parameters:
             processing_parameters[key] = processing_parameters.get(key, default_value)
         return processing_parameters
-        # json_metadata = {**json_metadata, "processingParameters": processing_parameters}
-        # return {**asset, "json_metadata": json_metadata}
 
     @staticmethod
     def map_frame_urls_to_index(asset: AssetLike):
@@ -64,7 +62,7 @@ class VideoMixin:
         assert json_content
         json_content_index = range(len(json_content))
         json_content = dict(zip(json_content_index, json_content))
-        return {**asset, "json_content": json_content}
+        return AssetLike(**{**asset, "json_content": json_content})
 
 
 class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
@@ -79,7 +77,7 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
         json_metadata = asset.get("json_metadata", {})
         processing_parameters = self.get_video_processing_parameters(asset, from_frames=False)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
-        return {**asset, "json_metadata": json_metadata}
+        return AssetLike(**{**asset, "json_metadata": json_metadata})
 
     def import_batch(self, assets: List[AssetLike]):
         """
@@ -101,7 +99,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         json_metadata = asset.get("json_metadata", {})
         processing_parameters = self.get_video_processing_parameters(asset, from_frames=True)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
-        return {**asset, "json_metadata": json_metadata}
+        return AssetLike(**{**asset, "json_metadata": json_metadata})
 
     def import_batch(self, assets: List[AssetLike]):
         """
@@ -132,7 +130,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
         cleaned_urls = (bucket.clean_signed_url(url, self.auth.api_endpoint) for url in url_gen)
-        return {**asset, "json_content": list(cleaned_urls)}
+        return AssetLike(**{**asset, "json_content": list(cleaned_urls)})
 
 
 class VideoDataImporter(BaseAssetImporter):
@@ -232,5 +230,7 @@ class VideoDataImporter(BaseAssetImporter):
                 self.auth, self.project_params, batch_params, self.pbar
             )
             batch_size = IMPORT_BATCH_SIZE
+        else:
+            raise ImportValidationError
         result = self.import_assets_by_batch(assets, batch_importer, batch_size)
         return result

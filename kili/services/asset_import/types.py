@@ -1,6 +1,6 @@
 """Import service types"""
 
-from typing import Optional, Union
+from typing import Union
 
 from typing_extensions import TypedDict
 
@@ -10,12 +10,12 @@ class AssetLike(TypedDict, total=False):
     General type of an asset obejct through the import functions
     """
 
-    content: Optional[str]
-    json_content: Optional[Union[dict, str, list]]
-    external_id: Optional[str]
-    status: Optional[str]
-    json_metadata: Optional[Union[str, dict]]
-    is_honeypot: Optional[bool]
+    content: str
+    json_content: Union[dict, str, list]
+    external_id: str
+    status: str
+    json_metadata: Union[str, dict]
+    is_honeypot: bool
 
 
 class KiliResolverAsset(TypedDict, total=True):

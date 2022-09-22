@@ -108,5 +108,7 @@ class TextDataImporter(BaseAssetImporter):
             batch_importer = JsonContentBatchImporter(
                 self.auth, self.project_params, batch_params, self.pbar
             )
+        else:
+            raise ImportValidationError
         result = self.import_assets_by_batch(assets, batch_importer)
         return result
