@@ -10,11 +10,11 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Dict, List, Optional, Tuple, Type
+from typing import List, Optional, Tuple, Type
 
 import pyparsing as pp
 import requests
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, is_typeddict
 
 from kili.constants import mime_extensions_for_IV2
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
@@ -181,9 +181,9 @@ def fragment_builder(fields: List[str], typedDictClass: Type[TypedDict]):
     subfields = [field.split(".", 1) for field in fields if "." in field]
     if subfields:
         for subquery in {subfield[0] for subfield in subfields}:
-            type_of_fields_subquery = getattr(type_of_fields, subquery)
+            type_of_fields_subquery = type_of_fields[subquery]
             try:
-                if isinstance(type_of_fields_subquery, Dict):
+                if is_typeddict(type_of_fields_subquery):
                     fields_subquery = [
                         subfield[1] for subfield in subfields if subfield[0] == subquery
                     ]
@@ -197,7 +197,7 @@ def fragment_builder(fields: List[str], typedDictClass: Type[TypedDict]):
         fields = [field for field in fields if "." not in field]
     for field in fields:
         try:
-            getattr(type_of_fields, field)
+            type_of_fields[field]
         except ValueError:
             print(f"{field} must be an instance of {type_of_fields}")
         if isinstance(field, str):
