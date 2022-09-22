@@ -1,9 +1,9 @@
 # Kili Python SDK
+
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Code style: flake8](https://img.shields.io/badge/code%20style-flake8-brightgreen.svg)](https://flake8.pycqa.org/)
 [![Python 3.7](https://img.shields.io/badge/python-3.7%20|%203.8%20|%203.9%20|%203.10%20-blue.svg)](https://www.python.org/)
-
 
 [SDK reference](https://python-sdk-docs.kili-technology.com/)
 
@@ -27,7 +27,7 @@ It comes with several [recipes](recipes/) that demonstrate how to use it in the 
 ## Requirements
 
 - Python >= 3.7
-- Create and copy a [Kili API key](recipes/api_key.md)
+- Create and copy a [Kili API key](https://docs.kili-technology.com/docs/creating-an-api-key)
 - Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
 
 ```bash
@@ -164,11 +164,5 @@ See a detailled example in this [recipe](https://docs.kili-technology.com/recipe
 
 ## More examples
 
-You can find all several recipes in this [folder](/recipes/). Among them:
-
-- [How to import assets](recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb))
-- [How to export labels](recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb))
-- [How to import predictions](recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb))
-- [How to query data through the API](recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb))
-
+You can find all several recipes in this [folder](recipes/).
 For more details, read the [SDK reference](https://python-sdk-docs.kili-technology.com) or the [Kili documentation](https://docs.kili-technology.com/docs)

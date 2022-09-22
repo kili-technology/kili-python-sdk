@@ -6,7 +6,7 @@ jobs:
     name: Pylint test
     strategy:
       matrix:
-        python-version: ["3.7", "3.10"]
+        python-version: ['3.7', '3.10']
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -27,7 +27,7 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        python-version: ["3.7", "3.10"]
+        python-version: ['3.7', '3.10']
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -51,3 +51,11 @@ jobs:
           KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
           KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
           KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
+  markdown-link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'

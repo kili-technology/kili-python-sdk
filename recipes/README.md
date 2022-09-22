@@ -3,7 +3,7 @@
 ## How to create a project
 
 You can refer to the following [documentation](https://docs.kili-technology.com/docs/creating-a-new-project).
-You can also refer to [our recipe on how to create a project](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb))
+You can also refer to [our recipe on how to create a project](https://docs.kili-technology.com/recipes/creating-a-project)
 
 ## How to update interface settings
 
@@ -29,7 +29,7 @@ python add_users.py
 
 ## How to import assets
 
-Check out [our recipe on how to import assets](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb))
+Check out [our recipe on how to import assets](https://docs.kili-technology.com/recipes/importing-data)
 
 ## How to delete all assets
 
@@ -41,11 +41,11 @@ python delete_all_assets.py
 
 ## How to push pre-annotation to existing assets
 
-Check out [our recipe on how to import predictions](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb))
+Check out [our recipe on how to import predictions](https://docs.kili-technology.com/recipes/importing-labels-and-predictions)
 
 ## How to export and parse labels
 
-Check out [our recipe on how to export labels](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/export_labels.ipynb))
+Check out [our recipe on how to get your labels](https://docs.kili-technology.com/recipes/exporting-assets-and-labels)
 
 ## How to do Named-Entity Recognition with Google
 
@@ -80,6 +80,8 @@ You can query every asset, label, or project-related information through the API
 A comprehensive example is [our recipe on how to use the query methods](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb))
 You can also refer to the [SDK reference](https://python-sdk-docs.kili-technology.com/).
 
+<!-- markdown-link-check-disable -->
+
 ## How to use GraphQL Playground to query data
 
 If you prefer, you can directly query GraphQL API without using [Apollo Studio](http://cloud.kili-technology.com/api/label/v2/graphql)
@@ -90,6 +92,8 @@ If you prefer, you can directly query GraphQL API without using [Apollo Studio](
 
 3. In the bottom left corner of the screen, click on `HTTP headers` and write
    the retrieved token in the authorization headers:
+
+<!-- markdown-link-check-enable -->
 
 ```json
 {

@@ -19,3 +19,4 @@ pre-commit
 pylint
 flake8-unused-arguments
 pyright
+linkcheckmd
