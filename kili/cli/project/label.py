@@ -57,7 +57,7 @@ def import_labels(
     project_id: str,
     is_prediction: bool,
     model_name: str,
-    verbose: bool,
+    verbose: bool,  # pylint: disable=unused-argument
 ):
     """
     Import labels or predictions
