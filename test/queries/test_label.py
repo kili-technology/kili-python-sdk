@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 from kili.queries.label import QueriesLabel
 
 mocked_auth = MagicMock()
-mocked_auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+mocked_auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql-fake"
 
 TEST_CASES = [
     {
