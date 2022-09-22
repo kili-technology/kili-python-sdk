@@ -6,6 +6,8 @@ from typing import Optional
 
 from typeguard import typechecked
 
+from kili.types import Project
+
 from ...helpers import Compatible, format_result
 from .helpers import verify_argument_ranges
 from .queries import (
@@ -180,7 +182,7 @@ class MutationsProject:
         title: str,
         description: str = "",
         project_type: Optional[str] = None,
-    ):
+    ) -> Project:
         # pylint: disable=line-too-long
         """Create a project.
 
@@ -230,7 +232,7 @@ class MutationsProject:
             }
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
-        return format_result("data", result)
+        return format_result("data", result)  # type: ignore
 
     @Compatible(["v2"])
     @typechecked

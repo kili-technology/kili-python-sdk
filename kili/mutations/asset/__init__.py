@@ -6,18 +6,17 @@ from typing import List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.services.asset_import import import_assets
-
-from ...helpers import Compatible, format_result
-from ...orm import Asset
-from ...utils.pagination import _mutate_from_paginated_call
-from .helpers import process_update_properties_in_assets_parameters
-from .queries import (
+from kili.helpers import Compatible, format_result
+from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
+from kili.mutations.asset.queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
     GQL_DELETE_MANY_FROM_DATASET,
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
+from kili.orm import Asset
+from kili.services.asset_import import import_assets
+from kili.utils.pagination import _mutate_from_paginated_call
 
 
 class MutationsAsset:

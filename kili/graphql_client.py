@@ -13,7 +13,7 @@ from datetime import datetime
 from enum import Enum
 
 import websocket
-from six.moves import urllib
+from six.moves import urllib  # type:ignore
 
 from kili import __version__
 
@@ -109,7 +109,7 @@ class GraphQLClient:
                     raise Exception(req.content) from exception
                 raise exception
 
-        req = urllib.request.Request(
+        req = urllib.request.Request(  # type: ignore
             self.endpoint, json.dumps(data).encode("utf-8"), headers
         )  # type:ignore
         try:
@@ -153,7 +153,7 @@ class SubscriptionGraphQLClient:
             self.ws_url, on_message=self._on_message, subprotocols=[GQL_WS_SUBPROTOCOL]
         )
         self._created_at = datetime.now()
-        self._conn.on_message = self._on_message
+        self._conn.on_message = self._on_message  # type: ignore
 
     def _reconnect(self):
         """
@@ -278,7 +278,9 @@ class SubscriptionGraphQLClient:
                     if response["type"] != "ka" and not self._paused:
                         _cc(_id, response)
                     time.sleep(1)
-                except websocket._exceptions.WebSocketConnectionClosedException as error:  # pylint: disable=no-member,protected-access
+                except (
+                    websocket._exceptions.WebSocketConnectionClosedException
+                ) as error:  # pylint: disable=no-member,protected-access
                     self.failed_connection_attempts += 1
                     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                     error_message = str(error)
