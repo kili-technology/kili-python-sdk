@@ -10,10 +10,11 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Type
 
 import pyparsing as pp
 import requests
+from typing_extensions import TypedDict
 
 from kili.constants import mime_extensions_for_IV2
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
@@ -144,7 +145,7 @@ def format_json_dict(result):
                         result[key] = loads(value)
                 except Exception as exception:
                     raise ValueError(
-                        "Json Metadata / json response /" " json interface should be valid jsons"
+                        "Json Metadata / json response / json interface should be valid jsons"
                     ) from exception
         else:
             result[key] = format_json(value)
@@ -167,7 +168,7 @@ def format_json(result):
     return result
 
 
-def fragment_builder(fields, type_of_fields):
+def fragment_builder(fields: List[str], typedDictClass: Type[TypedDict]):
     """
     Builds a GraphQL fragment for a list of fields to query
 
@@ -175,17 +176,21 @@ def fragment_builder(fields, type_of_fields):
         fields
         type_of_fields
     """
+    type_of_fields = typedDictClass.__annotations__
     fragment = ""
     subfields = [field.split(".", 1) for field in fields if "." in field]
     if subfields:
         for subquery in {subfield[0] for subfield in subfields}:
             type_of_fields_subquery = getattr(type_of_fields, subquery)
             try:
-                if issubclass(type_of_fields_subquery, object):
+                if isinstance(type_of_fields_subquery, Dict):
                     fields_subquery = [
                         subfield[1] for subfield in subfields if subfield[0] == subquery
                     ]
-                    new_fragment = fragment_builder(fields_subquery, type_of_fields_subquery)
+                    new_fragment = fragment_builder(
+                        fields_subquery,
+                        type_of_fields_subquery,  # type: ignore
+                    )
                     fragment += f" {subquery}{{{new_fragment}}}"
             except ValueError:
                 print(f"{subquery} must be a valid subquery field")
