@@ -2,7 +2,7 @@
 Asset mutations
 """
 
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from typeguard import typechecked
 
@@ -199,7 +199,7 @@ class MutationsAsset:
         }
         properties_to_batch = process_update_properties_in_assets_parameters(parameters)
 
-        def generate_variables(batch):
+        def generate_variables(batch: Dict) -> Dict:
             data = {
                 "externalId": batch["external_ids"],
                 "priority": batch["priorities"],
