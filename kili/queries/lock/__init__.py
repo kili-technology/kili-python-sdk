@@ -97,4 +97,4 @@ class QueriesLock:
         variables = {"where": {"id": None}}
         result = self.auth.client.execute(GQL_LOCKS_COUNT, variables)
         count = format_result("data", result)
-        return count
+        return int(count)  # type:ignore
