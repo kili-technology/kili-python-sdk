@@ -19,7 +19,7 @@ from kili.helpers import get_file_paths_to_upload
 from kili.services import asset_import
 
 
-def type_check_asset(key, value):
+def check_asset_type(key, value):
     """type check value based on key"""
     if key == "content" and not os.path.isfile(value):
         with urllib.request.urlopen(value) as http_response:
@@ -154,7 +154,7 @@ def import_assets(
             csv_path=csv_path,
             required_columns=["external_id", "content"],
             optional_columns=[],
-            type_check_function=type_check_asset,
+            type_check_function=check_asset_type,
         )
 
         files_to_upload = [row["content"] for row in row_dict]

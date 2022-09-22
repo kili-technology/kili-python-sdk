@@ -34,7 +34,7 @@ def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2))
-def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str, max_retry=3):
+def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str):
     """upload data in buckets' signed URL via REST
     Args:
         signed_urls: Bucket signed URLs to upload local files to
