@@ -1,6 +1,6 @@
 """Asset queries."""
 
-from typing import Iterable, List, Optional
+from typing import Generator, List, Optional, Union
 
 import pandas as pd
 from typeguard import typechecked
@@ -34,7 +34,6 @@ class QueriesAsset:
 
     # pylint: disable=dangerous-default-value
     @Compatible(["v1", "v2"])
-    @typechecked
     def assets(
         self,
         project_id: str,
@@ -80,7 +79,7 @@ class QueriesAsset:
         updated_at_lte: Optional[str] = None,
         as_generator: bool = False,
         label_category_search: Optional[str] = None,
-    ) -> Iterable[Asset]:
+    ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
