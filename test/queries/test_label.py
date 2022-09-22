@@ -3,11 +3,12 @@
 """
 import os
 from test.utils import mocked_count_method, mocked_query_method
+from unittest.mock import MagicMock
 
-from kili.client import Kili
+from kili.queries.label import QueriesLabel
 
-api_endpoint = os.getenv("KILI_API_ENDPOINT")
-kili = Kili(api_endpoint=api_endpoint)
+mocked_auth = MagicMock()
+mocked_auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql-fake"
 
 TEST_CASES = [
     {
@@ -40,7 +41,7 @@ def test_labels(mocker):
     for test_case in TEST_CASES:
         case_name = test_case["case"]
         expected = test_case["expected_result"]
-        actual = kili.labels(**test_case["args"])
+        actual = QueriesLabel(mocked_auth).labels(**test_case["args"])
         assert (
             type(actual).__name__ == test_case["expected_type"]
         ), f'Test case "{case_name}" failed'
