@@ -24,6 +24,7 @@ setup(
         "requests",
         "six",
         "tabulate",
+        "tenacity",
         "tqdm",
         "typeguard",
         "typing_extensions",

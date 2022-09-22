@@ -5,14 +5,26 @@ from typing import List
 from kili.authentication import KiliAuth
 from kili.constants import NO_ACCESS_RIGHT
 from kili.queries.project import QueriesProject
-from kili.services.asset_import.legacy import LegacyImporter
-from kili.services.asset_import.types import AssetToImport
+from kili.services.asset_import.image import ImageDataImporter
+from kili.services.asset_import.legacy import LegacyDataImporter
+from kili.services.asset_import.pdf import PdfDataImporter
+from kili.services.asset_import.text import TextDataImporter
+from kili.services.asset_import.types import AssetLike
+from kili.services.asset_import.video import VideoDataImporter
+
+from .base import LoggerParams, ProcessingParams, ProjectParams
+
+importer_by_type = {
+    "PDF": PdfDataImporter,
+    "IMAGE": ImageDataImporter,
+    "TEXT": TextDataImporter,
+    "VIDEO": VideoDataImporter,
+    "FRAMES": VideoDataImporter,
+}
 
 
 def import_assets(
-    auth: KiliAuth,
-    project_id: str,
-    assets: List[AssetToImport],
+    auth: KiliAuth, project_id: str, assets: List[AssetLike], raise_error=True, disable_tqdm=False
 ):
     """
     import the selected assets into the specified project
@@ -22,5 +34,11 @@ def import_assets(
     assert len(projects) == 1, NO_ACCESS_RIGHT
     input_type = projects[0]["inputType"]
 
-    legacy_importer = LegacyImporter(auth=auth, project_id=project_id, input_type=input_type)
-    return legacy_importer.import_assets(assets=assets)
+    project_params = ProjectParams(project_id=project_id, input_type=input_type)
+    processing_params = ProcessingParams(raise_error=raise_error)
+    logger_params = LoggerParams(disable_tqdm=disable_tqdm)
+    importer_params = (auth, project_params, processing_params, logger_params)
+
+    asset_importer = importer_by_type.get(input_type, LegacyDataImporter)(*importer_params)
+    result = asset_importer.import_assets(assets=assets)
+    return result

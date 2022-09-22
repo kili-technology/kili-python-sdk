@@ -1,11 +1,20 @@
 """Module for managing bucket's signed urls"""
 
-from typing import List
+
+from typing import Union
+from urllib.parse import parse_qs, urlparse
 
 import requests
+from tenacity import retry
+from tenacity.stop import stop_after_attempt
+from tenacity.wait import wait_random
 
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
+
+AZURE_STRING = "blob.core.windows.net"
+GCP_STRING = "storage.googleapis.com"
+GCP_STRING_PUBLIC = "storage.cloud.google.com"
 
 
 def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
@@ -24,27 +33,29 @@ def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
     return urls_response["data"]["urls"]
 
 
-def upload_data_via_rest(
-    signed_urls: List[str], data_array: List[str], content_type_array: List[str]
-):
+@retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2))
+def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str):
     """upload data in buckets' signed URL via REST
     Args:
         signed_urls: Bucket signed URLs to upload local files to
         path_array: a list of file paths, json or text to upload
         content_type: mimetype of the data. It will be infered if not given
     """
-    responses = []
-    for index, data in enumerate(data_array):
-        content_type = content_type_array[index]
-        headers = {"Content-type": content_type}
-        url_with_id = signed_urls[index]
-        url_to_use_for_upload = url_with_id.split("&id=")[0]
-        if "blob.core.windows.net" in url_to_use_for_upload:
-            headers["x-ms-blob-type"] = "BlockBlob"
+    headers = {"Content-type": content_type}
+    url_to_use_for_upload = url_with_id.split("&id=")[0]
+    if "blob.core.windows.net" in url_to_use_for_upload:
+        headers["x-ms-blob-type"] = "BlockBlob"
 
-        response = requests.put(url_to_use_for_upload, data=data, headers=headers)
-        if response.status_code >= 300:
-            responses.append("")
-            continue
-        responses.append(url_with_id)
-    return responses
+    response = requests.put(url_to_use_for_upload, data=data, headers=headers)
+    response.raise_for_status()
+    return url_with_id
+
+
+def clean_signed_url(url: str, endpoint: str):
+    """
+    return a cleaned sined url for frame upload
+    """
+    query = urlparse(url).query
+    id_param = parse_qs(query)["id"][0]
+    base_path = endpoint.replace("/graphql", "/files").replace("http://", "https://")
+    return f"{base_path}?id={id_param}"

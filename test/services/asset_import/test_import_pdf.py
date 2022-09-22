@@ -1,37 +1,28 @@
-import shutil
-import tempfile
+from test.services.asset_import.base import ImportTestCase
 from test.services.asset_import.mocks import (
-    mocked__mutate_from_paginated_call,
     mocked_request_signed_urls,
     mocked_upload_data_via_rest,
 )
-from test.utils import LocalDownloader
-from unittest import TestCase
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
-from kili.graphql.operations.asset.mutations import GQL_APPEND_MANY_TO_DATASET
+from kili.queries.asset import QueriesAsset
 from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
-@patch("kili.utils.pagination._mutate_from_paginated_call", mocked__mutate_from_paginated_call)
 @patch.object(
     QueriesProject,
     "projects",
     MagicMock(return_value=[{"inputType": "PDF"}]),
 )
-class PDFTestCase(TestCase):
-    def setUp(self):
-        self.project_id = "project_id"
-        self.test_dir = tempfile.mkdtemp()
-        self.downloader = LocalDownloader(self.test_dir)
-        self.auth = None
-
-    def tearDown(self):
-        shutil.rmtree(self.test_dir)
-
+@patch.object(
+    QueriesAsset,
+    "assets",
+    MagicMock(return_value=[]),
+)
+class PDFTestCase(ImportTestCase):
     def test_upload_from_one_local_pdf(self):
         url = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/pdfs/sample.pdf"
@@ -39,35 +30,18 @@ class PDFTestCase(TestCase):
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local pdf file"}]
         import_assets(self.auth, self.project_id, assets)
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://signed_url"],
-                "external_id_array": ["local pdf file"],
-                "is_honeypot_array": [False],
-                "json_content_array": [""],
-                "json_metadata_array": ["{}"],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
+        expected_parameters = self.get_expected_sync_call(
+            ["https://signed_url?id=id"], ["local pdf file"], [False], [""], ["{}"], ["TODO"]
         )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_hosted_pdf(
-        self,
-    ):
+    def test_upload_from_one_hosted_pdf(self):
         assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
         import_assets(self.auth, self.project_id, assets)
-        mocked__mutate_from_paginated_call.assert_called_with(
-            ANY,
-            {
-                "content_array": ["https://hosted-data"],
-                "external_id_array": ["hosted file"],
-                "is_honeypot_array": [False],
-                "json_content_array": [""],
-                "json_metadata_array": ["{}"],
-                "status_array": ["TODO"],
-            },
-            ANY,
-            GQL_APPEND_MANY_TO_DATASET,
+        expected_parameters = self.get_expected_sync_call(
+            ["https://hosted-data"], ["hosted file"], [False], [""], ["{}"], ["TODO"]
         )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
+
+    def test_uplaod_from_several_batches(self):
+        self.assert_upload_several_batches()

@@ -360,9 +360,7 @@ def validate_category_search_query(query):
         raise ValueError(f"Invalid category search query: {query}") from error
 
 
-def get_file_paths_to_upload(
-    files: Tuple[str, ...], file_check_function, verbose: bool
-) -> List[str]:
+def get_file_paths_to_upload(files: Tuple[str, ...]) -> List[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.
 
     Args:
@@ -385,23 +383,8 @@ def get_file_paths_to_upload(
                 [sub_item for sub_item in glob.glob(item) if os.path.isfile(sub_item)]
             )
 
-    file_paths_to_upload = [path for path in file_paths if file_check_function(path)]
-
-    if len(file_paths_to_upload) == 0:
-        raise ValueError(
-            "No files to upload. Check that the paths exist and that the file type is correct"
-        )
-
-    if verbose:
-        for path in file_paths:
-            if path not in file_paths_to_upload:
-                print(f"{path:30} SKIPPED")
-        if len(file_paths_to_upload) != len(file_paths):
-            print("Paths skipped either do not exist or point towards an incorrect file")
-
-    file_paths_to_upload.sort()
-
-    return file_paths_to_upload
+    file_paths.sort()
+    return file_paths
 
 
 def file_check_function_from_input_type(input_type: str):

@@ -98,20 +98,20 @@ class MutationsAsset:
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
         nb_data = len(content_array) if content_array is not None else len(json_content_array)
-
-        assets = [
-            {
-                "content": content_array and content_array[i],
-                "json_content": json_content_array and json_content_array[i],
-                "external_id": external_id_array and external_id_array[i],
-                "status": status_array and status_array[i],
-                "json_metadata": json_metadata_array and json_metadata_array[i],
-                "is_honeypot": is_honeypot_array and is_honeypot_array[i],
-            }
-            for i in range(nb_data)
-        ]
-
-        return import_assets(self.auth, project_id=project_id, assets=assets)
+        field_mapping = {
+            "content": content_array,
+            "json_content": json_content_array,
+            "external_id": external_id_array,
+            "status": status_array,
+            "json_metadata": json_metadata_array,
+            "is_honeypot": is_honeypot_array,
+        }
+        assets = [{}] * nb_data
+        for key, value in field_mapping.items():
+            if value is not None:
+                assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
+        result = import_assets(self.auth, project_id=project_id, assets=assets)
+        return result
 
     @Compatible(["v2"])
     @typechecked
