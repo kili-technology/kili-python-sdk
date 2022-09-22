@@ -42,7 +42,7 @@ def export_labels(
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
-    verbose: bool,
+    verbose: bool,  # pylint: disable=unused-argument
 ):
     """
     Export the Kili labels of a project to a given format.
