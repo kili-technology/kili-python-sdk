@@ -54,12 +54,12 @@ def type_check_label(key, value):
 @click.option(
     "--metadata-file",
     type=str,
-    help="File containing format metadata (if relevant to the format)",
+    help="File containing format metadata (if relevant to the input format)",
 )
 @click.option(
     "--target-job",
     type=str,
-    help="Job name in the project where to upload the labels (if relevant to the format)",
+    help="Job name in the project where to upload the labels (if relevant to the input format)",
 )
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
@@ -85,9 +85,14 @@ def import_labels(
     If no files are provided, --from-csv can be used to import
     assets from a CSV file with two columns:
     - `label_asset_external_id`: external id for which you want to import labels.
+    - `label_asset_id`: asset id for which you want to import labels (mutual exclusive with the
+    field above, and not available for predictions)
     - `path`: paths to the json files containing the json_response to upload.
 
-    Additional columns can be provided, depending our
+    Additional columns can be provided in the CSV file, see the `.append_to_labels` documentation:
+    - label_type
+    - seconds_to_label
+    - author_id
 
     \b
     !!! Examples "CSV file template for the raw Kili format"
