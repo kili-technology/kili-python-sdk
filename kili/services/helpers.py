@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import List, Optional, TypeVar
 
 from kili.services.exceptions import (
-    NotEnoughArgumentsSpecified,
-    TooManyArgumentsSpecified,
+    NotEnoughArgumentsSpecifiedError,
+    TooManyArgumentsSpecifiedError,
 )
 
 PathLike = TypeVar("PathLike", Path, str)
@@ -16,11 +16,13 @@ def check_exclusive_options(csv_path: Optional[PathLike], files: Optional[List[P
     """Forbid mutual use of options and argument(s)"""
 
     if (csv_path is not None) + (files is not None and len(files) > 0) > 1:
-        raise TooManyArgumentsSpecified("files arguments and option --from-csv are exclusive.")
+        raise TooManyArgumentsSpecifiedError(
+            "An explicit list of files and a CSV file containing label files can't be specified at the same time"
+        )
 
     if (csv_path is not None) + (files is not None and len(files) > 0) == 0:
-        raise NotEnoughArgumentsSpecified(
-            "You must either provide file arguments or use the option --from-csv"
+        raise NotEnoughArgumentsSpecifiedError(
+            "You must either provide an explicit list of files or a CSV file containing a file list"
         )
 
 
