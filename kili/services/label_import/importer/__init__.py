@@ -43,7 +43,7 @@ class AbstractLabelImporter(ABC):
         self.logger_params = logger_params
         self.input_format: LabelFormat = input_format
 
-        self.logger = logging.getLogger("kili.services.export")
+        self.logger = logging.getLogger("kili.services.label_import")
         self.logger.setLevel(logger_params.level)
 
     def process_from_files(  # pylint: disable=too-many-arguments
@@ -79,8 +79,9 @@ class AbstractLabelImporter(ABC):
         for label in tqdm(labels, disable=self.logger_params.disable_tqdm):
             kwargs = dict(label.copy())
             del kwargs["path"]
+            json_response = label_parser.parse(Path(label["path"]))
             self.kili.append_to_labels(
-                json_response=label_parser.parse(Path(label["path"])),
+                json_response=json_response,
                 project_id=project_id,
                 **kwargs,
             )
@@ -219,7 +220,7 @@ class YoloLabelImporter(AbstractLabelImporter):
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     csv_reader = csv.reader(m_f, delimiter=" ")
                     classes = Classes({int(r[0]): r[1] for r in csv_reader})
-            except ValueError:
+            except:
                 # layout: class\n
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     classes = Classes(dict(enumerate(m_f.read().splitlines())))
