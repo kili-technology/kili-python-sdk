@@ -17,7 +17,8 @@ def check_exclusive_options(csv_path: Optional[PathLike], files: Optional[List[P
 
     if (csv_path is not None) + (files is not None and len(files) > 0) > 1:
         raise TooManyArgumentsSpecifiedError(
-            "An explicit list of files and a CSV file containing label files can't be specified at the same time"
+            "An explicit list of files and a CSV file containing label files"
+            " can't be specified at the same time"
         )
 
     if (csv_path is not None) + (files is not None and len(files) > 0) == 0:
