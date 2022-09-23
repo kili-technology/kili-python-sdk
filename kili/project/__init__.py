@@ -4,8 +4,8 @@ from typing import List, Optional, cast
 from typeguard import typechecked
 
 from kili import services
-from kili.services.export.types import SplitOption
-from kili.services.types import AssetId, InputType, LabelFormat, LogLevel, ProjectId
+from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.types import AssetId, InputType, LogLevel, ProjectId
 
 
 class Project:  # pylint: disable=too-few-public-methods

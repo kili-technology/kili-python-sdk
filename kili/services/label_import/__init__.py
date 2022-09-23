@@ -12,12 +12,13 @@ from kili.services.label_import.importer import (
     LoggerParams,
     YoloLabelImporter,
 )
-from kili.services.types import LabelFormat, LogLevel
+from kili.services.label_import.types import LabelFormat
+from kili.services.types import LogLevel, ProjectId
 
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
     kili,
-    labels_file_path: Optional[str],
+    labels_files_paths_csv: Optional[str],
     labels_files: Optional[List[str]],
     meta_file_path: Optional[str],
     project_id: str,
@@ -48,10 +49,10 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, log_level))
     label_importer = label_importer_class(kili, logger_params, cast(LabelFormat, input_format))
     label_importer.process_from_files(
-        Path(labels_file_path) if labels_file_path is not None else None,
+        Path(labels_files_paths_csv) if labels_files_paths_csv is not None else None,
         [Path(lf) for lf in labels_files] if labels_files is not None else None,
         Path(meta_file_path) if meta_file_path is not None else None,
-        project_id,
+        cast(ProjectId, project_id),
         target_job_name,
         model_name,
         is_prediction,

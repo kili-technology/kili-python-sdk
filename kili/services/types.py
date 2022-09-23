@@ -5,7 +5,6 @@ from typing import NamedTuple, NewType, Tuple, Union
 
 from typing_extensions import Literal
 
-LabelFormat = Literal["yolo_v4", "yolo_v5"]
 InputType = Literal["TEXT", "IMAGE"]
 AssetId = NewType("AssetId", str)
 ProjectId = NewType("ProjectId", str)

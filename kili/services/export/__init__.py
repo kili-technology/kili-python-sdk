@@ -10,8 +10,8 @@ from kili.services.export.format.base import (
     LoggerParams,
 )
 from kili.services.export.format.yolo import YoloExporterSelector
-from kili.services.export.types import ExportType, SplitOption
-from kili.services.types import LabelFormat, LogLevel, ProjectId
+from kili.services.export.types import ExportType, LabelFormat, SplitOption
+from kili.services.types import LogLevel, ProjectId
 
 
 def export_labels(  # pylint: disable=too-many-arguments

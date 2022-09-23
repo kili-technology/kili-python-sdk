@@ -5,10 +5,12 @@ import os
 from typing import Optional, Tuple
 
 import click
+from typing_extensions import get_args
 
 from kili import services
 from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.helpers import get_kili_client
+from kili.services.label_import.types import LabelFormat
 
 
 def type_check_label(key, value):
@@ -42,7 +44,7 @@ def type_check_label(key, value):
 @Options.verbose
 @click.option(
     "--input-format",
-    type=str,
+    type=click.Choice(get_args(LabelFormat)),
     help="Format in which the labels are encoded",
     default="raw",
     show_default='"raw" kili format',
@@ -118,7 +120,7 @@ def import_labels(
         project_id=project_id,
         input_format=input_format,
         target_job_name=None,
-        disable_tqdm=verbose,
+        disable_tqdm=not verbose,
         log_level="INFO" if verbose else "WARNING",
         model_name=model_name,
         is_prediction=is_prediction,

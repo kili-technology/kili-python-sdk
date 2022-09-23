@@ -9,8 +9,8 @@ from datetime import datetime
 from typing import Dict, List, NamedTuple, Optional
 
 from kili.orm import JobMLTask, JobTool
-from kili.services.export.types import ExportType, SplitOption
-from kili.services.types import LabelFormat, LogLevel
+from kili.services.export.types import ExportType, LabelFormat, SplitOption
+from kili.services.types import LogLevel
 
 
 class ExportParams(NamedTuple):

@@ -20,8 +20,8 @@ from kili.services.label_import.parser import (
     KiliRawLabelParser,
     YoloLabelParser,
 )
-from kili.services.label_import.types import Classes, LabelToImport
-from kili.services.types import LabelFormat, LabelType, LogLevel
+from kili.services.label_import.types import Classes, LabelFormat, LabelToImport
+from kili.services.types import LabelType, LogLevel, ProjectId
 
 
 class LoggerParams(NamedTuple):
@@ -51,7 +51,7 @@ class AbstractLabelImporter(ABC):
         labels_file_path: Optional[Path],
         labels_files: Optional[List[Path]],
         meta_file_path: Optional[Path],
-        project_id: str,
+        project_id: ProjectId,
         target_job_name: Optional[str],
         model_name: Optional[str],
         is_prediction: bool,
@@ -72,7 +72,9 @@ class AbstractLabelImporter(ABC):
 
         self.logger.warning(print(f"{len(labels)} labels have been successfully imported"))
 
-    def _import_as_labels(self, labels, label_parser, project_id):
+    def _import_as_labels(
+        self, labels: List[LabelToImport], label_parser: AbstractLabelParser, project_id: ProjectId
+    ):
         for label in tqdm(labels, disable=self.logger_params.disable_tqdm):
             kwargs = dict(label.copy())
             del kwargs["path"]
@@ -82,7 +84,13 @@ class AbstractLabelImporter(ABC):
                 **kwargs,
             )
 
-    def _import_as_predictions(self, labels, label_parser, project_id, model_name):
+    def _import_as_predictions(
+        self,
+        labels: List[LabelToImport],
+        label_parser: AbstractLabelParser,
+        project_id: ProjectId,
+        model_name: str,
+    ):
         assert model_name
         json_response_array: List[Dict] = []
         external_id_array: List[str] = []
@@ -198,9 +206,9 @@ class YoloLabelImporter(AbstractLabelImporter):
     def _get_label_file_extension(self) -> str:
         return ".txt"
 
-    @classmethod
+    @staticmethod
     def _read_classes_from_meta_file(
-        cls, meta_file_path: Optional[Path], input_format: LabelFormat
+        meta_file_path: Optional[Path], input_format: LabelFormat
     ) -> Classes:
         assert meta_file_path
         classes: Classes = Classes({})
