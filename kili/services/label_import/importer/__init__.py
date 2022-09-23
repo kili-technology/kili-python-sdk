@@ -66,6 +66,7 @@ class AbstractLabelImporter(ABC):
         self.logger.warning("Importing labels")
         labels = self.extract_from_files(labels_file_path, labels_files)
         if is_prediction:
+            assert model_name
             self._import_as_predictions(labels, label_parser, project_id, model_name)
         else:
             self._import_as_labels(labels, label_parser, project_id)

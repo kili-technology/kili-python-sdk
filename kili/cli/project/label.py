@@ -70,13 +70,15 @@ def import_labels(
 
     If no files are provided, --from-csv can be used to import
     assets from a CSV file with two columns:
-    - `external_id`: external id for which you want to import labels.
-    - `json_response_path`: paths to the json files containing the json_response to upload.
+    - `label_asset_external_id`: external id for which you want to import labels.
+    - `path`: paths to the json files containing the json_response to upload.
+
+    Additional columns can be provided, depending our
 
     \b
     !!! Examples "CSV file template"
         ```
-        external_id,json_response_path
+        label_asset_external_id,path
         asset1,./labels/label_asset1.json
         asset2,./labels/label_asset2.json
         ```
@@ -102,6 +104,15 @@ def import_labels(
             --prediction \\
             --model-name YOLO-run-3
         ```
+        To import labels as predictions in the Yolo format:
+        ```
+        kili project label \\
+            --from-csv path/to/file.csv \\
+            --project-id <project_id> \\
+            --prediction \\
+            --model-name YOLO-run-3
+        ```
+
 
     """
     if is_prediction and model_name is None:
