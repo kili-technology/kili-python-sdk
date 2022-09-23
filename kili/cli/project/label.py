@@ -7,9 +7,9 @@ from typing import Optional, Tuple
 import click
 from typing_extensions import get_args
 
-from kili import services
 from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.helpers import get_kili_client
+from kili.services import label_import
 from kili.services.label_import.types import LabelFormat
 
 
@@ -33,13 +33,15 @@ def type_check_label(key, value):
     type=bool,
     is_flag=True,
     default=False,
-    help="Tells to import labels as predictions, which means that they will appear "
-    "as pre-annotations in the Kili interface",
+    help=(
+        "Tells to import labels as predictions, which means that they will appear "
+        "as pre-annotations in the Kili interface"
+    ),
 )
 @click.option(
     "--model-name",
     type=str,
-    help="Name of the model that generated predictions, " "if labels are sent as predictions",
+    help="Name of the model that generated predictions, if labels are sent as predictions",
 )
 @Options.verbose
 @click.option(
@@ -48,6 +50,16 @@ def type_check_label(key, value):
     help="Format in which the labels are encoded",
     default="raw",
     show_default='"raw" kili format',
+)
+@click.option(
+    "--metadata-file",
+    type=str,
+    help="File containing format metadata (if relevant to the format)",
+)
+@click.option(
+    "--target-job",
+    type=str,
+    help="Job name in the project where to upload the labels (if relevant to the format)",
 )
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
@@ -60,6 +72,8 @@ def import_labels(
     model_name: Optional[str],
     verbose: bool,
     input_format: str,
+    metadata_file: Optional[str],
+    target_job: Optional[str],
 ):
     """
     Import labels or predictions
@@ -76,11 +90,19 @@ def import_labels(
     Additional columns can be provided, depending our
 
     \b
-    !!! Examples "CSV file template"
+    !!! Examples "CSV file template for the raw Kili format"
         ```
         label_asset_external_id,path
         asset1,./labels/label_asset1.json
         asset2,./labels/label_asset2.json
+        ```
+
+     \b
+    !!! Examples "CSV file template for a Yolo format"
+        ```
+        label_asset_external_id,path
+        asset1,./labels/label_asset1.txt
+        asset2,./labels/label_asset2.txt
         ```
 
     \b
@@ -104,13 +126,15 @@ def import_labels(
             --prediction \\
             --model-name YOLO-run-3
         ```
-        To import labels as predictions in the Yolo format:
+        To import labels as predictions in the Yolo v5 format into the target job:
         ```
         kili project label \\
             --from-csv path/to/file.csv \\
             --project-id <project_id> \\
             --prediction \\
-            --model-name YOLO-run-3
+            --model-name YOLO-v5 \\
+            --metadata-file classes.yml \\
+            --target-job IMAGE_DETECTION_JOB
         ```
 
 
@@ -123,16 +147,16 @@ def import_labels(
 
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
-    services.import_labels_from_files(
+    label_import.import_labels_from_files(
         kili,
         csv_path,
         list(files or []),
-        meta_file_path=None,
-        project_id=project_id,
-        input_format=input_format,
-        target_job_name=None,
-        disable_tqdm=not verbose,
-        log_level="INFO" if verbose else "WARNING",
-        model_name=model_name,
-        is_prediction=is_prediction,
+        metadata_file,
+        project_id,
+        input_format,
+        target_job,
+        not verbose,
+        "INFO" if verbose else "WARNING",
+        model_name,
+        is_prediction,
     )

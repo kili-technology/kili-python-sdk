@@ -1,7 +1,7 @@
 import csv
 import json
 import os
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 from click.testing import CliRunner
@@ -95,6 +95,10 @@ class TestCLIProjectImport:
         ],
     )
     def test_import_labels(self, mocker, name, test_case):
+        """
+        Legacy tests that call the Kili import. To split into a CLI tests and
+        a service test.
+        """
         _, _ = mocker, name
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -135,3 +139,82 @@ class TestCLIProjectImport:
                 append_to_labels_mock.assert_any_call(**test_case["expected_mutation_payload"])
             else:
                 create_predictions_mock.assert_called_with(**test_case["expected_mutation_payload"])
+
+    @pytest.mark.parametrize(
+        "name,test_case",
+        [
+            (
+                "AAU, when I import Yolo v4 predictions from a CSV, I see a success",
+                {
+                    "files": [],
+                    "options": {
+                        "project-id": "project_id",
+                        "model-name": "model_name",
+                        "from-csv": "labels_to_import.csv",
+                        "metadata-file": "classes.txt",
+                        "input-format": "yolo_v4",
+                        "target-job": "job_0",
+                    },
+                    "flags": ["prediction"],
+                    "expected_service_call": (
+                        ANY,
+                        "labels_to_import.csv",
+                        [],
+                        "classes.txt",
+                        "project_id",
+                        "yolo_v4",
+                        "job_0",
+                        True,
+                        "WARNING",
+                        "model_name",
+                        True,
+                    ),
+                },
+            ),
+            (
+                "AAU, when I import Yolo v5 predictions from a CSV, I see a success",
+                {
+                    "files": [],
+                    "options": {
+                        "project-id": "project_id",
+                        "model-name": "model_name",
+                        "from-csv": "labels_to_import.csv",
+                        "metadata-file": "classes.yaml",
+                        "input-format": "yolo_v5",
+                        "target-job": "job_0",
+                    },
+                    "flags": ["prediction"],
+                    "expected_service_call": (
+                        ANY,
+                        "labels_to_import.csv",
+                        [],
+                        "classes.yaml",
+                        "project_id",
+                        "yolo_v5",
+                        "job_0",
+                        True,
+                        "WARNING",
+                        "model_name",
+                        True,
+                    ),
+                },
+            ),
+        ],
+    )
+    def test_import_labels_yolo(self, mocker, name, test_case):
+        _ = name
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+
+            with patch(
+                "kili.services.label_import.import_labels_from_files"
+            ) as mocked_import_labels_service:
+                arguments = test_case["files"]
+                for k, v in test_case["options"].items():
+                    arguments.append("--" + k)
+                    arguments.append(v)
+                if test_case.get("flags"):
+                    arguments.extend(["--" + flag for flag in test_case["flags"]])
+                result = runner.invoke(import_labels, arguments)
+                debug_subprocess_pytest(result)
+                mocked_import_labels_service.assert_called_with(*test_case["expected_service_call"])
