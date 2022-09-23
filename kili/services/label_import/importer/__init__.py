@@ -220,8 +220,10 @@ class YoloLabelImporter(AbstractLabelImporter):
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     csv_reader = csv.reader(m_f, delimiter=" ")
                     classes = Classes({int(r[0]): r[1] for r in csv_reader})
-            except:
-                # layout: class\n
+            except ValueError:
+                with meta_file_path.open("r", encoding="utf-8") as m_f:
+                    classes = Classes(dict(enumerate(m_f.read().splitlines())))
+            except IndexError:
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     classes = Classes(dict(enumerate(m_f.read().splitlines())))
         if input_format == "yolo_v5":
