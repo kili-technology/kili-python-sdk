@@ -5,7 +5,7 @@ import csv
 import mimetypes
 import os
 from json import dumps
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
@@ -303,7 +303,7 @@ def get_request_to_execute(
     json_metadata_array: Union[List[dict], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     mime_type: Union[str, None],
-) -> str:
+) -> Tuple[str, Optional[str]]:
     """
     Selects the right query to run versus the data given
     """

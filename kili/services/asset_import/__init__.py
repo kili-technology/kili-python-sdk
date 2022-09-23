@@ -1,6 +1,6 @@
 """Service for importing objects into kili"""
 
-from typing import List
+from typing import Dict, List
 
 from kili.authentication import KiliAuth
 from kili.constants import NO_ACCESS_RIGHT
@@ -9,7 +9,6 @@ from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.legacy import LegacyDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
-from kili.services.asset_import.types import AssetLike
 from kili.services.asset_import.video import VideoDataImporter
 
 from .base import LoggerParams, ProcessingParams, ProjectParams
@@ -24,7 +23,11 @@ importer_by_type = {
 
 
 def import_assets(
-    auth: KiliAuth, project_id: str, assets: List[AssetLike], raise_error=True, disable_tqdm=False
+    auth: KiliAuth,
+    project_id: str,
+    assets: List[Dict],
+    raise_error=True,
+    disable_tqdm=False,
 ):
     """
     import the selected assets into the specified project
