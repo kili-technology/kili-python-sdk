@@ -126,7 +126,7 @@ def import_labels(
             --prediction \\
             --model-name YOLO-run-3
         ```
-        To import labels as predictions in the Yolo v5 format into the target job:
+        To import labels as predictions in the Yolo v5 format into a target job:
         ```
         kili project label \\
             --from-csv path/to/file.csv \\
