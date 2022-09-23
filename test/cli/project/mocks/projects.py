@@ -1,5 +1,4 @@
 def mocked__projects(project_id=None, **_):
-    print("Mocker projects")
     if project_id == "text_project":
         return [{"id": "text_project", "inputType": "TEXT"}]
     if project_id == "image_project":

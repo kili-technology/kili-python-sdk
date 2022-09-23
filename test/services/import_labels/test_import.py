@@ -11,6 +11,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from kili.services import import_labels_from_files
+from kili.services.label_import.exceptions import LabelParsingError
 from kili.services.label_import.importer import YoloLabelImporter
 from kili.services.label_import.parser import YoloLabelParser
 from kili.services.label_import.types import Classes
@@ -89,6 +90,67 @@ def test_import_labels_from_files(description, inputs, outputs):
 
         for row in outputs["calls"]:
             kili.append_to_labels.assert_called_with(**row)
+
+
+def test_import_labels_from_files_malformed_annotation():
+
+    kili = MagicMock()
+    kili.append_to_labels = MagicMock()
+
+    inputs = {
+        "label_csv_path": "labels.csv",
+        "labels": {
+            "rows": [
+                {
+                    "yolo_data": "This is not yolo data...",
+                    "label_asset_external_id": "aieaie",
+                    "path": "label1.txt",
+                },
+            ],
+            "path": "wrong_annotation.json",
+            "headers": ["label_asset_external_id", "path"],
+        },
+        "meta_path": "classes.txt",
+        "yolo_classes": ["A", "B"],
+        "project_id": "pid1",
+        "target_job_name": "Job1",
+    }
+
+    with TemporaryDirectory() as label_folders:
+        yolo_all_labels_path = Path(label_folders) / inputs["label_csv_path"]
+        for rows in inputs["labels"]["rows"]:
+            yolo_label_path = Path(label_folders) / rows["path"]
+            yolo_rows = rows["yolo_data"]
+            _generate_label_file(yolo_rows, str(yolo_label_path))
+
+        yolo_classes = inputs["yolo_classes"]
+        yolo_meta_path = Path(label_folders) / inputs["meta_path"]
+
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            wrt = csv.writer(y_m, delimiter=" ")
+            wrt.writerows((str(a) for a in r) for r in yolo_classes)
+
+        _generate_label_file_list(
+            inputs["labels"]["rows"],
+            str(yolo_all_labels_path),
+            headers=inputs["labels"]["headers"],
+            annotation_root=label_folders,
+        )
+
+        with pytest.raises(LabelParsingError):
+            import_labels_from_files(
+                kili,
+                str(yolo_all_labels_path),
+                None,
+                str(yolo_meta_path),
+                ProjectId(inputs["project_id"]),
+                "yolo_v4",
+                inputs["target_job_name"],
+                disable_tqdm=False,
+                log_level="INFO",
+                is_prediction=False,
+                model_name=None,
+            )
 
 
 def test__read_labels_file_path():
