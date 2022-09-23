@@ -14,7 +14,6 @@ from .queries import (
     GQL_DELETE_FROM_ROLES,
     GQL_DELETE_PROJECT,
     GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
-    GQL_MAKE_PROJECT_PUBLIC,
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
     GQL_UPDATE_PROPERTIES_IN_PROJECT,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
@@ -230,25 +229,6 @@ class MutationsProject:
             }
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
-        return format_result("data", result)
-
-    @Compatible(["v2"])
-    @typechecked
-    def make_project_public(self, project_id: str):
-        """
-        Make a project public.
-
-        !!! warning
-            This action is permanent and irreversible.
-
-        Args:
-            project_id: Identifier of the project
-
-        Returns:
-            The public token to provide in the public URL
-        """
-        variables = {"where": {"id": project_id}}
-        result = self.auth.client.execute(GQL_MAKE_PROJECT_PUBLIC, variables)
         return format_result("data", result)
 
     @Compatible(["v1", "v2"])
