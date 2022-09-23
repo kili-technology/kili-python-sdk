@@ -15,6 +15,12 @@ from kili.services.helpers import (
     check_exclusive_options,
     get_external_id_from_file_path,
 )
+from kili.services.label_import.exceptions import (
+    LabelParsingError,
+    MissingExternalIdError,
+    MissingMetadataError,
+    MissingTargetJobError,
+)
 from kili.services.label_import.parser import (
     AbstractLabelParser,
     KiliRawLabelParser,
@@ -59,6 +65,7 @@ class AbstractLabelImporter(ABC):
         """
         Performs the import from the label files
         """
+        self._check_arguments_compatibility(meta_file_path, target_job_name)
         class_by_id = self._read_classes_from_meta_file(meta_file_path, self.input_format)
         label_parser_class = self._select_label_parser()
         label_parser = label_parser_class(class_by_id, target_job_name)
@@ -79,7 +86,12 @@ class AbstractLabelImporter(ABC):
         for label in tqdm(labels, disable=self.logger_params.disable_tqdm):
             kwargs = dict(label.copy())
             del kwargs["path"]
-            json_response = label_parser.parse(Path(label["path"]))
+            try:
+                json_response = label_parser.parse(Path(label["path"]))
+            except Exception as exc:
+                path = label["path"]
+                raise LabelParsingError(f"Failed to parse the file {path}") from exc
+
             self.kili.append_to_labels(
                 json_response=json_response,
                 project_id=project_id,
@@ -102,7 +114,9 @@ class AbstractLabelImporter(ABC):
             del kwargs["path"]
             json_response_array.append(label_parser.parse(Path(label["path"])))
             external_id = label.get("label_asset_external_id")
-            assert external_id
+            if external_id is None:
+                path = label["path"]
+                raise MissingExternalIdError(f"There is no associated asset external id to {path}")
             external_id_array.append(external_id)
             model_name_array.append(model_name)
         self.kili.create_predictions(
@@ -111,6 +125,13 @@ class AbstractLabelImporter(ABC):
             model_name_array=model_name_array,
             project_id=project_id,
         )
+
+    @staticmethod
+    @abstractmethod
+    def _check_arguments_compatibility(
+        meta_file_path: Optional[Path], target_job_name: Optional[str]
+    ):
+        pass
 
     @classmethod
     @abstractmethod
@@ -209,6 +230,15 @@ class YoloLabelImporter(AbstractLabelImporter):
         return ".txt"
 
     @staticmethod
+    def _check_arguments_compatibility(
+        meta_file_path: Optional[Path], target_job_name: Optional[str]
+    ):
+        if meta_file_path is None:
+            raise MissingMetadataError("Meta file is needed to import the label")
+        if target_job_name is None:
+            raise MissingTargetJobError("A target job name is needed to import the label")
+
+    @staticmethod
     def _read_classes_from_meta_file(
         meta_file_path: Optional[Path], input_format: LabelFormat
     ) -> Classes:
@@ -239,11 +269,17 @@ class YoloLabelImporter(AbstractLabelImporter):
 
 class KiliRawLabelImporter(AbstractLabelImporter):
     """
-    Label importer in the Kili format.
+    # Label importer in the Kili format.
     """
 
     def _get_label_file_extension(self) -> str:
         return ".json"
+
+    @staticmethod
+    def _check_arguments_compatibility(
+        meta_file_path: Optional[Path], target_job_name: Optional[str]
+    ):
+        pass
 
     @classmethod
     def _read_classes_from_meta_file(

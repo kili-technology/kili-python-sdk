@@ -4,6 +4,11 @@ Helpers for the services
 from pathlib import Path
 from typing import List, Optional, TypeVar
 
+from kili.services.exceptions import (
+    NotEnoughArgumentsSpecified,
+    TooManyArgumentsSpecified,
+)
+
 PathLike = TypeVar("PathLike", Path, str)
 
 
@@ -11,10 +16,12 @@ def check_exclusive_options(csv_path: Optional[PathLike], files: Optional[List[P
     """Forbid mutual use of options and argument(s)"""
 
     if (csv_path is not None) + (files is not None and len(files) > 0) > 1:
-        raise ValueError("files arguments and option --from-csv are exclusive.")
+        raise TooManyArgumentsSpecified("files arguments and option --from-csv are exclusive.")
 
     if (csv_path is not None) + (files is not None and len(files) > 0) == 0:
-        raise ValueError("You must either provide file arguments or use the option --from-csv")
+        raise NotEnoughArgumentsSpecified(
+            "You must either provide file arguments or use the option --from-csv"
+        )
 
 
 def get_external_id_from_file_path(path: PathLike) -> str:
