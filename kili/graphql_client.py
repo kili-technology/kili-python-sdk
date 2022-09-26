@@ -9,11 +9,11 @@ import random
 import string
 import threading
 import time
+import urllib
 from datetime import datetime
 from enum import Enum
 
 import websocket
-from six.moves import urllib  # type:ignore
 
 from kili import __version__
 
