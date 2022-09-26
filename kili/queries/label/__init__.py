@@ -1,6 +1,6 @@
 """Label queries."""
 
-from typing import Generator, Iterable, List, Optional, Union
+from typing import Generator, List, Optional, Union
 
 import pandas as pd
 from typeguard import typechecked
@@ -176,7 +176,7 @@ class QueriesLabel:
             first,
             self.count_labels,
             count_args,
-            self._query_labels,  # type: ignore
+            self._query_labels,
             payload_query,
             fields,
             disable_tqdm,
@@ -186,9 +186,8 @@ class QueriesLabel:
             return labels_generator
         return list(labels_generator)
 
-    def _query_labels(
-        self, skip: int, first: int, payload: dict, fields: List[str]
-    ) -> Iterable[Label]:
+    def _query_labels(self, skip: int, first: int, payload: dict, fields: List[str]):
+
         payload.update({"skip": skip, "first": first})
         _gql_labels = gql_labels(fragment_builder(fields, LabelType))
         result = self.auth.client.execute(_gql_labels, payload)

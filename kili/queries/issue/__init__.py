@@ -115,4 +115,4 @@ class QueriesIssue:
         }
         result = self.auth.client.execute(GQL_ISSUES_COUNT, variables)
         count = format_result("data", result)
-        return int(count)  # type:ignore
+        return count

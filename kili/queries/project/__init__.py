@@ -1,6 +1,6 @@
 """Project queries."""
 
-from typing import Iterable, List, Optional
+from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
@@ -50,7 +50,7 @@ class QueriesProject:
         first: Optional[int] = None,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Iterable[Project]:
+    ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a generator or a list of projects that match a set of criteria.
 
@@ -117,10 +117,11 @@ class QueriesProject:
         )
 
         if as_generator:
-            return projects_generator  # type: ignore
-        return list(projects_generator)  # type: ignore
+            return projects_generator
+        return list(projects_generator)
 
     def _query_projects(self, skip: int, first: int, payload: dict, fields: List[str]):
+
         payload.update({"skip": skip, "first": first})
         _gql_projects = gql_projects(fragment_builder(fields, Project))
         result = self.auth.client.execute(_gql_projects, payload)
@@ -167,4 +168,4 @@ class QueriesProject:
         }
         result = self.auth.client.execute(GQL_PROJECTS_COUNT, variables)
         count = format_result("data", result)
-        return int(count)  # type:ignore
+        return count

@@ -2,7 +2,7 @@
 Api key queries
 """
 
-from typing import Iterable, List, Optional
+from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
@@ -40,7 +40,7 @@ class QueriesApiKey:
         first: Optional[int] = None,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Iterable[ApiKeyType]:
+    ) -> Union[List[dict], Generator[dict, None, None]]:
         # pylint: disable=line-too-long
         """Get a generator or a list of API keys that match a set of constraints.
 
@@ -94,8 +94,8 @@ class QueriesApiKey:
         )
 
         if as_generator:
-            return api_keys_generator  # type: ignore
-        return list(api_keys_generator)  # type: ignore
+            return api_keys_generator
+        return list(api_keys_generator)
 
     def _query_api_keys(self, skip: int, first: int, payload: dict, fields: List[str]):
         payload.update({"skip": skip, "first": first})

@@ -4,13 +4,10 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, fragment_builder
-from kili.queries.project_version.queries import (
-    GQL_PROJECT_VERSION_COUNT,
-    gql_project_version,
-)
-from kili.types import ProjectVersion as ProjectVersionType
-from kili.utils.pagination import row_generator_from_paginated_calls
+from ...helpers import Compatible, format_result, fragment_builder
+from ...types import ProjectVersion as ProjectVersionType
+from ...utils.pagination import row_generator_from_paginated_calls
+from .queries import GQL_PROJECT_VERSION_COUNT, gql_project_version
 
 
 class QueriesProjectVersion:
@@ -33,7 +30,7 @@ class QueriesProjectVersion:
         self,
         project_id: str,
         first: Optional[int] = None,
-        skip: int = 0,
+        skip: Optional[int] = 0,
         fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
         disable_tqdm: bool = False,
         as_generator: bool = False,
@@ -100,4 +97,4 @@ class QueriesProjectVersion:
         }
         result = self.auth.client.execute(GQL_PROJECT_VERSION_COUNT, variables)
         count = format_result("data", result)
-        return int(count)  # type:ignore
+        return count

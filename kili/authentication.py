@@ -4,12 +4,11 @@ from datetime import datetime, timedelta
 
 import requests
 
-from kili import __version__
-from kili.graphql_client import GraphQLClient, GraphQLClientName
-from kili.helpers import format_result
-from kili.queries.api_key import QueriesApiKey
-from kili.queries.user.queries import GQL_ME
-from kili.types import User
+from . import __version__
+from .graphql_client import GraphQLClient, GraphQLClientName
+from .helpers import format_result
+from .queries.api_key import QueriesApiKey
+from .queries.user.queries import GQL_ME
 
 MAX_RETRIES = 20
 
@@ -45,9 +44,9 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         if api_endpoint and "v1/graphql" in api_endpoint:
             # pylint: disable=line-too-long
             message = (
-                "We are migrating the API to enhance our service, please use the new endpoint"
-                " https://cloud.kili-technology.com/api/label/v2/graphql (or None), the former"
-                " endpoint call will be deprecated on February 15th 2021"
+                "We are migrating the API to enhance our service,"
+                " please use the new endpoint https://cloud.kili-technology.com/api/label/v2/graphql"
+                " (or None), the former endpoint call will be deprecated on February 15th 2021"
             )
             warnings.warn(message, DeprecationWarning)
         try:
@@ -59,7 +58,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             )
             warnings.warn(message, UserWarning)
 
-        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type:ignore
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
         self.client = GraphQLClient(
@@ -118,7 +117,7 @@ Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
 You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning)
 
-    def get_user(self) -> User:
+    def get_user(self):
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
-        return format_result("data", result)  # type:ignore
+        return format_result("data", result)
