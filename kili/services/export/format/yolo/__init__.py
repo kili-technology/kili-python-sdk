@@ -1,5 +1,5 @@
 """
-Functions to export a project to YOLOv4 or v5 format
+Functions to export a project to YOLOv4, v5 or v7 format
 """
 
 import logging
@@ -22,7 +22,7 @@ class YoloExporterSelector(BaseExporterSelector):
     # pylint: disable=too-few-public-methods
 
     """
-    Formatter to export to YOLOv4 or YOLOv5
+    Formatter to export to YOLOv4, v5 or v7
     """
 
     @staticmethod

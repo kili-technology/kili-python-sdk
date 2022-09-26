@@ -7,7 +7,7 @@ from typing_extensions import Literal
 
 ExportType = Literal["latest", "normal"]
 SplitOption = Literal["split", "merged"]
-LabelFormat = Literal["yolo_v4", "yolo_v5"]
+LabelFormat = Literal["yolo_v4", "yolo_v5", "yolo_v7"]
 
 
 class JobCategory(NamedTuple):

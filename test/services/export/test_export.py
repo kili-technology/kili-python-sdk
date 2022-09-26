@@ -142,7 +142,15 @@ class YoloTestCase(TestCase):
             _write_class_file(directory, category_ids, "yolo_v5")
             self.assertTrue(os.path.isfile(os.path.join(directory, "data.yaml")))
             with open(os.path.join(directory, "data.yaml"), "rb") as created_file:
-                with open("./test/services/export/expected/data.yaml", "rb") as expected_file:
+                with open("./test/services/export/expected/data_v5.yaml", "rb") as expected_file:
+                    self.assertEqual(expected_file.read(), created_file.read())
+
+    def test_write_class_file_yolo_v7(self):
+        with TemporaryDirectory() as directory:
+            _write_class_file(directory, category_ids, "yolo_v7")
+            self.assertTrue(os.path.isfile(os.path.join(directory, "data.yaml")))
+            with open(os.path.join(directory, "data.yaml"), "rb") as created_file:
+                with open("./test/services/export/expected/data_v7.yaml", "rb") as expected_file:
                     self.assertEqual(expected_file.read(), created_file.read())
 
     def test_conversion_service(self):
