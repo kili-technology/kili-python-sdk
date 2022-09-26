@@ -1,6 +1,6 @@
 """CLI's project export subcommand"""
 
-from typing import Optional
+from typing import Optional, cast
 
 import click
 from typeguard import typechecked
@@ -10,7 +10,8 @@ from kili import services
 from kili.cli.common_args import Options
 from kili.cli.helpers import get_kili_client
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.typing import LabelFormat, SplitOption
+from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.types import ProjectId
 
 
 @click.command(name="export")
@@ -84,7 +85,7 @@ def export_labels(
         services.export_labels(
             kili,
             asset_ids=None,
-            project_id=project_id,
+            project_id=cast(ProjectId, project_id),
             export_type="latest",
             label_format=output_format,
             split_option=layout,

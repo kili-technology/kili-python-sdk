@@ -5,162 +5,25 @@ import json
 import os
 from unittest.mock import ANY, MagicMock, patch
 
+import pytest
 from click.testing import CliRunner
 
 from kili.cli.project.create import create_project
 from kili.cli.project.describe import describe_project
 from kili.cli.project.export import export_labels
 from kili.cli.project.import_ import import_assets
-from kili.cli.project.label import import_labels
 from kili.cli.project.list_ import list_projects
 
-from ..utils import debug_subprocess_pytest
-
-mock_label = {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}}
-
-
-def mocked__projects(project_id=None, **_):
-    if project_id == "text_project":
-        return [{"id": "text_project", "inputType": "TEXT"}]
-    if project_id == "image_project":
-        return [{"id": "image_project", "inputType": "IMAGE"}]
-    if project_id == "object_detection":
-        job_payload = {
-            "mlTask": "OBJECT_DETECTION",
-            "tools": ["rectangle"],
-            "instruction": "Categories",
-            "required": 1,
-            "isChild": False,
-            "content": {
-                "categories": {
-                    "OBJECT_A": {
-                        "name": "OBJECT A",
-                    },
-                    "OBJECT_B": {
-                        "name": "OBJECT B",
-                    },
-                },
-                "input": "radio",
-            },
-        }
-        json_interface = {
-            "jobs": {
-                "JOB_0": job_payload,
-            }
-        }
-        return [
-            {
-                "title": "test OD project",
-                "id": "object_detection",
-                "description": "This is a test project",
-                "jsonInterface": json_interface,
-            }
-        ]
-    if project_id == "frame_project":
-        return [{"id": "frame_project", "inputType": "VIDEO"}]
-    if project_id == None:
-        return [
-            {
-                "id": "text_project",
-                "title": "text_project",
-                "description": " a project with text",
-                "numberOfAssets": 10,
-                "numberOfRemainingAssets": 10,
-            },
-            {
-                "id": "image_project",
-                "title": "image_project",
-                "description": " a project with image",
-                "numberOfAssets": 0,
-                "numberOfRemainingAssets": 0,
-            },
-            {
-                "id": "frame_project",
-                "title": "frame_project",
-                "description": " a project with frame",
-                "numberOfAssets": 10,
-                "numberOfRemainingAssets": 0,
-            },
-        ]
-    if project_id == "project_id":
-        return [
-            {
-                "title": "project title",
-                "id": "project_id",
-                "description": "description test",
-                "numberOfAssets": 49,
-                "numberOfRemainingAssets": 29,
-                "numberOfReviewedAssets": 0,
-                "numberOfSkippedAssets": 0,
-                "numberOfOpenIssues": 3,
-                "numberOfSolvedIssues": 2,
-                "numberOfOpenQuestions": 0,
-                "numberOfSolvedQuestions": 2,
-                "honeypotMark": None,
-                "consensusMark": None,
-            }
-        ]
-
-
-def mocked__project_assets(project_id=None, **_):
-    if project_id == "object_detection":
-        job_object_detection = {
-            "JOB_0": {
-                "annotations": [
-                    {
-                        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-                        "jobName": "JOB_0",
-                        "mid": "2022040515434712-7532",
-                        "mlTask": "OBJECT_DETECTION",
-                        "boundingPoly": [
-                            {
-                                "normalizedVertices": [
-                                    {"x": 0.16504140348233334, "y": 0.7986938935103378},
-                                    {"x": 0.16504140348233334, "y": 0.2605618833516984},
-                                    {"x": 0.8377886490672706, "y": 0.2605618833516984},
-                                    {"x": 0.8377886490672706, "y": 0.7986938935103378},
-                                ]
-                            }
-                        ],
-                        "type": "rectangle",
-                        "children": {},
-                    }
-                ]
-            }
-        }
-
-        return [
-            {
-                "latestLabel": {
-                    "jsonResponse": job_object_detection,
-                    "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-                },
-                "externalId": "car_1",
-                "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
-                "jsonContent": "",
-            }
-        ]
-    else:
-        return [
-            {"externalId": "asset1"},
-            {"externalId": "asset2"},
-            {"externalId": "asset3"},
-            {"externalId": "asset4"},
-            {"externalId": "asset5"},
-            {"externalId": "asset6"},
-        ]
-
+from ...utils import debug_subprocess_pytest
+from .mocks.assets import mocked__project_assets
+from .mocks.projects import mocked__projects
 
 kili_client = MagicMock()
 kili_client.auth.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
 kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
-kili_client.create_predictions = create_predictions_mock = MagicMock()
 kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
 kili_client.create_project = create_project_mock = MagicMock()
 kili_client.assets = assets_mock = MagicMock(side_effect=mocked__project_assets)
-
-kili = MagicMock()
-kili.Kili = MagicMock(return_value=kili_client)
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
@@ -205,110 +68,6 @@ class TestCLIProject:
             and (result.output.count("49") == 1)
             and (result.output.count("project title") == 1)
         )
-
-    def test_import_labels(self, mocker):
-        TEST_CASES = [
-            {
-                "case_name": "AAU, when I import a list of label's file to project, I see a success",
-                "files": ["test_tree/leaf_1/", "test_tree/asset1.json", "test_tree/leaf_2/**.json"],
-                "options": {
-                    "project-id": "project_id",
-                },
-                "flags": [],
-                "mutation_to_call": "append_to_labels",
-                "expected_mutation_payload": {
-                    "project_id": "project_id",
-                    "json_response": {
-                        "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
-                    },
-                    "label_asset_external_id": "asset6",
-                },
-                "expected_mutation_call_count": 5,
-            },
-            {
-                "case_name": "AAU, when I import default labels from a CSV, I see a success",
-                "files": [],
-                "options": {
-                    "project-id": "project_id",
-                    "from-csv": "labels_to_import.csv",
-                },
-                "flags": [],
-                "mutation_to_call": "append_to_labels",
-                "expected_mutation_payload": {
-                    "project_id": "project_id",
-                    "json_response": {
-                        "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
-                    },
-                    "label_asset_external_id": "asset6",
-                },
-                "expected_mutation_call_count": 2,
-            },
-            {
-                "case_name": "AAU, when I import predictions from a CSV, I see a sucess",
-                "files": [],
-                "options": {
-                    "project-id": "project_id",
-                    "model-name": "model_name",
-                    "from-csv": "labels_to_import.csv",
-                },
-                "flags": ["prediction"],
-                "mutation_to_call": "create_predictions",
-                "expected_mutation_payload": {
-                    "project_id": "project_id",
-                    "json_response_array": [
-                        {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}}
-                    ]
-                    * 2,
-                    "external_id_array": ["asset1", "asset6"],
-                    "model_name_array": ["model_name"] * 2,
-                },
-            },
-        ]
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-
-            os.mkdir("test_tree")
-            # pylint: disable=unspecified-encoding
-            with open("test_tree/asset1.json", "w") as outfile:
-                json.dump(mock_label, outfile)
-            with open("test_tree/asset2.json", "w") as outfile:
-                json.dump(mock_label, outfile)
-            os.mkdir("test_tree/leaf_1")
-            with open("test_tree/leaf_1/asset3.json", "w") as outfile:
-                json.dump(mock_label, outfile)
-            with open("test_tree/leaf_1/asset4.json", "w") as outfile:
-                json.dump(mock_label, outfile)
-            os.mkdir("test_tree/leaf_2")
-            with open("test_tree/leaf_2/asset5.json", "w") as outfile:
-                json.dump(mock_label, outfile)
-            with open("test_tree/leaf_2/asset6.json", "w") as outfile:
-                json.dump(mock_label, outfile)
-            with open("labels_to_import.csv", "w") as f:
-                writer = csv.writer(f)
-                writer.writerow(["external_id", "json_response_path"])
-                writer.writerow(["asset1", "test_tree/asset1.json"])
-                writer.writerow(["asset6", "test_tree/leaf_2/asset6.json"])
-
-            for i, test_case in enumerate(TEST_CASES):
-                kili_client.append_to_labels = append_to_labels_mock = MagicMock()
-                arguments = test_case["files"]
-                for k, v in test_case["options"].items():
-                    arguments.append("--" + k)
-                    arguments.append(v)
-                if test_case.get("flags"):
-                    arguments.extend(["--" + flag for flag in test_case["flags"]])
-                result = runner.invoke(import_labels, arguments)
-                debug_subprocess_pytest(result)
-                if test_case["mutation_to_call"] == "append_to_labels":
-                    assert (
-                        append_to_labels_mock.call_count
-                        == test_case["expected_mutation_call_count"]
-                    )
-                    append_to_labels_mock.assert_any_call(**test_case["expected_mutation_payload"])
-                else:
-                    create_predictions_mock.assert_called_with(
-                        **test_case["expected_mutation_payload"]
-                    )
 
     def test_import(self, mocker):
 

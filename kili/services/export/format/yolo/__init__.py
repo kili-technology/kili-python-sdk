@@ -4,7 +4,7 @@ Functions to export a project to YOLOv4 or v5 format
 
 import logging
 
-from kili.services.export.typing import LogLevel
+from kili.services.types import LogLevel
 
 from ...repository import SDKContentRepository
 from ...tools import fetch_assets

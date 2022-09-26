@@ -8,7 +8,7 @@
   "python.testing.pytestEnabled": true,
   "python.testing.cwd": "${workspaceFolder}",
   "python.languageServer": "Pylance",
-  "python.linting.pylintEnabled": false,
+  "python.linting.pylintEnabled": true,
   "python.analysis.diagnosticMode": "workspace",
   "python.analysis.typeCheckingMode": "basic",
   "editor.showUnused": true

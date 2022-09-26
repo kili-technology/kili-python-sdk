@@ -7,7 +7,7 @@ from typing import Dict, List
 
 from ...exceptions import NoCompatibleJobError
 from ...format.yolo.common import YoloExporter, get_category_full_name
-from ...typing import JobCategory
+from ...types import JobCategory
 
 
 class YoloMergeExporter(YoloExporter):

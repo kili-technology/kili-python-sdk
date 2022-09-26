@@ -10,13 +10,14 @@ from kili.services.export.format.base import (
     LoggerParams,
 )
 from kili.services.export.format.yolo import YoloExporterSelector
-from kili.services.export.typing import ExportType, LabelFormat, LogLevel, SplitOption
+from kili.services.export.types import ExportType, LabelFormat, SplitOption
+from kili.services.types import LogLevel, ProjectId
 
 
 def export_labels(  # pylint: disable=too-many-arguments
     kili,
     asset_ids: Optional[List[str]],
-    project_id: str,
+    project_id: ProjectId,
     export_type: ExportType,
     label_format: LabelFormat,
     split_option: SplitOption,

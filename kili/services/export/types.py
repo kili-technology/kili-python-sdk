@@ -1,17 +1,13 @@
 """
 Types used by the conversion service
 """
-from typing import NamedTuple, NewType, Tuple, Union
+from typing import NamedTuple, Tuple
 
 from typing_extensions import Literal
 
-LabelFormat = Literal["yolo_v4", "yolo_v5"]
-InputType = Literal["TEXT", "IMAGE"]
 ExportType = Literal["latest", "normal"]
-AssetId = NewType("AssetId", str)
-ProjectId = NewType("ProjectId", str)
 SplitOption = Literal["split", "merged"]
-LogLevel = Union[int, Literal["ERROR", "WARNING", "DEBUG", "INFO", "CRITICAL"]]
+LabelFormat = Literal["yolo_v4", "yolo_v5"]
 
 
 class JobCategory(NamedTuple):

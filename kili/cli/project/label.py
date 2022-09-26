@@ -1,22 +1,16 @@
 """CLI's project label subcommand"""
 
-import json
+
 import os
-import warnings
 from typing import Optional, Tuple
 
 import click
+from typing_extensions import get_args
 
 from kili.cli.common_args import Arguments, Options, from_csv
-from kili.cli.helpers import (
-    check_exclusive_options,
-    collect_from_csv,
-    get_external_id_from_file_path,
-    get_kili_client,
-)
-from kili.exceptions import NotFound
-from kili.helpers import get_file_paths_to_upload
-from kili.mutations.label.helpers import generate_create_predictions_arguments
+from kili.cli.helpers import get_kili_client
+from kili.services import label_import
+from kili.services.label_import.types import LabelFormat
 
 
 def type_check_label(key, value):
@@ -39,15 +33,34 @@ def type_check_label(key, value):
     type=bool,
     is_flag=True,
     default=False,
-    help="Tells to import labels as predictions, which means that they will appear "
-    "as pre-annotations in the Kili interface",
+    help=(
+        "Tells to import labels as predictions, which means that they will appear "
+        "as pre-annotations in the Kili interface"
+    ),
 )
 @click.option(
     "--model-name",
     type=str,
-    help="Name of the model that generated predictions, " "if labels are sent as predictions",
+    help="Name of the model that generated predictions, if labels are sent as predictions",
 )
 @Options.verbose
+@click.option(
+    "--input-format",
+    type=click.Choice(get_args(LabelFormat)),
+    help="Format in which the labels are encoded",
+    default="raw",
+    show_default='"raw" kili format',
+)
+@click.option(
+    "--metadata-file",
+    type=str,
+    help="File containing format metadata (if relevant to the input format)",
+)
+@click.option(
+    "--target-job",
+    type=str,
+    help="Job name in the project where to upload the labels (if relevant to the input format)",
+)
 # pylint: disable=too-many-arguments, too-many-locals
 def import_labels(
     api_key: Optional[str],
@@ -56,8 +69,11 @@ def import_labels(
     csv_path: str,
     project_id: str,
     is_prediction: bool,
-    model_name: str,
-    verbose: bool,  # pylint: disable=unused-argument
+    model_name: Optional[str],
+    verbose: bool,
+    input_format: str,
+    metadata_file: Optional[str],
+    target_job: Optional[str],
 ):
     """
     Import labels or predictions
@@ -68,15 +84,35 @@ def import_labels(
 
     If no files are provided, --from-csv can be used to import
     assets from a CSV file with two columns:
-    - `external_id`: external id for which you want to import labels.
-    - `json_response_path`: paths to the json files containing the json_response to upload.
 
     \b
-    !!! Examples "CSV file template"
+      - `label_asset_external_id`: external id for which you want to import labels.
+      - `label_asset_id`: asset id for which you want to import labels (mutual exclusive with the
+    field above, and not available for predictions)
+      - `path`: paths to the json files containing the json_response to upload.
+
+    Additional columns can be provided in the CSV file, see `.append_to_labels` in the Python client
+    documentation:
+
+    \b
+      - label_type
+      - seconds_to_label
+      - author_id
+
+    \b
+    !!! Examples "CSV file template for the raw Kili format"
         ```
-        external_id,json_response_path
+        label_asset_external_id,path
         asset1,./labels/label_asset1.json
         asset2,./labels/label_asset2.json
+        ```
+
+     \b
+    !!! Examples "CSV file template for a Yolo format"
+        ```
+        label_asset_external_id,path
+        asset1,./labels/label_asset1.txt
+        asset2,./labels/label_asset2.txt
         ```
 
     \b
@@ -100,6 +136,17 @@ def import_labels(
             --prediction \\
             --model-name YOLO-run-3
         ```
+        To import labels as predictions in the Yolo v5 format into a target job:
+        ```
+        kili project label \\
+            --from-csv path/to/file.csv \\
+            --project-id <project_id> \\
+            --prediction \\
+            --model-name YOLO-v5 \\
+            --metadata-file classes.yml \\
+            --target-job IMAGE_DETECTION_JOB
+        ```
+
 
     """
     if is_prediction and model_name is None:
@@ -108,72 +155,18 @@ def import_labels(
             "you must provide a model name with the --model-name option"
         )
 
-    check_exclusive_options(csv_path, files)
-
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
-    if kili.count_projects(project_id=project_id) == 0:
-        raise NotFound(f"project ID: {project_id}")
-
-    if len(files) > 0:
-        label_paths = get_file_paths_to_upload(files)
-        label_paths = [path for path in label_paths if path.endswith(".json")]
-        if len(label_paths) == 0:
-            raise ValueError(
-                """No label files to upload.
-                Check that the paths exist and file types are .json
-                """
-            )
-        external_ids = [get_external_id_from_file_path(path) for path in label_paths]
-
-    elif csv_path is not None:
-
-        labels_to_add = collect_from_csv(
-            csv_path=csv_path,
-            required_columns=["external_id", "json_response_path"],
-            optional_columns=[],
-            type_check_function=type_check_label,
-        )
-
-        if len(labels_to_add) == 0:
-            raise ValueError(f"No json files were found in csv: {csv_path}")
-
-        label_paths = [label["json_response_path"] for label in labels_to_add]
-        external_ids = [label["external_id"] for label in labels_to_add]
-
-    asset_in_project_external_ids = kili.assets(
-        project_id=project_id, fields=["externalId"], disable_tqdm=True
+    label_import.import_labels_from_files(
+        kili,
+        csv_path,
+        list(files or []),
+        metadata_file,
+        project_id,
+        input_format,
+        target_job,
+        not verbose,
+        "INFO" if verbose else "WARNING",
+        model_name,
+        is_prediction,
     )
-    asset_in_project_external_ids = set(
-        asset["externalId"] for asset in asset_in_project_external_ids
-    )
-
-    label_index_to_import = []
-    for i, external_id in enumerate(external_ids):
-        if external_id in asset_in_project_external_ids:
-            label_index_to_import.append(i)
-        else:
-            warnings.warn(f"{external_id} is not an asset of project ID: {project_id}.")
-
-    if is_prediction:
-        create_predictions_arguments = generate_create_predictions_arguments(
-            [label_paths[i] for i in label_index_to_import],
-            [external_ids[i] for i in label_index_to_import],
-            model_name,
-            project_id,
-        )
-        kili.create_predictions(**create_predictions_arguments)
-        print(f"{len(external_ids)} labels have been successfully imported")
-
-    else:
-        for i in label_index_to_import:
-            with open(label_paths[i], encoding="utf-8") as label_file:
-                json_response = json.load(label_file)
-
-            kili.append_to_labels(
-                label_asset_external_id=external_ids[i],
-                json_response=json_response,
-                project_id=project_id,
-            )
-
-    print(f"{len(label_index_to_import)} labels have been successfully imported")

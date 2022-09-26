@@ -11,7 +11,7 @@ from kili.cli.project.member.list_ import list_members
 from kili.cli.project.member.remove import remove_member
 from kili.cli.project.member.update import update_member
 
-from ..utils import debug_subprocess_pytest
+from ...utils import debug_subprocess_pytest
 
 
 def mocked__project_users(project_id=None, **_):
