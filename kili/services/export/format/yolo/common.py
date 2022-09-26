@@ -8,11 +8,10 @@ import logging
 import os
 from typing import Dict, List, Set
 
-from tqdm.autonotebook import tqdm
-
 from kili.services.export.format.base import BaseExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
+from kili.utils.tqdm import tqdm
 
 
 class LabelFrames:

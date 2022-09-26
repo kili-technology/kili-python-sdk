@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional, Type, cast
 
 import yaml
-from tqdm.autonotebook import tqdm
 
 from kili.helpers import get_file_paths_to_upload
 from kili.services.helpers import (
@@ -28,6 +27,7 @@ from kili.services.label_import.parser import (
 )
 from kili.services.label_import.types import Classes, LabelFormat, LabelToImport
 from kili.services.types import LabelType, LogLevel, ProjectId
+from kili.utils.tqdm import tqdm
 
 
 class LoggerParams(NamedTuple):

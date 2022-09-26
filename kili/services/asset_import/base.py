@@ -7,8 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from typing import Callable, List, NamedTuple
 
-from tqdm import tqdm
-
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -18,6 +16,7 @@ from kili.helpers import format_result, is_url
 from kili.orm import Asset
 from kili.queries.asset import QueriesAsset
 from kili.utils import bucket, pagination
+from kili.utils.tqdm import tqdm
 
 from .constants import (
     ASSET_FIELDS_DEFAULT_VALUE,
