@@ -123,7 +123,8 @@ class QueriesOrganization:
             }
         }
         result = self.auth.client.execute(GQL_ORGANIZATIONS_COUNT, variables)
-        return format_result("data", result)
+        count = format_result("data", result)
+        return int(count)  # type:ignore
 
     @Compatible(["v2"])
     @typechecked

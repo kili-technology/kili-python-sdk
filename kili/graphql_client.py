@@ -9,11 +9,11 @@ import random
 import string
 import threading
 import time
+import urllib
 from datetime import datetime
 from enum import Enum
 
 import websocket
-from six.moves import urllib
 
 from kili import __version__
 
@@ -81,7 +81,10 @@ class GraphQLClient:
         }
 
         if self.token is not None:
-            headers[self.headername] = f"{self.token}"
+            if self.headername:
+                headers[self.headername] = f"{self.token}"
+            else:
+                raise ValueError("headername must be defined.")
 
         if self.session is not None:
             req = None
@@ -109,7 +112,7 @@ class GraphQLClient:
                     raise Exception(req.content) from exception
                 raise exception
 
-        req = urllib.request.Request(
+        req = urllib.request.Request(  # type: ignore
             self.endpoint, json.dumps(data).encode("utf-8"), headers
         )  # type:ignore
         try:
@@ -153,7 +156,7 @@ class SubscriptionGraphQLClient:
             self.ws_url, on_message=self._on_message, subprotocols=[GQL_WS_SUBPROTOCOL]
         )
         self._created_at = datetime.now()
-        self._conn.on_message = self._on_message
+        self._conn.on_message = self._on_message  # type: ignore
 
     def _reconnect(self):
         """
@@ -276,9 +279,11 @@ class SubscriptionGraphQLClient:
                         self._stop_subscribe(_id)
                         break
                     if response["type"] != "ka" and not self._paused:
-                        _cc(_id, response)
+                        _cc(_id, response)  # type:ignore
                     time.sleep(1)
-                except websocket._exceptions.WebSocketConnectionClosedException as error:  # pylint: disable=no-member,protected-access
+                except (
+                    websocket._exceptions.WebSocketConnectionClosedException  # pylint: disable=no-member,protected-access
+                ) as error:
                     self.failed_connection_attempts += 1
                     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                     error_message = str(error)

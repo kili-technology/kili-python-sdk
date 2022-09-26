@@ -5,7 +5,7 @@ import csv
 import mimetypes
 import os
 from json import dumps
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
@@ -272,7 +272,7 @@ def add_video_parameters(json_metadata, should_use_native_video):
         ("framesPlayedPerSecond", 30),
         ("shouldUseNativeVideo", should_use_native_video),
     ]
-    for (key, default_value) in video_parameters:
+    for key, default_value in video_parameters:
         processing_parameters[key] = processing_parameters.get(key, default_value)
     return {**json_metadata, "processingParameters": processing_parameters}
 
@@ -303,7 +303,7 @@ def get_request_to_execute(
     json_metadata_array: Union[List[dict], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     mime_type: Union[str, None],
-) -> str:
+) -> Tuple[str, Optional[str]]:
     """
     Selects the right query to run versus the data given
     """

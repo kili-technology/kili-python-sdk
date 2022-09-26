@@ -1,397 +1,388 @@
-# pylint: disable=invalid-name,too-many-instance-attributes
+# pylint: disable:invalid-name,too-many-instance-attributes
 
 """
 GraphQL types
 """
 
-from dataclasses import dataclass
+from typing import Dict
+
+from typing_extensions import TypedDict
+
+from kili.enums import (
+    InputType,
+    IssueStatus,
+    LabelType,
+    LicenseType,
+    LockType,
+    NotificationStatus,
+    OrganizationRole,
+    ProjectRole,
+    Right,
+    Status,
+)
 
 
-@dataclass
-class License:
+class License(TypedDict):
     """
     A Wrapper for License GraphQL object.
     """
 
-    api = "api"
-    apiPriority = "apiPriority"
-    enableSmartTools = "enableSmartTools"
-    expiryDate = "expiryDate"
-    inputType = "inputType"
-    maxNumberOfLabeledAssets = "maxNumberOfLabeledAssets"
-    seats = "seats"
-    startDate = "startDate"
-    type = "type"
-    uploadCloudData = "uploadCloudData"
-    organizationId = "organizationId"
+    api: bool
+    apiPriority: bool
+    enableSmartTools: bool
+    expiryDate: str
+    inputType: InputType
+    maxNumberOfLabeledAssets: int
+    seats: int
+    startDate: str
+    type: LicenseType
+    uploadCloudData: bool
+    organizationId: int
 
 
-@dataclass
-class OrganizationWithoutUser:
+class OrganizationWithoutUser(TypedDict):
     """
     A wrapper for Organization GraphQL object.
     Defined in two steps to avoid cyclical dependencies.
     """
 
-    id = "id"
-    address = "address"
-    canSeeDataset = "canSeeDataset"
-    city = "city"
-    country = "country"
-    license = License
-    name = "name"
-    numberOfAnnotations = "numberOfAnnotations"
-    numberOfLabeledAssets = "numberOfLabeledAssets"
-    numberOfHours = "numberOfHours"
-    zipCode = "zipCode"
+    id: str
+    address: str
+    canSeeDataset: bool
+    city: str
+    country: str
+    license: License
+    name: str
+    numberOfAnnotations: int
+    numberOfLabeledAssets: int
+    numberOfHours: float
+    zipCode: str
 
 
-@dataclass
-class UserWithoutProjectUsers:
+class UserWithoutProjectUsers(TypedDict):
     """
     A wrapper for User GraphQL object.
     """
 
-    id = "id"
-    activated = "activated"
-    createdAt = "createdAt"
-    email = "email"
-    firstname = "firstname"
-    lastname = "lastname"
-    organization = OrganizationWithoutUser
-    organizationId = "organizationId"
-    organizationIdCompute = "organizationIdCompute"
-    organizationRole = "organizationRole"
-    rights = "rights"
-    updatedAt = "updatedAt"
+    id: str
+    activated: bool
+    createdAt: str
+    email: str
+    firstname: str
+    lastname: str
+    organization: OrganizationWithoutUser
+    organizationId: str
+    organizationRole: OrganizationRole
+    rights: Right
+    updatedAt: str
 
 
-@dataclass
 class Organization(OrganizationWithoutUser):
     """
     A wrapper for Organization GraphQL object.
     """
 
-    users = UserWithoutProjectUsers
+    users: UserWithoutProjectUsers
 
 
-@dataclass
-class ProjectUserWithoutProject:
+class ProjectUserWithoutProject(TypedDict):
     """
     A wrapper for ProjectUser GraphQL object.
     Defined in two steps to avoid cyclical dependencies.
     """
 
-    id = "id"
-    activated = "activated"
-    consensusMark = "consensusMark"
-    consensusMarkPerCategory = "consensusMarkPerCategory"
-    consensusMarkCompute = "consensusMarkCompute"
-    honeypotMark = "honeypotMark"
-    honeypotMarkCompute = "honeypotMarkCompute"
-    lastLabelingAt = "lastLabelingAt"
-    lastLabelingAtCompute = "lastLabelingAtCompute"
-    numberOfAnnotations = "numberOfAnnotations"
-    numberOfAnnotationsCompute = "numberOfAnnotationsCompute"
-    numberOfLabeledAssets = "numberOfLabeledAssets"
-    numberOfLabels = "numberOfLabels"
-    numberOfLabelsCompute = "numberOfLabelsCompute"
-    numberOfLabeledAssets = "numberOfLabeledAssets"
-    numberOfLabeledAssetsCompute = "numberOfLabeledAssetsCompute"
-    role = "role"
-    starred = "starred"
-    totalDuration = "totalDuration"
-    totalDurationCompute = "totalDurationCompute"
-    user = UserWithoutProjectUsers
+    id: str
+    activated: bool
+    consensusMark: float
+    consensusMarkPerCategory: Dict
+    consensusMarkCompute: float
+    honeypotMark: float
+    honeypotMarkCompute: float
+    lastLabelingAt: str
+    lastLabelingAtCompute: str
+    numberOfAnnotations: int
+    numberOfAnnotationsCompute: int
+    numberOfLabeledAssets: int
+    numberOfLabels: int
+    numberOfLabelsCompute: int
+    numberOfLabeledAssets: int
+    numberOfLabeledAssetsCompute: int
+    role: ProjectRole
+    starred: bool
+    totalDuration: float
+    totalDurationCompute: float
+    user: UserWithoutProjectUsers
 
 
-@dataclass
-class ProjectWithoutDataset:
+class ProjectWithoutDataset(TypedDict):
     """
     A wrapper for Project GraphQL object.
     Defined in two steps to avoid cyclical dependencies.
     """
 
-    id = "id"
-    assetMetadata = "assetMetadata"
-    assetMetadataCompute = "assetMetadataCompute"
-    author = UserWithoutProjectUsers
-    consensusMark = "consensusMark"
-    consensusMarkPerCategory = "consensusMarkPerCategory"
-    consensusTotCoverage = "consensusTotCoverage"
-    createdAt = "createdAt"
-    description = "description"
-    honeypotMark = "honeypotMark"
-    inputType = "inputType"
-    instructions = "instructions"
-    interface = "interface"
-    interfaceCompute = "interfaceCompute"
-    jsonInterface = "jsonInterface"
-    minConsensusSize = "minConsensusSize"
-    mlTasks = "mlTasks"
-    mlTasksCompute = "mlTasksCompute"
-    numberOfRemainingAssets = "numberOfRemainingAssets"
-    numberOfAssets = "numberOfAssets"
-    numberOfSkippedAssets = "numberOfSkippedAssets"
-    numberOfOpenIssues = "numberOfOpenIssues"
-    numberOfOpenQuestions = "numberOfOpenQuestions"
-    numberOfSolvedIssues = "numberOfSolvedIssues"
-    numberOfSolvedQuestions = "numberOfSolvedQuestions"
-    numberOfReviewedAssets = "numberOfReviewedAssets"
-    readPermissionsForAssetsAndLabels = "readPermissionsForAssetsAndLabels"
-    reviewCoverage = "reviewCoverage"
-    rights = "rights"
-    roles = ProjectUserWithoutProject
-    shouldRelaunchKpiComputation = "shouldRelaunchKpiComputation"
-    title = "title"
-    updatedAt = "updatedAt"
-    useHoneyPot = "useHoneyPot"
+    id: str
+    assetMetadata: Dict
+    assetMetadataCompute: Dict
+    author: UserWithoutProjectUsers
+    consensusMark: float
+    consensusMarkPerCateg: int
+    createdAt: str
+    description: str
+    honeypotMark: float
+    inputType: InputType
+    instructions: str
+    interface: Dict
+    interfaceCompute: Dict
+    jsonInterface: Dict
+    minConsensusSize: int
+    mlTasks: str
+    mlTasksCompute: str
+    numberOfRemainingAssets: int
+    numberOfAssets: int
+    numberOfSkippedAssets: int
+    numberOfOpenIssues: int
+    numberOfOpenQuestions: int
+    numberOfSolvedIssues: int
+    numberOfSolvedQuestions: int
+    numberOfReviewedAssets: int
+    readPermissionsForAssetsAndLabels: str
+    reviewCoverage: int
+    rights: Right
+    roles: ProjectUserWithoutProject
+    shouldRelaunchKpiComputation: bool
+    title: str
+    updatedAt: str
+    useHoneyPot: bool
 
 
-@dataclass
 class ProjectUser(ProjectUserWithoutProject):
     """
     A wrapper for ProjectUser GraphQL object.
     """
 
-    project = ProjectWithoutDataset
+    project: ProjectWithoutDataset
 
 
-@dataclass
 class UserWithoutApiKey(UserWithoutProjectUsers):
     """
     A wrapper for User GraphQL object.
     """
 
-    projectUsers = ProjectUser
+    projectUsers: ProjectUser
 
 
-@dataclass
-class ApiKey:
+class ApiKey(TypedDict):
     """
     A wrapper for ApiKey GraphQL object.
     """
 
-    createdAt = "createdAt"
-    id = "id"
-    key = "key"
-    name = "name"
-    revoked = "revoked"
-    user = UserWithoutApiKey
-    userId = "userId"
+    createdAt: str
+    id: str
+    key: str
+    name: str
+    revoked: bool
+    user: UserWithoutApiKey  # ? Why not just User
+    userId: str
 
 
-@dataclass
 class User(UserWithoutApiKey):
     """
     A wrapper for User GraphQL object.
     """
 
-    apiKeys = ApiKey
+    apiKeys: ApiKey
 
 
-@dataclass
-class LabelWithoutLabelOf:
+class LabelWithoutLabelOf(TypedDict):
     """
     A wrapper for Label GraphQL object.
     Defined in two steps to avoid cyclical dependencies.
     """
 
-    id = "id"
-    assetIdCompute = "assetIdCompute"
-    authorIdCompute = "authorIdCompute"
-    author = User
-    createdAt = "createdAt"
-    honeypotMark = "honeypotMark"
-    honeypotMarkCompute = "honeypotMarkCompute"
-    inferenceMark = "inferenceMark"
-    inferenceMarkCompute = "inferenceMarkCompute"
-    isLatestLabelForUser = "isLatestLabelForUser"
-    isLatestLabelForUserCompute = "isLatestLabelForUserCompute"
-    isLatestDefaultLabelForUser = "isLatestDefaultLabelForUser"
-    isLatestDefaultLabelForUserCompute = "isLatestDefaultLabelForUserCompute"
-    isLatestReviewLabelForUser = "isLatestReviewLabelForUser"
-    isLatestReviewLabelForUserCompute = "isLatestReviewLabelForUserCompute"
-    jsonResponse = "jsonResponse"
-    labelType = "labelType"
-    modelName = "modelName"
-    numberOfAnnotations = "numberOfAnnotations"
-    numberOfAnnotationsCompute = "numberOfAnnotationsCompute"
-    projectIdCompute = "projectIdCompute"
-    responseCompute = "responseCompute"
-    searchCompute = "searchCompute"
-    secondsToLabel = "secondsToLabel"
-    totalSecondsToLabel = "totalSecondsToLabel"
-    totalSecondsToLabelCompute = "totalSecondsToLabelCompute"
+    id: str
+    assetIdCompute: str
+    authorIdCompute: str
+    author: User
+    createdAt: str
+    honeypotMark: float
+    honeypotMarkCompute: float
+    inferenceMark: float
+    inferenceMarkCompute: float
+    isLatestLabelForUser: bool
+    isLatestLabelForUserCompute: bool
+    isLatestDefaultLabelForUser: bool
+    isLatestDefaultLabelForUserCompute: bool
+    isLatestReviewLabelForUser: bool
+    isLatestReviewLabelForUserCompute: bool
+    jsonResponse: Dict
+    labelType: LabelType
+    modelName: str
+    numberOfAnnotations: int
+    numberOfAnnotationsCompute: int
+    projectIdCompute: str
+    responseCompute: Dict
+    searchCompute: Dict
+    secondsToLabel: int
+    totalSecondsToLabel: float
+    totalSecondsToLabelCompute: float
 
 
-@dataclass
-class Lock:
+class Lock(TypedDict):
     """
     A wrapper for Lock GraphQL object.
     """
 
-    id = "id"
-    author = User
-    authorIdCompute = "authorIdCompute"
-    createdAt = "createdAt"
-    lockType = "lockType"
-    lockOfIdCompute = "lockOfIdCompute"
+    id: str
+    author: User
+    authorIdCompute: str
+    createdAt: str
+    lockType: LockType
+    lockOfIdCompute: str
 
 
-@dataclass
-class CommentsWithoutCommentsOf:
+class CommentsWithoutCommentsOf(TypedDict):
     """
     A wrapper for Comment GraphQL object.
     Defined in two steps to avoid cyclical dependencies.
     """
 
-    id = "id"
-    author = ProjectUser
-    createdAt = "createdAt"
-    text = "text"
-    updatedAt = "updatedAt"
+    id: str
+    author: ProjectUser
+    createdAt: str
+    text: str
+    updatedAt: str
 
 
-@dataclass
-class CommentWithoutIssue:
+class CommentWithoutIssue(TypedDict):
     """
     A wrapper for Comment GraphQL object.
     """
 
-    id = "id"
-    author = ProjectUser
-    authorId = "authorId"
-    createdAt = "createdAt"
-    issueId = "issueId"
-    text = "text"
-    updatedAt = "updatedAt"
+    id: str
+    author: ProjectUser
+    authorId: str
+    createdAt: str
+    issueId: str
+    text: str
+    updatedAt: str
 
 
-@dataclass
-class IssueWithoutAsset:
+class IssueWithoutAsset(TypedDict):
     """
     A wrapper for Issue GraphQL object.
     Defined in two steps to avoid cyclical dependencies.
     """
 
-    id = "id"
-    assetId = "assetId"
-    assignee = ProjectUser
-    assigneeId = "assigneeId"
-    author = ProjectUser
-    authorId = "authorId"
-    comments = CommentWithoutIssue
-    createdAt = "createdAt"
-    hasBeenSeen = "hasBeenSeen"
-    issueNumber = "issueNumber"
-    objectMid = "objectMid"
+    id: str
+    assetId: str
+    assignee: ProjectUser
+    assigneeId: str
+    author: ProjectUser
+    authorId: str
+    comments: CommentWithoutIssue
+    createdAt: str
+    hasBeenSeen: bool
+    issueNumber: int
+    objectMid: str
     project: ProjectWithoutDataset
-    projectId = "projectId"
-    status = "status"
-    type = "type"
-    updatedAt = "updatedAt"
+    projectId: str
+    status: IssueStatus
+    type: "type"
+    updatedAt: str
 
 
-@dataclass
-class Asset:
+class Asset(TypedDict):
     """
     A wrapper for Asset GraphQL object.
     """
 
-    id = "id"
-    consensusMark = "consensusMark"
-    consensusMarkCompute = "consensusMarkCompute"
-    consensusMarkPerCategory = "consensusMarkPerCategory"
-    content = "content"
-    contentJson = "contentJson"
-    contentJsonCompute = "contentJsonCompute"
-    createdAt = "createdAt"
-    duration = "duration"
-    durationCompute = "durationCompute"
-    externalId = "externalId"
-    honeypotMark = "honeypotMark"
-    honeypotMarkCompute = "honeypotMarkCompute"
-    inferenceMark = "inferenceMark"
-    inferenceMarkCompute = "inferenceMarkCompute"
-    isHoneypot = "isHoneypot"
-    isProcessingAuthorized = "isProcessingAuthorized"
-    isToBeLabeledBy = "isToBeLabeledBy"
-    issues = IssueWithoutAsset
-    isUsedForConsensus = "isUsedForConsensus"
-    jsonContent = "jsonContent"
-    jsonMetadata = "jsonMetadata"
-    labels = LabelWithoutLabelOf
-    latestLabel = LabelWithoutLabelOf
-    latestLabelCompute = LabelWithoutLabelOf
-    locks = Lock
-    metadataCompute = "metadataCompute"
-    metadata = "metadata"
-    numberOfValidLocks = "numberOfValidLocks"
-    numberOfValidLocksCompute = "numberOfValidLocksCompute"
-    ocrMetadata = "ocrMetadata"
-    priority = "priority"
-    project = ProjectWithoutDataset
-    projectId = "projectId"
-    projectIdCompute = "projectIdCompute"
-    readPermissionsFromLabels = "readPermissionsFromLabels"
-    skipped = "skipped"
-    status = "status"
-    statusCompute = "statusCompute"
-    thumbnail = "thumbnail"
-    thumbnailCompute = "thumbnailCompute"
-    toBeLabeledBy = ProjectUser
-    updatedAt = "updatedAt"
+    id: str
+    consensusMark: float
+    consensusMarkCompute: float
+    consensusMarkPerCategory: Dict
+    content: str
+    contentJson: Dict
+    contentJsonCompute: Dict
+    createdAt: str
+    duration: float
+    durationCompute: float
+    externalId: str
+    honeypotMark: float
+    honeypotMarkCompute: float
+    inferenceMark: float
+    inferenceMarkCompute: float
+    isHoneypot: bool
+    isToBeLabeledBy: bool
+    issues: IssueWithoutAsset
+    isUsedForConsensus: bool
+    jsonContent: Dict
+    jsonMetadata: Dict
+    labels: LabelWithoutLabelOf
+    latestLabel: LabelWithoutLabelOf
+    latestLabelCompute: LabelWithoutLabelOf
+    locks: Lock
+    metadataCompute: Dict
+    metadata: Dict
+    numberOfValidLocks: int
+    numberOfValidLocksCompute: int
+    ocrMetadata: Dict
+    priority: int
+    project: ProjectWithoutDataset
+    projectId: str
+    projectIdCompute: str
+    readPermissionsFromLabels: str
+    skipped: bool
+    status: Status
+    statusCompute: Status
+    thumbnail: str
+    thumbnailCompute: str
+    toBeLabeledBy: ProjectUser
+    updatedAt: str
 
 
-@dataclass
 class Label(LabelWithoutLabelOf):
     """
     A wrapper for Label GraphQL object.
     """
 
-    labelOf = Asset
+    labelOf: Asset
 
 
-@dataclass
 class Project(ProjectWithoutDataset):
     """
     A wrapper for Project GraphQL object.
     """
 
-    dataset = Asset
+    dataset: Asset
 
 
-@dataclass
-class Notification:
+class Notification(TypedDict):
     """
     A wrapper for Notification GraphQL object.
     """
 
-    id = "id"
-    createdAt = "createdAt"
-    hasBeenSeen = "hasBeenSeen"
-    message = "message"
-    status = "status"
-    url = "url"
-    userID = "userID"
+    id: str
+    createdAt: str
+    hasBeenSeen: bool
+    message: str
+    status: NotificationStatus
+    url: str
+    userID: str
 
 
-@dataclass
-class ProjectVersion:
+class ProjectVersion(TypedDict):
     """
     A wrapper for ProjectVersion GraphQL object.
     """
 
-    id = "id"
-    createdAt = "createdAt"
-    content = "content"
-    name = "name"
-    project = Project
-    projectId = "projectId"
+    id: str
+    createdAt: str
+    content: str
+    name: str
+    project: Project
+    projectId: str
 
 
-@dataclass
 class Issue(IssueWithoutAsset):
     """
     A wrapper for Issue GraphQL object.
@@ -400,13 +391,12 @@ class Issue(IssueWithoutAsset):
     asset: Asset
 
 
-@dataclass
 class Comment(CommentWithoutIssue):
     """
     A wrapper for Comment GraphQL object.
     """
 
-    issue = Issue
+    issue: Issue
 
 
-# pylint: enable=invalid-name
+# pylint: enable:invalid-name

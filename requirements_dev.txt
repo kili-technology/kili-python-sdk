@@ -20,3 +20,7 @@ pylint
 flake8-unused-arguments
 pyright
 linkcheckmd
+
+# notebooks tests
+nbformat
+nbconvert

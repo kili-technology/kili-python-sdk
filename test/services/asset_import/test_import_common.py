@@ -6,6 +6,7 @@ from kili.queries.asset import QueriesAsset
 from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
+from kili.services.asset_import.types import AssetLike
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
