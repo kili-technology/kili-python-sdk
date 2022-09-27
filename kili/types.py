@@ -114,7 +114,7 @@ class ProjectUserWithoutProject(TypedDict):
     user: UserWithoutProjectUsers
 
 
-class ProjectWithoutDataset(TypedDict):
+class ProjectWithoutDataset(TypedDict, total=False):
     """
     A wrapper for Project GraphQL object.
     Defined in two steps to avoid cyclical dependencies.
@@ -348,7 +348,7 @@ class Label(LabelWithoutLabelOf):
     labelOf: Asset
 
 
-class Project(ProjectWithoutDataset):
+class Project(ProjectWithoutDataset, total=False):
     """
     A wrapper for Project GraphQL object.
     """

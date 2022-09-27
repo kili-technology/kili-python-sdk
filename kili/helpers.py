@@ -198,7 +198,7 @@ def fragment_builder(fields: List[str], typed_dict_class: Type[TypedDict]):
     for field in fields:
         try:
             type_of_fields[field]
-        except ValueError:
+        except KeyError:
             print(f"{field} must be an instance of {type_of_fields}")
         if isinstance(field, str):
             fragment += f" {field}"
