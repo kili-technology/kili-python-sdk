@@ -121,4 +121,4 @@ class QueriesNotification:
         }
         result = self.auth.client.execute(GQL_NOTIFICATIONS_COUNT, variables)
         count = format_result("data", result)
-        return count
+        return int(count)  # type:ignore
