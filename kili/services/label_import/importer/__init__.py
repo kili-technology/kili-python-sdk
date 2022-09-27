@@ -249,17 +249,21 @@ class YoloLabelImporter(AbstractLabelImporter):
                 # layout: id class\n
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     csv_reader = csv.reader(m_f, delimiter=" ")
-                    classes = Classes({int(r[0]): r[1] for r in csv_reader})
-            except ValueError:
+                    classes = Classes({int(r[0]): r[1] for r in csv_reader if r[0] != " "})
+            except (ValueError, IndexError):
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     classes = Classes(dict(enumerate(m_f.read().splitlines())))
-            except IndexError:
-                with meta_file_path.open("r", encoding="utf-8") as m_f:
-                    classes = Classes(dict(enumerate(m_f.read().splitlines())))
-        if input_format == "yolo_v5":
+
+        elif input_format == "yolo_v5":
+            with meta_file_path.open("r", encoding="utf-8") as m_f:
+                m_d = yaml.load(m_f, yaml.FullLoader)
+                classes = Classes(m_d["names"])
+        elif input_format == "yolo_v7":
             with meta_file_path.open("r", encoding="utf-8") as m_f:
                 m_d = yaml.load(m_f, yaml.FullLoader)
                 classes = Classes(dict(enumerate(m_d["names"])))
+        else:
+            raise NotImplementedError(f"The format f{input_format} does not have a metadata parser")
 
         return classes
 

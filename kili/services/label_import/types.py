@@ -8,7 +8,7 @@ from typing_extensions import Literal, Required, TypedDict
 from kili.services.types import LabelType
 
 Classes = NewType("Classes", Dict[int, str])
-LabelFormat = Literal["yolo_v4", "yolo_v5", "raw"]
+LabelFormat = Literal["yolo_v4", "yolo_v5", "yolo_v7", "raw"]
 
 
 class LabelToImport(TypedDict, total=False):
