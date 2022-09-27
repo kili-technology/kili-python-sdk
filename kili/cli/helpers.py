@@ -7,8 +7,6 @@ from typing import Any, Dict, List, Optional
 from kili.client import Kili
 from kili.graphql_client import GraphQLClientName
 
-# pylint: disable=consider-using-f-string
-
 
 def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
     """Instantiate a kili client for the CLI functions"""

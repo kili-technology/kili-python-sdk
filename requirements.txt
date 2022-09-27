@@ -2,7 +2,6 @@ click
 pandas
 pyparsing
 requests
-six
 tabulate
 tqdm
 typeguard
