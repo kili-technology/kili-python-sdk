@@ -18,7 +18,7 @@ if [[ "$1" == "bump:"* ]]
 
     #create or reset release branch
     git checkout master
-    git pull origin master --tags
+    git pull origin master
     git checkout -B release/bump-version-$(date +%s) $COMMIT
 
     echo "Creating a new branch from master commit $COMMIT"
@@ -33,8 +33,7 @@ if [[ "$1" == "bump:"* ]]
         | grep new_version | sed -r s,"^.*=",,`
 
     echo "Bumping to version $new_version"
-    git tag -a $new_version -m "Release $new_version"
-    git push origin master --tags
+    git push
 
     gh pr create \
         --fill \
