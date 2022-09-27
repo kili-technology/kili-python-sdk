@@ -213,6 +213,12 @@ def _write_class_file(folder: str, category_ids: Dict[str, JobCategory], label_f
                 fout.write(f"{job_category.id} {job_category.category_name}\n".encode())
     if label_format == "yolo_v5":
         with open(os.path.join(folder, "data.yaml"), "wb") as fout:
+            fout.write("names:\n".encode())
+            categories = ""
+            for ind, job_category in enumerate(category_ids.values()):
+                fout.write(f"  {ind}: {job_category.category_name}\n".encode())
+    if label_format == "yolo_v7":
+        with open(os.path.join(folder, "data.yaml"), "wb") as fout:
             categories = ""
             for job_category in category_ids.values():
                 categories += f"'{job_category.category_name}', "
