@@ -36,7 +36,7 @@ def collect_members_from_csv(csv_path: str, role: Optional[str]):
     if "role" in members_to_add[0].keys():
         if role is not None:
             raise ValueError(
-                "--role cannot be used if the argument passed is " "a path to a csv file with roles"
+                "--role cannot be used if the argument passed is a path to a csv file with roles"
             )
     else:
         if role is None:
@@ -100,7 +100,8 @@ def check_exclusive_options(
     all_members: Optional[bool],
 ):
     """Forbid mutual use of options and argument(s)"""
-
+    if not emails:
+        return True
     if all_members is None:
         if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) > 1:
             raise ValueError(

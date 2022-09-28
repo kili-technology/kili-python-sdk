@@ -28,7 +28,7 @@ def dict_type_check(dict_: Dict[str, Any], type_check):
 def collect_from_csv(
     csv_path: str,
     required_columns: List[str],
-    optional_columns: Optional[List[str]],
+    optional_columns: List[str],
     type_check_function,
 ):
     """read a csv to collect required_columns and optional_columns"""

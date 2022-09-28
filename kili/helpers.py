@@ -300,7 +300,9 @@ def list_is_not_none_else_none(_object):
     return [_object] if _object is not None else None
 
 
-def infer_id_from_external_id(kili, asset_id: Optional[str], external_id: str, project_id: str):
+def infer_id_from_external_id(
+    kili, asset_id: Optional[str], external_id: Optional[str], project_id: Optional[str]
+):
     """
     Infer asset id from external id
 

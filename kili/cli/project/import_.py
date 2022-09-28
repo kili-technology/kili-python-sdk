@@ -139,8 +139,8 @@ def import_assets(
 
     check_exclusive_options(csv_path, files)
 
-    if len(files) > 0:
-        files_to_upload = get_file_paths_to_upload(files)
+    if files:
+        files_to_upload = get_file_paths_to_upload(list(files))
         if len(files_to_upload) == 0:
             raise ValueError(
                 "No files to upload. "

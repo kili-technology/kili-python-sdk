@@ -34,6 +34,7 @@ def import_assets(
     """
     kili = QueriesProject(auth)
     projects = kili.projects(project_id, disable_tqdm=True)
+    projects = list(projects)
     assert len(projects) == 1, NO_ACCESS_RIGHT
     input_type = projects[0]["inputType"]
 

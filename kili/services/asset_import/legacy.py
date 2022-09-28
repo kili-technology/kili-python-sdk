@@ -188,7 +188,7 @@ def upload_content(signed_url: str, content: str, input_type: str):
 # pylint: disable=too-many-arguments
 def process_and_store_content(
     input_type: str,
-    content_array: Union[List[str], None],
+    content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     project_id: str,
     auth: KiliAuth,
@@ -240,7 +240,7 @@ def is_float(number: str) -> bool:
         return False
 
 
-def process_csv_content(reader, file_name=None, delimiter=",") -> bool:
+def process_csv_content(reader, file_name=None, delimiter=",") -> Optional[str]:
     """
     Process the content of csv for time_series and check if it corresponds to the expected format
     """
@@ -279,7 +279,7 @@ def add_video_parameters(json_metadata, should_use_native_video):
 
 def process_metadata(
     input_type: str,
-    content_array: Union[List[str], None],
+    content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     json_metadata_array: Union[List[dict], None],
 ):

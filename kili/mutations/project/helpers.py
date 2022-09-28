@@ -3,8 +3,13 @@ Helpers for the project mutations
 """
 
 
+from typing import Optional
+
+
 def verify_argument_ranges(
-    consensus_tot_coverage: int, min_consensus_size: int, review_coverage: int
+    consensus_tot_coverage: Optional[int],
+    min_consensus_size: Optional[int],
+    review_coverage: Optional[int],
 ):
     """
     Ensure that all arguments are set in a correct range or raise
