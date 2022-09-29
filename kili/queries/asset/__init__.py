@@ -3,8 +3,6 @@
 from typing import Dict, Iterable, List, Optional
 
 import pandas as pd
-from typeguard import typechecked
-
 from kili.helpers import (
     Compatible,
     format_result,
@@ -12,9 +10,11 @@ from kili.helpers import (
     validate_category_search_query,
 )
 from kili.orm import Asset
+from kili.queries.asset.helpers import get_post_assets_call_process
 from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 from kili.types import Asset as AssetType
 from kili.utils.pagination import row_generator_from_paginated_calls
+from typeguard import typechecked
 
 
 class QueriesAsset:
@@ -178,6 +178,8 @@ class QueriesAsset:
                 "self",
                 "as_generator",
                 "message",
+                "download_media",
+                "local_media_dir",
             ]
         }
 
@@ -218,6 +220,10 @@ class QueriesAsset:
             },
         }
 
+        post_call_process = get_post_assets_call_process(
+            download_media, local_media_dir, project_id
+        )
+
         asset_generator = row_generator_from_paginated_calls(
             skip,
             first,
@@ -227,6 +233,7 @@ class QueriesAsset:
             payload_query,
             fields,
             disable_tqdm,
+            post_call_process,
         )
 
         if format == "pandas":
