@@ -23,6 +23,7 @@ class License:
     startDate = "startDate"
     type = "type"
     uploadCloudData = "uploadCloudData"
+    uploadLocalData = "uploadLocalData"
     organizationId = "organizationId"
 
 
