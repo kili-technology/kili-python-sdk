@@ -7,7 +7,6 @@ import os
 from tempfile import TemporaryDirectory
 from typing import Dict, List
 
-from kili.orm import Label
 from kili.services.export.format.base import BaseExporter
 
 
