@@ -63,9 +63,7 @@ def test_import_labels_from_files(description, inputs, outputs):
         yolo_classes = inputs["yolo_classes"]
         yolo_meta_path = Path(label_folders) / inputs["meta_path"]
 
-        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
-            wrt = csv.writer(y_m, delimiter=" ")
-            wrt.writerows((str(a) for a in r) for r in yolo_classes)
+        _generate_meta_file(yolo_classes, yolo_meta_path, inputs["label_format"])
 
         _generate_label_file_list(
             inputs["labels"]["rows"],
@@ -80,7 +78,7 @@ def test_import_labels_from_files(description, inputs, outputs):
             None,
             str(yolo_meta_path),
             ProjectId(inputs["project_id"]),
-            "yolo_v4",
+            inputs["label_format"],
             inputs["target_job_name"],
             disable_tqdm=False,
             log_level="INFO",
@@ -90,6 +88,14 @@ def test_import_labels_from_files(description, inputs, outputs):
 
         for row in outputs["calls"]:
             kili.append_to_labels.assert_called_with(**row)
+
+def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
+    if input_format == "yolo_v4":
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            wrt = csv.writer(y_m, delimiter=" ")
+            wrt.writerows((str(a) for a in r) for r in yolo_classes)
+    else:
+        raise NotImplementedError(f"Format {input_format} not implemented yet")
 
 
 def test_import_labels_from_files_malformed_annotation():

@@ -43,6 +43,7 @@ TEST_CASES = [
             "label_csv_path": "yolo_all_labels.txt",
             "meta_path": "yolo_classes.txt",
             "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
+            "label_format": "yolo_v4",
         },
         "outputs": {
             "calls": [
@@ -108,6 +109,7 @@ TEST_CASES = [
                     "label_type": "DEFAULT",
                     "seconds_to_label": 0,
                     "project_id": "yolo!",
+                    "label_format": "yolo_v4",
                 }
             ]
         },
@@ -148,6 +150,7 @@ TEST_CASES = [
             "label_csv_path": "yolo_all_labels.txt",
             "meta_path": "yolo_classes.txt",
             "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
+            "label_format": "yolo_v4",
         },
         "outputs": {
             "calls": [
@@ -250,6 +253,7 @@ TEST_CASES = [
             "label_csv_path": "yolo_all_labels.txt",
             "meta_path": "yolo_classes.txt",
             "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
+            "label_format": "yolo_v4",
         },
         "outputs": {
             "calls": [
