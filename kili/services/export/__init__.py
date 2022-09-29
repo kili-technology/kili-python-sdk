@@ -9,6 +9,7 @@ from kili.services.export.format.base import (
     ExportParams,
     LoggerParams,
 )
+from kili.services.export.format.kili import KiliExporterSelector
 from kili.services.export.format.yolo import YoloExporterSelector
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import LogLevel, ProjectId
@@ -50,8 +51,10 @@ def export_labels(  # pylint: disable=too-many-arguments
     )
 
     if label_format in get_args(LabelFormat):
-        YoloExporterSelector.export_project(
-            kili, export_params, logger_params, content_repository_params
-        )
+        if label_format == "raw":
+            exporter = KiliExporterSelector
+        else:
+            exporter = YoloExporterSelector
+        exporter.export_project(kili, export_params, logger_params, content_repository_params)
     else:
         raise ValueError(f'Label format "{label_format}" is not implemented or does not exist.')

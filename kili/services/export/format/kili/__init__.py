@@ -10,15 +10,14 @@ from ..base import (
     ExportParams,
     LoggerParams,
 )
-from .merge import YoloMergeExporter
-from .split import YoloSplitExporter
+from .common import KiliExporter
 
 
-class YoloExporterSelector(BaseExporterSelector):
+class KiliExporterSelector(BaseExporterSelector):
     # pylint: disable=too-few-public-methods
 
     """
-    Formatter to export to YOLOv4, v5 or v7
+    Formatter to export to Kili
     """
 
     @staticmethod
@@ -29,7 +28,7 @@ class YoloExporterSelector(BaseExporterSelector):
         content_repository_params: ContentRepositoryParams,
     ) -> None:
         """
-        Export a project to YOLO v4 or v5 format
+        Export a project to Kili format
         """
         logger = BaseExporterSelector.get_logger(logger_params.level)
 
@@ -47,19 +46,8 @@ class YoloExporterSelector(BaseExporterSelector):
             content_repository_params.router_headers,
             verify_ssl=True,
         )
-        if export_params.split_option == "split":
 
-            return YoloSplitExporter(
-                export_params.project_id,
-                export_params.export_type,
-                export_params.label_format,
-                logger_params.disable_tqdm,
-                kili,
-                logger,
-                content_repository,
-            ).process_and_save(assets, export_params.output_file)
-
-        return YoloMergeExporter(
+        return KiliExporter(
             export_params.project_id,
             export_params.export_type,
             export_params.label_format,

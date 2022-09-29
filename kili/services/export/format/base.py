@@ -2,6 +2,7 @@
 Base class for all formatters and other utility classes.
 """
 
+import logging
 import os
 import shutil
 from abc import ABC, abstractmethod
@@ -63,6 +64,18 @@ class BaseExporterSelector(ABC):
         Export a project to a json.
         Return the name of the exported archive file in the bucket.
         """
+
+    @staticmethod
+    def get_logger(level: LogLevel):
+        """Gets the export logger"""
+        logger = logging.getLogger("kili.services.export")
+        logger.setLevel(level)
+        if logger.hasHandlers():
+            logger.handlers.clear()
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        return logger
 
 
 class BaseExporter(ABC):
