@@ -144,7 +144,8 @@ def import_labels(
             --prediction \\
             --model-name YOLO-v5 \\
             --metadata-file classes.yml \\
-            --target-job IMAGE_DETECTION_JOB
+            --target-job IMAGE_DETECTION_JOB \\
+            --input-format yolo_v5
         ```
 
 
