@@ -1,6 +1,6 @@
 """
 Kili tqdm
 """
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
 __all__ = ["tqdm"]
