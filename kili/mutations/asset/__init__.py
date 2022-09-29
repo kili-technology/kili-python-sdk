@@ -2,7 +2,7 @@
 Asset mutations
 """
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from typeguard import typechecked
 
@@ -241,7 +241,7 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        properties_to_batch = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -273,7 +273,7 @@ class MutationsAsset:
                         "ckg22d81s0jrh0885pdxfd03n"
                         ],
         """
-        properties_to_batch = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -305,7 +305,7 @@ class MutationsAsset:
                         "ckg22d81s0jrh0885pdxfd03n"
                         ],
         """
-        properties_to_batch = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}

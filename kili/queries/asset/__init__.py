@@ -239,7 +239,7 @@ class QueriesAsset:
         payload.update({"skip": skip, "first": first})
         _gql_assets = gql_assets(fragment_builder(fields, AssetType))
         result = self.auth.client.execute(_gql_assets, payload)
-        assets = format_result("data", result, Asset)
+        assets = format_result("data", result, _object=List[Asset])
         return assets
 
     @Compatible(["v1", "v2"])

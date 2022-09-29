@@ -64,12 +64,12 @@ class LegacyDataImporter:
         (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
             self.auth,
             self.input_type,
-            content_array,
-            external_id_array,
-            is_honeypot_array,
-            status_array,
-            json_content_array,
-            json_metadata_array,
+            content_array,  # type:ignore (legacy problem)
+            external_id_array,  # type:ignore
+            is_honeypot_array,  # type:ignore
+            status_array,  # type:ignore
+            json_content_array,  # type:ignore
+            json_metadata_array,  # type:ignore
             self.project_id,
         )
 
@@ -204,11 +204,11 @@ def process_and_store_content(
     url_content_array = []
     if has_local_files:
         signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
-    for i, content in enumerate(content_array):
-        url_content = (is_url(content) and content) or upload_content(
-            signed_urls[i], content, input_type
-        )
-        url_content_array.append(url_content)
+        for i, content in enumerate(content_array):
+            url_content = (is_url(content) and content) or upload_content(
+                signed_urls[i], content, input_type
+            )
+            url_content_array.append(url_content)
     return url_content_array
 
 
@@ -342,24 +342,28 @@ def process_append_many_to_dataset_parameters(
     Process arguments of the append_many_to_dataset method and return the data payload.
     """
     if content_array is None:
+        assert (
+            json_content_array
+        ), "When content_array is not passed, you should pass json_content_array"
         content_array = [""] * len(json_content_array)
     if external_id_array is None:
         external_id_array = [uuid4().hex for _ in range(len(content_array))]
-    is_honeypot_array = (
+    is_honeypot_array_ = (
         [False] * len(content_array) if is_honeypot_array is None else is_honeypot_array
     )
     status_array = ["TODO"] * len(content_array) if not status_array else status_array
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array
     )
-    mime_type = get_file_mimetype(content_array, json_content_array)
+
+    mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore legacy
     content_array = process_and_store_content(
-        input_type, content_array, json_content_array, project_id, auth
+        input_type, content_array, json_content_array, project_id, auth  # type:ignore
     )
     formatted_json_content_array = process_json_content(
         input_type,
-        content_array,
-        json_content_array,
+        content_array,  # type:ignore
+        json_content_array,  # type:ignore
     )
 
     request, upload_type = get_request_to_execute(
@@ -368,7 +372,7 @@ def process_append_many_to_dataset_parameters(
     properties = {
         "content_array": content_array,
         "external_id_array": external_id_array,
-        "is_honeypot_array": is_honeypot_array,
+        "is_honeypot_array": is_honeypot_array_,
         "status_array": status_array,
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,

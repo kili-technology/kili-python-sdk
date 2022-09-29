@@ -53,11 +53,13 @@ class MutationsIssue:
         try:
             asset_id = cast(
                 List[Dict],
-                QueriesLabel(self.auth).labels(
-                    project_id=project_id,
-                    label_id=label_id,
-                    fields=["labelOf.id"],
-                    disable_tqdm=True,
+                list(
+                    QueriesLabel(self.auth).labels(
+                        project_id=project_id,
+                        label_id=label_id,
+                        fields=["labelOf.id"],
+                        disable_tqdm=True,
+                    )
                 )[0]["labelOf"]["id"],
             )
         except:

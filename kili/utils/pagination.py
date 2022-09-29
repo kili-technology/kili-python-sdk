@@ -3,7 +3,7 @@ Utils
 """
 import functools
 import time
-from typing import Callable, Dict, Iterator, List, Optional
+from typing import Any, Callable, Dict, Iterator, List, Optional, TypeVar
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 from kili.exceptions import GraphQLError
@@ -87,6 +87,9 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
         yield iterable[ndx : min(ndx + batch_size, iterable_length)]
 
 
+T = TypeVar("T")
+
+
 def batch_object_builder(
     properties_to_batch: Dict[str, Optional[list]],
     batch_size: int = MUTATION_BATCH_SIZE,
@@ -135,7 +138,7 @@ def api_throttle(func):
 
 def _mutate_from_paginated_call(
     self,
-    properties_to_batch: Dict[str, Optional[list]],
+    properties_to_batch: Dict[str, Optional[List[Any]]],
     generate_variables: Callable,
     request: str,
     batch_size: int = MUTATION_BATCH_SIZE,
