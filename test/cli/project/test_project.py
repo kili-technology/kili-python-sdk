@@ -348,25 +348,45 @@ class TestCLIProject:
                     )
 
     def test_export(self, mocker):
+        export_commands = [
+            [
+                "--output-format",
+                "yolo_v4",
+                "--output-file",
+                "export.zip",
+                "--project-id",
+                "object_detection",
+                "--layout",
+                "split",
+                "--verbose",
+                "--api-key",
+                "toto",
+                "--endpoint",
+                "localhost",
+            ],
+            [
+                "--output-format",
+                "raw",
+                "--output-file",
+                "export.zip",
+                "--project-id",
+                "object_detection",
+                "--layout",
+                "split",
+                "--verbose",
+                "--api-key",
+                "toto",
+                "--endpoint",
+                "localhost",
+            ],
+        ]
+
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(
-                export_labels,
-                [
-                    "--output-format",
-                    "yolo_v4",
-                    "--output-file",
-                    "export.zip",
-                    "--project-id",
-                    "object_detection",
-                    "--layout",
-                    "split",
-                    "--verbose",
-                    "--api-key",
-                    "toto",
-                    "--endpoint",
-                    "localhost",
-                ],
-            )
-            debug_subprocess_pytest(result)
-            assert result.output.count("export.zip")
+            for export_command in export_commands:
+                result = runner.invoke(
+                    export_labels,
+                    export_command,
+                )
+                debug_subprocess_pytest(result)
+                assert result.output.count("export.zip")
