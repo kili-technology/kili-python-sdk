@@ -2,8 +2,6 @@
 Functions to export a project to YOLOv4, v5 or v7 format
 """
 
-from ...repository import SDKContentRepository
-from ...tools import fetch_assets
 from ..base import (
     BaseExporterSelector,
     ContentRepositoryParams,
@@ -21,8 +19,8 @@ class YoloExporterSelector(BaseExporterSelector):
     Formatter to export to YOLOv4, v5 or v7
     """
 
-    @staticmethod
     def export_project(
+        self,
         kili,
         export_params: ExportParams,
         logger_params: LoggerParams,
@@ -31,21 +29,8 @@ class YoloExporterSelector(BaseExporterSelector):
         """
         Export a project to YOLO v4 or v5 format
         """
-        logger = BaseExporterSelector.get_logger(logger_params.level)
-
-        logger.info("Fetching assets ...")
-        assets = fetch_assets(
-            kili,
-            project_id=export_params.project_id,
-            asset_ids=export_params.assets_ids,
-            export_type=export_params.export_type,
-            label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=logger_params.disable_tqdm,
-        )
-        content_repository = SDKContentRepository(
-            content_repository_params.router_endpoint,
-            content_repository_params.router_headers,
-            verify_ssl=True,
+        logger, assets, content_repository = self.get_logger_assets_and_content_repo(
+            kili, export_params, logger_params, content_repository_params
         )
         if export_params.split_option == "split":
 

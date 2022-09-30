@@ -2,8 +2,6 @@
 Functions to export a project to Kili format
 """
 
-from kili.services.export.repository import SDKContentRepository
-from kili.services.export.tools import fetch_assets
 from kili.services.export.format.base import (
     BaseExporterSelector,
     ContentRepositoryParams,
@@ -20,8 +18,8 @@ class KiliExporterSelector(BaseExporterSelector):
     Formatter to export to Kili
     """
 
-    @staticmethod
     def export_project(
+        self,
         kili,
         export_params: ExportParams,
         logger_params: LoggerParams,
@@ -30,23 +28,9 @@ class KiliExporterSelector(BaseExporterSelector):
         """
         Export a project to Kili format
         """
-        logger = BaseExporterSelector.get_logger(logger_params.level)
-
-        logger.info("Fetching assets ...")
-        assets = fetch_assets(
-            kili,
-            project_id=export_params.project_id,
-            asset_ids=export_params.assets_ids,
-            export_type=export_params.export_type,
-            label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=logger_params.disable_tqdm,
+        logger, assets, content_repository = self.get_logger_assets_and_content_repo(
+            kili, export_params, logger_params, content_repository_params
         )
-        content_repository = SDKContentRepository(
-            content_repository_params.router_endpoint,
-            content_repository_params.router_headers,
-            verify_ssl=True,
-        )
-
         return KiliExporter(
             export_params.project_id,
             export_params.export_type,
