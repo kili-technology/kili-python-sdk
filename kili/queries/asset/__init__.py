@@ -79,6 +79,8 @@ class QueriesAsset:
         updated_at_lte: Optional[str] = None,
         as_generator: bool = False,
         label_category_search: Optional[str] = None,
+        download_media: bool = False,
+        local_media_dir: Optional[str] = None,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
