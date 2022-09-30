@@ -4,6 +4,7 @@ import csv
 import os
 from unittest.mock import ANY, MagicMock, patch
 
+import pytest
 from click.testing import CliRunner
 
 from kili.cli.project.create import create_project
