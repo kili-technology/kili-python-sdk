@@ -10,6 +10,7 @@ from unittest import TestCase
 from zipfile import ZipFile
 
 import pytest
+from parameterized import parameterized
 
 from kili.services import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
@@ -51,7 +52,7 @@ def get_file_tree(folder: str):
     return dct
 
 
-class YoloTestCase(TestCase):
+class ExportTestCase(TestCase):
     def test_process_asset_for_job_image_not_served_by_kili(self):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
@@ -153,90 +154,108 @@ class YoloTestCase(TestCase):
                 with open("./test/services/export/expected/data_v7.yaml", "rb") as expected_file:
                     self.assertEqual(expected_file.read(), created_file.read())
 
-    def test_conversion_service(self):
-        use_cases = [
-            {
-                "export_kwargs": {
-                    "project_id": "object_detection",
-                    "label_format": "yolo_v5",
-                    "split_option": "split",
-                },
-                "file_tree_expected": {
-                    "images": {"remote_assets.csv": {}},
-                    "JOB_0": {
-                        "labels": {
-                            "car_1.txt": {},
-                        },
-                        "data.yaml": {},
+    @parameterized.expand(
+        [
+            [
+                {
+                    "export_kwargs": {
+                        "project_id": "object_detection",
+                        "label_format": "yolo_v5",
+                        "split_option": "split",
                     },
-                    "JOB_1": {"labels": {}, "data.yaml": {}},
-                    "JOB_2": {"labels": {}, "data.yaml": {}},
-                    "JOB_3": {"labels": {}, "data.yaml": {}},
-                    "README.kili.txt": {},
-                },
-            },
-            {
-                "export_kwargs": {
-                    "project_id": "object_detection",
-                    "label_format": "yolo_v5",
-                    "split_option": "merged",
-                },
-                "file_tree_expected": {
-                    "images": {"remote_assets.csv": {}},
-                    "labels": {"car_1.txt": {}},
-                    "data.yaml": {},
-                    "README.kili.txt": {},
-                },
-            },
-            {
-                "export_kwargs": {
-                    "project_id": "object_detection",
-                    "label_format": "yolo_v4",
-                    "split_option": "merged",
-                },
-                "file_tree_expected": {
-                    "images": {"remote_assets.csv": {}},
-                    "labels": {"car_1.txt": {}},
-                    "classes.txt": {},
-                    "README.kili.txt": {},
-                },
-            },
-        ]
-
-        for use_case in use_cases:
-            with TemporaryDirectory() as export_folder:
-                with TemporaryDirectory() as extract_folder:
-                    path_zipfile = Path(export_folder) / "export.zip"
-                    path_zipfile.parent.mkdir(parents=True, exist_ok=True)
-
-                    fake_kili = FakeKili()
-                    default_kwargs = {
-                        "asset_ids": [],
+                    "file_tree_expected": {
+                        "images": {"remote_assets.csv": {}},
+                        "JOB_0": {
+                            "labels": {
+                                "car_1.txt": {},
+                            },
+                            "data.yaml": {},
+                        },
+                        "JOB_1": {"labels": {}, "data.yaml": {}},
+                        "JOB_2": {"labels": {}, "data.yaml": {}},
+                        "JOB_3": {"labels": {}, "data.yaml": {}},
+                        "README.kili.txt": {},
+                    },
+                }
+            ],
+            [
+                {
+                    "export_kwargs": {
+                        "project_id": "object_detection",
+                        "label_format": "yolo_v5",
                         "split_option": "merged",
-                        "export_type": "latest",
-                        "output_file": str(path_zipfile),
-                        "disable_tqdm": True,
-                        "log_level": "INFO",
-                    }
+                    },
+                    "file_tree_expected": {
+                        "images": {"remote_assets.csv": {}},
+                        "labels": {"car_1.txt": {}},
+                        "data.yaml": {},
+                        "README.kili.txt": {},
+                    },
+                }
+            ],
+            [
+                {
+                    "export_kwargs": {
+                        "project_id": "object_detection",
+                        "label_format": "yolo_v4",
+                        "split_option": "merged",
+                    },
+                    "file_tree_expected": {
+                        "images": {"remote_assets.csv": {}},
+                        "labels": {"car_1.txt": {}},
+                        "classes.txt": {},
+                        "README.kili.txt": {},
+                    },
+                }
+            ],
+            [
+                {
+                    "export_kwargs": {
+                        "project_id": "object_detection",
+                        "label_format": "raw",
+                    },
+                    "file_tree_expected": {
+                        "data.json": {},
+                        "README.kili.txt": {},
+                    },
+                }
+            ],
+        ]
+    )
+    def test_export_service(self, test_case):
+        with TemporaryDirectory() as export_folder:
+            with TemporaryDirectory() as extract_folder:
+                path_zipfile = Path(export_folder) / "export.zip"
+                path_zipfile.parent.mkdir(parents=True, exist_ok=True)
 
-                    default_kwargs.update(use_case["export_kwargs"])
+                fake_kili = FakeKili()
+                default_kwargs = {
+                    "asset_ids": [],
+                    "split_option": "merged",
+                    "export_type": "latest",
+                    "output_file": str(path_zipfile),
+                    "disable_tqdm": True,
+                    "log_level": "INFO",
+                }
 
-                    export_labels(
-                        fake_kili,
-                        **default_kwargs,
-                    )
+                default_kwargs.update(test_case["export_kwargs"])
 
-                    Path(extract_folder).mkdir(parents=True, exist_ok=True)
-                    with ZipFile(path_zipfile, "r") as z_f:
-                        z_f.extractall(extract_folder)
+                export_labels(
+                    fake_kili,
+                    **default_kwargs,
+                )
 
-                    file_tree_result = get_file_tree(extract_folder)
+                Path(extract_folder).mkdir(parents=True, exist_ok=True)
+                with ZipFile(path_zipfile, "r") as z_f:
+                    z_f.extractall(extract_folder)
 
-                    file_tree_expected = use_case["file_tree_expected"]
+                file_tree_result = get_file_tree(extract_folder)
 
-                    assert file_tree_result == file_tree_expected
+                file_tree_expected = test_case["file_tree_expected"]
 
-    def test_conversion_service_errors(self):
+                assert file_tree_result == file_tree_expected
+
+    def test_export_service_errors(self):
         use_cases = [
             {
                 "export_kwargs": {
