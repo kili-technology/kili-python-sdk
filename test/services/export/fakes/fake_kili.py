@@ -5,6 +5,8 @@ Fake Kili object
 from test.services.export.fakes.fake_data import asset_image
 from typing import List, Optional
 
+from kili.orm import Asset
+
 
 class FakeAuth:
     api_key = ""
@@ -31,7 +33,7 @@ class FakeKili:
         """
         _ = fields, label_type_in, asset_id_in, disable_tqdm
         if project_id == "object_detection":
-            return [asset_image]
+            return [Asset(asset_image)]
         elif project_id == "text_classification":
             return []
         else:
