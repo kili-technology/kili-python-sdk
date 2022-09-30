@@ -5,6 +5,7 @@ import os
 from unittest.mock import ANY, MagicMock, patch
 
 from click.testing import CliRunner
+
 from kili.cli.project.create import create_project
 from kili.cli.project.describe import describe_project
 from kili.cli.project.export import export_labels
