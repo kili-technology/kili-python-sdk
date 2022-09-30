@@ -32,7 +32,7 @@ def download_file(url: str, external_id: str, local_dir_path: Path):
 
 
 def get_field_array(assets: List[dict], field: str):
-    """Get a generator of an asset field from a generator of kili assets"""
+    """Get a list of an asset field from a generator of kili assets"""
     field_array = []
     for asset in assets:
         value = asset.get(field)
@@ -45,7 +45,7 @@ def get_field_array(assets: List[dict], field: str):
     return field_array
 
 
-def download_asset_media(assets: List[dict], local_dir_path: Path):
+def download_asset_media(assets: List[dict], local_dir_path: Path) -> List[dict]:
     """Download assets media in local"""
     local_dir_path.mkdir(parents=True, exist_ok=True)
     content_array: List[str] = get_field_array(assets, "content")
