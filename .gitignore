@@ -21,7 +21,3 @@ launch.json
 # testing
 .coverage
 cov.xml
-
-# Export
-export.zip
-export/
