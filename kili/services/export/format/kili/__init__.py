@@ -1,16 +1,16 @@
 """
-Functions to export a project to YOLOv4, v5 or v7 format
+Functions to export a project to Kili format
 """
 
-from ...repository import SDKContentRepository
-from ...tools import fetch_assets
-from ..base import (
+from kili.services.export.repository import SDKContentRepository
+from kili.services.export.tools import fetch_assets
+from kili.services.export.format.base import (
     BaseExporterSelector,
     ContentRepositoryParams,
     ExportParams,
     LoggerParams,
 )
-from .common import KiliExporter
+from kili.services.export.format.kili.common import KiliExporter
 
 
 class KiliExporterSelector(BaseExporterSelector):
