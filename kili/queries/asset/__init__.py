@@ -3,6 +3,8 @@
 from typing import Dict, Iterable, List, Optional
 
 import pandas as pd
+from typeguard import typechecked
+
 from kili.helpers import (
     Compatible,
     format_result,
@@ -14,7 +16,6 @@ from kili.queries.asset.helpers import get_post_assets_call_process
 from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 from kili.types import Asset as AssetType
 from kili.utils.pagination import row_generator_from_paginated_calls
-from typeguard import typechecked
 
 
 class QueriesAsset:

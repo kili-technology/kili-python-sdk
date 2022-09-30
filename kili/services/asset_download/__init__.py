@@ -9,10 +9,11 @@ from pathlib import Path
 from typing import List
 
 import requests
-from kili.services.asset_download.exceptions import MissingPropertyError
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
+
+from kili.services.asset_download.exceptions import MissingPropertyError
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2))
