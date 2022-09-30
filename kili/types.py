@@ -37,6 +37,7 @@ class License(TypedDict):
     startDate: str
     type: LicenseType
     uploadCloudData: bool
+    uploadLocalData: bool
     organizationId: int
 
 

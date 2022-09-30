@@ -39,7 +39,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
         raise ValueError("If predictions are uploaded, a model name should be specified")
 
     label_importer_class: Optional[Type[AbstractLabelImporter]] = None
-    if input_format in ["yolo_v4", "yolo_v5"]:
+    if input_format in ["yolo_v4", "yolo_v5", "yolo_v7"]:
         label_importer_class = YoloLabelImporter
     elif input_format == "raw":
         label_importer_class = KiliRawLabelImporter

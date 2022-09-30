@@ -9,10 +9,19 @@ if [[ "$1" == "bump:"* ]]
             exit 1
     fi
 
+    if [ -z "$2" ]
+        then
+        COMMIT='HEAD'
+    else
+        COMMIT=$2
+    fi
+
     #create or reset release branch
     git checkout master
-    git pull
-    git checkout -B release/bump-version-$(date +%s)
+    git pull origin master
+    git checkout -B release/bump-version-$(date +%s) $COMMIT
+
+    echo "Creating a new branch from master commit $COMMIT"
 
     # increment version in the kili/__init__.py file and in setup.cfg
     new_version=`bump2version \
