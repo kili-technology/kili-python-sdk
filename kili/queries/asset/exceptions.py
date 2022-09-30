@@ -1,5 +1,5 @@
 """
-Asset download service exceptions
+Asset queries related exceptions
 """
 
 
