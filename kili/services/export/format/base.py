@@ -180,8 +180,8 @@ class BaseExporterSelector(ABC):
             content_repository_params.router_headers,
             verify_ssl=True,
         )
-        ExporterClass = self.select_exporter(export_params.split_option)
-        return ExporterClass(
+        exporter_class = self.select_exporter(export_params.split_option)
+        return exporter_class(
             export_params.project_id,
             export_params.export_type,
             export_params.label_format,
