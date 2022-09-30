@@ -1,5 +1,4 @@
 #tests
-parameterized
 pytest
 pytest-mock
 
