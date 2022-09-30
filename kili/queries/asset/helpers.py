@@ -23,5 +23,4 @@ def get_post_assets_call_process(
 
         return lambda assets: download_asset_media(assets, local_dir_path)
 
-    else:
-        return lambda assets: assets
+    return lambda assets: assets
