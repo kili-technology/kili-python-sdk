@@ -4,9 +4,8 @@ import csv
 import warnings
 from typing import Any, Dict, List, Optional
 
+from kili.client import Kili
 from kili.graphql_client import GraphQLClientName
-
-from ..client import Kili
 
 
 def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
@@ -37,6 +36,9 @@ def collect_from_csv(
     with open(csv_path, "r", encoding="utf-8") as csv_file:
         csvreader = csv.DictReader(csv_file)
         headers = csvreader.fieldnames
+        if not headers:
+            headers = []
+
         missing_columns = list(set(required_columns) - set(headers))
         if len(missing_columns) > 0:
             raise ValueError(f"{missing_columns} must be headers of the csv file: {csv_path}")
