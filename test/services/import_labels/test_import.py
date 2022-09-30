@@ -9,6 +9,7 @@ from typing import Any, Dict, List
 from unittest.mock import MagicMock
 
 import pytest
+import yaml
 
 from kili.services import import_labels_from_files
 from kili.services.label_import.exceptions import LabelParsingError
@@ -39,6 +40,21 @@ def _generate_label_file(yolo_rows: List[List], filename: str):
     with Path(filename).open("w", encoding="utf-8") as y_f:
         wrt = csv.writer(y_f, delimiter=" ")
         wrt.writerows((str(a) for a in r) for r in yolo_rows)
+
+
+def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
+    if input_format == "yolo_v4":
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            wrt = csv.writer(y_m, delimiter=" ")
+            wrt.writerows((str(a) for a in r) for r in yolo_classes)
+    elif input_format == "yolo_v5":
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            y_m.write(yaml.dump({"names": dict(yolo_classes)}))
+    elif input_format == "yolo_v7":
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            y_m.write(yaml.dump({"nc": len(yolo_classes), "names": [c[1] for c in yolo_classes]}))
+    else:
+        raise NotImplementedError(f"Format {input_format} not implemented yet")
 
 
 @pytest.mark.parametrize(
@@ -88,14 +104,6 @@ def test_import_labels_from_files(description, inputs, outputs):
 
         for row in outputs["calls"]:
             kili.append_to_labels.assert_called_with(**row)
-
-def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
-    if input_format == "yolo_v4":
-        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
-            wrt = csv.writer(y_m, delimiter=" ")
-            wrt.writerows((str(a) for a in r) for r in yolo_classes)
-    else:
-        raise NotImplementedError(f"Format {input_format} not implemented yet")
 
 
 def test_import_labels_from_files_malformed_annotation():
