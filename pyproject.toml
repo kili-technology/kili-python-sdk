@@ -11,3 +11,4 @@ exclude = '''
 [tool.isort]
 profile = "black"
 py_version=37
+known_first_party= ['kili']
