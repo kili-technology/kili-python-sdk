@@ -18,8 +18,8 @@ class KiliExporterSelector(BaseExporterSelector):
     Formatter to export to Kili
     """
 
+    @staticmethod
     def export_project(
-        self,
         kili,
         export_params: ExportParams,
         logger_params: LoggerParams,
@@ -28,7 +28,11 @@ class KiliExporterSelector(BaseExporterSelector):
         """
         Export a project to Kili format
         """
-        logger, assets, content_repository = self.get_logger_assets_and_content_repo(
+        (
+            logger,
+            assets,
+            content_repository,
+        ) = BaseExporterSelector.get_logger_assets_and_content_repo(
             kili, export_params, logger_params, content_repository_params
         )
         return KiliExporter(

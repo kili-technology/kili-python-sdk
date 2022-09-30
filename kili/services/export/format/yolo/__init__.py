@@ -19,8 +19,8 @@ class YoloExporterSelector(BaseExporterSelector):
     Formatter to export to YOLOv4, v5 or v7
     """
 
+    @staticmethod
     def export_project(
-        self,
         kili,
         export_params: ExportParams,
         logger_params: LoggerParams,
@@ -29,7 +29,11 @@ class YoloExporterSelector(BaseExporterSelector):
         """
         Export a project to YOLO v4 or v5 format
         """
-        logger, assets, content_repository = self.get_logger_assets_and_content_repo(
+        (
+            logger,
+            assets,
+            content_repository,
+        ) = BaseExporterSelector.get_logger_assets_and_content_repo(
             kili, export_params, logger_params, content_repository_params
         )
         if export_params.split_option == "split":

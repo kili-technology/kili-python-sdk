@@ -347,46 +347,53 @@ class TestCLIProject:
                         *test_case["expected_service_payload"]
                     )
 
-    def test_export(self, mocker):
-        export_commands = [
-            [
-                "--output-format",
-                "yolo_v4",
-                "--output-file",
-                "export.zip",
-                "--project-id",
-                "object_detection",
-                "--layout",
-                "split",
-                "--verbose",
-                "--api-key",
-                "toto",
-                "--endpoint",
-                "localhost",
-            ],
-            [
-                "--output-format",
-                "raw",
-                "--output-file",
-                "export.zip",
-                "--project-id",
-                "object_detection",
-                "--layout",
-                "split",
-                "--verbose",
-                "--api-key",
-                "toto",
-                "--endpoint",
-                "localhost",
-            ],
-        ]
-
+    @pytest.mark.parametrize(
+        "name,test_case",
+        [
+            (
+                "Export to Yolo v4 format using CLI",
+                [
+                    "--output-format",
+                    "yolo_v4",
+                    "--output-file",
+                    "export.zip",
+                    "--project-id",
+                    "object_detection",
+                    "--layout",
+                    "split",
+                    "--verbose",
+                    "--api-key",
+                    "toto",
+                    "--endpoint",
+                    "localhost",
+                ],
+            ),
+            (
+                "Export to Kili format using CLI",
+                [
+                    "--output-format",
+                    "raw",
+                    "--output-file",
+                    "export.zip",
+                    "--project-id",
+                    "object_detection",
+                    "--layout",
+                    "split",
+                    "--verbose",
+                    "--api-key",
+                    "toto",
+                    "--endpoint",
+                    "localhost",
+                ],
+            ),
+        ],
+    )
+    def test_export(self, mocker, name, test_case):
         runner = CliRunner()
         with runner.isolated_filesystem():
-            for export_command in export_commands:
-                result = runner.invoke(
-                    export_labels,
-                    export_command,
-                )
-                debug_subprocess_pytest(result)
-                assert result.output.count("export.zip")
+            result = runner.invoke(
+                export_labels,
+                test_case,
+            )
+            debug_subprocess_pytest(result)
+            assert result.output.count("export.zip")
