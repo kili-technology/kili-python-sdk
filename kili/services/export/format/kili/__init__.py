@@ -1,14 +1,12 @@
 """
 Functions to export a project to Kili format
 """
+from typing import Type
 
-from kili.services.export.format.base import (
-    BaseExporterSelector,
-    ContentRepositoryParams,
-    ExportParams,
-    LoggerParams,
-)
 from kili.services.export.format.kili.common import KiliExporter
+from kili.services.export.types import SplitOption
+
+from ..base import BaseExporter, BaseExporterSelector
 
 
 class KiliExporterSelector(BaseExporterSelector):
@@ -19,28 +17,5 @@ class KiliExporterSelector(BaseExporterSelector):
     """
 
     @staticmethod
-    def export_project(
-        kili,
-        export_params: ExportParams,
-        logger_params: LoggerParams,
-        content_repository_params: ContentRepositoryParams,
-    ) -> None:
-        """
-        Export a project to Kili format
-        """
-        (
-            logger,
-            assets,
-            content_repository,
-        ) = BaseExporterSelector.get_logger_assets_and_content_repo(
-            kili, export_params, logger_params, content_repository_params
-        )
-        return KiliExporter(
-            export_params.project_id,
-            export_params.export_type,
-            export_params.label_format,
-            logger_params.disable_tqdm,
-            kili,
-            logger,
-            content_repository,
-        ).process_and_save(assets, export_params.output_file)
+    def select_exporter(split_param: SplitOption) -> Type[BaseExporter]:
+        return KiliExporter
