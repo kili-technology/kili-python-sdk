@@ -93,7 +93,7 @@ def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):
     return members_to_add
 
 
-def check_exclusive_options_and_arguments(
+def check_exclusive_options(
     csv_path: Optional[str],
     project_id_src: Optional[str],
     emails: Optional[List[str]],
