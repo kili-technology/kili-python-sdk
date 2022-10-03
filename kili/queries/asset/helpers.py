@@ -1,5 +1,6 @@
 """Helpers for the asset queries"""
 
+import json
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from mimetypes import guess_extension
@@ -28,7 +29,6 @@ def get_post_assets_call_process(
             if local_media_dir is not None
             else Path(f".cache/kili/projects/{project_id}/assets")
         )
-
         return lambda assets: download_asset_media(assets, local_dir_path)
 
     return lambda assets: assets
@@ -80,6 +80,23 @@ def get_field_array(assets: List[dict], field: str):
         yield value
 
 
+def download_frame_media(json_content_url, external_id, local_dir_path):
+    asset_local_dir_path = local_dir_path / external_id
+    asset_local_dir_path.mkdir(parents=True, exist_ok=True)
+    with requests.get(json_content_url, stream=True, timeout=20) as response_json:
+        response_json.raise_for_status()
+        json_content = json.loads(response_json.text)
+        frame_urls = list(json_content.values())
+        nb_frames = len(frame_urls)
+        frames_name_array = [f"{frame_urls}_{i:05}" for i in range(nb_frames)]
+        with ThreadPoolExecutor() as threads:
+            path_gen = threads.map(
+                download_file, frame_urls, frames_name_array, repeat(asset_local_dir_path)
+            )
+        local_json_content = dict(zip(range(nb_frames), path_gen))
+        return local_json_content
+
+
 def download_asset_media(assets: List[dict], local_dir_path: Path) -> List[dict]:
     """Download assets media in local."""
     local_dir_path.mkdir(parents=True, exist_ok=True)
@@ -88,3 +105,22 @@ def download_asset_media(assets: List[dict], local_dir_path: Path) -> List[dict]
     with ThreadPoolExecutor() as threads:
         path_gen = threads.map(download_file, content_gen, external_id_gen, repeat(local_dir_path))
     return [{**asset, "content": str(path)} for asset, path in zip(assets, path_gen)]
+
+
+# external_id_array: List[str] = get_field_array(assets, "externalId")
+#     if "jsonContent" in list(assets[0].keys()):
+#         json_content_array: List[str] = get_field_array(assets, "jsonContent")
+#         with ThreadPoolExecutor() as threads:
+#             json_content_gen = threads.map(
+#                 download_frame_media, json_content_array, external_id_array, repeat(local_dir_path)
+#             )
+#         return [
+#             {**asset, "jsonContent": str(path)} for asset, path in zip(assets, json_content_gen)
+#         ]
+#     else:
+#         content_array: List[str] = get_field_array(assets, "content")
+#         with ThreadPoolExecutor() as threads:
+#             path_gen = threads.map(
+#                 download_file, content_array, external_id_array, repeat(local_dir_path)
+#             )
+#         return [{**asset, "content": str(path)} for asset, path in zip(assets, path_gen)]
