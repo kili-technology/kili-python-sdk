@@ -96,7 +96,7 @@ class MutationsAsset:
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
-        nb_data = len(content_array) if content_array is not None else len(json_content_array)
+        nb_data = len(content_array) if content_array else len(json_content_array)  # type:ignore
         field_mapping = {
             "content": content_array,
             "json_content": json_content_array,

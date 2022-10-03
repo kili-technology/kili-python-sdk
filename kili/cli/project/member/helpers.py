@@ -2,7 +2,7 @@
 
 import re
 import warnings
-from typing import Dict, List, Optional, cast
+from typing import Dict, Iterable, List, Optional, cast
 
 from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
@@ -76,7 +76,7 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
     return members
 
 
-def collect_members_from_emails(emails: List[str], role: Optional[str]):
+def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):
     """collect members with email address from emails"""
     if role is None:
         role = "LABELER"

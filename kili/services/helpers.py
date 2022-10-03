@@ -2,7 +2,7 @@
 Helpers for the services
 """
 from pathlib import Path
-from typing import List, Optional, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
@@ -12,8 +12,12 @@ from kili.services.exceptions import (
 PathLike = TypeVar("PathLike", Path, str)
 
 
-def check_exclusive_options(csv_path: Optional[PathLike], files: Optional[List[PathLike]]) -> None:
+def check_exclusive_options(
+    csv_path: Optional[PathLike], files: Optional[Iterable[PathLike]]
+) -> None:
     """Forbid mutual use of options and argument(s)"""
+    if files is not None:
+        files = list(files)
 
     if (csv_path is not None) + (files is not None and len(files) > 0) > 1:
         raise TooManyArgumentsSpecifiedError(

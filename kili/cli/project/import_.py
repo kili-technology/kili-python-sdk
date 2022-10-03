@@ -2,7 +2,7 @@
 
 import os
 import urllib.request
-from typing import Dict, List, Optional, Tuple, Union, cast
+from typing import Dict, Iterable, List, Optional, cast
 
 import click
 from typeguard import typechecked
@@ -73,7 +73,7 @@ def import_assets(
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
-    files: Optional[Union[Tuple[str, ...], List[str]]],
+    files: Optional[Iterable[str]],
     csv_path: Optional[str],
     fps: Optional[int],
     as_frames: bool,
