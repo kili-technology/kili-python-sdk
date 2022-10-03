@@ -1,3 +1,6 @@
+from kili.orm import Asset
+
+
 def mocked__project_assets(project_id=None, **_):
     if project_id in ["object_detection", "project_id"]:
         job_object_detection = {
@@ -26,22 +29,24 @@ def mocked__project_assets(project_id=None, **_):
         }
 
         return [
-            {
-                "latestLabel": {
-                    "jsonResponse": job_object_detection,
-                    "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-                },
-                "externalId": "car_1",
-                "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
-                "jsonContent": "",
-            }
+            Asset(
+                {
+                    "latestLabel": {
+                        "jsonResponse": job_object_detection,
+                        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+                    },
+                    "externalId": "car_1",
+                    "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+                    "jsonContent": "",
+                }
+            )
         ]
     else:
         return [
-            {"externalId": "asset1"},
-            {"externalId": "asset2"},
-            {"externalId": "asset3"},
-            {"externalId": "asset4"},
-            {"externalId": "asset5"},
-            {"externalId": "asset6"},
+            Asset({"externalId": "asset1"}),
+            Asset({"externalId": "asset2"}),
+            Asset({"externalId": "asset3"}),
+            Asset({"externalId": "asset4"}),
+            Asset({"externalId": "asset5"}),
+            Asset({"externalId": "asset6"}),
         ]

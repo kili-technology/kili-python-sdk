@@ -1,5 +1,6 @@
 from typing import Dict
 
+from kili.orm import Label
 from kili.services.export.types import JobCategory
 
 job_category_a: JobCategory = JobCategory(category_name="OBJECT_A", id=0, job_id="JOB_0")
@@ -76,4 +77,36 @@ asset_video_frames = {
     "externalId": "video_1",
     "content": "https://storage.googleapis.com/label-public-staging/video1/video1.mp4",
     "jsonContent": "",
+}
+
+# Data for Kili format export test
+job_0 = {
+    "JOB_0": {
+        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+    }
+}
+
+frame_json_response = {"0": job_0, "1": job_0, "2": job_0}
+
+frame_default_label = Label({"jsonResponse": frame_json_response, "labelType": "DEFAULT"})
+frame_autosave_label = Label({"jsonResponse": frame_json_response, "labelType": "AUTOSAVE"})
+
+kili_format_frame_asset = {
+    "labels": [
+        frame_default_label,
+        frame_autosave_label,
+    ]
+}
+
+kili_format_expected_frame_asset_output = {
+    "labels": [
+        {
+            "jsonResponse": {
+                0: job_0,
+                1: job_0,
+                2: job_0,
+            },
+            "labelType": "DEFAULT",
+        }
+    ]
 }

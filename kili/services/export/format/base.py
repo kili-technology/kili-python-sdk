@@ -2,13 +2,16 @@
 Base class for all formatters and other utility classes.
 """
 
+import logging
 import os
 import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Dict, List, NamedTuple, Optional
+from typing import Dict, List, NamedTuple, Optional, Type
 
 from kili.orm import JobMLTask, JobTool
+from kili.services.export.repository import SDKContentRepository
+from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import LogLevel
 
@@ -42,27 +45,6 @@ class ContentRepositoryParams(NamedTuple):
 
     router_endpoint: str
     router_headers: Dict[str, str]
-
-
-class BaseExporterSelector(ABC):
-    # pylint: disable=too-few-public-methods
-
-    """
-    Abstract class defining a standard signature for all formatters
-    """
-
-    @staticmethod
-    @abstractmethod
-    def export_project(
-        kili,
-        export_params: ExportParams,
-        logger_params: LoggerParams,
-        content_repository_params: ContentRepositoryParams,
-    ) -> str:
-        """
-        Export a project to a json.
-        Return the name of the exported archive file in the bucket.
-        """
 
 
 class BaseExporter(ABC):
@@ -125,3 +107,109 @@ class BaseExporter(ABC):
             fout.write(f'- Export date: {datetime.now().strftime("%Y%m%d-%H%M%S")}\n'.encode())
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
+
+    def export_project(
+        self,
+        kili,
+        export_params: ExportParams,
+        logger_params: LoggerParams,
+    ) -> str:
+        """
+        Export a project to a json.
+        Return the name of the exported archive file in the bucket.
+        """
+        assets = fetch_assets(
+            kili,
+            project_id=export_params.project_id,
+            asset_ids=export_params.assets_ids,
+            export_type=export_params.export_type,
+            label_type_in=["DEFAULT", "REVIEW"],
+            disable_tqdm=logger_params.disable_tqdm,
+        )
+        return self.process_and_save(assets, export_params.output_file)  # type: ignore
+
+
+class BaseExporterSelector(ABC):
+    # pylint: disable=too-few-public-methods
+
+    """
+    Abstract class defining a standard signature for all formatters
+    """
+
+    @staticmethod
+    def get_logger_assets_and_content_repo(
+        kili,
+        export_params: ExportParams,
+        logger_params: LoggerParams,
+        content_repository_params: ContentRepositoryParams,
+    ):
+        """
+        Fetches assets and gets right logger and content repository depending on parameters
+        """
+        logger = BaseExporterSelector.get_logger(logger_params.level)
+
+        logger.info("Fetching assets ...")
+        assets = fetch_assets(
+            kili,
+            project_id=export_params.project_id,
+            asset_ids=export_params.assets_ids,
+            export_type=export_params.export_type,
+            label_type_in=["DEFAULT", "REVIEW"],
+            disable_tqdm=logger_params.disable_tqdm,
+        )
+        content_repository = SDKContentRepository(
+            content_repository_params.router_endpoint,
+            content_repository_params.router_headers,
+            verify_ssl=True,
+        )
+        return logger, assets, content_repository
+
+    @staticmethod
+    @abstractmethod
+    def select_exporter_class(
+        split_param: SplitOption,
+    ) -> Type[BaseExporter]:
+        """
+        Return the right exporter class.
+        """
+
+    def select_exporter(
+        self,
+        kili,
+        logger_params,
+        export_params: ExportParams,
+        content_repository_params: ContentRepositoryParams,
+    ) -> BaseExporter:
+        """
+        Return the right exporter.
+        """
+        logger = BaseExporterSelector.get_logger(logger_params.level)
+
+        logger.info("Fetching assets ...")
+        content_repository = SDKContentRepository(
+            content_repository_params.router_endpoint,
+            content_repository_params.router_headers,
+            verify_ssl=True,
+        )
+        exporter_class = self.select_exporter_class(export_params.split_option)
+        return exporter_class(
+            export_params.project_id,
+            export_params.export_type,
+            export_params.label_format,
+            logger_params.disable_tqdm,
+            kili,
+            logger,
+            content_repository,
+        )
+
+    @staticmethod
+    def get_logger(level: LogLevel):
+        """Gets the export logger"""
+        logger = logging.getLogger("kili.services.export")
+        logger.setLevel(level)
+        if logger.hasHandlers():
+            logger.handlers.clear()
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        return logger
