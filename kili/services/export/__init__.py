@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from typing_extensions import get_args
 
+from kili.exceptions import NotFound
 from kili.services.export.format.base import (
     ContentRepositoryParams,
     ExportParams,
@@ -29,6 +30,9 @@ def export_labels(  # pylint: disable=too-many-arguments
     """
     Export the selected assets into the required format, and save it into a file archive.
     """
+    if kili.count_projects(project_id=project_id) == 0:
+        raise NotFound(f"project ID: {project_id}")
+
     export_params = ExportParams(
         assets_ids=asset_ids,
         project_id=project_id,
