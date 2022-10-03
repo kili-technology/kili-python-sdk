@@ -93,7 +93,7 @@ def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):
     return members_to_add
 
 
-def check_exclusive_options(
+def check_exclusive_options_and_arguments(
     csv_path: Optional[str],
     project_id_src: Optional[str],
     emails: Optional[List[str]],
@@ -120,3 +120,4 @@ def check_exclusive_options(
             raise ValueError(
                 "You must either provide emails arguments or use one option --from-csv or --all"
             )
+    return None
