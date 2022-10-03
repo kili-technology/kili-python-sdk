@@ -39,7 +39,9 @@ class FakeKili:
         else:
             return []
 
-    def projects(self, project_id: str, fields: List[str], disable_tqdm: bool = False):
+    def projects(
+        self, project_id: str, fields: Optional[List[str]] = None, disable_tqdm: bool = False
+    ):
         """
         Fake projects
         """
@@ -114,3 +116,6 @@ class FakeKili:
 
         else:
             return []
+
+    def count_projects(self, project_id: str) -> int:
+        return len(self.projects(project_id=project_id))
