@@ -1,11 +1,9 @@
 """Tests the Kili CLI"""
 
 import csv
-import json
 import os
 from unittest.mock import ANY, MagicMock, patch
 
-import pytest
 from click.testing import CliRunner
 
 from kili.cli.project.create import create_project
@@ -65,15 +63,16 @@ class TestCLIProject:
         assert (
             (result.output.count("40.8%") == 1)
             and (result.output.count("N/A") == 2)
-            and (result.output.count("49") == 1)
+            and (result.output.count("Number of remaining assets") == 1)
             and (result.output.count("project title") == 1)
         )
 
     def test_import(self, mocker):
-
         TEST_CASES = [
             {
-                "case_name": "AAU, when I import a list of file to an image project, I see a success",
+                "case_name": (
+                    "AAU, when I import a list of file to an image project, I see a success"
+                ),
                 "files": ["test_tree/image1.png", "test_tree/leaf/image3.png"],
                 "options": {
                     "project-id": "image_project",
@@ -137,7 +136,10 @@ class TestCLIProject:
                 ),
             },
             {
-                "case_name": "AAU, when I import videos to a video project, as native by changing the fps, I see a success",
+                "case_name": (
+                    "AAU, when I import videos to a video project, as native by changing the fps, I"
+                    " see a success"
+                ),
                 "files": ["test_tree/"],
                 "options": {
                     "project-id": "frame_project",
@@ -207,7 +209,10 @@ class TestCLIProject:
                 ),
             },
             {
-                "case_name": "AAU, when I import videos to a video project, as frames with the native frame rate, I see a success",
+                "case_name": (
+                    "AAU, when I import videos to a video project, as frames with the native frame"
+                    " rate, I see a success"
+                ),
                 "files": ["test_tree/"],
                 "options": {
                     "project-id": "frame_project",
@@ -292,7 +297,9 @@ class TestCLIProject:
                             "external_id": "image3",
                         },
                         {
-                            "content": "https://files.readme.io/cac9114-Kili_Wordmark_SoftWhite_RGB.svg",
+                            "content": (
+                                "https://files.readme.io/cac9114-Kili_Wordmark_SoftWhite_RGB.svg"
+                            ),
                             "external_id": "test",
                         },
                     ],
@@ -343,7 +350,6 @@ class TestCLIProject:
     def test_export(self, mocker):
         runner = CliRunner()
         with runner.isolated_filesystem():
-
             result = runner.invoke(
                 export_labels,
                 [

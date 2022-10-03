@@ -16,6 +16,8 @@ AZURE_STRING = "blob.core.windows.net"
 GCP_STRING = "storage.googleapis.com"
 GCP_STRING_PUBLIC = "storage.cloud.google.com"
 
+MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
+
 
 def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
     """
@@ -25,12 +27,16 @@ def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
         project_id: the project Id
         size: the amount of upload signed URL to query
     """
-    payload = {
-        "projectID": project_id,
-        "size": size,
-    }
-    urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
-    return urls_response["data"]["urls"]
+    signed_urls = []
+    while len(signed_urls) < size:
+        nb_url_requested = min(MAX_NUMBER_SIGNED_URLS_TO_FETCH, size - len(signed_urls))
+        payload = {
+            "projectID": project_id,
+            "size": nb_url_requested,
+        }
+        urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
+        signed_urls.extend(urls_response["data"]["urls"])
+    return signed_urls
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2))

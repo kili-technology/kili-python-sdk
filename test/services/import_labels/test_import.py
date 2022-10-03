@@ -9,6 +9,7 @@ from typing import Any, Dict, List
 from unittest.mock import MagicMock
 
 import pytest
+import yaml
 
 from kili.services import import_labels_from_files
 from kili.services.label_import.exceptions import LabelParsingError
@@ -41,6 +42,21 @@ def _generate_label_file(yolo_rows: List[List], filename: str):
         wrt.writerows((str(a) for a in r) for r in yolo_rows)
 
 
+def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
+    if input_format == "yolo_v4":
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            wrt = csv.writer(y_m, delimiter=" ")
+            wrt.writerows((str(a) for a in r) for r in yolo_classes)
+    elif input_format == "yolo_v5":
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            y_m.write(yaml.dump({"names": dict(yolo_classes)}))
+    elif input_format == "yolo_v7":
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            y_m.write(yaml.dump({"nc": len(yolo_classes), "names": [c[1] for c in yolo_classes]}))
+    else:
+        raise NotImplementedError(f"Format {input_format} not implemented yet")
+
+
 @pytest.mark.parametrize(
     "description,inputs,outputs",
     [
@@ -63,9 +79,7 @@ def test_import_labels_from_files(description, inputs, outputs):
         yolo_classes = inputs["yolo_classes"]
         yolo_meta_path = Path(label_folders) / inputs["meta_path"]
 
-        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
-            wrt = csv.writer(y_m, delimiter=" ")
-            wrt.writerows((str(a) for a in r) for r in yolo_classes)
+        _generate_meta_file(yolo_classes, yolo_meta_path, inputs["label_format"])
 
         _generate_label_file_list(
             inputs["labels"]["rows"],
@@ -80,7 +94,7 @@ def test_import_labels_from_files(description, inputs, outputs):
             None,
             str(yolo_meta_path),
             ProjectId(inputs["project_id"]),
-            "yolo_v4",
+            inputs["label_format"],
             inputs["target_job_name"],
             disable_tqdm=False,
             log_level="INFO",
@@ -200,42 +214,51 @@ def test__read_labels_file_path():
         assert labels_to_import[0]["path"] == str(yolo_one_label)
 
 
-def test__read_classes_from_meta_file():
+@pytest.mark.parametrize(
+    "name,filename,lines,label_format, expected",
+    [
+        (
+            "YOLO v4 1st layout",
+            "classes.txt",
+            ["0 OBJECT_A", "1 OBJECT_B"],
+            "yolo_v4",
+            {0: "OBJECT_A", 1: "OBJECT_B"},
+        ),
+        (
+            "YOLO v4 2nd layout",
+            "classes.txt",
+            ["OBJECT A", "OBJECT B"],
+            "yolo_v4",
+            {0: "OBJECT A", 1: "OBJECT B"},
+        ),
+        (
+            "YOLO v5",
+            "data.yaml",
+            ["names: ", "  0: OBJECT_A", "  1: OBJECT_B"],
+            "yolo_v5",
+            {0: "OBJECT_A", 1: "OBJECT_B"},
+        ),
+        (
+            "YOLO v7",
+            "data.yaml",
+            ["nc: 2", "names: ['OBJECT_A', 'OBJECT_B']"],
+            "yolo_v7",
+            {0: "OBJECT_A", 1: "OBJECT_B"},
+        ),
+    ],
+)
+def test__read_classes_from_meta_file(name, filename, lines, label_format, expected):
     with TemporaryDirectory() as class_dir:
-        class_file = Path(class_dir) / "classes.txt"
-        with open(class_file, "w") as f:
-            f.write("0 OBJECT_A\n")
-            f.write("1 OBJECT_B")
-        classes_by_id = (
-            YoloLabelImporter._read_classes_from_meta_file(  # pylint: disable=protected-access
-                class_file, "yolo_v4"
-            )
-        )
-        assert classes_by_id == {0: "OBJECT_A", 1: "OBJECT_B"}
+        class_file = Path(class_dir) / filename
+        with open(class_file, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
 
-    with TemporaryDirectory() as class_dir:
-        class_file = Path(class_dir) / "classes.txt"
-        with open(class_file, "w") as f:
-            f.write("OBJECT A\n")
-            f.write("OBJECT B")
         classes_by_id = (
             YoloLabelImporter._read_classes_from_meta_file(  # pylint: disable=protected-access
-                class_file, "yolo_v4"
+                class_file, label_format
             )
         )
-        assert classes_by_id == {0: "OBJECT A", 1: "OBJECT B"}
-
-    with TemporaryDirectory() as class_dir:
-        class_file = Path(class_dir) / "data.yaml"
-        with open(class_file, "w") as f:
-            f.write("nc: 2\n")
-            f.write("names: ['OBJECT_A', 'OBJECT_B']")
-        classes_by_id = (
-            YoloLabelImporter._read_classes_from_meta_file(  # pylint: disable=protected-access
-                class_file, "yolo_v5"
-            )
-        )
-        assert classes_by_id == {0: "OBJECT_A", 1: "OBJECT_B"}
+        assert classes_by_id == expected
 
 
 def test_yolo_label_parser():
