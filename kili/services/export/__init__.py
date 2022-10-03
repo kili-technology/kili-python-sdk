@@ -52,9 +52,12 @@ def export_labels(  # pylint: disable=too-many-arguments
 
     if label_format in get_args(LabelFormat):
         if label_format == "raw":
-            exporter = KiliExporterSelector()
+            exporter_selector = KiliExporterSelector()
         else:
-            exporter = YoloExporterSelector()
-        exporter.export_project(kili, export_params, logger_params, content_repository_params)
+            exporter_selector = YoloExporterSelector()
+        exporter = exporter_selector.select_exporter(
+            kili, logger_params, export_params, content_repository_params
+        )
+        exporter.export_project(kili, export_params, logger_params)
     else:
         raise ValueError(f'Label format "{label_format}" is not implemented or does not exist.')

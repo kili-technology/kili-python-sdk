@@ -17,5 +17,5 @@ class KiliExporterSelector(BaseExporterSelector):
     """
 
     @staticmethod
-    def select_exporter(split_param: SplitOption) -> Type[BaseExporter]:
+    def select_exporter_class(split_param: SplitOption) -> Type[BaseExporter]:
         return KiliExporter

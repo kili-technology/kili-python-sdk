@@ -108,6 +108,26 @@ class BaseExporter(ABC):
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
 
+    def export_project(
+        self,
+        kili,
+        export_params: ExportParams,
+        logger_params: LoggerParams,
+    ) -> str:
+        """
+        Export a project to a json.
+        Return the name of the exported archive file in the bucket.
+        """
+        assets = fetch_assets(
+            kili,
+            project_id=export_params.project_id,
+            asset_ids=export_params.assets_ids,
+            export_type=export_params.export_type,
+            label_type_in=["DEFAULT", "REVIEW"],
+            disable_tqdm=logger_params.disable_tqdm,
+        )
+        return self.process_and_save(assets, export_params.output_file)  # type: ignore
+
 
 class BaseExporterSelector(ABC):
     # pylint: disable=too-few-public-methods
@@ -146,41 +166,32 @@ class BaseExporterSelector(ABC):
 
     @staticmethod
     @abstractmethod
-    def select_exporter(
+    def select_exporter_class(
         split_param: SplitOption,
     ) -> Type[BaseExporter]:
         """
         Return the right exporter class.
         """
 
-    def export_project(
+    def select_exporter(
         self,
         kili,
+        logger_params,
         export_params: ExportParams,
-        logger_params: LoggerParams,
         content_repository_params: ContentRepositoryParams,
-    ) -> str:
+    ) -> BaseExporter:
         """
-        Export a project to a json.
-        Return the name of the exported archive file in the bucket.
+        Return the right exporter.
         """
         logger = BaseExporterSelector.get_logger(logger_params.level)
 
         logger.info("Fetching assets ...")
-        assets = fetch_assets(
-            kili,
-            project_id=export_params.project_id,
-            asset_ids=export_params.assets_ids,
-            export_type=export_params.export_type,
-            label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=logger_params.disable_tqdm,
-        )
         content_repository = SDKContentRepository(
             content_repository_params.router_endpoint,
             content_repository_params.router_headers,
             verify_ssl=True,
         )
-        exporter_class = self.select_exporter(export_params.split_option)
+        exporter_class = self.select_exporter_class(export_params.split_option)
         return exporter_class(
             export_params.project_id,
             export_params.export_type,
@@ -189,9 +200,7 @@ class BaseExporterSelector(ABC):
             kili,
             logger,
             content_repository,
-        ).process_and_save(
-            assets, export_params.output_file
-        )  # type: ignore
+        )
 
     @staticmethod
     def get_logger(level: LogLevel):

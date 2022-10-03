@@ -18,7 +18,7 @@ class YoloExporterSelector(BaseExporterSelector):
     """
 
     @staticmethod
-    def select_exporter(
+    def select_exporter_class(
         split_param: SplitOption,
     ) -> Type[BaseExporter]:
         """
