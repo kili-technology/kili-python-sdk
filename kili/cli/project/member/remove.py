@@ -71,7 +71,10 @@ def remove_member(
     elif all_members:
         members_to_rm = collect_members_from_project(kili, project_id, None)
     else:
-        assert emails, "You probably forgot to specify the emails."
+        assert emails, (
+            "When a --csv-path and --all-members are not called, you must add several email"
+            " addresses as arguments."
+        )
         members_to_rm = collect_members_from_emails(emails, None)
 
     count = 0

@@ -98,10 +98,10 @@ def check_exclusive_options(
     project_id_src: Optional[str],
     emails: Optional[List[str]],
     all_members: Optional[bool],
-):
+) -> None:
     """Forbid mutual use of options and argument(s)"""
     if not emails:
-        return True
+        return None
     if all_members is None:
         if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) > 1:
             raise ValueError(

@@ -21,6 +21,3 @@ launch.json
 # testing
 .coverage
 cov.xml
-recipes/img/frame_dicom_data_asset-1.png
-recipes/img/frame_dicom_data_asset-2.png
-recipes/img/frame_dicom_data_asset-3.png

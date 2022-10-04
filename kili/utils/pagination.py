@@ -91,9 +91,9 @@ T = TypeVar("T")
 
 
 def batch_object_builder(
-    properties_to_batch: Dict[str, Optional[list]],
+    properties_to_batch: Dict[str, Optional[List[Any]]],
     batch_size: int = MUTATION_BATCH_SIZE,
-) -> Iterator[Dict[str, Optional[list]]]:
+) -> Iterator[Dict[str, Optional[List[Any]]]]:
     """Generate a paginated iterator for several variables
     Args:
         properties_to_batch: a dictionnary of properties to be batched.
@@ -112,9 +112,9 @@ def batch_object_builder(
         )
         for k, v in properties_to_batch.items()
     }
-    batch_object_iterator = [
+    batch_object_iterator = (
         dict(zip(batched_properties, t)) for t in zip(*batched_properties.values())
-    ]
+    )
     for batch in batch_object_iterator:
         yield batch
 

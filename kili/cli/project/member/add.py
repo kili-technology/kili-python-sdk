@@ -65,7 +65,10 @@ def add_member(
     elif project_id_src is not None:
         members_to_add = collect_members_from_project(kili, project_id_src, role)
     else:
-        assert emails, "You should probably indicate a list of emails"
+        assert emails, (
+            "When `--csv-path` and `--from-project` are not specified, you must add several email"
+            " addresses as arguments."
+        )
         members_to_add = collect_members_from_emails(emails, role)
 
     count = 0
