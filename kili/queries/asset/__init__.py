@@ -12,6 +12,7 @@ from kili.helpers import (
     validate_category_search_query,
 )
 from kili.orm import Asset
+from kili.queries.asset.helpers import get_post_assets_call_process
 from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 from kili.types import Asset as AssetType
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -79,6 +80,8 @@ class QueriesAsset:
         updated_at_lte: Optional[str] = None,
         as_generator: bool = False,
         label_category_search: Optional[str] = None,
+        download_media: bool = False,
+        local_media_dir: Optional[str] = None,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
@@ -178,6 +181,8 @@ class QueriesAsset:
                 "self",
                 "as_generator",
                 "message",
+                "download_media",
+                "local_media_dir",
             ]
         }
 
@@ -218,6 +223,10 @@ class QueriesAsset:
             },
         }
 
+        post_call_process = get_post_assets_call_process(
+            download_media, local_media_dir, project_id
+        )
+
         asset_generator = row_generator_from_paginated_calls(
             skip,
             first,
@@ -227,6 +236,7 @@ class QueriesAsset:
             payload_query,
             fields,
             disable_tqdm,
+            post_call_process,
         )
 
         if format == "pandas":
