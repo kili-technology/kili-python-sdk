@@ -70,25 +70,21 @@ def download_file(url: str, external_id: str, local_dir_path: Path):
 
 def get_field_array(assets: List[dict], field: str):
     """Get a list of an asset field from a generator of kili assets"""
-    field_array = []
     for asset in assets:
         value = asset.get(field)
         if value is None:
             raise MissingPropertyError(
-                f"The asset does not have the {field} property. Please add it to the fields when"
+                f"The asset does not have the {field} field. Please add it to the fields when"
                 " querying assets "
             )
-        field_array.append(value)
-    return field_array
+        yield value
 
 
 def download_asset_media(assets: List[dict], local_dir_path: Path) -> List[dict]:
-    """Download assets media in local"""
+    """Download assets media in local."""
     local_dir_path.mkdir(parents=True, exist_ok=True)
-    content_array: List[str] = get_field_array(assets, "content")
-    external_id_array: List[str] = get_field_array(assets, "externalId")
+    content_gen = get_field_array(assets, "content")
+    external_id_gen = get_field_array(assets, "externalId")
     with ThreadPoolExecutor() as threads:
-        path_gen = threads.map(
-            download_file, content_array, external_id_array, repeat(local_dir_path)
-        )
+        path_gen = threads.map(download_file, content_gen, external_id_gen, repeat(local_dir_path))
     return [{**asset, "content": str(path)} for asset, path in zip(assets, path_gen)]
