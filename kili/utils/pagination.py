@@ -3,7 +3,7 @@ Utils
 """
 import functools
 import time
-from typing import Any, Callable, Dict, Iterator, List, Optional
+from typing import Any, Callable, Dict, Iterator, List, Optional, TypeVar
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 from kili.exceptions import GraphQLError
@@ -11,16 +11,19 @@ from kili.utils.tqdm import tqdm
 
 # pylint: disable=too-many-arguments,too-many-locals
 
+T = TypeVar("T")
+
 
 def row_generator_from_paginated_calls(
     skip: int,
     first: Optional[int],
     count_method: Callable[..., int],
     count_kwargs: dict,
-    paged_call_method: Callable[..., List[dict]],
+    paged_call_method: Callable[..., List[T]],
     paged_call_payload: dict,
     fields: List[str],
     disable_tqdm: bool,
+    post_call_process: Optional[Callable[[List[T]], List[T]]] = None,
 ):
     """
     Builds a row generator from paginated calls.
@@ -45,27 +48,24 @@ def row_generator_from_paginated_calls(
         # dummy value that won't have any impact since tqdm is disabled
         count_rows_queried_total = 1 if first != 0 else 0
     count_rows_query_default = min(100, first or 100)
-    throttling_delay = 60 / 250
 
     if count_rows_queried_total == 0:
         yield from ()
     else:
         with tqdm(total=count_rows_queried_total, disable=disable_tqdm) as pbar:
             while True:
-                query_start = time.time()
-                rows = paged_call_method(
+                rows = api_throttle(paged_call_method)(
                     count_rows_retrieved + skip,
                     count_rows_query_default,
                     paged_call_payload,
                     fields,
                 )
-                query_time = time.time() - query_start
-
-                if query_time < throttling_delay:
-                    time.sleep(throttling_delay - query_time)
 
                 if rows is None or len(rows) == 0:
                     break
+
+                if post_call_process is not None:
+                    rows = post_call_process(rows)
 
                 for row in rows:
                     yield row

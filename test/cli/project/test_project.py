@@ -4,6 +4,7 @@ import csv
 import os
 from unittest.mock import ANY, MagicMock, patch
 
+import pytest
 from click.testing import CliRunner
 
 from kili.cli.project.create import create_project
@@ -347,11 +348,11 @@ class TestCLIProject:
                         *test_case["expected_service_payload"]
                     )
 
-    def test_export(self, mocker):
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-            result = runner.invoke(
-                export_labels,
+    @pytest.mark.parametrize(
+        "name,test_case",
+        [
+            (
+                "Export to Yolo v4 format using CLI",
                 [
                     "--output-format",
                     "yolo_v4",
@@ -367,6 +368,33 @@ class TestCLIProject:
                     "--endpoint",
                     "localhost",
                 ],
+            ),
+            (
+                "Export to Kili format using CLI",
+                [
+                    "--output-format",
+                    "raw",
+                    "--output-file",
+                    "export.zip",
+                    "--project-id",
+                    "object_detection",
+                    "--layout",
+                    "split",
+                    "--verbose",
+                    "--api-key",
+                    "toto",
+                    "--endpoint",
+                    "localhost",
+                ],
+            ),
+        ],
+    )
+    def test_export(self, mocker, name, test_case):
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                export_labels,
+                test_case,
             )
             debug_subprocess_pytest(result)
             assert result.output.count("export.zip")
