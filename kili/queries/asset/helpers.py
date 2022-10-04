@@ -28,8 +28,7 @@ def get_post_assets_call_process(
             if local_media_dir is not None
             else Path(f".cache/kili/projects/{project_id}/assets")
         )
-
-        return lambda assets: download_asset_media(assets, local_dir_path)
+        return lambda assets: download_asset_content(assets, local_dir_path)
 
     return lambda assets: assets
 
@@ -49,7 +48,7 @@ def get_download_path(url: str, external_id: str, local_dir_path: Path):
     extension = get_file_extension_from_headers(url)
     if extension is not None:
         local_path = local_path.with_suffix(extension)
-    return local_path
+    return local_path.resolve()
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2))
@@ -68,23 +67,32 @@ def download_file(url: str, external_id: str, local_dir_path: Path):
     return local_path
 
 
-def get_field_array(assets: List[dict], field: str):
+def assert_required_fields_existence(asset: dict):
     """Get a list of an asset field from a generator of kili assets"""
-    for asset in assets:
-        value = asset.get(field)
-        if value is None:
+    required_fields = ["content", "externalId"]
+    for field in required_fields:
+        if field not in asset.keys():
             raise MissingPropertyError(
                 f"The asset does not have the {field} field. Please add it to the fields when"
                 " querying assets "
             )
-        yield value
+        content = asset["content"]
+        if content == "":
+            raise NotImplementedError(
+                "The media of the asset is not stored in the content field. If your asset is video"
+                " imported from frames or a richText asset, the media is stored in the jsonContent"
+                " field. The download in local of such asset media is currently not supported."
+            )
 
 
-def download_asset_media(assets: List[dict], local_dir_path: Path) -> List[dict]:
+def download_asset_content(assets: List[dict], local_dir_path: Path) -> List[dict]:
     """Download assets media in local."""
+    if len(assets) == 0:
+        return assets
     local_dir_path.mkdir(parents=True, exist_ok=True)
-    content_gen = get_field_array(assets, "content")
-    external_id_gen = get_field_array(assets, "externalId")
+    assert_required_fields_existence(assets[0])
+    content_gen = (asset["content"] for asset in assets)
+    external_id_gen = (asset["externalId"] for asset in assets)
     with ThreadPoolExecutor() as threads:
         path_gen = threads.map(download_file, content_gen, external_id_gen, repeat(local_dir_path))
     return [{**asset, "content": str(path)} for asset, path in zip(assets, path_gen)]
