@@ -3,7 +3,7 @@ Utils
 """
 import functools
 import time
-from typing import Any, Callable, Dict, Iterator, List, Optional, TypeVar
+from typing import Any, Callable, Dict, Iterator, List, Optional
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 from kili.exceptions import GraphQLError
@@ -85,9 +85,6 @@ def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
     iterable_length = len(iterable)
     for ndx in range(0, iterable_length, batch_size):
         yield iterable[ndx : min(ndx + batch_size, iterable_length)]
-
-
-T = TypeVar("T")
 
 
 def batch_object_builder(
