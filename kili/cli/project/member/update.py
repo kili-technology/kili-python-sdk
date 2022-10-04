@@ -66,7 +66,10 @@ def update_member(
     elif project_id_src is not None:
         members_to_update = collect_members_from_project(kili, project_id_src, role)
     else:
-        assert emails is not None
+        assert emails is not None, (
+            "When --csv-path and --from-project are not specified, you must add several email"
+            " addresses as arguments."
+        )
         members_to_update = collect_members_from_emails(emails, role)
 
     count = 0
@@ -95,7 +98,7 @@ def update_member(
                 count += 1
             else:
                 warnings.warn(
-                    f"{email} is already an active member of the project" " with the same role."
+                    f"{email} is already an active member of the project with the same role."
                 )
         else:
             warnings.warn(
