@@ -15,7 +15,7 @@ jobs:
           python-version: ${{ matrix.version }}
           cache: "pip"
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt && pip install -r requirements_dev.txt
       - name: Install pyright
         run: pip install pyright
       - name: Run pyright
