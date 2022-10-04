@@ -1,10 +1,11 @@
 """Label queries."""
 
-from typing import Dict, Generator, Iterable, List, Optional, Union
+from typing import Dict, Generator, Iterable, List, Optional, Union, cast
 
 import pandas as pd
 from typeguard import typechecked
 
+from kili import services
 from kili.constants import NO_ACCESS_RIGHT
 from kili.helpers import (
     Compatible,
@@ -16,6 +17,9 @@ from kili.orm import Label
 from kili.queries.asset import QueriesAsset
 from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 from kili.queries.project import QueriesProject
+from kili.services.export.exceptions import NoCompatibleJobError
+from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.types import ProjectId
 from kili.types import Label as LabelType
 from kili.utils.pagination import row_generator_from_paginated_calls
 
@@ -314,3 +318,58 @@ class QueriesLabel:
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
         count = format_result("data", result)
         return int(count)  # type:ignore
+
+    def export_labels(
+        self,
+        project_id: str,
+        filename: str,
+        fmt: LabelFormat,
+        asset_ids: Optional[List[str]] = None,
+        layout: SplitOption = "split",
+        disable_tqdm: bool = False,
+    ):
+        """
+        Export the project labels with the requested format into the requested output path.
+
+        Args:
+            filename: Relative or full path of the archive that will contain
+                the exported data.
+            fmt: Format of the exported labels.
+            asset_ids: Optional list of the assets from which to export the labels.
+            layout: Layout of the exported files: "split" means there is one folder
+                per job, "merged" that there is one folder with every labels.
+            disable_tqdm: Disable the progress bar if True.
+
+        !!! Info
+            The supported formats are:
+
+            - Yolo V4, V5, V7 for object detection (bounding box) tasks.
+
+            - Kili for all tasks.
+
+            - COCO (coming soon) for object detection tasks.
+
+            - Pascal VOC (coming soon) for object detection tasks.
+
+        !!! Example
+            ```
+            from kili.client import Kili
+            kili = Kili()
+            project.export_labels("your_project_id", "export.zip", "yolo_v4")
+            ```
+        """
+
+        try:
+            services.export_labels(
+                self,
+                asset_ids=asset_ids,
+                project_id=cast(ProjectId, project_id),
+                export_type="latest",
+                label_format=fmt,
+                split_option=layout,
+                output_file=filename,
+                disable_tqdm=disable_tqdm,
+                log_level="WARNING",
+            )
+        except NoCompatibleJobError as excp:
+            print(str(excp))
