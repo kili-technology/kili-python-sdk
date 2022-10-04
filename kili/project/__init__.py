@@ -27,8 +27,8 @@ class Project:  # pylint: disable=too-few-public-methods
     @typechecked
     def export(  # pylint: disable=too-many-arguments
         self,
-        output_filename: str,
-        output_format: LabelFormat,
+        filename: str,
+        fmt: LabelFormat,
         asset_ids: Optional[List[AssetId]] = None,
         layout: SplitOption = "split",
         disable_tqdm: bool = False,
@@ -45,12 +45,12 @@ class Project:  # pylint: disable=too-few-public-methods
         ```
 
         Args:
-            output_filename: Relative or full path of the archive that will contain
-            the exported data.
+            filename: Relative or full path of the archive that will contain
+                the exported data.
             output_format: Format of the exported labels.
             asset_ids: Optional list of the assets from which to export the labels.
             layout: Layout of the exported files: "split" means there is one folder
-            per job, "merged" that there is one folder with every labels.
+                per job, "merged" that there is one folder with every labels.
             disable_tqdm: Disable the progress bar if True.
             log_level: Level of debugging.
         """
@@ -59,9 +59,9 @@ class Project:  # pylint: disable=too-few-public-methods
             asset_ids=cast(Optional[List[str]], asset_ids),
             project_id=self.project_id,
             export_type="latest",
-            label_format=output_format,
+            label_format=fmt,
             split_option=layout,
-            output_file=output_filename,
+            output_file=filename,
             disable_tqdm=disable_tqdm,
             log_level=log_level,
         )
