@@ -5,7 +5,7 @@ import csv
 import mimetypes
 import os
 from json import dumps
-from typing import List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
@@ -43,33 +43,28 @@ class LegacyDataImporter:
         self.input_type = project_params.input_type
 
     def import_assets(self, assets: List[AssetLike]):
-        content_array = assets[0].get("content", None) and [
-            asset.get("content", "") for asset in assets
-        ]
-        json_content_array = assets[0].get("json_content", None) and [
-            asset.get("json_content", "") for asset in assets
-        ]
-        external_id_array = assets[0].get("external_id", None) and [
-            asset.get("external_id", uuid4().hex) for asset in assets
-        ]
-        status_array = assets[0].get("status", None) and [
-            asset.get("status", "TODO") for asset in assets
-        ]
-        is_honeypot_array = assets[0].get("is_honeypot", None) and [
-            asset.get("is_honeypot", False) for asset in assets
-        ]
-        json_metadata_array = assets[0].get("json_metadata", None) and [
-            asset.get("json_metadata", {}) for asset in assets
-        ]
+        def ternary(field: str, default=None) -> Optional[List[Any]]:
+            if assets[0].get(field, None):
+                return [asset.get(field, default) for asset in assets]
+            else:
+                return None
+
+        content_array = ternary("content")
+        json_content_array = ternary("json_content")
+        external_id_array = ternary("external_id", uuid4().hex)
+        status_array = ternary("status", "TODO")
+        is_honeypot_array = ternary("is_honeypot", False)
+        json_metadata_array = ternary("json_metadata", {})
+
         (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
             self.auth,
             self.input_type,
-            content_array,  # type:ignore (legacy problem)
-            external_id_array,  # type:ignore
-            is_honeypot_array,  # type:ignore
-            status_array,  # type:ignore
-            json_content_array,  # type:ignore
-            json_metadata_array,  # type:ignore
+            content_array,
+            external_id_array,
+            is_honeypot_array,
+            status_array,
+            json_content_array,
+            json_metadata_array,
             self.project_id,
         )
 
