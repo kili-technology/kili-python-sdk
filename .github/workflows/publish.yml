@@ -34,17 +34,18 @@ jobs:
           python -m twine upload dist/*
       - name: Slack notification
         id: slack
+        if: success()
         uses: slackapi/slack-github-action@v1.18.0
         with:
           payload: |
             {
-              "text": "Kili SDK ${{ steps.vars.outputs.pr_title }} released on Pypi: https://pypi.org/project/kili/",
+              "text": "Kili SDK released on Pypi: https://pypi.org/project/kili/",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Kili SDK ${{ steps.vars.outputs.pr_title }} released on Pypi: https://pypi.org/project/kili/"
+                    "text": "Kili SDK released on Pypi: https://pypi.org/project/kili/"
                   }
                 }
               ]
@@ -70,7 +71,7 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements_dev.txt
 
-      - name: Deploy technical documentation
+      - name: Deploy doc
         run: |
           git config user.name ci-bot
           git config user.email ci-bot@example.com
@@ -78,3 +79,25 @@ jobs:
           export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:2]))')
           git fetch origin gh-pages --depth=1
           mike deploy --push --update-aliases $version latest
+
+      - name: Slack notification
+        id: slack
+        if: success()
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be usefull to see the latest version",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be usefull to see the latest version"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
