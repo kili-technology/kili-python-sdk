@@ -127,6 +127,7 @@ class ProjectWithoutDataset(TypedDict, total=False):
     author: UserWithoutProjectUsers
     consensusMark: float
     consensusMarkPerCateg: int
+    consensusTotCoverage: int
     createdAt: str
     description: str
     honeypotMark: float
