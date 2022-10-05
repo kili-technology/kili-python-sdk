@@ -1,8 +1,5 @@
 name: CI
-on:
-  push:
-  release:
-    types: [prereleased]
+on: [push]
 jobs:
   pylint:
     runs-on: ubuntu-latest

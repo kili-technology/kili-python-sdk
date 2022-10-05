@@ -46,7 +46,7 @@ function get_latest_release {
         | jq -r .tag_name
 }
 
-function create_prerelease {
+function create_draft_release {
     read -p 'Release (format: X.XX.X, default: current branch release): ' release
     if [ -z $release ]; then
         branch_name=$(git rev-parse --abbrev-ref HEAD)
@@ -67,20 +67,20 @@ function create_prerelease {
         echo "The release that you are trying to push is older than the latest release ($latest_release)"
         exit 1
     fi
-    git tag -a $release -m "Release $release"
-    git push origin $release
+    git tag -f -a $release -m "Release $release"
+    git push -f origin $release
 
     gh release create $release \
-        --prerelease \
+        --draft \
         --title "Release $release" \
         --generate-notes
 
 }
 
-if [[ "$1" == 'release:create-branch' ]]; then
+if [[ "$1" == 'release:branch' ]]; then
     create_release_branch
 fi
 
-if [[ "$1" == 'release:create-prerelease' ]]; then
-    create_prerelease
+if [[ "$1" == 'release:draft' ]]; then
+    create_draft_release
 fi

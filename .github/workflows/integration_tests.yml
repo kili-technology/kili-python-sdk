@@ -6,8 +6,6 @@ on:
   push:
     branches:
       - 'release/**'
-  release:
-    types: [prereleased]
 jobs:
   recipes:
     runs-on: ubuntu-latest
