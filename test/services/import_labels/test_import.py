@@ -4,6 +4,7 @@ Tests the label import service
 import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from test.services.import_labels import fakes
 from test.services.import_labels.test_cases import TEST_CASES
 from typing import Any, Dict, List
 from unittest.mock import MagicMock
@@ -11,6 +12,7 @@ from unittest.mock import MagicMock
 import pytest
 import yaml
 
+from kili.exceptions import NotFound
 from kili.services import import_labels_from_files
 from kili.services.label_import.exceptions import LabelParsingError
 from kili.services.label_import.importer import YoloLabelImporter
@@ -68,6 +70,7 @@ def test_import_labels_from_files(description, inputs, outputs):
 
     kili = MagicMock()
     kili.append_to_labels = MagicMock()
+    kili.projects = MagicMock(side_effect=fakes.projects)
 
     with TemporaryDirectory() as label_folders:
         yolo_all_labels_path = Path(label_folders) / inputs["label_csv_path"]
@@ -110,6 +113,7 @@ def test_import_labels_from_files_malformed_annotation():
 
     kili = MagicMock()
     kili.append_to_labels = MagicMock()
+    kili.projects = MagicMock(side_effect=fakes.projects)
 
     inputs = {
         "label_csv_path": "labels.csv",
@@ -152,6 +156,78 @@ def test_import_labels_from_files_malformed_annotation():
         )
 
         with pytest.raises(LabelParsingError):
+            import_labels_from_files(
+                kili,
+                str(yolo_all_labels_path),
+                None,
+                str(yolo_meta_path),
+                ProjectId(inputs["project_id"]),
+                "yolo_v4",
+                inputs["target_job_name"],
+                disable_tqdm=False,
+                log_level="INFO",
+                is_prediction=False,
+                model_name=None,
+            )
+
+
+def test_import_labels_wrong_target_job():
+    kili = MagicMock()
+    kili.append_to_labels = MagicMock()
+    kili.projects = MagicMock(side_effect=fakes.projects)
+
+    inputs = {
+        "labels": {
+            "headers": [
+                "path",
+                "author_id",
+                "label_asset_external_id",
+                "label_asset_id",
+                "label_type",
+                "seconds_to_label",
+            ],
+            "rows": [
+                {
+                    "yolo_data": [],
+                    "path": "one_yolo_label.txt",
+                    "author_id": "Jean-Pierre",
+                    "label_asset_external_id": "un_asset",
+                    "label_asset_id": None,
+                    "label_type": "DEFAULT",
+                    "seconds_to_label": 0,
+                }
+            ],
+        },
+        "project_id": "yolo!",
+        "target_job_name": "JOB_1",
+        "label_csv_path": "yolo_all_labels.txt",
+        "meta_path": "yolo_classes.txt",
+        "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
+        "label_format": "yolo_v4",
+    }
+
+    with TemporaryDirectory() as label_folders:
+        yolo_all_labels_path = Path(label_folders) / inputs["label_csv_path"]
+        for rows in inputs["labels"]["rows"]:
+            yolo_label_path = Path(label_folders) / rows["path"]
+            yolo_rows = rows["yolo_data"]
+            _generate_label_file(yolo_rows, str(yolo_label_path))
+
+        yolo_classes = inputs["yolo_classes"]
+        yolo_meta_path = Path(label_folders) / inputs["meta_path"]
+
+        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+            wrt = csv.writer(y_m, delimiter=" ")
+            wrt.writerows((str(a) for a in r) for r in yolo_classes)
+
+        _generate_label_file_list(
+            inputs["labels"]["rows"],
+            str(yolo_all_labels_path),
+            headers=inputs["labels"]["headers"],
+            annotation_root=label_folders,
+        )
+
+        with pytest.raises(NotFound):
             import_labels_from_files(
                 kili,
                 str(yolo_all_labels_path),

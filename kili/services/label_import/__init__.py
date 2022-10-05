@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import List, Optional, Type, cast
 
 from kili.exceptions import NotFound
+from kili.services.helpers import is_target_job_in_json_interface
 from kili.services.label_import.importer import (
     AbstractLabelImporter,
     KiliRawLabelImporter,
@@ -37,6 +38,11 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
 
     if is_prediction and model_name is None:
         raise ValueError("If predictions are uploaded, a model name should be specified")
+
+    if target_job_name and not is_target_job_in_json_interface(kili, project_id, target_job_name):
+        raise NotFound(
+            f"Target job {target_job_name} has not been found in the project JSON interface"
+        )
 
     label_importer_class: Optional[Type[AbstractLabelImporter]] = None
     if input_format in ["yolo_v4", "yolo_v5", "yolo_v7"]:
