@@ -33,3 +33,11 @@ def get_external_id_from_file_path(path: PathLike) -> str:
     """
     file_path = Path(path).parts[-1]
     return ".".join(file_path.split(".")[:-1])
+
+
+def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str):
+    """Tell if the target job id is defined in the project's JSON interface"""
+    json_interface = list(kili.projects(project_id=project_id, fields=["jsonInterface"]))[0][
+        "jsonInterface"
+    ]
+    return target_job_name in json_interface
