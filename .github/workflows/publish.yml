@@ -20,16 +20,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install setuptools twine wheel
           pip install -r requirements.txt
-          pip install -r requirements_dev.txt
-
-      - name: Deploy technical documentation
-        run: |
-          git config user.name ci-bot
-          git config user.email ci-bot@example.com
-          pip install -e .
-          export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:2]))')
-          git fetch origin gh-pages --depth=1
-          mike deploy --push --update-aliases $version latest
 
       - name: Build
         run: |
@@ -42,3 +32,49 @@ jobs:
         run: |
           python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
           python -m twine upload dist/*
+      - name: Slack notification
+        id: slack
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "Kili SDK ${{ steps.vars.outputs.pr_title }} released on Pypi: https://pypi.org/project/kili/",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Kili SDK ${{ steps.vars.outputs.pr_title }} released on Pypi: https://pypi.org/project/kili/"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  deploy-documentation:
+    name: Deploy technical documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements_dev.txt
+
+      - name: Deploy technical documentation
+        run: |
+          git config user.name ci-bot
+          git config user.email ci-bot@example.com
+          pip install -e .
+          export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:2]))')
+          git fetch origin gh-pages --depth=1
+          mike deploy --push --update-aliases $version latest
