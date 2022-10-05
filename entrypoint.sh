@@ -30,10 +30,12 @@ function create_release_branch() {
     #create a branch from the specified sha and and commit the version bump
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
-    sucess=$(git push -q)
-    echo $sucess
-    echo "version bump commited and pushed on the release branch"
-    echo "Tests are launched on Github Actions: https://github.com/kili-technology/kili-python-sdk/actions"
+    if git push -q; then
+        echo "version bump commited and pushed on the release branch"
+        echo "Tests are launched on Github Actions: https://github.com/kili-technology/kili-python-sdk/actions"
+    else
+        echo "push didn't work"
+    fi
 
 }
 
