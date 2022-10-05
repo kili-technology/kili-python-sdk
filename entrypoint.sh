@@ -30,11 +30,9 @@ function create_release_branch() {
     #create a branch from the specified sha and and commit the version bump
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
-    if git push -q; then
+    if git push -f -q; then
         echo "version bump commited and pushed on the release branch"
         echo "Tests are launched on Github Actions: https://github.com/kili-technology/kili-python-sdk/actions"
-    else
-        echo "push didn't work"
     fi
 
 }
@@ -48,17 +46,19 @@ function get_latest_release {
         | jq -r .tag_name
 }
 
-function create_draft_release {
+function create_prerelease {
     read -p 'Release (format: X.XX.X, default: current branch release): ' release
     if [ -z $release ]; then
         branch_name=$(git rev-parse --abbrev-ref HEAD)
-        if [ $branch_name -ne 'release/*' ]; then
+        if [[ $branch_name != release/* ]]; then
             echo "You are currently not on a release branch. Please enter the release version on prompt or checkout on the release branch"
             exit 1
         fi
-        release=$(branch_name| cut -d/ -f2)
+        release=$(echo $branch_name | cut -d/ -f2)
     else
-        git checkout release/$release;
+        if ! git checkout release/$release; then
+            exit 1
+        fi
     fi
 
     git pull origin master -q
@@ -71,8 +71,8 @@ function create_draft_release {
     git push origin $release
 
     gh release create $release \
-        --draft \
-        --title "Release $release"
+        --prerelease \
+        --title "Release $release" \
         --generate-notes
 
 }
@@ -81,8 +81,6 @@ if [[ "$1" == 'release:create-branch' ]]; then
     create_release_branch
 fi
 
-if [[ "$1" == 'release:create-draft' ]]; then
-    create_draft_release
+if [[ "$1" == 'release:create-prerelease' ]]; then
+    create_prerelease
 fi
-
-version $1
