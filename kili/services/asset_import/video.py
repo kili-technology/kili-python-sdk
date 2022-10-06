@@ -8,17 +8,19 @@ from enum import Enum
 from typing import List
 
 from kili.helpers import is_url
-from kili.utils import bucket
-
-from .base import (
+from kili.services.asset_import.base import (
     BaseAssetImporter,
     BatchParams,
     ContentBatchImporter,
     JsonContentBatchImporter,
 )
-from .constants import FRAME_IMPORT_BATCH_SIZE, IMPORT_BATCH_SIZE
-from .exceptions import ImportValidationError
-from .types import AssetLike
+from kili.services.asset_import.constants import (
+    FRAME_IMPORT_BATCH_SIZE,
+    IMPORT_BATCH_SIZE,
+)
+from kili.services.asset_import.exceptions import ImportValidationError
+from kili.services.asset_import.types import AssetLike
+from kili.utils import bucket
 
 
 class VideoDataType(Enum):
@@ -49,7 +51,7 @@ class VideoMixin:
             ("framesPlayedPerSecond", 30),
             ("shouldUseNativeVideo", not from_frames),
         ]
-        for (key, default_value) in video_parameters:
+        for key, default_value in video_parameters:
             processing_parameters[key] = processing_parameters.get(key, default_value)
         return processing_parameters
 

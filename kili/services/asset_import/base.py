@@ -12,7 +12,7 @@ from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )
-from kili.helpers import format_result, is_url
+from kili.helpers import T, format_result, is_url
 from kili.orm import Asset
 from kili.queries.asset import QueriesAsset
 from kili.services.asset_import.constants import (
@@ -81,8 +81,8 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         Base actions to import a batch of asset
         """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
-        assets = self.loop_on_batch(self.fill_empty_fields)(assets)  # type: ignore X
-        result_batch = self.import_to_kili(assets)  # type: ignore X
+        assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
+        result_batch = self.import_to_kili(assets_)
         self.pbar.update(n=len(assets))
         return result_batch
 
@@ -107,7 +107,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         )
 
     @staticmethod
-    def loop_on_batch(func: Callable[[AssetLike], AssetLike]):
+    def loop_on_batch(func: Callable[[AssetLike], T]) -> Callable[[List[AssetLike]], List[T]]:
         """
         Apply a function, that takes a single asset as input, on the whole batch
         """

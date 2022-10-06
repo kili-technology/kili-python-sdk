@@ -18,14 +18,14 @@ class AssetLike(TypedDict, total=False):
     is_honeypot: bool
 
 
-class KiliResolverAsset(TypedDict, total=True):
+class KiliResolverAsset(AssetLike, TypedDict, total=True):
     """
     Type of an asset object to be sent in Kili resolvers
     """
 
     content: str
-    json_content: str
+    json_content: Union[dict, str, list]
     external_id: str
     status: str
-    json_metadata: str
+    json_metadata: Union[str, dict]
     is_honeypot: bool

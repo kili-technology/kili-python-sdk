@@ -232,7 +232,7 @@ class QueriesAsset:
             first,
             self.count_assets,
             count_args,
-            self._query_assets,  # type:ignore
+            self._query_assets,
             payload_query,
             fields,
             disable_tqdm,
