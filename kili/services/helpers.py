@@ -44,4 +44,4 @@ def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str)
     json_interface = list(kili.projects(project_id=project_id, fields=["jsonInterface"]))[0][
         "jsonInterface"
     ]
-    return target_job_name in json_interface
+    return target_job_name in json_interface["jobs"]
