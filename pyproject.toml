@@ -23,5 +23,3 @@ exclude = [
 
 pythonVersion = "3.7"
 typeCheckingMode = "basic"
-
-reportUnnecessaryTypeIgnoreComment = true
