@@ -94,8 +94,8 @@ class QueriesApiKey:
         )
 
         if as_generator:
-            return api_keys_generator  # type: ignore
-        return list(api_keys_generator)  # type: ignore
+            return api_keys_generator
+        return list(api_keys_generator)
 
     def _query_api_keys(self, skip: int, first: int, payload: dict, fields: List[str]):
         payload.update({"skip": skip, "first": first})
@@ -135,5 +135,4 @@ class QueriesApiKey:
             },
         }
         result = self.auth.client.execute(GQL_API_KEYS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        return format_result("data", result, int)

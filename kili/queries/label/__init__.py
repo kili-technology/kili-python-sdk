@@ -316,8 +316,7 @@ class QueriesLabel:
             }
         }
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        return format_result("data", result, int)
 
     def export_labels(
         self,

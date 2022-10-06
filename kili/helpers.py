@@ -86,7 +86,7 @@ def format_result(name, result, _object: Optional[Type[T]] = None) -> T:
         if get_origin(_object) is list:
             obj = get_args(_object)[0]
             return [obj(element) for element in formatted_json]  # type:ignore
-    return _object(formatted_json)  # type:ignore
+    return _object(formatted_json)
 
 
 def content_escape(content):
@@ -195,7 +195,7 @@ def fragment_builder(fields: List[str], typed_dict_class: Type[TypedDict]):
                     ]
                     new_fragment = fragment_builder(
                         fields_subquery,
-                        type_of_fields_subquery,  # type: ignore
+                        type_of_fields_subquery,
                     )
                     fragment += f" {subquery}{{{new_fragment}}}"
             except ValueError:

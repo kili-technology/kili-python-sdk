@@ -15,16 +15,15 @@ from kili.graphql.operations.asset.mutations import (
 from kili.helpers import format_result, is_url
 from kili.orm import Asset
 from kili.queries.asset import QueriesAsset
-from kili.utils import bucket, pagination
-from kili.utils.tqdm import tqdm
-
-from .constants import (
+from kili.services.asset_import.constants import (
     ASSET_FIELDS_DEFAULT_VALUE,
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
 )
-from .exceptions import ImportValidationError, MimeTypeError
-from .types import AssetLike, KiliResolverAsset
+from kili.services.asset_import.exceptions import ImportValidationError, MimeTypeError
+from kili.services.asset_import.types import AssetLike, KiliResolverAsset
+from kili.utils import bucket, pagination
+from kili.utils.tqdm import tqdm
 
 
 class BatchParams(NamedTuple):
@@ -311,7 +310,7 @@ class BaseAssetImporter:
             raise MimeTypeError(f"The mime type of the asset {path} has not been found")
 
         input_type = self.project_params.input_type
-        if mime_type not in project_compatible_mimetypes[input_type]:  # type: ignore
+        if mime_type not in project_compatible_mimetypes[input_type]:
             raise MimeTypeError(
                 f"""
                 File mime type for {path} is {mime_type} and does not correspond
