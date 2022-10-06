@@ -1,7 +1,7 @@
 """CLI's project member add subcommand"""
 
 import warnings
-from typing import List, Optional
+from typing import Iterable, Optional
 
 import click
 
@@ -27,7 +27,7 @@ from kili.cli.project.member.helpers import (
 def add_member(
     api_key: Optional[str],
     endpoint: Optional[str],
-    emails: Optional[List[str]],
+    emails: Optional[Iterable[str]],
     project_id: str,
     role: Optional[str],
     csv_path: Optional[str],

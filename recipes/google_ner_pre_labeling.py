@@ -128,7 +128,7 @@ if __name__ == "__main__":
         input_type="TEXT",
         json_interface=JSON_INTERFACE,
     )
-    assert "id" in p, "The project does not contain an id. This is probably a bug."
+    assert "id" in p, "The project was not created successfully"
     project_id = p["id"]
 
     def asset_generator():

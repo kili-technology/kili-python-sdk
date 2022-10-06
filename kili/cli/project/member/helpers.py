@@ -96,12 +96,13 @@ def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):
 def check_exclusive_options(
     csv_path: Optional[str],
     project_id_src: Optional[str],
-    emails: Optional[List[str]],
+    emails: Optional[Iterable[str]],
     all_members: Optional[bool],
 ) -> None:
     """Forbid mutual use of options and argument(s)"""
     if not emails:
         return None
+    emails = list(emails)
     if all_members is None:
         if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) > 1:
             raise ValueError(

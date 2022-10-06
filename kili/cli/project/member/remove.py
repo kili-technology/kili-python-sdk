@@ -1,7 +1,7 @@
 """CLI's project member remove subcommand"""
 
 import warnings
-from typing import List, Optional
+from typing import Iterable, Optional
 
 import click
 
@@ -33,7 +33,7 @@ from kili.cli.project.member.helpers import (
 def remove_member(
     api_key: Optional[str],
     endpoint: Optional[str],
-    emails: Optional[List[str]],
+    emails: Optional[Iterable[str]],
     project_id: str,
     csv_path: Optional[str],
     all_members: bool,

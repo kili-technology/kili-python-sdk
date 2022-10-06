@@ -199,11 +199,11 @@ def process_and_store_content(
     url_content_array = []
     if has_local_files:
         signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
-        for i, content in enumerate(content_array):
-            url_content = (is_url(content) and content) or upload_content(
-                signed_urls[i], content, input_type
-            )
-            url_content_array.append(url_content)
+    for i, content in enumerate(content_array):
+        url_content = (is_url(content) and content) or upload_content(
+            signed_urls[i], content, input_type  # type:ignore
+        )
+        url_content_array.append(url_content)
     return url_content_array
 
 
