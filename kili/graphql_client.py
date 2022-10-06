@@ -106,7 +106,7 @@ class GraphQLClient:
                     if trial_number == number_of_trials - 1 and errors_in_response:
                         break
                     time.sleep(1)
-                return req.json()  # type:ignore
+                return req.json()  # type:ignore X
             except Exception as exception:
                 if req is not None:
                     raise Exception(req.content) from exception

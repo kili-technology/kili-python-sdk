@@ -81,8 +81,8 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         Base actions to import a batch of asset
         """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
-        assets = self.loop_on_batch(self.fill_empty_fields)(assets)  # type: ignore
-        result_batch = self.import_to_kili(assets)  # type: ignore
+        assets = self.loop_on_batch(self.fill_empty_fields)(assets)  # type: ignore X
+        result_batch = self.import_to_kili(assets)  # type: ignore X
         self.pbar.update(n=len(assets))
         return result_batch
 

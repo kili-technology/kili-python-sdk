@@ -180,7 +180,7 @@ class QueriesLabel:
             first,
             self.count_labels,
             count_args,
-            self._query_labels,  # type: ignore
+            self._query_labels,  # type: ignore X
             payload_query,
             fields,
             disable_tqdm,

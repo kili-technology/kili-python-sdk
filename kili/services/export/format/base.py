@@ -126,7 +126,7 @@ class BaseExporter(ABC):
             label_type_in=["DEFAULT", "REVIEW"],
             disable_tqdm=logger_params.disable_tqdm,
         )
-        return self.process_and_save(assets, export_params.output_file)  # type: ignore
+        return self.process_and_save(assets, export_params.output_file)  # type: ignore X
 
 
 class BaseExporterSelector(ABC):

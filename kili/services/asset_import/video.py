@@ -43,7 +43,7 @@ class VideoMixin:
         Base method for adding video processing parameters
         """
         json_metadata = asset.get("json_metadata", {})
-        processing_parameters = json_metadata.get("processingParameters", {})  # type: ignore
+        processing_parameters = json_metadata.get("processingParameters", {})  # type: ignore X
         video_parameters = [
             ("shouldKeepNativeFrameRate", not from_frames),
             ("framesPlayedPerSecond", 30),
