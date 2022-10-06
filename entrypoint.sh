@@ -14,10 +14,9 @@ function bump_version(){
 
 function create_release_branch() {
     read -p 'Bump type (possible values: patch or minor): ' release_type
-    if [ "$release_type" != "patch" ] && [ "$release_type" != "minor" ]
-        then
-            echo "Wrong Bump type. It should be minor or patch"
-            exit 1
+    if [ "$release_type" != "patch" ] && [ "$release_type" != "minor" ]; then
+        echo "Wrong Bump type. It should be minor or patch"
+        exit 1
     fi
     read -p 'from commit (default: HEAD): ' commit
     commit="${commit:=HEAD}"
@@ -31,10 +30,57 @@ function create_release_branch() {
     #create a branch from the specified sha and and commit the version bump
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
-    echo "version bump commited on the release branch"
+    if git push -f -q; then
+        echo "version bump commited and pushed on the release branch"
+        echo "Tests are launched on Github Actions: https://github.com/kili-technology/kili-python-sdk/actions"
+    fi
 
 }
 
-if [[ "$1" == 'release:create-branch' ]]; then
+function version_to_int { echo "$@" | awk -F. '{ printf("%d%03d%d\n", $1,$2,$3); }'; }
+
+function get_latest_release {
+    curl \
+        --silent \
+        "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" \
+        | jq -r .tag_name
+}
+
+function create_draft_release {
+    read -p 'Release (format: X.XX.X, default: current branch release): ' release
+    if [ -z $release ]; then
+        branch_name=$(git rev-parse --abbrev-ref HEAD)
+        if [[ $branch_name != release/* ]]; then
+            echo "You are currently not on a release branch. Please enter the release version on prompt or checkout on the release branch"
+            exit 1
+        fi
+        release=$(echo $branch_name | cut -d/ -f2)
+    else
+        if ! git checkout release/$release; then
+            exit 1
+        fi
+    fi
+
+    git pull origin master -q
+    latest_release=get_latest_release
+    if [ $(version_to_int $latest_release) -ge $(version_to_int $release) ]; then
+        echo "The release that you are trying to push is older than the latest release ($latest_release)"
+        exit 1
+    fi
+    git tag -f -a $release -m "Release $release"
+    git push -f origin $release
+
+    gh release create $release \
+        --draft \
+        --title "Release $release" \
+        --generate-notes
+
+}
+
+if [[ "$1" == 'release:branch' ]]; then
     create_release_branch
+fi
+
+if [[ "$1" == 'release:draft' ]]; then
+    create_draft_release
 fi
