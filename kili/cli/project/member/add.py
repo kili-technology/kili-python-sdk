@@ -1,7 +1,7 @@
 """CLI's project member add subcommand"""
 
 import warnings
-from typing import Optional
+from typing import Iterable, Optional
 
 import click
 
@@ -27,7 +27,7 @@ from kili.cli.project.member.helpers import (
 def add_member(
     api_key: Optional[str],
     endpoint: Optional[str],
-    emails: Optional[str],
+    emails: Optional[Iterable[str]],
     project_id: str,
     role: Optional[str],
     csv_path: Optional[str],
@@ -65,6 +65,10 @@ def add_member(
     elif project_id_src is not None:
         members_to_add = collect_members_from_project(kili, project_id_src, role)
     else:
+        assert emails, (
+            "When `--csv-path` and `--from-project` are not specified, you must add several email"
+            " addresses as arguments."
+        )
         members_to_add = collect_members_from_emails(emails, role)
 
     count = 0

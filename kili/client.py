@@ -27,6 +27,7 @@ from kili.queries.project import QueriesProject
 from kili.queries.project_user import QueriesProjectUser
 from kili.queries.project_version import QueriesProjectVersion
 from kili.queries.user import QueriesUser
+from kili.services.types import ProjectId
 from kili.subscriptions.label import SubscriptionsLabel
 
 
@@ -128,4 +129,6 @@ class Kili(  # pylint: disable=too-many-ancestors
         title = project_fields["title"]
         input_type = project_fields["inputType"]
 
-        return Project(client=self, project_id=project_id, input_type=input_type, title=title)
+        return Project(
+            client=self, project_id=ProjectId(project_id), input_type=input_type, title=title
+        )

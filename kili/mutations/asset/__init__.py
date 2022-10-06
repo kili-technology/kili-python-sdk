@@ -2,7 +2,7 @@
 Asset mutations
 """
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from typeguard import typechecked
 
@@ -96,7 +96,11 @@ class MutationsAsset:
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
-        nb_data = len(content_array) if content_array is not None else len(json_content_array)
+        nb_data = (
+            len(content_array)
+            if content_array is not None
+            else len(json_content_array)  # type:ignore
+        )
         field_mapping = {
             "content": content_array,
             "json_content": json_content_array,
@@ -241,7 +245,7 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        properties_to_batch = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -273,7 +277,7 @@ class MutationsAsset:
                         "ckg22d81s0jrh0885pdxfd03n"
                         ],
         """
-        properties_to_batch = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -305,7 +309,7 @@ class MutationsAsset:
                         "ckg22d81s0jrh0885pdxfd03n"
                         ],
         """
-        properties_to_batch = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}

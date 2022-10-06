@@ -5,7 +5,7 @@ import csv
 import mimetypes
 import os
 from json import dumps
-from typing import List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
@@ -43,24 +43,19 @@ class LegacyDataImporter:
         self.input_type = project_params.input_type
 
     def import_assets(self, assets: List[AssetLike]):
-        content_array = assets[0].get("content", None) and [
-            asset.get("content", "") for asset in assets
-        ]
-        json_content_array = assets[0].get("json_content", None) and [
-            asset.get("json_content", "") for asset in assets
-        ]
-        external_id_array = assets[0].get("external_id", None) and [
-            asset.get("external_id", uuid4().hex) for asset in assets
-        ]
-        status_array = assets[0].get("status", None) and [
-            asset.get("status", "TODO") for asset in assets
-        ]
-        is_honeypot_array = assets[0].get("is_honeypot", None) and [
-            asset.get("is_honeypot", False) for asset in assets
-        ]
-        json_metadata_array = assets[0].get("json_metadata", None) and [
-            asset.get("json_metadata", {}) for asset in assets
-        ]
+        def ternary(field: str, default=None) -> Optional[List[Any]]:
+            if assets[0].get(field, None):
+                return [asset.get(field, default) for asset in assets]
+            else:
+                return None
+
+        content_array = ternary("content")
+        json_content_array = ternary("json_content")
+        external_id_array = ternary("external_id", uuid4().hex)
+        status_array = ternary("status", "TODO")
+        is_honeypot_array = ternary("is_honeypot", False)
+        json_metadata_array = ternary("json_metadata", {})
+
         (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
             self.auth,
             self.input_type,
@@ -188,7 +183,7 @@ def upload_content(signed_url: str, content: str, input_type: str):
 # pylint: disable=too-many-arguments
 def process_and_store_content(
     input_type: str,
-    content_array: Union[List[str], None],
+    content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     project_id: str,
     auth: KiliAuth,
@@ -206,7 +201,7 @@ def process_and_store_content(
         signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
     for i, content in enumerate(content_array):
         url_content = (is_url(content) and content) or upload_content(
-            signed_urls[i], content, input_type
+            signed_urls[i], content, input_type  # type:ignore
         )
         url_content_array.append(url_content)
     return url_content_array
@@ -240,7 +235,7 @@ def is_float(number: str) -> bool:
         return False
 
 
-def process_csv_content(reader, file_name=None, delimiter=",") -> bool:
+def process_csv_content(reader, file_name=None, delimiter=",") -> Optional[str]:
     """
     Process the content of csv for time_series and check if it corresponds to the expected format
     """
@@ -279,7 +274,7 @@ def add_video_parameters(json_metadata, should_use_native_video):
 
 def process_metadata(
     input_type: str,
-    content_array: Union[List[str], None],
+    content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     json_metadata_array: Union[List[dict], None],
 ):
@@ -342,24 +337,28 @@ def process_append_many_to_dataset_parameters(
     Process arguments of the append_many_to_dataset method and return the data payload.
     """
     if content_array is None:
+        assert (
+            json_content_array
+        ), "When content_array is not passed, you should pass json_content_array"
         content_array = [""] * len(json_content_array)
     if external_id_array is None:
         external_id_array = [uuid4().hex for _ in range(len(content_array))]
-    is_honeypot_array = (
+    is_honeypot_array_ = (
         [False] * len(content_array) if is_honeypot_array is None else is_honeypot_array
     )
     status_array = ["TODO"] * len(content_array) if not status_array else status_array
     formatted_json_metadata_array = process_metadata(
         input_type, content_array, json_content_array, json_metadata_array
     )
-    mime_type = get_file_mimetype(content_array, json_content_array)
+
+    mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore legacy
     content_array = process_and_store_content(
-        input_type, content_array, json_content_array, project_id, auth
+        input_type, content_array, json_content_array, project_id, auth  # type:ignore
     )
     formatted_json_content_array = process_json_content(
         input_type,
-        content_array,
-        json_content_array,
+        content_array,  # type:ignore
+        json_content_array,  # type:ignore
     )
 
     request, upload_type = get_request_to_execute(
@@ -368,7 +367,7 @@ def process_append_many_to_dataset_parameters(
     properties = {
         "content_array": content_array,
         "external_id_array": external_id_array,
-        "is_honeypot_array": is_honeypot_array,
+        "is_honeypot_array": is_honeypot_array_,
         "status_array": status_array,
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,

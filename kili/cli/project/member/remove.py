@@ -1,7 +1,7 @@
 """CLI's project member remove subcommand"""
 
 import warnings
-from typing import Optional
+from typing import Iterable, Optional
 
 import click
 
@@ -33,7 +33,7 @@ from kili.cli.project.member.helpers import (
 def remove_member(
     api_key: Optional[str],
     endpoint: Optional[str],
-    emails: Optional[str],
+    emails: Optional[Iterable[str]],
     project_id: str,
     csv_path: Optional[str],
     all_members: bool,
@@ -71,6 +71,10 @@ def remove_member(
     elif all_members:
         members_to_rm = collect_members_from_project(kili, project_id, None)
     else:
+        assert emails, (
+            "When a --csv-path and --all-members are not called, you must add several email"
+            " addresses as arguments."
+        )
         members_to_rm = collect_members_from_emails(emails, None)
 
     count = 0

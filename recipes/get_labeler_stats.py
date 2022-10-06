@@ -26,7 +26,7 @@ def main(api_endpoint):
 
     df = pd.DataFrame(columns=["Project", "Date", "Email"])
     for project_id in source_project_id.split(","):
-        project = kili.projects(project_id=project_id)[0]
+        project = list(kili.projects(project_id=project_id))[0]
         assets = kili.assets(project_id=project_id)
         title = project["title"]
         for asset in assets:

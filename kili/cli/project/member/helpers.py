@@ -2,7 +2,7 @@
 
 import re
 import warnings
-from typing import Dict, List, Optional, cast
+from typing import Dict, Iterable, List, Optional, cast
 
 from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
@@ -36,7 +36,7 @@ def collect_members_from_csv(csv_path: str, role: Optional[str]):
     if "role" in members_to_add[0].keys():
         if role is not None:
             raise ValueError(
-                "--role cannot be used if the argument passed is " "a path to a csv file with roles"
+                "--role cannot be used if the argument passed is a path to a csv file with roles"
             )
     else:
         if role is None:
@@ -76,7 +76,7 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
     return members
 
 
-def collect_members_from_emails(emails: List[str], role: Optional[str]):
+def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):
     """collect members with email address from emails"""
     if role is None:
         role = "LABELER"
@@ -96,11 +96,13 @@ def collect_members_from_emails(emails: List[str], role: Optional[str]):
 def check_exclusive_options(
     csv_path: Optional[str],
     project_id_src: Optional[str],
-    emails: Optional[List[str]],
+    emails: Optional[Iterable[str]],
     all_members: Optional[bool],
-):
+) -> None:
     """Forbid mutual use of options and argument(s)"""
-
+    if not emails:
+        return None
+    emails = list(emails)
     if all_members is None:
         if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) > 1:
             raise ValueError(
@@ -119,3 +121,4 @@ def check_exclusive_options(
             raise ValueError(
                 "You must either provide emails arguments or use one option --from-csv or --all"
             )
+    return None

@@ -1,7 +1,7 @@
 """CLI's project member update subcommand"""
 
 import warnings
-from typing import Optional
+from typing import Iterable, Optional
 
 import click
 
@@ -27,7 +27,7 @@ from kili.cli.project.member.helpers import (
 def update_member(
     api_key: Optional[str],
     endpoint: Optional[str],
-    emails: Optional[str],
+    emails: Optional[Iterable[str]],
     project_id: str,
     role: Optional[str],
     csv_path: Optional[str],
@@ -66,6 +66,10 @@ def update_member(
     elif project_id_src is not None:
         members_to_update = collect_members_from_project(kili, project_id_src, role)
     else:
+        assert emails is not None, (
+            "When --csv-path and --from-project are not specified, you must add several email"
+            " addresses as arguments."
+        )
         members_to_update = collect_members_from_emails(emails, role)
 
     count = 0
@@ -94,7 +98,7 @@ def update_member(
                 count += 1
             else:
                 warnings.warn(
-                    f"{email} is already an active member of the project" " with the same role."
+                    f"{email} is already an active member of the project with the same role."
                 )
         else:
             warnings.warn(

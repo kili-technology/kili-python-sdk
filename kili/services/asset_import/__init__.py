@@ -33,7 +33,7 @@ def import_assets(
     import the selected assets into the specified project
     """
     kili = QueriesProject(auth)
-    projects = kili.projects(project_id, disable_tqdm=True)
+    projects = list(kili.projects(project_id, disable_tqdm=True))
     assert len(projects) == 1, NO_ACCESS_RIGHT
     input_type = projects[0]["inputType"]
 
@@ -43,5 +43,5 @@ def import_assets(
     importer_params = (auth, project_params, processing_params, logger_params)
 
     asset_importer = importer_by_type.get(input_type, LegacyDataImporter)(*importer_params)
-    result = asset_importer.import_assets(assets=assets)
+    result = asset_importer.import_assets(assets=assets)  # type:ignore
     return result

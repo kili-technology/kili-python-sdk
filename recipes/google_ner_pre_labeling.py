@@ -6,7 +6,7 @@ import tarfile
 import urllib.request
 from itertools import cycle
 
-from google.cloud import language
+from google.cloud import language  # type:ignore
 from google.protobuf.json_format import MessageToDict
 from tqdm import tqdm
 
@@ -113,7 +113,6 @@ JSON_INTERFACE = {
 MAX_NUMBER_OF_ASSET = 50
 
 if __name__ == "__main__":
-
     path_gz = download_dataset()
     path_dir = extract_dataset(path_gz)
 
@@ -129,10 +128,10 @@ if __name__ == "__main__":
         input_type="TEXT",
         json_interface=JSON_INTERFACE,
     )
+    assert "id" in p, "The project was not created successfully"
     project_id = p["id"]
 
     def asset_generator():
-
         for filepath in tqdm(only_files[:MAX_NUMBER_OF_ASSET]):
             with open(filepath, "r") as f:
                 text = f.read()

@@ -100,7 +100,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         warn_days = 30
         queries = QueriesApiKey(self)
         key_object = queries.api_keys(api_key=api_key, fields=["createdAt"], disable_tqdm=True)
-        key_creation = datetime.strptime(key_object[0]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        key_creation = datetime.strptime(list(key_object)[0]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
         key_expiry = key_creation + timedelta(days=duration_days)
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)

@@ -10,11 +10,11 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Callable, List, Optional, Type
+from typing import Callable, List, Optional, Type, TypeVar
 
 import pyparsing as pp
 import requests
-from typing_extensions import TypedDict, is_typeddict
+from typing_extensions import TypedDict, get_args, get_origin, is_typeddict
 
 from kili.constants import mime_extensions_for_IV2
 from kili.exceptions import EndpointCompatibilityError, GraphQLError
@@ -65,22 +65,28 @@ class Compatible:
         return checked_resolver
 
 
-def format_result(name, result, _object=None):
+T = TypeVar("T")
+
+
+def format_result(name, result, _object: Optional[Type[T]] = None) -> T:
     """
     Formats the result of the GraphQL queries.
 
     Args:
         name: name of the field to extract, usually data
         result: query result to parse
+        _object: returned type
     """
     if "errors" in result:
         raise GraphQLError(result["errors"])
     formatted_json = format_json(result["data"][name])
     if _object is None:
-        return formatted_json
+        return formatted_json  # type:ignore
     if isinstance(formatted_json, list):
-        return [_object(element) for element in formatted_json]
-    return _object(formatted_json)
+        if get_origin(_object) is list:
+            obj = get_args(_object)[0]
+            return [obj(element) for element in formatted_json]  # type:ignore
+    return _object(formatted_json)  # type:ignore
 
 
 def content_escape(content):
@@ -300,7 +306,9 @@ def list_is_not_none_else_none(_object):
     return [_object] if _object is not None else None
 
 
-def infer_id_from_external_id(kili, asset_id: Optional[str], external_id: str, project_id: str):
+def infer_id_from_external_id(
+    kili, asset_id: Optional[str], external_id: Optional[str], project_id: Optional[str]
+):
     """
     Infer asset id from external id
 
