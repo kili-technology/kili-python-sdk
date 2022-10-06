@@ -4,7 +4,7 @@ This script permits to setup the python package.
 
 from setuptools import find_packages, setup
 
-from kili import __version__
+from src.kili import __version__
 
 setup(
     # name on pypi
@@ -12,7 +12,8 @@ setup(
     # code version
     version=__version__,
     # List packages
-    packages=find_packages(),
+    package_dir={"": "src"},
+    packages=find_packages(where="src", exclude=["test"]),
     author="Kili Technology",
     author_email="contact@kili-technology.com",
     description="Python client for Kili Technology labeling tool",
