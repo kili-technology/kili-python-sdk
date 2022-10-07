@@ -2,10 +2,10 @@
 Fake Kili object
 """
 
-from test.services.export.fakes.fake_data import asset_image
 from typing import List, Optional
 
 from kili.orm import Asset
+from tests.services.export.fakes.fake_data import asset_image
 
 
 class FakeAuth:

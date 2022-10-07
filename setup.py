@@ -13,7 +13,7 @@ setup(
     version=__version__,
     # List packages
     package_dir={"": "src"},
-    packages=find_packages(where="src", exclude=["test"]),
+    packages=find_packages(where="src", exclude=["tests"]),
     author="Kili Technology",
     author_email="contact@kili-technology.com",
     description="Python client for Kili Technology labeling tool",
