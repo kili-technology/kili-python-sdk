@@ -39,11 +39,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install jupyter nbconvert nbformat pytest mock pytest-mock
+          pip install - ".[dev]"
 
       - name: Unit tests
-        run: pytest -ra -sv --ignore test/test_notebooks.py --color yes  --code-highlight yes  -vv
+        run: pytest -ra -sv --ignore tests/test_notebooks.py --color yes  --code-highlight yes  -vv
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
