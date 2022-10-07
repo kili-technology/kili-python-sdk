@@ -40,7 +40,7 @@ dev_extra = [
     "flake8-unused-arguments",
     "pyright",
     "linkcheckmd",
-    "pyright"
+    "pyright",
     # notebooks tests
     "nbformat",
     "nbconvert",
