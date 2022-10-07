@@ -53,6 +53,8 @@ class BaseExporter(ABC):
     Abstract class defining the interface for all exporters.
     """
 
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(
         self,
         project_id,
