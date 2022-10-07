@@ -31,6 +31,7 @@ class Project:  # pylint: disable=too-few-public-methods
         fmt: LabelFormat,
         asset_ids: Optional[List[AssetId]] = None,
         layout: SplitOption = "split",
+        multiple_files: bool = False,
         disable_tqdm: bool = False,
         log_level: LogLevel = "INFO",
     ) -> None:
@@ -61,6 +62,7 @@ class Project:  # pylint: disable=too-few-public-methods
             export_type="latest",
             label_format=fmt,
             split_option=layout,
+            multiple_files=multiple_files,
             output_file=filename,
             disable_tqdm=disable_tqdm,
             log_level=log_level,

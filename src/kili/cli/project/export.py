@@ -22,13 +22,20 @@ from kili.services.types import ProjectId
     required=True,
 )
 @click.option(
+    "--output-file", type=str, help="File into which the labels are saved.", required=True
+)
+@click.option(
     "--layout",
     type=click.Choice(get_args(SplitOption)),
     default="merged",
     help="Layout of the label files",
 )
 @click.option(
-    "--output-file", type=str, help="File into which the labels are saved.", required=True
+    "--multiple-files",
+    type=bool,
+    # is_flag=True,
+    default=False,
+    help="Layout of the label files",
 )
 @Options.api_key
 @Options.endpoint
@@ -40,6 +47,7 @@ def export_labels(
     output_format: LabelFormat,
     output_file: str,
     layout: SplitOption,
+    multiple_files: bool,
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
@@ -88,6 +96,7 @@ def export_labels(
             export_type="latest",
             label_format=output_format,
             split_option=layout,
+            multiple_files=multiple_files,
             output_file=output_file,
             disable_tqdm=not verbose,
             log_level="INFO" if verbose else "WARNING",

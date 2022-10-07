@@ -26,6 +26,7 @@ class ExportParams(NamedTuple):
     project_id: str
     label_format: LabelFormat
     split_option: SplitOption
+    multiple_files: bool
     output_file: str
 
 
@@ -53,11 +54,20 @@ class BaseExporter(ABC):
     """
 
     def __init__(
-        self, project_id, export_type, label_format, disable_tqdm, kili, logger, content_repository
+        self,
+        project_id,
+        export_type,
+        label_format,
+        multiple_files,
+        disable_tqdm,
+        kili,
+        logger,
+        content_repository,
     ):  # pylint: disable=too-many-arguments
         self.project_id = project_id
         self.export_type = export_type
         self.label_format = label_format
+        self.multiple_files = multiple_files
         self.disable_tqdm = disable_tqdm
         self.kili = kili
         self.logger = logger
@@ -196,6 +206,7 @@ class BaseExporterSelector(ABC):
             export_params.project_id,
             export_params.export_type,
             export_params.label_format,
+            export_params.multiple_files,
             logger_params.disable_tqdm,
             kili,
             logger,
