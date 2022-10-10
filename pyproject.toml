@@ -17,7 +17,6 @@ known_first_party= ['kili']
 
 [tool.pyright]
 exclude = [
-    "**/utils/ultralytics/yolov5/**",
     "**/__pycache__",
 ]
 
