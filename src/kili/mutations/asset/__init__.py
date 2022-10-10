@@ -230,7 +230,7 @@ class MutationsAsset:
             generate_variables,
             GQL_UPDATE_PROPERTIES_IN_ASSETS,
         )
-        formated_results = [format_result("data", result) for result in results]
+        formated_results = [format_result("data", result, Asset) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
     @Compatible(["v1", "v2"])
