@@ -13,7 +13,6 @@ from kili.helpers import (
     fragment_builder,
     validate_category_search_query,
 )
-from kili.orm import Label
 from kili.queries.asset import QueriesAsset
 from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 from kili.queries.project import QueriesProject
@@ -196,7 +195,7 @@ class QueriesLabel:
         payload.update({"skip": skip, "first": first})
         _gql_labels = gql_labels(fragment_builder(fields, LabelType))
         result = self.auth.client.execute(_gql_labels, payload)
-        return format_result("data", result, Label)
+        return format_result("data", result)
 
     # pylint: disable=dangerous-default-value
     @typechecked
