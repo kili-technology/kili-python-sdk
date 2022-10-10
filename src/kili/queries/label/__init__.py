@@ -19,7 +19,7 @@ from kili.queries.project import QueriesProject
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import ProjectId
-from kili.types import Label as Label
+from kili.types import Label as LabelType
 from kili.utils.pagination import row_generator_from_paginated_calls
 
 
@@ -193,9 +193,9 @@ class QueriesLabel:
         self, skip: int, first: int, payload: dict, fields: List[str]
     ) -> Iterable[Dict]:
         payload.update({"skip": skip, "first": first})
-        _gql_labels = gql_labels(fragment_builder(fields, Label))
+        _gql_labels = gql_labels(fragment_builder(fields, LabelType))
         result = self.auth.client.execute(_gql_labels, payload)
-        return format_result("data", result, _object=List[Label])  # type:ignore
+        return format_result("data", result, _object=List[LabelType])  # type:ignore
 
     # pylint: disable=dangerous-default-value
     @typechecked
