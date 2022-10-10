@@ -1,11 +1,10 @@
-name: Integration Tests
+name: End-to-end Tests
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 17 * * 1-5'
   push:
     branches:
       - 'release/**'
+      - master
 jobs:
   recipes:
     runs-on: ubuntu-latest
@@ -41,13 +40,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Daily integration tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "End-to-end tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Daily integration tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "End-to-end tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]
