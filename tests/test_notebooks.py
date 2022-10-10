@@ -34,11 +34,11 @@ def test_all_recipes():
     Runs `process_notebook` on all notebooks in the git repository.
     """
     for notebook in [
-        "test/integration/create_project.ipynb",
-        "test/integration/export_labels.ipynb",
+        "tests/integration/create_project.ipynb",
+        "tests/integration/export_labels.ipynb",
         "recipes/frame_dicom_data.ipynb",
-        "test/integration/import_assets.ipynb",
-        "test/integration/import_predictions.ipynb",
+        "tests/integration/import_assets.ipynb",
+        "tests/integration/import_predictions.ipynb",
         "recipes/import_text_assets.ipynb",
         "recipes/inference_labels.ipynb",
         "recipes/medical_imaging.ipynb",

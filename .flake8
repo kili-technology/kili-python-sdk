@@ -8,4 +8,4 @@ unused-arguments-ignore-stub-functions = True
 ; E203 whitespace before ':' (conflict with black)
 ; B001, E722 do not use bare 'except' (hard to handle with Kili)
 ignore = B006, U100, E501, W503, E203, B001, E722
-exclude = test/*.py, recipes/*.py
+exclude = tests/*.py, recipes/*.py

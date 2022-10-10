@@ -4,8 +4,6 @@ Tests the label import service
 import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from test.services.import_labels import fakes
-from test.services.import_labels.test_cases import TEST_CASES
 from typing import Any, Dict, List
 from unittest.mock import MagicMock
 
@@ -19,6 +17,8 @@ from kili.services.label_import.importer import YoloLabelImporter
 from kili.services.label_import.parser import YoloLabelParser
 from kili.services.label_import.types import Classes
 from kili.services.types import ProjectId
+from tests.services.import_labels import fakes
+from tests.services.import_labels.test_cases import TEST_CASES
 
 
 def _generate_label_file_list(
@@ -67,7 +67,6 @@ def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
     ],
 )
 def test_import_labels_from_files(description, inputs, outputs):
-
     kili = MagicMock()
     kili.append_to_labels = MagicMock()
     kili.projects = MagicMock(side_effect=fakes.projects)
@@ -110,7 +109,6 @@ def test_import_labels_from_files(description, inputs, outputs):
 
 
 def test_import_labels_from_files_malformed_annotation():
-
     kili = MagicMock()
     kili.append_to_labels = MagicMock()
     kili.projects = MagicMock(side_effect=fakes.projects)

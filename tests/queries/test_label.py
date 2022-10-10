@@ -2,10 +2,10 @@
     Tests labels query.
 """
 import os
-from test.utils import mocked_count_method, mocked_query_method
 from unittest.mock import MagicMock
 
 from kili.queries.label import QueriesLabel
+from tests.utils import mocked_count_method, mocked_query_method
 
 mocked_auth = MagicMock()
 mocked_auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql-fake"
@@ -18,8 +18,10 @@ TEST_CASES = [
         "expected_type": "list",
     },
     {
-        "case": "AAU, When I query labels with first=3, skip=20 as_generator=True I get a "
-        "generator that skips the 20 first labels and yield the 3 labels following",
+        "case": (
+            "AAU, When I query labels with first=3, skip=20 as_generator=True I get a "
+            "generator that skips the 20 first labels and yield the 3 labels following"
+        ),
         "args": {
             "project_id": "abcdefgh",
             "as_generator": True,

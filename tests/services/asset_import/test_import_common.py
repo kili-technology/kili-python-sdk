@@ -1,11 +1,11 @@
-from test.services.asset_import.base import ImportTestCase
-from test.services.asset_import.mocks import mocked_request_signed_urls
 from unittest.mock import MagicMock, patch
 
 from kili.queries.asset import QueriesAsset
 from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
+from tests.services.asset_import.base import ImportTestCase
+from tests.services.asset_import.mocks import mocked_request_signed_urls
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)

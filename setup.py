@@ -4,39 +4,65 @@ This script permits to setup the python package.
 
 from setuptools import find_packages, setup
 
-from kili import __version__
+from src.kili import __version__
+
+install_requires = [
+    "pandas",
+    "click",
+    "requests",
+    "tabulate",
+    "tenacity",
+    "tqdm",
+    "typeguard",
+    "typing_extensions",
+    "pyparsing",
+    "websocket-client",
+    "pyyaml",
+]
+
+dev_extra = [
+    # tests
+    "pytest",
+    "pytest-mock",
+    # documentation
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocstrings-python-legacy",
+    "mkdocs-click",
+    "mike",
+    # releases/object_detection_project_fixture.jso
+    "bump2version",
+    # linting
+    "black",
+    "pre-commit",
+    "pylint==2.13",
+    "flake8-unused-arguments",
+    "pyright",
+    "linkcheckmd",
+    "pyright",
+    # notebooks tests
+    "nbformat",
+    "nbconvert",
+]
 
 setup(
-    # name on pypi
     name="kili",
-    # code version
     version=__version__,
-    # List packages
-    packages=find_packages(),
+    package_dir={"": "src"},
+    packages=find_packages(where="src", exclude=["tests"]),
     author="Kili Technology",
     author_email="contact@kili-technology.com",
     description="Python client for Kili Technology labeling tool",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    install_requires=[
-        "pandas",
-        "click",
-        "requests",
-        "tabulate",
-        "tenacity",
-        "tqdm",
-        "typeguard",
-        "typing_extensions",
-        "pyparsing",
-        "websocket-client",
-        "pyyaml",
-    ],
-    # Taking into account MANIFEST.in
+    install_requires=install_requires,
+    extras_require={"dev": dev_extra},
     include_package_data=True,
-    # Official page
+    entry_points={
+        "console_scripts": ["kili=kili.cli:main"],
+    },
     url="https://github.com/kili-technology/kili-python-sdk",
-    # Some meta data:
-    # https://pypi.python.org/pypi?%3Aaction=list_classifiers.
     classifiers=[
         "Intended Audience :: Science/Research",
         "Intended Audience :: Developers",
@@ -58,7 +84,4 @@ setup(
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    entry_points={
-        "console_scripts": ["kili=kili.cli:main"],
-    },
 )

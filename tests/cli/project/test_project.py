@@ -47,7 +47,7 @@ class TestCLIProject:
             create_project,
             [
                 "--interface",
-                "test/fixtures/image_interface.json",
+                "tests/fixtures/image_interface.json",
                 "--title",
                 "Test project",
                 "--description",

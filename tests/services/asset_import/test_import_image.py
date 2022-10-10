@@ -1,13 +1,13 @@
-from test.services.asset_import.base import ImportTestCase
-from test.services.asset_import.mocks import (
-    mocked_request_signed_urls,
-    mocked_upload_data_via_rest,
-)
 from unittest.mock import MagicMock, call, patch
 
 from kili.queries.asset import QueriesAsset
 from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
+from tests.services.asset_import.base import ImportTestCase
+from tests.services.asset_import.mocks import (
+    mocked_request_signed_urls,
+    mocked_upload_data_via_rest,
+)
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
