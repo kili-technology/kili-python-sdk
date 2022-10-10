@@ -6,7 +6,7 @@ function bump_version(){
         --$1 \
         --current-version $(python -c 'from kili import __version__; print(__version__)') \
         $release_type \
-        kili/__init__.py \
+        src/kili/__init__.py \
         | grep new_version | sed -r s,"^.*=",,`
 
     echo $new_version
