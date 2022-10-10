@@ -195,7 +195,7 @@ class QueriesLabel:
         payload.update({"skip": skip, "first": first})
         _gql_labels = gql_labels(fragment_builder(fields, LabelType))
         result = self.auth.client.execute(_gql_labels, payload)
-        return format_result("data", result)
+        return format_result("data", result, LabelType)
 
     # pylint: disable=dangerous-default-value
     @typechecked
