@@ -1,11 +1,10 @@
-name: Integration Tests
+name: End-to-end Tests
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 17 * * 1-5'
   push:
     branches:
       - 'release/**'
+      - master
 jobs:
   recipes:
     runs-on: ubuntu-latest
