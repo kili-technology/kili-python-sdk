@@ -12,3 +12,13 @@ exclude = '''
 profile = "black"
 py_version=37
 known_first_party= ['kili']
+
+
+
+[tool.pyright]
+exclude = [
+    "**/__pycache__",
+]
+
+pythonVersion = "3.7"
+typeCheckingMode = "basic"

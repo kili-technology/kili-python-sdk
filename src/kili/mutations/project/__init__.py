@@ -231,7 +231,7 @@ class MutationsProject:
             }
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
-        return format_result("data", result)  # type: ignore
+        return format_result("data", result)
 
     @Compatible(["v1", "v2"])
     @typechecked

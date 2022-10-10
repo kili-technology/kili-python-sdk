@@ -12,19 +12,18 @@ from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )
-from kili.helpers import format_result, is_url
+from kili.helpers import T, format_result, is_url
 from kili.orm import Asset
 from kili.queries.asset import QueriesAsset
-from kili.utils import bucket, pagination
-from kili.utils.tqdm import tqdm
-
-from .constants import (
+from kili.services.asset_import.constants import (
     ASSET_FIELDS_DEFAULT_VALUE,
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
 )
-from .exceptions import ImportValidationError, MimeTypeError
-from .types import AssetLike, KiliResolverAsset
+from kili.services.asset_import.exceptions import ImportValidationError, MimeTypeError
+from kili.services.asset_import.types import AssetLike, KiliResolverAsset
+from kili.utils import bucket, pagination
+from kili.utils.tqdm import tqdm
 
 
 class BatchParams(NamedTuple):
@@ -82,8 +81,8 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         Base actions to import a batch of asset
         """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
-        assets = self.loop_on_batch(self.fill_empty_fields)(assets)  # type: ignore
-        result_batch = self.import_to_kili(assets)  # type: ignore
+        assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
+        result_batch = self.import_to_kili(assets_)
         self.pbar.update(n=len(assets))
         return result_batch
 
@@ -108,7 +107,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         )
 
     @staticmethod
-    def loop_on_batch(func: Callable[[AssetLike], AssetLike]):
+    def loop_on_batch(func: Callable[[AssetLike], T]) -> Callable[[List[AssetLike]], List[T]]:
         """
         Apply a function, that takes a single asset as input, on the whole batch
         """
@@ -311,7 +310,7 @@ class BaseAssetImporter:
             raise MimeTypeError(f"The mime type of the asset {path} has not been found")
 
         input_type = self.project_params.input_type
-        if mime_type not in project_compatible_mimetypes[input_type]:  # type: ignore
+        if mime_type not in project_compatible_mimetypes[input_type]:
             raise MimeTypeError(
                 f"""
                 File mime type for {path} is {mime_type} and does not correspond

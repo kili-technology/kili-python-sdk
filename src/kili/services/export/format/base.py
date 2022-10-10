@@ -113,7 +113,7 @@ class BaseExporter(ABC):
         kili,
         export_params: ExportParams,
         logger_params: LoggerParams,
-    ) -> str:
+    ) -> None:
         """
         Export a project to a json.
         Return the name of the exported archive file in the bucket.
@@ -126,7 +126,7 @@ class BaseExporter(ABC):
             label_type_in=["DEFAULT", "REVIEW"],
             disable_tqdm=logger_params.disable_tqdm,
         )
-        return self.process_and_save(assets, export_params.output_file)  # type: ignore
+        self.process_and_save(assets, export_params.output_file)
 
 
 class BaseExporterSelector(ABC):

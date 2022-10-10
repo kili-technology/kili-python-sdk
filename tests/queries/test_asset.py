@@ -61,7 +61,7 @@ def test_assets(mocker):
             type(actual).__name__ == test_case["expected_type"]
         ), f'Test case "{case_name}" failed'
         if isinstance(actual, pd.DataFrame):
-            actual_list = actual.to_dict(orient="records")  # type:ignore
+            actual_list = actual.to_dict(orient="records")  # type: ignore
         else:
             actual_list = list(actual)
         assert expected == actual_list, f'Test case "{case_name}" failed'

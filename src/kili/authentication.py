@@ -51,7 +51,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             )
             warnings.warn(message, UserWarning)
 
-        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type:ignore
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type: ignore
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
         self.client = GraphQLClient(
@@ -113,4 +113,4 @@ You should generate a new one on My account > API KEY."""
     def get_user(self) -> User:
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
-        return format_result("data", result)  # type:ignore
+        return format_result("data", result)

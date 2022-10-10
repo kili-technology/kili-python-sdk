@@ -106,7 +106,7 @@ class GraphQLClient:
                     if trial_number == number_of_trials - 1 and errors_in_response:
                         break
                     time.sleep(1)
-                return req.json()  # type:ignore
+                return req.json()  # type:ignore X
             except Exception as exception:
                 if req is not None:
                     raise Exception(req.content) from exception
@@ -114,7 +114,7 @@ class GraphQLClient:
 
         req = urllib.request.Request(  # type: ignore
             self.endpoint, json.dumps(data).encode("utf-8"), headers
-        )  # type:ignore
+        )
         try:
             with urllib.request.urlopen(req) as response:  # type:ignore
                 str_json = response.read().decode("utf-8")
@@ -156,7 +156,7 @@ class SubscriptionGraphQLClient:
             self.ws_url, on_message=self._on_message, subprotocols=[GQL_WS_SUBPROTOCOL]
         )
         self._created_at = datetime.now()
-        self._conn.on_message = self._on_message  # type: ignore
+        self._conn.on_message = self._on_message
 
     def _reconnect(self):
         """

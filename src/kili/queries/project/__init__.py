@@ -4,10 +4,10 @@ from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, fragment_builder
-from ...types import Project
-from ...utils.pagination import row_generator_from_paginated_calls
-from .queries import GQL_PROJECTS_COUNT, gql_projects
+from kili.helpers import Compatible, format_result, fragment_builder
+from kili.queries.project.queries import GQL_PROJECTS_COUNT, gql_projects
+from kili.types import Project
+from kili.utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesProject:
@@ -117,8 +117,8 @@ class QueriesProject:
         )
 
         if as_generator:
-            return projects_generator  # type: ignore
-        return list(projects_generator)  # type: ignore
+            return projects_generator
+        return list(projects_generator)
 
     def _query_projects(self, skip: int, first: int, payload: dict, fields: List[str]):
         payload.update({"skip": skip, "first": first})
@@ -166,5 +166,4 @@ class QueriesProject:
             }
         }
         result = self.auth.client.execute(GQL_PROJECTS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        return format_result("data", result, int)

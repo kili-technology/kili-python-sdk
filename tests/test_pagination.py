@@ -80,7 +80,7 @@ def test_row_generator_from_paginated_calls():
             mocked_count_method,
             {},
             mocked_query_method,
-            {first, skip},  # type:ignore
+            {first, skip},  # type:ignore X
             [],
             disable_tqdm,
         )

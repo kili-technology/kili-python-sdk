@@ -3,7 +3,7 @@ Utils
 """
 import functools
 import time
-from typing import Any, Callable, Dict, Iterator, List, Optional, TypeVar
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, TypeVar
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 from kili.exceptions import GraphQLError
@@ -19,7 +19,7 @@ def row_generator_from_paginated_calls(
     first: Optional[int],
     count_method: Callable[..., int],
     count_kwargs: dict,
-    paged_call_method: Callable[..., List[T]],
+    paged_call_method: Callable[..., Iterable[T]],
     paged_call_payload: dict,
     fields: List[str],
     disable_tqdm: bool,

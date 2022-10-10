@@ -232,7 +232,7 @@ class QueriesAsset:
             first,
             self.count_assets,
             count_args,
-            self._query_assets,  # type:ignore
+            self._query_assets,
             payload_query,
             fields,
             disable_tqdm,
@@ -240,10 +240,10 @@ class QueriesAsset:
         )
 
         if format == "pandas":
-            return pd.DataFrame(list(asset_generator))  # type: ignore
+            return pd.DataFrame(list(asset_generator))
         if as_generator:
-            return asset_generator  # type: ignore
-        return list(asset_generator)  # type: ignore
+            return asset_generator
+        return list(asset_generator)
 
     def _query_assets(self, skip: int, first: int, payload: dict, fields: List[str]):
         payload.update({"skip": skip, "first": first})
@@ -377,5 +377,4 @@ class QueriesAsset:
             }
         }
         result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        return format_result("data", result, int)

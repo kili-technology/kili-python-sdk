@@ -50,7 +50,7 @@ class Compatible:
             version = "v1" if address_matched.group() == ":4000/" else "v2"
         if version_matched:
             version = "v1" if version_matched.group() == "/v1/" else "v2"
-        return version in self.endpoints  # type:ignore
+        return version in self.endpoints  # type:ignore X
 
     def __call__(self, resolver, *args, **kwargs):
         @functools.wraps(resolver)
@@ -85,7 +85,7 @@ def format_result(name, result, _object: Optional[Type[T]] = None) -> T:
         raise GraphQLError(result["errors"])
     formatted_json = format_json(result["data"][name])
     if _object is None:
-        return formatted_json  # type:ignore
+        return formatted_json  # type:ignore X
     if isinstance(formatted_json, list):
         if get_origin(_object) is list:
             obj = get_args(_object)[0]

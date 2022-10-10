@@ -3,11 +3,8 @@ Test notebooks with pytest
 """
 
 
-import nbformat  # type:ignore
-from nbconvert.preprocessors import (  # type:ignore
-    CellExecutionError,
-    ExecutePreprocessor,
-)
+import nbformat
+from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
 
 
 def process_notebook(notebook_filename):

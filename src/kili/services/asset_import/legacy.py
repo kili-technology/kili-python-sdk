@@ -201,7 +201,7 @@ def process_and_store_content(
         signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
     for i, content in enumerate(content_array):
         url_content = (is_url(content) and content) or upload_content(
-            signed_urls[i], content, input_type  # type:ignore
+            signed_urls[i], content, input_type  # type:ignore X
         )
         url_content_array.append(url_content)
     return url_content_array
@@ -351,14 +351,14 @@ def process_append_many_to_dataset_parameters(
         input_type, content_array, json_content_array, json_metadata_array
     )
 
-    mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore legacy
+    mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore
     content_array = process_and_store_content(
-        input_type, content_array, json_content_array, project_id, auth  # type:ignore
+        input_type, content_array, json_content_array, project_id, auth  # type:ignore X
     )
     formatted_json_content_array = process_json_content(
         input_type,
-        content_array,  # type:ignore
-        json_content_array,  # type:ignore
+        content_array,  # type:ignore X
+        json_content_array,  # type:ignore X
     )
 
     request, upload_type = get_request_to_execute(

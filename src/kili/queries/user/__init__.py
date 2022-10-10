@@ -4,10 +4,10 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, fragment_builder
-from ...types import User
-from ...utils.pagination import row_generator_from_paginated_calls
-from .queries import GQL_USERS_COUNT, gql_users
+from kili.helpers import Compatible, format_result, fragment_builder
+from kili.queries.user.queries import GQL_USERS_COUNT, gql_users
+from kili.types import User
+from kili.utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesUser:
@@ -117,5 +117,4 @@ class QueriesUser:
             }
         }
         result = self.auth.client.execute(GQL_USERS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        return format_result("data", result, int)

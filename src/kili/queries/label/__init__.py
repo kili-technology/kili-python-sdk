@@ -13,7 +13,6 @@ from kili.helpers import (
     fragment_builder,
     validate_category_search_query,
 )
-from kili.orm import Label
 from kili.queries.asset import QueriesAsset
 from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 from kili.queries.project import QueriesProject
@@ -180,7 +179,7 @@ class QueriesLabel:
             first,
             self.count_labels,
             count_args,
-            self._query_labels,  # type: ignore
+            self._query_labels,
             payload_query,
             fields,
             disable_tqdm,
@@ -196,7 +195,7 @@ class QueriesLabel:
         payload.update({"skip": skip, "first": first})
         _gql_labels = gql_labels(fragment_builder(fields, LabelType))
         result = self.auth.client.execute(_gql_labels, payload)
-        return format_result("data", result, Label)
+        return format_result("data", result, _object=List[LabelType])  # type:ignore
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -316,8 +315,7 @@ class QueriesLabel:
             }
         }
         result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)  # type:ignore
+        return format_result("data", result, int)
 
     def export_labels(
         self,
