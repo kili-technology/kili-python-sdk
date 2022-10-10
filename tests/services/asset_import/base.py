@@ -1,7 +1,5 @@
 import shutil
 import tempfile
-from test.services.asset_import.mocks import mocked_auth
-from test.utils import LocalDownloader
 from unittest import TestCase
 from unittest.mock import call
 
@@ -10,6 +8,8 @@ from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.services.asset_import import import_assets
+from tests.services.asset_import.mocks import mocked_auth
+from tests.utils import LocalDownloader
 
 
 class ImportTestCase(TestCase):

@@ -3,15 +3,6 @@ import glob
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from test.services.export.fakes.fake_content_repository import FakeContentRepository
-from test.services.export.fakes.fake_data import (
-    asset_image,
-    asset_video,
-    category_ids,
-    kili_format_expected_frame_asset_output,
-    kili_format_frame_asset,
-)
-from test.services.export.fakes.fake_kili import FakeKili
 from zipfile import ZipFile
 
 import pytest
@@ -25,6 +16,15 @@ from kili.services.export.format.yolo.common import (
     _process_asset,
     _write_class_file,
 )
+from tests.services.export.fakes.fake_content_repository import FakeContentRepository
+from tests.services.export.fakes.fake_data import (
+    asset_image,
+    asset_video,
+    category_ids,
+    kili_format_expected_frame_asset_output,
+    kili_format_frame_asset,
+)
+from tests.services.export.fakes.fake_kili import FakeKili
 
 
 def get_file_tree(folder: str):
@@ -181,7 +181,6 @@ def test_export_service(name, test_case):
     ],
 )
 def test_export_service_errors(name, test_case):
-
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
         path_zipfile.parent.mkdir(parents=True, exist_ok=True)
@@ -282,7 +281,7 @@ class YoloTestCase:
             _write_class_file(directory, category_ids, "yolo_v4")
             assert os.path.isfile(os.path.join(directory, "classes.txt"))
             with open(os.path.join(directory, "classes.txt"), "rb") as created_file:
-                with open("./test/services/export/expected/classes.txt", "rb") as expected_file:
+                with open("./tests/services/export/expected/classes.txt", "rb") as expected_file:
                     assert expected_file.read() == created_file.read()
 
     def test_write_class_file_yolo_v5(self):
@@ -290,7 +289,7 @@ class YoloTestCase:
             _write_class_file(directory, category_ids, "yolo_v5")
             assert os.path.isfile(os.path.join(directory, "data.yaml"))
             with open(os.path.join(directory, "data.yaml"), "rb") as created_file:
-                with open("./test/services/export/expected/data_v5.yaml", "rb") as expected_file:
+                with open("./tests/services/export/expected/data_v5.yaml", "rb") as expected_file:
                     assert expected_file.read() == created_file.read()
 
     def test_write_class_file_yolo_v7(self):
@@ -298,7 +297,7 @@ class YoloTestCase:
             _write_class_file(directory, category_ids, "yolo_v7")
             assert os.path.isfile(os.path.join(directory, "data.yaml"))
             with open(os.path.join(directory, "data.yaml"), "rb") as created_file:
-                with open("./test/services/export/expected/data_v7.yaml", "rb") as expected_file:
+                with open("./tests/services/export/expected/data_v7.yaml", "rb") as expected_file:
                     assert expected_file.read() == created_file.read()
 
 

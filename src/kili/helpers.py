@@ -17,7 +17,11 @@ import requests
 from typing_extensions import TypedDict, get_args, get_origin, is_typeddict
 
 from kili.constants import mime_extensions_for_IV2
-from kili.exceptions import EndpointCompatibilityError, GraphQLError
+from kili.exceptions import (
+    EndpointCompatibilityError,
+    GraphQLError,
+    NonExistingFieldError,
+)
 
 
 class Compatible:
@@ -188,24 +192,24 @@ def fragment_builder(fields: List[str], typed_dict_class: Type[TypedDict]):
     if subfields:
         for subquery in {subfield[0] for subfield in subfields}:
             type_of_fields_subquery = type_of_fields[subquery]
-            try:
-                if is_typeddict(type_of_fields_subquery):
-                    fields_subquery = [
-                        subfield[1] for subfield in subfields if subfield[0] == subquery
-                    ]
-                    new_fragment = fragment_builder(
-                        fields_subquery,
-                        type_of_fields_subquery,
-                    )
-                    fragment += f" {subquery}{{{new_fragment}}}"
-            except ValueError:
-                print(f"{subquery} must be a valid subquery field")
+            if type_of_fields_subquery == str:
+                raise NonExistingFieldError(f"{subquery} field does not take subfields")
+            if is_typeddict(type_of_fields_subquery):
+                fields_subquery = [subfield[1] for subfield in subfields if subfield[0] == subquery]
+                new_fragment = fragment_builder(
+                    fields_subquery,
+                    type_of_fields_subquery,  # type: ignore
+                )
+                fragment += f" {subquery}{{{new_fragment}}}"
         fields = [field for field in fields if "." not in field]
     for field in fields:
         try:
             type_of_fields[field]
-        except KeyError:
-            print(f"{field} must be an instance of {type_of_fields}")
+        except KeyError as exception:
+            raise NonExistingFieldError(
+                f"Cannot query field {field} on object {typed_dict_class.__name__}. Admissible"
+                " fields are: \n- " + "\n- ".join(type_of_fields.keys())
+            ) from exception
         if isinstance(field, str):
             fragment += f" {field}"
         else:

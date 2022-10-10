@@ -15,9 +15,9 @@ from kili.project import Project
 def mocked__projects(project_id, **_):
     """Simulates a project call and return an object detection project if
     the given project_id is the one of the fixture."""
-    project_fixture = json.load(open("test/fixtures/object_detection_project_fixture.json"))
+    project_fixture = json.load(open("tests/fixtures/object_detection_project_fixture.json"))
     if project_id == project_fixture[0]["id"]:
-        return json.load(open("test/fixtures/object_detection_project_fixture.json"))
+        return json.load(open("tests/fixtures/object_detection_project_fixture.json"))
     else:
         return []
 

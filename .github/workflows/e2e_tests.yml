@@ -1,11 +1,10 @@
-name: Integration Tests
+name: End-to-end Tests
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 17 * * 1-5'
   push:
     branches:
       - 'release/**'
+      - master
 jobs:
   recipes:
     runs-on: ubuntu-latest
@@ -23,11 +22,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install jupyter nbconvert nbformat pytest mock pytest-mock
+          pip install -e ".[dev]"
 
       - name: Test notebooks
-        run: pytest -sv test/test_notebooks.py
+        run: pytest -sv tests/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
@@ -42,13 +40,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Daily integration tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "End-to-end tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Daily integration tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "End-to-end tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]

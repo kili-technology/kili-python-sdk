@@ -1,12 +1,12 @@
 """
     Tests assets query.
 """
-from test.utils import mocked_count_method, mocked_query_method
 from unittest.mock import MagicMock
 
 import pandas as pd
 
 from kili.queries.asset import QueriesAsset
+from tests.utils import mocked_count_method, mocked_query_method
 
 mocked_auth = MagicMock()
 mocked_auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql-fake"

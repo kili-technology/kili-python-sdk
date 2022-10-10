@@ -52,6 +52,9 @@ class GraphQLError(Exception):
             super().__init__(f'error: "{ast.literal_eval(str(error))[0]["message"]}"')
         else:
             super().__init__(
-                f"error at index {100*batch_number}: "
-                f'{ast.literal_eval(str(error))[0]["message"]}"'
+                f'error at index {100*batch_number}: {ast.literal_eval(str(error))[0]["message"]}"'
             )
+
+
+class NonExistingFieldError(ValueError):
+    """Raised when querying a field that does not exist on an object"""
