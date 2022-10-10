@@ -1,6 +1,6 @@
 # Contributing
 
-## Set set up the Development environment
+## Set up the Development environment
 
 To install the development environment, please follow these steps:
 
@@ -11,7 +11,7 @@ pre-commit run --all-files
 ```
 
 You will also have all packages related to the repository development: testing, linting, documentation etc...
-pre-commit will run automatically when you commit.
+pre-commit will automatically run when you commit.
 
 (If kili was already installed in the virtual environment, remove it with `pip uninstall kili` before reinstalling it in editable mode with the -e flag.)
 
