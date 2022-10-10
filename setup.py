@@ -44,6 +44,7 @@ dev_extra = [
     # notebooks tests
     "nbformat",
     "nbconvert",
+    "ipykernel",
 ]
 
 setup(
