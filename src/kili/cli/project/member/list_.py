@@ -63,4 +63,11 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         key=lambda column: column.map(ROLE_ORDER) if column.name == "ROLE" else column,
     )
     users = users[["ROLE", "NAME", "EMAIL", "ID", "ORGANIZATION"]]
-    print(tabulate(users, headers="keys", tablefmt=tablefmt, showindex=False))
+    print(
+        tabulate(
+            users.to_numpy().tolist(),
+            headers=list(users.columns),
+            tablefmt=tablefmt,
+            showindex=False,
+        )
+    )

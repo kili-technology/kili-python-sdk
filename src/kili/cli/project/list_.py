@@ -74,8 +74,8 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     projects = projects[["TITLE", "ID", "PROGRESS", "DESCRIPTION"]]
     print(
         tabulate(
-            projects,
-            headers="keys",
+            projects.to_numpy().tolist(),
+            headers=list(projects.columns),
             tablefmt=tablefmt,
             showindex=False,
             colalign=("left", "left", "right", "left"),
