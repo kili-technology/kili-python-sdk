@@ -89,8 +89,11 @@ def format_result(name, result, _object: Optional[Type[T]] = None) -> T:
     if isinstance(formatted_json, list):
         if get_origin(_object) is list:
             obj = get_args(_object)[0]
-            return [obj(element) for element in formatted_json]  # type:ignore X
-    return _object(formatted_json)
+            return [obj(element) for element in formatted_json]  # type:ignore
+        # the legacy "orm" objects fall into this category.
+        return [_object(element) for element in formatted_json]  # type:ignore
+
+    return _object(formatted_json)  # type:ignore
 
 
 def content_escape(content):
