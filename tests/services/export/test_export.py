@@ -124,7 +124,7 @@ def get_file_tree(folder: str):
                     "label_format": "raw",
                 },
                 "file_tree_expected": {
-                    "labels": {"asset_car_1.json": {}},
+                    "labels": {"car_1.json": {}},
                     "README.kili.txt": {},
                 },
             },
