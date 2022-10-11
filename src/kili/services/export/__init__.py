@@ -23,6 +23,7 @@ def export_labels(  # pylint: disable=too-many-arguments
     export_type: ExportType,
     label_format: LabelFormat,
     split_option: SplitOption,
+    single_file: bool,
     output_file: str,
     disable_tqdm: bool,
     log_level: LogLevel,
@@ -39,6 +40,7 @@ def export_labels(  # pylint: disable=too-many-arguments
         export_type=export_type,
         label_format=label_format,
         split_option=split_option,
+        single_file=single_file,
         output_file=output_file,
     )
 
