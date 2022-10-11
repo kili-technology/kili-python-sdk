@@ -354,7 +354,7 @@ class MutationsProject:
 
     @Compatible(endpoints=["v2"])
     @typechecked
-    def upload_plugin(
+    def upload_plugin_poc(
         self,
         project_id: str,
         file_path: str,
@@ -374,7 +374,7 @@ class MutationsProject:
                 or an error message.
 
         Examples:
-            >>> kili.upload_plugin(project_id=project_id, file_path="./path/to/my/file.py")
+            >>> kili.upload_plugin_poc(project_id=project_id, file_path="./path/to/my/file.py")
         """
 
         if not check_file_is_py(file_path, verbose):
