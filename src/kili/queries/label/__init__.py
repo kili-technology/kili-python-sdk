@@ -324,7 +324,7 @@ class QueriesLabel:
         fmt: LabelFormat,
         asset_ids: Optional[List[str]] = None,
         layout: SplitOption = "split",
-        multiple_files: bool = False,
+        single_file: bool = False,
         disable_tqdm: bool = False,
     ):
         """
@@ -366,7 +366,7 @@ class QueriesLabel:
                 export_type="latest",
                 label_format=fmt,
                 split_option=layout,
-                multiple_files=multiple_files,
+                single_file=single_file,
                 output_file=filename,
                 disable_tqdm=disable_tqdm,
                 log_level="WARNING",

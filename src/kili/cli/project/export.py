@@ -31,10 +31,9 @@ from kili.services.types import ProjectId
     help="Layout of the label files",
 )
 @click.option(
-    "--multiple-files",
+    "--single-file",
     type=bool,
-    # is_flag=True,
-    default=False,
+    is_flag=True,
     help="Layout of the label files",
 )
 @Options.api_key
@@ -47,7 +46,7 @@ def export_labels(
     output_format: LabelFormat,
     output_file: str,
     layout: SplitOption,
-    multiple_files: bool,
+    single_file: bool,
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
@@ -96,7 +95,7 @@ def export_labels(
             export_type="latest",
             label_format=output_format,
             split_option=layout,
-            multiple_files=multiple_files,
+            single_file=single_file,
             output_file=output_file,
             disable_tqdm=not verbose,
             log_level="INFO" if verbose else "WARNING",

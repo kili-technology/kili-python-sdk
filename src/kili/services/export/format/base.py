@@ -26,7 +26,7 @@ class ExportParams(NamedTuple):
     project_id: str
     label_format: LabelFormat
     split_option: SplitOption
-    multiple_files: bool
+    single_file: bool
     output_file: str
 
 
@@ -60,7 +60,7 @@ class BaseExporter(ABC):
         project_id,
         export_type,
         label_format,
-        multiple_files,
+        single_file,
         disable_tqdm,
         kili,
         logger,
@@ -69,7 +69,7 @@ class BaseExporter(ABC):
         self.project_id = project_id
         self.export_type = export_type
         self.label_format = label_format
-        self.multiple_files = multiple_files
+        self.single_file = single_file
         self.disable_tqdm = disable_tqdm
         self.kili = kili
         self.logger = logger
@@ -208,7 +208,7 @@ class BaseExporterSelector(ABC):
             export_params.project_id,
             export_params.export_type,
             export_params.label_format,
-            export_params.multiple_files,
+            export_params.single_file,
             logger_params.disable_tqdm,
             kili,
             logger,
