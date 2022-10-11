@@ -1,9 +1,8 @@
 """CLI's project upload_plugin subcommand"""
-import click
-
 from pathlib import Path
 from typing import Dict, List, Optional, cast
 
+import click
 from typeguard import typechecked
 
 from kili.cli.common_args import Arguments, Options
@@ -60,7 +59,7 @@ def upload_plugin(
             "Check that the path exists and file types are compatible with the project"
         )
 
-    kili.upload_plugin(
+    kili.upload_plugin_poc(
         project_id=project_id, file_path=file_path, script_name=script_name, verbose=verbose
     )
 
