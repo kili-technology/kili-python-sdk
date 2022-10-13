@@ -1,0 +1,1714 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kili Python SDK">
+      
+      
+      
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.122/cli/reference/">
+      
+      <link rel="icon" href="../../assets/kili_favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.3">
+    
+    
+      
+        <title>Reference - Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7a952b86.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archia:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Archia";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-HRVEXSEWL0"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-HRVEXSEWL0",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-HRVEXSEWL0",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="kili" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kili" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../assets/kili_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Python SDK
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api_key/" class="md-tabs__link">
+        Python SDK
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link md-tabs__link--active">
+        Command line interface
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../assets/kili_logo.png" alt="logo">
+
+    </a>
+    Python SDK
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          Python SDK
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Python SDK" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Python SDK
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_key/" class="md-nav__link">
+        API Key
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asset/" class="md-nav__link">
+        Asset
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../issue/" class="md-nav__link">
+        Issue
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label/" class="md-nav__link">
+        Label
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notification/" class="md-nav__link">
+        Notification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../organization/" class="md-nav__link">
+        Organization
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project/" class="md-nav__link">
+        Project
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_user/" class="md-nav__link">
+        Project User
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_version/" class="md-nav__link">
+        Project Version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/" class="md-nav__link">
+        User
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Command line interface
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Command line interface" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Command line interface
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Reference
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project" class="md-nav__link">
+    project
+  </a>
+  
+    <nav class="md-nav" aria-label="project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe" class="md-nav__link">
+    describe
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    export
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import" class="md-nav__link">
+    import
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label" class="md-nav__link">
+    label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    list
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#member" class="md-nav__link">
+    member
+  </a>
+  
+    <nav class="md-nav" aria-label="member">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add" class="md-nav__link">
+    add
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_1" class="md-nav__link">
+    list
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rm" class="md-nav__link">
+    rm
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    update
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project" class="md-nav__link">
+    project
+  </a>
+  
+    <nav class="md-nav" aria-label="project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe" class="md-nav__link">
+    describe
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    export
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import" class="md-nav__link">
+    import
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label" class="md-nav__link">
+    label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    list
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#member" class="md-nav__link">
+    member
+  </a>
+  
+    <nav class="md-nav" aria-label="member">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add" class="md-nav__link">
+    add
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_1" class="md-nav__link">
+    list
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rm" class="md-nav__link">
+    rm
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    update
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="kili">kili</h1>
+<p>Kili Command line Interface</p>
+<p>To get all the available commands, please type: <code>kili project --help</code>.</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili [OPTIONS] COMMAND [ARGS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>boolean</td>
+<td>Show the version and exit.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="project">project</h2>
+<p>Commands to interact with a Kili project</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project [OPTIONS] COMMAND [ARGS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="create">create</h3>
+<p>Create a Kili project</p>
+<p>interface must be a path pointing to your json interface file</p>
+<p>If no interface is provided, --from-project can be used
+to create a new project with the json_interface of another project
+(assets will not be copied).</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project create \
+     path/to/interface.json \
+    --input-type TEXT \
+    --title &quot;Invoice annotation project&quot;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project create \
+    --from-project &lt;project_id_src&gt; \
+    --input-type TEXT \
+    --title &quot;Invoice annotation project&quot;
+</code></pre></div></p>
+</div>
+<p>To build a Kili project interface, please visit: </p>
+<p>https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project create [OPTIONS] [INTERFACE]
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-project</code></td>
+<td>text</td>
+<td>project_id of another Kili project</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--title</code></td>
+<td>text</td>
+<td>Project Title.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--input-type</code></td>
+<td>choice (<code>AUDIO</code> &#x7C; <code>FRAME</code> &#x7C; <code>IMAGE</code> &#x7C; <code>PDF</code> &#x7C; <code>TEXT</code> &#x7C; <code>TIME_SERIES</code> &#x7C; <code>VIDEO</code> &#x7C; <code>VIDEO_LEGACY</code>)</td>
+<td>Project input data type. Please check your license to see which ones you have access to.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--description</code></td>
+<td>text</td>
+<td>Project description.</td>
+<td>``</td>
+</tr>
+<tr>
+<td><code>--stdout-format</code></td>
+<td>text</td>
+<td>Defines how the output table is formatted (see https://pypi.org/project/tabulate/, default: plain).</td>
+<td><code>plain</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="describe">describe</h3>
+<p>Show project description and analytics.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<div class="highlight"><pre><span></span><code>kili project describe --project-id &lt;project_id&gt;
+</code></pre></div>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project describe [OPTIONS] PROJECT_ID
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="export">export</h3>
+<p>Export the Kili labels of a project to a given format.</p>
+<p>The supported formats are:
+- Yolo V4, V5, V7 for object detection (bounding box) tasks.
+- Kili for all tasks.
+- COCO (coming soon) for object detection tasks.
+- Pascal VOC (coming soon) for object detection tasks.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project export \
+    --project-id &lt;project_id&gt; \
+    --output-format yolo_v5 \
+    --output-file /tmp/export.zip
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project export \
+    --project-id &lt;project_id&gt; \
+    --output-format yolo_v4 \
+    --output-file /tmp/export_split.zip \
+    --layout split
+</code></pre></div></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Unsupported exports</p>
+<p>Currently, this command does not support the export of videos that have not
+been cut into separated frames.</p>
+<p>For such exports, please use the Kili UI.</p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project export [OPTIONS]
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output-format</code></td>
+<td>choice (<code>raw</code> &#x7C; <code>yolo_v4</code> &#x7C; <code>yolo_v5</code> &#x7C; <code>yolo_v7</code>)</td>
+<td>Format into which the label data will be converted</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--output-file</code></td>
+<td>text</td>
+<td>File into which the labels are saved.</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--layout</code></td>
+<td>choice (<code>split</code> &#x7C; <code>merged</code>)</td>
+<td>Layout of the label files</td>
+<td><code>merged</code></td>
+</tr>
+<tr>
+<td><code>--single-file</code></td>
+<td>boolean</td>
+<td>Layout of the label files</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--verbose</code></td>
+<td>boolean</td>
+<td>Show more logs</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="import">import</h3>
+<p>Add assets into a project</p>
+<p>Files can be paths to files or to folders. You can provide several paths separated by spaces.</p>
+<p>If no Files are provided, --from-csv can be used to import
+assets from a CSV file with two columns:</p>
+<ul>
+<li><code>external_id</code>: external id of the asset.</li>
+<li><code>content</code>: paths to the asset file or a url hosting the asset.</li>
+</ul>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project import \
+    dir1/dir2/ dir1/dir3/test1.png \
+    --project-id &lt;project_id&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project import \
+    dir1/dir3/video.mp4 \
+    --project-id &lt;project_id&gt; \
+    --frames \
+    --fps 24
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project import \
+    --from-csv assets_list.csv \
+    --project-id &lt;project_id&gt; \
+    --frames \
+    --fps 24
+</code></pre></div></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Unsupported imports</p>
+<p>Currently, this command does not support:</p>
+<ul>
+<li>the import of videos from local frames, rich text and time series assets</li>
+<li>the import of assets with metadata or with a custom external_id</li>
+</ul>
+<p>For such imports, please use the <code>append_many_to_dataset</code> method in the Kili SDK.</p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project import [OPTIONS] [FILES]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with required columns:external_id, content required columns:</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--frames</code></td>
+<td>boolean</td>
+<td>Only for a frame project, import videos as frames. The import time is longer with this option.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--fps</code></td>
+<td>integer</td>
+<td>Only for a frame project, import videos with a specific frame rate</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--verbose</code></td>
+<td>boolean</td>
+<td>Show more logs</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="label">label</h3>
+<p>Import labels or predictions</p>
+<p>Files can be paths to files or to folders. You can provide several paths separated by spaces.
+The labels to import have to be in the Kili format and stored in a json file.
+File's name must be equal to asset's external_id.</p>
+<p>If no files are provided, --from-csv can be used to import
+assets from a CSV file with two columns:</p>
+<ul>
+<li><code>label_asset_external_id</code>: external id for which you want to import labels.</li>
+<li><code>label_asset_id</code>: asset id for which you want to import labels (mutual exclusive with the
+field above, and not available for predictions)</li>
+<li><code>path</code>: paths to the json files containing the json_response to upload.</li>
+</ul>
+<p>Additional columns can be provided in the CSV file, see <code>.append_to_labels</code> in the Python client
+documentation:</p>
+<ul>
+<li>label_type</li>
+<li>seconds_to_label</li>
+<li>author_id</li>
+</ul>
+<div class="admonition examples">
+<p class="admonition-title">CSV file template for the raw Kili format</p>
+<div class="highlight"><pre><span></span><code>label_asset_external_id,path
+asset1,./labels/label_asset1.json
+asset2,./labels/label_asset2.json
+</code></pre></div>
+</div>
+<div class="admonition examples">
+<p class="admonition-title">CSV file template for a Yolo format</p>
+<div class="highlight"><pre><span></span><code>label_asset_external_id,path
+asset1,./labels/label_asset1.txt
+asset2,./labels/label_asset2.txt
+</code></pre></div>
+</div>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p>To import default labels:
+<div class="highlight"><pre><span></span><code>kili project label \
+     dir1/dir2/ dir1/dir3/test1.json \
+    --project-id &lt;project_id&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project label \
+    --from-csv path/to/file.csv \
+    --project-id &lt;project_id&gt;
+</code></pre></div>
+To import labels as predictions:
+<div class="highlight"><pre><span></span><code>kili project label \
+    --from-csv path/to/file.csv \
+    --project-id &lt;project_id&gt; \
+    --prediction \
+    --model-name YOLO-run-3
+</code></pre></div>
+To import labels as predictions in the Yolo v5 format into a target job:
+<div class="highlight"><pre><span></span><code>kili project label \
+    --from-csv path/to/file.csv \
+    --project-id &lt;project_id&gt; \
+    --prediction \
+    --model-name YOLO-v5 \
+    --metadata-file classes.yml \
+    --target-job IMAGE_DETECTION_JOB \
+    --input-format yolo_v5
+</code></pre></div></p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project label [OPTIONS] [FILES]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with required columns:external_id, json_response_path required columns:</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--prediction</code></td>
+<td>boolean</td>
+<td>Tells to import labels as predictions, which means that they will appear as pre-annotations in the Kili interface</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--model-name</code></td>
+<td>text</td>
+<td>Name of the model that generated predictions, if labels are sent as predictions</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--verbose</code></td>
+<td>boolean</td>
+<td>Show more logs</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--input-format</code></td>
+<td>choice (<code>yolo_v4</code> &#x7C; <code>yolo_v5</code> &#x7C; <code>yolo_v7</code> &#x7C; <code>raw</code>)</td>
+<td>Format in which the labels are encoded</td>
+<td><code>raw</code></td>
+</tr>
+<tr>
+<td><code>--metadata-file</code></td>
+<td>text</td>
+<td>File containing format metadata (if relevant to the input format)</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--target-job</code></td>
+<td>text</td>
+<td>Job name in the project where to upload the labels (if relevant to the input format)</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="list">list</h3>
+<p>List your projects</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<div class="highlight"><pre><span></span><code>kili project list --max 10 --stdout-format pretty
+</code></pre></div>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project list [OPTIONS]
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--stdout-format</code></td>
+<td>text</td>
+<td>Defines how the output table is formatted (see https://pypi.org/project/tabulate/, default: plain).</td>
+<td><code>plain</code></td>
+</tr>
+<tr>
+<td><code>--max</code></td>
+<td>integer</td>
+<td>Maximum number of project to display.</td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="member">member</h3>
+<p>Commands to interact with Kili project members</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member [OPTIONS] COMMAND [ARGS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="add">add</h4>
+<p>Add members to a Kili project</p>
+<p>Emails can be passed directly as arguments.
+You can provide several emails separated by spaces.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project member add \
+    --project-id &lt;project_id&gt; \
+    --role REVIEWER \
+    john.doe@test.com jane.doe@test.com
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member add \
+    --project-id &lt;project_id&gt; \
+    --from-csv path/to/members.csv
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member add \
+    --project-id &lt;project_id&gt; \
+    --from-project &lt;project_id_scr&gt;
+</code></pre></div></p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member add [OPTIONS] [EMAILS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--role</code></td>
+<td>choice (<code>ADMIN</code> &#x7C; <code>TEAM_MANAGER</code> &#x7C; <code>REVIEWER</code> &#x7C; <code>LABELER</code>)</td>
+<td>Project role of the added user(s).</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with required columns:email required columns: role</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-project</code></td>
+<td>text</td>
+<td>project_id of another Kili project</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="list_1">list</h4>
+<p>List the members of the project</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<div class="highlight"><pre><span></span><code>kili project member list &lt;project_id&gt; --stdout-format pretty
+</code></pre></div>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member list [OPTIONS] PROJECT_ID
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--stdout-format</code></td>
+<td>text</td>
+<td>Defines how the output table is formatted (see https://pypi.org/project/tabulate/, default: plain).</td>
+<td><code>plain</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="rm">rm</h4>
+<p>Remove members from a Kili project</p>
+<p>Emails can be passed directly as arguments.
+You can provide several emails separated by spaces.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project member rm \
+    --project-id &lt;project_id&gt; \
+    john.doe@test.com
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member rm \
+    --project-id &lt;project_id&gt; \
+    --from-csv path/to/members.csv
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member rm \
+    --project-id &lt;project_id&gt; \
+    --all
+</code></pre></div></p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member rm [OPTIONS] [EMAILS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with required columns:email required columns: role</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--all</code></td>
+<td>boolean</td>
+<td>Remove all users from project</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="update">update</h4>
+<p>Update member's role of a Kili project</p>
+<p>Emails can be passed directly as arguments.
+You can provide several emails separated by spaces.</p>
+<div class="admonition examples">
+<p class="admonition-title">Examples</p>
+<p><div class="highlight"><pre><span></span><code>kili project member update\
+    --project-id &lt;project_id&gt; \
+    --role REVIEWER \
+    john.doe@test.com
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member update \
+    --project-id &lt;project_id&gt; \
+    --from-csv path/to/members.csv
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kili project member update \
+    --project-id &lt;project_id&gt; \
+    --from-project &lt;project_id_scr&gt;
+</code></pre></div></p>
+</div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>kili project member update [OPTIONS] [EMAILS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--api-key</code></td>
+<td>text</td>
+<td>Your Kili API key.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td>text</td>
+<td>Kili API Endpoint.</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--project-id</code></td>
+<td>text</td>
+<td>Id of the project</td>
+<td>_required</td>
+</tr>
+<tr>
+<td><code>--role</code></td>
+<td>choice (<code>ADMIN</code> &#x7C; <code>TEAM_MANAGER</code> &#x7C; <code>REVIEWER</code> &#x7C; <code>LABELER</code>)</td>
+<td>Project role of the added user(s).</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-csv</code></td>
+<td>path</td>
+<td>path to a csv file with required columns:email required columns: role</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--from-project</code></td>
+<td>text</td>
+<td>project_id of another Kili project</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Getting Started" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Getting Started
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.37e9125f.min.js"></script>
+      
+    
+  </body>
+</html>
