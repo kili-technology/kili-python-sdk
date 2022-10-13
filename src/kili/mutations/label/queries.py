@@ -32,6 +32,20 @@ mutation(
 }}
 """
 
+GQL_APPEND_MANY_TO_LABELS = f"""
+mutation(
+    $data: AppendManyToLabelsData!
+    $where: AssetWhere!
+) {{
+  data: appendToLabels(
+    data: $data
+    where: $where
+  ) {{
+      {LABEL_FRAGMENT_ID}
+  }}
+}}
+"""
+
 
 GQL_UPDATE_PROPERTIES_IN_LABEL = f"""
 mutation(

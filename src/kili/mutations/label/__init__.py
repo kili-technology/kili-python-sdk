@@ -10,6 +10,7 @@ from typeguard import typechecked
 
 from kili.helpers import format_result, infer_id_from_external_id
 from kili.mutations.label.queries import (
+    GQL_APPEND_MANY_TO_LABELS,
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
     GQL_CREATE_PREDICTIONS,
@@ -142,6 +143,59 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result("data", result, Label)
 
+    @typechecked
+    def append_many_to_labels(
+        self,
+        json_response_array: List[dict],
+        author_id_array: Optional[List[str]] = None,
+        label_asset_external_id_array: Optional[List[str]] = None,
+        label_asset_id_array: Optional[List[str]] = None,
+        label_type: str = "DEFAULT",
+        project_id: Optional[str] = None,
+        seconds_to_label_array: Optional[List[int]] = None,
+    ):
+        """Append a label to an asset.
+
+        Args:
+            json_response: Label is given here
+            author_id: ID of the author of the label
+            label_asset_external_id: External identifier of the asset
+            label_asset_id: Identifier of the asset
+            project_id: Identifier of the project
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`
+            seconds_to_label: Time to create the label
+
+        !!! warning
+            Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
+
+        """
+
+        if author_id_array is None:
+            author_id_array = [self.auth.user_id] * len(json_response_array)
+        label_asset_id_array = infer_id_from_external_id(
+            self, label_asset_id_array, label_asset_external_id_array, project_id
+        )
+        variables = {
+            "data": {
+                "authorIDArray": author_id_array,
+                "jsonResponse": list(map(dumps, json_response_array)),
+                "labelType": label_type,
+                "secondsToLabel": seconds_to_label_array,
+            },
+            "where": {"idIn": label_asset_id_array},
+        }
+        result = self.auth.client.execute(GQL_APPEND_MANY_TO_LABELS, variables)
+        return result
+        # return format_result("data", result[0], Label)
+
+    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_label(
         self,

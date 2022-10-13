@@ -264,7 +264,10 @@ def list_is_not_none_else_none(_object):
 
 
 def infer_id_from_external_id(
-    kili, asset_id: Optional[str], external_id: Optional[str], project_id: Optional[str]
+    kili,
+    asset_id_array: Optional[List[str]],
+    external_id_array: Optional[List[str]],
+    project_id: Optional[str],
 ):
     """
     Infer asset id from external id
@@ -274,24 +277,24 @@ def infer_id_from_external_id(
         external_id: external id
         project_id: project id
     """
-    if asset_id is None and external_id is None:
+    if asset_id_array is None and external_id_array is None:
         raise Exception("Either provide asset_id or external_id and project_id")
-    if asset_id is not None:
-        return asset_id
+    if asset_id_array is not None:
+        return asset_id_array
     assets = kili.assets(
-        external_id_contains=[external_id],
+        external_id_contains=external_id_array,
         project_id=project_id,
         fields=["id"],
         disable_tqdm=True,
     )
     if len(assets) == 0:
-        raise Exception(f'No asset found with external ID "{external_id}"')
-    if len(assets) > 1:
-        raise Exception(
-            f'Several assets found containing external ID "{external_id}":'
-            f" {assets}. Please, use asset ID instead."
-        )
-    return assets[0]["id"]
+        raise Exception("No asset found with given external IDs")
+    # if len(assets) > 1:
+    #     raise Exception(
+    #         f'Several assets found containing external ID "{external_id}":'
+    #         f" {assets}. Please, use asset ID instead."
+    #     )
+    return [asset["id"] for asset in assets]
 
 
 def validate_category_search_query(query):

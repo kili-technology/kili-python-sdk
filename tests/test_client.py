@@ -6,8 +6,8 @@ from unittest import mock
 
 import pytest
 
-from kili.client import Kili
-from kili.exceptions import AuthenticationFailed
+from src.kili.client import Kili
+from src.kili.exceptions import AuthenticationFailed
 
 
 class TestClient:
