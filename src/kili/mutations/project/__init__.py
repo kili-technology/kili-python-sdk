@@ -2,7 +2,7 @@
 
 import warnings
 from json import dumps
-from typing import Optional
+from typing import Dict, Optional
 
 from typeguard import typechecked
 
@@ -179,7 +179,7 @@ class MutationsProject:
         title: str,
         description: str = "",
         project_type: Optional[str] = None,
-    ) -> dict:
+    ) -> Dict:
         # pylint: disable=line-too-long
         """Create a project.
 
