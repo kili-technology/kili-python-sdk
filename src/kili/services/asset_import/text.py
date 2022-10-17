@@ -38,7 +38,7 @@ class RawTextBatchImporter(ContentBatchImporter):
         """
         Overwrite the base function in order to be able to upload raw text
         """
-        signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
+        signed_urls = bucket.request_signed_urls(self.auth, len(assets))
         uploaded_assets = []
         for i, asset in enumerate(assets):
             data = asset.get("content") or ""

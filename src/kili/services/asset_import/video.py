@@ -119,7 +119,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         """
         frames = asset.get("json_content")
         assert frames
-        signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(frames))
+        signed_urls = bucket.request_signed_urls(self.auth, len(frames))
         data_array = []
         content_type_array = []
         for frame_path in frames:

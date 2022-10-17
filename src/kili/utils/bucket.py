@@ -19,7 +19,7 @@ GCP_STRING_PUBLIC = "storage.cloud.google.com"
 MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
 
-def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
+def request_signed_urls(auth: KiliAuth, size: int):
     """
     Get upload signed URLs
     Args:
@@ -31,7 +31,6 @@ def request_signed_urls(auth: KiliAuth, project_id: str, size: int):
     while len(signed_urls) < size:
         nb_url_requested = min(MAX_NUMBER_SIGNED_URLS_TO_FETCH, size - len(signed_urls))
         payload = {
-            "projectID": project_id,
             "size": nb_url_requested,
         }
         urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)

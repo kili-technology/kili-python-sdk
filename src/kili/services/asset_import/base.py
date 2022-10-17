@@ -179,7 +179,7 @@ class ContentBatchImporter(BaseBatchImporter):
         """
         Upload local content to a bucket
         """
-        signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
+        signed_urls = bucket.request_signed_urls(self.auth, len(assets))
         data_array = []
         content_type_array = []
         for asset in assets:
@@ -215,7 +215,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
         """
         Upload the json_contents to a bucket with signed urls
         """
-        signed_urls = bucket.request_signed_urls(self.auth, self.project_id, len(assets))
+        signed_urls = bucket.request_signed_urls(self.auth, len(assets))
         json_content_array = [asset.get("json_content") for asset in assets]
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(

@@ -65,7 +65,6 @@ class LegacyDataImporter:
             status_array,
             json_content_array,
             json_metadata_array,
-            self.project_id,
         )
 
         def generate_variables(batch):
@@ -185,7 +184,6 @@ def process_and_store_content(
     input_type: str,
     content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
-    project_id: str,
     auth: KiliAuth,
 ):
     """
@@ -198,7 +196,7 @@ def process_and_store_content(
     has_local_files = any(not is_url(content) for content in content_array)
     url_content_array = []
     if has_local_files:
-        signed_urls = bucket.request_signed_urls(auth, project_id, len(content_array))
+        signed_urls = bucket.request_signed_urls(auth, len(content_array))
     for i, content in enumerate(content_array):
         url_content = (is_url(content) and content) or upload_content(
             signed_urls[i], content, input_type  # type:ignore X
@@ -331,7 +329,6 @@ def process_append_many_to_dataset_parameters(
     status_array: Union[List[str], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
     json_metadata_array: Union[List[dict], None],
-    project_id: str,
 ):
     """
     Process arguments of the append_many_to_dataset method and return the data payload.
@@ -353,7 +350,7 @@ def process_append_many_to_dataset_parameters(
 
     mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore
     content_array = process_and_store_content(
-        input_type, content_array, json_content_array, project_id, auth  # type:ignore X
+        input_type, content_array, json_content_array, auth  # type:ignore X
     )
     formatted_json_content_array = process_json_content(
         input_type,
