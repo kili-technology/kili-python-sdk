@@ -45,7 +45,7 @@ class QueriesLock:
         Args:
             lock_id: The id of the lock to request. If None, all locks are returned
             fields: All the fields to request among the possible fields for the locks.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#locks)
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#locks)
                 for all possible fields.
             first: Maximum number of locks to return.
             skip: Number of skipped locks (they are ordered by creation date)
@@ -78,7 +78,6 @@ class QueriesLock:
         return list(locks_generator)
 
     def _query_locks(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_locks = gql_locks(fragment_builder(fields, Lock))
         result = self.auth.client.execute(_gql_locks, payload)
