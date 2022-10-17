@@ -45,7 +45,7 @@ class QueriesUser:
             email: Email of the user
             organization_id: Identifier of the user's organization
             fields: All the fields to request among the possible fields for the users.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#user) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#user) for all possible fields.
             first: Maximum number of users to return
             skip: Number of skipped users (they are ordered by creation date)
             disable_tqdm: If `True`, the progress bar will be disabled
@@ -92,7 +92,6 @@ class QueriesUser:
         return list(users_generator)
 
     def _query_users(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_users = gql_users(fragment_builder(fields, User))
         result = self.auth.client.execute(_gql_users, payload)

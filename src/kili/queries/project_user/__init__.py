@@ -54,7 +54,7 @@ class QueriesProjectUser:
             email: Email of the user
             organization_id: Identifier of the user's organization
             fields: All the fields to request among the possible fields for the projectUsers
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#projectuser) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectuser) for all possible fields.
             first: Maximum number of users to return
             skip: Number of project users to skip
             disable_tqdm: If `True`, the progress bar will be disabled

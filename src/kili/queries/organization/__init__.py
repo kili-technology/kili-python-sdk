@@ -50,7 +50,7 @@ class QueriesOrganization:
             email : Email of a user of the organization
             organization_id : Identifier of the organization
             fields: All the fields to request among the possible fields for the organizations.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#organization) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#organization) for all possible fields.
             first: Maximum number of organizations to return.
             Skip: Number of skipped organizations (they are ordered by creation date)
             disable_tqdm: If `True`, the progress bar will be disabled

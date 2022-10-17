@@ -53,7 +53,7 @@ class QueriesApiKey:
             api_key: Value of the API key.
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
-                See [the documentation](https://cloud.kili-technology.com/docs/python-graphql-api/graphql-api/#apikey) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#apikey) for all possible fields.
             first: Maximum number of API keys to return.
             disable_tqdm: If `True`, the progress bar will be disabled.
             as_generator: If `True`, a generator on the API key is returned.
