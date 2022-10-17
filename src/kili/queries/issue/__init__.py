@@ -26,7 +26,6 @@ class QueriesIssue:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-
     @typechecked
     def issues(
         self,

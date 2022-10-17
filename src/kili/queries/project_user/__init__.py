@@ -24,7 +24,6 @@ class QueriesProjectUser:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value,invalid-name
-
     @typechecked
     def project_users(
         self,

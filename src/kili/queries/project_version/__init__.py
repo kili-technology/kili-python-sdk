@@ -27,7 +27,6 @@ class QueriesProjectVersion:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-
     @typechecked
     def project_version(
         self,

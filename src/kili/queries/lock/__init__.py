@@ -28,7 +28,6 @@ class QueriesLock:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-
     @typechecked
     def locks(
         self,

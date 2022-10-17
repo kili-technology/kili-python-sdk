@@ -29,7 +29,6 @@ class QueriesAsset:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-
     def assets(
         self,
         project_id: str,

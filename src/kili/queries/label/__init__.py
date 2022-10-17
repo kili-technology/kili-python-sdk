@@ -32,7 +32,6 @@ class QueriesLabel:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-
     @typechecked
     def labels(
         self,

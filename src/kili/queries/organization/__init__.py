@@ -31,7 +31,6 @@ class QueriesOrganization:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-
     @typechecked
     def organizations(
         self,
