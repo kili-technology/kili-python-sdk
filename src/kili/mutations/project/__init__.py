@@ -6,8 +6,6 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from kili.types import Project
-
 from ...helpers import Compatible, format_result
 from .helpers import verify_argument_ranges
 from .queries import (
@@ -181,7 +179,7 @@ class MutationsProject:
         title: str,
         description: str = "",
         project_type: Optional[str] = None,
-    ) -> Project:
+    ) -> dict:
         # pylint: disable=line-too-long
         """Create a project.
 
