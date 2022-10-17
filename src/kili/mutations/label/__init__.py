@@ -8,7 +8,11 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import format_result, infer_id_from_external_id
+from kili.helpers import (
+    format_result,
+    infer_id_from_external_id,
+    infer_ids_from_external_id,
+)
 from kili.mutations.label.queries import (
     GQL_APPEND_MANY_TO_LABELS,
     GQL_APPEND_TO_LABELS,
@@ -179,15 +183,16 @@ class MutationsLabel:
 
         if author_id_array is None:
             author_id_array = [self.auth.user_id] * len(json_response_array)
-        label_asset_id_array = infer_id_from_external_id(
+        label_asset_id_array = infer_ids_from_external_id(
             self, label_asset_id_array, label_asset_external_id_array, project_id
         )
         variables = {
             "data": {
                 "authorIDArray": author_id_array,
-                "jsonResponse": list(map(dumps, json_response_array)),
+                "jsonResponseArray": list(map(dumps, json_response_array)),
                 "labelType": label_type,
-                "secondsToLabel": seconds_to_label_array,
+                "secondsToLabelArray": seconds_to_label_array,
+                "assetIDArray": label_asset_id_array,
             },
             "where": {"idIn": label_asset_id_array},
         }
@@ -195,7 +200,6 @@ class MutationsLabel:
         return result
         # return format_result("data", result[0], Label)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_label(
         self,

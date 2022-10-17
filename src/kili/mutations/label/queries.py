@@ -32,12 +32,13 @@ mutation(
 }}
 """
 
+
 GQL_APPEND_MANY_TO_LABELS = f"""
 mutation(
     $data: AppendManyToLabelsData!
     $where: AssetWhere!
 ) {{
-  data: appendToLabels(
+  data: appendManyToLabels(
     data: $data
     where: $where
   ) {{
