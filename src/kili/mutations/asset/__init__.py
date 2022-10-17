@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result
+from kili.helpers import format_result
 from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
 from kili.mutations.asset.queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
@@ -34,7 +34,6 @@ class MutationsAsset:
         """
         self.auth = auth
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def append_many_to_dataset(
         self,
@@ -116,7 +115,6 @@ class MutationsAsset:
         result = import_assets(self.auth, project_id=project_id, assets=assets)
         return result
 
-    @Compatible(["v2"])
     @typechecked
     # pylint: disable=unused-argument
     def update_properties_in_assets(
@@ -233,7 +231,6 @@ class MutationsAsset:
         formated_results = [format_result("data", result, Asset) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def delete_many_from_dataset(self, asset_ids: List[str]):
         """Delete assets from a project.
@@ -255,7 +252,6 @@ class MutationsAsset:
         )
         return format_result("data", results[0], Asset)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def add_to_review(self, asset_ids: List[str]) -> dict:
         """Add assets to review.
@@ -290,7 +286,6 @@ class MutationsAsset:
         )
         return format_result("data", results[0])
 
-    @Compatible(["v2"])
     @typechecked
     def send_back_to_queue(self, asset_ids: List[str]):
         """Send assets back to queue.

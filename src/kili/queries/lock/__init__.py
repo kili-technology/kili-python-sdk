@@ -6,7 +6,7 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, fragment_builder
+from kili.helpers import format_result, fragment_builder
 from kili.queries.lock.queries import GQL_LOCKS_COUNT, gql_locks
 from kili.types import Lock
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -28,7 +28,6 @@ class QueriesLock:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v1", "v2"])
     @typechecked
     def locks(
         self,
@@ -83,7 +82,6 @@ class QueriesLock:
         result = self.auth.client.execute(_gql_locks, payload)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def count_locks(self) -> int:
         """Get the number of locks

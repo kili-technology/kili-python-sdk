@@ -4,7 +4,7 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, fragment_builder
+from kili.helpers import format_result, fragment_builder
 from kili.queries.user.queries import GQL_USERS_COUNT, gql_users
 from kili.types import User
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -24,7 +24,6 @@ class QueriesUser:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v1", "v2"])
     @typechecked
     def users(
         self,
@@ -97,7 +96,6 @@ class QueriesUser:
         result = self.auth.client.execute(_gql_users, payload)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def count_users(self, organization_id: Optional[str] = None) -> int:
         """Get user count based on a set of constraints.

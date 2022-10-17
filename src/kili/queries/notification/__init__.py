@@ -4,7 +4,7 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, fragment_builder
+from ...helpers import format_result, fragment_builder
 from ...types import Notification
 from ...utils.pagination import row_generator_from_paginated_calls
 from .queries import GQL_NOTIFICATIONS_COUNT, gql_notifications
@@ -24,7 +24,6 @@ class QueriesNotification:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v2"])
     @typechecked
     def notifications(
         self,
@@ -91,13 +90,11 @@ class QueriesNotification:
         return list(notifications_generator)
 
     def _query_notifications(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_notifications = gql_notifications(fragment_builder(fields, Notification))
         result = self.auth.client.execute(_gql_notifications, payload)
         return format_result("data", result)
 
-    @Compatible(["v2"])
     @typechecked
     def count_notifications(
         self, has_been_seen: Optional[bool] = None, user_id: Optional[str] = None

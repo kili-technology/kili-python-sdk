@@ -8,7 +8,7 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, infer_id_from_external_id
+from kili.helpers import format_result, infer_id_from_external_id
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
@@ -32,7 +32,6 @@ class MutationsLabel:
         """
         self.auth = auth
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def create_predictions(
         self,
@@ -92,7 +91,6 @@ class MutationsLabel:
         )
         return format_result("data", results[0], Label)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def append_to_labels(
         self,
@@ -144,7 +142,6 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result("data", result, Label)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_label(
         self,
@@ -178,7 +175,6 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
         return format_result("data", result, Label)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def create_honeypot(
         self,

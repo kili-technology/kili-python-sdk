@@ -6,7 +6,7 @@ from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, fragment_builder
+from kili.helpers import format_result, fragment_builder
 from kili.queries.api_key.queries import GQL_API_KEYS_COUNT, gql_api_keys
 from kili.types import ApiKey as ApiKeyType
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -28,7 +28,6 @@ class QueriesApiKey:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v2"])
     @typechecked
     def api_keys(
         self,
@@ -103,7 +102,6 @@ class QueriesApiKey:
         result = self.auth.client.execute(_gql_api_keys, payload)
         return format_result("data", result)
 
-    @Compatible(["v2"])
     @typechecked
     def count_api_keys(
         self,

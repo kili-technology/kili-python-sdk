@@ -4,7 +4,7 @@ Notification mutations
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result
+from ...helpers import format_result
 from .queries import GQL_CREATE_NOTIFICATION, GQL_UPDATE_PROPERTIES_IN_NOTIFICATION
 
 
@@ -21,7 +21,6 @@ class MutationsNotification:
         """
         self.auth = auth
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def create_notification(self, message: str, status: str, url: str, user_id: str):
         """Create a notification.
@@ -49,7 +48,6 @@ class MutationsNotification:
         result = self.auth.client.execute(GQL_CREATE_NOTIFICATION, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_notification(
         self, notification_id: str, has_been_seen: bool, status: str, url: str
