@@ -4,7 +4,7 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, fragment_builder
+from kili.helpers import format_result, fragment_builder
 from kili.queries.project_user.queries import GQL_PROJECT_USERS_COUNT, gql_project_users
 from kili.types import ProjectUser
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -24,7 +24,7 @@ class QueriesProjectUser:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value,invalid-name
-    @Compatible(["v1", "v2"])
+
     @typechecked
     def project_users(
         self,
@@ -108,7 +108,6 @@ class QueriesProjectUser:
         return list(project_users_generator)
 
     def _query_project_users(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_project_users = gql_project_users(fragment_builder(fields, ProjectUser))
         result = self.auth.client.execute(_gql_project_users, payload)

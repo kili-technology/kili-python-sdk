@@ -4,7 +4,7 @@ Api key mutations
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result
+from ...helpers import format_result
 from .queries import GQL_APPEND_TO_API_KEYS
 
 
@@ -21,7 +21,6 @@ class MutationsApiKey:  # pylint: disable=too-few-public-methods
         """
         self.auth = auth
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def append_to_api_keys(self, api_key: str, name: str):
         """Create an api key to connect to the API.

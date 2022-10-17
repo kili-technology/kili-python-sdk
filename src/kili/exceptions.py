@@ -31,17 +31,6 @@ class AuthenticationFailed(Exception):
             )
 
 
-class EndpointCompatibilityError(Exception):
-    """
-    Used when a resolver is called but is not compatible with the endpoint
-    """
-
-    def __init__(self, resolver, endpoint):
-        super().__init__(
-            f"Resolver {resolver} is not compatible with the following endpoint : {endpoint}"
-        )
-
-
 class GraphQLError(Exception):
     """
     Used when the GraphQL call returns an error

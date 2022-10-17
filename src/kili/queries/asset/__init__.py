@@ -5,12 +5,7 @@ from typing import Dict, Iterable, List, Optional
 import pandas as pd
 from typeguard import typechecked
 
-from kili.helpers import (
-    Compatible,
-    format_result,
-    fragment_builder,
-    validate_category_search_query,
-)
+from kili.helpers import format_result, fragment_builder, validate_category_search_query
 from kili.orm import Asset
 from kili.queries.asset.helpers import get_post_assets_call_process
 from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
@@ -34,7 +29,7 @@ class QueriesAsset:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v1", "v2"])
+
     def assets(
         self,
         project_id: str,
@@ -252,7 +247,6 @@ class QueriesAsset:
         assets = format_result("data", result, _object=List[Asset])
         return assets
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def count_assets(
         self,

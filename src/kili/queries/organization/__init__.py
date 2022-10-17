@@ -5,7 +5,7 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result, fragment_builder
+from ...helpers import format_result, fragment_builder
 from ...types import Organization
 from ...utils.pagination import row_generator_from_paginated_calls
 from .queries import (
@@ -31,7 +31,7 @@ class QueriesOrganization:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v1", "v2"])
+
     @typechecked
     def organizations(
         self,
@@ -93,13 +93,11 @@ class QueriesOrganization:
         return list(organizations_generator)
 
     def _query_organizations(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_organizations = gql_organizations(fragment_builder(fields, Organization))
         result = self.auth.client.execute(_gql_organizations, payload)
         return format_result("data", result)
 
-    @Compatible(["v2"])
     @typechecked
     def count_organizations(
         self, email: Optional[str] = None, organization_id: Optional[str] = None
@@ -125,7 +123,6 @@ class QueriesOrganization:
         result = self.auth.client.execute(GQL_ORGANIZATIONS_COUNT, variables)
         return format_result("data", result, int)
 
-    @Compatible(["v2"])
     @typechecked
     def organization_metrics(
         self,

@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result
+from kili.helpers import format_result
 from kili.mutations.user.queries import (
     GQL_CREATE_USER,
     GQL_RESET_PASSWORD,
@@ -26,7 +26,6 @@ class MutationsUser:
         """
         self.auth = auth
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def create_user(
         self,
@@ -63,7 +62,6 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def update_password(
         self, email: str, old_password: str, new_password_1: str, new_password_2: str
@@ -92,7 +90,6 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def reset_password(self, email: str):
         """Reset password.
@@ -111,7 +108,6 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_user(
         self,

@@ -17,57 +17,7 @@ import requests
 from typing_extensions import TypedDict, get_args, get_origin, is_typeddict
 
 from kili.constants import mime_extensions_for_IV2
-from kili.exceptions import (
-    EndpointCompatibilityError,
-    GraphQLError,
-    NonExistingFieldError,
-)
-
-
-class Compatible:
-    """
-    Compatibility of Kili Python SDK version with Kili API version
-    """
-
-    # pylint: disable=dangerous-default-value
-    def __init__(self, endpoints=["v1"]):
-        self.endpoints = endpoints
-        self.version_extractor = re.compile(r"\/v\d+/")
-        self.address_extractor = re.compile(r":400\d+/")
-
-    def client_is_compatible(self, endpoint: str):
-        """
-        Checks if client is compatible with Kili API
-
-        Args:
-            endpoint: the Kili API endpoint
-        """
-        version_matched = self.version_extractor.search(endpoint)
-        address_matched = self.address_extractor.search(endpoint)
-        if not version_matched and not address_matched:
-            return False
-        if address_matched:
-            version = "v1" if address_matched.group() == ":4000/" else "v2"
-        if version_matched:
-            version = "v1" if version_matched.group() == "/v1/" else "v2"
-        return version in self.endpoints  # type:ignore X
-
-    def __call__(self, resolver, *args, **kwargs):
-        @functools.wraps(resolver)
-        def checked_resolver(*args, **kwargs):
-            try:
-                client_endpoint = args[0].auth.client.endpoint
-            except Exception as exception:
-                raise ValueError(
-                    "Cannot find client endpoint from resolver"
-                    f" {resolver.__name__} with arguments {args}"
-                ) from exception
-            if self.client_is_compatible(client_endpoint):
-                return resolver(*args, **kwargs)
-            raise EndpointCompatibilityError(resolver.__name__, client_endpoint)
-
-        return checked_resolver
-
+from kili.exceptions import GraphQLError, NonExistingFieldError
 
 T = TypeVar("T")
 

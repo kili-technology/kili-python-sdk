@@ -6,7 +6,7 @@ from typing import Dict, Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result
+from ...helpers import format_result
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
@@ -33,7 +33,6 @@ class MutationsProject:
         """
         self.auth = auth
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def append_to_roles(self, project_id: str, user_email: str, role: str = "LABELER"):
         """Add a user to a project.
@@ -64,7 +63,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_project(
         self,
@@ -170,7 +168,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result("data", result)
 
-    @Compatible(endpoints=["v2"])
     @typechecked
     def create_project(
         self,
@@ -231,7 +228,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
         """Update properties of a role.
@@ -263,7 +259,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def delete_from_roles(self, role_id: str):
         """Delete users by their role_id.
@@ -279,7 +274,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
         return format_result("data", result)
 
-    @Compatible(["v2"])
     @typechecked
     def update_properties_in_project_user(
         self,
@@ -322,7 +316,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def internal_delete_project(self, project_id: str):
         """Delete project permanently.
@@ -339,7 +332,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def delete_project(self, project_id: str):
         """

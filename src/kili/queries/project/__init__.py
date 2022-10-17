@@ -4,7 +4,7 @@ from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, fragment_builder
+from kili.helpers import format_result, fragment_builder
 from kili.queries.project.queries import GQL_PROJECTS_COUNT, gql_projects
 from kili.types import Project
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -24,7 +24,7 @@ class QueriesProject:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v1", "v2"])
+
     @typechecked
     def projects(
         self,
@@ -126,7 +126,6 @@ class QueriesProject:
         result = self.auth.client.execute(_gql_projects, payload)
         return format_result("data", result)
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def count_projects(
         self,

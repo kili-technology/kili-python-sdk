@@ -4,7 +4,7 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.helpers import Compatible, format_result, fragment_builder
+from kili.helpers import format_result, fragment_builder
 from kili.queries.project_version.queries import (
     GQL_PROJECT_VERSION_COUNT,
     gql_project_version,
@@ -27,7 +27,7 @@ class QueriesProjectVersion:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v2"])
+
     @typechecked
     def project_version(
         self,
@@ -78,13 +78,11 @@ class QueriesProjectVersion:
         return list(project_versions_generator)
 
     def _query_project_versions(self, skip: int, first: int, payload: dict, fields: List[str]):
-
         payload.update({"skip": skip, "first": first})
         _gql_project_version = gql_project_version(fragment_builder(fields, ProjectVersionType))
         result = self.auth.client.execute(_gql_project_version, payload)
         return format_result("data", result)
 
-    @Compatible(["v2"])
     @typechecked
     def count_project_versions(self, project_id: str) -> int:
         """Count the number of project versions.

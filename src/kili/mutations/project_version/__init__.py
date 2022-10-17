@@ -5,7 +5,7 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from ...helpers import Compatible, format_result
+from ...helpers import format_result
 from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 
 
@@ -23,7 +23,6 @@ class MutationsProjectVersion:
         """
         self.auth = auth
 
-    @Compatible(["v2"])
     @typechecked
     def update_properties_in_project_version(self, project_version_id: str, content: Optional[str]):
         """Update properties of a project version.

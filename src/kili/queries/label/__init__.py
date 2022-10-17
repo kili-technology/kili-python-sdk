@@ -7,12 +7,7 @@ from typeguard import typechecked
 
 from kili import services
 from kili.constants import NO_ACCESS_RIGHT
-from kili.helpers import (
-    Compatible,
-    format_result,
-    fragment_builder,
-    validate_category_search_query,
-)
+from kili.helpers import format_result, fragment_builder, validate_category_search_query
 from kili.queries.asset import QueriesAsset
 from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 from kili.queries.project import QueriesProject
@@ -37,7 +32,7 @@ class QueriesLabel:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
-    @Compatible(["v1", "v2"])
+
     @typechecked
     def labels(
         self,
@@ -242,7 +237,6 @@ class QueriesLabel:
         labels_df = pd.DataFrame(labels)
         return labels_df
 
-    @Compatible(["v1", "v2"])
     @typechecked
     def count_labels(
         self,
