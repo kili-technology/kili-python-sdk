@@ -1,5 +1,19 @@
 """
-Queries of plugins mutations
+Plugins related mutations
+"""
+
+GQL_UPLOAD_PLUGIN_BETA = """
+mutation(
+  $pluginSrc: String!
+  $pluginName: String!
+  ) {
+  data: uploadPlugin(
+    data: {
+      pluginSrc: $pluginSrc
+      pluginName: $pluginName
+    }
+  )
+}
 """
 
 GQL_ACTIVATE_PLUGIN_ON_PROJECT = """
