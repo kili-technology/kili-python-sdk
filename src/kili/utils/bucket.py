@@ -1,7 +1,7 @@
 """Module for managing bucket's signed urls"""
 
 
-from typing import Union
+from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
 import requests
@@ -44,7 +44,7 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
     Args:
         signed_urls: Bucket signed URLs to upload local files to
         path_array: a list of file paths, json or text to upload
-        content_type: mimetype of the data. It will be infered if not given
+        content_type: mimetype of the data
     """
     headers = {"Content-type": content_type}
     url_to_use_for_upload = url_with_id.split("&id=")[0]
