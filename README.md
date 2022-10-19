@@ -173,6 +173,8 @@ with open("labels.json", "w") as label_file:
 
 See a detailled example in this [recipe](https://docs.kili-technology.com/recipes/exporting-assets-and-labels).
 
+More ways to export in other formats (YOLO, Pascal VOC) are described [here](docs/label_export.md).
+
 ## More examples
 
 You can find all several recipes in this [folder](recipes/).
