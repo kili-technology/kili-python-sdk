@@ -59,7 +59,7 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
     Args:
         signed_urls: Bucket signed URLs to upload local files to
         path_array: a list of file paths, json or text to upload
-        content_type: mimetype of the data. It will be infered if not given
+        content_type: mimetype of the data
     """
     if content_type == "text/plain":
         content_type += "; charset=utf-8"

@@ -2,10 +2,6 @@
 Queries of plugins mutations
 """
 
-PROJECT_FRAGMENT_ID = """
-id
-"""
-
 GQL_UPLOAD_PLUGIN_BETA = """
 mutation(
   $pluginName: String!
