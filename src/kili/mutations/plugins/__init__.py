@@ -5,11 +5,10 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from kili.services.plugins import PluginUploader
+from kili.services.plugins import PluginUploader, activate_plugin, deactivate_plugin
 
 from ...authentication import KiliAuth
-from ...helpers import Compatible, format_result
-from .queries import GQL_ACTIVATE_PLUGIN_ON_PROJECT, GQL_DEACTIVATE_PLUGIN_ON_PROJECT
+from ...helpers import Compatible
 
 
 class MutationsPlugins:
@@ -37,8 +36,8 @@ class MutationsPlugins:
         """Upload a plugin.
 
         Args:
-            project_id: Identifier of the project
             file_path : Path to your .py file
+            plugin_name: name of your plugin, if not provided, it will be the name from your file
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -75,10 +74,7 @@ class MutationsPlugins:
             >>> kili.activate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
 
-        variables = {"pluginName": plugin_name, "projectId": project_id}
-        result = self.auth.client.execute(GQL_ACTIVATE_PLUGIN_ON_PROJECT, variables)
-
-        pretty_result = format_result("data", result)
+        pretty_result = activate_plugin(self.auth, plugin_name, project_id)
         return pretty_result
 
     @Compatible(endpoints=["v2"])
@@ -104,8 +100,5 @@ class MutationsPlugins:
             >>> kili.deactivate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
 
-        variables = {"pluginName": plugin_name, "projectId": project_id}
-        result = self.auth.client.execute(GQL_DEACTIVATE_PLUGIN_ON_PROJECT, variables)
-
-        pretty_result = format_result("data", result)
+        pretty_result = deactivate_plugin(self.auth, plugin_name, project_id)
         return pretty_result
