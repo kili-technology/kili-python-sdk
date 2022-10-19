@@ -10,6 +10,7 @@ import os
 import re
 import warnings
 from json import dumps, loads
+from pathlib import Path
 from typing import Callable, List, Optional, Type, TypeVar
 
 import pyparsing as pp
@@ -401,11 +402,11 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
     return correct_mime_type
 
 
-def check_file_is_py(path: str, verbose: bool = True) -> bool:
+def check_file_is_py(path: Path, verbose: bool = True) -> bool:
     """
     Returns true if the mime type of the file corresponds to a python file
     """
-    mime_type = get_data_type(path)
+    mime_type = get_data_type(path.as_posix())
 
     if not (mime_extensions_for_py_scripts and mime_type):
         return False
