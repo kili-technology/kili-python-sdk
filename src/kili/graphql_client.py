@@ -175,7 +175,6 @@ class SubscriptionGraphQLClient:
         Args:
             message : the message
         """
-        # pylint: disable=no-self-use
         data = json.loads(message)
         # skip keepalive messages
         if data["type"] != "ka":
