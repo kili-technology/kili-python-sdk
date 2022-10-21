@@ -36,7 +36,7 @@ dev_extra = [
     # linting
     "black",
     "pre-commit",
-    "pylint==2.13",
+    "pylint",
     "flake8-unused-arguments",
     "pyright",
     "linkcheckmd",
