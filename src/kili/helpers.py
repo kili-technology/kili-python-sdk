@@ -153,7 +153,7 @@ def format_json_dict(result):
             elif isinstance(value, str):
                 try:
                     if is_url(value):
-                        result[key] = requests.get(value).json()
+                        result[key] = requests.get(value, timeout=30).json()
                     else:
                         result[key] = loads(value)
                 except Exception as exception:
