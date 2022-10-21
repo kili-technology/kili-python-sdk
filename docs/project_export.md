@@ -15,10 +15,17 @@ More options here https://python-sdk-docs.kili-technology.com/latest/cli/referen
 
 ## With the Python SDK
 You can also use the Python SDK:
+```q
+from kili.client import Kili
+kili = Kili()
+kili.export_labels(project_id = "<projectid>",
+        filename = "/tmp/export.zip",
+        fmt = "yolo_v5")
 ```
-```
+More details here: https://python-sdk-docs.kili-technology.com/latest/label/#kili.queries.label.__init__.QueriesLabel.export_labels
 
 ## From the Kili UI
+You can refer to: https://docs.kili-technology.com/docs/exporting-project-data
 
 ## Available formats
 
@@ -32,4 +39,4 @@ You can also use the Python SDK:
 | Pascal VOC    | ✅   | ❌             | ❌                      |
 
 
-more to come
+And more to come!
