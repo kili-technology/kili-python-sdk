@@ -6,26 +6,28 @@ There are several ways to export labels from a Kili project.
 You can export a project using the `kili project export` command:
 ```
 
-    kili project export \\
-        --project-id <project_id> \\
-        --output-format yolo_v5 \\
+    kili project export \
+        --project-id <project_id> \
+        --output-format yolo_v5 \
         --output-file /tmp/export.zip
 ```
-More options here https://python-sdk-docs.kili-technology.com/latest/cli/reference/#export
+More options [here](https://python-sdk-docs.kili-technology.com/latest/cli/reference/#export).
 
 ## With the Python SDK
 You can also use the Python SDK:
 ```q
 from kili.client import Kili
 kili = Kili()
-kili.export_labels(project_id = "<projectid>",
-        filename = "/tmp/export.zip",
-        fmt = "yolo_v5")
+kili.export_labels(
+    project_id = "<project_id>",
+    filename = "/tmp/export.zip",
+    fmt = "yolo_v5",
+)
 ```
-More details here: https://python-sdk-docs.kili-technology.com/latest/label/#kili.queries.label.__init__.QueriesLabel.export_labels
+More details [here](https://python-sdk-docs.kili-technology.com/latest/label/#kili.queries.label.__init__.QueriesLabel.export_labels).
 
 ## From the Kili UI
-You can refer to: https://docs.kili-technology.com/docs/exporting-project-data
+You can refer to this [Kili documentation page](https://docs.kili-technology.com/docs/exporting-project-data).
 
 ## Available formats
 
