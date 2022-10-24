@@ -81,7 +81,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             api_endpoint: url of the Kili API
         """
         url = api_endpoint.replace("/graphql", "/version")
-        response = requests.get(url, verify=self.verify).json()
+        response = requests.get(url, verify=self.verify, timeout=30).json()
         version = response["version"]
         if get_version_without_patch(version) != get_version_without_patch(__version__):
             message = (
