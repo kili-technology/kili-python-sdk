@@ -179,9 +179,9 @@ class MutationsLabel:
     def create_honeypot(
         self,
         json_response: dict,
-        asset_external_id: str,
-        asset_id: str,
-        project_id: str,
+        asset_external_id: Optional[str] = None,
+        asset_id: Optional[str] = None,
+        project_id: Optional[str] = None,
     ):
         """Create honeypot for an asset.
 
