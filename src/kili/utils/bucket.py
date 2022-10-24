@@ -34,6 +34,7 @@ def request_signed_urls(auth: KiliAuth, size: int):
             "size": nb_url_requested,
         }
         urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
+        print(f"{urls_response=}, {payload=}")
         signed_urls.extend(urls_response["data"]["urls"])
     return signed_urls
 
