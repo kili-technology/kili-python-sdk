@@ -1,7 +1,7 @@
 """Module for managing bucket's signed urls"""
 
 
-from typing import List, Union
+from typing import Union
 from urllib.parse import parse_qs, urlparse
 
 import requests
