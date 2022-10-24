@@ -6,7 +6,7 @@ jobs:
     name: Pylint test
     strategy:
       matrix:
-        python-version: ['3.7', '3.10']
+        python-version: ["3.7", "3.11-dev"]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -26,7 +26,7 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        python-version: ['3.7', '3.10']
+        python-version: ["3.7", "3.11-dev"]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -55,5 +55,5 @@ jobs:
       - uses: actions/checkout@master
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
-          use-quiet-mode: 'yes'
-          use-verbose-mode: 'yes'
+          use-quiet-mode: "yes"
+          use-verbose-mode: "yes"
