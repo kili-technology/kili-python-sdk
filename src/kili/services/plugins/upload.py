@@ -13,16 +13,15 @@ from kili.graphql.operations.plugins.mutations import (
     GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
     GQL_GENERATE_UPDATE_URL,
-    GQL_GET_PLUGIN_UPLOAD_URL,
     GQL_UPDATE_PLUGIN_RUNNER,
 )
 from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
 from kili.services.types import LogLevel
-from kili.helpers import format_result
 from kili.utils import bucket
 
 NUMBER_TRIES_RUNNER_STATUS = 20
+
 
 
 def check_file_is_py(path: Path, verbose: bool = True) -> bool:
