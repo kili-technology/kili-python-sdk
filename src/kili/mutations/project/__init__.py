@@ -2,12 +2,11 @@
 
 import warnings
 from json import dumps
-from pathlib import Path
 from typing import Dict, Optional
 
 from typeguard import typechecked
 
-from ...helpers import check_file_is_py, format_result
+from ...helpers import format_result
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
@@ -18,7 +17,6 @@ from .queries import (
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
     GQL_UPDATE_PROPERTIES_IN_PROJECT,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
-    GQL_UPLOAD_PLUGIN,
 )
 
 
@@ -348,49 +346,4 @@ class MutationsProject:
         """
         variables = {"where": {"id": project_id}}
         result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
-        return format_result("data", result)
-
-    @typechecked
-    def upload_plugin_poc(
-        self,
-        project_id: str,
-        file_path: str,
-        script_name: Optional[str],
-        verbose: bool = True,
-    ):
-        # pylint: disable=line-too-long
-        """Upload a plugin.
-
-        Args:
-            project_id: Identifier of the project
-            file_path : Path to your .py file
-            verbose: If false, minimal logs are displayed
-
-        Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
-
-        Examples:
-            >>> kili.upload_plugin_poc(project_id=project_id, file_path="./path/to/my/file.py")
-        """
-
-        path = Path(file_path)
-
-        if not check_file_is_py(path, verbose):
-            raise ValueError("Wrong file format. ")
-
-        with path.open("r", encoding="utf-8") as file:
-            source_code = file.read()
-
-        # We execute the source code to prevent the upload of a file with SyntaxError
-        print(f"Executing {path.name}...")
-        # pylint: disable=exec-used
-        exec(source_code)
-        print(f"Done executing {path.name}!")
-
-        if script_name is None:
-            script_name = path.name
-
-        variables = {"projectID": project_id, "scriptName": script_name, "scriptSrc": source_code}
-        result = self.auth.client.execute(GQL_UPLOAD_PLUGIN, variables)
         return format_result("data", result)

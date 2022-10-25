@@ -142,23 +142,3 @@ mutation($where: ProjectWhere!) {
   data: deleteProjectAsynchronously(where: $where)
 }
 """
-
-GQL_UPLOAD_PLUGIN = f"""
-mutation(
-  $projectID: ID!
-  $scriptName: String!
-  $scriptSrc: String!
-  ) {{
-  data: uploadPluginScript(
-    data: {{
-      scriptName: $scriptName
-      scriptSrc: $scriptSrc
-    }}
-    where: {{
-      id: $projectID
-    }}
-  ) {{
-      {PROJECT_FRAGMENT_ID}
-  }}
-}}
-"""
