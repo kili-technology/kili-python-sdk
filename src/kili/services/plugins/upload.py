@@ -43,6 +43,26 @@ def check_file_is_py(path: Path, verbose: bool = True) -> bool:
     return correct_mime_type
 
 
+def check_file_is_py(path: Path, verbose: bool = True) -> bool:
+    """
+    Returns true if the mime type of the file corresponds to a python file
+    """
+    mime_type = get_data_type(path.as_posix())
+
+    if not (mime_extensions_for_py_scripts and mime_type):
+        return False
+
+    correct_mime_type = mime_type in mime_extensions_for_py_scripts
+
+    if verbose and not correct_mime_type:
+        print(
+            f"File mime type for {path} is {mime_type} and does not correspond"
+            "to the type of the project. "
+            f"File mime type should be one of {mime_extensions_for_py_scripts}"
+        )
+    return correct_mime_type
+
+
 class PluginUploader:  # pylint: disable=too-few-public-methods
     """
     Class to upload a plugin
