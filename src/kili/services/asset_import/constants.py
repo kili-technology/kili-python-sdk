@@ -13,6 +13,7 @@ ASSET_FIELDS_DEFAULT_VALUE = AssetLike(
     status="TODO",
     json_metadata="{}",
     is_honeypot=False,
+    id="",
 )
 
 mime_extensions = {
