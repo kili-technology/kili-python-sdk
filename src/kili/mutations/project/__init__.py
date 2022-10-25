@@ -7,9 +7,7 @@ from typing import Dict, Optional
 
 from typeguard import typechecked
 
-from kili.types import Project
-
-from ...helpers import Compatible, check_file_is_py, format_result
+from ...helpers import check_file_is_py, format_result
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
@@ -359,7 +357,6 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
         return format_result("data", result)
 
-    @Compatible(endpoints=["v2"])
     @typechecked
     def upload_plugin_poc(
         self,
@@ -384,10 +381,10 @@ class MutationsProject:
             >>> kili.upload_plugin_poc(project_id=project_id, file_path="./path/to/my/file.py")
         """
 
-        if not check_file_is_py(file_path, verbose):
-            raise ValueError("Wrong file format. ")
-
         path = Path(file_path)
+
+        if not check_file_is_py(path, verbose):
+            raise ValueError("Wrong file format. ")
 
         with path.open("r", encoding="utf-8") as file:
             source_code = file.read()
