@@ -6,12 +6,33 @@ from pathlib import Path
 from typing import Optional
 
 from kili.authentication import KiliAuth
+from kili.constants import mime_extensions_for_py_scripts
 from kili.graphql.operations.plugins.mutations import (
     GQL_CREATE_PLUGIN_RUNNER,
     GQL_GET_PLUGIN_UPLOAD_URL,
 )
-from kili.helpers import check_file_is_py, format_result
+from kili.helpers import format_result, get_data_type
 from kili.utils import bucket
+
+
+def check_file_is_py(path: Path, verbose: bool = True) -> bool:
+    """
+    Returns true if the mime type of the file corresponds to a python file
+    """
+    mime_type = get_data_type(path.as_posix())
+
+    if not (mime_extensions_for_py_scripts and mime_type):
+        return False
+
+    correct_mime_type = mime_type in mime_extensions_for_py_scripts
+
+    if verbose and not correct_mime_type:
+        print(
+            f"File mime type for {path} is {mime_type} and does not correspond"
+            "to the type of the project. "
+            f"File mime type should be one of {mime_extensions_for_py_scripts}"
+        )
+    return correct_mime_type
 
 
 class PluginUploader:  # pylint: disable=too-few-public-methods
@@ -39,8 +60,6 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
 
         with path.open("r", encoding="utf-8") as file:
             source_code = file.read()
-
-        file.close()
 
         return source_code
 
