@@ -41,6 +41,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local video file to native"],
+            [""],
             [False],
             [""],
             [expected_json_metadata],
@@ -65,6 +66,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"],
             ["hosted file"],
+            [""],
             [False],
             [""],
             [expected_json_metadata],
@@ -79,6 +81,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "content": path,
                 "external_id": "local video to frames",
+                "id": "id",
                 "json_metadata": {
                     "processingParameters": {
                         "shouldUseNativeVideo": False,
@@ -99,6 +102,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_async_call(
             ["https://signed_url?id=id"],
             ["local video to frames"],
+            ["id"],
             [expected_json_metadata],
             "VIDEO",
         )
@@ -109,6 +113,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "content": "https://hosted-data",
                 "external_id": "changing fps",
+                "id": "id",
                 "json_metadata": {
                     "processingParameters": {
                         "shouldUseNativeVideo": False,
@@ -128,7 +133,7 @@ class VideoTestCase(ImportTestCase):
             }
         )
         expected_parameters = self.get_expected_async_call(
-            ["https://hosted-data"], ["changing fps"], [expected_json_metadata], "VIDEO"
+            ["https://hosted-data"], ["changing fps"], ["id"], [expected_json_metadata], "VIDEO"
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -158,6 +163,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             [""],
             ["from local frames"],
+            [""],
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
@@ -188,6 +194,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             [""],
             ["from hosted frames"],
+            [""],
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
@@ -219,6 +226,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://reading_signed_url_content"],
             ["from label-import"],
+            [""],
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
@@ -249,6 +257,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"],
             ["with metadata"],
+            [""],
             [False],
             [""],
             [expected_json_metadata],

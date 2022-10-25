@@ -126,6 +126,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
             "data": {
                 "contentArray": [asset["content"] for asset in assets],
                 "externalIDArray": [asset["external_id"] for asset in assets],
+                "idArray": [asset["id"] for asset in assets],
                 "jsonMetadataArray": [asset["json_metadata"] for asset in assets],
                 "uploadType": upload_type,
             },
@@ -142,6 +143,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
             "data": {
                 "contentArray": [asset["content"] for asset in assets],
                 "externalIDArray": [asset["external_id"] for asset in assets],
+                "idArray": [asset["id"] for asset in assets],
                 "isHoneypotArray": [asset["is_honeypot"] for asset in assets],
                 "statusArray": [asset["status"] for asset in assets],
                 "jsonContentArray": [asset["json_content"] for asset in assets],

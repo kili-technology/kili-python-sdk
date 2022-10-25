@@ -26,6 +26,7 @@ class ImportTestCase(TestCase):
         self,
         content_array,
         external_id_array,
+        id_array,
         is_honeypot_array,
         json_content_array,
         json_metadata_array,
@@ -37,6 +38,7 @@ class ImportTestCase(TestCase):
                 "data": {
                     "contentArray": content_array,
                     "externalIDArray": external_id_array,
+                    "idArray": id_array,
                     "isHoneypotArray": is_honeypot_array,
                     "statusArray": status_array,
                     "jsonContentArray": json_content_array,
@@ -47,13 +49,14 @@ class ImportTestCase(TestCase):
         )
 
     def get_expected_async_call(
-        self, content_array, external_id_array, json_metadata_array, upload_type
+        self, content_array, external_id_array, id_array, json_metadata_array, upload_type
     ):
         return (
             GQL_APPEND_MANY_FRAMES_TO_DATASET,
             {
                 "data": {
                     "contentArray": content_array,
+                    "idArray": id_array,
                     "externalIDArray": external_id_array,
                     "jsonMetadataArray": json_metadata_array,
                     "uploadType": upload_type,
@@ -73,6 +76,7 @@ class ImportTestCase(TestCase):
         expected_parameters_1 = self.get_expected_sync_call(
             ["https://hosted-data"] * 10,
             [external_id_array[i] for i in range(10)],
+            [""] * 10,
             [False] * 10,
             [""] * 10,
             ["{}"] * 10,
@@ -81,6 +85,7 @@ class ImportTestCase(TestCase):
         expected_parameters_2 = self.get_expected_sync_call(
             ["https://hosted-data"] * 5,
             [external_id_array[i] for i in range(10, 15)],
+            [""] * 5,
             [False] * 5,
             [""] * 5,
             ["{}"] * 5,
