@@ -5,10 +5,14 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from kili.services.plugins import PluginUploader, activate_plugin, deactivate_plugin
+from kili.services.plugins import (
+    PluginUploader,
+    activate_plugin,
+    deactivate_plugin,
+    delete_plugin,
+)
 
 from ...authentication import KiliAuth
-from ...helpers import Compatible
 
 
 class MutationsPlugins:
@@ -24,7 +28,6 @@ class MutationsPlugins:
         """
         self.auth = auth
 
-    @Compatible(endpoints=["v2"])
     @typechecked
     def upload_plugin_beta(
         self,
@@ -33,7 +36,7 @@ class MutationsPlugins:
         verbose: bool = True,
     ):
         # pylint: disable=line-too-long
-        """Upload a plugin.
+        """Uploads a plugin.
 
         Args:
             file_path : Path to your .py file
@@ -51,7 +54,6 @@ class MutationsPlugins:
         result = PluginUploader(self.auth, file_path, plugin_name, verbose).create_plugin()
         return result
 
-    @Compatible(endpoints=["v2"])
     @typechecked
     def activate_plugin_on_project(
         self,
@@ -59,7 +61,7 @@ class MutationsPlugins:
         project_id: str,
     ):
         # pylint: disable=line-too-long
-        """Activate a plugin on a project.
+        """Activates a plugin on a project.
 
         Args:
             plugin_name: Name of the plugin
@@ -77,7 +79,6 @@ class MutationsPlugins:
         pretty_result = activate_plugin(self.auth, plugin_name, project_id)
         return pretty_result
 
-    @Compatible(endpoints=["v2"])
     @typechecked
     def deactivate_plugin_on_project(
         self,
@@ -85,7 +86,7 @@ class MutationsPlugins:
         project_id: str,
     ):
         # pylint: disable=line-too-long
-        """Activate a plugin on a project.
+        """Activates a plugin on a project.
 
         Args:
             plugin_name: Name of the plugin
@@ -101,4 +102,27 @@ class MutationsPlugins:
         """
 
         pretty_result = deactivate_plugin(self.auth, plugin_name, project_id)
+        return pretty_result
+
+    @typechecked
+    def delete_plugin(
+        self,
+        plugin_name: str,
+    ):
+        # pylint: disable=line-too-long
+        """Deletes a plugin.
+
+        Args:
+            plugin_name: Name of the plugin
+            verbose: If false, minimal logs are displayed
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.delete_plugin(plugin_name="my_plugin_name")
+        """
+
+        pretty_result = delete_plugin(self.auth, plugin_name)
         return pretty_result

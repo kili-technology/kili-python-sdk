@@ -2,14 +2,24 @@
 Plugins related mutations
 """
 
-GQL_UPLOAD_PLUGIN_BETA = """
+GQL_GET_PLUGIN_UPLOAD_URL = """
 mutation(
-  $pluginSrc: String!
   $pluginName: String!
   ) {
-  data: uploadPlugin(
+  data: getPluginUploadUrl(
     data: {
-      pluginSrc: $pluginSrc
+      pluginName: $pluginName
+    }
+  )
+}
+"""
+
+GQL_CREATE_PLUGIN_RUNNER = """
+mutation(
+  $pluginName: String!
+  ) {
+  data: createPluginRunner(
+    data: {
       pluginName: $pluginName
     }
   )
@@ -39,6 +49,18 @@ mutation(
     where: {
       pluginName: $pluginName
       projectId: $projectId
+    }
+  )
+}
+"""
+
+GQL_DELETE_PLUGIN = """
+mutation(
+  $pluginName: String!
+  ) {
+  data: deletePlugin(
+    where: {
+      pluginName: $pluginName
     }
   )
 }
