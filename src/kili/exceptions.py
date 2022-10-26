@@ -18,6 +18,12 @@ class AuthenticationFailed(Exception):
     Used when the authentification fails
     """
 
+    @staticmethod
+    def _obfuscate(input_str: str) -> str:
+        if len(input_str) >= 4:
+            return "*" * (len(input_str) - 4) + input_str[-4:]
+        return input_str
+
     def __init__(self, api_key, api_endpoint):
         if api_key is None:
             super().__init__(
@@ -26,8 +32,8 @@ class AuthenticationFailed(Exception):
             )
         else:
             super().__init__(
-                f"Connection to Kili endpoint {api_endpoint} failed with API key: {api_key}."
-                " Check your connection and API key."
+                f"Connection to Kili endpoint {api_endpoint} failed with API key:"
+                f" {self._obfuscate(api_key)}. Check your connection and API key."
             )
 
 
