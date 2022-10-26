@@ -44,6 +44,7 @@ class MutationsAsset:
         status_array: Optional[List[str]] = None,
         json_content_array: Optional[List[List[Union[dict, str]]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
+        disable_tqdm: bool = False,
     ):
         # pylint: disable=line-too-long
         """Append assets to a project.
@@ -76,6 +77,7 @@ class MutationsAsset:
                     Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
                 - For video, you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
+            disable_tqdm: If `True`, the progress bar will be disabled
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -112,7 +114,9 @@ class MutationsAsset:
         for key, value in field_mapping.items():
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
-        result = import_assets(self.auth, project_id=project_id, assets=assets)
+        result = import_assets(
+            self.auth, project_id=project_id, assets=assets, disable_tqdm=disable_tqdm
+        )
         return result
 
     @typechecked
