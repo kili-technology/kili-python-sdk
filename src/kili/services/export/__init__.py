@@ -34,6 +34,9 @@ def export_labels(  # pylint: disable=too-many-arguments
     if kili.count_projects(project_id=project_id) == 0:
         raise NotFound(f"project ID: {project_id}")
 
+    if single_file and label_format != "raw":
+        raise ValueError(f"The label format {label_format} can not be exported in a single file.")
+
     export_params = ExportParams(
         assets_ids=asset_ids,
         project_id=project_id,
