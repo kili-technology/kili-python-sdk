@@ -10,6 +10,7 @@ from kili.services.export.format.base import (
     ExportParams,
     LoggerParams,
 )
+from kili.services.export.format.coco import CocoExporterSelector
 from kili.services.export.format.kili import KiliExporterSelector
 from kili.services.export.format.yolo import YoloExporterSelector
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
@@ -59,6 +60,8 @@ def export_labels(  # pylint: disable=too-many-arguments
     if label_format in get_args(LabelFormat):
         if label_format == "raw":
             exporter_selector = KiliExporterSelector()
+        elif label_format == "coco":
+            exporter_selector = CocoExporterSelector()
         else:
             exporter_selector = YoloExporterSelector()
         exporter = exporter_selector.select_exporter(

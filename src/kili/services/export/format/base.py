@@ -53,6 +53,8 @@ class BaseExporter(ABC):
     Abstract class defining the interface for all exporters.
     """
 
+    download_media = False  # Whether or not we need to download the images
+
     # pylint: disable=too-many-instance-attributes
 
     def __init__(
@@ -130,6 +132,8 @@ class BaseExporter(ABC):
         Export a project to a json.
         Return the name of the exported archive file in the bucket.
         """
+        path = "/tmp/kili_export/"
+        shutil.rmtree(path, ignore_errors=True)
         assets = fetch_assets(
             kili,
             project_id=export_params.project_id,
@@ -137,6 +141,8 @@ class BaseExporter(ABC):
             export_type=export_params.export_type,
             label_type_in=["DEFAULT", "REVIEW"],
             disable_tqdm=logger_params.disable_tqdm,
+            # download_media=self.download_media,
+            # local_media_dir=path,
         )
         self.process_and_save(assets, export_params.output_file)
 
