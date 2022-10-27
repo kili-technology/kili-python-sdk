@@ -2,11 +2,11 @@
 Plugins related mutations
 """
 
-GQL_GET_PLUGIN_UPLOAD_URL = """
+GQL_CREATE_PLUGIN = """
 mutation(
   $pluginName: String!
   ) {
-  data: getPluginUploadUrl(
+  data: createPlugin(
     data: {
       pluginName: $pluginName
     }

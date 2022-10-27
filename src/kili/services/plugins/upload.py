@@ -8,8 +8,8 @@ from typing import Optional
 from kili.authentication import KiliAuth
 from kili.constants import mime_extensions_for_py_scripts
 from kili.graphql.operations.plugins.mutations import (
+    GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
-    GQL_GET_PLUGIN_UPLOAD_URL,
 )
 from kili.helpers import format_result, get_data_type
 from kili.utils import bucket
@@ -81,15 +81,22 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
         """
         bucket.upload_data_via_rest(url, source_code, "text/x-python")
 
+    def _retrieve_upload_url(self) -> str:
+        """
+        Retrieve an upload url from the backend
+        """
+        variables = {"pluginName": self.plugin_name}
+
+        result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
+        upload_url = format_result("data", result)
+        return upload_url
+
     def _upload_script(self):
         """
         Upload a script to Kili bucket
         """
 
-        variables = {"pluginName": self.plugin_name}
-
-        result = self.auth.client.execute(GQL_GET_PLUGIN_UPLOAD_URL, variables)
-        upload_url = format_result("data", result)
+        upload_url = self._retrieve_upload_url()
 
         source_code = self._retrieve_script()
         self._parse_script(source_code)
