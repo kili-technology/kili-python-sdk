@@ -9,7 +9,7 @@ import pytest
 
 from kili.orm import AnnotationFormat
 from kili.services import export_labels
-from kili.services.export.exceptions import NoCompatibleJobError
+from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
 from kili.services.export.format.kili.common import _process_assets
 from kili.services.export.format.yolo.common import (
     _convert_from_kili_to_yolo_format,
@@ -190,7 +190,7 @@ def test_export_service(name, test_case):
                     "single_file": True,
                 },
             },
-            ValueError,
+            NotCompatibleOptions,
         ),
     ],
 )

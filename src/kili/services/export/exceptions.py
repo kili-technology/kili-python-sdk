@@ -13,3 +13,9 @@ class NoCompatibleJobError(Exception):
     """
     Exception thrown when there is no job compatible with the format.
     """
+
+
+class NotCompatibleOptions(ValueError):
+    """
+    Exception thrown when two export options are not compatible
+    """
