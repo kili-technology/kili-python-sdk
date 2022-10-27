@@ -9,7 +9,7 @@ import pytest
 
 from kili.orm import AnnotationFormat
 from kili.services import export_labels
-from kili.services.export.exceptions import NoCompatibleJobError
+from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
 from kili.services.export.format.kili.common import _process_assets
 from kili.services.export.format.yolo.common import (
     _convert_from_kili_to_yolo_format,
@@ -167,7 +167,7 @@ def test_export_service(name, test_case):
 
 
 @pytest.mark.parametrize(
-    "name,test_case",
+    "name,test_case,error",
     [
         (
             "Export text classification to Yolo format to throw error",
@@ -178,10 +178,23 @@ def test_export_service(name, test_case):
                     "split_option": "merged",
                 },
             },
-        )
+            NoCompatibleJobError,
+        ),
+        (
+            "Export Yolo format with single file to throw error",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "yolo_v4",
+                    "split_option": "merged",
+                    "single_file": True,
+                },
+            },
+            NotCompatibleOptions,
+        ),
     ],
 )
-def test_export_service_errors(name, test_case):
+def test_export_service_errors(name, test_case, error):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
         path_zipfile.parent.mkdir(parents=True, exist_ok=True)
@@ -198,7 +211,7 @@ def test_export_service_errors(name, test_case):
         }
 
         default_kwargs.update(test_case["export_kwargs"])
-        with pytest.raises(NoCompatibleJobError):
+        with pytest.raises(error):
             export_labels(
                 fake_kili,
                 **default_kwargs,
