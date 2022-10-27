@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Dict, List, NamedTuple, Optional, Type
 
 from kili.orm import JobMLTask, JobTool
+from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.repository import SDKContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
@@ -75,6 +76,12 @@ class BaseExporter(ABC):
         self.logger = logger
         self.content_repository = content_repository
 
+    def _check_arguments_compatibility(self):
+        if self.single_file and self.label_format != "raw":
+            raise NotCompatibleOptions(
+                f"The label format {self.label_format} can not " "be exported in a single file."
+            )
+
     @abstractmethod
     def process_and_save(self, assets: List[Dict], output_filename: str) -> None:
         """
@@ -130,6 +137,7 @@ class BaseExporter(ABC):
         Export a project to a json.
         Return the name of the exported archive file in the bucket.
         """
+        self._check_arguments_compatibility()
         assets = fetch_assets(
             kili,
             project_id=export_params.project_id,
