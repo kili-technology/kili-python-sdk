@@ -8,6 +8,8 @@ from json import dumps
 from typing import Any, List, Optional, Tuple, Union
 from uuid import uuid4
 
+import cuid
+
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -57,8 +59,7 @@ class LegacyDataImporter:
         json_metadata_array = ternary("json_metadata", {})
 
         (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
-            self.auth,
-            self.input_type,
+            self,
             content_array,
             external_id_array,
             is_honeypot_array,
@@ -179,27 +180,38 @@ def upload_content(signed_url: str, content: str, input_type: str):
         raise ValueError(f"File: {content} not found")
 
 
+def generate_unique_ids(size: int) -> List[str]:
+    """
+    Returns ids
+    """
+    return [cuid.cuid() for _ in range(size)]
+
+
 # pylint: disable=too-many-arguments
 def process_and_store_content(
-    input_type: str,
+    legacy_data_importer: LegacyDataImporter,
     content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
-    auth: KiliAuth,
 ):
     """
     Process the array of contents and upload content if not already hosted
     """
-    if input_type == "TIME_SERIES":
+    if legacy_data_importer.input_type == "TIME_SERIES":
         return list(map(process_time_series, content_array))
     if json_content_array is not None:
         return content_array
     has_local_files = any(not is_url(content) for content in content_array)
     url_content_array = []
     if has_local_files:
-        signed_urls = bucket.request_signed_urls(auth, len(content_array))
+        asset_ids = generate_unique_ids(len(content_array))
+        project_bucket_path = f"projects/{legacy_data_importer.project_id}/assets"
+        asset_content_paths = [
+            os.path.join(project_bucket_path, asset_id, "content") for asset_id in asset_ids
+        ]
+        signed_urls = bucket.request_signed_urls(legacy_data_importer.auth, asset_content_paths)
     for i, content in enumerate(content_array):
         url_content = (is_url(content) and content) or upload_content(
-            signed_urls[i], content, input_type  # type:ignore X
+            signed_urls[i], content, legacy_data_importer.input_type  # type:ignore X
         )
         url_content_array.append(url_content)
     return url_content_array
@@ -321,8 +333,7 @@ def get_request_to_execute(
 
 # pylint: disable=too-many-arguments, too-many-locals
 def process_append_many_to_dataset_parameters(
-    auth: KiliAuth,
-    input_type: str,
+    legacy_data_importer: LegacyDataImporter,
     content_array: Union[List[str], None],
     external_id_array: Union[List[str], None],
     is_honeypot_array: Union[List[str], None],
@@ -345,21 +356,21 @@ def process_append_many_to_dataset_parameters(
     )
     status_array = ["TODO"] * len(content_array) if not status_array else status_array
     formatted_json_metadata_array = process_metadata(
-        input_type, content_array, json_content_array, json_metadata_array
+        legacy_data_importer.input_type, content_array, json_content_array, json_metadata_array
     )
 
     mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore
     content_array = process_and_store_content(
-        input_type, content_array, json_content_array, auth  # type:ignore X
+        legacy_data_importer, content_array, json_content_array  # type:ignore X
     )
     formatted_json_content_array = process_json_content(
-        input_type,
+        legacy_data_importer.input_type,
         content_array,  # type:ignore X
         json_content_array,  # type:ignore X
     )
 
     request, upload_type = get_request_to_execute(
-        input_type, json_metadata_array, json_content_array, mime_type
+        legacy_data_importer.input_type, json_metadata_array, json_content_array, mime_type
     )
     properties = {
         "content_array": content_array,

@@ -5,7 +5,9 @@ import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
-from typing import Callable, List, NamedTuple
+from typing import Callable, List, NamedTuple, Tuple, Union
+
+import cuid
 
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.mutations import (
@@ -85,6 +87,19 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         result_batch = self.import_to_kili(assets_)
         self.pbar.update(n=len(assets))
         return result_batch
+
+    @staticmethod
+    def generate_unique_ids(size: int) -> List[str]:
+        """
+        Returns ids
+        """
+        return [cuid.cuid() for _ in range(size)]
+
+    def generate_project_bucket_path(self) -> str:
+        """
+        Returns ids
+        """
+        return f"projects/{self.project_id}/assets"
 
     @staticmethod
     def stringify_metadata(asset: AssetLike) -> AssetLike:
@@ -177,25 +192,48 @@ class ContentBatchImporter(BaseBatchImporter):
             assets = self.upload_local_content_to_bucket(assets)
         return super().import_batch(assets)
 
+    def get_content_type_and_data_from_content(
+        self, content: Union[str, None]
+    ) -> Tuple[bytes, Union[str, None]]:
+        """
+        Returns the data of the content (path) and its content type
+        """
+        assert content
+        with open(content, "rb") as file:
+            data = file.read()
+            content_type, _ = mimetypes.guess_type(content)
+            return data, content_type
+
+    def get_type_and_data_from_content_array(
+        self, content_array: List[Union[str, None]]
+    ) -> List[Tuple[Union[bytes, str], Union[str, None]]]:
+        """
+        Returns the data of the content (path) and its content type for each element in the array
+        """
+        return list(map(self.get_content_type_and_data_from_content, content_array))
+
     def upload_local_content_to_bucket(self, assets: List[AssetLike]):
         """
         Upload local content to a bucket
         """
-        signed_urls = bucket.request_signed_urls(self.auth, len(assets))
-        data_array = []
-        content_type_array = []
-        for asset in assets:
-            path = asset.get("content")
-            assert path
-            with open(path, "rb") as file:
-                data_array.append(file.read())
-            content_type, _ = mimetypes.guess_type(path)
-            content_type_array.append(content_type)
+        asset_ids = self.generate_unique_ids(len(assets))
+        project_bucket_path = self.generate_project_bucket_path()
+        asset_content_paths = [
+            os.path.join(project_bucket_path, asset_id, "content") for asset_id in asset_ids
+        ]
+        signed_urls = bucket.request_signed_urls(self.auth, asset_content_paths)
+        data_and_content_type_array = self.get_type_and_data_from_content_array(
+            list(map(lambda asset: asset.get("content"), assets))
+        )
+        data_array, content_type_array = zip(*data_and_content_type_array)
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
-        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]
+        return [
+            AssetLike(**{**asset, "content": url, "id": id})
+            for asset, url, id in zip(assets, url_gen, asset_ids)
+        ]
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -217,7 +255,12 @@ class JsonContentBatchImporter(BaseBatchImporter):
         """
         Upload the json_contents to a bucket with signed urls
         """
-        signed_urls = bucket.request_signed_urls(self.auth, len(assets))
+        asset_ids = self.generate_unique_ids(len(assets))
+        project_bucket_path = self.generate_project_bucket_path()
+        asset_json_content_paths = [
+            os.path.join(project_bucket_path, asset_id, "jsonContent") for asset_id in asset_ids
+        ]
+        signed_urls = bucket.request_signed_urls(self.auth, asset_json_content_paths)
         json_content_array = [asset.get("json_content") for asset in assets]
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(

@@ -1,7 +1,8 @@
 """Module for managing bucket's signed urls"""
 
 
-from typing import Union
+import functools
+from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
 import requests
@@ -19,23 +20,27 @@ GCP_STRING_PUBLIC = "storage.cloud.google.com"
 MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
 
-def request_signed_urls(auth: KiliAuth, size: int):
+def request_signed_urls(auth: KiliAuth, file_paths: List[str]):
     """
     Get upload signed URLs
     Args:
         auth: Kili Auth
-        project_id: the project Id
         size: the amount of upload signed URL to query
     """
-    signed_urls = []
-    while len(signed_urls) < size:
-        nb_url_requested = min(MAX_NUMBER_SIGNED_URLS_TO_FETCH, size - len(signed_urls))
+    size = len(file_paths)
+    file_batches = [
+        file_paths[i : i + MAX_NUMBER_SIGNED_URLS_TO_FETCH]
+        for i in range(0, size, MAX_NUMBER_SIGNED_URLS_TO_FETCH)
+    ]
+
+    def get_file_batch_urls(file_paths: List[str]) -> List[str]:
         payload = {
-            "size": nb_url_requested,
+            "filePaths": file_paths,
         }
         urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
-        signed_urls.extend(urls_response["data"]["urls"])
-    return signed_urls
+        return urls_response["data"]["urls"]
+
+    return functools.reduce(lambda acc, value: acc + value, map(get_file_batch_urls, file_batches))
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2))

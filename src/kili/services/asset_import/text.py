@@ -3,10 +3,9 @@ Functions to import assets into a TEXT project
 """
 import os
 from enum import Enum
-from typing import List
+from typing import List, Tuple, Union
 
 from kili.helpers import is_url
-from kili.utils import bucket
 
 from .base import (
     BaseAssetImporter,
@@ -34,18 +33,11 @@ class RawTextBatchImporter(ContentBatchImporter):
     class for importing a batch of raw text assets into a TEXT project
     """
 
-    def upload_local_content_to_bucket(self, assets: List[AssetLike]):
+    def get_content_type_and_data_from_content(self, content: Union[str, None]) -> Tuple[str, str]:
         """
-        Overwrite the base function in order to be able to upload raw text
+        Returns the data of the content (path) and its content type
         """
-        signed_urls = bucket.request_signed_urls(self.auth, len(assets))
-        uploaded_assets = []
-        for i, asset in enumerate(assets):
-            data = asset.get("content") or ""
-            content_type = "text/plain"
-            uploaded_content_url = bucket.upload_data_via_rest(signed_urls[i], data, content_type)
-            uploaded_assets.append({**asset, "content": uploaded_content_url})
-        return uploaded_assets
+        return content or "", "text/plain"
 
 
 class TextDataImporter(BaseAssetImporter):
