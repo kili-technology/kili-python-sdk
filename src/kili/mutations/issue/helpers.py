@@ -20,7 +20,7 @@ def get_issue_number(auth: KiliAuth, project_id: str, type_: str):
     issues = kili.issues(project_id=project_id, disable_tqdm=True, fields=["type", "issueNumber"])
     issue_number = (
         max(
-            [issue["issueNumber"] for issue in issues if issue["type"] == type_],
+            (issue["issueNumber"] for issue in issues if issue["type"] == type_),
             default=-1,
         )
         + 1
