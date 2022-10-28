@@ -1,7 +1,7 @@
 """
 Types used by the conversion service
 """
-from typing import Any, Dict, List, NamedTuple, Tuple
+from typing import Any, Dict, List, NamedTuple, Tuple, NewType
 
 from typing_extensions import Literal, TypedDict
 
@@ -23,23 +23,26 @@ class JobCategory(NamedTuple):
 YoloAnnotation = Tuple[int, float, float, float, float]
 
 
-InputTypeT = Literal["IMAGE", "TEXT"]
-MLTaskT = Literal["CLASSIFICATION", "NAMED_ENTITIES_RECOGNITION", "OBJECT_DETECTION"]
-ToolT = Literal["rectangle", "semantic", "polygon"]
-JobNameT = str
-ProjectIdT = str
+InputType = Literal["IMAGE", "TEXT"]
+MLTask = Literal["CLASSIFICATION", "NAMED_ENTITIES_RECOGNITION", "OBJECT_DETECTION"]
+Tool = Literal["rectangle", "semantic", "polygon"]
+JobName = NewType("JobName", str)
+ProjectId = NewType("ProjectId", str)
 
 
-class JobT(TypedDict):
+class Job(TypedDict):
+    """
+    Contains job settings
+    """
     content: Any
     instruction: str
     isChild: bool
-    tools: List[ToolT]
-    mlTask: MLTaskT
+    tools: List[Tool]
+    mlTask: MLTask
     models: Any  # example: {"interactive-segmentation": {"job": "SEMANTIC_JOB_MARKER"}},
     isVisible: bool
     required: int
     isNew: bool
 
 
-JobsT = Dict[JobNameT, JobT]
+Jobs = Dict[JobName, Job]

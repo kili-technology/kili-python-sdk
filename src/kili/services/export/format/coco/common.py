@@ -16,11 +16,10 @@ from typing_extensions import TypedDict
 
 from kili.orm import AnnotationFormat
 from kili.services.export.format.base import BaseExporter
-from kili.services.export.types import InputTypeT, JobNameT, JobsT, JobT, ProjectIdT
+from kili.services.export.types import InputType, JobName, Jobs, Job, ProjectId
+
 
 # COCO format
-
-
 class ImageCoco(TypedDict):
     id: int
     license: int
@@ -54,7 +53,7 @@ class CocoFormat(TypedDict):
     annotations: List[AnnotationsCoco]
 
 
-def get_mapping_category_name_cat_kili_id(job: JobT):
+def get_mapping_category_name_cat_kili_id(job: Job):
     cats = job["content"]["categories"]
     mapping_category_name_category_ids = {cat["name"]: catId for catId, cat in cats.items()}
     return mapping_category_name_category_ids
@@ -120,12 +119,12 @@ def _process_assets(assets, label_format):
 
 
 def convert_kili_semantic_to_coco(
-    job_name: JobNameT,
+    job_name: JobName,
     assets,
     output_dir,
     api_key: str,
-    job: JobT,
-    project_id: ProjectIdT,
+    job: Job,
+    project_id: ProjectId,
     kili,
 ) -> Tuple[CocoFormat, List[str]]:
     """
@@ -244,7 +243,7 @@ def convert_kili_semantic_to_coco(
     return labels_json, classes
 
 
-def get_project(kili, project_id: ProjectIdT) -> Tuple[InputTypeT, JobsT, str]:
+def get_project(kili, project_id: ProjectId) -> Tuple[InputType, Jobs, str]:
     projects = kili.projects(project_id=project_id, fields=["inputType", "jsonInterface", "title"])
 
     if len(projects) == 0:
