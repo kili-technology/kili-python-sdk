@@ -8,8 +8,6 @@ from json import dumps
 from typing import Any, List, Optional, Tuple, Union
 from uuid import uuid4
 
-import cuid
-
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -184,7 +182,7 @@ def generate_unique_ids(size: int) -> List[str]:
     """
     Returns ids
     """
-    return [cuid.cuid() for _ in range(size)]
+    return [bucket.generate_unique_id() for _ in range(size)]
 
 
 # pylint: disable=too-many-arguments

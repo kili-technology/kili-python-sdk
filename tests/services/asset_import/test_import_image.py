@@ -6,12 +6,14 @@ from kili.services.asset_import import import_assets
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
     mocked_request_signed_urls,
+    mocked_unique_id,
     mocked_upload_data_via_rest,
 )
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
+@patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch.object(
     QueriesProject,
     "projects",
@@ -29,17 +31,25 @@ class PDFTestCase(ImportTestCase):
         assets = [{"content": path_image, "external_id": "local image"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url?id=id"], ["local image"], [""], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"],
+            ["local image"],
+            ["unique_id"],
+            [False],
+            [""],
+            ["{}"],
+            ["TODO"],
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_one_hosted_image(
         self,
     ):
-        assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
+        assets = [
+            {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
+        ]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], [""], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -49,7 +59,11 @@ class PDFTestCase(ImportTestCase):
         assets = [{"content": path_image, "external_id": "local tiff image"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_async_call(
-            ["https://signed_url?id=id"], ["local tiff image"], [""], ["{}"], "GEO_SATELLITE"
+            ["https://signed_url?id=id"],
+            ["local tiff image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -66,14 +80,18 @@ class PDFTestCase(ImportTestCase):
         expected_parameters_sync = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local basic image"],
-            [""],
+            ["unique_id"],
             [False],
             [""],
             ["{}"],
             ["TODO"],
         )
         expected_parameters_async = self.get_expected_async_call(
-            ["https://signed_url?id=id"], ["local tiff image"], [""], ["{}"], "GEO_SATELLITE"
+            ["https://signed_url?id=id"],
+            ["local tiff image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
         )
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
         self.auth.client.execute.assert_has_calls(calls, any_order=True)

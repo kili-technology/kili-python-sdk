@@ -7,8 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from typing import List
 
-import cuid
-
 from kili.helpers import is_url
 from kili.services.asset_import.base import (
     BaseAssetImporter,
@@ -121,7 +119,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         """
         frames = asset.get("json_content")
         assert frames
-        asset_id: str = asset.get("id") or f"unknown-{cuid.cuid()}"
+        asset_id: str = asset.get("id") or f"unknown-{bucket.generate_unique_id()}"
         project_bucket_path = self.generate_project_bucket_path()
         asset_frames_paths = [
             os.path.join(project_bucket_path, asset_id, "frame", str(frame_id))

@@ -7,8 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from typing import Callable, List, NamedTuple, Tuple, Union
 
-import cuid
-
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -93,7 +91,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         """
         Returns ids
         """
-        return [cuid.cuid() for _ in range(size)]
+        return [bucket.generate_unique_id() for _ in range(size)]
 
     def generate_project_bucket_path(self) -> str:
         """

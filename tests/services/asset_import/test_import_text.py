@@ -6,12 +6,14 @@ from kili.services.asset_import import import_assets
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
     mocked_request_signed_urls,
+    mocked_unique_id,
     mocked_upload_data_via_rest,
 )
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
+@patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch.object(
     QueriesProject,
     "projects",
@@ -29,17 +31,25 @@ class TextTestCase(ImportTestCase):
         assets = [{"content": path, "external_id": "local text file"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url?id=id"], ["local text file"], [""], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"],
+            ["local text file"],
+            ["unique_id"],
+            [False],
+            [""],
+            ["{}"],
+            ["TODO"],
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_one_hosted_text_file(
         self,
     ):
-        assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
+        assets = [
+            {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
+        ]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], [""], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -47,7 +57,13 @@ class TextTestCase(ImportTestCase):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url?id=id"], ["raw text"], [""], [False], [""], ["{}"], ["TODO"]
+            ["https://signed_url?id=id"],
+            ["raw text"],
+            ["unique_id"],
+            [False],
+            [""],
+            ["{}"],
+            ["TODO"],
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -63,10 +79,16 @@ class TextTestCase(ImportTestCase):
                 ]
             }
         ]
-        assets = [{"json_content": json_content, "external_id": "rich text"}]
+        assets = [{"json_content": json_content, "external_id": "rich text", "id": "unique_id"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            [""], ["rich text"], [""], [False], ["https://signed_url?id=id"], ["{}"], ["TODO"]
+            [""],
+            ["rich text"],
+            ["unique_id"],
+            [False],
+            ["https://signed_url?id=id"],
+            ["{}"],
+            ["TODO"],
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 

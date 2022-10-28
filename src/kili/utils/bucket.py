@@ -5,6 +5,7 @@ import functools
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
+import cuid
 import requests
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
@@ -18,6 +19,13 @@ GCP_STRING = "storage.googleapis.com"
 GCP_STRING_PUBLIC = "storage.cloud.google.com"
 
 MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
+
+
+def generate_unique_id():
+    """
+    Generates a unique id
+    """
+    return cuid.cuid()
 
 
 def request_signed_urls(auth: KiliAuth, file_paths: List[str]):

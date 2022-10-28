@@ -5,9 +5,13 @@ from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
 from tests.services.asset_import.base import ImportTestCase
-from tests.services.asset_import.mocks import mocked_request_signed_urls
+from tests.services.asset_import.mocks import (
+    mocked_request_signed_urls,
+    mocked_unique_id,
+)
 
 
+@patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch.object(
     QueriesAsset,
