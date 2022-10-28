@@ -4,9 +4,8 @@ Common code for the coco exporter.
 
 import json
 import os
-import shutil
 import time
-from os.path import join
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import cv2
@@ -16,7 +15,7 @@ from typing_extensions import TypedDict
 
 from kili.orm import AnnotationFormat
 from kili.services.export.format.base import BaseExporter
-from kili.services.export.types import InputType, JobName, Jobs, Job, ProjectId
+from kili.services.export.types import InputType, Job, JobName, Jobs, ProjectId
 
 
 # COCO format
@@ -120,12 +119,9 @@ def _process_assets(assets, label_format):
 
 def convert_kili_semantic_to_coco(
     job_name: JobName,
-    assets,
-    output_dir,
-    api_key: str,
+    assets: List[Dict],
+    output_dir: Path,
     job: Job,
-    project_id: ProjectId,
-    kili,
 ) -> Tuple[CocoFormat, List[str]]:
     """
     creates the following structure on the disk:
@@ -142,8 +138,8 @@ def convert_kili_semantic_to_coco(
     infos_coco = {
         "year": time.strftime("%Y"),
         "version": "1.0",
-        "description": "Exported from KiliAutoML",
-        "contributor": "KiliAutoML",
+        "description": "Exported from Kili Python Client",
+        "contributor": "Kili Technology",
         "url": "https://kili-technology.com",
         "date_created": time.strftime("%Y %m %d %H %M"),
     }
@@ -156,9 +152,7 @@ def convert_kili_semantic_to_coco(
     )
 
     # Prepare output folder
-    if os.path.exists(output_dir):
-        shutil.rmtree(output_dir)
-    data_dir = os.path.join(output_dir, "data")
+    data_dir = output_dir / "data"
     os.makedirs(data_dir, exist_ok=True)
 
     # Mapping category - category id
@@ -180,22 +174,17 @@ def convert_kili_semantic_to_coco(
         total=len(assets),
         desc="Convert to coco format",
     ):
-        # annotations_ = asset.get_annotations_semantic(job_name)["annotations"]
         annotations_ = asset["latestLabel"]["jsonResponse"][job_name]
 
-        # Add a new image
-        # img_data = download_asset_binary(api_key, asset.content)  # jpg
-        # img = cv2.imdecode(np.frombuffer(img_data, np.uint8), cv2.IMREAD_COLOR)
-
-        img = cv2.imread("/Users/raph/Desktop/Screenshot_kili.png")
-        file_name = os.path.join(data_dir, f"{asset_i}.jpg")
-        cv2.imwrite(file_name, img)
+        img = cv2.imread(asset["content"])
+        file_name = data_dir / f"{asset_i}.jpg"
+        cv2.imwrite(str(file_name), img)
         height = img.shape[0]
         width = img.shape[1]
         image_coco = ImageCoco(
             id=asset_i,
             license=0,
-            file_name=file_name,
+            file_name=str(file_name),
             height=height,
             width=width,
             date_captured=None,
@@ -208,10 +197,12 @@ def convert_kili_semantic_to_coco(
             if not annotation:
                 print("continue")
                 continue
-            boundingPoly = annotation["boundingPoly"]
-            px: List[float] = [float(v["x"]) * width for v in boundingPoly[0]["normalizedVertices"]]
+            bounding_poly = annotation["boundingPoly"]
+            px: List[float] = [
+                float(v["x"]) * width for v in bounding_poly[0]["normalizedVertices"]
+            ]
             py: List[float] = [
-                float(v["y"]) * height for v in boundingPoly[0]["normalizedVertices"]
+                float(v["y"]) * height for v in bounding_poly[0]["normalizedVertices"]
             ]
             poly_ = [(float(x), float(y)) for x, y in zip(px, py)]
             if len(poly_) < 3:
@@ -236,7 +227,7 @@ def convert_kili_semantic_to_coco(
             )
             labels_json["annotations"].append(annotations_coco)
 
-    with open(join(output_dir, "labels.json"), "w") as outfile:
+    with (output_dir / "labels.json").open("w") as outfile:
         json.dump(labels_json, outfile)
 
     classes: List[str] = list(cat_kili_id_to_coco_id.keys())
@@ -274,11 +265,8 @@ class CocoExporter(BaseExporter):
             convert_kili_semantic_to_coco(
                 job_name=job_name,
                 assets=assets,
-                output_dir=output_filename,
-                api_key=self.kili.auth.api_key,
+                output_dir=Path(output_filename),
                 job=job,
-                project_id=self.project_id,
-                kili=self.kili,
             )
 
     def process_and_save(self, assets: List[Dict], output_filename: str):
