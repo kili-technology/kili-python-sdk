@@ -192,18 +192,18 @@ def process_and_store_content(
     legacy_data_importer: LegacyDataImporter,
     content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
-):
+) -> Tuple[List[str], List[str]]:
     """
     Process the array of contents and upload content if not already hosted
     """
+    asset_ids = generate_unique_ids(len(content_array))
     if legacy_data_importer.input_type == "TIME_SERIES":
-        return list(map(process_time_series, content_array))
+        return list(map(process_time_series, content_array)), asset_ids
     if json_content_array is not None:
-        return content_array
+        return content_array, asset_ids
     has_local_files = any(not is_url(content) for content in content_array)
     url_content_array = []
     if has_local_files:
-        asset_ids = generate_unique_ids(len(content_array))
         project_bucket_path = f"projects/{legacy_data_importer.project_id}/assets"
         asset_content_paths = [
             os.path.join(project_bucket_path, asset_id, "content") for asset_id in asset_ids
@@ -214,10 +214,10 @@ def process_and_store_content(
             signed_urls[i], content, legacy_data_importer.input_type  # type:ignore X
         )
         url_content_array.append(url_content)
-    return url_content_array
+    return url_content_array, asset_ids
 
 
-def process_time_series(content: str) -> Union[str, None]:
+def process_time_series(content: str) -> str:
     """
     Process the content for TIME_SERIES projects: if it is a file, read the content
     and also check if the content corresponds to the expected format, else return None
@@ -228,7 +228,7 @@ def process_time_series(content: str) -> Union[str, None]:
             with open(content, "r", encoding="utf8") as csvfile:
                 reader = csv.reader(csvfile, delimiter=delimiter)
                 return process_csv_content(reader, file_name=content, delimiter=delimiter)
-        return None
+        return ""
 
     reader = csv.reader(content.split("\n"), delimiter=",")
     return process_csv_content(reader, delimiter=delimiter)
@@ -245,7 +245,7 @@ def is_float(number: str) -> bool:
         return False
 
 
-def process_csv_content(reader, file_name=None, delimiter=",") -> Optional[str]:
+def process_csv_content(reader, file_name=None, delimiter=",") -> str:
     """
     Process the content of csv for time_series and check if it corresponds to the expected format
     """
@@ -260,7 +260,7 @@ correct format: it should have only 2 columns, the first one being the timestamp
 otherwise it will be considered as missing value). The first row should have the names \
 of the 2 columns. The delimiter used should be ','."""
             )
-            return None
+            return ""
         value = row[1] if (is_float(row[1]) or first_row) else ""
         processed_lines.append(delimiter.join([row[0], value]))
         first_row = False
@@ -360,7 +360,7 @@ def process_append_many_to_dataset_parameters(
     )
 
     mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore
-    content_array = process_and_store_content(
+    content_array, id_array = process_and_store_content(
         legacy_data_importer, content_array, json_content_array  # type:ignore X
     )
     formatted_json_content_array = process_json_content(
@@ -376,6 +376,7 @@ def process_append_many_to_dataset_parameters(
         "content_array": content_array,
         "external_id_array": external_id_array,
         "is_honeypot_array": is_honeypot_array_,
+        "id_array": id_array,
         "status_array": status_array,
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,

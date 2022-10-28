@@ -121,7 +121,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         """
         frames = asset.get("json_content")
         assert frames
-        asset_id: str = asset.get("id") or cuid.cuid()
+        asset_id: str = asset.get("id") or f"unknown-{cuid.cuid()}"
         project_bucket_path = self.generate_project_bucket_path()
         asset_frames_paths = [
             os.path.join(project_bucket_path, asset_id, "frame", str(frame_id))
