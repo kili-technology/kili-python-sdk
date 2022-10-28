@@ -48,7 +48,7 @@ dev_extra = [
 ]
 
 coco_extra = [
-    "opencv-python",
+    "Pillow",
 ]
 
 setup(

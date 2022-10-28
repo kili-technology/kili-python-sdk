@@ -38,6 +38,7 @@ def get_file_extension_from_headers(url):
     with requests.head(url, timeout=20) as header_response:
         headers = header_response.headers
         header_response.raise_for_status()
+        print(headers)
         content_type = headers["content-type"]
         return guess_extension(content_type)
 

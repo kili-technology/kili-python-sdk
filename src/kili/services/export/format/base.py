@@ -149,8 +149,7 @@ class BaseExporter(ABC):
             export_type=export_params.export_type,
             label_type_in=["DEFAULT", "REVIEW"],
             disable_tqdm=logger_params.disable_tqdm,
-            # download_media=self.download_media,
-            # local_media_dir=path,
+            download_media=self.download_media,
         )
         self.process_and_save(assets, export_params.output_file)
 
