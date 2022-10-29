@@ -6,16 +6,24 @@ import json
 import os
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, cast
 
 import numpy as np
 from PIL import Image
 from tqdm.autonotebook import tqdm
+from typeguard import typechecked
 from typing_extensions import TypedDict
 
-from kili.orm import AnnotationFormat
+from kili.orm import AnnotationFormat, Asset, Label
 from kili.services.export.format.base import BaseExporter
-from kili.services.export.types import InputType, Job, JobName, Jobs, ProjectId
+from kili.services.export.types import (
+    InputType,
+    Job,
+    JobName,
+    Jobs,
+    LabelFormat,
+    ProjectId,
+)
 
 
 # COCO format
@@ -52,7 +60,62 @@ class _CocoFormat(TypedDict):
     annotations: List[_CocoAnnotation]
 
 
-def _filter_out_autosave_labels(assets: List[Dict]) -> List[Dict]:
+def convert_kili_semantic_to_coco(
+    job_name: JobName,
+    assets: List[Asset],
+    output_dir: Path,
+    job: Job,
+    title: str,
+) -> Tuple[_CocoFormat, List[str]]:
+    """
+    creates the following structure on the disk:
+    <dataset_dir>/
+        data/
+            <filename0>.<ext>
+            <filename1>.<ext>
+            ...
+        labels.json
+
+
+    We iterate on the assets and create a coco format for each asset.
+    """
+    infos_coco = {
+        "year": time.strftime("%Y"),
+        "version": "1.0",
+        "description": f"{title} - Exported from Kili Python Client",
+        "contributor": "Kili Technology",
+        "url": "https://kili-technology.com",
+        "date_created": time.strftime("%Y %m %d %H %M"),
+    }
+    labels_json = _CocoFormat(
+        info=infos_coco,
+        licenses=[],
+        categories=[],
+        images=[],
+        annotations=[],
+    )
+
+    # Prepare output folder
+    data_dir = output_dir / "data"
+    os.makedirs(data_dir, exist_ok=True)
+
+    # Mapping category - category id
+    cat_kili_id_to_coco_id = _get_kili_cat_id_to_coco_cat_id_mapping(job)
+    labels_json["categories"] = _get_coco_categories(cat_kili_id_to_coco_id)
+    labels_json["images"], labels_json["annotations"] = _get_coco_images_and_annotations(
+        job_name, assets, data_dir, cat_kili_id_to_coco_id
+    )
+
+    with (output_dir / "labels.json").open("w") as outfile:
+        json.dump(labels_json, outfile)
+
+    classes = list(cat_kili_id_to_coco_id.keys())
+    return labels_json, classes
+
+
+def _filter_out_autosave_labels(
+    assets: List[Asset],
+) -> List[Asset]:  # FIXME: check if it is handled in the other export jobs
     """
     Removes AUTOSAVE labels from exports
 
@@ -70,7 +133,9 @@ def _filter_out_autosave_labels(assets: List[Dict]) -> List[Dict]:
     return clean_assets
 
 
-def _format_json_response(label, label_format) -> Dict[str, Dict]:
+def _format_json_response(
+    label: Label, label_format: LabelFormat
+) -> Dict[str, Dict]:  # FIXME: probably not necessary?
     """
     Format the label JSON response in the requested format
     """
@@ -79,16 +144,19 @@ def _format_json_response(label, label_format) -> Dict[str, Dict]:
         label["jsonResponse"] = formatted_json_response
     else:
         json_response = {}
-        for key, value in formatted_json_response.items():
-            if key.isdigit():
-                json_response[int(key)] = value
-                continue
-            json_response[key] = value
-        label["jsonResponse"] = json_response
+        if formatted_json_response is not None:
+            for key, value in cast(Dict, formatted_json_response).items():  # FIXME: see above
+                if key.isdigit():
+                    json_response[int(key)] = value
+                    continue
+                json_response[key] = value
+            label["jsonResponse"] = json_response
+        else:
+            label["jsonResponse"] = {}
     return label
 
 
-def _process_assets(assets, label_format) -> List[Dict]:
+def _process_assets(assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
     """
     Format labels in the requested format, and filter out autosave labels
     """
@@ -111,83 +179,26 @@ def _process_assets(assets, label_format) -> List[Dict]:
     return clean_assets
 
 
-def convert_kili_semantic_to_coco(
-    job_name: JobName,
-    assets: List[Dict],
-    output_dir: Path,
-    job: Job,
-) -> Tuple[_CocoFormat, List[str]]:
-    """
-    creates the following structure on the disk:
-    <dataset_dir>/
-        data/
-            <filename0>.<ext>
-            <filename1>.<ext>
-            ...
-        labels.json
-
-
-    We iterate on the assets and create a coco format for each asset.
-    """
-    infos_coco = {
-        "year": time.strftime("%Y"),
-        "version": "1.0",
-        "description": "Exported from Kili Python Client",
-        "contributor": "Kili Technology",
-        "url": "https://kili-technology.com",
-        "date_created": time.strftime("%Y %m %d %H %M"),
-    }
-    labels_json = _CocoFormat(
-        info=infos_coco,
-        licenses=[],
-        categories=[],
-        images=[],
-        annotations=[],
-    )
-
-    # Prepare output folder
-    data_dir = output_dir / "data"
-    os.makedirs(data_dir, exist_ok=True)
-
-    # Mapping category - category id
-    cat_kili_id_to_coco_id = _get_kili_cat_id_to_coco_cat_id_mapping(job)
-    labels_json["categories"] = _get_coco_categories(cat_kili_id_to_coco_id)
-
-    # Fill labels_json
-    coco_images, coco_annotations = _get_coco_images_and_annotations(
-        job_name, assets, data_dir, cat_kili_id_to_coco_id
-    )
-
-    labels_json["images"] = coco_images
-    labels_json["annotations"] = coco_annotations
-
-    with (output_dir / "labels.json").open("w") as outfile:
-        json.dump(labels_json, outfile)
-
-    classes = list(cat_kili_id_to_coco_id.keys())
-    return labels_json, classes
-
-
-def _get_kili_cat_id_to_coco_cat_id_mapping(job):
+def _get_kili_cat_id_to_coco_cat_id_mapping(job: Job) -> Dict[str, int]:
     cats = job["content"]["categories"]
     mapping_cat_name_cat_kili_id = {cat["name"]: catId for catId, cat in cats.items()}
     cat_kili_ids = list(mapping_cat_name_cat_kili_id.values())
-    cat_kili_id_to_coco_id = {categoryId: i for i, categoryId in enumerate(cat_kili_ids)}
+    cat_kili_id_to_coco_id = {str(categoryId): i for i, categoryId in enumerate(cat_kili_ids)}
     return cat_kili_id_to_coco_id
 
 
 def _get_coco_images_and_annotations(
     job_name, assets, data_dir, cat_kili_id_to_coco_id
 ) -> Tuple[List[_CocoImage], List[_CocoAnnotation]]:
-    annotation_j = -1
     coco_images = []
     coco_annotations = []
+    annotation_offset = -1
     for asset_i, asset in tqdm(
         enumerate(assets),
         total=len(assets),
         desc="Convert to coco format",
     ):
-        annotations_ = asset["latestLabel"]["jsonResponse"][job_name]
+        annotations_ = asset["latestLabel"]["jsonResponse"][job_name]["annotations"]
         img = Image.open(asset["content"])
 
         file_name = data_dir / f"{asset_i}.jpg"  # FIXME: take original format
@@ -204,28 +215,37 @@ def _get_coco_images_and_annotations(
         )
 
         coco_images.append(image_coco)
-        coco_annotations.extend(
-            _get_coco_image_annotations(
-                cat_kili_id_to_coco_id, annotation_j, asset_i, annotations_, width, height
-            )
+        coco_img_annotations, annotation_offset = _get_coco_image_annotations(
+            annotations_, cat_kili_id_to_coco_id, annotation_offset, asset_i, width, height
         )
+        coco_annotations.extend(coco_img_annotations)
     return coco_images, coco_annotations
 
 
+@typechecked
 def _get_coco_image_annotations(
-    cat_kili_id_to_coco_id, annotation_j, asset_i, annotations_, width, height
-) -> List[_CocoAnnotation]:
+    annotations_: List[Dict],
+    cat_kili_id_to_coco_id: Dict[str, int],
+    annotation_offset: int,
+    asset_i: int,
+    width: int,
+    height: int,
+) -> Tuple[List[_CocoAnnotation], int]:
     coco_annotations = []
+
+    annotation_j = annotation_offset
 
     for annotation in annotations_:  # we do not use enumerate as some annotations may be empty
         annotation_j += 1
-        print("Annotation", annotation)
+
         if not annotation:
             print("continue")
             continue
+        print(annotation)
         bounding_poly = annotation["boundingPoly"]
-        p_x: List[float] = [float(v["x"]) * width for v in bounding_poly[0]["normalizedVertices"]]
-        p_y: List[float] = [float(v["y"]) * height for v in bounding_poly[0]["normalizedVertices"]]
+        print(bounding_poly[0])
+        p_x = [float(v["x"]) * width for v in bounding_poly[0]["normalizedVertices"]]
+        p_y = [float(v["y"]) * height for v in bounding_poly[0]["normalizedVertices"]]
         poly_ = [(float(x), float(y)) for x, y in zip(p_x, p_y)]
         if len(poly_) < 3:
             print("A polygon must contain more than 2 points. Skipping this polygon...")
@@ -248,7 +268,7 @@ def _get_coco_image_annotations(
             iscrowd=0,
         )
         coco_annotations.append(annotations_coco)
-    return coco_annotations
+    return coco_annotations, annotation_j
 
 
 def _get_coco_categories(cat_kili_id_to_coco_id) -> List[_CocoCategory]:
@@ -285,12 +305,11 @@ class CocoExporter(BaseExporter):
 
     download_media = True
 
-    def _save_assets_export(self, assets: List[Dict], output_filename: str):
+    def _save_assets_export(self, assets: List[Asset], output_filename: str):
         """
         Save the assets to a file and return the link to that file
         """
-        input_type, jobs, title = _get_project(self.kili, self.project_id)
-        _ = input_type, title
+        _, jobs, title = _get_project(self.kili, self.project_id)
 
         for job_name, job in jobs.items():
             convert_kili_semantic_to_coco(
@@ -298,9 +317,10 @@ class CocoExporter(BaseExporter):
                 assets=assets,
                 output_dir=Path(output_filename),
                 job=job,
+                title=title,
             )
 
-    def process_and_save(self, assets: List[Dict], output_filename: str):
+    def process_and_save(self, assets: List[Asset], output_filename: str):
         """
         Extract formatted annotations from labels and save the json in the buckets.
         """
