@@ -79,6 +79,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     """
     fields = get_fields_to_fetch(export_type)
     assets = None
+
     if asset_ids is not None and len(asset_ids) > 0:
         assets = kili.assets(
             asset_id_in=asset_ids,
@@ -86,15 +87,17 @@ def fetch_assets(  # pylint: disable=too-many-arguments
             fields=fields,
             label_type_in=label_type_in,
             disable_tqdm=disable_tqdm,
+            download_media=download_media,
+            local_media_dir=local_media_dir,
         )
     else:
         assets = kili.assets(
             project_id=project_id,
             fields=fields,
             label_type_in=label_type_in,
+            disable_tqdm=disable_tqdm,
             download_media=download_media,
             local_media_dir=local_media_dir,
-            disable_tqdm=disable_tqdm,
         )
     attach_name_to_assets_labels_author(assets, export_type)
     return assets

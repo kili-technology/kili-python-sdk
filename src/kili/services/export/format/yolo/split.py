@@ -3,6 +3,7 @@ Handles the Yolo export with the split layout
 """
 
 import os
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, List
 
@@ -36,7 +37,7 @@ class YoloSplitExporter(YoloExporter):
                 root_folder,
                 images_folder,
             )
-            self.create_readme_kili_file(root_folder)
+            self.create_readme_kili_file(Path(root_folder))
             self.make_archive(root_folder, output_filename)
 
         self.logger.warning(output_filename)

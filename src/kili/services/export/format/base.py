@@ -7,6 +7,8 @@ import os
 import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Dict, List, NamedTuple, Optional, Type
 
 from kili.orm import JobMLTask, JobTool
@@ -29,6 +31,7 @@ class ExportParams(NamedTuple):
     split_option: SplitOption
     single_file: bool
     output_file: str
+    download_media: Optional[bool]
 
 
 class LoggerParams(NamedTuple):
@@ -81,13 +84,13 @@ class BaseExporter(ABC):
     def _check_arguments_compatibility(self):
         if self.single_file and self.label_format != "raw":
             raise NotCompatibleOptions(
-                f"The label format {self.label_format} can not " "be exported in a single file."
+                f"The label format {self.label_format} can not be exported in a single file."
             )
 
     @abstractmethod
     def process_and_save(self, assets: List[Dict], output_filename: str) -> None:
         """
-        Converts the asset and save them into an archive.
+        Converts the asset and save them into an archive file.
         """
 
     def make_archive(self, root_folder: str, output_filename: str) -> str:
@@ -112,15 +115,16 @@ class BaseExporter(ABC):
 
         return json_interface, ml_task, tool
 
-    def create_readme_kili_file(self, root_folder: str) -> None:
+    def create_readme_kili_file(self, root_folder: Path) -> None:
         """
         Create a README.kili.txt file to give information about exported labels
         """
-        readme_file_name = os.path.join(root_folder, self.project_id, "README.kili.txt")
+        readme_file_name = root_folder / self.project_id / "README.kili.txt"
         project_info = self.kili.projects(
             project_id=self.project_id, fields=["title", "id", "description"], disable_tqdm=True
         )[0]
-        with open(readme_file_name, "wb") as fout:
+        readme_file_name.parent.mkdir(parents=True, exist_ok=True)
+        with readme_file_name.open("wb") as fout:
             fout.write("Exported Labels from KILI\n=========================\n\n".encode())
             fout.write(f"- Project name: {project_info['title']}\n".encode())
             fout.write(f"- Project identifier: {self.project_id}\n".encode())
@@ -139,19 +143,21 @@ class BaseExporter(ABC):
         Export a project to a json.
         Return the name of the exported archive file in the bucket.
         """
-        path = "/tmp/kili_export/"
-        shutil.rmtree(path, ignore_errors=True)
-        self._check_arguments_compatibility()
-        assets = fetch_assets(
-            kili,
-            project_id=export_params.project_id,
-            asset_ids=export_params.assets_ids,
-            export_type=export_params.export_type,
-            label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=logger_params.disable_tqdm,
-            download_media=self.download_media,
-        )
-        self.process_and_save(assets, export_params.output_file)
+        # path = "/tmp/kili_export/"
+        # shutil.rmtree(path, ignore_errors=True)
+        with TemporaryDirectory() as dir_tmp:
+            self._check_arguments_compatibility()
+            assets = fetch_assets(
+                kili,
+                project_id=export_params.project_id,
+                asset_ids=export_params.assets_ids,
+                export_type=export_params.export_type,
+                label_type_in=["DEFAULT", "REVIEW"],
+                disable_tqdm=logger_params.disable_tqdm,
+                download_media=export_params.download_media or self.download_media,
+                local_media_dir=dir_tmp,
+            )
+            self.process_and_save(assets, export_params.output_file)
 
 
 class BaseExporterSelector(ABC):

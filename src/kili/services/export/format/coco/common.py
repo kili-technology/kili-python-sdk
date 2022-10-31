@@ -6,6 +6,7 @@ import json
 import os
 import time
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Dict, List, Tuple, cast
 
 import numpy as np
@@ -195,7 +196,6 @@ def _get_coco_images_and_annotations(
     annotation_offset = -1
     for asset_i, asset in tqdm(
         enumerate(assets),
-        total=len(assets),
         desc="Convert to coco format",
     ):
         annotations_ = asset["latestLabel"]["jsonResponse"][job_name]["annotations"]
@@ -216,7 +216,12 @@ def _get_coco_images_and_annotations(
 
         coco_images.append(image_coco)
         coco_img_annotations, annotation_offset = _get_coco_image_annotations(
-            annotations_, cat_kili_id_to_coco_id, annotation_offset, asset_i, width, height
+            annotations_,
+            cat_kili_id_to_coco_id,
+            annotation_offset,
+            asset_i,
+            width,
+            height,
         )
         coco_annotations.extend(coco_img_annotations)
     return coco_images, coco_annotations
@@ -305,7 +310,7 @@ class CocoExporter(BaseExporter):
 
     download_media = True
 
-    def _save_assets_export(self, assets: List[Asset], output_filename: str):
+    def _save_assets_export(self, assets: List[Asset], output_directory: str):
         """
         Save the assets to a file and return the link to that file
         """
@@ -315,17 +320,24 @@ class CocoExporter(BaseExporter):
             convert_kili_semantic_to_coco(
                 job_name=job_name,
                 assets=assets,
-                output_dir=Path(output_filename),
+                output_dir=Path(output_directory) / job_name,
                 job=job,
                 title=title,
             )
 
     def process_and_save(self, assets: List[Asset], output_filename: str):
         """
-        Extract formatted annotations from labels and save the json in the buckets.
+        Extract formatted annotations from labels.
         """
         clean_assets = _process_assets(assets, self.label_format)
-        return self._save_assets_export(
-            clean_assets,
-            output_filename,
-        )
+
+        with TemporaryDirectory() as tmp_dir:
+            self._save_assets_export(
+                clean_assets,
+                tmp_dir,
+            )
+            assert os.path.exists(tmp_dir)
+            self.create_readme_kili_file(Path(tmp_dir))
+            self.make_archive(tmp_dir, output_filename)
+
+        self.logger.warning(output_filename)

@@ -28,6 +28,7 @@ def export_labels(  # pylint: disable=too-many-arguments
     output_file: str,
     disable_tqdm: bool,
     log_level: LogLevel,
+    download_media: Optional[bool],
 ) -> None:
     """
     Export the selected assets into the required format, and save it into a file archive.
@@ -43,6 +44,7 @@ def export_labels(  # pylint: disable=too-many-arguments
         split_option=split_option,
         single_file=single_file,
         output_file=output_file,
+        download_media=download_media,
     )
 
     logger_params = LoggerParams(

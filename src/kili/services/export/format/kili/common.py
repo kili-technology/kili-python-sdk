@@ -4,6 +4,7 @@ Common code for the yolo exporter.
 
 import json
 import os
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, List
 
@@ -98,7 +99,7 @@ class KiliExporter(BaseExporter):
                         os.path.join(labels_folder, f"{external_id}.json"), "wb"
                     ) as output_file:
                         output_file.write(asset_json.encode("utf-8"))
-            self.create_readme_kili_file(root_folder)
+            self.create_readme_kili_file(Path(root_folder))
             self.make_archive(root_folder, output_filename)
 
         self.logger.warning(output_filename)

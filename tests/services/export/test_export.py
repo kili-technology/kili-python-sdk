@@ -18,7 +18,7 @@ from kili.services.export.format.yolo.common import (
 )
 from tests.services.export.fakes.fake_content_repository import FakeContentRepository
 from tests.services.export.fakes.fake_data import (
-    asset_image,
+    asset_image_1,
     asset_video,
     category_ids,
     kili_format_expected_frame_asset_output,
@@ -129,6 +129,23 @@ def get_file_tree(folder: str):
                 },
             },
         ),
+        (
+            "Export to COCO format",
+            {
+                "export_kwargs": {
+                    "project_id": "semantic_segmentation",
+                    "label_format": "coco",
+                },
+                "file_tree_expected": {
+                    "data": {
+                        "car_1.jpg": {},
+                        "car_2.jpg": {},
+                    },
+                    "labels.json": {},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
     ],
 )
 def test_export_service(name, test_case):
@@ -146,6 +163,7 @@ def test_export_service(name, test_case):
                 "output_file": str(path_zipfile),
                 "disable_tqdm": True,
                 "log_level": "INFO",
+                "download_media": None,
             }
 
             default_kwargs.update(test_case["export_kwargs"])
@@ -208,6 +226,7 @@ def test_export_service_errors(name, test_case, error):
             "output_file": str(path_zipfile),
             "disable_tqdm": True,
             "log_level": "INFO",
+            "download_media": None,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
@@ -224,7 +243,11 @@ class YoloTestCase:
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository("https://contentrep", {}, False)
                 asset_remote_content, video_filenames = _process_asset(
-                    asset_image, images_folder, labels_folder, category_ids, fake_content_repository
+                    asset_image_1,
+                    images_folder,
+                    labels_folder,
+                    category_ids,
+                    fake_content_repository,
                 )
 
                 nb_files = len(
@@ -283,7 +306,7 @@ class YoloTestCase:
 
     def test_convert_from_kili_to_yolo_format(self):
         converted_annotations = _convert_from_kili_to_yolo_format(
-            "JOB_0", asset_image["latestLabel"], category_ids
+            "JOB_0", asset_image_1["latestLabel"], category_ids
         )
         expected_annotations = [
             (0, 0.501415026274802, 0.5296278884310182, 0.6727472455849373, 0.5381320101586394)

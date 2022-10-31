@@ -5,7 +5,8 @@ Fake Kili object
 from typing import List, Optional
 
 from kili.orm import Asset
-from tests.services.export.fakes.fake_data import asset_image
+from kili.queries.asset.helpers import get_post_assets_call_process
+from tests.services.export.fakes.fake_data import asset_image_1, asset_image_2
 
 
 class FakeAuth:
@@ -27,17 +28,33 @@ class FakeKili:
         label_type_in: Optional[List[str]] = None,
         asset_id_in: Optional[List[str]] = None,
         disable_tqdm: bool = False,
+        download_media: Optional[bool] = None,
+        local_media_dir: Optional[str] = None,
     ):
         """
         Fake assets
         """
-        _ = fields, label_type_in, asset_id_in, disable_tqdm
-        if project_id == "object_detection":
-            return [Asset(asset_image)]
-        elif project_id == "text_classification":
-            return []
-        else:
-            return []
+
+        _ = fields, label_type_in, asset_id_in, disable_tqdm, local_media_dir
+
+        def _assets():
+            if project_id == "object_detection":
+                return [Asset(asset_image_1)]
+            elif project_id == "text_classification":
+                return []
+            elif project_id == "semantic_segmentation":
+                return [
+                    Asset(asset_image_1),
+                    Asset(asset_image_2),
+                ]
+            else:
+                return []
+
+        post_call_process = get_post_assets_call_process(
+            bool(download_media), local_media_dir, project_id
+        )
+
+        return post_call_process(_assets())
 
     def projects(
         self, project_id: str, fields: Optional[List[str]] = None, disable_tqdm: bool = False
@@ -113,7 +130,49 @@ class FakeKili:
                     "jsonInterface": json_interface,
                 }
             ]
+        elif project_id == "semantic_segmentation":
+            job_payload = {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {
+                            "children": [],
+                            "name": "Object A",
+                            "color": "#733AFB",
+                            "id": "category1",
+                        },
+                        "OBJECT_B": {
+                            "children": [],
+                            "name": "Object B",
+                            "color": "#3CD876",
+                            "id": "category2",
+                        },
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["semantic"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {"interactive-segmentation": {}},
+                "isVisible": True,
+                "required": 1,
+                "isNew": False,
+            }
+            json_interface = {
+                "jobs": {
+                    "JOB_0": job_payload,
+                }
+            }
 
+            return [
+                {
+                    "title": "segmentation",
+                    "id": "semantic_segmentation",
+                    "description": "This is a semantic segmentation test project",
+                    "jsonInterface": json_interface,
+                    "inputType": "IMAGE",
+                }
+            ]
         else:
             return []
 
