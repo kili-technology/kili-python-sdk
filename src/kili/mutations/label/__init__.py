@@ -103,7 +103,12 @@ class MutationsLabel:
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ):
-        """Append a label to an asset.
+        """
+        !!! danger "[DEPRECATED]"
+            append_to_labels is deprecated. Please use append_labels instead. This new function
+            allows to import several labels 10 times faster.
+
+        Append a label to an asset.
 
         Args:
             json_response: Label is given here
@@ -125,7 +130,10 @@ class MutationsLabel:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
 
         """
-
+        warnings.warn(
+            "append_to_labels is deprecated. Please use append_labels instead. This new function"
+            " allows to import several labels much faster."
+        )
         if author_id is None:
             author_id = self.auth.user_id
         label_asset_id = infer_ids_from_external_ids(
