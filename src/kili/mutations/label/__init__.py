@@ -8,13 +8,9 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import (
-    format_result,
-    infer_id_from_external_id,
-    infer_ids_from_external_id,
-)
+from kili.helpers import format_result, infer_ids_from_external_ids
 from kili.mutations.label.queries import (
-    GQL_APPEND_MANY_TO_LABELS,
+    GQL_APPEND_MANY_LABELS,
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
     GQL_CREATE_PREDICTIONS,
@@ -115,7 +111,7 @@ class MutationsLabel:
             label_asset_external_id: External identifier of the asset
             label_asset_id: Identifier of the asset
             project_id: Identifier of the project
-            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`
+            label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
             seconds_to_label: Time to create the label
 
         !!! warning
@@ -132,9 +128,12 @@ class MutationsLabel:
 
         if author_id is None:
             author_id = self.auth.user_id
-        label_asset_id = infer_id_from_external_id(
-            self, label_asset_id, label_asset_external_id, project_id
-        )
+        label_asset_id = infer_ids_from_external_ids(
+            self,
+            [label_asset_id] if label_asset_id is not None else None,
+            [label_asset_external_id] if label_asset_external_id is not None else None,
+            project_id,
+        )[0]
         variables = {
             "data": {
                 "authorID": author_id,
@@ -148,26 +147,27 @@ class MutationsLabel:
         return format_result("data", result, Label)
 
     @typechecked
-    def append_many_to_labels(
+    def append_labels(
         self,
         json_response_array: List[dict],
         author_id_array: Optional[List[str]] = None,
         label_asset_external_id_array: Optional[List[str]] = None,
         label_asset_id_array: Optional[List[str]] = None,
+        seconds_to_label_array: Optional[List[int]] = None,
         label_type: str = "DEFAULT",
         project_id: Optional[str] = None,
-        seconds_to_label_array: Optional[List[int]] = None,
     ):
         """Append a label to an asset.
 
         Args:
-            json_response: Label is given here
-            author_id: ID of the author of the label
-            label_asset_external_id: External identifier of the asset
-            label_asset_id: Identifier of the asset
+            json_response_array: Labels to upload
+            author_id_array: IDs of the author of the labels
+            label_asset_external_id_array: External identifier of the assets
+                on which to add the labels
+            label_asset_id_array: Identifier of the assets on which to add the labels
+            seconds_to_label_array: Time to create the labels
             project_id: Identifier of the project
-            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`
-            seconds_to_label: Time to create the label
+            label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
 
         !!! warning
             Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
@@ -177,14 +177,20 @@ class MutationsLabel:
                 or an error message.
 
         Examples:
-            >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
+            >>> kili.append_to_labels(
+                label_asset_id_array=[asset_id1, asset_id2],
+                json_response=[{...}, {...}]
+                )
 
         """
 
         if author_id_array is None:
             author_id_array = [self.auth.user_id] * len(json_response_array)
-        label_asset_id_array = infer_ids_from_external_id(
-            self, label_asset_id_array, label_asset_external_id_array, project_id
+        label_asset_id_array = infer_ids_from_external_ids(
+            self,
+            label_asset_id_array,
+            label_asset_external_id_array,
+            project_id,
         )
         variables = {
             "data": {
@@ -196,9 +202,8 @@ class MutationsLabel:
             },
             "where": {"idIn": label_asset_id_array},
         }
-        result = self.auth.client.execute(GQL_APPEND_MANY_TO_LABELS, variables)
-        return result
-        # return format_result("data", result[0], Label)
+        result = self.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
+        return format_result("data", result, Label)
 
     @typechecked
     def update_properties_in_label(
@@ -261,7 +266,12 @@ class MutationsLabel:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        asset_id = infer_id_from_external_id(self, asset_id, asset_external_id, project_id)
+        asset_id = infer_ids_from_external_ids(
+            self,
+            [asset_id] if asset_id is not None else None,
+            [asset_external_id] if asset_external_id is not None else None,
+            project_id,
+        )[0]
 
         variables = {
             "data": {"jsonResponse": dumps(json_response)},
