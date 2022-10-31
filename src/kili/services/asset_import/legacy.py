@@ -5,6 +5,7 @@ import csv
 import mimetypes
 import os
 from json import dumps
+from pathlib import Path
 from typing import Any, List, Optional, Tuple, Union
 from uuid import uuid4
 
@@ -116,7 +117,7 @@ def process_frame_json_content(json_content):
 
 def get_file_mimetype(
     content_array: Union[List[str], None], json_content_array: Union[List[str], None]
-) -> Union[str, None]:
+) -> Optional[str]:
     """
     Returns the mimetype of the first file of the content array
     """
@@ -202,9 +203,9 @@ def process_and_store_content(
     has_local_files = any(not is_url(content) for content in content_array)
     url_content_array = []
     if has_local_files:
-        project_bucket_path = f"projects/{legacy_data_importer.project_id}/assets"
+        project_bucket_path = Path("projects") / legacy_data_importer.project_id / "assets"
         asset_content_paths = [
-            os.path.join(project_bucket_path, asset_id, "content") for asset_id in asset_ids
+            Path(project_bucket_path) / asset_id / "content" for asset_id in asset_ids
         ]
         signed_urls = bucket.request_signed_urls(legacy_data_importer.auth, asset_content_paths)
     for i, content in enumerate(content_array):
@@ -305,7 +306,7 @@ def get_request_to_execute(
     input_type: str,
     json_metadata_array: Union[List[dict], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
-    mime_type: Union[str, None],
+    mime_type: Optional[str],
 ) -> Tuple[str, Optional[str]]:
     """
     Selects the right query to run versus the data given

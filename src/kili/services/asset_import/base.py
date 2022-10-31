@@ -5,7 +5,8 @@ import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
-from typing import Callable, List, NamedTuple, Tuple, Union
+from pathlib import Path
+from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.mutations import (
@@ -191,20 +192,20 @@ class ContentBatchImporter(BaseBatchImporter):
         return super().import_batch(assets)
 
     def get_content_type_and_data_from_content(
-        self, content: Union[str, None]
-    ) -> Tuple[bytes, Union[str, None]]:
+        self, content: Optional[str]
+    ) -> Tuple[bytes, Optional[str]]:
         """
         Returns the data of the content (path) and its content type
         """
         assert content
-        with open(content, "rb") as file:
+        with Path(content).open("rb") as file:
             data = file.read()
             content_type, _ = mimetypes.guess_type(content)
             return data, content_type
 
     def get_type_and_data_from_content_array(
-        self, content_array: List[Union[str, None]]
-    ) -> List[Tuple[Union[bytes, str], Union[str, None]]]:
+        self, content_array: List[Optional[str]]
+    ) -> List[Tuple[Union[bytes, str], Optional[str]]]:
         """
         Returns the data of the content (path) and its content type for each element in the array
         """
@@ -217,7 +218,7 @@ class ContentBatchImporter(BaseBatchImporter):
         asset_ids = self.generate_unique_ids(len(assets))
         project_bucket_path = self.generate_project_bucket_path()
         asset_content_paths = [
-            os.path.join(project_bucket_path, asset_id, "content") for asset_id in asset_ids
+            Path(project_bucket_path) / asset_id / "content" for asset_id in asset_ids
         ]
         signed_urls = bucket.request_signed_urls(self.auth, asset_content_paths)
         data_and_content_type_array = self.get_type_and_data_from_content_array(
@@ -256,7 +257,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
         asset_ids = self.generate_unique_ids(len(assets))
         project_bucket_path = self.generate_project_bucket_path()
         asset_json_content_paths = [
-            os.path.join(project_bucket_path, asset_id, "jsonContent") for asset_id in asset_ids
+            Path(project_bucket_path) / asset_id / "jsonContent" for asset_id in asset_ids
         ]
         signed_urls = bucket.request_signed_urls(self.auth, asset_json_content_paths)
         json_content_array = [asset.get("json_content") for asset in assets]

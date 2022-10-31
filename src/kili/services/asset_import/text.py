@@ -3,7 +3,7 @@ Functions to import assets into a TEXT project
 """
 import os
 from enum import Enum
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple
 
 from kili.helpers import is_url
 
@@ -33,7 +33,7 @@ class RawTextBatchImporter(ContentBatchImporter):
     class for importing a batch of raw text assets into a TEXT project
     """
 
-    def get_content_type_and_data_from_content(self, content: Union[str, None]) -> Tuple[str, str]:
+    def get_content_type_and_data_from_content(self, content: Optional[str]) -> Tuple[str, str]:
         """
         Returns the data of the content (path) and its content type
         """

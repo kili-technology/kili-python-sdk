@@ -1,7 +1,8 @@
 """Module for managing bucket's signed urls"""
 
 
-import functools
+import itertools
+from pathlib import Path
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
@@ -28,12 +29,13 @@ def generate_unique_id():
     return cuid.cuid()
 
 
-def request_signed_urls(auth: KiliAuth, file_paths: List[str]):
+def request_signed_urls(auth: KiliAuth, file_paths: List[Path]):
     """
     Get upload signed URLs
     Args:
         auth: Kili Auth
-        size: the amount of upload signed URL to query
+        file_paths: the paths in Kili bucket of the data you upload. It must respect
+            the convention projects/:projectId/assets/xxx.
     """
     size = len(file_paths)
     file_batches = [
@@ -41,14 +43,14 @@ def request_signed_urls(auth: KiliAuth, file_paths: List[str]):
         for i in range(0, size, MAX_NUMBER_SIGNED_URLS_TO_FETCH)
     ]
 
-    def get_file_batch_urls(file_paths: List[str]) -> List[str]:
+    def get_file_batch_urls(file_paths: List[Path]) -> List[str]:
         payload = {
             "filePaths": file_paths,
         }
         urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
         return urls_response["data"]["urls"]
 
-    return functools.reduce(lambda acc, value: acc + value, map(get_file_batch_urls, file_batches))
+    return [*itertools.chain(*map(get_file_batch_urls, file_batches))]
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2))
