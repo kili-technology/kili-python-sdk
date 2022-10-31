@@ -26,7 +26,7 @@ def get_post_assets_call_process(
         local_dir_path = (
             Path(local_media_dir)
             if local_media_dir is not None
-            else Path(f".cache/kili/projects/{project_id}/assets")
+            else Path.home() / ".cache" / "kili" / "projects" / project_id / "assets"
         )
         return lambda assets: download_asset_content(assets, local_dir_path)
 
