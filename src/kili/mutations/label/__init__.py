@@ -8,7 +8,8 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import format_result, infer_ids_from_external_ids
+from kili.enums import LabelType
+from kili.helpers import deprecate, format_result, infer_ids_from_external_ids
 from kili.mutations.label.queries import (
     GQL_APPEND_MANY_LABELS,
     GQL_APPEND_TO_LABELS,
@@ -16,6 +17,7 @@ from kili.mutations.label.queries import (
     GQL_CREATE_PREDICTIONS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
+from kili.mutations.label.types import LabelData
 from kili.orm import Label
 from kili.utils.pagination import _mutate_from_paginated_call
 
@@ -92,6 +94,12 @@ class MutationsLabel:
         )
         return format_result("data", results[0], Label)
 
+    @deprecate(
+        msg=(
+            "append_to_labels is deprecated. Please use append_labels instead. This new function"
+            " allows to import several labels 10 times faster."
+        )
+    )
     @typechecked
     def append_to_labels(
         self,
@@ -130,10 +138,6 @@ class MutationsLabel:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
 
         """
-        warnings.warn(
-            "append_to_labels is deprecated. Please use append_labels instead. This new function"
-            " allows to import several labels much faster."
-        )
         if author_id is None:
             author_id = self.auth.user_id
         label_asset_id = infer_ids_from_external_ids(
@@ -154,31 +158,22 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result("data", result, Label)
 
-    @typechecked
-    def append_labels(
-        self,
-        json_response_array: List[dict],
-        author_id_array: Optional[List[str]] = None,
-        label_asset_external_id_array: Optional[List[str]] = None,
-        label_asset_id_array: Optional[List[str]] = None,
-        seconds_to_label_array: Optional[List[int]] = None,
-        label_type: str = "DEFAULT",
-        project_id: Optional[str] = None,
-    ):
-        """Append a label to an asset.
+    def append_labels(self, labels: List[LabelData], label_type: LabelType = "DEFAULT"):
+        """Append labels to assets.
+
+        !!! info "fields of labelData"
+            ```
+            class LabelData(TypedDict, total=False):
+                asset_id: Required[str]
+                json_response: Required[Dict]
+                author_id: str
+                seconds_to_label: int
+                modelName: str
+            ```
 
         Args:
-            json_response_array: Labels to upload
-            author_id_array: IDs of the author of the labels
-            label_asset_external_id_array: External identifier of the assets
-                on which to add the labels
-            label_asset_id_array: Identifier of the assets on which to add the labels
-            seconds_to_label_array: Time to create the labels
-            project_id: Identifier of the project
-            label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
-
-        !!! warning
-            Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
+            labels: list of dictionnaries with informations about the labels to create.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -186,29 +181,26 @@ class MutationsLabel:
 
         Examples:
             >>> kili.append_to_labels(
-                label_asset_id_array=[asset_id1, asset_id2],
-                json_response=[{...}, {...}]
+                    [
+                        {'json_response': {...}, asset_id: 'cl9wmlkuc00050qsz6ut39g8h'},
+                        {'json_response': {...}, asset_id: 'cl9wmlkuw00080qsz2kqh8aiy'}
+                    ]
                 )
 
         """
-
-        if author_id_array is None:
-            author_id_array = [self.auth.user_id] * len(json_response_array)
-        label_asset_id_array = infer_ids_from_external_ids(
-            self,
-            label_asset_id_array,
-            label_asset_external_id_array,
-            project_id,
-        )
+        labels_data = [
+            {
+                "jsonResponse": dumps(label.get("json_response")),
+                "assetID": label.get("asset_id"),
+                "secondsToLabel": label.get("seconds_to_label"),
+                "modelName": label.get("modelName"),
+                "authorID": label.get("author_id"),
+            }
+            for label in labels
+        ]
         variables = {
-            "data": {
-                "authorIDArray": author_id_array,
-                "jsonResponseArray": list(map(dumps, json_response_array)),
-                "labelType": label_type,
-                "secondsToLabelArray": seconds_to_label_array,
-                "assetIDArray": label_asset_id_array,
-            },
-            "where": {"idIn": label_asset_id_array},
+            "data": {"labelType": label_type, "labelsData": labels_data},
+            "where": {"idIn": [label["asset_id"] for label in labels]},
         }
         result = self.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
         return format_result("data", result, Label)
