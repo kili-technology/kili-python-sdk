@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Type
 
-from kili.orm import JobMLTask, JobTool
+from kili.orm import AnnotationFormat, Asset, JobMLTask, JobTool
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.repository import SDKContentRepository
 from kili.services.export.tools import fetch_assets
@@ -51,14 +51,13 @@ class ContentRepositoryParams(NamedTuple):
     router_headers: Dict[str, str]
 
 
-class BaseExporter(ABC):
+class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
+
     """
     Abstract class defining the interface for all exporters.
     """
 
     download_media = False  # Whether or not we need to download the images
-
-    # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
@@ -142,8 +141,6 @@ class BaseExporter(ABC):
         Export a project to a json.
         Return the name of the exported archive file in the bucket.
         """
-        # path = "/tmp/kili_export/"
-        # shutil.rmtree(path, ignore_errors=True)
         self._check_arguments_compatibility()
         assets = fetch_assets(
             kili,
@@ -153,9 +150,67 @@ class BaseExporter(ABC):
             label_type_in=["DEFAULT", "REVIEW"],
             disable_tqdm=logger_params.disable_tqdm,
             download_media=export_params.download_media or self.download_media,
-            # local_media_dir=dir_tmp,
         )
         self.process_and_save(assets, export_params.output_file)
+
+    @staticmethod
+    def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:
+        """
+        Removes AUTOSAVE labels from exports
+
+        Parameters
+        ----------
+        - assets: list of assets
+        """
+        clean_assets = []
+        for asset in assets:
+            labels = asset.get("labels", [])
+            clean_labels = list(filter(lambda label: label["labelType"] != "AUTOSAVE", labels))
+            if clean_labels:
+                asset["labels"] = clean_labels
+            clean_assets.append(asset)
+        return clean_assets
+
+    @staticmethod
+    def _format_json_response(label, label_format):
+        """
+        Format the label JSON response in the requested format
+        """
+        formatted_json_response = label.json_response(_format=label_format.lower())
+        if label_format.lower() == AnnotationFormat.Simple:
+            label["jsonResponse"] = formatted_json_response
+        else:
+            json_response = {}
+            for key, value in formatted_json_response.items():
+                if key.isdigit():
+                    json_response[int(key)] = value
+                    continue
+                json_response[key] = value
+            label["jsonResponse"] = json_response
+        return label
+
+    @staticmethod
+    def _process_assets(assets: List[Asset], label_format: AnnotationFormat) -> List[Asset]:
+        """
+        Format labels in the requested format, and filter out autosave labels
+        """
+        assets_in_format = []
+        for asset in assets:
+            if "labels" in asset:
+                labels_of_asset = []
+                for label in asset["labels"]:
+                    clean_label = BaseExporter._format_json_response(label, label_format)
+                    labels_of_asset.append(clean_label)
+                asset["labels"] = labels_of_asset
+            if "latestLabel" in asset:
+                label = asset["latestLabel"]
+                if label is not None:
+                    clean_label = BaseExporter._format_json_response(label, label_format)
+                    asset["latestLabel"] = clean_label
+            assets_in_format.append(asset)
+
+        clean_assets = BaseExporter._filter_out_autosave_labels(assets_in_format)
+        return clean_assets
 
 
 class BaseExporterSelector(ABC):
@@ -202,8 +257,9 @@ class BaseExporterSelector(ABC):
         Return the right exporter class.
         """
 
-    def select_exporter(
-        self,
+    @classmethod
+    def init_exporter(
+        cls,
         kili,
         logger_params,
         export_params: ExportParams,
@@ -220,7 +276,7 @@ class BaseExporterSelector(ABC):
             content_repository_params.router_headers,
             verify_ssl=True,
         )
-        exporter_class = self.select_exporter_class(export_params.split_option)
+        exporter_class = cls.select_exporter_class(export_params.split_option)
         return exporter_class(
             export_params.project_id,
             export_params.export_type,

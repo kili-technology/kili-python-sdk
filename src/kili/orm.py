@@ -27,7 +27,7 @@ class AnnotationFormat:
     Simple = "simple"
     YoloV4 = "yolo_v4"
     YoloV5 = "yolo_v5"
-    coco = "coco"
+    Coco = "coco"
 
 
 @dataclass
@@ -160,9 +160,7 @@ class Label(DictClass):
             raise Exception(
                 f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"'
             )
-        if _format in AnnotationFormat.Raw:
-            return self.jsonResponse
-        elif _format in AnnotationFormat.coco:
+        if _format in [AnnotationFormat.Raw, AnnotationFormat.Coco]:
             return self.jsonResponse
         if _format == AnnotationFormat.Simple:
             job_names = self.jsonResponse.keys()

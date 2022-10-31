@@ -10,7 +10,7 @@ import pytest
 from kili.orm import AnnotationFormat
 from kili.services import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
-from kili.services.export.format.kili.common import _process_assets
+from kili.services.export.format.base import BaseExporter
 from kili.services.export.format.yolo.common import (
     _convert_from_kili_to_yolo_format,
     _process_asset,
@@ -244,7 +244,7 @@ class YoloTestCase:
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository("https://contentrep", {}, False)
-                asset_remote_content, video_filenames = _process_asset(
+                asset_remote_content, video_filenames = BaseExporter._process_assets(
                     asset_image_1,
                     images_folder,
                     labels_folder,
@@ -343,6 +343,6 @@ class YoloTestCase:
 
 class KiliTestCase:
     def test_process_assets(self):
-        clean_assets = _process_assets([kili_format_frame_asset], AnnotationFormat.Raw)
+        clean_assets = BaseExporter._process_assets([kili_format_frame_asset], AnnotationFormat.Raw)
         assert len(clean_assets) == 1
         assert clean_assets[0] == kili_format_expected_frame_asset_output
