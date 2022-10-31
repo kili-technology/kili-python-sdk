@@ -40,7 +40,8 @@ from kili.services.types import ProjectId
     "--include-media",
     type=bool,
     is_flag=True,
-    help="Tell if the media should be included (default: depends on the format, Raw and YOLO: false, COCO: true)",
+    help="Tell if the media should be included (default: "
+    "depends on the format, Raw and YOLO: false, COCO: true)",
 )
 @Options.api_key
 @Options.endpoint

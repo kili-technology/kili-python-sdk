@@ -8,7 +8,6 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Dict, List, NamedTuple, Optional, Type
 
 from kili.orm import JobMLTask, JobTool

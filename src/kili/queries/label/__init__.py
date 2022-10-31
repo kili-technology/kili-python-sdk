@@ -319,6 +319,7 @@ class QueriesLabel:
         layout: SplitOption = "split",
         single_file: bool = False,
         disable_tqdm: bool = False,
+        download_media: bool = False,
     ):
         """
         Export the project labels with the requested format into the requested output path.
@@ -331,6 +332,7 @@ class QueriesLabel:
             layout: Layout of the exported files: "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
             disable_tqdm: Disable the progress bar if True.
+            download_media: Tell to download media if True.
 
         !!! Info
             The supported formats are:
@@ -363,6 +365,7 @@ class QueriesLabel:
                 output_file=filename,
                 disable_tqdm=disable_tqdm,
                 log_level="WARNING",
+                download_media=download_media,
             )
         except NoCompatibleJobError as excp:
             print(str(excp))
