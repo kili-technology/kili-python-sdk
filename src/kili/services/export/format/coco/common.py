@@ -233,7 +233,7 @@ class CocoExporter(BaseExporter):
         """
         Extract formatted annotations from labels.
         """
-        clean_assets = self._process_assets(assets, self.label_format)
+        clean_assets = self.process_assets(assets, self.label_format)
 
         with TemporaryDirectory() as tmp_dir:
             self._save_assets_export(

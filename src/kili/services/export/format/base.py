@@ -190,7 +190,7 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return label
 
     @staticmethod
-    def _process_assets(assets: List[Asset], label_format: AnnotationFormat) -> List[Asset]:
+    def process_assets(assets: List[Asset], label_format: AnnotationFormat) -> List[Asset]:
         """
         Format labels in the requested format, and filter out autosave labels
         """

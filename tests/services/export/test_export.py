@@ -3,6 +3,7 @@ import glob
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest import TestCase
 from zipfile import ZipFile
 
 import pytest
@@ -239,12 +240,12 @@ def test_export_service_errors(name, test_case, error):
             )
 
 
-class YoloTestCase:
+class YoloTestCase(TestCase):
     def test_process_asset_for_job_image_not_served_by_kili(self):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository("https://contentrep", {}, False)
-                asset_remote_content, video_filenames = BaseExporter._process_assets(
+                asset_remote_content, video_filenames = _process_asset(
                     asset_image_1,
                     images_folder,
                     labels_folder,
@@ -341,8 +342,8 @@ class YoloTestCase:
                     assert expected_file.read() == created_file.read()
 
 
-class KiliTestCase:
+class KiliTestCase(TestCase):
     def test_process_assets(self):
-        clean_assets = BaseExporter._process_assets([kili_format_frame_asset], AnnotationFormat.Raw)
+        clean_assets = BaseExporter.process_assets([kili_format_frame_asset], AnnotationFormat.Raw)
         assert len(clean_assets) == 1
         assert clean_assets[0] == kili_format_expected_frame_asset_output

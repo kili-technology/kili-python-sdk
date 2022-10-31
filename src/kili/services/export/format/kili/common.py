@@ -49,7 +49,7 @@ class KiliExporter(BaseExporter):
         """
         Extract formatted annotations from labels and save the json in the buckets.
         """
-        clean_assets = self._process_assets(assets, self.label_format)
+        clean_assets = self.process_assets(assets, self.label_format)
         return self._save_assets_export(
             clean_assets,
             output_filename,
