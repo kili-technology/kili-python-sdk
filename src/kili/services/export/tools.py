@@ -64,7 +64,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     label_type_in=None,
     disable_tqdm: bool = False,
     download_media: bool = False,
-    local_media_dir: Optional[str] = None,
+    # local_media_dir: Optional[str] = None,
 ):
     """
     Fetches assets where ID are in asset_ids if the list has more than one element,
@@ -88,7 +88,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
             label_type_in=label_type_in,
             disable_tqdm=disable_tqdm,
             download_media=download_media,
-            local_media_dir=local_media_dir,
+            # local_media_dir=local_media_dir,
         )
     else:
         assets = kili.assets(
@@ -97,7 +97,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
             label_type_in=label_type_in,
             disable_tqdm=disable_tqdm,
             download_media=download_media,
-            local_media_dir=local_media_dir,
+            # local_media_dir=local_media_dir,
         )
     attach_name_to_assets_labels_author(assets, export_type)
     return assets

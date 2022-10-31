@@ -145,19 +145,18 @@ class BaseExporter(ABC):
         """
         # path = "/tmp/kili_export/"
         # shutil.rmtree(path, ignore_errors=True)
-        with TemporaryDirectory() as dir_tmp:
-            self._check_arguments_compatibility()
-            assets = fetch_assets(
-                kili,
-                project_id=export_params.project_id,
-                asset_ids=export_params.assets_ids,
-                export_type=export_params.export_type,
-                label_type_in=["DEFAULT", "REVIEW"],
-                disable_tqdm=logger_params.disable_tqdm,
-                download_media=export_params.download_media or self.download_media,
-                local_media_dir=dir_tmp,
-            )
-            self.process_and_save(assets, export_params.output_file)
+        self._check_arguments_compatibility()
+        assets = fetch_assets(
+            kili,
+            project_id=export_params.project_id,
+            asset_ids=export_params.assets_ids,
+            export_type=export_params.export_type,
+            label_type_in=["DEFAULT", "REVIEW"],
+            disable_tqdm=logger_params.disable_tqdm,
+            download_media=export_params.download_media or self.download_media,
+            # local_media_dir=dir_tmp,
+        )
+        self.process_and_save(assets, export_params.output_file)
 
 
 class BaseExporterSelector(ABC):
