@@ -1,7 +1,7 @@
 """
 Types used by the conversion service
 """
-from typing import Any, Dict, List, NamedTuple, Tuple, NewType
+from typing import Any, Dict, List, NamedTuple, NewType, Tuple
 
 from typing_extensions import Literal, TypedDict
 
@@ -34,6 +34,7 @@ class Job(TypedDict):
     """
     Contains job settings
     """
+
     content: Any
     instruction: str
     isChild: bool
