@@ -7,12 +7,14 @@ from kili.services.asset_import import import_assets
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
     mocked_request_signed_urls,
+    mocked_unique_id,
     mocked_upload_data_via_rest,
 )
 
 
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
+@patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch.object(
     QueriesProject,
     "projects",
@@ -41,6 +43,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local video file to native"],
+            ["unique_id"],
             [False],
             [""],
             [expected_json_metadata],
@@ -51,7 +54,9 @@ class VideoTestCase(ImportTestCase):
     def test_upload_from_one_hosted_video_file_to_native(
         self,
     ):
-        assets = [{"content": "https://hosted-data", "external_id": "hosted file"}]
+        assets = [
+            {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
+        ]
         import_assets(self.auth, self.project_id, assets)
         expected_json_metadata = json.dumps(
             {
@@ -65,6 +70,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"],
             ["hosted file"],
+            ["unique_id"],
             [False],
             [""],
             [expected_json_metadata],
@@ -79,6 +85,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "content": path,
                 "external_id": "local video to frames",
+                "id": "unique_id",
                 "json_metadata": {
                     "processingParameters": {
                         "shouldUseNativeVideo": False,
@@ -99,6 +106,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_async_call(
             ["https://signed_url?id=id"],
             ["local video to frames"],
+            ["unique_id"],
             [expected_json_metadata],
             "VIDEO",
         )
@@ -109,6 +117,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "content": "https://hosted-data",
                 "external_id": "changing fps",
+                "id": "unique_id",
                 "json_metadata": {
                     "processingParameters": {
                         "shouldUseNativeVideo": False,
@@ -128,7 +137,11 @@ class VideoTestCase(ImportTestCase):
             }
         )
         expected_parameters = self.get_expected_async_call(
-            ["https://hosted-data"], ["changing fps"], [expected_json_metadata], "VIDEO"
+            ["https://hosted-data"],
+            ["changing fps"],
+            ["unique_id"],
+            [expected_json_metadata],
+            "VIDEO",
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -143,6 +156,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "external_id": "from local frames",
                 "json_content": [path_frame1, path_frame2, path_frame3],
+                "id": "unique_id",
             }
         ]
         import_assets(self.auth, self.project_id, assets)
@@ -158,6 +172,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             [""],
             ["from local frames"],
+            ["unique_id"],
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
@@ -173,6 +188,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "external_id": "from hosted frames",
                 "json_content": [url_frame1, url_frame2, url_frame3],
+                "id": "unique_id",
             }
         ]
         import_assets(self.auth, self.project_id, assets)
@@ -188,6 +204,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             [""],
             ["from hosted frames"],
+            ["unique_id"],
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
@@ -203,6 +220,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "content": "https://reading_signed_url_content",
                 "external_id": "from label-import",
+                "id": "unique_id",
                 "json_content": [url_frame1, url_frame2, url_frame3],
             }
         ]
@@ -219,6 +237,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://reading_signed_url_content"],
             ["from label-import"],
+            ["unique_id"],
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
@@ -231,6 +250,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "content": "https://hosted-data",
                 "external_id": "with metadata",
+                "id": "unique_id",
                 "json_metadata": {"fromBucket": True, "score": 10},
             }
         ]
@@ -249,6 +269,7 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"],
             ["with metadata"],
+            ["unique_id"],
             [False],
             [""],
             [expected_json_metadata],

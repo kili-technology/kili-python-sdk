@@ -5,6 +5,7 @@ import csv
 import mimetypes
 import os
 from json import dumps
+from pathlib import Path
 from typing import Any, List, Optional, Tuple, Union
 from uuid import uuid4
 
@@ -57,8 +58,7 @@ class LegacyDataImporter:
         json_metadata_array = ternary("json_metadata", {})
 
         (properties_to_batch, upload_type, request,) = process_append_many_to_dataset_parameters(
-            self.auth,
-            self.input_type,
+            self,
             content_array,
             external_id_array,
             is_honeypot_array,
@@ -117,7 +117,7 @@ def process_frame_json_content(json_content):
 
 def get_file_mimetype(
     content_array: Union[List[str], None], json_content_array: Union[List[str], None]
-) -> Union[str, None]:
+) -> Optional[str]:
     """
     Returns the mimetype of the first file of the content array
     """
@@ -179,33 +179,44 @@ def upload_content(signed_url: str, content: str, input_type: str):
         raise ValueError(f"File: {content} not found")
 
 
+def generate_unique_ids(size: int) -> List[str]:
+    """
+    Returns ids
+    """
+    return [bucket.generate_unique_id() for _ in range(size)]
+
+
 # pylint: disable=too-many-arguments
 def process_and_store_content(
-    input_type: str,
+    legacy_data_importer: LegacyDataImporter,
     content_array: List[str],
     json_content_array: Union[List[List[Union[dict, str]]], None],
-    auth: KiliAuth,
-):
+) -> Tuple[List[str], List[str]]:
     """
     Process the array of contents and upload content if not already hosted
     """
-    if input_type == "TIME_SERIES":
-        return list(map(process_time_series, content_array))
+    asset_ids = generate_unique_ids(len(content_array))
+    if legacy_data_importer.input_type == "TIME_SERIES":
+        return list(map(process_time_series, content_array)), asset_ids
     if json_content_array is not None:
-        return content_array
+        return content_array, asset_ids
     has_local_files = any(not is_url(content) for content in content_array)
     url_content_array = []
     if has_local_files:
-        signed_urls = bucket.request_signed_urls(auth, len(content_array))
+        project_bucket_path = Path("projects") / legacy_data_importer.project_id / "assets"
+        asset_content_paths = [
+            Path(project_bucket_path) / asset_id / "content" for asset_id in asset_ids
+        ]
+        signed_urls = bucket.request_signed_urls(legacy_data_importer.auth, asset_content_paths)
     for i, content in enumerate(content_array):
         url_content = (is_url(content) and content) or upload_content(
-            signed_urls[i], content, input_type  # type:ignore X
+            signed_urls[i], content, legacy_data_importer.input_type  # type:ignore X
         )
         url_content_array.append(url_content)
-    return url_content_array
+    return url_content_array, asset_ids
 
 
-def process_time_series(content: str) -> Union[str, None]:
+def process_time_series(content: str) -> str:
     """
     Process the content for TIME_SERIES projects: if it is a file, read the content
     and also check if the content corresponds to the expected format, else return None
@@ -216,7 +227,7 @@ def process_time_series(content: str) -> Union[str, None]:
             with open(content, "r", encoding="utf8") as csvfile:
                 reader = csv.reader(csvfile, delimiter=delimiter)
                 return process_csv_content(reader, file_name=content, delimiter=delimiter)
-        return None
+        return ""
 
     reader = csv.reader(content.split("\n"), delimiter=",")
     return process_csv_content(reader, delimiter=delimiter)
@@ -233,7 +244,7 @@ def is_float(number: str) -> bool:
         return False
 
 
-def process_csv_content(reader, file_name=None, delimiter=",") -> Optional[str]:
+def process_csv_content(reader, file_name=None, delimiter=",") -> str:
     """
     Process the content of csv for time_series and check if it corresponds to the expected format
     """
@@ -248,7 +259,7 @@ correct format: it should have only 2 columns, the first one being the timestamp
 otherwise it will be considered as missing value). The first row should have the names \
 of the 2 columns. The delimiter used should be ','."""
             )
-            return None
+            return ""
         value = row[1] if (is_float(row[1]) or first_row) else ""
         processed_lines.append(delimiter.join([row[0], value]))
         first_row = False
@@ -295,7 +306,7 @@ def get_request_to_execute(
     input_type: str,
     json_metadata_array: Union[List[dict], None],
     json_content_array: Union[List[List[Union[dict, str]]], None],
-    mime_type: Union[str, None],
+    mime_type: Optional[str],
 ) -> Tuple[str, Optional[str]]:
     """
     Selects the right query to run versus the data given
@@ -321,8 +332,7 @@ def get_request_to_execute(
 
 # pylint: disable=too-many-arguments, too-many-locals
 def process_append_many_to_dataset_parameters(
-    auth: KiliAuth,
-    input_type: str,
+    legacy_data_importer: LegacyDataImporter,
     content_array: Union[List[str], None],
     external_id_array: Union[List[str], None],
     is_honeypot_array: Union[List[str], None],
@@ -345,26 +355,27 @@ def process_append_many_to_dataset_parameters(
     )
     status_array = ["TODO"] * len(content_array) if not status_array else status_array
     formatted_json_metadata_array = process_metadata(
-        input_type, content_array, json_content_array, json_metadata_array
+        legacy_data_importer.input_type, content_array, json_content_array, json_metadata_array
     )
 
     mime_type = get_file_mimetype(content_array, json_content_array)  # type:ignore
-    content_array = process_and_store_content(
-        input_type, content_array, json_content_array, auth  # type:ignore X
+    content_array, id_array = process_and_store_content(
+        legacy_data_importer, content_array, json_content_array  # type:ignore X
     )
     formatted_json_content_array = process_json_content(
-        input_type,
+        legacy_data_importer.input_type,
         content_array,  # type:ignore X
         json_content_array,  # type:ignore X
     )
 
     request, upload_type = get_request_to_execute(
-        input_type, json_metadata_array, json_content_array, mime_type
+        legacy_data_importer.input_type, json_metadata_array, json_content_array, mime_type
     )
     properties = {
         "content_array": content_array,
         "external_id_array": external_id_array,
         "is_honeypot_array": is_honeypot_array_,
+        "id_array": id_array,
         "status_array": status_array,
         "json_content_array": formatted_json_content_array,
         "json_metadata_array": formatted_json_metadata_array,

@@ -61,14 +61,13 @@ function create_draft_release {
         fi
     fi
 
-    git pull origin master -q
     latest_release=get_latest_release
     if [ $(version_to_int $latest_release) -ge $(version_to_int $release) ]; then
         echo "The release that you are trying to push is older than the latest release ($latest_release)"
         exit 1
     fi
     git tag -f -a $release -m "Release $release"
-    git push -f origin $release
+    git push origin $release
 
     gh release create $release \
         --draft \
