@@ -36,13 +36,6 @@ from kili.services.types import ProjectId
     is_flag=True,
     help="Layout of the label files",
 )
-@click.option(
-    "--include-media",
-    type=bool,
-    is_flag=True,
-    help="Tell if the media should be included (default: "
-    "depends on the format, Raw and YOLO: false, COCO: true)",
-)
 @Options.api_key
 @Options.endpoint
 @Options.project_id
@@ -54,7 +47,6 @@ def export_labels(
     output_file: str,
     layout: SplitOption,
     single_file: bool,
-    include_media: bool,
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
@@ -65,9 +57,9 @@ def export_labels(
 
     \b
     The supported formats are:
-    - Yolo V4, V5, V7 for object detection (bounding box) tasks.
+    - YOLO V4, V5, V7 for object detection (bounding box) tasks.
     - Kili for all tasks.
-    - coco for object detection tasks.
+    - COCO for object detection tasks.
     - Pascal VOC (coming soon) for object detection tasks.
     \b
     \b
@@ -81,7 +73,7 @@ def export_labels(
         ```
         kili project export \\
             --project-id <project_id> \\
-            --output-format yolo_v4 \\
+            --output-format yolo_v5 \\
             --output-file /tmp/export_split.zip \\
             --layout split
         ```
@@ -107,7 +99,6 @@ def export_labels(
             output_file=output_file,
             disable_tqdm=not verbose,
             log_level="INFO" if verbose else "WARNING",
-            download_media=include_media,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))

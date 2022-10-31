@@ -13,12 +13,11 @@ from typing import Dict, List, Tuple
 import numpy as np
 from PIL import Image
 from tqdm.autonotebook import tqdm
-from typeguard import typechecked
 from typing_extensions import TypedDict
 
 from kili.orm import Asset
 from kili.services.export.format.base import BaseExporter
-from kili.services.export.types import InputType, Job, JobName, Jobs, ProjectId
+from kili.services.export.types import Job, JobName, Jobs, ProjectId
 
 
 # COCO format
@@ -55,7 +54,68 @@ class _CocoFormat(TypedDict):
     annotations: List[_CocoAnnotation]
 
 
-def convert_kili_semantic_to_coco(
+class CocoExporter(BaseExporter):
+    """
+    Common code for Kili exporters.
+    """
+
+    download_media = True
+
+    def process_and_save(self, assets: List[Asset], output_filename: str):
+        """
+        Extract formatted annotations from labels.
+        """
+        clean_assets = self.process_assets(assets, self.label_format)
+
+        with TemporaryDirectory() as tmp_dir:
+            self._save_assets_export(
+                clean_assets,
+                Path(tmp_dir),
+            )
+            self.create_readme_kili_file(Path(tmp_dir))
+            self.make_archive(tmp_dir, output_filename)
+
+        self.logger.warning(output_filename)
+
+    def _save_assets_export(self, assets: List[Asset], output_directory: Path):
+        """
+        Save the assets to a file and return the link to that file
+        """
+        jobs, title = self._get_project(self.kili, self.project_id)
+
+        for job_name, job in jobs.items():
+            if self._is_coco_compatible(job):
+                _convert_kili_semantic_to_coco(
+                    job_name=job_name,
+                    assets=assets,
+                    output_dir=Path(output_directory) / self.project_id,
+                    job=job,
+                    title=title,
+                )
+            else:
+                self.logger.warning(f"Job {job_name} is not compatible with the COCO format.")
+
+    @staticmethod
+    def _get_project(kili, project_id: ProjectId) -> Tuple[Jobs, str]:
+        projects = kili.projects(
+            project_id=project_id, fields=["inputType", "jsonInterface", "title"]
+        )
+
+        if len(projects) == 0:
+            raise ValueError(
+                "no such project. Maybe your KILI_API_KEY does not belong to a member of the"
+                " project."
+            )
+        jobs = projects[0]["jsonInterface"].get("jobs", {})
+        title = projects[0]["title"]
+        return jobs, title
+
+    @staticmethod
+    def _is_coco_compatible(job: Job) -> bool:
+        return "semantic" in job["tools"] and job["mlTask"] == "OBJECT_DETECTION"
+
+
+def _convert_kili_semantic_to_coco(
     job_name: JobName,
     assets: List[Asset],
     output_dir: Path,
@@ -150,7 +210,6 @@ def _get_coco_images_and_annotations(
     return coco_images, coco_annotations
 
 
-@typechecked
 def _get_coco_image_annotations(
     annotations_: List[Dict],
     cat_kili_id_to_coco_id: Dict[str, int],
@@ -207,55 +266,3 @@ def _get_coco_categories(cat_kili_id_to_coco_id) -> List[_CocoCategory]:
         )
 
     return categories_coco
-
-
-def _get_project(kili, project_id: ProjectId) -> Tuple[InputType, Jobs, str]:
-    projects = kili.projects(project_id=project_id, fields=["inputType", "jsonInterface", "title"])
-
-    if len(projects) == 0:
-        raise ValueError(
-            "no such project. Maybe your KILI_API_KEY does not belong to a member of the project."
-        )
-    input_type = projects[0]["inputType"]
-    jobs = projects[0]["jsonInterface"].get("jobs", {})
-    title = projects[0]["title"]
-    return input_type, jobs, title
-
-
-class CocoExporter(BaseExporter):
-    """
-    Common code for Kili exporters.
-    """
-
-    download_media = True
-
-    def process_and_save(self, assets: List[Asset], output_filename: str):
-        """
-        Extract formatted annotations from labels.
-        """
-        clean_assets = self.process_assets(assets, self.label_format)
-
-        with TemporaryDirectory() as tmp_dir:
-            self._save_assets_export(
-                clean_assets,
-                Path(tmp_dir),
-            )
-            self.create_readme_kili_file(Path(tmp_dir))
-            self.make_archive(tmp_dir, output_filename)
-
-        self.logger.warning(output_filename)
-
-    def _save_assets_export(self, assets: List[Asset], output_directory: Path):
-        """
-        Save the assets to a file and return the link to that file
-        """
-        _, jobs, title = _get_project(self.kili, self.project_id)
-
-        for job_name, job in jobs.items():
-            convert_kili_semantic_to_coco(
-                job_name=job_name,
-                assets=assets,
-                output_dir=Path(output_directory) / self.project_id,
-                job=job,
-                title=title,
-            )

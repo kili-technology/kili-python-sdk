@@ -30,7 +30,6 @@ class ExportParams(NamedTuple):
     split_option: SplitOption
     single_file: bool
     output_file: str
-    download_media: Optional[bool]
 
 
 class LoggerParams(NamedTuple):
@@ -57,7 +56,7 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
     Abstract class defining the interface for all exporters.
     """
 
-    download_media = False  # Whether or not we need to download the images
+    download_media = False  # Whether or not we need to download the media for the given format.
 
     def __init__(
         self,
@@ -149,7 +148,7 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
             export_type=export_params.export_type,
             label_type_in=["DEFAULT", "REVIEW"],
             disable_tqdm=logger_params.disable_tqdm,
-            download_media=export_params.download_media or self.download_media,
+            download_media=self.download_media,
         )
         self.process_and_save(assets, export_params.output_file)
 
@@ -190,7 +189,7 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return label
 
     @staticmethod
-    def process_assets(assets: List[Asset], label_format: AnnotationFormat) -> List[Asset]:
+    def process_assets(assets: List[Asset], label_format: str) -> List[Asset]:
         """
         Format labels in the requested format, and filter out autosave labels
         """
