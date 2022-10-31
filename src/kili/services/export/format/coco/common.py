@@ -107,7 +107,9 @@ def convert_kili_semantic_to_coco(
         job_name, assets, data_dir, cat_kili_id_to_coco_id
     )
 
-    with (output_dir / "labels.json").open("w") as outfile:
+    label_file_name = output_dir / job_name / "labels.json"
+    label_file_name.parent.mkdir(parents=True)
+    with (output_dir / job_name / "labels.json").open("w") as outfile:
         json.dump(labels_json, outfile)
 
     classes = list(cat_kili_id_to_coco_id.keys())
@@ -199,9 +201,10 @@ def _get_coco_images_and_annotations(
         desc="Convert to coco format",
     ):
         annotations_ = asset["latestLabel"]["jsonResponse"][job_name]["annotations"]
+        asset_external_id = asset["externalId"]
         img = Image.open(asset["content"])
 
-        file_name = data_dir / f"{asset_i}.jpg"  # FIXME: take original format
+        file_name = data_dir / f"{asset_external_id}.jpg"  # FIXME: take original format
         width, height = img.size
         img.save(file_name)
 
@@ -310,7 +313,7 @@ class CocoExporter(BaseExporter):
 
     download_media = True
 
-    def _save_assets_export(self, assets: List[Asset], output_directory: str):
+    def _save_assets_export(self, assets: List[Asset], output_directory: Path):
         """
         Save the assets to a file and return the link to that file
         """
@@ -320,7 +323,7 @@ class CocoExporter(BaseExporter):
             convert_kili_semantic_to_coco(
                 job_name=job_name,
                 assets=assets,
-                output_dir=Path(output_directory) / job_name,
+                output_dir=Path(output_directory) / self.project_id,
                 job=job,
                 title=title,
             )
@@ -332,12 +335,11 @@ class CocoExporter(BaseExporter):
         clean_assets = _process_assets(assets, self.label_format)
 
         with TemporaryDirectory() as tmp_dir:
+            self.create_readme_kili_file(Path(tmp_dir))
             self._save_assets_export(
                 clean_assets,
-                tmp_dir,
+                Path(tmp_dir),
             )
-            assert os.path.exists(tmp_dir)
-            self.create_readme_kili_file(Path(tmp_dir))
             self.make_archive(tmp_dir, output_filename)
 
         self.logger.warning(output_filename)

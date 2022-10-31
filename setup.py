@@ -18,6 +18,7 @@ install_requires = [
     "pyparsing",
     "websocket-client",
     "pyyaml",
+    "Pillow",
 ]
 
 dev_extra = [
@@ -47,10 +48,6 @@ dev_extra = [
     "ipykernel",
 ]
 
-coco_extra = [
-    "Pillow",
-]
-
 setup(
     name="kili",
     version=__version__,
@@ -62,7 +59,7 @@ setup(
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     install_requires=install_requires,
-    extras_require={"dev": dev_extra, "coco": coco_extra},
+    extras_require={"dev": dev_extra},
     include_package_data=True,
     entry_points={
         "console_scripts": ["kili=kili.cli:main"],

@@ -68,7 +68,8 @@ def fetch_assets(  # pylint: disable=too-many-arguments
 ):
     """
     Fetches assets where ID are in asset_ids if the list has more than one element,
-    else all the assets of the project
+    else all the assets of the project. If download media is passed, the media are
+    downloaded into the `$HOME/.cache` folder.
 
     Parameters
     ----------
@@ -76,6 +77,8 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     - assets_ids: list of asset IDs
     - export_type: type of export (latest label or all labels)
     - label_type_in: types of label to fetch (default, reviewed, ...)
+    - disable_tqdm: tell to disable tqdm
+    - download_media: tell to download the media in the cache folder.
     """
     fields = get_fields_to_fetch(export_type)
     assets = None

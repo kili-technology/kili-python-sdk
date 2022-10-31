@@ -141,7 +141,9 @@ def get_file_tree(folder: str):
                         "car_1.jpg": {},
                         "car_2.jpg": {},
                     },
-                    "labels.json": {},
+                    "JOB_0": {
+                        "labels.json": {},
+                    },
                     "README.kili.txt": {},
                 },
             },
