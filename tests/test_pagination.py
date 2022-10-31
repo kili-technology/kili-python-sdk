@@ -36,9 +36,9 @@ TEST_CASES = [
         "expected_result": ({"id": i} for i in range(20, 220)),
     },
     {
-        "case": "AAU, When I query objects with first=1100, I get the first 1100 objects",
-        "args": {"first": 1100},
-        "expected_result": ({"id": i} for i in range(1100)),
+        "case": "AAU, When I query objects with first=25100, I get the first 1100 objects",
+        "args": {"first": 25100},
+        "expected_result": ({"id": i} for i in range(25100)),
     },
     {
         "case": (
