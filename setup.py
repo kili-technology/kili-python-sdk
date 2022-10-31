@@ -18,6 +18,7 @@ install_requires = [
     "pyparsing",
     "websocket-client",
     "pyyaml",
+    "cuid",
 ]
 
 dev_extra = [

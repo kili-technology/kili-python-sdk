@@ -16,6 +16,7 @@ class AssetLike(TypedDict, total=False):
     status: str
     json_metadata: Union[str, dict]
     is_honeypot: bool
+    id: str
 
 
 class KiliResolverAsset(AssetLike, TypedDict, total=True):
@@ -29,3 +30,4 @@ class KiliResolverAsset(AssetLike, TypedDict, total=True):
     status: str
     json_metadata: Union[str, dict]
     is_honeypot: bool
+    id: str
