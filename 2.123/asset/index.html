@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.123/asset/">
       
       <link rel="icon" href="../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
     
     
       
@@ -839,6 +839,8 @@
 <span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
 <span class="sd">            as_generator: If `True`, a generator on the assets is returned.</span>
 <span class="sd">            label_category_search: Returned assets should have a label that follows this category search query.</span>
+<span class="sd">            download_media: Tell is the media have to be downloaded or not.</span>
+<span class="sd">            local_media_dir: Directory where the media is downloaded if `download_media` is True.</span>
 
 <span class="sd">        !!! info &quot;Dates format&quot;</span>
 <span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
@@ -1315,6 +1317,18 @@ Possible choices: <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code> 
         <td><p>Returned assets should have a label that follows this category search query.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>download_media</code></td>
+        <td><code>bool</code></td>
+        <td><p>Tell is the media have to be downloaded or not.</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>local_media_dir</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Directory where the media is downloaded if <code>download_media</code> is True.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>      <div class="admonition info">
 <p class="admonition-title">Dates format</p>
@@ -1460,6 +1474,8 @@ label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_
 <span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
 <span class="sd">        as_generator: If `True`, a generator on the assets is returned.</span>
 <span class="sd">        label_category_search: Returned assets should have a label that follows this category search query.</span>
+<span class="sd">        download_media: Tell is the media have to be downloaded or not.</span>
+<span class="sd">        local_media_dir: Directory where the media is downloaded if `download_media` is True.</span>
 
 <span class="sd">    !!! info &quot;Dates format&quot;</span>
 <span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
@@ -1981,10 +1997,12 @@ whose update date is lower or equal to this date.</p></td>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">json_content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot;Append assets to a project.</span>
@@ -2017,6 +2035,7 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}]`.</span>
 <span class="sd">                - For video, you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
 <span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A result object which indicates if the mutation was successful, or an error message.</span>
@@ -2045,6 +2064,7 @@ whose update date is lower or equal to this date.</p></td>
             <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content_array</span><span class="p">,</span>
             <span class="s2">&quot;json_content&quot;</span><span class="p">:</span> <span class="n">json_content_array</span><span class="p">,</span>
             <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
+            <span class="s2">&quot;id_array&quot;</span><span class="p">:</span> <span class="n">id_array</span><span class="p">,</span>
             <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status_array</span><span class="p">,</span>
             <span class="s2">&quot;json_metadata&quot;</span><span class="p">:</span> <span class="n">json_metadata_array</span><span class="p">,</span>
             <span class="s2">&quot;is_honeypot&quot;</span><span class="p">:</span> <span class="n">is_honeypot_array</span><span class="p">,</span>
@@ -2053,7 +2073,9 @@ whose update date is lower or equal to this date.</p></td>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">field_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">assets</span> <span class="o">=</span> <span class="p">[{</span><span class="o">**</span><span class="n">assets</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_data</span><span class="p">)]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">import_assets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">import_assets</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@typechecked</span>
@@ -2378,7 +2400,7 @@ whose update date is lower or equal to this date.</p></td>
 
 
 <h3 id="kili.mutations.asset.__init__.MutationsAsset.append_many_to_dataset" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">append_many_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_honeypot_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_metadata_array</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">append_many_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_honeypot_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_metadata_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2463,6 +2485,12 @@ rich-text assets</a></li>
 </ul></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>disable_tqdm</code></td>
+        <td><code>bool</code></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
+        <td><code>False</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2504,10 +2532,12 @@ rich-text assets</a></li>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">is_honeypot_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">status_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">json_content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">&quot;&quot;&quot;Append assets to a project.</span>
@@ -2540,6 +2570,7 @@ rich-text assets</a></li>
 <span class="sd">                Example for one asset: `json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}]`.</span>
 <span class="sd">            - For video, you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
 <span class="sd">                Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A result object which indicates if the mutation was successful, or an error message.</span>
@@ -2568,6 +2599,7 @@ rich-text assets</a></li>
         <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content_array</span><span class="p">,</span>
         <span class="s2">&quot;json_content&quot;</span><span class="p">:</span> <span class="n">json_content_array</span><span class="p">,</span>
         <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
+        <span class="s2">&quot;id_array&quot;</span><span class="p">:</span> <span class="n">id_array</span><span class="p">,</span>
         <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status_array</span><span class="p">,</span>
         <span class="s2">&quot;json_metadata&quot;</span><span class="p">:</span> <span class="n">json_metadata_array</span><span class="p">,</span>
         <span class="s2">&quot;is_honeypot&quot;</span><span class="p">:</span> <span class="n">is_honeypot_array</span><span class="p">,</span>
@@ -2576,7 +2608,9 @@ rich-text assets</a></li>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">field_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">assets</span> <span class="o">=</span> <span class="p">[{</span><span class="o">**</span><span class="n">assets</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_data</span><span class="p">)]</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">import_assets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">import_assets</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
