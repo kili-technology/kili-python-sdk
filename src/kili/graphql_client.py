@@ -92,7 +92,7 @@ class GraphQLClient:
                 try:
                     number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
                 except ValueError:
-                    number_of_trials = 1
+                    number_of_trials = 10
                 for trial_number in range(number_of_trials):
                     self.session.verify = self.verify
                     req = self.session.post(
