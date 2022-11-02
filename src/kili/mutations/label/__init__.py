@@ -17,7 +17,7 @@ from kili.mutations.label.queries import (
     GQL_CREATE_PREDICTIONS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
-from kili.mutations.label.types import LabelData
+from kili.mutations.label.types import AppendLabelData
 from kili.orm import Label
 from kili.utils.pagination import _mutate_from_paginated_call
 
@@ -158,12 +158,12 @@ class MutationsLabel:
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result("data", result, Label)
 
-    def append_labels(self, labels: List[LabelData], label_type: LabelType = "DEFAULT"):
+    def append_labels(self, labels: List[AppendLabelData], label_type: LabelType = "DEFAULT"):
         """Append labels to assets.
 
-        !!! info "fields of labelData"
+        !!! info "fields of AppendLabelData"
             ```
-            class LabelData(TypedDict, total=False):
+            class AppendLabelData(TypedDict, total=False):
                 asset_id: Required[str]
                 json_response: Required[Dict]
                 author_id: str

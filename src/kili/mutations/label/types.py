@@ -7,7 +7,7 @@ from typing import Dict
 from typing_extensions import Required, TypedDict
 
 
-class LabelData(TypedDict, total=False):
+class AppendLabelData(TypedDict, total=False):
     """
     Data about a label to append
     """
