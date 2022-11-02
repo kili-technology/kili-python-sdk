@@ -263,11 +263,8 @@ def list_is_not_none_else_none(_object):
     return [_object] if _object is not None else None
 
 
-def infer_ids_from_external_ids(
-    kili,
-    asset_id_array: Optional[List[str]],
-    external_id_array: Optional[List[str]],
-    project_id: Optional[str],
+def infer_id_from_external_id(
+    kili, asset_id: Optional[str], external_id: Optional[str], project_id: Optional[str]
 ):
     """
     Infer asset id from external id
@@ -277,25 +274,24 @@ def infer_ids_from_external_ids(
         external_id: external id
         project_id: project id
     """
-    if asset_id_array is None and external_id_array is None:
+    if asset_id is None and external_id is None:
         raise Exception("Either provide asset_id or external_id and project_id")
-    if asset_id_array is not None:
-        return asset_id_array
-    assert external_id_array
-    if project_id is None:
-        raise Exception("You must provide the project ID when specifiyng asset external IDs")
+    if asset_id is not None:
+        return asset_id
     assets = kili.assets(
-        external_id_contains=external_id_array,
+        external_id_contains=[external_id],
         project_id=project_id,
         fields=["id"],
         disable_tqdm=True,
     )
-    if len(assets) != len(external_id_array):
+    if len(assets) == 0:
+        raise Exception(f'No asset found with external ID "{external_id}"')
+    if len(assets) > 1:
         raise Exception(
-            "The number of assets found does not match the number of specified external IDs. Some"
-            " external IDs might be misgiven or ambigious. Please use asset IDs instead"
+            f'Several assets found containing external ID "{external_id}":'
+            f" {assets}. Please, use asset ID instead."
         )
-    return [asset["id"] for asset in assets]
+    return assets[0]["id"]
 
 
 def validate_category_search_query(query):

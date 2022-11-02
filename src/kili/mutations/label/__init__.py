@@ -9,7 +9,7 @@ from typing import List, Optional
 from typeguard import typechecked
 
 from kili.enums import LabelType
-from kili.helpers import deprecate, format_result, infer_ids_from_external_ids
+from kili.helpers import deprecate, format_result, infer_id_from_external_id
 from kili.mutations.label.queries import (
     GQL_APPEND_MANY_LABELS,
     GQL_APPEND_TO_LABELS,
@@ -140,12 +140,9 @@ class MutationsLabel:
         """
         if author_id is None:
             author_id = self.auth.user_id
-        label_asset_id = infer_ids_from_external_ids(
-            self,
-            [label_asset_id] if label_asset_id is not None else None,
-            [label_asset_external_id] if label_asset_external_id is not None else None,
-            project_id,
-        )[0]
+        label_asset_id = infer_id_from_external_id(
+            self, label_asset_id, label_asset_external_id, project_id
+        )
         variables = {
             "data": {
                 "authorID": author_id,
@@ -266,12 +263,7 @@ class MutationsLabel:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        asset_id = infer_ids_from_external_ids(
-            self,
-            [asset_id] if asset_id is not None else None,
-            [asset_external_id] if asset_external_id is not None else None,
-            project_id,
-        )[0]
+        asset_id = infer_id_from_external_id(self, asset_id, asset_external_id, project_id)
 
         variables = {
             "data": {"jsonResponse": dumps(json_response)},
