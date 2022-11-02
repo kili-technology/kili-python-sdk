@@ -45,7 +45,7 @@ def request_signed_urls(auth: KiliAuth, file_paths: List[Path]):
 
     def get_file_batch_urls(file_paths: List[Path]) -> List[str]:
         payload = {
-            "filePaths": file_paths,
+            "filePaths": list(map(str, file_paths)),
         }
         urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
         return urls_response["data"]["urls"]
