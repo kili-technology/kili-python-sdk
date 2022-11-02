@@ -34,7 +34,6 @@ class Project:  # pylint: disable=too-few-public-methods
         single_file: bool = False,
         disable_tqdm: bool = False,
         log_level: LogLevel = "INFO",
-        download_media: bool = False,
     ) -> None:
         """Export the project assets with the requested format into the requested output path.
 
@@ -55,7 +54,6 @@ class Project:  # pylint: disable=too-few-public-methods
                 per job, "merged" that there is one folder with every labels.
             disable_tqdm: Disable the progress bar if True.
             log_level: Level of debugging.
-            download_media: Tell that media should be downloaded if True.
         """
         services.export_labels(
             self.client,
@@ -68,5 +66,4 @@ class Project:  # pylint: disable=too-few-public-methods
             output_file=filename,
             disable_tqdm=disable_tqdm,
             log_level=log_level,
-            download_media=download_media,
         )
