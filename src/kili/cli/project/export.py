@@ -66,7 +66,7 @@ def export_labels(
     !!! Examples
         ```
         kili project export \\
-            --project-id cl66ckxol06vt0pylc35ofip2 \\
+            --project-id <project_id> \\
             --output-format coco \\
             --output-file /tmp/export.zip
         ```
