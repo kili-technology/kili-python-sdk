@@ -96,5 +96,5 @@ class PDFTestCase(ImportTestCase):
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
         self.auth.client.execute.assert_has_calls(calls, any_order=True)
 
-    def test_uplaod_from_several_batches(self):
+    def test_upload_from_several_batches(self):
         self.assert_upload_several_batches()

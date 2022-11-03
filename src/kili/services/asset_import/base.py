@@ -87,12 +87,11 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         self.pbar.update(n=len(assets))
         return result_batch
 
-    @staticmethod
-    def generate_unique_ids(size: int) -> List[str]:
+    def add_ids(self, assets: List[AssetLike]):
         """
-        Returns ids
+        Adds ids to all assets
         """
-        return [bucket.generate_unique_id() for _ in range(size)]
+        return self.loop_on_batch(self.add_id_to_asset)(assets)
 
     def generate_project_bucket_path(self) -> str:
         """
@@ -109,6 +108,14 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         if not isinstance(json_metadata, str):
             json_metadata = dumps(json_metadata)
         return {**asset, "json_metadata": json_metadata}
+
+    @staticmethod
+    def add_id_to_asset(asset: AssetLike) -> AssetLike:
+        """
+        Generates an asset id
+        """
+
+        return {**asset, "id": asset.get("id", bucket.generate_unique_id())}
 
     @staticmethod
     def fill_empty_fields(asset: AssetLike):
@@ -187,6 +194,7 @@ class ContentBatchImporter(BaseBatchImporter):
         """
         Method to import a batch of asset with content
         """
+        assets = self.add_ids(assets)
         if not self.is_hosted:
             assets = self.upload_local_content_to_bucket(assets)
         return super().import_batch(assets)
@@ -215,10 +223,10 @@ class ContentBatchImporter(BaseBatchImporter):
         """
         Upload local content to a bucket
         """
-        asset_ids = self.generate_unique_ids(len(assets))
         project_bucket_path = self.generate_project_bucket_path()
         asset_content_paths = [
-            Path(project_bucket_path) / asset_id / "content" for asset_id in asset_ids
+            Path(project_bucket_path) / asset.get("id", bucket.generate_unique_id()) / "content"
+            for asset in assets
         ]
         signed_urls = bucket.request_signed_urls(self.auth, asset_content_paths)
         data_and_content_type_array = self.get_type_and_data_from_content_array(
@@ -229,10 +237,7 @@ class ContentBatchImporter(BaseBatchImporter):
             url_gen = threads.map(
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
-        return [
-            AssetLike(**{**asset, "content": url, "id": id})
-            for asset, url, id in zip(assets, url_gen, asset_ids)
-        ]
+        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -254,10 +259,10 @@ class JsonContentBatchImporter(BaseBatchImporter):
         """
         Upload the json_contents to a bucket with signed urls
         """
-        asset_ids = self.generate_unique_ids(len(assets))
         project_bucket_path = self.generate_project_bucket_path()
         asset_json_content_paths = [
-            Path(project_bucket_path) / asset_id / "jsonContent" for asset_id in asset_ids
+            Path(project_bucket_path) / asset.get("id", bucket.generate_unique_id()) / "jsonContent"
+            for asset in assets
         ]
         signed_urls = bucket.request_signed_urls(self.auth, asset_json_content_paths)
         json_content_array = [asset.get("json_content") for asset in assets]
@@ -275,6 +280,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
         """
         Method to import a batch of asset with json content
         """
+        assets = self.add_ids(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets = self.upload_json_content_to_bucket(assets)
         return super().import_batch(assets)

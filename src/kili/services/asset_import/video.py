@@ -108,6 +108,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         """
         Import a batch of video assets from frames
         """
+        assets = self.add_ids(assets)
         if not self.is_hosted:
             assets = self.loop_on_batch(self.upload_frames_to_bucket)(assets)
         assets = self.loop_on_batch(self.map_frame_urls_to_index)(assets)
