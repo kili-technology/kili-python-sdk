@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import time
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, List, Tuple
@@ -140,7 +141,7 @@ def _convert_kili_semantic_to_coco(
         "description": f"{title} - Exported from Kili Python Client",
         "contributor": "Kili Technology",
         "url": "https://kili-technology.com",
-        "date_created": time.strftime("%Y %m %d %H %M"),
+        "date_created": datetime.now().isoformat(),
     }
     labels_json = _CocoFormat(
         info=infos_coco,
