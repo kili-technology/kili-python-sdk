@@ -1,6 +1,6 @@
 """Project mutations."""
 
-
+from datetime import datetime
 from typing import Optional
 
 from typeguard import typechecked
@@ -10,6 +10,7 @@ from kili.services.plugins import (
     activate_plugin,
     deactivate_plugin,
     delete_plugin,
+    get_logs,
 )
 
 from ...authentication import KiliAuth
@@ -125,4 +126,33 @@ class MutationsPlugins:
         """
 
         pretty_result = delete_plugin(self.auth, plugin_name)
+        return pretty_result
+
+    @typechecked
+    def get_plugin_logs(
+        self,
+        project_id: str,
+        plugin_name: str,
+        start_date: datetime,
+        limit: Optional[int] = None,
+        skip: Optional[int] = None,
+    ):
+        # pylint: disable=line-too-long
+        """Get paginated logs of a plugin on a project.
+        Args:
+            project_id: Identifier of the project
+            plugin_name: Name of the plugin
+            start_date: Datetime used to get the logs from
+            limit: Limit for pagination, if not provided, it will be 100
+            skip: Skip for pagination, if not provided, it will be 0
+        Returns:
+            A result array which contains the logs of the plugin,
+                or an error message.
+        Examples:
+            >>> kili.get_plugin_logs(project_id="my_project_id", plugin_name="my_plugin_name", start_date="1970/01/01")
+        """
+
+        plugin = {"project_id": project_id, "plugin_name": plugin_name}
+
+        pretty_result = get_logs(self.auth, plugin, start_date, limit, skip)
         return pretty_result
