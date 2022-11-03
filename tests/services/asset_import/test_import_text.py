@@ -92,5 +92,5 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_uplaod_from_several_batches(self):
+    def test_upload_from_several_batches(self):
         self.assert_upload_several_batches()

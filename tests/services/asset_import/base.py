@@ -76,7 +76,7 @@ class ImportTestCase(TestCase):
         expected_parameters_1 = self.get_expected_sync_call(
             ["https://hosted-data"] * 10,
             [external_id_array[i] for i in range(10)],
-            [""] * 10,
+            ["unique_id"] * 10,
             [False] * 10,
             [""] * 10,
             ["{}"] * 10,
@@ -85,7 +85,7 @@ class ImportTestCase(TestCase):
         expected_parameters_2 = self.get_expected_sync_call(
             ["https://hosted-data"] * 5,
             [external_id_array[i] for i in range(10, 15)],
-            [""] * 5,
+            ["unique_id"] * 5,
             [False] * 5,
             [""] * 5,
             ["{}"] * 5,
