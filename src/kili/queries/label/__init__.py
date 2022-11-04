@@ -340,7 +340,7 @@ class QueriesLabel:
 
             - Kili for all tasks.
 
-            - COCO (coming soon) for object detection tasks.
+            - COCO for semantic segmentation tasks.
 
             - Pascal VOC (coming soon) for object detection tasks.
 
