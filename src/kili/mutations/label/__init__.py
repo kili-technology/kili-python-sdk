@@ -113,8 +113,8 @@ class MutationsLabel:
     ):
         """
         !!! danger "[DEPRECATED]"
-            append_to_labels method is deprecated. Please use append_labels instead. This new function
-            allows to import several labels 10 times faster.
+            append_to_labels method is deprecated. Please use append_labels instead.
+            This new function allows to import several labels 10 times faster.
 
         Append a label to an asset.
 
@@ -172,7 +172,8 @@ class MutationsLabel:
             json_response_array: list of labels to append
             author_id_array: list of the author id of the labels
             seconds_to_label_array: list of times taken to produce the label, in seconds
-            model_name: Only useful when uploading predictions. Name of the model when uploading predictions
+            model_name: Only useful when uploading predictions.
+                Name of the model when uploading predictions
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
 
         Returns:

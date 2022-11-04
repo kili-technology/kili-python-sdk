@@ -46,4 +46,5 @@ class LabelsValidator(BaseModel, extra=Extra.forbid):
 
     @validator("labels", each_item=True)
     def label_validator(cls, label):  # pylint: disable=no-self-argument
+        """Validate the data of one label"""
         return LabelData(**label)
