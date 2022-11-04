@@ -115,7 +115,9 @@ class CocoExporter(BaseExporter):
 
     @staticmethod
     def _is_coco_compatible(job: Job) -> bool:
-        return "semantic" in job["tools"] and job["mlTask"] == "OBJECT_DETECTION"
+        return ("semantic" in job["tools"] or "rectangle" in job["tools"]) and job[
+            "mlTask"
+        ] == "OBJECT_DETECTION"
 
 
 def _convert_kili_semantic_to_coco(

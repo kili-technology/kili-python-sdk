@@ -335,11 +335,11 @@ class QueriesLabel:
         !!! Info
             The supported formats are:
 
-            - Yolo V4, V5, V7 for object detection (bounding box) tasks.
+            - Yolo V4, V5, V7 for object detection tasks (bounding box)
 
             - Kili for all tasks.
 
-            - COCO for semantic segmentation tasks.
+            - COCO for semantic segmentation tasks (bounding box and semantic segmentation)
 
             - Pascal VOC (coming soon) for object detection tasks.
 
