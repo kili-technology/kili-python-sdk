@@ -2,18 +2,30 @@
 Types for the label mutations
 """
 
-from typing import Dict
+from typing import Dict, List, Optional
 
-from typing_extensions import Required, TypedDict
+from pydantic import BaseModel, Extra, validator
 
 
-class AppendLabelData(TypedDict, total=False):
+class LabelData(BaseModel, extra=Extra.forbid):
     """
     Data about a label to append
     """
 
-    asset_id: Required[str]
-    json_response: Required[Dict]
-    author_id: str
-    seconds_to_label: int
-    modelName: str
+    asset_id: str
+    json_response: Dict
+    author_id: Optional[str]
+    seconds_to_label: Optional[int]
+    modelName: Optional[str]
+
+
+class LabelsValidator(BaseModel, extra=Extra.forbid):
+    """
+    Data about a label to append
+    """
+
+    labels: List[Dict]
+
+    @validator("labels", each_item=True)
+    def label_validator(cls, label):  # pylint: disable=no-self-argument
+        return LabelData(**label)

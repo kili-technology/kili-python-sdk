@@ -5,7 +5,8 @@ from typeguard import typechecked
 
 from kili import services
 from kili.services.export.types import LabelFormat, SplitOption
-from kili.services.types import AssetId, InputType, LogLevel, ProjectId
+from kili.services.label_import import import_labels_from_dict
+from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
 
 
 class Project:  # pylint: disable=too-few-public-methods
@@ -67,3 +68,36 @@ class Project:  # pylint: disable=too-few-public-methods
             disable_tqdm=disable_tqdm,
             log_level=log_level,
         )
+
+    @typechecked
+    def append_labels(self, labels: List[dict], label_type: LabelType = "DEFAULT"):
+        """Append labels to assets.
+
+        !!! info "fields of labels to append"
+            ```
+            class LabelData:
+                asset_id: Required[str]
+                json_response: Required[Dict]
+                author_id: str
+                seconds_to_label: int
+                modelName: str
+            ```
+
+        Args:
+            labels: list of dictionnaries with informations about the labels to create.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.append_to_labels(
+                    [
+                        {'json_response': {...}, asset_id: 'cl9wmlkuc00050qsz6ut39g8h'},
+                        {'json_response': {...}, asset_id: 'cl9wmlkuw00080qsz2kqh8aiy'}
+                    ]
+                )
+
+        """
+        return import_labels_from_dict(self.client, labels, label_type)
