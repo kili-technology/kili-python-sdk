@@ -101,7 +101,7 @@ class CocoExporter(BaseExporter):
     @staticmethod
     def _get_project(kili, project_id: ProjectId) -> Tuple[Jobs, str]:
         projects = kili.projects(
-            project_id=project_id, fields=["inputType", "jsonInterface", "title"]
+            project_id=project_id, fields=["inputType", "jsonInterface", "title"], disable_tqdm=True
         )
 
         if len(projects) == 0:
