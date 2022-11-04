@@ -35,10 +35,11 @@ You can refer to this [Kili documentation page](https://docs.kili-technology.com
 | ------------- | --- | ------------- | ---------------------- |
 | Kili (raw)    | ✅   | ✅             | ✅                      |
 | Kili (simple) | ✅   | ❌             | ❌                      |
-| Yolo V4       | ✅   | ✅             | ✅                      |
-| Yolo V5       | ✅   | ✅             | ✅                      |
-| Yolo V7       | ❌   | ✅             | ✅                      |
+| YOLO V4       | ✅   | ✅             | ✅                      |
+| YOLO V5       | ✅   | ✅             | ✅                      |
+| YOLO V7       | ❌   | ✅             | ✅                      |
 | Pascal VOC    | ✅   | ❌             | ❌                      |
+| COCO          | ❌   | ✅             | ✅                      |
 
 
 And more to come!
