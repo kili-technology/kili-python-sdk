@@ -19,6 +19,7 @@ from kili.services.label_import.importer import (
 )
 from kili.services.label_import.types import LabelFormat, LabelsValidator
 from kili.services.types import LabelType, LogLevel, ProjectId
+from kili.utils import pagination
 
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
@@ -84,9 +85,13 @@ def import_labels_from_dict(kili, labels: List[Dict], label_type: LabelType):
         }
         for label in labels
     ]
-    variables = {
-        "data": {"labelType": label_type, "labelsData": labels_data},
-        "where": {"idIn": [label["asset_id"] for label in labels]},
-    }
-    result = kili.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
-    return format_result("data", result, Label)
+    batch_generator = pagination.batch_iterator_builder(labels_data)
+    result = []
+    for batch_labels in batch_generator:
+        variables = {
+            "data": {"labelType": label_type, "labelsData": batch_labels},
+            "where": {"idIn": [label["assetID"] for label in batch_labels]},
+        }
+        batch_result = kili.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
+        result.extend(format_result("data", batch_result, Label))
+    return result
