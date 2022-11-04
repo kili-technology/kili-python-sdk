@@ -127,7 +127,7 @@ class CocoTestCase(TestCase):
                 }
                 assert "Test project" in coco_annotation["info"]["description"]
                 categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
-                assert "car_1.jpg" in coco_annotation["images"][0]["file_name"]
+                assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
                 assert coco_annotation["images"][0]["width"] == 1920
                 assert coco_annotation["images"][0]["height"] == 1080
                 assert coco_annotation["annotations"][0]["image_id"] == 0

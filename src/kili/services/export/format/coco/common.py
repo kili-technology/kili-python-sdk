@@ -20,6 +20,8 @@ from kili.orm import Asset
 from kili.services.export.format.base import BaseExporter
 from kili.services.export.types import Job, JobName, Jobs, ProjectId
 
+DATA_SUBDIR = "data"
+
 
 # COCO format
 class _CocoImage(TypedDict):
@@ -152,7 +154,7 @@ def _convert_kili_semantic_to_coco(
     )
 
     # Prepare output folder
-    data_dir = output_dir / "data"
+    data_dir = output_dir / DATA_SUBDIR
     os.makedirs(data_dir, exist_ok=True)
 
     # Mapping category - category id
@@ -189,13 +191,13 @@ def _get_coco_images_and_annotations(
         enumerate(assets),
         desc="Convert to coco format",
     ):
-        file_name = shutil.copy(asset["content"], data_dir)
+        file_name = Path(shutil.copy(asset["content"], data_dir))
         width, height = Image.open(asset["content"]).size
 
         coco_image = _CocoImage(
             id=asset_i,
             license=0,
-            file_name=str(file_name),
+            file_name=str("data" / Path(file_name.parts[-1])),
             height=height,
             width=width,
             date_captured=None,
