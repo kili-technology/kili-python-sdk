@@ -1,5 +1,5 @@
 """Project mutations."""
-
+import json
 from datetime import datetime
 from typing import Optional
 
@@ -155,4 +155,4 @@ class MutationsPlugins:
         plugin = {"project_id": project_id, "plugin_name": plugin_name}
 
         pretty_result = get_logs(self.auth, plugin, start_date, limit, skip)
-        return pretty_result
+        return json.dumps(pretty_result, sort_keys=True, indent=4)
