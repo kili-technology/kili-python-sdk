@@ -331,7 +331,6 @@ class QueriesLabel:
             layout: Layout of the exported files: "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
             disable_tqdm: Disable the progress bar if True.
-            download_media: Tell to download media if True.
 
         !!! Info
             The supported formats are:
