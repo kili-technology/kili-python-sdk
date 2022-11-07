@@ -10,7 +10,6 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from pathlib import Path
 from typing import Callable, List, Optional, Type, TypeVar
 
 import pyparsing as pp
