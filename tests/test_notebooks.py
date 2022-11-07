@@ -56,7 +56,3 @@ def test_all_recipes(notebook_file):
     process_notebook(notebook_file)
 
     return
-
-
-if __name__ == "__main__":
-    test_all_recipes()
