@@ -45,7 +45,7 @@ plugins:
             docstring_options:
               replace_admonitions: yes
       watch:
-        - kili
+        - src/kili
   - mike:
       version_selector: true
 
