@@ -57,7 +57,7 @@ def export_labels(  # pylint: disable=too-many-arguments
     )
 
     if label_format in get_args(LabelFormat):
-        if label_format == "raw":
+        if label_format in ["raw", "kili"]:
             exporter_selector = KiliExporterSelector()
         else:
             exporter_selector = YoloExporterSelector()

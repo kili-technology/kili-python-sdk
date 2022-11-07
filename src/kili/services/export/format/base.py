@@ -77,7 +77,7 @@ class BaseExporter(ABC):
         self.content_repository = content_repository
 
     def _check_arguments_compatibility(self):
-        if self.single_file and self.label_format != "raw":
+        if self.single_file and self.label_format not in ["raw", "kili"]:
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not " "be exported in a single file."
             )
