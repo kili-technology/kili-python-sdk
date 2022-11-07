@@ -10,13 +10,14 @@ from kili.services.export.format.base import (
     ExportParams,
     LoggerParams,
 )
+from kili.services.export.format.coco import CocoExporterSelector
 from kili.services.export.format.kili import KiliExporterSelector
 from kili.services.export.format.yolo import YoloExporterSelector
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import LogLevel, ProjectId
 
 
-def export_labels(  # pylint: disable=too-many-arguments
+def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     kili,
     asset_ids: Optional[List[str]],
     project_id: ProjectId,
@@ -57,11 +58,19 @@ def export_labels(  # pylint: disable=too-many-arguments
     )
 
     if label_format in get_args(LabelFormat):
-        if label_format in ["raw", "kili"]:
-            exporter_selector = KiliExporterSelector()
-        else:
-            exporter_selector = YoloExporterSelector()
-        exporter = exporter_selector.select_exporter(
+        format_exporter_selector_mapping = {
+            "raw": KiliExporterSelector,
+            "kili": KiliExporterSelector,
+            "coco": CocoExporterSelector,
+            "yolo_v4": YoloExporterSelector,
+            "yolo_v5": YoloExporterSelector,
+            "yolo_v7": YoloExporterSelector,
+        }
+        assert set(format_exporter_selector_mapping.keys()) == set(
+            get_args(LabelFormat)
+        )  # ensures full mapping
+        exporter_selector = format_exporter_selector_mapping[label_format]
+        exporter = exporter_selector.init_exporter(
             kili, logger_params, export_params, content_repository_params
         )
         exporter.export_project(kili, export_params, logger_params)

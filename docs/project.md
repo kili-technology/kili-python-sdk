@@ -7,3 +7,4 @@
     selection:
         filters:
             - '!internal_delete_project'
+            - '!^__'
