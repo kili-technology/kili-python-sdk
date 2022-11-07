@@ -17,7 +17,7 @@ from kili.services.label_import.importer import (
     LoggerParams,
     YoloLabelImporter,
 )
-from kili.services.label_import.types import LabelFormat, LabelsValidator
+from kili.services.label_import.types import LabelFormat, _LabelsValidator
 from kili.services.types import LabelType, LogLevel, ProjectId
 from kili.utils import pagination
 
@@ -74,7 +74,7 @@ def import_labels_from_dict(kili, labels: List[Dict], label_type: LabelType):
     """
     Imports labels from a list of dictionaries
     """
-    LabelsValidator(labels=labels)
+    _LabelsValidator(labels=labels)
     labels_data = [
         {
             "jsonResponse": dumps(label.get("json_response")),

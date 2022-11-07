@@ -3,7 +3,7 @@ Types specific to import
 """
 from typing import Dict, List, NewType, Optional
 
-from pydantic import BaseModel, Extra, validator
+from pydantic import BaseModel, Extra, StrictInt, StrictStr, validator
 from typing_extensions import Literal, Required, TypedDict
 
 from kili.services.types import LabelType
@@ -30,16 +30,16 @@ class LabelData(BaseModel, extra=Extra.forbid):
     Data about a label to append
     """
 
-    asset_id: str
-    json_response: Dict
-    author_id: Optional[str]
-    seconds_to_label: Optional[int]
-    model_name: Optional[str]
+    asset_id: StrictStr
+    json_response: dict
+    author_id: Optional[StrictStr]
+    seconds_to_label: Optional[StrictInt]
+    model_name: Optional[StrictStr]
 
 
-class LabelsValidator(BaseModel, extra=Extra.forbid):
+class _LabelsValidator(BaseModel, extra=Extra.forbid):
     """
-    Data about a label to append
+    Validates the data about a label to append
     """
 
     labels: List[Dict]
