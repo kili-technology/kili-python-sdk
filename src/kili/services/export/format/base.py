@@ -7,9 +7,10 @@ import os
 import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Type
 
-from kili.orm import JobMLTask, JobTool
+from kili.orm import AnnotationFormat, Asset, JobMLTask, JobTool
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.repository import SDKContentRepository
 from kili.services.export.tools import fetch_assets
@@ -49,12 +50,13 @@ class ContentRepositoryParams(NamedTuple):
     router_headers: Dict[str, str]
 
 
-class BaseExporter(ABC):
+class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
+
     """
     Abstract class defining the interface for all exporters.
     """
 
-    # pylint: disable=too-many-instance-attributes
+    download_media = False  # Whether or not we need to download the media for the given format.
 
     def __init__(
         self,
@@ -79,13 +81,13 @@ class BaseExporter(ABC):
     def _check_arguments_compatibility(self):
         if self.single_file and self.label_format != "raw":
             raise NotCompatibleOptions(
-                f"The label format {self.label_format} can not " "be exported in a single file."
+                f"The label format {self.label_format} can not be exported in a single file."
             )
 
     @abstractmethod
     def process_and_save(self, assets: List[Dict], output_filename: str) -> None:
         """
-        Converts the asset and save them into an archive.
+        Converts the asset and save them into an archive file.
         """
 
     def make_archive(self, root_folder: str, output_filename: str) -> str:
@@ -110,15 +112,16 @@ class BaseExporter(ABC):
 
         return json_interface, ml_task, tool
 
-    def create_readme_kili_file(self, root_folder: str) -> None:
+    def create_readme_kili_file(self, root_folder: Path) -> None:
         """
         Create a README.kili.txt file to give information about exported labels
         """
-        readme_file_name = os.path.join(root_folder, self.project_id, "README.kili.txt")
+        readme_file_name = root_folder / self.project_id / "README.kili.txt"
         project_info = self.kili.projects(
             project_id=self.project_id, fields=["title", "id", "description"], disable_tqdm=True
         )[0]
-        with open(readme_file_name, "wb") as fout:
+        readme_file_name.parent.mkdir(parents=True, exist_ok=True)
+        with readme_file_name.open("wb") as fout:
             fout.write("Exported Labels from KILI\n=========================\n\n".encode())
             fout.write(f"- Project name: {project_info['title']}\n".encode())
             fout.write(f"- Project identifier: {self.project_id}\n".encode())
@@ -145,8 +148,64 @@ class BaseExporter(ABC):
             export_type=export_params.export_type,
             label_type_in=["DEFAULT", "REVIEW"],
             disable_tqdm=logger_params.disable_tqdm,
+            download_media=self.download_media,
         )
         self.process_and_save(assets, export_params.output_file)
+
+    @staticmethod
+    def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:
+        """
+        Removes AUTOSAVE labels from exports
+        """
+        clean_assets = []
+        for asset in assets:
+            labels = asset.get("labels", [])
+            clean_labels = list(filter(lambda label: label["labelType"] != "AUTOSAVE", labels))
+            if clean_labels:
+                asset["labels"] = clean_labels
+            clean_assets.append(asset)
+        return clean_assets
+
+    @staticmethod
+    def _format_json_response(label, label_format):
+        """
+        Format the label JSON response in the requested format
+        """
+        formatted_json_response = label.json_response(_format=label_format.lower())
+        if label_format.lower() == AnnotationFormat.Simple:
+            label["jsonResponse"] = formatted_json_response
+        else:
+            json_response = {}
+            for key, value in formatted_json_response.items():
+                if key.isdigit():
+                    json_response[int(key)] = value
+                    continue
+                json_response[key] = value
+            label["jsonResponse"] = json_response
+        return label
+
+    @staticmethod
+    def process_assets(assets: List[Asset], label_format: str) -> List[Asset]:
+        """
+        Format labels in the requested format, and filter out autosave labels
+        """
+        assets_in_format = []
+        for asset in assets:
+            if "labels" in asset:
+                labels_of_asset = []
+                for label in asset["labels"]:
+                    clean_label = BaseExporter._format_json_response(label, label_format)
+                    labels_of_asset.append(clean_label)
+                asset["labels"] = labels_of_asset
+            if "latestLabel" in asset:
+                label = asset["latestLabel"]
+                if label is not None:
+                    clean_label = BaseExporter._format_json_response(label, label_format)
+                    asset["latestLabel"] = clean_label
+            assets_in_format.append(asset)
+
+        clean_assets = BaseExporter._filter_out_autosave_labels(assets_in_format)
+        return clean_assets
 
 
 class BaseExporterSelector(ABC):
@@ -193,8 +252,9 @@ class BaseExporterSelector(ABC):
         Return the right exporter class.
         """
 
-    def select_exporter(
-        self,
+    @classmethod
+    def init_exporter(
+        cls,
         kili,
         logger_params,
         export_params: ExportParams,
@@ -211,7 +271,7 @@ class BaseExporterSelector(ABC):
             content_repository_params.router_headers,
             verify_ssl=True,
         )
-        exporter_class = self.select_exporter_class(export_params.split_option)
+        exporter_class = cls.select_exporter_class(export_params.split_option)
         return exporter_class(
             export_params.project_id,
             export_params.export_type,

@@ -18,6 +18,7 @@ install_requires = [
     "pyparsing",
     "websocket-client",
     "pyyaml",
+    "Pillow",
     "cuid",
 ]
 
@@ -56,7 +57,7 @@ setup(
     author="Kili Technology",
     author_email="contact@kili-technology.com",
     description="Python client for Kili Technology labeling tool",
-    long_description=open("README.md").read(),
+    long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     install_requires=install_requires,
     extras_require={"dev": dev_extra},

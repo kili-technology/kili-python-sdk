@@ -1,4 +1,6 @@
-"""CLI's project list subcommand"""
+"""
+    CLI's project list subcommand
+"""
 
 from typing import Dict, List, Optional, cast
 
