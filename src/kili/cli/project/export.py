@@ -57,9 +57,9 @@ def export_labels(
 
     \b
     The supported formats are:
-    - Yolo V4, V5, V7 for object detection (bounding box) tasks.
+    - YOLO V4, V5, V7 for object detection tasks (bounding box).
     - Kili for all tasks.
-    - COCO (coming soon) for object detection tasks.
+    - COCO for object detection tasks (semantic or bounding box)
     - Pascal VOC (coming soon) for object detection tasks.
     \b
     \b
@@ -67,13 +67,13 @@ def export_labels(
         ```
         kili project export \\
             --project-id <project_id> \\
-            --output-format yolo_v5 \\
+            --output-format coco \\
             --output-file /tmp/export.zip
         ```
         ```
         kili project export \\
             --project-id <project_id> \\
-            --output-format yolo_v4 \\
+            --output-format yolo_v5 \\
             --output-file /tmp/export_split.zip \\
             --layout split
         ```

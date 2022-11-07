@@ -63,10 +63,12 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     export_type,
     label_type_in=None,
     disable_tqdm: bool = False,
+    download_media: bool = False,
 ):
     """
     Fetches assets where ID are in asset_ids if the list has more than one element,
-    else all the assets of the project
+    else all the assets of the project. If download media is passed, the media are
+    downloaded into the `$HOME/.cache` folder.
 
     Parameters
     ----------
@@ -74,9 +76,12 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     - assets_ids: list of asset IDs
     - export_type: type of export (latest label or all labels)
     - label_type_in: types of label to fetch (default, reviewed, ...)
+    - disable_tqdm: tell to disable tqdm
+    - download_media: tell to download the media in the cache folder.
     """
     fields = get_fields_to_fetch(export_type)
     assets = None
+
     if asset_ids is not None and len(asset_ids) > 0:
         assets = kili.assets(
             asset_id_in=asset_ids,
@@ -84,6 +89,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
             fields=fields,
             label_type_in=label_type_in,
             disable_tqdm=disable_tqdm,
+            download_media=download_media,
         )
     else:
         assets = kili.assets(
@@ -91,6 +97,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
             fields=fields,
             label_type_in=label_type_in,
             disable_tqdm=disable_tqdm,
+            download_media=download_media,
         )
     attach_name_to_assets_labels_author(assets, export_type)
     return assets

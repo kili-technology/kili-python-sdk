@@ -27,6 +27,7 @@ class AnnotationFormat:
     Simple = "simple"
     YoloV4 = "yolo_v4"
     YoloV5 = "yolo_v5"
+    Coco = "coco"
 
 
 @dataclass
@@ -157,18 +158,19 @@ class Label(DictClass):
         """
         if "jsonResponse" not in self:
             raise Exception(
-                "You did not fetch jsonResponse for"
-                f' label "{self["id"] if "id" in self else self}"'
+                f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"'
             )
-        if _format == AnnotationFormat.Raw:
+        if _format in [AnnotationFormat.Raw, AnnotationFormat.Coco]:
             return self.jsonResponse
         if _format == AnnotationFormat.Simple:
             job_names = self.jsonResponse.keys()
             if len(job_names) > 1:
                 return {
-                    "error": "Simple format is not adapted"
-                    " when there is more than one job."
-                    " Please choose another annotation format."
+                    "error": (
+                        "Simple format is not adapted"
+                        " when there is more than one job."
+                        " Please choose another annotation format."
+                    )
                 }
             for job_name in job_names:
                 job_response = self.jsonResponse[job_name]

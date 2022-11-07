@@ -33,13 +33,23 @@ job_object_detection = {
         ]
     }
 }
-asset_image = {
+asset_image_1 = {
     "latestLabel": {
         "jsonResponse": job_object_detection,
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
     },
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+    "jsonContent": "",
+}
+
+asset_image_2 = {
+    "latestLabel": {
+        "jsonResponse": job_object_detection,
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+    },
+    "externalId": "car_2",
+    "content": "https://storage.googleapis.com/label-public-staging/car/car_2.jpg",
     "jsonContent": "",
 }
 
