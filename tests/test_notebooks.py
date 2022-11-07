@@ -4,6 +4,7 @@ Test notebooks with pytest
 
 
 import nbformat
+import pytest
 from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
 
 
@@ -26,11 +27,9 @@ def process_notebook(notebook_filename):
     return
 
 
-def test_all_recipes():
-    """
-    Runs `process_notebook` on all notebooks in the git repository.
-    """
-    for notebook in [
+@pytest.mark.parametrize(
+    "notebook_file",
+    [
         "tests/integration/create_project.ipynb",
         "tests/integration/export_labels.ipynb",
         "recipes/frame_dicom_data.ipynb",
@@ -47,9 +46,14 @@ def test_all_recipes():
         "recipes/getting-started/getting_started-image_classification.ipynb",
         "recipes/getting-started/getting_started-image_semantic_segmentation.ipynb",
         "recipes/getting-started/getting_started-named-entity-recognition.ipynb",
-    ]:
-        print("Testing", notebook)
-        process_notebook(notebook)
+    ],
+)
+def test_all_recipes(notebook_file):
+    """
+    Runs `process_notebook` on all notebooks in the git repository.
+    """
+    print("Testing: %s", notebook_file)
+    process_notebook(notebook_file)
 
     return
 
