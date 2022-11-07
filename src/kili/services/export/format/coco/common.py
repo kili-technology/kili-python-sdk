@@ -115,6 +115,8 @@ class CocoExporter(BaseExporter):
 
     @staticmethod
     def _is_coco_compatible(job: Job) -> bool:
+        if "tools" not in job:
+            return False
         return ("semantic" in job["tools"] or "rectangle" in job["tools"]) and job[
             "mlTask"
         ] == "OBJECT_DETECTION"
