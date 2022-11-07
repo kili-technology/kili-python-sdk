@@ -156,10 +156,6 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:
         """
         Removes AUTOSAVE labels from exports
-
-        Parameters
-        ----------
-        - assets: list of assets
         """
         clean_assets = []
         for asset in assets:

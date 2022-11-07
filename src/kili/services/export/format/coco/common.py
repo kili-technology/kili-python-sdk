@@ -18,7 +18,7 @@ from typing_extensions import TypedDict
 
 from kili.orm import Asset
 from kili.services.export.format.base import BaseExporter
-from kili.services.export.types import Job, JobName, Jobs, ProjectId
+from kili.services.types import Job, JobName, Jobs, ProjectId
 
 DATA_SUBDIR = "data"
 
@@ -62,7 +62,7 @@ class CocoExporter(BaseExporter):
     Common code for Kili exporters.
     """
 
-    download_media = True
+    download_media = True  # COCO is self-contained and requires paths to the media files
 
     def process_and_save(self, assets: List[Asset], output_filename: str):
         """

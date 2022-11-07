@@ -9,7 +9,7 @@ import requests
 
 from kili.orm import Asset
 from kili.services.export.format.coco.common import _convert_kili_semantic_to_coco
-from kili.services.export.types import JobName
+from kili.services.types import JobName
 
 
 class CocoTestCase(TestCase):
