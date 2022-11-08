@@ -125,6 +125,8 @@ class ProjectWithoutDataset(TypedDict, total=False):
     assetMetadata: Dict
     assetMetadataCompute: Dict
     author: UserWithoutProjectUsers
+    canNavigateBetweenAssets: bool
+    canSkipAsset: bool
     consensusMark: float
     consensusMarkPerCateg: int
     consensusTotCoverage: int
