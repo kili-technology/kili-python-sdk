@@ -14,6 +14,7 @@ from kili.graphql.operations.plugins.mutations import (
     GQL_UPDATE_PLUGIN_RUNNER,
 )
 from kili.helpers import format_result, get_data_type
+from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 
 
@@ -94,6 +95,7 @@ class PluginUploader:
         else:
             result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
 
+        check_errors_plugin_upload(result, self.file_path, self.plugin_name)
         upload_url = format_result("data", result)
         return upload_url
 
