@@ -48,7 +48,7 @@ def type_check_label(key, value):
     "--input-format",
     type=click.Choice(get_args(LabelFormat)),
     help="Format in which the labels are encoded",
-    default="raw",
+    default="kili",
     show_default='"raw" kili format',
 )
 @click.option(

@@ -60,6 +60,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     if label_format in get_args(LabelFormat):
         format_exporter_selector_mapping = {
             "raw": KiliExporterSelector,
+            "kili": KiliExporterSelector,
             "coco": CocoExporterSelector,
             "yolo_v4": YoloExporterSelector,
             "yolo_v5": YoloExporterSelector,
