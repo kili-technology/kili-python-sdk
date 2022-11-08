@@ -115,7 +115,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         """
         Stringify the metadata
         """
-        json_content = asset.get("json_content", {})
+        json_content = asset.get("json_content", "")
         if not isinstance(json_content, str):
             json_content = dumps(json_content)
         return {**asset, "json_content": json_content}
