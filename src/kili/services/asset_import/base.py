@@ -82,6 +82,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         Base actions to import a batch of asset
         """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
+        assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
         result_batch = self.import_to_kili(assets_)
         self.pbar.update(n=len(assets))
@@ -108,6 +109,16 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         if not isinstance(json_metadata, str):
             json_metadata = dumps(json_metadata)
         return {**asset, "json_metadata": json_metadata}
+
+    @staticmethod
+    def stringify_json_content(asset: AssetLike) -> AssetLike:
+        """
+        Stringify the metadata
+        """
+        json_content = asset.get("json_content", {})
+        if not isinstance(json_content, str):
+            json_content = dumps(json_content)
+        return {**asset, "json_content": json_content}
 
     @staticmethod
     def add_id_to_asset(asset: AssetLike) -> AssetLike:
