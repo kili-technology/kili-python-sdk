@@ -91,7 +91,9 @@ class PluginUploader:
 
     @staticmethod
     def get_logger(level: LogLevel = "DEBUG"):
-        """Gets the export logger"""
+        """
+        Get the plugins logger
+        """
         logger = logging.getLogger("kili.services.plugins")
         logger.setLevel(level)
         if logger.hasHandlers():
@@ -145,7 +147,7 @@ class PluginUploader:
 
         action = "updated" if update else "created"
 
-        logger.info("Plugin is being %s... This should take approximately 3 minutes.", action)
+        logger.info(f"Plugin is being {action}... This should take approximately 3 minutes.")
 
         n_tries = 0
         status = None
@@ -158,7 +160,7 @@ class PluginUploader:
             if status == "ACTIVE":
                 break
 
-            logger.info("Status : %s...", status)
+            logger.info(f"Status : {status}...")
 
             n_tries += 1
             time.sleep(15)
