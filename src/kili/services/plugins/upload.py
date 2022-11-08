@@ -10,6 +10,8 @@ from kili.constants import mime_extensions_for_py_scripts
 from kili.graphql.operations.plugins.mutations import (
     GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
+    GQL_UPDATE_PLUGIN,
+    GQL_UPDATE_PLUGIN_RUNNER,
 )
 from kili.helpers import format_result, get_data_type
 from kili.utils import bucket
@@ -35,7 +37,7 @@ def check_file_is_py(path: Path, verbose: bool = True) -> bool:
     return correct_mime_type
 
 
-class PluginUploader:  # pylint: disable=too-few-public-methods
+class PluginUploader:
     """
     Class to upload a plugin
     """
@@ -79,24 +81,28 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
         """
         Upload a file to a signed url and returns the url with the file_id
         """
-        bucket.upload_data_via_rest(url, source_code.encode('utf-8'), "text/x-python")
+        bucket.upload_data_via_rest(url, source_code.encode("utf-8"), "text/x-python")
 
-    def _retrieve_upload_url(self) -> str:
+    def _retrieve_upload_url(self, is_updating_plugin: bool) -> str:
         """
         Retrieve an upload url from the backend
         """
         variables = {"pluginName": self.plugin_name}
 
-        result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
+        if is_updating_plugin:
+            result = self.auth.client.execute(GQL_UPDATE_PLUGIN, variables)
+        else:
+            result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
+
         upload_url = format_result("data", result)
         return upload_url
 
-    def _upload_script(self):
+    def _upload_script(self, is_updating_plugin: bool):
         """
         Upload a script to Kili bucket
         """
 
-        upload_url = self._retrieve_upload_url()
+        upload_url = self._retrieve_upload_url(is_updating_plugin)
 
         source_code = self._retrieve_script()
         self._parse_script(source_code)
@@ -117,6 +123,23 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
         Create a plugin in Kili
         """
 
-        self._upload_script()
+        self._upload_script(False)
 
         return self._create_plugin_runner()
+
+    def _update_plugin_runner(self):
+        """
+        Update plugin's runner
+        """
+        variables = {"pluginName": self.plugin_name}
+
+        result = self.auth.client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
+        return format_result("data", result)
+
+    def update_plugin(self):
+        """
+        Update a plugin in Kili
+        """
+
+        self._upload_script(True)
+        return self._update_plugin_runner()
