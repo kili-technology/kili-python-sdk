@@ -79,7 +79,7 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
         """
         Upload a file to a signed url and returns the url with the file_id
         """
-        bucket.upload_data_via_rest(url, source_code, "text/x-python")
+        bucket.upload_data_via_rest(url, source_code.encode('utf-8'), "text/x-python")
 
     def _retrieve_upload_url(self) -> str:
         """
