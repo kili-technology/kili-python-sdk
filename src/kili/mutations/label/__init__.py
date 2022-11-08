@@ -3,12 +3,14 @@ Label mutations
 """
 
 import warnings
+from itertools import repeat
 from json import dumps
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import format_result, infer_id_from_external_id
+from kili.enums import LabelType
+from kili.helpers import deprecate, format_result, infer_id_from_external_id
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
@@ -16,6 +18,7 @@ from kili.mutations.label.queries import (
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
+from kili.services.label_import import import_labels_from_dict
 from kili.utils.pagination import _mutate_from_paginated_call
 
 
@@ -91,6 +94,12 @@ class MutationsLabel:
         )
         return format_result("data", results[0], Label)
 
+    @deprecate(
+        msg=(
+            "append_to_labels method is deprecated. Please use append_labels instead. This new"
+            " function allows to import several labels 10 times faster."
+        )
+    )
     @typechecked
     def append_to_labels(
         self,
@@ -102,7 +111,12 @@ class MutationsLabel:
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ):
-        """Append a label to an asset.
+        """
+        !!! danger "[DEPRECATED]"
+            append_to_labels method is deprecated. Please use append_labels instead.
+            This new function allows to import several labels 10 times faster.
+
+        Append a label to an asset.
 
         Args:
             json_response: Label is given here
@@ -110,7 +124,7 @@ class MutationsLabel:
             label_asset_external_id: External identifier of the asset
             label_asset_id: Identifier of the asset
             project_id: Identifier of the project
-            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION` or `REVIEW`
+            label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
             seconds_to_label: Time to create the label
 
         !!! warning
@@ -124,7 +138,6 @@ class MutationsLabel:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
 
         """
-
         if author_id is None:
             author_id = self.auth.user_id
         label_asset_id = infer_id_from_external_id(
@@ -141,6 +154,64 @@ class MutationsLabel:
         }
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result("data", result, Label)
+
+    @typechecked
+    def append_labels(
+        self,
+        asset_id_array: List[str],
+        json_response_array: List[Dict],
+        author_id_array: Optional[List[str]] = None,
+        seconds_to_label_array: Optional[List[int]] = None,
+        model_name: Optional[str] = None,
+        label_type: LabelType = "DEFAULT",
+    ):
+        """Append labels to assets.
+
+        Args:
+            asset_id_array: list of asset ids to append labels on
+            json_response_array: list of labels to append
+            author_id_array: list of the author id of the labels
+            seconds_to_label_array: list of times taken to produce the label, in seconds
+            model_name: Only useful when uploading predictions.
+                Name of the model when uploading predictions
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.append_to_labels(
+                    asset_id_array=['cl9wmlkuc00050qsz6ut39g8h', 'cl9wmlkuw00080qsz2kqh8aiy'],
+                    json_response_array=[{...}, {...}]
+                )
+        """
+        if label_type == "PREDICTION" and model_name is None:
+            raise ValueError("You must provide model_name when uploading predictions")
+        if len(asset_id_array) != len(json_response_array):
+            raise ValueError("asset_id_array and json_response_array should have the same length")
+        for array in [seconds_to_label_array, author_id_array]:
+            if array is not None and len(array) != len(asset_id_array):
+                raise ValueError("All arrays should have the same length")
+        labels = [
+            {
+                "asset_id": asset_id,
+                "json_response": json_response,
+                "seconds_to_label": seconds_to_label,
+                "model_name": model_name,
+                "author_id": author_id,
+            }
+            for (asset_id, json_response, seconds_to_label, author_id, model_name) in list(
+                zip(
+                    asset_id_array,
+                    json_response_array,
+                    seconds_to_label_array or [None] * len(asset_id_array),
+                    author_id_array or [None] * len(asset_id_array),
+                    repeat(model_name),
+                )
+            )
+        ]
+        return import_labels_from_dict(self, labels, label_type)
 
     @typechecked
     def update_properties_in_label(

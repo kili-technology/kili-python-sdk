@@ -20,6 +20,7 @@ install_requires = [
     "pyyaml",
     "Pillow",
     "cuid",
+    "pydantic",
 ]
 
 dev_extra = [

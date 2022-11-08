@@ -91,7 +91,7 @@ def import_labels(
     field above, and not available for predictions)
       - `path`: paths to the json files containing the json_response to upload.
 
-    Additional columns can be provided in the CSV file, see `.append_to_labels` in the Python client
+    Additional columns can be provided in the CSV file, see `.append_labels` in the Python client
     documentation:
 
     \b
