@@ -132,7 +132,6 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     def export_project(
         self,
-        kili,
         export_params: ExportParams,
         logger_params: LoggerParams,
     ) -> None:
@@ -143,7 +142,7 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self._check_arguments_compatibility()
         self.logger.warning("Fetching assets...")
         assets = fetch_assets(
-            kili,
+            self.kili,
             project_id=export_params.project_id,
             asset_ids=export_params.assets_ids,
             export_type=export_params.export_type,
