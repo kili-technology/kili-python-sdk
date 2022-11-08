@@ -2,7 +2,9 @@
 Class to upload a plugin
 """
 
+import logging
 from pathlib import Path
+import time
 from typing import Optional
 
 from kili.authentication import KiliAuth
@@ -13,7 +15,9 @@ from kili.graphql.operations.plugins.mutations import (
     GQL_UPDATE_PLUGIN,
     GQL_UPDATE_PLUGIN_RUNNER,
 )
+from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
+from kili.services.types import LogLevel
 from kili.utils import bucket
 
 
@@ -83,6 +87,18 @@ class PluginUploader:
         """
         bucket.upload_data_via_rest(url, source_code.encode("utf-8"), "text/x-python")
 
+    @staticmethod
+    def get_logger(level: LogLevel = 'DEBUG'):
+        """Gets the export logger"""
+        logger = logging.getLogger("kili.services.plugins")
+        logger.setLevel(level)
+        if logger.hasHandlers():
+            logger.handlers.clear()
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        return logger
+
     def _retrieve_upload_url(self, is_updating_plugin: bool) -> str:
         """
         Retrieve an upload url from the backend
@@ -118,6 +134,46 @@ class PluginUploader:
         result = self.auth.client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
+    def _check_plugin_runner_status(self):
+        """
+        Check the status of a plugin's runner until it is active
+        """
+
+        n_tries = 0
+        status = None
+
+        logger = self.get_logger("INFO")
+
+        while n_tries < 20:
+            status = self._get_plugin_runner_status()
+
+            if status == "ACTIVE":
+                break
+
+            logger.info("Status : %s...", status)
+
+            n_tries += 1
+            time.sleep(15)
+
+        if status == "DEPLOYING" and n_tries == 20:
+            raise Exception("Limit of number of tries exceeded.")
+
+        if status != "ACTIVE":
+            raise Exception("There was some error during the creation of the plugin.")
+
+        return "Plugin created successfully"
+
+    def _get_plugin_runner_status(self):
+        """
+        Get the status of a plugin's runner
+        """
+
+        variables = {"name": self.plugin_name}
+
+        result = self.auth.client.execute(GQL_GET_PLUGIN_RUNNER_STATUS, variables)
+
+        return format_result("data", result)
+
     def create_plugin(self):
         """
         Create a plugin in Kili
@@ -125,7 +181,17 @@ class PluginUploader:
 
         self._upload_script(False)
 
-        return self._create_plugin_runner()
+        self._create_plugin_runner()
+
+        logger = self.get_logger()
+
+        logger.info("Plugin is being created... This should take approximately 3 minutes.")
+
+        status = self._check_plugin_runner_status()
+
+        logger.info(status)
+
+        return status
 
     def _update_plugin_runner(self):
         """
