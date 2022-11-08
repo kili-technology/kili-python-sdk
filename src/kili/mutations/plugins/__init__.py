@@ -156,3 +156,29 @@ class MutationsPlugins:
 
         pretty_result = get_logs(self.auth, plugin, start_date, limit, skip)
         return json.dumps(pretty_result, sort_keys=True, indent=4)
+
+    @typechecked
+    def update_plugin(
+        self,
+        file_path: str,
+        plugin_name: str,
+        verbose: bool = True,
+    ):
+        # pylint: disable=line-too-long
+        """Update a plugin with new code.
+
+        Args:
+            file_path : Path to your .py file
+            plugin_name: Name of the plugin
+            verbose: If false, minimal logs are displayed
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.update_plugin(plugin_name="my_plugin_name")
+        """
+
+        result = PluginUploader(self.auth, file_path, plugin_name, verbose).update_plugin()
+        return result

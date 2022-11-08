@@ -26,6 +26,30 @@ mutation(
 }
 """
 
+GQL_UPDATE_PLUGIN = """
+mutation(
+  $pluginName: String!
+  ) {
+  data: updatePlugin(
+    data: {
+      pluginName: $pluginName
+    }
+  )
+}
+"""
+
+GQL_UPDATE_PLUGIN_RUNNER = """
+mutation(
+  $pluginName: String!
+  ) {
+  data: updatePluginRunner(
+    data: {
+      pluginName: $pluginName
+    }
+  )
+}
+"""
+
 GQL_ACTIVATE_PLUGIN_ON_PROJECT = """
 mutation(
   $pluginName: String!
