@@ -141,6 +141,7 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Return the name of the exported archive file in the bucket.
         """
         self._check_arguments_compatibility()
+        self.logger.warning("Fetching assets...")
         assets = fetch_assets(
             kili,
             project_id=export_params.project_id,
@@ -216,34 +217,6 @@ class BaseExporterSelector(ABC):
     """
 
     @staticmethod
-    def get_logger_assets_and_content_repo(
-        kili,
-        export_params: ExportParams,
-        logger_params: LoggerParams,
-        content_repository_params: ContentRepositoryParams,
-    ):
-        """
-        Fetches assets and gets right logger and content repository depending on parameters
-        """
-        logger = BaseExporterSelector.get_logger(logger_params.level)
-
-        logger.info("Fetching assets ...")
-        assets = fetch_assets(
-            kili,
-            project_id=export_params.project_id,
-            asset_ids=export_params.assets_ids,
-            export_type=export_params.export_type,
-            label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=logger_params.disable_tqdm,
-        )
-        content_repository = SDKContentRepository(
-            content_repository_params.router_endpoint,
-            content_repository_params.router_headers,
-            verify_ssl=True,
-        )
-        return logger, assets, content_repository
-
-    @staticmethod
     @abstractmethod
     def select_exporter_class(
         split_param: SplitOption,
@@ -265,7 +238,6 @@ class BaseExporterSelector(ABC):
         """
         logger = BaseExporterSelector.get_logger(logger_params.level)
 
-        logger.info("Fetching assets ...")
         content_repository = SDKContentRepository(
             content_repository_params.router_endpoint,
             content_repository_params.router_headers,
