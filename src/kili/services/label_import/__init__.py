@@ -47,7 +47,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     label_importer_class: Optional[Type[AbstractLabelImporter]] = None
     if input_format in ["yolo_v4", "yolo_v5", "yolo_v7"]:
         label_importer_class = YoloLabelImporter
-    elif input_format == "raw":
+    elif input_format in ["raw", "kili"]:
         label_importer_class = KiliRawLabelImporter
     else:
         raise NotImplementedError(f"{input_format} import is not implemented yet.")
