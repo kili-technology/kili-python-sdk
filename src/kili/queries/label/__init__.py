@@ -13,6 +13,7 @@ from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 from kili.queries.project import QueriesProject
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.label_response import Response
 from kili.services.types import ProjectId
 from kili.types import Label as LabelType
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -347,7 +348,7 @@ class QueriesLabel:
             ```
             from kili.client import Kili
             kili = Kili()
-            project.export_labels("your_project_id", "export.zip", "yolo_v4")
+            kili.export_labels("your_project_id", "export.zip", "yolo_v4")
             ```
         """
 
@@ -366,3 +367,27 @@ class QueriesLabel:
             )
         except NoCompatibleJobError as excp:
             print(str(excp))
+
+    def label_response(self, label_id: str, project_id: str):
+        """
+        Get the response from a label as a python class
+
+        Args:
+            label_id: id from the label.
+
+        !!! Example
+            ```
+            from kili.client import Kili
+            kili = Kili()
+            project.label_response(label_id="my_label_id")
+            ```
+        """
+        json_response = self.labels(
+            project_id=project_id, label_id=label_id, fields=["jsonResponse"]
+        )[0]["jsonResponse"]
+
+        project = QueriesProject(self.auth).projects(
+            project_id=project_id, fields=["inputType", "jsonInterface"]
+        )[0]
+
+        return Response(json_response, project["jsonInterface"], project["inputType"])
