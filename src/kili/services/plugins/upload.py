@@ -3,8 +3,8 @@ Class to upload a plugin
 """
 
 import logging
-from pathlib import Path
 import time
+from pathlib import Path
 from typing import Optional
 
 from kili.authentication import KiliAuth
@@ -19,6 +19,8 @@ from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
 from kili.services.types import LogLevel
 from kili.utils import bucket
+
+NUMBER_TRIES_RUNNER_STATUS = 20
 
 
 def check_file_is_py(path: Path, verbose: bool = True) -> bool:
@@ -88,7 +90,7 @@ class PluginUploader:
         bucket.upload_data_via_rest(url, source_code.encode("utf-8"), "text/x-python")
 
     @staticmethod
-    def get_logger(level: LogLevel = 'DEBUG'):
+    def get_logger(level: LogLevel = "DEBUG"):
         """Gets the export logger"""
         logger = logging.getLogger("kili.services.plugins")
         logger.setLevel(level)
@@ -134,17 +136,23 @@ class PluginUploader:
         result = self.auth.client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
-    def _check_plugin_runner_status(self):
+    def _check_plugin_runner_status(self, update=False):
         """
         Check the status of a plugin's runner until it is active
         """
+
+        logger = self.get_logger()
+
+        action = "updated" if update else "created"
+
+        logger.info("Plugin is being %s... This should take approximately 3 minutes.", action)
 
         n_tries = 0
         status = None
 
         logger = self.get_logger("INFO")
 
-        while n_tries < 20:
+        while n_tries < NUMBER_TRIES_RUNNER_STATUS:
             status = self._get_plugin_runner_status()
 
             if status == "ACTIVE":
@@ -161,7 +169,10 @@ class PluginUploader:
         if status != "ACTIVE":
             raise Exception("There was some error during the creation of the plugin.")
 
-        return "Plugin created successfully"
+        message = f"Plugin {action} successfully"
+        logger.info(message)
+
+        return message
 
     def _get_plugin_runner_status(self):
         """
@@ -183,15 +194,7 @@ class PluginUploader:
 
         self._create_plugin_runner()
 
-        logger = self.get_logger()
-
-        logger.info("Plugin is being created... This should take approximately 3 minutes.")
-
-        status = self._check_plugin_runner_status()
-
-        logger.info(status)
-
-        return status
+        return self._check_plugin_runner_status()
 
     def _update_plugin_runner(self):
         """
@@ -208,4 +211,7 @@ class PluginUploader:
         """
 
         self._upload_script(True)
-        return self._update_plugin_runner()
+
+        self._update_plugin_runner()
+
+        return self._check_plugin_runner_status(update=True)
