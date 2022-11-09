@@ -5,7 +5,8 @@ Test notebooks with pytest
 
 import nbformat
 import pytest
-from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
+from nbclient.exceptions import CellExecutionError
+from nbconvert.preprocessors.execute import ExecutePreprocessor
 
 
 def process_notebook(notebook_filename):
