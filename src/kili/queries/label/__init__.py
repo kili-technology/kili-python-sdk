@@ -347,7 +347,7 @@ class QueriesLabel:
             ```
             from kili.client import Kili
             kili = Kili()
-            project.export_labels("your_project_id", "export.zip", "yolo_v4")
+            kili.export_labels("your_project_id", "export.zip", "yolo_v4")
             ```
         """
 
