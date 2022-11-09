@@ -1,5 +1,5 @@
 """
-Constants for the asset_improt services
+Constants for the asset_import services
 """
 
 from uuid import uuid4
