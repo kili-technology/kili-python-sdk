@@ -67,8 +67,6 @@ class MutationsProject:
     def update_properties_in_project(
         self,
         project_id: str,
-        can_navigate_between_assets: Optional[bool] = None,
-        can_skip_asset: Optional[bool] = None,
         consensus_mark: Optional[float] = None,
         consensus_tot_coverage: Optional[int] = None,
         description: Optional[str] = None,
@@ -91,9 +89,6 @@ class MutationsProject:
 
         Args:
             project_id: Identifier of the project.
-            can_navigate_between_assets:
-                Activate / Deactivate the use of next and previous buttons in labeling interface.
-            can_skip_asset: Activate / Deactivate the use of skip button in labeling interface.
             consensus_mark: Should be between 0 and 1.
             consensus_tot_coverage: Should be between 0 and 100.
                 It is the percentage of the dataset that will be annotated several times.
@@ -151,8 +146,6 @@ class MutationsProject:
         verify_argument_ranges(consensus_tot_coverage, min_consensus_size, review_coverage)
 
         variables = {
-            "canNavigateBetweenAssets": can_navigate_between_assets,
-            "canSkipAsset": can_skip_asset,
             "consensusMark": consensus_mark,
             "consensusTotCoverage": consensus_tot_coverage,
             "description": description,

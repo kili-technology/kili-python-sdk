@@ -17,8 +17,6 @@ mutation($data: AppendToRolesData!, $where: ProjectWhere!) {{
 
 GQL_UPDATE_PROPERTIES_IN_PROJECT = f"""
 mutation(
-    $canNavigateBetweenAssets: Boolean
-    $canSkipAsset: Boolean
     $consensusMark: Float
     $consensusTotCoverage: Int
     $description: String
@@ -42,8 +40,6 @@ mutation(
       id: $projectID
     }},
     data: {{
-      canNavigateBetweenAssets: $canNavigateBetweenAssets
-      canSkipAsset: $canSkipAsset
       consensusMark: $consensusMark
       consensusTotCoverage: $consensusTotCoverage
       description: $description
