@@ -10,7 +10,7 @@ from kili.constants import mime_extensions_for_py_scripts
 from kili.graphql.operations.plugins.mutations import (
     GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
-    GQL_UPDATE_PLUGIN,
+    GQL_GENERATE_UPDATE_URL,
     GQL_UPDATE_PLUGIN_RUNNER,
 )
 from kili.helpers import format_result, get_data_type
@@ -90,7 +90,7 @@ class PluginUploader:
         variables = {"pluginName": self.plugin_name}
 
         if is_updating_plugin:
-            result = self.auth.client.execute(GQL_UPDATE_PLUGIN, variables)
+            result = self.auth.client.execute(GQL_GENERATE_UPDATE_URL, variables)
         else:
             result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
 

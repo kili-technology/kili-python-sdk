@@ -26,11 +26,11 @@ mutation(
 }
 """
 
-GQL_UPDATE_PLUGIN = """
+GQL_GENERATE_UPDATE_URL = """
 mutation(
   $pluginName: String!
   ) {
-  data: updatePlugin(
+  data: generateUpdateUrl(
     data: {
       pluginName: $pluginName
     }
