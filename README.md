@@ -53,6 +53,8 @@ Install the Kili client with pip:
 pip install kili
 ```
 
+If you want to contribute, here are the [installation steps](CONTRIBUTING.md).
+
 ## Usage
 
 Instantiate the Kili client:
