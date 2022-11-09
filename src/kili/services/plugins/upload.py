@@ -75,12 +75,13 @@ class PluginUploader:
         """
         Method to detect indentation errors in the script
         """
+        logger = self.get_logger()
 
         # We execute the source code to prevent the upload of a file with SyntaxError
-        print(f"Executing {self.file_path.name}...")
+        logger.info(f"Executing {self.file_path.name}...")
         # pylint: disable=exec-used
         exec(source_code)
-        print(f"Done executing {self.file_path.name}!")
+        logger.info(f"Done executing {self.file_path.name}!")
 
     @staticmethod
     def _upload_file(source_code: str, url: str):
@@ -152,10 +153,8 @@ class PluginUploader:
         n_tries = 0
         status = None
 
-        logger = self.get_logger("INFO")
-
         while n_tries < NUMBER_TRIES_RUNNER_STATUS:
-            status = self._get_plugin_runner_status()
+            status = self.get_plugin_runner_status()
 
             if status == "ACTIVE":
                 break
@@ -166,17 +165,27 @@ class PluginUploader:
             time.sleep(15)
 
         if status == "DEPLOYING" and n_tries == 20:
-            raise Exception("Limit of number of tries exceeded.")
+            raise Exception(
+                f"""We could not check your plugin was deployed in time.
+Please check again the status of the plugin after some minutes with the command : \
+kili.get_plugin_status("{self.plugin_name}").
+If the status is different than DEPLOYING or ACTIVE, please check your plugin's code and try to \
+overwrite the plugin with a new version of the code (you can use kili.update_plugin() for that)."""
+            )
 
         if status != "ACTIVE":
-            raise Exception("There was some error during the creation of the plugin.")
+            raise Exception(
+                """There was some error during the creation of the plugin. \
+Please check your plugin's code and try to overwrite the plugin with a new version of the \
+code (you can use kili.update_plugin() for that)."""
+            )
 
         message = f"Plugin {action} successfully"
         logger.info(message)
 
         return message
 
-    def _get_plugin_runner_status(self):
+    def get_plugin_runner_status(self):
         """
         Get the status of a plugin's runner
         """
