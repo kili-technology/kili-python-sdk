@@ -10,8 +10,6 @@ from kili.services.plugins import PluginUploader, get_logs, list_plugins
 
 from ...authentication import KiliAuth
 
-from ...authentication import KiliAuth
-
 
 class QueriesPlugins:
     """Set of Plugins queries."""
