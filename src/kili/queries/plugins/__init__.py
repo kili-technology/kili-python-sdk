@@ -2,11 +2,11 @@
 
 import json
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.services.plugins import PluginUploader, get_logs
+from kili.services.plugins import PluginUploader, get_logs, list_plugins
 
 from ...authentication import KiliAuth
 
@@ -74,3 +74,29 @@ class QueriesPlugins:
 
         result = PluginUploader(self.auth, "", plugin_name, verbose).get_plugin_runner_status()
         return result
+
+    # pylint: disable=dangerous-default-value
+    @typechecked
+    def list_plugins(
+        self,
+        fields: List[str] = [
+            "name",
+            "id",
+            "createdAt",
+            "updatedAt",
+        ],
+    ):
+        # pylint: disable=line-too-long
+        """List all plugins from your organization
+        Args:
+            fields: All the fields to request among the possible fields for the plugins
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#plugins) for all possible fields.
+
+        Returns:
+            A result array which contains all the plugins from your organization,
+                or an error message.
+        Examples:
+            >>> kili.list_plugins()
+            >>> kili.list_plugins(fields=['name'])
+        """
+        return list_plugins(self.auth, fields)

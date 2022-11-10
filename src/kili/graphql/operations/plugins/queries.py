@@ -35,3 +35,16 @@ query(
   )
 }
 """
+
+
+def gql_list_plugins(fragment):
+    """
+    Return the GraphQL list_plugins query
+    """
+    return f"""
+query {{
+  data: listPlugins {{
+    {fragment}
+  }}
+}}
+"""
