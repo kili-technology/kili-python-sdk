@@ -11,7 +11,6 @@ import time
 from datetime import datetime
 from enum import Enum
 
-import requests
 import websocket
 
 from kili import __version__
@@ -85,27 +84,20 @@ class GraphQLClient:
             else:
                 raise ValueError("headername must be defined.")
 
-        if self.session is not None:
-            req = None
-            try:
-                self.session.verify = self.verify
-                req = self.session.post(
-                    self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
-                )
-                if req.status_code == 401:
-                    raise Exception("Invalid API KEY")
-                return req.json()
-            except Exception as exception:
-                if req is not None:
-                    raise Exception(req.content) from exception
-                raise exception
-
-        # when session is not defined (should not happen)
-        req = requests.get(
-            self.endpoint, data=json.dumps(data).encode("utf-8"), headers=headers, timeout=30
-        )
-        str_json = req.content.decode("utf-8")
-        return json.loads(str_json)
+        assert self.session, "Session must be defined"
+        req = None
+        try:
+            self.session.verify = self.verify
+            req = self.session.post(
+                self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
+            )
+            if req.status_code == 401:
+                raise Exception("Invalid API KEY")
+            return req.json()
+        except Exception as exception:
+            if req is not None:
+                raise Exception(req.content) from exception
+            raise exception
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
