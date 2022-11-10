@@ -8,13 +8,15 @@ from typeguard import typechecked
 
 from kili.services.plugins import PluginUploader, get_logs
 
+from ...authentication import KiliAuth
+
 
 class QueriesPlugins:
     """Set of Plugins queries."""
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
