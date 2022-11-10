@@ -2,6 +2,8 @@
 Class to upload a plugin
 """
 
+import logging
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -13,8 +15,12 @@ from kili.graphql.operations.plugins.mutations import (
     GQL_GENERATE_UPDATE_URL,
     GQL_UPDATE_PLUGIN_RUNNER,
 )
+from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
+from kili.services.types import LogLevel
 from kili.utils import bucket
+
+NUMBER_TRIES_RUNNER_STATUS = 20
 
 
 def check_file_is_py(path: Path, verbose: bool = True) -> bool:
@@ -69,12 +75,13 @@ class PluginUploader:
         """
         Method to detect indentation errors in the script
         """
+        logger = self.get_logger()
 
         # We execute the source code to prevent the upload of a file with SyntaxError
-        print(f"Executing {self.file_path.name}...")
+        logger.info(f"Executing {self.file_path.name}...")
         # pylint: disable=exec-used
         exec(source_code)
-        print(f"Done executing {self.file_path.name}!")
+        logger.info(f"Done executing {self.file_path.name}!")
 
     @staticmethod
     def _upload_file(source_code: str, url: str):
@@ -82,6 +89,20 @@ class PluginUploader:
         Upload a file to a signed url and returns the url with the file_id
         """
         bucket.upload_data_via_rest(url, source_code.encode("utf-8"), "text/x-python")
+
+    @staticmethod
+    def get_logger(level: LogLevel = "DEBUG"):
+        """
+        Get the plugins logger
+        """
+        logger = logging.getLogger("kili.services.plugins")
+        logger.setLevel(level)
+        if logger.hasHandlers():
+            logger.handlers.clear()
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        return logger
 
     def _retrieve_upload_url(self, is_updating_plugin: bool) -> str:
         """
@@ -118,6 +139,63 @@ class PluginUploader:
         result = self.auth.client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
+    def _check_plugin_runner_status(self, update=False):
+        """
+        Check the status of a plugin's runner until it is active
+        """
+
+        logger = self.get_logger()
+
+        action = "updated" if update else "created"
+
+        logger.info(f"Plugin is being {action}... This should take approximately 3 minutes.")
+
+        n_tries = 0
+        status = None
+
+        while n_tries < NUMBER_TRIES_RUNNER_STATUS:
+            status = self.get_plugin_runner_status()
+
+            if status == "ACTIVE":
+                break
+
+            logger.info(f"Status : {status}...")
+
+            n_tries += 1
+            time.sleep(15)
+
+        if status == "DEPLOYING" and n_tries == 20:
+            raise Exception(
+                f"""We could not check your plugin was deployed in time.
+Please check again the status of the plugin after some minutes with the command : \
+kili.get_plugin_status("{self.plugin_name}").
+If the status is different than DEPLOYING or ACTIVE, please check your plugin's code and try to \
+overwrite the plugin with a new version of the code (you can use kili.update_plugin() for that)."""
+            )
+
+        if status != "ACTIVE":
+            raise Exception(
+                """There was some error during the creation of the plugin. \
+Please check your plugin's code and try to overwrite the plugin with a new version of the \
+code (you can use kili.update_plugin() for that)."""
+            )
+
+        message = f"Plugin {action} successfully"
+        logger.info(message)
+
+        return message
+
+    def get_plugin_runner_status(self):
+        """
+        Get the status of a plugin's runner
+        """
+
+        variables = {"name": self.plugin_name}
+
+        result = self.auth.client.execute(GQL_GET_PLUGIN_RUNNER_STATUS, variables)
+
+        return format_result("data", result)
+
     def create_plugin(self):
         """
         Create a plugin in Kili
@@ -125,7 +203,9 @@ class PluginUploader:
 
         self._upload_script(False)
 
-        return self._create_plugin_runner()
+        self._create_plugin_runner()
+
+        return self._check_plugin_runner_status()
 
     def _update_plugin_runner(self):
         """
@@ -142,4 +222,7 @@ class PluginUploader:
         """
 
         self._upload_script(True)
-        return self._update_plugin_runner()
+
+        self._update_plugin_runner()
+
+        return self._check_plugin_runner_status(update=True)

@@ -242,6 +242,8 @@ redefining-builtins-modules=six.moves,past.builtins,future.builtins,builtins,io
 
 [FORMAT]
 
+disable=logging-fstring-interpolation
+
 # Expected format of line ending, e.g. empty (any line ending), LF or CRLF.
 expected-line-ending-format=
 

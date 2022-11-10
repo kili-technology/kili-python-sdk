@@ -25,3 +25,13 @@ query(
   }}
 }}
 """
+
+GQL_GET_PLUGIN_RUNNER_STATUS = """
+query(
+  $name: String!
+  ) {
+  data: getPluginRunnerStatus(
+    name: $name
+  )
+}
+"""
