@@ -4,15 +4,14 @@ GraphQL Client
 
 
 import json
-import os
 import random
 import string
 import threading
 import time
-import urllib
 from datetime import datetime
 from enum import Enum
 
+import requests
 import websocket
 
 from kili import __version__
@@ -89,40 +88,24 @@ class GraphQLClient:
         if self.session is not None:
             req = None
             try:
-                try:
-                    number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
-                except ValueError:
-                    number_of_trials = 10
-                for trial_number in range(number_of_trials):
-                    self.session.verify = self.verify
-                    req = self.session.post(
-                        self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
-                    )
-                    errors_in_response = "errors" in req.json()
-                    if req.status_code == 200 and not errors_in_response:
-                        break
-                    if req.status_code == 401:
-                        raise Exception("Invalid API KEY")
-                    if trial_number == number_of_trials - 1 and errors_in_response:
-                        break
-                    time.sleep(1)
-                return req.json()  # type:ignore X
+                self.session.verify = self.verify
+                req = self.session.post(
+                    self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
+                )
+                if req.status_code == 401:
+                    raise Exception("Invalid API KEY")
+                return req.json()
             except Exception as exception:
                 if req is not None:
                     raise Exception(req.content) from exception
                 raise exception
 
-        req = urllib.request.Request(  # type: ignore
-            self.endpoint, json.dumps(data).encode("utf-8"), headers
+        # when session is not defined (should not happen)
+        req = requests.get(
+            self.endpoint, data=json.dumps(data).encode("utf-8"), headers=headers, timeout=30
         )
-        try:
-            with urllib.request.urlopen(req) as response:  # type:ignore
-                str_json = response.read().decode("utf-8")
-                return json.loads(str_json)
-        except urllib.error.HTTPError as error:  # type:ignore
-            print((error.read()))
-            print("")
-            raise error
+        str_json = req.content.decode("utf-8")
+        return json.loads(str_json)
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"

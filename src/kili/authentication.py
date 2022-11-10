@@ -1,8 +1,10 @@
 """API authentication module"""
+import os
 import warnings
 from datetime import datetime, timedelta
 
 import requests
+from requests import adapters
 
 from kili import __version__
 from kili.graphql_client import GraphQLClient, GraphQLClientName
@@ -10,8 +12,6 @@ from kili.helpers import format_result
 from kili.queries.api_key import QueriesApiKey
 from kili.queries.user.queries import GQL_ME
 from kili.types import User
-
-MAX_RETRIES = 20
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -51,7 +51,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             )
             warnings.warn(message, UserWarning)
 
-        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type: ignore
+        adapter = adapters.HTTPAdapter(max_retries=self._get_retry_policy())
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
         self.client = GraphQLClient(
@@ -70,6 +70,18 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         self.user_id = user["id"]
         self.user_email = user["email"]
         self.check_expiry_of_key_is_close(api_key)
+
+    @staticmethod
+    def _get_retry_policy() -> adapters.Retry:
+        number_of_trials = None
+        try:
+            number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
+        except ValueError:
+            number_of_trials = 10
+        retry_policy = adapters.Retry(
+            connect=number_of_trials, read=0, redirect=0, status=0, other=0
+        )
+        return retry_policy
 
     def __del__(self):
         self.session.close()
