@@ -10,7 +10,7 @@ class AssetLike(TypedDict, total=False):
     General type of an asset obejct through the import functions
     """
 
-    content: str
+    content: Union[str, bytes]
     json_content: Union[dict, str, list]
     external_id: str
     status: str
@@ -24,7 +24,7 @@ class KiliResolverAsset(AssetLike, TypedDict, total=True):
     Type of an asset object to be sent in Kili resolvers
     """
 
-    content: str
+    content: Union[str, bytes]
     json_content: Union[dict, str, list]
     external_id: str
     status: str

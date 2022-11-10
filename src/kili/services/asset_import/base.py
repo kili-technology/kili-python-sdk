@@ -211,19 +211,20 @@ class ContentBatchImporter(BaseBatchImporter):
         return super().import_batch(assets)
 
     def get_content_type_and_data_from_content(
-        self, content: Optional[str]
+        self, content: Optional[Union[str, bytes]]
     ) -> Tuple[bytes, Optional[str]]:
         """
         Returns the data of the content (path) and its content type
         """
         assert content
+        assert isinstance(content, str)
         with Path(content).open("rb") as file:
             data = file.read()
             content_type, _ = mimetypes.guess_type(content)
             return data, content_type
 
     def get_type_and_data_from_content_array(
-        self, content_array: List[Optional[str]]
+        self, content_array: List[Optional[Union[str, bytes]]]
     ) -> List[Tuple[Union[bytes, str], Optional[str]]]:
         """
         Returns the data of the content (path) and its content type for each element in the array
@@ -341,6 +342,7 @@ class BaseAssetImporter:
         for asset in assets:
             path = asset.get("content")
             assert path
+            assert isinstance(path, str)
             try:
                 self.check_mime_type_compatibility(path)
                 filtered_assets.append(asset)
