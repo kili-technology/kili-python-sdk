@@ -24,6 +24,7 @@ from kili.queries.label import QueriesLabel
 from kili.queries.lock import QueriesLock
 from kili.queries.notification import QueriesNotification
 from kili.queries.organization import QueriesOrganization
+from kili.queries.plugins import QueriesPlugins
 from kili.queries.project import QueriesProject
 from kili.queries.project_user import QueriesProjectUser
 from kili.queries.project_version import QueriesProjectVersion
@@ -50,6 +51,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     QueriesLock,
     QueriesOrganization,
     QueriesNotification,
+    QueriesPlugins,
     QueriesProject,
     QueriesProjectUser,
     QueriesProjectVersion,
