@@ -52,6 +52,7 @@ class ImageDataImporter(BaseAssetImporter):
         for asset in assets:
             path = asset.get("content")
             assert path
+            assert isinstance(path, str)
             mime_type, _ = mimetypes.guess_type(path.lower())
             is_large_image = os.path.getsize(path) >= LARGE_IMAGE_THRESHOLD_SIZE
             is_tiff = mime_type == "image/tiff"
