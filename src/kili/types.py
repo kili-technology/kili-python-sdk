@@ -374,6 +374,17 @@ class Notification(TypedDict):
     userID: str
 
 
+class Plugin(TypedDict):
+    """
+    A wrapper for Plugin GraphQL object.
+    """
+
+    id: str
+    name: str
+    createdAt: str
+    updatedAt: str
+
+
 class ProjectVersion(TypedDict):
     """
     A wrapper for ProjectVersion GraphQL object.

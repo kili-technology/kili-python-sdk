@@ -49,8 +49,7 @@ class MutationsPlugins:
             >>> kili.upload_plugin_beta(file_path="./path/to/my/file.py")
         """
 
-        result = PluginUploader(self.auth, file_path, plugin_name, verbose).create_plugin()
-        return result
+        return PluginUploader(self.auth, file_path, plugin_name, verbose).create_plugin()
 
     @typechecked
     def activate_plugin_on_project(
@@ -74,8 +73,7 @@ class MutationsPlugins:
             >>> kili.activate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
 
-        pretty_result = activate_plugin(self.auth, plugin_name, project_id)
-        return pretty_result
+        return activate_plugin(self.auth, plugin_name, project_id)
 
     @typechecked
     def deactivate_plugin_on_project(
@@ -99,8 +97,7 @@ class MutationsPlugins:
             >>> kili.deactivate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
 
-        pretty_result = deactivate_plugin(self.auth, plugin_name, project_id)
-        return pretty_result
+        return deactivate_plugin(self.auth, plugin_name, project_id)
 
     @typechecked
     def delete_plugin(
@@ -122,8 +119,7 @@ class MutationsPlugins:
             >>> kili.delete_plugin(plugin_name="my_plugin_name")
         """
 
-        pretty_result = delete_plugin(self.auth, plugin_name)
-        return pretty_result
+        return delete_plugin(self.auth, plugin_name)
 
     @typechecked
     def update_plugin(
@@ -147,5 +143,4 @@ class MutationsPlugins:
             >>> kili.update_plugin(plugin_name="my_plugin_name")
         """
 
-        result = PluginUploader(self.auth, file_path, plugin_name, verbose).update_plugin()
-        return result
+        return PluginUploader(self.auth, file_path, plugin_name, verbose).update_plugin()
