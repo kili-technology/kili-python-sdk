@@ -59,3 +59,27 @@ jobs:
         with:
           use-quiet-mode: "yes"
           use-verbose-mode: "yes"
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools twine wheel
+          pip install -e .
+
+      - name: Build
+        run: |
+          python setup.py sdist bdist_wheel
+
+      - name: Test the Build
+        run: |
+          python -m pip install --no-index --find-links=dist kili
+          python -c "from kili.client import Kili; k=Kili(); print(\"Everything OK!\")"
