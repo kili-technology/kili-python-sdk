@@ -18,6 +18,7 @@ known_first_party= ['kili']
 [tool.pyright]
 exclude = [
     "**/__pycache__",
+    "recipes/datasets/plugins/plugin.py",
 ]
 
 pythonVersion = "3.7"
