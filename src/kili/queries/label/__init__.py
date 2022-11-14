@@ -147,7 +147,7 @@ class QueriesLabel:
                 "id": label_id,
                 "asset": {
                     "id": asset_id,
-                    "externalIdIn": asset_external_id_in,
+                    "externalIdStrictlyIn": asset_external_id_in,
                     "statusIn": asset_status_in,
                 },
                 "project": {
@@ -288,7 +288,7 @@ class QueriesLabel:
                 "id": label_id,
                 "asset": {
                     "id": asset_id,
-                    "externalIdIn": asset_external_id_in,
+                    "externalIdStrictlyIn": asset_external_id_in,
                     "statusIn": asset_status_in,
                 },
                 "project": {
