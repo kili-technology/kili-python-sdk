@@ -154,6 +154,8 @@ class PluginUploader:
         status = None
 
         while n_tries < NUMBER_TRIES_RUNNER_STATUS:
+            time.sleep(15)
+
             status = self.get_plugin_runner_status()
 
             if status == "ACTIVE":
@@ -162,7 +164,6 @@ class PluginUploader:
             logger.info(f"Status : {status}...")
 
             n_tries += 1
-            time.sleep(15)
 
         if status == "DEPLOYING" and n_tries == 20:
             raise Exception(
