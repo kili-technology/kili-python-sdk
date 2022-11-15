@@ -2,7 +2,6 @@
 Class to upload a plugin
 """
 
-import logging
 import time
 from pathlib import Path
 from typing import Optional
@@ -17,8 +16,9 @@ from kili.graphql.operations.plugins.mutations import (
 )
 from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
-from kili.services.types import LogLevel
 from kili.utils import bucket
+
+from .helpers import get_logger
 
 NUMBER_TRIES_RUNNER_STATUS = 20
 
@@ -75,7 +75,7 @@ class PluginUploader:
         """
         Method to detect indentation errors in the script
         """
-        logger = self.get_logger()
+        logger = get_logger()
 
         # We execute the source code to prevent the upload of a file with SyntaxError
         logger.info(f"Executing {self.file_path.name}...")
@@ -89,20 +89,6 @@ class PluginUploader:
         Upload a file to a signed url and returns the url with the file_id
         """
         bucket.upload_data_via_rest(url, source_code.encode("utf-8"), "text/x-python")
-
-    @staticmethod
-    def get_logger(level: LogLevel = "DEBUG"):
-        """
-        Get the plugins logger
-        """
-        logger = logging.getLogger("kili.services.plugins")
-        logger.setLevel(level)
-        if logger.hasHandlers():
-            logger.handlers.clear()
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.DEBUG)
-        logger.addHandler(handler)
-        return logger
 
     def _retrieve_upload_url(self, is_updating_plugin: bool) -> str:
         """
@@ -144,7 +130,7 @@ class PluginUploader:
         Check the status of a plugin's runner until it is active
         """
 
-        logger = self.get_logger()
+        logger = get_logger()
 
         action = "updated" if update else "created"
 
