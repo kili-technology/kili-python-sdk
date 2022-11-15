@@ -27,7 +27,7 @@ class QueriesPlugins:
         self,
         project_id: str,
         plugin_name: str,
-        start_date: datetime,
+        start_date: Optional[datetime] = None,
         limit: Optional[int] = None,
         skip: Optional[int] = None,
     ):
@@ -36,7 +36,7 @@ class QueriesPlugins:
         Args:
             project_id: Identifier of the project
             plugin_name: Name of the plugin
-            start_date: Datetime used to get the logs from
+            start_date: Datetime used to get the logs from, if not provided, it will be the plugin's creation date
             limit: Limit for pagination, if not provided, it will be 100
             skip: Skip for pagination, if not provided, it will be 0
         Returns:
