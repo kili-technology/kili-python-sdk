@@ -73,6 +73,6 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         exporter = exporter_selector.init_exporter(
             kili, logger_params, export_params, content_repository_params
         )
-        exporter.export_project(kili, export_params, logger_params)
+        exporter.export_project(export_params, logger_params)
     else:
         raise ValueError(f'Label format "{label_format}" is not implemented or does not exist.')
