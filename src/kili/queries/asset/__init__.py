@@ -193,7 +193,7 @@ class QueriesAsset:
                 "project": {
                     "id": project_id,
                 },
-                "externalIdIn": external_id_contains,
+                "externalIdStrictlyIn": external_id_contains,
                 "statusIn": status_in,
                 "consensusMarkGte": consensus_mark_gt,
                 "consensusMarkLte": consensus_mark_lt,
@@ -346,7 +346,7 @@ class QueriesAsset:
                 "project": {
                     "id": project_id,
                 },
-                "externalIdIn": external_id_contains,
+                "externalIdStrictlyIn": external_id_contains,
                 "statusIn": status_in,
                 "consensusMarkGte": consensus_mark_gt,
                 "consensusMarkLte": consensus_mark_lt,
