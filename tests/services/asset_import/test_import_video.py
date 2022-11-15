@@ -108,7 +108,7 @@ class VideoTestCase(ImportTestCase):
             ["local video to frames"],
             ["unique_id"],
             [expected_json_metadata],
-            "VIDEO_LEGACY",
+            "VIDEO",
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -141,7 +141,7 @@ class VideoTestCase(ImportTestCase):
             ["changing fps"],
             ["unique_id"],
             [expected_json_metadata],
-            "VIDEO_LEGACY",
+            "VIDEO",
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 

@@ -43,6 +43,6 @@ def import_assets(
 
     if input_type not in importer_by_type:
         raise NotImplementedError(f"There is no imported for the input type: {input_type}")
-    asset_importer = importer_by_type["input_type"](*importer_params)
+    asset_importer = importer_by_type[input_type](*importer_params)
     result = asset_importer.import_assets(assets=assets)  # type:ignore X
     return result
