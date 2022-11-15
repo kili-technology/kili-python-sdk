@@ -23,7 +23,6 @@ from kili.utils import bucket
 NUMBER_TRIES_RUNNER_STATUS = 20
 
 
-
 def check_file_is_py(path: Path, verbose: bool = True) -> bool:
     """
     Returns true if the mime type of the file corresponds to a python file
