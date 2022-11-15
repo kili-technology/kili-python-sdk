@@ -175,7 +175,7 @@ Status = Literal[
 
 
 UploadType = Literal[
-    "VIDEO_LEGACY",
+    "VIDEO",
     "GEO_SATELLITE",
 ]
 
