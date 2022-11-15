@@ -8,4 +8,5 @@ content
 projectId
 pluginName
 logType
+runId
 """
