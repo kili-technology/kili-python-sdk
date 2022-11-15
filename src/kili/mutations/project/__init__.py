@@ -1,6 +1,5 @@
 """Project mutations."""
 
-import warnings
 from json import dumps
 from typing import Dict, Optional
 
@@ -101,7 +100,7 @@ class MutationsProject:
             honeypot_mark : Should be between 0 and 1
             instructions : Instructions of the project.
             interface_category: Always use 'IV2'.
-            input_type: Currently, one of `AUDIO`, `FRAME`, `IMAGE`, `PDF`, `TEXT`,
+            input_type: Currently, one of `AUDIO`, `IMAGE`, `PDF`, `TEXT`,
                 `VIDEO`, `VIDEO_LEGACY`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
@@ -188,7 +187,7 @@ class MutationsProject:
         """Create a project.
 
         Args:
-            input_type : Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, NA}
+            input_type : Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, VIDEO_LEGACY, NA}
             json_interface: The json parameters of the project, see Edit your interface.
             title : Title of the project
             description : Description of the project
@@ -221,8 +220,6 @@ class MutationsProject:
             For more detailed examples on how to create projects,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb).
         """
-        if input_type == "FRAME":
-            warnings.warn("FRAME input type is deprecated. Please use VIDEO instead")
         variables = {
             "data": {
                 "description": description,

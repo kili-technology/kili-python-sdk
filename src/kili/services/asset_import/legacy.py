@@ -106,7 +106,7 @@ def encode_object_if_not_url(content, input_type):
 
 def process_frame_json_content(json_content):
     """
-    Function to process individual json_content of VIDEO projects
+    Function to process individual json_content of VIDEO_LEGACY projects
     """
     if is_url(json_content):
         return json_content
@@ -150,7 +150,7 @@ def process_json_content(
         if is_url(json_content):
             processed_json_content_array.append(json_content)
         else:
-            if input_type in ("FRAME", "VIDEO"):
+            if input_type in ("VIDEO_LEGACY", "VIDEO"):
                 json_content = process_frame_json_content(json_content)
             processed_json_content_array.append(dumps(json_content))
     return processed_json_content_array
@@ -293,7 +293,7 @@ def process_metadata(
     json_metadata_array = (
         [{}] * len(content_array) if json_metadata_array is None else json_metadata_array
     )
-    if input_type in ("FRAME", "VIDEO"):
+    if input_type in ("VIDEO_LEGACY", "VIDEO"):
         should_use_native_video = json_content_array is None
         json_metadata_array = [
             add_video_parameters(json_metadata, should_use_native_video)
@@ -313,7 +313,7 @@ def get_request_to_execute(
     """
     if json_content_array is not None:
         return GQL_APPEND_MANY_TO_DATASET, None
-    if input_type not in ("FRAME", "VIDEO"):
+    if input_type not in ("VIDEO_LEGACY", "VIDEO"):
         if input_type == "IMAGE" and mime_type == "image/tiff":
             return GQL_APPEND_MANY_FRAMES_TO_DATASET, "GEO_SATELLITE"
         return GQL_APPEND_MANY_TO_DATASET, None
@@ -326,7 +326,7 @@ def get_request_to_execute(
         .get("processingParameters", {})
         .get("shouldUseNativeVideo", True)
     ):
-        return GQL_APPEND_MANY_FRAMES_TO_DATASET, "VIDEO"
+        return GQL_APPEND_MANY_FRAMES_TO_DATASET, "VIDEO_LEGACY"
     return GQL_APPEND_MANY_TO_DATASET, None
 
 

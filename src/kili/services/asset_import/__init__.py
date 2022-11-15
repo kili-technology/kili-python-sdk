@@ -18,7 +18,7 @@ importer_by_type = {
     "IMAGE": ImageDataImporter,
     "TEXT": TextDataImporter,
     "VIDEO": VideoDataImporter,
-    "FRAMES": VideoDataImporter,
+    "VIDEO_LEGACY": VideoDataImporter,
 }
 
 

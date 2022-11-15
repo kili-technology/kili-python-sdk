@@ -153,7 +153,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         """
         Import assets with asynchronous resolver.
         """
-        upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO"
+        upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO_LEGACY"
         payload = {
             "data": {
                 "contentArray": [asset["content"] for asset in assets],

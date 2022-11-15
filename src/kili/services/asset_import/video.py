@@ -1,5 +1,5 @@
 """
-Functions to import assets into a VIDEO project
+Functions to import assets into a VIDEO_LEGACY project
 """
 import mimetypes
 import os
@@ -70,7 +70,7 @@ class VideoMixin:
 
 class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
     """
-    Class for importing a batch of video assets from content into a VIDEO project
+    Class for importing a batch of video assets from content into a VIDEO_LEGACY project
     """
 
     def add_video_processing_parameters(self, asset):
@@ -92,7 +92,7 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
 
 class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
     """
-    Class for importing a batch of video assets from frames into a VIDEO project
+    Class for importing a batch of video assets from frames into a VIDEO_LEGACY project
     """
 
     def add_video_processing_parameters(self, asset):
@@ -145,7 +145,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
 
 class VideoDataImporter(BaseAssetImporter):
     """
-    Class for importing data into a VIDEO project
+    Class for importing data into a VIDEO_LEGACY project
     """
 
     @staticmethod

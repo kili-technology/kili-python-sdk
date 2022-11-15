@@ -30,7 +30,6 @@ mime_extensions = {
 
 project_compatible_mimetypes = {
     "AUDIO": mime_extensions["Audio"],
-    "FRAME": mime_extensions["Video"],
     "IMAGE": mime_extensions["Image"],
     "NA": "",
     "PDF": mime_extensions["Pdf"],

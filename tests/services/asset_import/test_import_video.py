@@ -30,7 +30,7 @@ class VideoTestCase(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -57,7 +57,7 @@ class VideoTestCase(ImportTestCase):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -93,7 +93,7 @@ class VideoTestCase(ImportTestCase):
                 },
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -108,7 +108,7 @@ class VideoTestCase(ImportTestCase):
             ["local video to frames"],
             ["unique_id"],
             [expected_json_metadata],
-            "VIDEO",
+            "VIDEO_LEGACY",
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -125,7 +125,7 @@ class VideoTestCase(ImportTestCase):
                 },
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
         expected_json_metadata = json.dumps(
             {
@@ -141,7 +141,7 @@ class VideoTestCase(ImportTestCase):
             ["changing fps"],
             ["unique_id"],
             [expected_json_metadata],
-            "VIDEO",
+            "VIDEO_LEGACY",
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
@@ -159,7 +159,7 @@ class VideoTestCase(ImportTestCase):
                 "id": "unique_id",
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -191,7 +191,7 @@ class VideoTestCase(ImportTestCase):
                 "id": "unique_id",
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -254,7 +254,7 @@ class VideoTestCase(ImportTestCase):
                 "json_metadata": {"fromBucket": True, "score": 10},
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "fromBucket": True,
