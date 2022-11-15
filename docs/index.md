@@ -2,7 +2,9 @@
 
 <img src="assets/Kili_Core_Illustration_Interact.png" alt="Kili Character" align="right" style="height:400px;"/>
 ## What is Kili?
-Kili is a platform that empowers a data-centric approach to Machine Learning through quality training data creation. It provides collaborative data **annotation tools** and APIs that enable quick iterations between reliable dataset building and model training. More info [here](https://kili-technology.com/product/label-annotate).
+Kili is a platform that empowers a data-centric approach to Machine Learning through quality training data creation. It provides collaborative data **annotation tools** and APIs that enable quick iterations between reliable dataset building and model training. More info about the product [here](https://kili-technology.com/product/label-annotate).
+
+If you are looking for the Kili product documentation, it is located [here](https://docs.kili-technology.com/docs).
 
 ## Requirements
 
