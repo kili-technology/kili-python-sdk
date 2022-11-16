@@ -13,12 +13,12 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 from PIL import Image
-from tqdm.autonotebook import tqdm
 from typing_extensions import TypedDict
 
 from kili.orm import Asset
 from kili.services.export.format.base import BaseExporter
 from kili.services.types import Job, JobName, Jobs, ProjectId
+from kili.utils.tqdm import tqdm
 
 DATA_SUBDIR = "data"
 

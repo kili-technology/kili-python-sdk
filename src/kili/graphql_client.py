@@ -4,12 +4,10 @@ GraphQL Client
 
 
 import json
-import os
 import random
 import string
 import threading
 import time
-import urllib
 from datetime import datetime
 from enum import Enum
 
@@ -86,43 +84,20 @@ class GraphQLClient:
             else:
                 raise ValueError("headername must be defined.")
 
-        if self.session is not None:
-            req = None
-            try:
-                try:
-                    number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
-                except ValueError:
-                    number_of_trials = 10
-                for trial_number in range(number_of_trials):
-                    self.session.verify = self.verify
-                    req = self.session.post(
-                        self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
-                    )
-                    errors_in_response = "errors" in req.json()
-                    if req.status_code == 200 and not errors_in_response:
-                        break
-                    if req.status_code == 401:
-                        raise Exception("Invalid API KEY")
-                    if trial_number == number_of_trials - 1 and errors_in_response:
-                        break
-                    time.sleep(1)
-                return req.json()  # type:ignore X
-            except Exception as exception:
-                if req is not None:
-                    raise Exception(req.content) from exception
-                raise exception
-
-        req = urllib.request.Request(  # type: ignore
-            self.endpoint, json.dumps(data).encode("utf-8"), headers
-        )
+        assert self.session, "Session must be defined"
+        req = None
         try:
-            with urllib.request.urlopen(req) as response:  # type:ignore
-                str_json = response.read().decode("utf-8")
-                return json.loads(str_json)
-        except urllib.error.HTTPError as error:  # type:ignore
-            print((error.read()))
-            print("")
-            raise error
+            self.session.verify = self.verify
+            req = self.session.post(
+                self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
+            )
+            if req.status_code == 401:
+                raise Exception("Invalid API KEY")
+            return req.json()
+        except Exception as exception:
+            if req is not None:
+                raise Exception(req.content) from exception
+            raise exception
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"

@@ -91,10 +91,10 @@ class TextDataImporter(BaseAssetImporter):
                 self.auth, self.project_params, batch_params, self.pbar
             )
         elif data_type == TextDataType.RAW_TEXT:
-            assets: List[AssetLike] = [
-                AssetLike(**{**asset, "content": asset["content"].encode("utf-8")})
-                for asset in assets
-            ]
+            for asset in assets:
+                if "content" in asset and isinstance(asset["content"], str):
+                    asset["content"] = asset["content"].encode("utf-8")
+
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = RawTextBatchImporter(
                 self.auth, self.project_params, batch_params, self.pbar
