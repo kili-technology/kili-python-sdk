@@ -107,7 +107,7 @@ class MutationsAsset:
             "content": content_array,
             "json_content": json_content_array,
             "external_id": external_id_array,
-            "id_array": id_array,
+            "id": id_array,
             "status": status_array,
             "json_metadata": json_metadata_array,
             "is_honeypot": is_honeypot_array,
