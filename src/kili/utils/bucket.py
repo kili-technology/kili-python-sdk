@@ -61,6 +61,8 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
         path_array: a list of file paths, json or text to upload
         content_type: mimetype of the data. It will be infered if not given
     """
+    if content_type == "text/plain":
+        content_type += "; charset=utf-8"
     headers = {"Content-type": content_type}
     url_to_use_for_upload = url_with_id.split("&id=")[0]
     if "blob.core.windows.net" in url_to_use_for_upload:
