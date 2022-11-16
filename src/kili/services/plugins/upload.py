@@ -16,31 +16,12 @@ from kili.graphql.operations.plugins.mutations import (
 )
 from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
+from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 
 from .helpers import get_logger
 
 NUMBER_TRIES_RUNNER_STATUS = 20
-
-
-def check_file_is_py(path: Path, verbose: bool = True) -> bool:
-    """
-    Returns true if the mime type of the file corresponds to a python file
-    """
-    mime_type = get_data_type(path.as_posix())
-
-    if not (mime_extensions_for_py_scripts and mime_type):
-        return False
-
-    correct_mime_type = mime_type in mime_extensions_for_py_scripts
-
-    if verbose and not correct_mime_type:
-        print(
-            f"File mime type for {path} is {mime_type} and does not correspond"
-            "to the type of the project. "
-            f"File mime type should be one of {mime_extensions_for_py_scripts}"
-        )
-    return correct_mime_type
 
 
 def check_file_is_py(path: Path, verbose: bool = True) -> bool:
@@ -121,6 +102,7 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
         else:
             result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
 
+        check_errors_plugin_upload(result, self.file_path, self.plugin_name)
         upload_url = format_result("data", result)
         return upload_url
 
