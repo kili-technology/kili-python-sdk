@@ -14,7 +14,7 @@ install_requires = [
     "tenacity",
     "tqdm",
     "typeguard",
-    "typing_extensions",
+    "typing_extensions>=4.1.0",
     "pyparsing",
     "websocket-client",
     "pyyaml",
