@@ -22,14 +22,14 @@ class TestContentType(ImportTestCase):
     @patch.object(
         QueriesProject,
         "projects",
-        MagicMock(return_value=[{"inputType": "VIDEO"}]),
+        MagicMock(return_value=[{"inputType": "VIDEO_LEGACY"}]),
     )
     def test_cannot_upload_an_image_to_video_project(self):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
         with self.assertRaises(MimeTypeError):
-            import_assets(self.auth, self.project_id, assets)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(
         QueriesProject,
@@ -40,7 +40,7 @@ class TestContentType(ImportTestCase):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(
         QueriesProject,
@@ -51,4 +51,4 @@ class TestContentType(ImportTestCase):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)

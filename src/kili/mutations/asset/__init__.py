@@ -58,16 +58,17 @@ class MutationsAsset:
                 - For a `TEXT` project, the content can be either raw text, or URLs to TEXT assets.
                 - For an `IMAGE` / `PDF` project, the content can be either URLs or paths to existing
                     images/pdf on your computer.
-                - For a `VIDEO`  project, the content must be hosted on a web server,
-                    and you point Kili to your data by giving the URLs.
+                - For a VIDEO project, the content can be either URLs pointing to videos hosted on a web server or paths to
+                existing video files on your computer. If you want to import video from frames, look at the json_content
+                section below.
             external_id_array: List of external ids given to identify the assets.
                 If None, random identifiers are created.
             is_honeypot_array:  Whether to use the asset for honeypot
             status_array: By default, all imported assets are set to `TODO`. Other options:
                 `ONGOING`, `LABELED`, `REVIEWED`.
-            json_content_array: Useful for `VIDEO` or `TEXT` projects only.
+            json_content_array: Useful for `VIDEO_LEGACY` or `TEXT` projects only.
 
-                - For `FRAME` projects, each element is a sequence of frames, i.e. a
+                - For `VIDEO_LEGACY` projects, each element is a sequence of frames, i.e. a
                     list of URLs to images or a list of paths to images.
                 - For `TEXT` projects, each element is a json_content dict,
                     formatted according to documentation [on how to import

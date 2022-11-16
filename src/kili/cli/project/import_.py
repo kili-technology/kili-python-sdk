@@ -129,7 +129,7 @@ def import_assets(
         # pylint: disable=raise-missing-from
         raise NotFound(f"project ID: {project_id}")
 
-    if input_type not in ("FRAME", "VIDEO") and (fps is not None or as_frames is True):
+    if input_type not in ("VIDEO_LEGACY", "VIDEO") and (fps is not None or as_frames is True):
         illegal_option = "fps and frames are"
         if not as_frames:
             illegal_option = "fps is"
@@ -173,7 +173,7 @@ def import_assets(
         }
         for i in range(len(files_to_upload))
     ]
-    if input_type in ("FRAME", "VIDEO"):
+    if input_type in ("VIDEO_LEGACY", "VIDEO"):
         json_metadata = generate_json_metadata(as_frames, fps)
         assets_to_import = [
             {**assets_to_import[i], "json_metadata": json_metadata}

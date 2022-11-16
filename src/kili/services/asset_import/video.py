@@ -1,5 +1,5 @@
 """
-Functions to import assets into a VIDEO project
+Functions to import assets into a VIDEO_LEGACY project
 """
 import mimetypes
 import os
