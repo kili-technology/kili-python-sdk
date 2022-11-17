@@ -1,7 +1,9 @@
-from typing import Optional
 import logging
+from typing import Optional
+
 from kili.client import Kili
 from kili.types import Label
+
 
 class PluginParams(object):
     """
@@ -21,10 +23,8 @@ class PluginParams(object):
             self.logger = logging.getLogger()
         self.project_id = project_id
         self.run_id = run_id
-    
 
 
-    
 class PluginCore(PluginParams):
     """
     Kili Plugin core class
@@ -44,7 +44,6 @@ class PluginCore(PluginParams):
         self.kili = kili
         if plugin_params:
             super().__init__(**plugin_params.__dict__)
-
 
     def on_submit(self, label: Label, asset_id: str, project_id: str) -> None:
         """
