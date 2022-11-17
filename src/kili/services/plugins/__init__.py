@@ -5,8 +5,10 @@ from kili.services.plugins.deletion import delete_plugin
 from kili.services.plugins.list import list_plugins
 from kili.services.plugins.logs import get_logs
 from kili.services.plugins.upload import PluginUploader
+from kili.services.plugins.model import PluginCore
 
 __all__ = [
+    "PluginCore",
     "PluginUploader",
     "activate_plugin",
     "deactivate_plugin",
