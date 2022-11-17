@@ -3,10 +3,14 @@ Fragments of plugins related mutations and queries
 """
 
 PLUGIN_LOG_FRAGMENT = """
-createdAt
 content
-projectId
-pluginName
+createdAt
 logType
+metadata {
+  assetId
+  labelId
+}
+pluginName
+projectId
 runId
 """
