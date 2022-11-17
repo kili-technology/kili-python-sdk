@@ -81,6 +81,7 @@ class QueriesPlugins:
         self,
         fields: List[str] = [
             "name",
+            "projectIds",
             "id",
             "createdAt",
             "updatedAt",
