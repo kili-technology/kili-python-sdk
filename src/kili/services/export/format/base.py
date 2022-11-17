@@ -12,7 +12,7 @@ from typing import Dict, List, NamedTuple, Optional, Type
 
 from kili.orm import AnnotationFormat, Asset, JobMLTask, JobTool
 from kili.services.export.exceptions import NotCompatibleOptions
-from kili.services.export.repository import SDKContentRepository
+from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import LogLevel
@@ -29,25 +29,7 @@ class ExportParams(NamedTuple):
     label_format: LabelFormat
     split_option: SplitOption
     single_file: bool
-    output_file: str
-
-
-class LoggerParams(NamedTuple):
-    """
-    Contains all parameters related to logging.
-    """
-
-    disable_tqdm: bool
-    level: LogLevel
-
-
-class ContentRepositoryParams(NamedTuple):
-    """
-    Contains all the parameters related to the content repository.
-    """
-
-    router_endpoint: str
-    router_headers: Dict[str, str]
+    output_file: Path
 
 
 class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -58,25 +40,27 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     download_media = False  # Whether or not we need to download the media for the given format.
 
+    from kili.client import Kili
+
     def __init__(
         self,
-        project_id,
-        export_type,
-        label_format,
-        single_file,
-        disable_tqdm,
-        kili,
-        logger,
-        content_repository,
+        export_params: ExportParams,
+        kili: Kili,
+        logger: logging.Logger,
+        disable_tqdm: bool,
+        content_repository: AbstractContentRepository,
     ):  # pylint: disable=too-many-arguments
-        self.project_id = project_id
-        self.export_type = export_type
-        self.label_format = label_format
-        self.single_file = single_file
+        self.project_id = export_params.project_id
+        self.assets_ids = export_params.assets_ids
+        self.export_type = export_params.export_type
+        self.label_format = export_params.label_format
+        self.single_file = export_params.single_file
+        self.asset_ids = export_params.assets_ids
         self.disable_tqdm = disable_tqdm
         self.kili = kili
         self.logger = logger
         self.content_repository = content_repository
+        self.output_file = export_params.output_file
 
     def _check_arguments_compatibility(self):
         if self.single_file and self.label_format not in ["raw", "kili"]:
@@ -85,12 +69,12 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
             )
 
     @abstractmethod
-    def process_and_save(self, assets: List[Dict], output_filename: str) -> None:
+    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """
         Converts the asset and save them into an archive file.
         """
 
-    def make_archive(self, root_folder: str, output_filename: str) -> str:
+    def make_archive(self, root_folder: str, output_filename: Path) -> Path:
         """
         Make the export archive
         """
@@ -103,8 +87,10 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         Get and validate the project
         """
-        json_interface = self.kili.projects(
-            project_id=self.project_id, fields=["jsonInterface"], disable_tqdm=True
+        json_interface = list(
+            self.kili.projects(
+                project_id=self.project_id, fields=["jsonInterface"], disable_tqdm=True
+            )
         )[0]["jsonInterface"]
 
         ml_task = JobMLTask.ObjectDetection
@@ -117,8 +103,10 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Create a README.kili.txt file to give information about exported labels
         """
         readme_file_name = root_folder / self.project_id / "README.kili.txt"
-        project_info = self.kili.projects(
-            project_id=self.project_id, fields=["title", "id", "description"], disable_tqdm=True
+        project_info = list(
+            self.kili.projects(
+                project_id=self.project_id, fields=["title", "id", "description"], disable_tqdm=True
+            )
         )[0]
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
@@ -132,8 +120,6 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     def export_project(
         self,
-        export_params: ExportParams,
-        logger_params: LoggerParams,
     ) -> None:
         """
         Export a project to a json.
@@ -143,14 +129,14 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.logger.warning("Fetching assets...")
         assets = fetch_assets(
             self.kili,
-            project_id=export_params.project_id,
-            asset_ids=export_params.assets_ids,
-            export_type=export_params.export_type,
+            project_id=self.project_id,
+            asset_ids=self.assets_ids,
+            export_type=self.export_type,
             label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=logger_params.disable_tqdm,
+            disable_tqdm=self.disable_tqdm,
             download_media=self.download_media,
         )
-        self.process_and_save(assets, export_params.output_file)
+        self.process_and_save(assets, self.output_file)
 
     @staticmethod
     def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:
@@ -167,7 +153,7 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return clean_assets
 
     @staticmethod
-    def _format_json_response(label, label_format):
+    def _format_json_response(label: Dict, label_format: Dict):
         """
         Format the label JSON response in the requested format
         """
@@ -221,38 +207,33 @@ class BaseExporterSelector(ABC):
         Return the right exporter class.
         """
 
-    @classmethod
-    def init_exporter(
-        cls,
-        kili,
-        logger_params,
-        export_params: ExportParams,
-        content_repository_params: ContentRepositoryParams,
-    ) -> BaseExporter:
-        """
-        Return the right exporter.
-        """
-        logger = BaseExporterSelector.get_logger(logger_params.level)
+    # @classmethod
+    # def init_exporter(
+    #     cls,
+    #     kili,
+    #     logger_params,
+    #     export_params: ExportParams,
+    #     content_repository_params: ContentRepositoryParams,
+    # ) -> BaseExporter:
+    #     """
+    #     Return the right exporter.
+    #     """
 
-        content_repository = SDKContentRepository(
-            content_repository_params.router_endpoint,
-            content_repository_params.router_headers,
-            verify_ssl=True,
-        )
-        exporter_class = cls.select_exporter_class(export_params.split_option)
-        return exporter_class(
-            export_params.project_id,
-            export_params.export_type,
-            export_params.label_format,
-            export_params.single_file,
-            logger_params.disable_tqdm,
-            kili,
-            logger,
-            content_repository,
-        )
+    #     exporter_class = cls.select_exporter_class(export_params.split_option)
+
+    #     return exporter_class(
+    #         export_params.project_id,
+    #         export_params.export_type,
+    #         export_params.label_format,
+    #         export_params.single_file,
+    #         logger_params.disable_tqdm,
+    #         kili,
+    #         logger,
+    #         content_repository,
+    #     )
 
     @staticmethod
-    def get_logger(level: LogLevel):
+    def get_logger(level: LogLevel) -> logging.Logger:
         """Gets the export logger"""
         logger = logging.getLogger("kili.services.export")
         logger.setLevel(level)

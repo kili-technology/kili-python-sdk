@@ -3,7 +3,7 @@ Functions to export a project to YOLOv4, v5 or v7 format
 """
 from typing import Type
 
-from kili.services.export.types import SplitOption
+from kili.services.export.format.base import ExportParams
 
 from ..base import BaseExporter, BaseExporterSelector
 from .merge import YoloMergeExporter
@@ -19,11 +19,11 @@ class YoloExporterSelector(BaseExporterSelector):
 
     @staticmethod
     def select_exporter_class(
-        split_param: SplitOption,
+        export_params: ExportParams,
     ) -> Type[BaseExporter]:
         """
         Export a project to YOLO v4 or v5 format
         """
-        if split_param == "split":
+        if export_params.split_option == "split":
             return YoloSplitExporter
         return YoloMergeExporter

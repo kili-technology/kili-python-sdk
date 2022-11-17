@@ -3,8 +3,8 @@ Functions to export a project to Kili format
 """
 from typing import Type
 
+from kili.services.export.format.base import ExportParams
 from kili.services.export.format.kili.common import KiliExporter
-from kili.services.export.types import SplitOption
 
 from ..base import BaseExporter, BaseExporterSelector
 
@@ -17,5 +17,6 @@ class KiliExporterSelector(BaseExporterSelector):
     """
 
     @staticmethod
-    def select_exporter_class(split_param: SplitOption) -> Type[BaseExporter]:
+    def select_exporter_class(export_params: ExportParams) -> Type[BaseExporter]:
+        _ = export_params
         return KiliExporter
