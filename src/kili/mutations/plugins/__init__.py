@@ -9,8 +9,7 @@ from kili.services.plugins import (
     deactivate_plugin,
     delete_plugin,
 )
-
-from ...authentication import KiliAuth
+from kili.authentication import KiliAuth
 
 
 class MutationsPlugins:
