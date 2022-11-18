@@ -12,8 +12,8 @@ class TemporaryDirectory:
 
     def __init__(self) -> None:
         self.temporary_directory = (
-            tempfile.TemporaryDirectory()
-        )  # pylint: disable=consider-using-with
+            tempfile.TemporaryDirectory()  # pylint: disable=consider-using-with
+        )
 
     def __enter__(self) -> Path:
         return Path(self.temporary_directory.__enter__())

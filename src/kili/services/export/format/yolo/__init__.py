@@ -6,7 +6,7 @@ import csv
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
@@ -236,11 +236,11 @@ class _LabelFrames:
         """
         return len(str(self.number_frames))
 
-    def get_label_filename(self, idx: int) -> Path:
+    def get_label_filename(self, idx: int) -> str:
         """
         Get label filemame for index
         """
-        return Path(f"{self.external_id}_{str(idx + 1).zfill(self.get_leading_zeros())}")
+        return f"{self.external_id}_{str(idx + 1).zfill(self.get_leading_zeros())}"
 
 
 def _convert_from_kili_to_yolo_format(
@@ -291,7 +291,7 @@ def _process_asset(
     labels_folder: Path,
     category_ids: Dict[str, JobCategory],
     content_repository: AbstractContentRepository,
-):
+) -> Tuple[List[Tuple[str, str, str]], List[str]]:
     # pylint: disable=too-many-locals, too-many-branches
     """
     Process an asset for all job_ids of category_ids.
@@ -383,7 +383,7 @@ def _get_frame_labels(
 def _write_content_frame_to_file(
     url_content_frame: str,
     images_folder: Path,
-    filename: Path,
+    filename: str,
     content_repository: AbstractContentRepository,
 ):
     content_iterator = content_repository.get_content_stream(url_content_frame, 1024)
@@ -395,7 +395,7 @@ def _write_content_frame_to_file(
 
 
 def _write_labels_to_file(
-    labels_folder: Path, filename: Path, annotations: List[YoloAnnotation]
+    labels_folder: Path, filename: str, annotations: List[YoloAnnotation]
 ) -> None:
     with (labels_folder / f"{filename}.txt").open("wb") as fout:
         for category_idx, _x_, _y_, _w_, _h_ in annotations:
