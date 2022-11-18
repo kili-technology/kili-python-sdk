@@ -3,13 +3,12 @@ Common code for the yolo exporter.
 """
 
 import json
-import os
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import List
 
 from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
+from kili.utils.tempfile import TemporaryDirectory
 
 
 class KiliExporter(AbstractExporter):
@@ -29,24 +28,22 @@ class KiliExporter(AbstractExporter):
         self.logger.info("Exporting to kili format...")
 
         with TemporaryDirectory() as root_folder:
-            base_folder = os.path.join(root_folder, self.project_id)
-            os.makedirs(base_folder)
+            base_folder = root_folder / self.project_id
+            base_folder.mkdir(parents=True)
             if self.single_file:
                 project_json = json.dumps(assets, sort_keys=True, indent=4)
-                with open(os.path.join(base_folder, "data.json"), "wb") as output_file:
+                with (base_folder / "data.json").open("wb") as output_file:
                     output_file.write(project_json.encode("utf-8"))
             else:
-                labels_folder = os.path.join(base_folder, "labels")
-                os.makedirs(labels_folder)
+                labels_folder = base_folder / "labels"
+                labels_folder.mkdir(parents=True)
                 for asset in assets:
                     external_id = asset["externalId"].replace(" ", "_")
                     asset_json = json.dumps(asset, sort_keys=True, indent=4)
-                    with open(
-                        os.path.join(labels_folder, f"{external_id}.json"), "wb"
-                    ) as output_file:
+                    with (labels_folder / f"{external_id}.json").open("wb") as output_file:
                         output_file.write(asset_json.encode("utf-8"))
-            self.create_readme_kili_file(Path(root_folder))
-            self.make_archive(Path(root_folder), output_filename)
+            self.create_readme_kili_file(root_folder)
+            self.make_archive(root_folder, output_filename)
 
         self.logger.warning(output_filename)
 

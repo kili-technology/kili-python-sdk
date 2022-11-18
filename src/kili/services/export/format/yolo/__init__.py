@@ -5,15 +5,14 @@ Common code for the yolo exporter.
 import csv
 import json
 import logging
-import os
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Dict, List, Set
 
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
+from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
 
@@ -48,16 +47,16 @@ class YoloExporter(AbstractExporter):
             )
 
         with TemporaryDirectory() as root_folder:
-            images_folder = Path(root_folder) / self.project_id / "images"
-            os.makedirs(images_folder)
+            images_folder = root_folder / self.project_id / "images"
+            images_folder.mkdir(parents=True)
             self._write_jobs_labels_into_split_folders(
                 assets,
                 categories_by_job,
-                Path(root_folder),
+                root_folder,
                 images_folder,
             )
-            self.create_readme_kili_file(Path(root_folder))
-            self.make_archive(Path(root_folder), output_filename)
+            self.create_readme_kili_file(root_folder)
+            self.make_archive(root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -72,11 +71,11 @@ class YoloExporter(AbstractExporter):
             )
 
         with TemporaryDirectory() as root_folder:
-            base_folder = Path(root_folder) / self.project_id
+            base_folder = root_folder / self.project_id
             images_folder = base_folder / "images"
             labels_folder = base_folder / "labels"
-            os.makedirs(images_folder)
-            os.makedirs(labels_folder)
+            images_folder.mkdir(parents=True)
+            labels_folder.mkdir(parents=True)
             self._write_labels_into_single_folder(
                 assets,
                 merged_categories_id,
@@ -84,8 +83,8 @@ class YoloExporter(AbstractExporter):
                 images_folder,
                 base_folder,
             )
-            self.create_readme_kili_file(Path(root_folder))
-            self.make_archive(Path(root_folder), output_filename)
+            self.create_readme_kili_file(root_folder)
+            self.make_archive(root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -155,7 +154,7 @@ class YoloExporter(AbstractExporter):
         for job_id, category_ids in categories_by_job.items():
             base_folder = root_folder / self.project_id / job_id
             labels_folder = base_folder / "labels"
-            os.makedirs(labels_folder)
+            labels_folder.mkdir(parents=True)
 
             self._write_labels_into_single_folder(
                 assets,
@@ -350,17 +349,17 @@ def _write_class_file(
     Create a file that contains meta information about the export, depending of Yolo version
     """
     if label_format == "yolo_v4":
-        with open(os.path.join(folder, "classes.txt"), "wb") as fout:
+        with (folder / "classes.txt").open("wb") as fout:
             for job_category in category_ids.values():
                 fout.write(f"{job_category.id} {job_category.category_name}\n".encode())
     if label_format == "yolo_v5":
-        with open(os.path.join(folder, "data.yaml"), "wb") as fout:
+        with (folder / "data.yaml").open("wb") as fout:
             fout.write("names:\n".encode())
             categories = ""
             for ind, job_category in enumerate(category_ids.values()):
                 fout.write(f"  {ind}: {job_category.category_name}\n".encode())
     if label_format == "yolo_v7":
-        with open(os.path.join(folder, "data.yaml"), "wb") as fout:
+        with (folder / "data.yaml").open("wb") as fout:
             categories = ""
             for job_category in category_ids.values():
                 categories += f"'{job_category.category_name}', "
@@ -388,7 +387,7 @@ def _write_content_frame_to_file(
     content_repository: AbstractContentRepository,
 ):
     content_iterator = content_repository.get_content_stream(url_content_frame, 1024)
-    with open(os.path.join(images_folder, f"{filename}.jpg"), "wb") as fout:
+    with (images_folder / f"{filename}.jpg").open("wb") as fout:
         for block in content_iterator:
             if not block:
                 break
@@ -398,7 +397,7 @@ def _write_content_frame_to_file(
 def _write_labels_to_file(
     labels_folder: Path, filename: Path, annotations: List[YoloAnnotation]
 ) -> None:
-    with open(os.path.join(labels_folder, f"{filename}.txt"), "wb") as fout:
+    with (labels_folder / f"{filename}.txt").open("wb") as fout:
         for category_idx, _x_, _y_, _w_, _h_ in annotations:
             fout.write(f"{category_idx} {_x_} {_y_} {_w_} {_h_}\n".encode())
 
@@ -409,8 +408,7 @@ def _write_video_metadata_file(video_metadata: Dict, base_folder: Path) -> None:
     """
     video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
     if video_metadata_json is not None:
-        meta_json_path = os.path.join(base_folder, "video_meta.json")
-        with open(meta_json_path, "wb") as output_file:
+        with (base_folder / "video_meta.json").open("wb") as output_file:
             output_file.write(video_metadata_json.encode("utf-8"))
 
 
@@ -419,8 +417,7 @@ def _write_remote_content_file(remote_content: List[str], images_folder: Path) -
     Write remote content file
     """
     remote_content_header = ["external id", "url", "label file"]
-    remote_file_path = os.path.join(images_folder, "remote_assets.csv")
-    with open(remote_file_path, "w", encoding="utf8") as file:
+    with (images_folder / "remote_assets.csv").open("w", encoding="utf8") as file:
         writer = csv.writer(file)
         writer.writerow(remote_content_header)
         writer.writerows(remote_content)

@@ -3,12 +3,10 @@ Common code for the coco exporter.
 """
 
 import json
-import os
 import shutil
 import time
 from datetime import datetime
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -18,6 +16,7 @@ from typing_extensions import TypedDict
 from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job, JobName, Jobs, ProjectId
+from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
 DATA_SUBDIR = "data"
@@ -76,10 +75,10 @@ class CocoExporter(AbstractExporter):
         with TemporaryDirectory() as tmp_dir:
             self._save_assets_export(
                 clean_assets,
-                Path(tmp_dir),
+                tmp_dir,
             )
-            self.create_readme_kili_file(Path(tmp_dir))
-            self.make_archive(Path(tmp_dir), output_filename)
+            self.create_readme_kili_file(tmp_dir)
+            self.make_archive(tmp_dir, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -162,7 +161,7 @@ def _convert_kili_semantic_to_coco(
 
     # Prepare output folder
     data_dir = output_dir / DATA_SUBDIR
-    os.makedirs(data_dir, exist_ok=True)
+    data_dir.mkdir(parents=True, exist_ok=True)
 
     # Mapping category - category id
     cat_kili_id_to_coco_id = _get_kili_cat_id_to_coco_cat_id_mapping(job)
