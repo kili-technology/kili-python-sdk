@@ -9,7 +9,7 @@ from kili.types import Label
 
 class PluginParams:  # pylint: disable=too-few-public-methods
     """
-    Base plugin init argument
+    Base plugin init argument for internal use
     :param logger: logger that plugins can make use of
     :param project_id: the project on which plugin is ran
     :param run_id: a unique identifier for the plugin run
@@ -43,6 +43,8 @@ class PluginCore(PluginParams):
     Implements
     on_submit(self, label: Label, asset_id: str, project_id: str)
     on_review(self, label: Label, asset_id: str, project_id: str)
+
+    # Warning : if using a custom init, be sure to call super().__init__()
     """
 
     kili: Kili
@@ -56,13 +58,11 @@ class PluginCore(PluginParams):
         self,
         label: Label,
         asset_id: str,
-        project_id: str,
     ) -> None:
         """
         Handler for the submit action, triggered when a default label is submitted into Kili
         :param label: label submitted to Kili
         :param asset_id: id of the asset on which the label was submitted
-        :param project_id: id of the project on which the label was submitted
 
         Example use:
         def on_submit(self, label: Label, project_id: str, asset_id: str):
@@ -74,20 +74,18 @@ class PluginCore(PluginParams):
 
         """
         # pylint: disable=unused-argument
-        self.logger.warn("Method not implemented. Define a custom on_submit on your plugin")  # pylint: disable=deprecated-method
+        self.logger.warning("Method not implemented. Define a custom on_submit on your plugin")
         pass  # pylint: disable=unnecessary-pass
 
     def on_review(
         self,
         label: Label,
         asset_id: str,
-        project_id: str,
     ) -> None:
         """
         Handler for the review action, triggered when a default label is reviewed on Kili
         :param label: label submitted to Kili
         :param asset_id: id of the asset on which the label was submitted
-        :param project_id: id of the project on which the label was submitted
 
         Example use:
         def on_review(self, label: Label, project_id: str, asset_id: str):
@@ -98,5 +96,5 @@ class PluginCore(PluginParams):
                 self.kili.send_back_to_queue(asset_ids=[asset_id])
         """
         # pylint: disable=unused-argument
-        self.logger.warn("Method not implemented. Define a custom on_review on your plugin")  # pylint: disable=deprecated-method
+        self.logger.warning("Method not implemented. Define a custom on_review on your plugin")
         pass  # pylint: disable=unnecessary-pass
