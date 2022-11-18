@@ -1,6 +1,4 @@
-"""
-Develop Plugins for Kili
-"""
+"""Develop Plugins for Kili"""
 
 import logging
 from typing import Optional
@@ -9,7 +7,7 @@ from kili.client import Kili
 from kili.types import Label
 
 
-class PluginParams:
+class PluginParams:  # pylint: disable=too-few-public-methods
     """
     Base plugin init argument
     :param logger: logger that plugins can make use of
@@ -75,9 +73,10 @@ class PluginCore(PluginParams):
                 self.kili.send_back_to_queue(asset_ids=[asset_id])
 
         """
-        self.logger.warn("Method not implemented. Define a custom on_submit on your plugin")
-        pass
-    
+        # pylint: disable=unused-argument
+        self.logger.warn("Method not implemented. Define a custom on_submit on your plugin")  # pylint: disable=deprecated-method,line-too-long
+        pass  # pylint: disable=unnecessary-pass
+
     def on_review(
         self,
         label: Label,
@@ -98,5 +97,6 @@ class PluginCore(PluginParams):
             else:
                 self.kili.send_back_to_queue(asset_ids=[asset_id])
         """
-        self.logger.warn("Method not implemented. Define a custom on_review on your plugin")
-        pass
+        # pylint: disable=unused-argument
+        self.logger.warn("Method not implemented. Define a custom on_review on your plugin")  # pylint: disable=deprecated-method,line-too-long
+        pass  # pylint: disable=unnecessary-pass
