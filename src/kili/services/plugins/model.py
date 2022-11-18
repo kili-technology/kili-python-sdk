@@ -74,9 +74,7 @@ class PluginCore(PluginParams):
 
         """
         # pylint: disable=unused-argument
-        self.logger.warn(
-            "Method not implemented. Define a custom on_submit on your plugin"
-        )  # pylint: disable=deprecated-method
+        self.logger.warn("Method not implemented. Define a custom on_submit on your plugin")  # pylint: disable=deprecated-method
         pass  # pylint: disable=unnecessary-pass
 
     def on_review(
@@ -100,7 +98,5 @@ class PluginCore(PluginParams):
                 self.kili.send_back_to_queue(asset_ids=[asset_id])
         """
         # pylint: disable=unused-argument
-        self.logger.warn(
-            "Method not implemented. Define a custom on_review on your plugin"
-        )  # pylint: disable=deprecated-method
+        self.logger.warn("Method not implemented. Define a custom on_review on your plugin")  # pylint: disable=deprecated-method
         pass  # pylint: disable=unnecessary-pass
