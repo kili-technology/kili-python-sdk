@@ -172,20 +172,17 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Format the label JSON response in the requested format
         """
         formatted_json_response = label.json_response(_format=label_format.lower())
-        if label_format.lower() == AnnotationFormat.Simple:
-            label["jsonResponse"] = formatted_json_response
-        else:
-            json_response = {}
-            for key, value in formatted_json_response.items():
-                if key.isdigit():
-                    json_response[int(key)] = value
-                    continue
-                json_response[key] = value
-            label["jsonResponse"] = json_response
+        json_response = {}
+        for key, value in formatted_json_response.items():
+            if key.isdigit():
+                json_response[int(key)] = value
+                continue
+            json_response[key] = value
+        label["jsonResponse"] = json_response
         return label
 
     @staticmethod
-    def process_assets(assets: List[Asset], label_format: str) -> List[Asset]:
+    def process_assets(assets: List[Asset], label_format: AnnotationFormat) -> List[Asset]:
         """
         Format labels in the requested format, and filter out autosave labels
         """

@@ -3,7 +3,7 @@ Set of common functions used by different export formats
 """
 from typing import List, Optional
 
-from kili.orm import AnnotationFormat
+from kili.services.export.types import ExportType
 
 DEFAULT_FIELDS = [
     "id",
@@ -38,12 +38,12 @@ LATEST_LABEL_FIELDS = [
 ]
 
 
-def attach_name_to_assets_labels_author(assets, export_type):
+def attach_name_to_assets_labels_author(assets, export_type: ExportType):
     """
     Adds `name` field for author, by concatenating his/her first and last name
     """
     for asset in assets:
-        if export_type.lower() == AnnotationFormat.Latest.lower():
+        if export_type == "latest":
             latest_label = asset["latestLabel"]
             if latest_label:
                 firstname = latest_label["author"]["firstname"]
@@ -103,10 +103,10 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     return assets
 
 
-def get_fields_to_fetch(export_type):
+def get_fields_to_fetch(export_type: ExportType):
     """
     Returns the fields to fetch depending on the export type
     """
-    if export_type.lower() == AnnotationFormat.Latest.lower():
+    if export_type == "latest":
         return LATEST_LABEL_FIELDS
     return DEFAULT_FIELDS
