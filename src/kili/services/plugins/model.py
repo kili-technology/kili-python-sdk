@@ -74,7 +74,9 @@ class PluginCore(PluginParams):
 
         """
         # pylint: disable=unused-argument
-        self.logger.warn("Method not implemented. Define a custom on_submit on your plugin")  # pylint: disable=deprecated-method,line-too-long
+        self.logger.warn(
+            "Method not implemented. Define a custom on_submit on your plugin"
+        )  # pylint: disable=deprecated-method
         pass  # pylint: disable=unnecessary-pass
 
     def on_review(
@@ -84,7 +86,7 @@ class PluginCore(PluginParams):
         project_id: str,
     ) -> None:
         """
-        Handler for the submit action, triggered when a default label is submitted into Kili
+        Handler for the review action, triggered when a default label is reviewed on Kili
         :param label: label submitted to Kili
         :param asset_id: id of the asset on which the label was submitted
         :param project_id: id of the project on which the label was submitted
@@ -98,5 +100,7 @@ class PluginCore(PluginParams):
                 self.kili.send_back_to_queue(asset_ids=[asset_id])
         """
         # pylint: disable=unused-argument
-        self.logger.warn("Method not implemented. Define a custom on_review on your plugin")  # pylint: disable=deprecated-method,line-too-long
+        self.logger.warn(
+            "Method not implemented. Define a custom on_review on your plugin"
+        )  # pylint: disable=deprecated-method
         pass  # pylint: disable=unnecessary-pass
