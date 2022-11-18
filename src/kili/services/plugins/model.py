@@ -16,6 +16,7 @@ class PluginParams:
     :param project_id: the project on which plugin is ran
     :param run_id: a unique identifier for the plugin run
     """
+
     logger: logging.Logger
     project_id: Optional[str]
     run_id: Optional[str]
@@ -24,7 +25,7 @@ class PluginParams:
         self,
         logger: Optional[logging.Logger] = None,
         project_id: Optional[str] = None,
-        run_id: Optional[str] = None
+        run_id: Optional[str] = None,
     ) -> None:
 
         if logger:
@@ -57,7 +58,7 @@ class PluginCore(PluginParams):
         self,
         label: Label,
         asset_id: str,
-        project_id: str
+        project_id: str,
     ) -> None:
         """
         Handler for the submit action, triggered when a default label is submitted into Kili
@@ -81,7 +82,7 @@ class PluginCore(PluginParams):
         self,
         label: Label,
         asset_id: str,
-        project_id: str
+        project_id: str,
     ) -> None:
         """
         Handler for the submit action, triggered when a default label is submitted into Kili
