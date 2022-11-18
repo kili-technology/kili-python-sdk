@@ -3,13 +3,13 @@ from typing import Optional
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
 from kili.services.plugins import (
     PluginUploader,
     activate_plugin,
     deactivate_plugin,
     delete_plugin,
 )
-from kili.authentication import KiliAuth
 
 
 class MutationsPlugins:

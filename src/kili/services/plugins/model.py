@@ -1,3 +1,7 @@
+"""
+Develop Plugins for Kili
+"""
+
 import logging
 from typing import Optional
 
@@ -5,7 +9,7 @@ from kili.client import Kili
 from kili.types import Label
 
 
-class PluginParams(object):
+class PluginParams:
     """
     Base plugin init argument
     :param logger: logger that plugins can make use of
@@ -16,7 +20,13 @@ class PluginParams(object):
     project_id: Optional[str]
     run_id: Optional[str]
 
-    def __init__(self, logger: Optional[logging.Logger] = None, project_id: Optional[str] = None, run_id: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        logger: Optional[logging.Logger] = None,
+        project_id: Optional[str] = None,
+        run_id: Optional[str] = None
+    ) -> None:
+
         if logger:
             self.logger = logger
         else:
@@ -35,24 +45,27 @@ class PluginCore(PluginParams):
     on_submit(self, label: Label, asset_id: str, project_id: str)
     on_review(self, label: Label, asset_id: str, project_id: str)
     """
-    kili: Kili
 
-    class Config:
-        arbitrary_types_allowed = True
+    kili: Kili
 
     def __init__(self, kili: Kili, plugin_params: Optional[PluginParams] = None) -> None:
         self.kili = kili
         if plugin_params:
             super().__init__(**plugin_params.__dict__)
 
-    def on_submit(self, label: Label, asset_id: str, project_id: str) -> None:
+    def on_submit(
+        self,
+        label: Label,
+        asset_id: str,
+        project_id: str
+    ) -> None:
         """
         Handler for the submit action, triggered when a default label is submitted into Kili
         :param label: label submitted to Kili
         :param asset_id: id of the asset on which the label was submitted
         :param project_id: id of the project on which the label was submitted
 
-        Example use: 
+        Example use:
         def on_submit(self, label: Label, project_id: str, asset_id: str):
             json_response = label.get('jsonResponse')
             if label_is_respecting_business_rule(json_response):
@@ -61,17 +74,22 @@ class PluginCore(PluginParams):
                 self.kili.send_back_to_queue(asset_ids=[asset_id])
 
         """
-        self.logger.warn('Method not implemented. Define a custom on_submit on your plugin')
+        self.logger.warn("Method not implemented. Define a custom on_submit on your plugin")
         pass
     
-    def on_review(self, label: Label, asset_id: str, project_id: str, ) -> None:
+    def on_review(
+        self,
+        label: Label,
+        asset_id: str,
+        project_id: str
+    ) -> None:
         """
         Handler for the submit action, triggered when a default label is submitted into Kili
         :param label: label submitted to Kili
         :param asset_id: id of the asset on which the label was submitted
         :param project_id: id of the project on which the label was submitted
 
-        Example use: 
+        Example use:
         def on_review(self, label: Label, project_id: str, asset_id: str):
             json_response = label.get('jsonResponse')
             if label_is_respecting_business_rule(json_response):
@@ -79,5 +97,5 @@ class PluginCore(PluginParams):
             else:
                 self.kili.send_back_to_queue(asset_ids=[asset_id])
         """
-        self.logger.warn('Method not implemented. Define a custom on_review on your plugin')
+        self.logger.warn("Method not implemented. Define a custom on_review on your plugin")
         pass
