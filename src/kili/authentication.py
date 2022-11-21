@@ -78,9 +78,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
         except ValueError:
             number_of_trials = 10
-        retry_policy = adapters.Retry(
-            connect=number_of_trials, read=0, redirect=0, status=0
-        )
+        retry_policy = adapters.Retry(connect=number_of_trials, read=0, redirect=0, status=0)
         return retry_policy
 
     def __del__(self):
