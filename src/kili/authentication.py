@@ -79,7 +79,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         except ValueError:
             number_of_trials = 10
         retry_policy = adapters.Retry(
-            connect=number_of_trials, read=0, redirect=0, status=0, other=0
+            connect=number_of_trials, read=0, redirect=0, status=0
         )
         return retry_policy
 
