@@ -61,6 +61,7 @@ class MutationsAsset:
                 - For a VIDEO project, the content can be either URLs pointing to videos hosted on a web server or paths to
                 existing video files on your computer. If you want to import video from frames, look at the json_content
                 section below.
+                - For an `VIDEO_LEGACY` project, the content can be only be URLs
             external_id_array: List of external ids given to identify the assets.
                 If None, random identifiers are created.
             is_honeypot_array:  Whether to use the asset for honeypot
@@ -77,7 +78,7 @@ class MutationsAsset:
 
                 - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.
                     Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
-                - For video, you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
+                - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
 
