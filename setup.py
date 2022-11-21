@@ -21,6 +21,7 @@ install_requires = [
     "Pillow",
     "cuid",
     "pydantic",
+    "urllib3>=1.26",
 ]
 
 dev_extra = [
