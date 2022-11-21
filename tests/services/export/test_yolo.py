@@ -1,10 +1,11 @@
 # pylint: disable=missing-docstring
 
 import os
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import TestCase
 
-from kili.services.export.format.yolo.common import (
+from kili.services.export.format.yolo import (
     _convert_from_kili_to_yolo_format,
     _process_asset,
     _write_class_file,
@@ -24,8 +25,8 @@ class YoloTestCase(TestCase):
                 fake_content_repository = FakeContentRepository("https://contentrep", {}, False)
                 asset_remote_content, video_filenames = _process_asset(
                     asset_image_1,
-                    images_folder,
-                    labels_folder,
+                    Path(images_folder),
+                    Path(labels_folder),
                     category_ids,
                     fake_content_repository,
                 )
@@ -54,7 +55,11 @@ class YoloTestCase(TestCase):
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository("https://contentrep", {}, False)
                 asset_remote_content, video_filenames = _process_asset(
-                    asset_video, images_folder, labels_folder, category_ids, fake_content_repository
+                    asset_video,
+                    Path(images_folder),
+                    Path(labels_folder),
+                    category_ids,
+                    fake_content_repository,
                 )
 
                 nb_files = len(
@@ -80,7 +85,7 @@ class YoloTestCase(TestCase):
                 ]
                 assert asset_remote_content == expected_content
 
-                expected_video_filenames = [f"video_1_{i+1}" for i in range(4)]
+                expected_video_filenames = [Path(f"video_1_{i+1}") for i in range(4)]
                 assert len(video_filenames) == 4
                 assert video_filenames == expected_video_filenames
 
@@ -96,7 +101,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v4(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v4")
+            _write_class_file(Path(directory), category_ids, "yolo_v4")
             assert os.path.isfile(os.path.join(directory, "classes.txt"))
             with open(os.path.join(directory, "classes.txt"), "rb") as created_file:
                 with open("./tests/services/export/expected/classes.txt", "rb") as expected_file:
@@ -104,7 +109,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v5(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v5")
+            _write_class_file(Path(directory), category_ids, "yolo_v5")
             assert os.path.isfile(os.path.join(directory, "data.yaml"))
             with open(os.path.join(directory, "data.yaml"), "rb") as created_file:
                 with open("./tests/services/export/expected/data_v5.yaml", "rb") as expected_file:
@@ -112,7 +117,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v7(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v7")
+            _write_class_file(Path(directory), category_ids, "yolo_v7")
             assert os.path.isfile(os.path.join(directory, "data.yaml"))
             with open(os.path.join(directory, "data.yaml"), "rb") as created_file:
                 with open("./tests/services/export/expected/data_v7.yaml", "rb") as expected_file:

@@ -3,19 +3,17 @@ Base class for all formatters and other utility classes.
 """
 
 import logging
-import os
 import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Type
+from typing import Dict, List, NamedTuple, Optional, cast
 
-from kili.orm import AnnotationFormat, Asset, JobMLTask, JobTool
-from kili.services.export.exceptions import NotCompatibleOptions
+from kili.orm import AnnotationFormat, Asset, JobMLTask, JobTool, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
-from kili.services.types import LogLevel
+from kili.services.types import ProjectId
 
 
 class ExportParams(NamedTuple):
@@ -25,14 +23,14 @@ class ExportParams(NamedTuple):
 
     assets_ids: Optional[List[str]]
     export_type: ExportType
-    project_id: str
+    project_id: ProjectId
     label_format: LabelFormat
     split_option: SplitOption
     single_file: bool
     output_file: Path
 
 
-class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
+class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     """
     Abstract class defining the interface for all exporters.
@@ -40,33 +38,31 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     download_media = False  # Whether or not we need to download the media for the given format.
 
-    from kili.client import Kili
-
     def __init__(
         self,
         export_params: ExportParams,
-        kili: Kili,
+        kili,
         logger: logging.Logger,
         disable_tqdm: bool,
         content_repository: AbstractContentRepository,
     ):  # pylint: disable=too-many-arguments
-        self.project_id = export_params.project_id
-        self.assets_ids = export_params.assets_ids
-        self.export_type = export_params.export_type
-        self.label_format = export_params.label_format
-        self.single_file = export_params.single_file
-        self.asset_ids = export_params.assets_ids
-        self.disable_tqdm = disable_tqdm
+        self.project_id: ProjectId = export_params.project_id
+        self.assets_ids: Optional[List[str]] = export_params.assets_ids
+        self.export_type: ExportType = export_params.export_type
+        self.label_format: LabelFormat = export_params.label_format
+        self.single_file: bool = export_params.single_file
+        self.split_option: SplitOption = export_params.split_option
+        self.disable_tqdm: bool = disable_tqdm
         self.kili = kili
-        self.logger = logger
-        self.content_repository = content_repository
+        self.logger: logging.Logger = logger
+        self.content_repository: AbstractContentRepository = content_repository
         self.output_file = export_params.output_file
 
+    @abstractmethod
     def _check_arguments_compatibility(self):
-        if self.single_file and self.label_format not in ["raw", "kili"]:
-            raise NotCompatibleOptions(
-                f"The label format {self.label_format} can not be exported in a single file."
-            )
+        """
+        Checks if the format can accept the
+        """
 
     @abstractmethod
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
@@ -74,12 +70,12 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Converts the asset and save them into an archive file.
         """
 
-    def make_archive(self, root_folder: str, output_filename: Path) -> Path:
+    def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
         """
         Make the export archive
         """
-        path_folder = os.path.join(root_folder, self.project_id)
-        path_archive = shutil.make_archive(path_folder, "zip", path_folder)
+        path_folder = root_folder / self.project_id
+        path_archive = shutil.make_archive(str(path_folder), "zip", path_folder)
         shutil.copy(path_archive, output_filename)
         return output_filename
 
@@ -153,13 +149,13 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return clean_assets
 
     @staticmethod
-    def _format_json_response(label: Dict, label_format: Dict):
+    def _format_json_response(label: Label, label_format: LabelFormat):
         """
         Format the label JSON response in the requested format
         """
         formatted_json_response = label.json_response(_format=label_format.lower())
         json_response = {}
-        for key, value in formatted_json_response.items():
+        for key, value in cast(Dict, formatted_json_response).items():
             if key.isdigit():
                 json_response[int(key)] = value
                 continue
@@ -177,69 +173,15 @@ class BaseExporter(ABC):  # pylint: disable=too-many-instance-attributes
             if "labels" in asset:
                 labels_of_asset = []
                 for label in asset["labels"]:
-                    clean_label = BaseExporter._format_json_response(label, label_format)
+                    clean_label = AbstractExporter._format_json_response(label, label_format)
                     labels_of_asset.append(clean_label)
                 asset["labels"] = labels_of_asset
             if "latestLabel" in asset:
                 label = asset["latestLabel"]
                 if label is not None:
-                    clean_label = BaseExporter._format_json_response(label, label_format)
+                    clean_label = AbstractExporter._format_json_response(label, label_format)
                     asset["latestLabel"] = clean_label
             assets_in_format.append(asset)
 
-        clean_assets = BaseExporter._filter_out_autosave_labels(assets_in_format)
+        clean_assets = AbstractExporter._filter_out_autosave_labels(assets_in_format)
         return clean_assets
-
-
-class BaseExporterSelector(ABC):
-    # pylint: disable=too-few-public-methods
-
-    """
-    Abstract class defining a standard signature for all formatters
-    """
-
-    @staticmethod
-    @abstractmethod
-    def select_exporter_class(
-        split_param: SplitOption,
-    ) -> Type[BaseExporter]:
-        """
-        Return the right exporter class.
-        """
-
-    # @classmethod
-    # def init_exporter(
-    #     cls,
-    #     kili,
-    #     logger_params,
-    #     export_params: ExportParams,
-    #     content_repository_params: ContentRepositoryParams,
-    # ) -> BaseExporter:
-    #     """
-    #     Return the right exporter.
-    #     """
-
-    #     exporter_class = cls.select_exporter_class(export_params.split_option)
-
-    #     return exporter_class(
-    #         export_params.project_id,
-    #         export_params.export_type,
-    #         export_params.label_format,
-    #         export_params.single_file,
-    #         logger_params.disable_tqdm,
-    #         kili,
-    #         logger,
-    #         content_repository,
-    #     )
-
-    @staticmethod
-    def get_logger(level: LogLevel) -> logging.Logger:
-        """Gets the export logger"""
-        logger = logging.getLogger("kili.services.export")
-        logger.setLevel(level)
-        if logger.hasHandlers():
-            logger.handlers.clear()
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.DEBUG)
-        logger.addHandler(handler)
-        return logger

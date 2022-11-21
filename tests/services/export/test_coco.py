@@ -8,7 +8,7 @@ from unittest import TestCase
 import requests
 
 from kili.orm import Asset
-from kili.services.export.format.coco.common import _convert_kili_semantic_to_coco
+from kili.services.export.format.coco import _convert_kili_semantic_to_coco
 from kili.services.types import JobName
 
 

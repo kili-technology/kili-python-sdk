@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from kili.orm import AnnotationFormat, Asset
-from kili.services.export.format.base import BaseExporter
+from kili.services.export.format.base import AbstractExporter
 from tests.services.export.fakes.fake_data import (
     kili_format_expected_frame_asset_output,
     kili_format_frame_asset,

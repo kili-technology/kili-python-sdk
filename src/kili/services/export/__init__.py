@@ -1,19 +1,16 @@
 """Service for exporting kili objects """
 
 from pathlib import Path
-from typing import List, Optional, Type
+from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
 from kili.exceptions import NotFound
-from kili.services.export.format.base import (
-    BaseExporter,
-    BaseExporterSelector,
-    ExportParams,
-)
-from kili.services.export.format.coco import CocoExporterSelector
-from kili.services.export.format.kili import KiliExporterSelector
-from kili.services.export.format.yolo import YoloExporterSelector
+from kili.services.export.format.base import AbstractExporter, ExportParams
+from kili.services.export.format.coco import CocoExporter
+from kili.services.export.format.kili import KiliExporter
+from kili.services.export.format.yolo import YoloExporter
+from kili.services.export.logger import get_logger
 from kili.services.export.repository import SDKContentRepository
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import LogLevel, ProjectId
@@ -47,7 +44,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         output_file=Path(output_file),
     )
 
-    logger = BaseExporterSelector.get_logger(log_level)
+    logger = get_logger(log_level)
 
     content_repository = SDKContentRepository(
         kili.auth.api_endpoint,
@@ -58,19 +55,18 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     )
 
     if label_format in get_args(LabelFormat):
-        format_exporter_selector_mapping = {
-            "raw": KiliExporterSelector,
-            "kili": KiliExporterSelector,
-            "coco": CocoExporterSelector,
-            "yolo_v4": YoloExporterSelector,
-            "yolo_v5": YoloExporterSelector,
-            "yolo_v7": YoloExporterSelector,
+        format_exporter_selector_mapping: Dict[str, Type[AbstractExporter]] = {
+            "raw": KiliExporter,
+            "kili": KiliExporter,
+            "coco": CocoExporter,
+            "yolo_v4": YoloExporter,
+            "yolo_v5": YoloExporter,
+            "yolo_v7": YoloExporter,
         }
         assert set(format_exporter_selector_mapping.keys()) == set(
             get_args(LabelFormat)
         )  # ensures full mapping
-        exporter_selector = format_exporter_selector_mapping[label_format]
-        exporter_class: Type[BaseExporter] = exporter_selector.select_exporter_class(export_params)
+        exporter_class = format_exporter_selector_mapping[label_format]
         exporter_class(
             export_params, kili, logger, disable_tqdm, content_repository
         ).export_project()
