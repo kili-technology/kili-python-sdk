@@ -1,11 +1,8 @@
 """
 Test notebooks with pytest
 """
-
-
 import nbformat
 import pytest
-from nbclient.exceptions import CellExecutionError
 from nbconvert.preprocessors.execute import ExecutePreprocessor
 
 
@@ -13,19 +10,11 @@ def process_notebook(notebook_filename):
     """
     Checks if an IPython notebook runs without error from start to finish.
     """
-    with open(notebook_filename) as f:
-        nb = nbformat.read(f, as_version=4)
+    with open(notebook_filename, encoding="utf-8") as n_f:
+        notebook = nbformat.read(n_f, as_version=4)
 
-    ep = ExecutePreprocessor(timeout=1000, kernel_name="python3")
-
-    try:
-        # Check that the notebook runs
-        ep.preprocess(nb, {"metadata": {"path": ""}})
-    except CellExecutionError:
-        raise
-
-    print(f"Successfully executed {notebook_filename}")
-    return
+    execute_preprocessor = ExecutePreprocessor(timeout=1000, kernel_name="python3")
+    execute_preprocessor.preprocess(notebook, {"metadata": {"path": ""}})
 
 
 @pytest.mark.parametrize(
@@ -53,7 +42,6 @@ def test_all_recipes(notebook_file):
     """
     Runs `process_notebook` on all notebooks in the git repository.
     """
-    print("Testing: %s", notebook_file)
     process_notebook(notebook_file)
 
     return
