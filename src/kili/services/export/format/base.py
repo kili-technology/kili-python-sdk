@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, cast
 
-from kili.orm import AnnotationFormat, Asset, JobMLTask, JobTool, Label
+from kili.orm import Asset, JobMLTask, JobTool, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
@@ -153,7 +153,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         Format the label JSON response in the requested format
         """
-        formatted_json_response = label.json_response(_format=label_format.lower())
+        formatted_json_response = label.json_response(_format=label_format)
         json_response = {}
         for key, value in cast(Dict, formatted_json_response).items():
             if key.isdigit():
@@ -164,7 +164,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return label
 
     @staticmethod
-    def process_assets(assets: List[Asset], label_format: AnnotationFormat) -> List[Asset]:
+    def process_assets(assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
         """
         Format labels in the requested format, and filter out autosave labels
         """
