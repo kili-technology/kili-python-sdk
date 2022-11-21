@@ -66,9 +66,9 @@ class MutationsAsset:
             is_honeypot_array:  Whether to use the asset for honeypot
             status_array: By default, all imported assets are set to `TODO`. Other options:
                 `ONGOING`, `LABELED`, `REVIEWED`.
-            json_content_array: Useful for `VIDEO_LEGACY` or `TEXT` projects only.
+            json_content_array: Useful for `VIDEO` or `TEXT` projects only.
 
-                - For `VIDEO_LEGACY` projects, each element is a sequence of frames, i.e. a
+                - For `VIDEO` projects, each element is a sequence of frames, i.e. a
                     list of URLs to images or a list of paths to images.
                 - For `TEXT` projects, each element is a json_content dict,
                     formatted according to documentation [on how to import
