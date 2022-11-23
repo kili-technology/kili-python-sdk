@@ -1,4 +1,4 @@
-# Getting started with Kili CLI
+# Getting started with the Kili CLI
 
 ## What is Kili CLI
 
