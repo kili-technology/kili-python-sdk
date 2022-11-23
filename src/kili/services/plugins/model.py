@@ -7,38 +7,12 @@ from kili.client import Kili
 from kili.types import Label
 
 
-class PluginParams:  # pylint: disable=too-few-public-methods
-    """
-    Base plugin init argument for internal use
-    :param logger: logger that plugins can make use of
-    :param project_id: the project on which plugin is ran
-    :param run_id: a unique identifier for the plugin run
-    """
-
-    logger: logging.Logger
-    project_id: Optional[str]
-    run_id: Optional[str]
-
-    def __init__(
-        self,
-        logger: Optional[logging.Logger] = None,
-        project_id: Optional[str] = None,
-        run_id: Optional[str] = None,
-    ) -> None:
-
-        if logger:
-            self.logger = logger
-        else:
-            self.logger = logging.getLogger()
-        self.project_id = project_id
-        self.run_id = run_id
-
-
-class PluginCore(PluginParams):
+class PluginCore:
     """
     Kili Plugin core class
 
     :param kili: kili instance that plugins can make use of
+    :param project_id: the project on which plugin is ran
 
     Implements
     on_submit(self, label: Label, asset_id: str, project_id: str)
@@ -47,12 +21,19 @@ class PluginCore(PluginParams):
     # Warning : if using a custom init, be sure to call super().__init__()
     """
 
+    logger: logging.Logger
     kili: Kili
+    project_id: str
 
-    def __init__(self, kili: Kili, plugin_params: Optional[PluginParams] = None) -> None:
+    def __init__(
+        self, kili: Kili, project_id: str, logger: Optional[logging.Logger] = None
+    ) -> None:
         self.kili = kili
-        if plugin_params:
-            super().__init__(**plugin_params.__dict__)
+        self.project_id = project_id
+        if logger:
+            self.logger = logger
+        else:
+            self.logger = logging.getLogger()
 
     def on_submit(
         self,
