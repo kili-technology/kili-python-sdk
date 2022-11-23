@@ -149,6 +149,13 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
 
         return loop_func
 
+    @staticmethod
+    def build_url_from_parts(*parts) -> str:
+        """
+        Builds an url from the parts
+        """
+        return "/".join(parts)
+
     def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
         """
         Import assets with asynchronous resolver.
@@ -237,7 +244,9 @@ class ContentBatchImporter(BaseBatchImporter):
         """
         project_bucket_path = self.generate_project_bucket_path()
         asset_content_paths = [
-            Path(project_bucket_path) / asset.get("id", bucket.generate_unique_id()) / "content"
+            BaseBatchImporter.build_url_from_parts(
+                project_bucket_path, asset.get("id", bucket.generate_unique_id()), "content"
+            )
             for asset in assets
         ]
         signed_urls = bucket.request_signed_urls(self.auth, asset_content_paths)
@@ -273,7 +282,11 @@ class JsonContentBatchImporter(BaseBatchImporter):
         """
         project_bucket_path = self.generate_project_bucket_path()
         asset_json_content_paths = [
-            Path(project_bucket_path) / asset.get("id", bucket.generate_unique_id()) / "jsonContent"
+            BaseBatchImporter.build_url_from_parts(
+                project_bucket_path,
+                asset.get("id", bucket.generate_unique_id()),
+                "jsonContent",
+            )
             for asset in assets
         ]
         signed_urls = bucket.request_signed_urls(self.auth, asset_json_content_paths)
