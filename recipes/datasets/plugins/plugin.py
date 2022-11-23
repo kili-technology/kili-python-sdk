@@ -50,7 +50,7 @@ class PluginHandler(PluginCore):
 
     def on_submit(self, label: Label, asset_id: str) -> None:
         """
-        Dedicated handler for Review action
+        Dedicated handler for Submit action
         """
         self.logger.info("On submit called")
 
