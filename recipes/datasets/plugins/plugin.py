@@ -1,3 +1,6 @@
+"""
+My custom plugin for bills
+"""
 from kili.plugins import PluginCore
 from kili.types import Label
 
@@ -7,11 +10,11 @@ def check_rules_on_label(label: Label):
     my custom handle method
     """
     label_id = label["id"]
-    jsonResponse = label["jsonResponse"]
+    json_response = label["jsonResponse"]
 
     print(f"Started searching for issues for label {label_id}")
 
-    annotations_for_job0 = jsonResponse["JOB_0"]["annotations"]
+    annotations_for_job0 = json_response["JOB_0"]["annotations"]
 
     issues_array = []
     mid_issues_array = []
