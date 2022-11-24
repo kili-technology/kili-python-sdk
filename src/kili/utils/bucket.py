@@ -58,7 +58,7 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
     Args:
         signed_urls: Bucket signed URLs to upload local files to
         path_array: a list of file paths, json or text to upload
-        content_type: mimetype of the data. It will be infered if not given
+        content_type: mimetype of the data
     """
     if content_type == "text/plain":
         content_type += "; charset=utf-8"
@@ -74,7 +74,7 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
 
 def clean_signed_url(url: str, endpoint: str):
     """
-    return a cleaned sined url for frame upload
+    return a cleaned signed url for frame upload
     """
     query = urlparse(url).query
     id_param = parse_qs(query)["id"][0]

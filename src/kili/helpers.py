@@ -56,7 +56,7 @@ def content_escape(content):
     return content.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
 
 
-def get_data_type(path):
+def get_data_type(path: str):
     """
     Get the data type, either image/png or application/pdf
 

@@ -4,7 +4,7 @@
 GraphQL types
 """
 
-from typing import Dict
+from typing import Dict, List
 
 from typing_extensions import TypedDict
 
@@ -372,6 +372,18 @@ class Notification(TypedDict):
     status: NotificationStatus
     url: str
     userID: str
+
+
+class Plugin(TypedDict):
+    """
+    A wrapper for Plugin GraphQL object.
+    """
+
+    id: str
+    name: str
+    projectIds: List[str]
+    createdAt: str
+    updatedAt: str
 
 
 class ProjectVersion(TypedDict):
