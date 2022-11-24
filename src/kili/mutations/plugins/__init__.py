@@ -26,7 +26,7 @@ class MutationsPlugins:
         self.auth = auth
 
     @typechecked
-    def upload_plugin_beta(
+    def upload_plugin(
         self,
         file_path: str,
         plugin_name: Optional[str] = None,
@@ -45,7 +45,7 @@ class MutationsPlugins:
                 or an error message.
 
         Examples:
-            >>> kili.upload_plugin_beta(file_path="./path/to/my/file.py")
+            >>> kili.upload_plugin(file_path="./path/to/my/file.py")
         """
 
         return PluginUploader(self.auth, file_path, plugin_name, verbose).create_plugin()

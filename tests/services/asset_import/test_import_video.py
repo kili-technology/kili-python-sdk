@@ -30,7 +30,7 @@ class VideoTestCase(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -57,7 +57,7 @@ class VideoTestCase(ImportTestCase):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -93,7 +93,7 @@ class VideoTestCase(ImportTestCase):
                 },
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -125,7 +125,7 @@ class VideoTestCase(ImportTestCase):
                 },
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
         expected_json_metadata = json.dumps(
             {
@@ -159,7 +159,7 @@ class VideoTestCase(ImportTestCase):
                 "id": "unique_id",
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -191,7 +191,7 @@ class VideoTestCase(ImportTestCase):
                 "id": "unique_id",
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
@@ -254,7 +254,7 @@ class VideoTestCase(ImportTestCase):
                 "json_metadata": {"fromBucket": True, "score": 10},
             }
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "fromBucket": True,
@@ -269,6 +269,48 @@ class VideoTestCase(ImportTestCase):
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"],
             ["with metadata"],
+            ["unique_id"],
+            [False],
+            [""],
+            [expected_json_metadata],
+            ["TODO"],
+        )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
+
+
+@patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
+@patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
+@patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
+@patch.object(
+    QueriesProject,
+    "projects",
+    MagicMock(return_value=[{"inputType": "VIDEO_LEGACY"}]),
+)
+@patch.object(
+    QueriesAsset,
+    "assets",
+    MagicMock(return_value=[]),
+)
+class VideoLegacyTestCase(ImportTestCase):
+    def test_upload_from_one_hosted_video_file_to_video_legacy_project(
+        self,
+    ):
+        assets = [
+            {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
+        ]
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+        expected_json_metadata = json.dumps(
+            {
+                "processingParameters": {
+                    "shouldKeepNativeFrameRate": True,
+                    "framesPlayedPerSecond": 30,
+                    "shouldUseNativeVideo": True,
+                }
+            }
+        )
+        expected_parameters = self.get_expected_sync_call(
+            ["https://hosted-data"],
+            ["hosted file"],
             ["unique_id"],
             [False],
             [""],

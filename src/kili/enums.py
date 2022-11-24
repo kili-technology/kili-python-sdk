@@ -34,13 +34,13 @@ HubspotSubscriptionStatus = Literal[
 
 InputType = Literal[
     "AUDIO",
-    "FRAME",
     "IMAGE",
     "NA",
     "PDF",
     "TEXT",
     "TIME_SERIES",
     "VIDEO",
+    "VIDEO_LEGACY",
     "URL",
 ]
 

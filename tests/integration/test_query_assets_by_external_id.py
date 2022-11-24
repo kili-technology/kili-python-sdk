@@ -13,7 +13,7 @@ def kili():
 
 
 @pytest.fixture()
-def fixture_project_with_assets(kili):
+def project_with_assets(kili):
     interface = {
         "jobs": {
             "JOB_0": {

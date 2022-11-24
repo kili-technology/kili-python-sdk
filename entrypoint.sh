@@ -21,7 +21,7 @@ function create_release_branch() {
     read -p 'from commit (default: HEAD): ' commit
     commit="${commit:=HEAD}"
 
-    git pull origin master -q
+    git pull -q
 
     #get the new version
     new_version=$(bump_version dry-run)

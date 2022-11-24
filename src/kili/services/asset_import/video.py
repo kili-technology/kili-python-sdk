@@ -1,16 +1,16 @@
 """
-Functions to import assets into a VIDEO project
+Functions to import assets into a VIDEO_LEGACY project
 """
 import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
-from pathlib import Path
 from typing import List
 
 from kili.helpers import is_url
 from kili.services.asset_import.base import (
     BaseAssetImporter,
+    BaseBatchImporter,
     BatchParams,
     ContentBatchImporter,
     JsonContentBatchImporter,
@@ -124,7 +124,9 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         asset_id: str = asset.get("id") or f"unknown-{bucket.generate_unique_id()}"
         project_bucket_path = self.generate_project_bucket_path()
         asset_frames_paths = [
-            Path(project_bucket_path) / asset_id / "frame" / str(frame_id)
+            BaseBatchImporter.build_url_from_parts(
+                project_bucket_path, asset_id, "frame", str(frame_id)
+            )
             for frame_id in range(len(frames))
         ]
         signed_urls = bucket.request_signed_urls(self.auth, asset_frames_paths)

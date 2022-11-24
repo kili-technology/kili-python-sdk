@@ -6,7 +6,6 @@ from kili.authentication import KiliAuth
 from kili.constants import NO_ACCESS_RIGHT
 from kili.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
-from kili.services.asset_import.legacy import LegacyDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
 from kili.services.asset_import.video import VideoDataImporter
@@ -18,7 +17,7 @@ importer_by_type = {
     "IMAGE": ImageDataImporter,
     "TEXT": TextDataImporter,
     "VIDEO": VideoDataImporter,
-    "FRAMES": VideoDataImporter,
+    "VIDEO_LEGACY": VideoDataImporter,
 }
 
 
@@ -42,6 +41,8 @@ def import_assets(
     logger_params = LoggerParams(disable_tqdm=disable_tqdm)
     importer_params = (auth, project_params, processing_params, logger_params)
 
-    asset_importer = importer_by_type.get(input_type, LegacyDataImporter)(*importer_params)
+    if input_type not in importer_by_type:
+        raise NotImplementedError(f"There is no imported for the input type: {input_type}")
+    asset_importer = importer_by_type[input_type](*importer_params)
     result = asset_importer.import_assets(assets=assets)  # type:ignore X
     return result

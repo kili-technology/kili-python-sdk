@@ -2,7 +2,6 @@
 
 
 import itertools
-from pathlib import Path
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
@@ -29,7 +28,7 @@ def generate_unique_id():
     return cuid.cuid()
 
 
-def request_signed_urls(auth: KiliAuth, file_paths: List[Path]):
+def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
     """
     Get upload signed URLs
     Args:
@@ -37,15 +36,15 @@ def request_signed_urls(auth: KiliAuth, file_paths: List[Path]):
         file_paths: the paths in Kili bucket of the data you upload. It must respect
             the convention projects/:projectId/assets/xxx.
     """
-    size = len(file_paths)
+    size = len(file_urls)
     file_batches = [
-        file_paths[i : i + MAX_NUMBER_SIGNED_URLS_TO_FETCH]
+        file_urls[i : i + MAX_NUMBER_SIGNED_URLS_TO_FETCH]
         for i in range(0, size, MAX_NUMBER_SIGNED_URLS_TO_FETCH)
     ]
 
-    def get_file_batch_urls(file_paths: List[Path]) -> List[str]:
+    def get_file_batch_urls(file_paths: List[str]) -> List[str]:
         payload = {
-            "filePaths": list(map(str, file_paths)),
+            "filePaths": file_paths,
         }
         urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
         return urls_response["data"]["urls"]

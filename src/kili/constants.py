@@ -10,7 +10,6 @@ NO_ACCESS_RIGHT = (
 
 INPUT_TYPE = [
     "AUDIO",
-    "FRAME",
     "IMAGE",
     "PDF",
     "TEXT",
@@ -33,7 +32,6 @@ mime_extensions = {
 
 mime_extensions_for_IV2 = {
     "AUDIO": mime_extensions["Audio"],
-    "FRAME": mime_extensions["Video"],
     "IMAGE": mime_extensions["Image"],
     "NA": "",
     "PDF": mime_extensions["Pdf"],

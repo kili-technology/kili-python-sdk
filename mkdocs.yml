@@ -11,16 +11,18 @@ edit_uri: '' #disables edit button
 ## Site Architecture
 nav:
   - Python SDK:
-      - API Key: api_key.md
-      - Asset: asset.md
-      - Issue: issue.md
-      - Label: label.md
-      - Notification: notification.md
-      - Organization: organization.md
-      - Project: project.md
-      - Project User: project_user.md
-      - Project Version: project_version.md
-      - User: user.md
+      - Getting Started: index.md
+      - Reference:
+        - API Key: sdk/api_key.md
+        - Asset: sdk/asset.md
+        - Issue: sdk/issue.md
+        - Label: sdk/label.md
+        - Notification: sdk/notification.md
+        - Organization: sdk/organization.md
+        - Project: sdk/project.md
+        - Project User: sdk/project_user.md
+        - Project Version: sdk/project_version.md
+        - User: sdk/user.md
   - Command line interface:
       - Getting Started: cli/index.md
       - Reference: cli/reference.md

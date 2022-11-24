@@ -14,13 +14,14 @@ install_requires = [
     "tenacity",
     "tqdm",
     "typeguard",
-    "typing_extensions",
+    "typing_extensions>=4.1.0",
     "pyparsing",
     "websocket-client",
     "pyyaml",
     "Pillow",
     "cuid",
     "pydantic",
+    "urllib3>=1.26",
 ]
 
 dev_extra = [

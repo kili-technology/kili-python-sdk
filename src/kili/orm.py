@@ -4,6 +4,8 @@ This script defines object-relational mapping helpers to ease
 """
 from dataclasses import dataclass
 
+from typing_extensions import Literal
+
 
 class DictClass(dict):
     """
@@ -15,19 +17,7 @@ class DictClass(dict):
         self.__dict__ = self
 
 
-@dataclass
-class AnnotationFormat:
-    # pylint: disable=invalid-name
-    """
-    List of annotation formats
-    """
-
-    Latest = "latest"
-    Raw = "raw"
-    Simple = "simple"
-    YoloV4 = "yolo_v4"
-    YoloV5 = "yolo_v5"
-    Coco = "coco"
+AnnotationFormat = Literal["kili", "raw", "simple", "yolo_v4", "yolo_v5", "yolo_v7", "coco"]
 
 
 @dataclass
@@ -149,7 +139,7 @@ class Label(DictClass):
 
     jsonResponse = {}
 
-    def json_response(self, _format=AnnotationFormat.Raw):
+    def json_response(self, _format: AnnotationFormat = "raw"):
         """
         Format a json response
 
@@ -160,9 +150,7 @@ class Label(DictClass):
             raise Exception(
                 f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"'
             )
-        if _format in [AnnotationFormat.Raw, AnnotationFormat.Coco]:
-            return self.jsonResponse
-        if _format == AnnotationFormat.Simple:
+        if _format == "simple":
             job_names = self.jsonResponse.keys()
             if len(job_names) > 1:
                 return {
@@ -184,7 +172,7 @@ class Label(DictClass):
                     for annotation in job_response["annotations"]
                 ]
             return None
-        raise Exception(f'format "{_format}" is not a valid annotation format.')
+        return self.jsonResponse
 
 
 class Asset(DictClass):
