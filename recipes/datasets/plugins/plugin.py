@@ -6,37 +6,17 @@ from kili.types import Label
 
 
 def check_rules_on_label(label: Label):
-    """
-    my custom handle method
-    """
-    label_id = label["id"]
-    json_response = label["jsonResponse"]
+    # custom methods
+    print("Custom method - checking number of bboxes")
 
-    print(f"Started searching for issues for label {label_id}")
+    counter = 0
+    for annotation in label["jsonResponse"]["JOB_0"]["annotations"]:
+        if annotation["categories"][0]["name"] == "OBJECT_A":
+            counter += 1
 
-    annotations_for_job0 = json_response["JOB_0"]["annotations"]
-
-    issues_array = []
-    mid_issues_array = []
-
-    for bbox in annotations_for_job0:
-
-        if bbox["categories"][0]["name"] == "IBAN":
-            iban = bbox["children"]["TRANSCRIPTION_JOB"]["text"]
-
-            if iban[0:2] != "FR":
-                issues_array.append("IBAN number should start by FR")
-                mid_issues_array.append(bbox["mid"])
-
-        if bbox["categories"][0]["name"] == "CURRENCY":
-            currency = bbox["children"]["TRANSCRIPTION_JOB_2"]["text"]
-
-            if currency not in ["USD", "EUR"]:
-                issues_array.append("Authorized currency are only Euro and Dollar")
-                mid_issues_array.append(bbox["mid"])
-
-    print(f"Finished searching for issues for label {label_id}")
-    return issues_array, mid_issues_array
+    if counter == 0:
+        return []
+    return [f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"]
 
 
 class PluginHandler(PluginCore):
@@ -44,23 +24,13 @@ class PluginHandler(PluginCore):
     Custom plugin instance
     """
 
-    def on_review(self, label: Label, asset_id: str) -> None:
-        """
-        Dedicated handler for Review action
-        """
-        super().on_review(label, asset_id)
-        self.logger.info("No action on review for now")
-
     def on_submit(self, label: Label, asset_id: str) -> None:
         """
         Dedicated handler for Submit action
         """
         self.logger.info("On submit called")
 
-        label_id = label["id"]
-        annotations_for_job0 = label["jsonResponse"]["JOB_0"]["annotations"]
-
-        issues_array, mid_issues_array = check_rules_on_label(label)
+        issues_array = check_rules_on_label(label)
 
         project_id = self.project_id
 
@@ -70,18 +40,11 @@ class PluginHandler(PluginCore):
             for i, _ in enumerate(issues_array):
 
                 self.kili.append_to_issues(
-                    label_id=label_id,
+                    label_id=label["id"],
                     project_id=project_id,
-                    object_mid=mid_issues_array[i],
                     text=issues_array[i],
                 )
 
-            self.kili.send_back_to_queue(asset_ids=[asset_id])
-
             print("Issue created!")
 
-        accuracy = 100 - len(issues_array) / len(annotations_for_job0) * 100
-
-        self.kili.update_properties_in_assets(
-            asset_ids=[asset_id], json_metadatas=[{"accuracy": accuracy}]
-        )
+            self.kili.send_back_to_queue(asset_ids=[asset_id])
