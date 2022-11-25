@@ -8,7 +8,7 @@ GQL_GET_PLUGIN_LOGS = f"""
 query(
     $projectId: ID!
     $pluginName: String!
-    $createdAt: DateTime!
+    $createdAt: DateTime
     $limit: Int
     $skip: Int
   ) {{

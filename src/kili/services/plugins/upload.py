@@ -80,7 +80,7 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
         # We execute the source code to prevent the upload of a file with SyntaxError
         logger.info(f"Executing {self.file_path.name}...")
         # pylint: disable=exec-used
-        exec(source_code)
+        exec(source_code, globals())
         logger.info(f"Done executing {self.file_path.name}!")
 
     @staticmethod
