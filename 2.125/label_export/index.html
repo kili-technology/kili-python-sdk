@@ -618,23 +618,23 @@
 <p>There are several ways to export labels from a Kili project.</p>
 <h2 id="with-the-cli">With the CLI</h2>
 <p>You can export a project using the <code>kili project export</code> command:
-<div class="highlight"><pre><span></span><code>    kili project export \
-        --project-id &lt;project_id&gt; \
-        --output-format yolo_v5 \
+<div class="highlight"><pre><span></span><code>    kili project <span class="nb">export</span> <span class="se">\</span>
+        --project-id &lt;project_id&gt; <span class="se">\</span>
+        --output-format yolo_v5 <span class="se">\</span>
         --output-file /tmp/export.zip
 </code></pre></div>
 More options <a href="https://python-sdk-docs.kili-technology.com/latest/cli/reference/#export">here</a>.</p>
 <h2 id="with-the-python-sdk">With the Python SDK</h2>
 <p>You can also use the Python SDK:
-<div class="highlight"><pre><span></span><code><span class="ow">from</span><span class="w"> </span><span class="n">kili.client</span><span class="w"> </span><span class="n">import</span><span class="w"> </span><span class="n">Kili</span><span class="w"></span>
-<span class="n">kili</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Kili</span><span class="p">()</span><span class="w"></span>
-<span class="n">kili.export_labels</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">project_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;project_id&gt;&quot;</span><span class="o">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="o">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">fmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;yolo_v5&quot;</span><span class="o">,</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">()</span>
+<span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
+    <span class="n">project_id</span> <span class="o">=</span> <span class="s2">&quot;&lt;project_id&gt;&quot;</span><span class="p">,</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;yolo_v5&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </code></pre></div>
-More details <a href="https://python-sdk-docs.kili-technology.com/latest/label/#kili.queries.label.__init__.QueriesLabel.export_labels">here</a>.</p>
+More details <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.export_labels">here</a>.</p>
 <h2 id="from-the-kili-ui">From the Kili UI</h2>
 <p>You can refer to this <a href="https://docs.kili-technology.com/docs/exporting-project-data">Kili documentation page</a>.</p>
 <h2 id="available-formats">Available formats</h2>
