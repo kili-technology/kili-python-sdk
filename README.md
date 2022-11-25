@@ -128,7 +128,7 @@ kili.append_many_to_dataset(
 )
 ```
 
-See the detailled example in this [recipe](https://docs.kili-technology.com/recipes/importing-data).
+See the detailed example in this [recipe](https://docs.kili-technology.com/recipes/importing-data).
 
 ### Importing predictions
 
@@ -160,7 +160,7 @@ kili.create_predictions(
 
 ```
 
-See detailled examples in this [recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
+See detailed examples in this [recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
 
 ### Exporting labels
 
@@ -173,7 +173,7 @@ with open("labels.json", "w") as label_file:
             label_file.write(label.json_response(format='simple'))
 ```
 
-See a detailled example in this [recipe](https://docs.kili-technology.com/recipes/exporting-assets-and-labels).
+See a detailed example in this [recipe](https://docs.kili-technology.com/recipes/exporting-assets-and-labels).
 
 More ways to export in other formats (YOLO, Pascal VOC) are described [here](docs/label_export.md).
 
