@@ -351,3 +351,45 @@ class MutationsProject:
         variables = {"where": {"id": project_id}}
         result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
         return format_result("data", result)
+
+    @typechecked
+    def archive_project(self, project_id: str):
+        """
+        Archive a project.
+
+        Args:
+            project_id: Identifier of the project
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+        """
+
+        variables = {
+            "projectID": project_id,
+            "archived": True,
+        }
+
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+        return format_result("data", result)
+
+    @typechecked
+    def unarchive_project(self, project_id: str):
+        """
+        Unarchive a project.
+
+        Args:
+            project_id: Identifier of the project
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+        """
+
+        variables = {
+            "projectID": project_id,
+            "archived": False,
+        }
+
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+        return format_result("data", result)
