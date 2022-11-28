@@ -5,7 +5,6 @@ With Kili, once you have annotated enough assets, you can export the data progra
  * export the whole project as a dataset using `.export_labels`, which will create an archive containing one or several files containing the labels in the format you need.
 
 
-To retrieve all assets of a project one by one, you can perform the following steps:
 ## Preliminary steps
  1. Fetch the project ID from the Kili UI (in Settings / Admin):
    ![Get Project ID from UI](../../assets/get_project_id.jpg)
@@ -20,6 +19,7 @@ from pathlib import Path
 kili = Kili()
 ```
 ## Exporting assets and labels one by one
+To retrieve all assets of a project one by one, you can perform the following steps:
 
 ### Exporting the latests labels per asset
  1. First fetch the assets:
@@ -27,12 +27,12 @@ kili = Kili()
 assets = kili.assets("<your_project_id>", fields=["externalId", "latestLabel.jsonResponse"])
 ```
 
- 1. Now if you print an asset, you will see that you can access its `latestLabel`:
+ 2. Now if you print an asset, you will see that you can access its `latestLabel`:
 ```python
 print(assets[0])
 {'latestLabel': {'jsonResponse': {'CLASSIFICATION_JOB': {'categories': [{'name': 'VEHICLE'}]}}}, 'externalId': '0'}
 ```
- 1. You can now get your label this way, and for example write the category name into a `0.txt` file:
+ 3. You can now get your label this way, and for example write the category name into a `0.txt` file:
 ```python
 for asset in assets:
     if asset["latestLabel"]: # covers the assets without label
@@ -65,7 +65,7 @@ labels = kili.labels("<your_project_id>", fields=["labelOf.externalId", "jsonRes
 labels = kili.labels("<your_project_id>", fields=["labelOf.externalId", "jsonResponse"], author_in=["John Smith"])
 # + label conversion code
 ```
-will directly return a list of labels authored by John Smith (or any first name, last name, or first name + last name).
+will directly return a list of labels authored by John Smith. In the `author_in` , you can also pass the first name, the last name, or the first name + last name of the user for which you want to fetch the labels.
 
 
 ### Filtering specific labels per asset through the label properties
@@ -85,7 +85,7 @@ for asset in assets:
 ```
 
 ## Exporting a whole project
-There are also methods to export a full project into specific export formats.
+There is also a method to export a full project into specific export formats. It can be useful when your goal is to use a standard export format.
 
 ### Available formats
 
@@ -120,7 +120,7 @@ The `.export_labels` method enables the export of a full project. It does the fo
      * YOLO: multiple files only.
      * COCO: single-file only.
 
-In the output archive, a README.kili.txt file is also output. Here is an example of its contents:
+For all the formats, in the output archive, a README.kili.txt file is also output. Here is an example of its contents:
 ```
 Exported Labels from KILI
 =========================
@@ -187,7 +187,7 @@ kili.export_labels(
 )
 ```
 
-Please note that the YOLO file format also includes the path root to the assets, and also the `train`, `val` and `test` subfolders. Since this is up to the ML engineer or Data scientist which data goes where, we do not provide this layout.
+Please note that a standard YOLO file format should also include the path root to the assets, and also the `train`, `val` and `test` subfolders. Since this is up to the ML engineer or Data scientist which data goes where, we do not provide this layout.
 
 
 ### COCO format
