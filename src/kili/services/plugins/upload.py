@@ -16,6 +16,7 @@ from kili.graphql.operations.plugins.mutations import (
 )
 from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
+from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 
 from .helpers import get_logger
@@ -101,6 +102,7 @@ class PluginUploader:  # pylint: disable=too-few-public-methods
         else:
             result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
 
+        check_errors_plugin_upload(result, self.file_path, self.plugin_name)
         upload_url = format_result("data", result)
         return upload_url
 
