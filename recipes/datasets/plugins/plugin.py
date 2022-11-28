@@ -14,7 +14,7 @@ def check_rules_on_label(label: Label):
         if annotation["categories"][0]["name"] == "OBJECT_A":
             counter += 1
 
-    if counter == 0:
+    if counter <= 1:
         return []
     return [f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"]
 
