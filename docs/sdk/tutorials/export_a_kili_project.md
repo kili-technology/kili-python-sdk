@@ -69,8 +69,7 @@ will directly return a list of labels authored by John Smith. In the `author_in`
 
 
 ### Filtering specific labels per asset through the label properties
-You can also look for specific labels, for example the last "review" status label per user, and dump the result into a json file.
- 1. This time, query the field `"labels.isLatestReviewLabelForUser"`
+You can also look for specific labels, for example the last "review" status label per user, and dump the result into a json file. You can use the field `"labels.isLatestReviewLabelForUser"` to know if the label is the latest per user.
 ```python
 assets = kili.assets("<your_project_id>", fields=["externalId", "labels.jsonResponse", "labels.isLatestReviewLabelForUser"])
 
