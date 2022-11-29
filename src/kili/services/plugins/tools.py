@@ -12,7 +12,7 @@ def check_errors_plugin_upload(result, file_path, plugin_name):
     """
     if "errors" in result and DUPLICATE_ERROR_SUBSTRING in result["errors"][0]["message"]:
         print(
-            "Perhaps you wanted to use "
-            f'kili.update_plugin(file_path="{file_path}", plugin_name="{plugin_name}") '
-            "(Warning, the existing plugin will be overwritten)"
+            "Hint: A plugin with this name already exist, "
+            "if you want to override it you can use the command "
+            f'kili.update_plugin(file_path="{file_path}", plugin_name="{plugin_name}")'
         )
