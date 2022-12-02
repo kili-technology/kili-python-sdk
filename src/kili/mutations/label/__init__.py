@@ -42,7 +42,7 @@ class MutationsLabel:
         external_id_array: List[str],
         model_name_array: List[str],
         json_response_array: List[dict],
-    ):
+    ) -> Label:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
@@ -51,13 +51,13 @@ class MutationsLabel:
             external_id_array: The external identifiers of the assets for which we want to add predictions
             model_name_array: In case you want to precise from which model the label originated
             json_response_array: The predictions are given here. For examples,
-                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb).
+                see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
 
         !!! example "Recipe"
-            For more detailed examples on how to create predictions, see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_predictions.ipynb).
+            For more detailed examples on how to create predictions, see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
         """
         assert len(external_id_array) == len(
             json_response_array
@@ -220,7 +220,7 @@ class MutationsLabel:
         seconds_to_label: Optional[int] = None,
         model_name: Optional[str] = None,
         json_response: Optional[dict] = None,
-    ):
+    ) -> Label:
         """Update properties of a label.
 
         Args:
@@ -253,7 +253,7 @@ class MutationsLabel:
         asset_external_id: Optional[str] = None,
         asset_id: Optional[str] = None,
         project_id: Optional[str] = None,
-    ):
+    ) -> Label:
         """Create honeypot for an asset.
 
         !!! info
