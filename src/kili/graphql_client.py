@@ -42,7 +42,7 @@ class GraphQLClient:
         self.token = None
         self.verify = verify
 
-    def execute(self, query, variables=None):
+    def execute(self, query, variables=None) -> dict:
         """
         Execute a query
 
@@ -62,7 +62,7 @@ class GraphQLClient:
         self.token = token
         self.headername = headername
 
-    def _send(self, query, variables):
+    def _send(self, query, variables) -> dict:
         """
         Send the query
 

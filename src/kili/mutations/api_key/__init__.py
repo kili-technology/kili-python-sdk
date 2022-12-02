@@ -2,6 +2,8 @@
 Api key mutations
 """
 
+from typing import Dict
+
 from typeguard import typechecked
 
 from ...helpers import format_result
@@ -22,11 +24,11 @@ class MutationsApiKey:  # pylint: disable=too-few-public-methods
         self.auth = auth
 
     @typechecked
-    def append_to_api_keys(self, api_key: str, name: str):
+    def append_to_api_keys(self, api_key: str, name: str) -> Dict[str, str]:
         """Create an api key to connect to the API.
 
         Args:
-            api_key: A new api key to connect with
+            api_key: A new api key to connect with.
             name: A name used to describe the api key.
 
         Returns:

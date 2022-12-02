@@ -70,7 +70,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     )
 
 
-def import_labels_from_dict(kili, labels: List[Dict], label_type: LabelType):
+def import_labels_from_dict(kili, labels: List[Dict], label_type: LabelType) -> List:
     """
     Imports labels from a list of dictionaries
     """

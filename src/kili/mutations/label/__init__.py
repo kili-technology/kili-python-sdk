@@ -164,7 +164,7 @@ class MutationsLabel:
         seconds_to_label_array: Optional[List[int]] = None,
         model_name: Optional[str] = None,
         label_type: LabelType = "DEFAULT",
-    ):
+    ) -> List:
         """Append labels to assets.
 
         Args:

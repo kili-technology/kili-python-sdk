@@ -24,7 +24,9 @@ class SubscriptionsLabel:
         self.auth = auth
 
     @typechecked
-    def label_created_or_updated(self, project_id: str, callback: Callable[[str, str], None]):
+    def label_created_or_updated(
+        self, project_id: str, callback: Callable[[str, str], None]
+    ) -> SubscriptionGraphQLClient:
         # pylint: disable=line-too-long
         """
         Subscribe a callback to a project, which is executed when a label is created or updated.
@@ -34,7 +36,7 @@ class SubscriptionsLabel:
             callback: This function takes as input the id of the asset and its content.
 
         Returns:
-            A subscription client
+            SubscriptionGraphQLClient: A subscription client.
 
         !!! example "Recipe"
             For more detailed examples on how to use Webhooks,
