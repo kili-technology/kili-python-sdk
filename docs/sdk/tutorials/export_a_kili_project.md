@@ -1,8 +1,12 @@
 # How to export a Kili project
-With Kili, once you have annotated enough assets, you can export the data programmatically to train a machine learning algorithm from it. There are several ways to do it:
+## Outline
+This tutorial explains the multiple ways to export a Kili project. It describes a per-label method involving label filtering and conversion, and also the solutions performing a full-project export. The methods are illustrated with code snippets.
 
- * fetch the assets and/or the labels one by one using `.assets` or `.labels`, perform the data transformation yourself, then write them to one or several output files.
- * export the whole project as a dataset using `.export_labels`, which will create an archive containing one or several files containing the labels in the format you need.
+## Export methods
+With Kili, once you have annotated enough assets, you can export the data programmatically to train a machine learning algorithm with it. There are several ways to do it:
+
+ * Fetch the assets and/or the labels one by one using `.assets` or `.labels`, perform the data transformation yourself, then write the data to one or several output files.
+ * Export the whole project as a dataset. To do that, use the `.export_labels` method that creates an archive containing the labels in your chosen format.
 
 
 ## Preliminary steps
@@ -12,27 +16,31 @@ With Kili, once you have annotated enough assets, you can export the data progra
  ```bash
  export KILI_API_KEY = <YOUR_API_KEY>
  ```
- 3. Import packages and initialize the Kili client:
+ 3. Install Kili if it has not been done already.
+```bash
+!pip install --upgrade kili
+```
+
+ 4. Import packages and instanciate `Kili`:
 ```python
 from kili.client import Kili
 from pathlib import Path
 kili = Kili()
 ```
 ## Exporting assets and labels one by one
-To retrieve all assets of a project one by one, you can perform the following steps:
+To retrieve all assets of a project one by one, perform the following steps:
 
-### Exporting the latests labels per asset
- 1. First fetch the assets:
+### Exporting the latest labels per asset
+ 1. First, fetch the assets:
 ```python
 assets = kili.assets("<your_project_id>", fields=["externalId", "latestLabel.jsonResponse"])
 ```
-
  2. Now if you print an asset, you will see that you can access its `latestLabel`:
 ```python
 print(assets[0])
 {'latestLabel': {'jsonResponse': {'CLASSIFICATION_JOB': {'categories': [{'name': 'VEHICLE'}]}}}, 'externalId': '0'}
 ```
- 3. You can now get your label this way, and for example write the category name into a `0.txt` file:
+  3. You can now get your label this way, and for example write the category name into a `0.txt` file:
 ```python
 for asset in assets:
     if asset["latestLabel"]: # covers the assets without label
@@ -46,9 +54,9 @@ for asset in assets:
 You can specify label filters directly in the `.assets` and the `.labels` methods. The available filters are listed in the arguments
 of [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) and [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.labels) methods.
 
-Once done, you can write the conversion code to obtain the data in the format you need.
+When done, you can write the conversion code to obtain the data in the format that you need.
 
-**Get all the assets, but each will only have the labels with a consensus mark above 0.7**
+**Get only the assets that have labels with a consensus mark above 0.7**
 ```python
 assets = kili.assets("<your_project_id>", fields=["externalId", "labels.jsonResponse"], label_consensus_mark_gt=0.7)
 # + asset conversion code
@@ -60,7 +68,7 @@ labels = kili.labels("<your_project_id>", fields=["labelOf.externalId", "jsonRes
 # + label conversion code
 ```
 
-**Get all the labels done by a given author**
+**Get all the labels done by a specific project member**
 ```python
 labels = kili.labels("<your_project_id>", fields=["labelOf.externalId", "jsonResponse"], author_in=["John Smith"])
 # + label conversion code
@@ -69,7 +77,7 @@ will directly return a list of labels authored by John Smith. In the `author_in`
 
 
 ### Filtering specific labels per asset through the label properties
-You can also look for specific labels, for example the last "review" status label per user, and dump the result into a json file. You can use the field `"labels.isLatestReviewLabelForUser"` to know if the label is the latest per user.
+You can also look for specific labels, for example the last "review" status label per user, and dump the result into a json file. You can use the field `"labels.isLatestReviewLabelForUser"` to check if the label is the latest per user.
 ```python
 assets = kili.assets("<your_project_id>", fields=["externalId", "labels.jsonResponse", "labels.isLatestReviewLabelForUser"])
 
@@ -84,7 +92,7 @@ for asset in assets:
 ```
 
 ## Exporting a whole project
-There is also a method to export a full project into specific export formats. It can be useful when your goal is to use a standard export format.
+There is also a method to export the whole project into specific export formats. It can be useful when your goal is to use one of the standard output formats.
 
 ### Available formats
 
@@ -105,21 +113,21 @@ Here are the available formats:
 
 The `.export_labels` method enables the export of a full project. It does the following preprocessing:
 
-* Only fetches the labels of types `"DEFAULT"` and `"REVIEW"`.
-* If specified, only selects a subset of asset ids.
-* You can specify a standard export format (only available for a restricted set of ML task).
+* Only fetches the labels of types `"DEFAULT"` and `"REVIEW"` (see the [label types explanations](https://docs.kili-technology.com/docs/asset-lifecycle#label-types-and-definitions-throughout-an-asset-lifecycle)).
+* If specified, selects a subset of asset ids.
+* Exports labels to one of the standard formats (only available for a restricted set of ML tasks).
 * Depending on the export type, it downloads the asset media:
      * Kili: ❌
      * YOLO: ❌
      * COCO: ✅
-* Depending on the `export_type` argument, it will export the latest label or all the labels.
-* Depending on the `split_option` argument, the layout will be one folder for all the jobs, or one folder per job.
+* The `export_type` argument tells if the latest label or all the labels are exported.
+* The `split_option` argument tells if the export contains one folder for all the jobs, or one folder per job.
 * The `single_file` argument tells if the labels data should be exported into one single file. Note that some formats are single_file only, and that some others cannot be output into a single file.
      * Kili: single file or multiple files.
      * YOLO: multiple files only.
      * COCO: single-file only.
 
-For all the formats, in the output archive, a README.kili.txt file is also output. Here is an example of its contents:
+For all the formats, in the output archive, a README.kili.txt file is also created. Here is an example of its contents:
 ```
 Exported Labels from KILI
 =========================
@@ -134,6 +142,7 @@ Exported Labels from KILI
 
 
 ### Kili format, one file per asset
+The following code snippet exports all the assets payloads and the associated labels, with one json file per asset, into the `/tmp/export.zip` folder.
 ```python
 from kili.client import Kili
 kili = Kili()
@@ -143,9 +152,10 @@ kili.export_labels(
     fmt = "kili",
 )
 ```
-will export all the assets payloads and the associated labels, with one json file per asset, into the `/tmp/export.zip` folder.
+
 
 ### Kili format, one file for the whole project
+This code snippet exports the assets payloads and the associated labels, with one json file per asset, into the `/tmp/export.zip` folder.
 ```python
 from kili.client import Kili
 kili = Kili()
@@ -156,14 +166,13 @@ kili.export_labels(
     single_file = True,
 )
 ```
-will export all the assets payloads and the associated labels, with one json file per asset, into the `/tmp/export.zip` folder.
 
 ### YOLO formats
-You can also export to the yolo format, when you have at least one Object Detection job with bounding boxes. You can select the `"yolo_v4"`, `"yolo_v5"` or `"yolo_v7"`. The difference between each format is the structure of the metadata YAML file, which specifies the object classes. In all the cases, it produces one file per asset in the Yolo format, containing the last DEFAULT or REVIEW label that has been produced. Each YOLO label has the following shape:
+You can also export to on of the YOLO format, when you have at least one Object Detection job with bounding boxes. You can choose the `"yolo_v4"`, `"yolo_v5"` or `"yolo_v7"`. The difference between each format is the structure of the metadata YAML file, which specifies the object classes. In all the cases, it produces one file per asset in the Yolo format, containing the last `DEFAULT` or `REVIEW` label that has been produced. Each YOLO label has the following shape:
 ```
-2        0  123 33 145
-^        ^  ^   ^  ^
-class    x  y   w  h
+2        0.25 0.67 0.26 0.34
+^        ^    ^    ^    ^
+class    x    y    w    h
 ```
 where:
 
@@ -173,7 +182,10 @@ where:
    * `w` is the width relative to the image width (between 0.0 and 1.0) of the bounding box.
    * `h` is the height relative to the image height (between 0.0 and 1.0) of the bounding box.
 
-Here is how to call the YOLO export (YOLO V5 here):
+Here is an example of a YOLO annotation over an image:
+![yolo on an image](../../assets/teslabb.jpg)
+
+Here's how to export to YOLO (in this example, YOLOv5):
 
 ```python
 from kili.client import Kili
@@ -186,11 +198,11 @@ kili.export_labels(
 )
 ```
 
-Please note that a standard YOLO file format should also include the path root to the assets, and also the `train`, `val` and `test` subfolders. Since this is up to the ML engineer or Data scientist which data goes where, we do not provide this layout.
+Please note that a standard YOLO file format must also include the path root to the assets, and also the `train`, `val` and `test` subfolders. Since this is up to the ML engineer or Data scientist which data goes where, we do not provide this layout.
 
 
 ### COCO format
-To export your data into the COCO format, you can do the following:
+To export your data into the COCO format, run the following code:
 ```python
 from kili.client import Kili
 kili = Kili()
@@ -205,3 +217,9 @@ This will create an archive containing both:
 
  * The COCO annotation file.
  * A folder `data/` with all the assets.
+
+## Summary
+In this tutorial, we have seen several ways to export labels from a Kili project:
+
+* Using `.assets` and `.labels` and their filtering arguments, a subset of assets or labels can be selected and then exported.
+* Using `.export_labels`, the whole project can be exported into a standard output format.
