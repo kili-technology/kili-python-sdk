@@ -183,10 +183,11 @@ where:
    * `h` is the height relative to the image height (between 0.0 and 1.0) of the bounding box.
 
 Here is an example of a YOLO annotation over an image:
-![yolo on an image](../../assets/teslabb.jpg)
+<br>
+<img src="../../assets/teslabb.jpg" alt="yolo on an image" width="400"/>
+
 
 Here's how to export to YOLO (in this example, YOLOv5):
-
 ```python
 from kili.client import Kili
 kili = Kili()
