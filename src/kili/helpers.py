@@ -10,7 +10,7 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Callable, List, Optional, Type, TypeVar, Union
+from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
 import requests
@@ -92,7 +92,7 @@ def is_url(path):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result: dict) -> dict:
+def format_json_dict(result: dict) -> Dict:
     """
     Formats the dict part of a json return by a GraphQL query into a python object
 

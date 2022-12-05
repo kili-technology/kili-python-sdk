@@ -261,7 +261,7 @@ class MutationsAsset:
         return format_result("data", results[0], Asset)
 
     @typechecked
-    def add_to_review(self, asset_ids: List[str]) -> dict:
+    def add_to_review(self, asset_ids: List[str]) -> Dict:
         """Add assets to review.
 
         !!! warning

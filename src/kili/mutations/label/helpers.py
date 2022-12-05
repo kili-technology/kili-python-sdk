@@ -3,7 +3,7 @@ Helpers for the label mutations
 """
 import json
 from os import PathLike
-from typing import List
+from typing import Dict, List
 
 
 def generate_create_predictions_arguments(
@@ -11,7 +11,7 @@ def generate_create_predictions_arguments(
     external_id_array: List[str],
     model_name: str,
     project_id: str,
-) -> dict:
+) -> Dict:
     """
     Generate the arguments of create prediction mutation given
     a list of external ids and paths to json response files

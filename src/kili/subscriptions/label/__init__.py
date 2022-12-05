@@ -36,7 +36,7 @@ class SubscriptionsLabel:
             callback: This function takes as input the id of the asset and its content.
 
         Returns:
-            SubscriptionGraphQLClient: A subscription client.
+            A subscription client.
 
         !!! example "Recipe"
             For more detailed examples on how to use Webhooks,
