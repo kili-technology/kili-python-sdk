@@ -29,7 +29,9 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Test notebooks
-        run: pytest -sv tests/test_notebooks.py tests/integration/*.py
+        run: |
+          pytest -sv tests/test_notebooks.py
+          pytest -sv tests/integration -k ".py"
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
