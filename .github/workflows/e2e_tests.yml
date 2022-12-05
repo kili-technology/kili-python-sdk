@@ -7,9 +7,18 @@ on:
       - master
 jobs:
   recipes:
-    runs-on: ubuntu-latest
     timeout-minutes: 10
     name: Recipes test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
+      KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
+      KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
+      KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
+      KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -25,14 +34,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Test notebooks
-        run: pytest -sv tests/test_notebooks.py tests/integration/*.py
-        env:
-          KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
-          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
-          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
-          KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
-          KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
+      - name: Notebook tests windows
+        if: ${{ matrix.os }} == 'windows-latest'
+        run: pytest -sv tests/test_notebooks.py --deselect=tests/test_notebooks.py::test_all_recipes[recipes/frame_dicom_data.ipynb] --deselect=tests/test_notebooks.py::test_all_recipes[recipes/medical_imaging.ipynb]
+
+      - name: Notebook tests linux
+        if: ${{ matrix.os }} == 'ubuntu-latest'
+        run: pytest -sv tests/test_notebooks.py
+
+      - name: Integration tests
+        run: pytest -sv tests/integration -k ".py"
 
       - name: Slack notification if failure
         if: failure()
