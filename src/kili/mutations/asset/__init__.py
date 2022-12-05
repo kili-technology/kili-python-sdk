@@ -46,7 +46,7 @@ class MutationsAsset:
         json_content_array: Optional[List[List[Union[dict, str]]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
-    ):
+    ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -240,7 +240,7 @@ class MutationsAsset:
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
-    def delete_many_from_dataset(self, asset_ids: List[str]):
+    def delete_many_from_dataset(self, asset_ids: List[str]) -> Asset:
         """Delete assets from a project.
 
         Args:
@@ -261,7 +261,7 @@ class MutationsAsset:
         return format_result("data", results[0], Asset)
 
     @typechecked
-    def add_to_review(self, asset_ids: List[str]) -> dict:
+    def add_to_review(self, asset_ids: List[str]) -> Dict:
         """Add assets to review.
 
         !!! warning
@@ -295,7 +295,7 @@ class MutationsAsset:
         return format_result("data", results[0])
 
     @typechecked
-    def send_back_to_queue(self, asset_ids: List[str]):
+    def send_back_to_queue(self, asset_ids: List[str]) -> Dict[str, str]:
         """Send assets back to queue.
 
         Args:

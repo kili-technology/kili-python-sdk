@@ -10,7 +10,7 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Callable, List, Optional, Type, TypeVar
+from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
 import requests
@@ -22,7 +22,7 @@ from kili.exceptions import GraphQLError, NonExistingFieldError
 T = TypeVar("T")
 
 
-def format_result(name, result, _object: Optional[Type[T]] = None) -> T:
+def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) -> T:
     """
     Formats the result of the GraphQL queries.
 
@@ -46,12 +46,15 @@ def format_result(name, result, _object: Optional[Type[T]] = None) -> T:
     return _object(formatted_json)  # type:ignore
 
 
-def content_escape(content):
+def content_escape(content: str) -> str:
     """
     Escapes the content
 
     Args:
-        content: string to escape
+        content (str): string to escape
+
+    Returns:
+        str: escaped string
     """
     return content.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
 
@@ -89,7 +92,7 @@ def is_url(path):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result):
+def format_json_dict(result: dict) -> Dict:
     """
     Formats the dict part of a json return by a GraphQL query into a python object
 
@@ -115,7 +118,10 @@ def format_json_dict(result):
     return result
 
 
-def format_json(result):
+D = TypeVar("D")
+
+
+def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D]:
     """
     Formats the json return by a GraphQL query into a python object
 

@@ -8,6 +8,7 @@ from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.services.asset_import import import_assets
+from kili.services.asset_import.constants import IMPORT_BATCH_SIZE
 from tests.services.asset_import.mocks import mocked_auth
 from tests.utils import LocalDownloader
 
@@ -66,7 +67,7 @@ class ImportTestCase(TestCase):
         )
 
     def assert_upload_several_batches(self):
-        nb_asset_test = 15
+        nb_asset_test = IMPORT_BATCH_SIZE + 5
         external_id_array = [f"hosted file {i}" for i in range(nb_asset_test)]
         assets = [
             {"content": "https://hosted-data", "external_id": external_id}
@@ -74,17 +75,17 @@ class ImportTestCase(TestCase):
         ]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters_1 = self.get_expected_sync_call(
-            ["https://hosted-data"] * 10,
-            [external_id_array[i] for i in range(10)],
-            ["unique_id"] * 10,
-            [False] * 10,
-            [""] * 10,
-            ["{}"] * 10,
-            ["TODO"] * 10,
+            ["https://hosted-data"] * IMPORT_BATCH_SIZE,
+            [external_id_array[i] for i in range(IMPORT_BATCH_SIZE)],
+            ["unique_id"] * IMPORT_BATCH_SIZE,
+            [False] * IMPORT_BATCH_SIZE,
+            [""] * IMPORT_BATCH_SIZE,
+            ["{}"] * IMPORT_BATCH_SIZE,
+            ["TODO"] * IMPORT_BATCH_SIZE,
         )
         expected_parameters_2 = self.get_expected_sync_call(
             ["https://hosted-data"] * 5,
-            [external_id_array[i] for i in range(10, 15)],
+            [external_id_array[i] for i in range(IMPORT_BATCH_SIZE, IMPORT_BATCH_SIZE + 5)],
             ["unique_id"] * 5,
             [False] * 5,
             [""] * 5,

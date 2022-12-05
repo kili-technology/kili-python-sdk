@@ -44,7 +44,7 @@ project_compatible_mimetypes = {
     "VIDEO_LEGACY": "",
 }
 
-IMPORT_BATCH_SIZE = 10
+IMPORT_BATCH_SIZE = 100
 FRAME_IMPORT_BATCH_SIZE = 1
 
 MB_SIZE = 1024**2

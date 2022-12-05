@@ -9,7 +9,6 @@ from typing_extensions import Literal
 
 from ...helpers import format_result
 from ...queries.label import QueriesLabel
-from ..comment.queries import GQL_APPEND_TO_COMMENTS
 from .helpers import get_issue_number
 from .queries import GQL_APPEND_TO_ISSUES
 
@@ -35,7 +34,7 @@ class MutationsIssue:
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
         type_: Literal["ISSUE", "QUESTION"] = "ISSUE",
-    ) -> dict:
+    ) -> Dict:
         """Create an issue.
 
         Args:
@@ -76,20 +75,8 @@ class MutationsIssue:
             },
             "where": {"id": asset_id},
         }
-        result = self.auth.client.execute(GQL_APPEND_TO_ISSUES, variables)
-        formated_result = format_result("data", result)
-        issue_id = formated_result["id"]
-
         if text:
-            variables = {
-                "data": {
-                    "text": text,
-                    "inReview": False,
-                },
-                "where": {
-                    "id": issue_id,
-                },
-            }
-            result = self.auth.client.execute(GQL_APPEND_TO_COMMENTS, variables)
+            variables["data"]["text"] = text
 
-        return formated_result
+        result = self.auth.client.execute(GQL_APPEND_TO_ISSUES, variables)
+        return format_result("data", result)
