@@ -51,7 +51,7 @@ class QueriesOrganization:
             fields: All the fields to request among the possible fields for the organizations.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#organization) for all possible fields.
             first: Maximum number of organizations to return.
-            Skip: Number of skipped organizations (they are ordered by creation date)
+            skip: Number of skipped organizations (they are ordered by creation date)
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the organizations is returned.
 

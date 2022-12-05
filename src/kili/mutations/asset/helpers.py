@@ -1,10 +1,12 @@
 """
 Helpers for the asset mutations
 """
+from typing import Dict
+
 from ...helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
 
 
-def process_update_properties_in_assets_parameters(properties) -> dict:
+def process_update_properties_in_assets_parameters(properties) -> Dict:
     """
     Process arguments of the update_properties_in_assets method
     and return the properties for the paginated loop

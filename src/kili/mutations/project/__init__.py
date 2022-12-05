@@ -1,7 +1,7 @@
 """Project mutations."""
 
 from json import dumps
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from typeguard import typechecked
 
@@ -33,7 +33,9 @@ class MutationsProject:
         self.auth = auth
 
     @typechecked
-    def append_to_roles(self, project_id: str, user_email: str, role: str = "LABELER"):
+    def append_to_roles(
+        self, project_id: str, user_email: str, role: str = "LABELER"
+    ) -> Dict[str, Union[str, dict, list]]:
         """Add a user to a project.
 
         !!! info
@@ -85,7 +87,7 @@ class MutationsProject:
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[dict] = None,
-    ):
+    ) -> Dict[str, str]:
         """Update properties of a project.
 
         Args:
@@ -99,7 +101,6 @@ class MutationsProject:
             description : Description of the project.
             honeypot_mark : Should be between 0 and 1
             instructions : Instructions of the project.
-            interface_category: Always use 'IV2'.
             input_type: Currently, one of `AUDIO`, `IMAGE`, `PDF`, `TEXT`,
                 `VIDEO`, `VIDEO_LEGACY`.
             json_interface: The json parameters of the project, see Edit your interface.
@@ -337,7 +338,7 @@ class MutationsProject:
         return format_result("data", result)
 
     @typechecked
-    def delete_project(self, project_id: str):
+    def delete_project(self, project_id: str) -> str:
         """
         Delete a project permanently.
 

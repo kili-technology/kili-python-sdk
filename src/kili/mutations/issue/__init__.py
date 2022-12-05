@@ -35,7 +35,7 @@ class MutationsIssue:
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
         type_: Literal["ISSUE", "QUESTION"] = "ISSUE",
-    ) -> dict:
+    ) -> Dict:
         """Create an issue.
 
         Args:
