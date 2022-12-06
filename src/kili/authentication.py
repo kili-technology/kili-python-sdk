@@ -14,6 +14,8 @@ from kili.queries.api_key import QueriesApiKey
 from kili.queries.user.queries import GQL_ME
 from kili.types import User
 
+MAX_RETRIES = 20
+
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
 
@@ -52,7 +54,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
             )
             warnings.warn(message, UserWarning)
 
-        adapter = adapters.HTTPAdapter(max_retries=self._get_retry_policy())
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type: ignore
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
         self.client = GraphQLClient(
