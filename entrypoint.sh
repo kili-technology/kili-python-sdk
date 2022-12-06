@@ -43,7 +43,7 @@ function create_release_branch() {
     new_version=$(bump_version commit)
     echo "New version (bump_version commit): $new_version"
 
-    if git push --force --quiet --set-upstream origin release/$new_version $commit; then
+    if git push --force --quiet --set-upstream origin release/$new_version; then
         echo "version bump commited and pushed on the release branch"
         echo "Tests are launched on Github Actions: https://github.com/kili-technology/kili-python-sdk/actions"
     else
