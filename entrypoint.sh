@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# print cli arguments for debug
-echo "cli arguments received below (for debug):"
-echo $@
-
 function bump_version(){
     new_version=`bump2version \
         --list \
@@ -36,9 +32,6 @@ function create_release_branch() {
     echo "New version (bump_version dry-run): $new_version"
 
     #create a branch from the specified sha and commit the version bump
-    git config user.name
-    git config user.email
-
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
     echo "New version (bump_version commit): $new_version"
