@@ -69,6 +69,10 @@ function create_draft_release {
     git tag -f -a $release -m "Release $release"
     git push origin $release
 
+    if ! command -v gh &> /dev/null; then
+        brew install gh
+    fi
+
     gh release create $release \
         --draft \
         --title "Release $release" \
