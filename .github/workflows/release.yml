@@ -22,7 +22,7 @@ jobs:
         run: pip install -e .
       - name: Set git identity
         run: |
-          git config --global user.email "${{ github.actor }}"
-          git config --global user.name "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
       - name: Bump version
         run: bash -c "./entrypoint.sh release:branch minor"
