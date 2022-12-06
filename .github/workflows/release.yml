@@ -19,4 +19,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install bump2version
       - name: Bump version
-        run: bash -c "entrypoint.sh release:branch minor"
+        run: bash -c "./entrypoint.sh release:branch minor"
