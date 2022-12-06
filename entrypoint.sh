@@ -1,5 +1,8 @@
 # #!/bin/bash
 
+# print cli arguments for debug
+echo $@
+
 function bump_version(){
     new_version=`bump2version \
         --list \
@@ -13,13 +16,16 @@ function bump_version(){
 }
 
 function create_release_branch() {
-    read -p 'Bump type (possible values: patch or minor): ' release_type
+    release_type=$2
+
     if [ "$release_type" != "patch" ] && [ "$release_type" != "minor" ]; then
         echo "Wrong Bump type. It should be minor or patch"
         exit 1
     fi
-    read -p 'from commit (default: HEAD): ' commit
-    commit="${commit:=HEAD}"
+
+    commit=$3
+
+    commit="${commit:=HEAD}"  # set commit to HEAD if commit variable is not given by the user
 
     git pull -q
 
@@ -27,7 +33,7 @@ function create_release_branch() {
     new_version=$(bump_version dry-run)
     echo "New version: $new_version"
 
-    #create a branch from the specified sha and and commit the version bump
+    #create a branch from the specified sha and commit the version bump
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
     if git push -f -q; then
