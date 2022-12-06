@@ -1,6 +1,7 @@
 # #!/bin/bash
 
 # print cli arguments for debug
+echo "cli arguments received (for debug):"
 echo $@
 
 function bump_version(){
