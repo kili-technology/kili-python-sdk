@@ -26,7 +26,7 @@ function create_release_branch() {
 
     commit=$2
 
-    commit="${commit:=HEAD}"  # set commit to HEAD if commit variable is not given by the user
+    commit="${commit:=HEAD}"  # set commit to HEAD if commit variable is null
     echo "commit: $commit"
 
     git pull --quiet
@@ -36,6 +36,9 @@ function create_release_branch() {
     echo "New version: $new_version"
 
     #create a branch from the specified sha and commit the version bump
+    git config user.name
+    git config user.email
+
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
     if git push --force --quiet; then
@@ -92,7 +95,7 @@ function create_draft_release {
 }
 
 if [[ "$1" == 'release:branch' ]]; then
-    create_release_branch $2 $3
+    create_release_branch $2 $3  # pass bump type and commit hash
 fi
 
 if [[ "$1" == 'release:draft' ]]; then
