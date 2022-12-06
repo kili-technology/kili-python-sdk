@@ -1,7 +1,7 @@
-# #!/bin/bash
+#!/bin/bash
 
 # print cli arguments for debug
-echo "cli arguments received (for debug):"
+echo "cli arguments received below (for debug):"
 echo $@
 
 function bump_version(){
@@ -17,16 +17,17 @@ function bump_version(){
 }
 
 function create_release_branch() {
-    release_type=$2
+    release_type=$1
 
     if [ "$release_type" != "patch" ] && [ "$release_type" != "minor" ]; then
         echo "Wrong Bump type. It should be minor or patch. Received: $release_type"
         exit 1
     fi
 
-    commit=$3
+    commit=$2
 
     commit="${commit:=HEAD}"  # set commit to HEAD if commit variable is not given by the user
+    echo "commit: $commit"
 
     git pull -q
 
@@ -88,7 +89,7 @@ function create_draft_release {
 }
 
 if [[ "$1" == 'release:branch' ]]; then
-    create_release_branch
+    create_release_branch $2 $3
 fi
 
 if [[ "$1" == 'release:draft' ]]; then
