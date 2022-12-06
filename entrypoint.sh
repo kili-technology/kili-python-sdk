@@ -33,7 +33,7 @@ function create_release_branch() {
 
     #get the new version
     new_version=$(bump_version dry-run)
-    echo "New version: $new_version"
+    echo "New version (bump_version dry-run): $new_version"
 
     #create a branch from the specified sha and commit the version bump
     git config user.name
@@ -41,7 +41,9 @@ function create_release_branch() {
 
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
-    if git push --force --quiet --set-upstream origin; then
+    echo "New version (bump_version commit): $new_version"
+
+    if git push --force --quiet --set-upstream origin release/$new_version $commit; then
         echo "version bump commited and pushed on the release branch"
         echo "Tests are launched on Github Actions: https://github.com/kili-technology/kili-python-sdk/actions"
     else
