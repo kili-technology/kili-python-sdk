@@ -1,9 +1,9 @@
-name: release
+name: Release minor
 on:
   workflow_dispatch:
 
 jobs:
-  release_branch:
+  create_release_branch:
     runs-on: ubuntu-latest
     name: create release branch
 
