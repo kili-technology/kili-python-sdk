@@ -36,8 +36,12 @@ def get_post_assets_call_process(
 def get_file_extension_from_headers(url) -> Optional[str]:
     """guess the extension of a file with the url response headers"""
     with requests.head(url, timeout=20) as header_response:
-        headers = header_response.headers
-        header_response.raise_for_status()
+        if header_response.status_code == 200:
+            headers = header_response.headers
+        else:
+            with requests.get(url, timeout=20) as response:
+                response.raise_for_status()
+                headers = response.headers
         content_type = headers["content-type"]
         return guess_extension(content_type)
 
