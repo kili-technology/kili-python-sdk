@@ -20,7 +20,7 @@ function create_release_branch() {
     release_type=$2
 
     if [ "$release_type" != "patch" ] && [ "$release_type" != "minor" ]; then
-        echo "Wrong Bump type. It should be minor or patch"
+        echo "Wrong Bump type. It should be minor or patch. Received: $release_type"
         exit 1
     fi
 
