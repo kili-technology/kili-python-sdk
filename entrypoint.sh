@@ -29,7 +29,7 @@ function create_release_branch() {
     commit="${commit:=HEAD}"  # set commit to HEAD if commit variable is not given by the user
     echo "commit: $commit"
 
-    git pull -q
+    git pull --quiet
 
     #get the new version
     new_version=$(bump_version dry-run)
