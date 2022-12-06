@@ -20,4 +20,4 @@ jobs:
           pip install bump2version
       - name: Bump version
         run: |
-          bash entrypoint.sh release:branch
+          bash entrypoint.sh release:branch minor
