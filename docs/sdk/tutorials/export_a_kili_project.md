@@ -14,14 +14,14 @@ With Kili, once you have annotated enough assets, you can export the data progra
    ![Get Project ID from UI](../../assets/get_project_id.jpg)
  2. Ensure that your Kili API key as been set as an environment variable:
  ```bash
- export KILI_API_KEY = <YOUR_API_KEY>
+ export KILI_API_KEY=<YOUR_API_KEY>
  ```
  3. Install Kili if it has not been done already.
 ```bash
-!pip install --upgrade kili
+pip install --upgrade kili
 ```
 
- 4. Import packages and instanciate `Kili`:
+ 4. Import packages and instantiate `Kili`:
 ```python
 from kili.client import Kili
 from pathlib import Path
@@ -96,7 +96,6 @@ There is also a method to export the whole project into specific export formats.
 
 ### Available formats
 
-Here are the available formats:
 
 | Format        | UI  | Python Client | Command Line Interface |
 | ------------- | --- | ------------- | ---------------------- |
@@ -187,7 +186,7 @@ Here is an example of a YOLO annotation over an image:
 <img src="../../assets/teslabb.jpg" alt="yolo on an image" width="400"/>
 
 
-Here's how to export to YOLO (in this example, YOLOv5):
+Here is how to export to YOLO (in this example, YOLOv5):
 ```python
 from kili.client import Kili
 kili = Kili()
@@ -199,7 +198,7 @@ kili.export_labels(
 )
 ```
 
-Please note that a standard YOLO file format must also include the path root to the assets, and also the `train`, `val` and `test` subfolders. Since this is up to the ML engineer or Data scientist which data goes where, we do not provide this layout.
+Please note that a standard YOLO file format must also include the path root to the assets, and also the `train`, `val` and `test` subfolders. Since this is up to the ML engineer or Data scientist to know which data goes where, we do not provide this layout.
 
 
 ### COCO format
