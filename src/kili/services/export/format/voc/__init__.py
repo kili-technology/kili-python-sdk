@@ -2,8 +2,6 @@
 Common code for the PASCAL VOC exporter.
 """
 
-import csv
-import json
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -16,6 +14,8 @@ from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
+
+from ..yolo import _write_remote_content_file, _write_video_metadata_file
 
 
 class VocExporter(AbstractExporter):
@@ -61,19 +61,10 @@ class VocExporter(AbstractExporter):
                 remote_content.extend(asset_remote_content)
 
             if video_metadata:
-                video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
-                if video_metadata_json is not None:
-                    meta_json_path = base_folder / "video_meta.json"
-                    with open(meta_json_path, "wb") as output_file:
-                        output_file.write(video_metadata_json.encode("utf-8"))
+                _write_video_metadata_file(video_metadata, base_folder)
 
             if len(remote_content) > 0:
-                remote_content_header = ["external id", "url", "label file"]
-                remote_file_path = images_folder / "remote_assets.csv"
-                with open(remote_file_path, "w", encoding="utf8") as file:
-                    writer = csv.writer(file)
-                    writer.writerow(remote_content_header)
-                    writer.writerows(remote_content)
+                _write_remote_content_file(remote_content, images_folder)
 
             self.create_readme_kili_file(base_folder)
             self.make_archive(base_folder, output_filename)
