@@ -154,7 +154,7 @@ kili.export_labels(
 
 
 ### Kili format, one file for the whole project
-This code snippet exports the assets payloads and the associated labels, with one json file per asset, into the `/tmp/export.zip` folder.
+This code snippet exports the assets payloads and the associated labels in one file for the whole project, into the `/tmp/export.zip` folder.
 ```python
 from kili.client import Kili
 kili = Kili()
@@ -194,7 +194,6 @@ kili.export_labels(
     project_id = "<your_project_id>",
     filename = "/tmp/export.zip",
     fmt = "yolo_v5",
-    single_file = True,
 )
 ```
 
