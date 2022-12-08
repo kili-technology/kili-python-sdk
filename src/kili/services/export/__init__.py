@@ -9,6 +9,7 @@ from kili.exceptions import NotFound
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.kili import KiliExporter
+from kili.services.export.format.voc import VocExporter
 from kili.services.export.format.yolo import YoloExporter
 from kili.services.export.logger import get_logger
 from kili.services.export.repository import SDKContentRepository
@@ -62,6 +63,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
             "yolo_v4": YoloExporter,
             "yolo_v5": YoloExporter,
             "yolo_v7": YoloExporter,
+            "pascal_voc": VocExporter,
         }
         assert set(format_exporter_selector_mapping.keys()) == set(
             get_args(LabelFormat)

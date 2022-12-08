@@ -61,7 +61,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     @abstractmethod
     def _check_arguments_compatibility(self):
         """
-        Checks if the format can accept the
+        Checks if the format is compatible with the export options.
         """
 
     @abstractmethod

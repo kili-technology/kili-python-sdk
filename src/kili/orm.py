@@ -17,7 +17,9 @@ class DictClass(dict):
         self.__dict__ = self
 
 
-AnnotationFormat = Literal["kili", "raw", "simple", "yolo_v4", "yolo_v5", "yolo_v7", "coco"]
+AnnotationFormat = Literal[
+    "kili", "raw", "simple", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "pascal_voc"
+]
 
 
 @dataclass
