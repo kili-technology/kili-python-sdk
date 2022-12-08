@@ -1,4 +1,15 @@
-# #!/bin/bash
+#!/bin/bash
+
+# Usage:
+# - To create a release branch:
+# ./entrypoint.sh release:branch <bump_type> <commit_hash>
+# bump_type: minor or patch.
+# commit_hash: no argument will default to HEAD. Else, the commit hash provided.
+
+# - To create a draft release:
+# ./entrypoint.sh release:draft
+
+# Requirements: gh, bump2version, git, curl
 
 function bump_version(){
     new_version=`bump2version \
@@ -13,26 +24,35 @@ function bump_version(){
 }
 
 function create_release_branch() {
-    read -p 'Bump type (possible values: patch or minor): ' release_type
+    release_type=$1
+
     if [ "$release_type" != "patch" ] && [ "$release_type" != "minor" ]; then
-        echo "Wrong Bump type. It should be minor or patch"
+        echo "Wrong Bump type. It should be minor or patch. Received: $release_type"
         exit 1
     fi
-    read -p 'from commit (default: HEAD): ' commit
-    commit="${commit:=HEAD}"
 
-    git pull -q
+    commit=$2
+
+    commit="${commit:=HEAD}"  # set commit to HEAD if commit variable is null
+    echo "commit: $commit"
+
+    git pull --quiet
 
     #get the new version
     new_version=$(bump_version dry-run)
-    echo "New version: $new_version"
+    echo "New version (bump_version dry-run): $new_version"
 
-    #create a branch from the specified sha and and commit the version bump
+    #create a branch from the specified sha and commit the version bump
     git checkout -B release/$new_version $commit
     new_version=$(bump_version commit)
-    if git push -f -q; then
+    echo "New version (bump_version commit): $new_version"
+
+    if git push --quiet --set-upstream origin release/$new_version; then
         echo "version bump commited and pushed on the release branch"
         echo "Tests are launched on Github Actions: https://github.com/kili-technology/kili-python-sdk/actions"
+    else
+        echo "Failed to push release branch"
+        exit 1
     fi
 
 }
@@ -81,7 +101,7 @@ function create_draft_release {
 }
 
 if [[ "$1" == 'release:branch' ]]; then
-    create_release_branch
+    create_release_branch $2 $3  # pass bump type and commit hash
 fi
 
 if [[ "$1" == 'release:draft' ]]; then
