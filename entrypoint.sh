@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Usage:
+# - To create a release branch:
+# ./entrypoint.sh release:branch <bump_type> <commit_hash>
+# bump_type: minor or patch.
+# commit_hash: no argument will default to HEAD. Else, the commit hash provided.
+
+# - To create a draft release:
+# ./entrypoint.sh release:draft
+
+# Requirements: gh, bump2version, git, curl
+
 function bump_version(){
     new_version=`bump2version \
         --list \
