@@ -142,9 +142,9 @@ class MutationsAsset:
         """Update the properties of one or more assets.
 
         Args:
-            asset_ids : The asset IDs to modify
+            asset_ids: The asset IDs to modify
             external_ids: Change the external id of the assets
-            priorities : You can change the priority of the assets
+            priorities: You can change the priority of the assets
                 By default, all assets have a priority of 0.
             json_metadatas: The metadata given to an asset should be stored
                 in a json like dict with keys `imageUrl`, `text`, `url`:

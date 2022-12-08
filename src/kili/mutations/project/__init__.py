@@ -188,10 +188,10 @@ class MutationsProject:
         """Create a project.
 
         Args:
-            input_type : Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, VIDEO_LEGACY, NA}
+            input_type: Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, VIDEO_LEGACY, NA}
             json_interface: The json parameters of the project, see Edit your interface.
-            title : Title of the project
-            description : Description of the project
+            title: Title of the project
+            description: Description of the project
             project_type:
                 Currently, one of {
                     `IMAGE_CLASSIFICATION_SINGLE`,
@@ -269,7 +269,7 @@ class MutationsProject:
         """Delete users by their role_id.
 
         Args:
-            role_id : Identifier of the project user (not the ID of the user)
+            role_id: Identifier of the project user (not the ID of the user)
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -293,7 +293,7 @@ class MutationsProject:
         Update properties of a project-user tuple
 
         Args:
-            project_user_id : Identifier of the project user
+            project_user_id: Identifier of the project user
             consensus_mark: Should be between 0 and 1.
             honeypot_mark: Should be between 0 and 1.
             number_of_labeled_assets: Number of assets the user labeled in the project.
