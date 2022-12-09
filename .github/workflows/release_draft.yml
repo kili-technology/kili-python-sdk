@@ -1,0 +1,39 @@
+name: Release patch
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: "Latest minor release branch version"
+        required: true
+        type: string
+        default: "X.XXX.X"
+
+jobs:
+  create_draft_release:
+    runs-on: ubuntu-latest
+    name: create draft release
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bump2version
+
+      - name: Install kili
+        run: pip install -e .
+
+      - name: Set git identity
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: checkout to latest minor release branch
+        run: git checkout release/${{ inputs.releaseVersion }}
