@@ -197,6 +197,8 @@ def _get_coco_images_and_annotations(
         enumerate(assets),
         desc="Convert to coco format",
     ):
+        if job_name not in asset["latestLabel"]["jsonResponse"]:
+            continue
         file_name = Path(shutil.copy(asset["content"], data_dir))
         width, height = Image.open(asset["content"]).size
 
