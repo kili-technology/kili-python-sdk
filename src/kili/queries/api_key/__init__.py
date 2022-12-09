@@ -6,8 +6,8 @@ from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
+from kili.graphql.operations.api_key.queries import GQL_API_KEYS_COUNT, gql_api_keys
 from kili.helpers import format_result, fragment_builder
-from kili.queries.api_key.queries import GQL_API_KEYS_COUNT, gql_api_keys
 from kili.types import ApiKey as ApiKeyType
 from kili.utils.pagination import row_generator_from_paginated_calls
 
