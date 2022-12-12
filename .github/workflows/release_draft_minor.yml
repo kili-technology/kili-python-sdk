@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       releaseVersion:
-        description: "Latest minor release branch version"
+        description: "Release branch version release/X.XXX.X"
         required: true
         type: string
         default: "X.XXX.X"
@@ -35,13 +35,13 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: checkout to latest minor release branch
+      - name: checkout to release branch
         run: |
           git fetch origin release/${{ inputs.releaseVersion }}
           git checkout release/${{ inputs.releaseVersion }}
           git status
 
-      - name: bump patch version, commit and push
+      - name: create draft release
         run: |
           link_to_draft=$(./entrypoint.sh release:draft ${{ inputs.releaseVersion }}")
           echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
