@@ -36,4 +36,43 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: checkout to latest minor release branch
-        run: git checkout release/${{ inputs.releaseVersion }}
+        run: |
+          git fetch origin release/${{ inputs.releaseVersion }}
+          git checkout release/${{ inputs.releaseVersion }}
+          git status
+
+      - name: bump patch version commit
+        run: |
+          new_version=$(./entrypoint.sh bump_version commit patch)
+          echo $new_version
+          echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
+
+      # - name: Tag patch
+      #   run: |
+      #     git tag -f -a ${{ env.NEW_PATCH_VERSION }} -m "Release ${{ env.NEW_PATCH_VERSION }}"
+      #     git push origin ${{ env.NEW_PATCH_VERSION }}
+
+      # - name: Create draft release
+      #   run: gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes
+
+      # - name: Slack notification
+      #   id: slack
+      #   if: success()
+      #   uses: slackapi/slack-github-action@v1.18.0
+      #   with:
+      #     payload: |
+      #       {
+      #         "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready.",
+      #         "blocks": [
+      #           {
+      #             "type": "section",
+      #             "text": {
+      #               "type": "mrkdwn",
+      #               "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready."
+      #             }
+      #           }
+      #         ]
+      #       }
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+      #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

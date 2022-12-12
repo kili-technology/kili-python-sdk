@@ -11,12 +11,14 @@
 
 # Requirements: gh, bump2version, git, curl
 
-function bump_version(){
+# $1: commit or dry-run
+# $2: release type (minor or patch)
+function bump_version() {
     new_version=`bump2version \
         --list \
         --$1 \
         --current-version $(python -c 'from kili import __version__; print(__version__)') \
-        $release_type \
+        $2 \
         src/kili/__init__.py \
         | grep new_version | sed -r s,"^.*=",,`
 
@@ -38,13 +40,15 @@ function create_release_branch() {
 
     git pull --quiet
 
-    #get the new version
-    new_version=$(bump_version dry-run)
+    # get the new version
+    new_version=$(bump_version dry-run $release_type)
     echo "New version (bump_version dry-run): $new_version"
 
-    #create a branch from the specified sha and commit the version bump
+    # create a branch from the specified sha and commit the version bump
     git checkout -B release/$new_version $commit
-    new_version=$(bump_version commit)
+
+    # create version bump commit
+    new_version=$(bump_version commit $release_type)
     echo "New version (bump_version commit): $new_version"
 
     if git push --quiet --set-upstream origin release/$new_version; then
@@ -89,7 +93,8 @@ function create_draft_release {
     git tag -f -a $release -m "Release $release"
     git push origin $release
 
-    if ! command -v gh &> /dev/null; then
+    # install gh if needed on macOS
+    if [[ $OSTYPE == 'darwin'* ]] && ! [[ -x "$(command -v gh)" ]]; then
         brew install gh
     fi
 
@@ -100,8 +105,12 @@ function create_draft_release {
 
 }
 
+if [[ "$1" == 'bump_version' ]]; then
+    bump_version $2 $3 # pass (commit/dry-run) and bump type (minor/patch)
+fi
+
 if [[ "$1" == 'release:branch' ]]; then
-    create_release_branch $2 $3  # pass bump type and commit hash
+    create_release_branch $2 $3  # pass bump type (minor or patch) and commit hash to create branch from
 fi
 
 if [[ "$1" == 'release:draft' ]]; then
