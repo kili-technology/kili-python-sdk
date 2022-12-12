@@ -41,11 +41,12 @@ jobs:
           git checkout release/${{ inputs.releaseVersion }}
           git status
 
-      - name: bump patch version and commit
+      - name: bump patch version, commit and push
         run: |
+          current_version = $(python -c 'from kili import __version__; print(__version__)')
           new_version=$(./entrypoint.sh bump_version commit patch)
-          echo $new_version
           echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
+          echo "CURRENT_PATCH_VERSION=$current_version" >> $GITHUB_ENV
           git push
 
       - name: Tag patch commit and push
@@ -54,7 +55,7 @@ jobs:
           git push origin ${{ env.NEW_PATCH_VERSION }}
 
       - name: Create draft release
-        run: gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes
+        run: gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes --notes-start-tag ${{ env.CURRENT_PATCH_VERSION }}
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -65,13 +66,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready.",
+              "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready: https://github.com/kili-technology/kili-python-sdk/releases",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready."
+                    "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready: https://github.com/kili-technology/kili-python-sdk/releases"
                   }
                 }
               ]
