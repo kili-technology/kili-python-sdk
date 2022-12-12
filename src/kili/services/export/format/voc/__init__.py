@@ -67,7 +67,7 @@ class VocExporter(AbstractExporter):
                 _write_remote_content_file(remote_content, images_folder)
 
             self.create_readme_kili_file(base_folder)
-            self.make_archive(base_folder, output_filename)
+            self.make_archive(folder, output_filename)
 
         self.logger.warning(output_filename)
 
