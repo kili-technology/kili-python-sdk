@@ -41,19 +41,22 @@ jobs:
           git checkout release/${{ inputs.releaseVersion }}
           git status
 
-      - name: bump patch version commit
+      - name: bump patch version and commit
         run: |
           new_version=$(./entrypoint.sh bump_version commit patch)
           echo $new_version
           echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
+          git push
 
-      - name: Tag patch and push
+      - name: Tag patch commit and push
         run: |
           git tag -f -a ${{ env.NEW_PATCH_VERSION }} -m "Release ${{ env.NEW_PATCH_VERSION }}"
           git push origin ${{ env.NEW_PATCH_VERSION }}
 
       - name: Create draft release
         run: gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       # - name: Slack notification
       #   id: slack
