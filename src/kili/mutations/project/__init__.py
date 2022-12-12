@@ -12,7 +12,6 @@ from .queries import (
     GQL_CREATE_PROJECT,
     GQL_DELETE_FROM_ROLES,
     GQL_DELETE_PROJECT,
-    GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
     GQL_UPDATE_PROPERTIES_IN_PROJECT,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
@@ -277,48 +276,6 @@ class MutationsProject:
         """
         variables = {"where": {"id": role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
-        return format_result("data", result)
-
-    @typechecked
-    def update_properties_in_project_user(
-        self,
-        project_user_id: str,
-        consensus_mark: Optional[float] = None,
-        honeypot_mark: Optional[float] = None,
-        number_of_labeled_assets: Optional[int] = None,
-        starred: Optional[bool] = None,
-        total_duration: Optional[int] = None,
-    ):
-        """
-        Update properties of a project-user tuple
-
-        Args:
-            project_user_id: Identifier of the project user
-            consensus_mark: Should be between 0 and 1.
-            honeypot_mark: Should be between 0 and 1.
-            number_of_labeled_assets: Number of assets the user labeled in the project.
-            starred: Whether to star the project in the project list.
-            total_duration: Total time the user spent in the project.
-
-        Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
-
-        Examples:
-            >>> for project_user in project_users:
-            ...     kili.update_properties_in_project_user(
-                        project_user_id=project_user['id'],
-                        honeypot_mark=0)
-        """
-        variables = {
-            "consensusMark": consensus_mark,
-            "honeypotMark": honeypot_mark,
-            "numberOfLabeledAssets": number_of_labeled_assets,
-            "projectUserID": project_user_id,
-            "starred": starred,
-            "totalDuration": total_duration,
-        }
-        result = self.auth.client.execute(GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
         return format_result("data", result)
 
     @typechecked

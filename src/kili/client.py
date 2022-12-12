@@ -14,6 +14,7 @@ from kili.mutations.notification import MutationsNotification
 from kili.mutations.organization import MutationsOrganization
 from kili.mutations.plugins import MutationsPlugins
 from kili.mutations.project import MutationsProject
+from kili.mutations.project_user import MutationsProjectUser
 from kili.mutations.project_version import MutationsProjectVersion
 from kili.mutations.user import MutationsUser
 from kili.project import Project
@@ -42,6 +43,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     MutationsOrganization,
     MutationsPlugins,
     MutationsProject,
+    MutationsProjectUser,
     MutationsProjectVersion,
     MutationsUser,
     QueriesApiKey,
