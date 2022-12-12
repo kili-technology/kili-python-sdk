@@ -43,7 +43,7 @@ jobs:
 
       - name: bump patch version, commit and push
         run: |
-          current_version = $(python -c 'from kili import __version__; print(__version__)')
+          current_version=$(python -c 'from kili import __version__; print(__version__)')
           new_version=$(./entrypoint.sh bump_version commit patch)
           echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
           echo "CURRENT_PATCH_VERSION=$current_version" >> $GITHUB_ENV
