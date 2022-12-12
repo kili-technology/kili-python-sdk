@@ -1,4 +1,4 @@
-name: Release minor
+name: Create release branch
 on:
   workflow_dispatch:
 

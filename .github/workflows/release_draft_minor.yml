@@ -1,4 +1,4 @@
-name: Release patch
+name: Create draft release minor
 on:
   workflow_dispatch:
     inputs:
@@ -43,23 +43,8 @@ jobs:
 
       - name: bump patch version, commit and push
         run: |
-          current_version=$(python -c 'from kili import __version__; print(__version__)')
-          new_version=$(./entrypoint.sh bump_version commit patch)
-          echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
-          echo "CURRENT_PATCH_VERSION=$current_version" >> $GITHUB_ENV
-          git push
-
-      - name: Tag patch commit and push
-        run: |
-          git tag -f -a ${{ env.NEW_PATCH_VERSION }} -m "Release ${{ env.NEW_PATCH_VERSION }}"
-          git push origin ${{ env.NEW_PATCH_VERSION }}
-
-      - name: Create draft release
-        run: |
-          link_to_draft=$(gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes --notes-start-tag ${{ env.CURRENT_PATCH_VERSION }})
+          link_to_draft=$(./entrypoint.sh release:draft ${{ inputs.releaseVersion }}")
           echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: Slack notification
         id: slack

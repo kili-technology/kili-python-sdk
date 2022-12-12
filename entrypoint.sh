@@ -7,7 +7,8 @@
 # commit_hash: no argument will default to HEAD. Else, the commit hash provided.
 
 # - To create a draft release:
-# ./entrypoint.sh release:draft
+# ./entrypoint.sh release:draft <release_number>
+# release_number: release branch number. Format: X.XX.X (default: current branch)
 
 # Requirements: gh, bump2version, git, curl
 
@@ -70,39 +71,44 @@ function get_latest_release {
         | jq -r .tag_name
 }
 
-function create_draft_release {
-    read -p 'Release (format: X.XX.X, default: current branch release): ' release
-    if [ -z $release ]; then
+function create_draft_release() {
+    release_version=$1
+
+    # Checkout to the release branch
+    if [ -z $release_version ]; then
         branch_name=$(git rev-parse --abbrev-ref HEAD)
         if [[ $branch_name != release/* ]]; then
             echo "You are currently not on a release branch. Please enter the release version on prompt or checkout on the release branch"
             exit 1
         fi
-        release=$(echo $branch_name | cut -d/ -f2)
+        release_version=$(echo $branch_name | cut -d/ -f2)
     else
-        if ! git checkout release/$release; then
+        if ! git checkout release/$release_version; then
+            echo "Failed to checkout on branch: release/$release_version"
             exit 1
         fi
     fi
 
+    # make sure new version is greater or equal than last release
     latest_release=get_latest_release
-    if [ $(version_to_int $latest_release) -ge $(version_to_int $release) ]; then
+    if [ $(version_to_int $latest_release) -ge $(version_to_int $release_version) ]; then
         echo "The release that you are trying to push is older than the latest release ($latest_release)"
         exit 1
     fi
-    git tag -f -a $release -m "Release $release"
-    git push origin $release
+
+    # tag and push the tag
+    git tag -f -a $release_version -m "Release $release_version"
+    git push origin $release_version
 
     # install gh if needed on macOS
     if [[ $OSTYPE == 'darwin'* ]] && ! [[ -x "$(command -v gh)" ]]; then
         brew install gh
     fi
 
-    gh release create $release \
-        --draft \
-        --title "Release $release" \
-        --generate-notes
+    # create draft release
+    link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes)
 
+    echo $link_to_draft
 }
 
 if [[ "$1" == 'bump_version' ]]; then
@@ -114,5 +120,5 @@ if [[ "$1" == 'release:branch' ]]; then
 fi
 
 if [[ "$1" == 'release:draft' ]]; then
-    create_draft_release
+    create_draft_release $2  # pass release version number
 fi
