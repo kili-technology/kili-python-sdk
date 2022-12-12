@@ -47,13 +47,13 @@ jobs:
           echo $new_version
           echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
 
-      # - name: Tag patch
-      #   run: |
-      #     git tag -f -a ${{ env.NEW_PATCH_VERSION }} -m "Release ${{ env.NEW_PATCH_VERSION }}"
-      #     git push origin ${{ env.NEW_PATCH_VERSION }}
+      - name: Tag patch and push
+        run: |
+          git tag -f -a ${{ env.NEW_PATCH_VERSION }} -m "Release ${{ env.NEW_PATCH_VERSION }}"
+          git push origin ${{ env.NEW_PATCH_VERSION }}
 
-      # - name: Create draft release
-      #   run: gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes
+      - name: Create draft release
+        run: gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes
 
       # - name: Slack notification
       #   id: slack
