@@ -58,24 +58,24 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      # - name: Slack notification
-      #   id: slack
-      #   if: success()
-      #   uses: slackapi/slack-github-action@v1.18.0
-      #   with:
-      #     payload: |
-      #       {
-      #         "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready.",
-      #         "blocks": [
-      #           {
-      #             "type": "section",
-      #             "text": {
-      #               "type": "mrkdwn",
-      #               "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready."
-      #             }
-      #           }
-      #         ]
-      #       }
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
-      #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      - name: Slack notification
+        id: slack
+        if: success()
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready.",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
