@@ -34,17 +34,9 @@ class VocExporter(AbstractExporter):
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """
-        Converts the asset and save them into an archive file.
-        """
-        return self._process_and_save_pascal_voc_export(assets, output_filename)
-
-    def _process_and_save_pascal_voc_export(
-        self, assets: List[Dict], output_filename: Path
-    ) -> None:
-        # pylint: disable=too-many-locals, too-many-arguments
-        """
         Save the assets and annotations to a zip file in the Pascal VOC format.
         """
+        # pylint: disable=too-many-locals, too-many-arguments
         self.logger.info("Exporting VOC format")
 
         with TemporaryDirectory() as folder:
@@ -164,10 +156,6 @@ def get_asset_dimensions(
                 fout.write(block)
         if is_frame is True:
             raise NotImplementedError("Export of annotations on videos is not supported yet.")
-            # probe = ffmpeg.probe(downloaded_file.name)
-            # video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
-            # width = video_info["width"]
-            # height = video_info["height"]
         image = Image.open(downloaded_file.name)
         width, height = image.size
 
@@ -175,7 +163,7 @@ def get_asset_dimensions(
 
 
 def _parse_annotations(
-    response: dict, xml_label: ET.Element, img_width: int, img_height: int
+    response: Dict, xml_label: ET.Element, img_width: int, img_height: int
 ) -> None:
     # pylint: disable=too-many-locals
     for _, job_response in response.items():
@@ -210,7 +198,7 @@ def _parse_annotations(
 
 
 def _provide_voc_headers(
-    xml_label: ET.Element, img_width: int, img_height: int, parameters: dict
+    xml_label: ET.Element, img_width: int, img_height: int, parameters: Dict
 ) -> None:
     folder = ET.SubElement(xml_label, "folder")
     folder.text = parameters.get("folder", "")
@@ -238,7 +226,7 @@ def _provide_voc_headers(
 
 
 def _convert_from_kili_to_voc_format(
-    response: dict, img_width: int, img_height: int, parameters: dict
+    response: Dict, img_width: int, img_height: int, parameters: Dict
 ) -> str:
     xml_label = ET.Element("annotation")
 
