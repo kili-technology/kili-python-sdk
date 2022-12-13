@@ -1,4 +1,4 @@
-name: Release patch
+name: Create draft release patch
 on:
   workflow_dispatch:
     inputs:
