@@ -7,7 +7,7 @@ from typing import Optional, Tuple
 import click
 from typing_extensions import get_args
 
-from kili.cli.common_args import Arguments, Options, from_csv
+from kili.cli.common_args import Arguments, Options
 from kili.cli.helpers import get_kili_client
 from kili.services import label_import
 from kili.services.label_import.types import LabelFormat
@@ -25,7 +25,6 @@ def type_check_label(key, value):
 @Options.api_key
 @Options.endpoint
 @Arguments.files
-@from_csv(["external_id", "json_response_path"], [])
 @Options.project_id
 @click.option(
     "--prediction",
@@ -65,8 +64,7 @@ def type_check_label(key, value):
 def import_labels(
     api_key: Optional[str],
     endpoint: Optional[str],
-    files: Optional[Tuple[str, ...]],
-    csv_path: str,
+    files: Tuple[str, ...],
     project_id: str,
     is_prediction: bool,
     model_name: Optional[str],
@@ -82,56 +80,18 @@ def import_labels(
     The labels to import have to be in the Kili format and stored in a json file.
     File's name must be equal to asset's external_id.
 
-    If no files are provided, --from-csv can be used to import
-    assets from a CSV file with two columns:
-
-    \b
-      - `label_asset_external_id`: external id for which you want to import labels.
-      - `label_asset_id`: asset id for which you want to import labels (mutual exclusive with the
-    field above, and not available for predictions)
-      - `path`: paths to the json files containing the json_response to upload.
-
-    Additional columns can be provided in the CSV file, see `.append_labels` in the Python client
-    documentation:
-
-    \b
-      - label_type
-      - seconds_to_label
-      - author_id
-
-    \b
-    !!! Examples "CSV file template for the raw Kili format"
-        ```
-        label_asset_external_id,path
-        asset1,./labels/label_asset1.json
-        asset2,./labels/label_asset2.json
-        ```
-
-     \b
-    !!! Examples "CSV file template for a Yolo format"
-        ```
-        label_asset_external_id,path
-        asset1,./labels/label_asset1.txt
-        asset2,./labels/label_asset2.txt
-        ```
-
     \b
     !!! Examples
         To import default labels:
         ```
         kili project label \\
-             dir1/dir2/ dir1/dir3/test1.json \\
-            --project-id <project_id>
-        ```
-        ```
-        kili project label \\
-            --from-csv path/to/file.csv \\
+            dir/labels/ dir/ground-truth/image1.json \\
             --project-id <project_id>
         ```
         To import labels as predictions:
         ```
         kili project label \\
-            --from-csv path/to/file.csv \\
+            dir/predictions/ \\
             --project-id <project_id> \\
             --prediction \\
             --model-name YOLO-run-3
@@ -139,7 +99,7 @@ def import_labels(
         To import labels as predictions in the Yolo v5 format into a target job:
         ```
         kili project label \\
-            --from-csv path/to/file.csv \\
+            dir/predictions/ \\
             --project-id <project_id> \\
             --prediction \\
             --model-name YOLO-v5 \\
@@ -160,7 +120,6 @@ def import_labels(
 
     label_import.import_labels_from_files(
         kili,
-        csv_path,
         list(files or []),
         metadata_file,
         project_id,

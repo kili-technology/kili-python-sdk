@@ -15,7 +15,7 @@ For the actions it supports, the CLI offers a more compact way to manage your pr
   ```
 
 !!! info
-    While launching commands, you can also provide you API key through the `--api-key` option. If you set your api key in the `KILI_API_KEY` environment variable and provide it once again through the `--api-key` option, Kili CLI will use the api key value provided in command options.
+While launching commands, you can also provide you API key through the `--api-key` option. If you set your api key in the `KILI_API_KEY` environment variable and provide it once again through the `--api-key` option, Kili CLI will use the api key value provided in command options.
 
 ## Usage
 
@@ -118,27 +118,20 @@ Ouput:
 
 ### Import labels to your project
 
-To import labels, provide a list of files or folders (you can also procide a csv file external_id and label's paths).
+To import labels, provide a list of files or folders.
 
 Label's files are json with the json_response to upload
 
-!!! Examples "CSV file template"
-    ```
-    external_id;json_response_path
-    asset1; ./labels/label_asset1.json
-    asset2;./labels/label_asset2.json
-    ```
-
 ```
 kili project label \
-    --project-id $project_id \
-    --from-csv labels.csv
+    labels \
+    --project-id $project_id
 ```
 
 Outputs:
 
 ```
-10 labels have been successfully imported
+40 labels have been successfully imported
 ```
 
 If you have run a pre-annotation model, you can also import labels as predictions.
@@ -146,8 +139,8 @@ These labels will be seen as pre-annotation in the labeling interface.
 
 ```
 kili project label \
+    labels \
     --project-id $project_id \
-    --from-csv labels.csv \
     --prediction \
     --model-name YOLO-run-3
 ```
@@ -155,7 +148,7 @@ kili project label \
 Outputs:
 
 ```
-10 labels have been successfully imported
+40 labels have been successfully imported
 ```
 
 ### Get metrics of your project

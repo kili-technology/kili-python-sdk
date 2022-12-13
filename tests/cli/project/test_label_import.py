@@ -47,33 +47,15 @@ class TestCLIProjectImport:
                 },
             ),
             (
-                "AAU, when I import default labels from a CSV, I see a success",
+                "AAU, when I import predictions, I see a success",
                 {
-                    "files": [],
-                    "options": {
-                        "project-id": "project_id",
-                        "from-csv": "labels_to_import.csv",
-                    },
-                    "flags": [],
-                    "mutation_to_call": "append_to_labels",
-                    "expected_mutation_payload": {
-                        "project_id": "project_id",
-                        "json_response": {
-                            "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
-                        },
-                        "label_asset_external_id": "asset6",
-                    },
-                    "expected_mutation_call_count": 2,
-                },
-            ),
-            (
-                "AAU, when I import predictions from a CSV, I see a success",
-                {
-                    "files": [],
+                    "files": [
+                        "test_tree/asset1.json",
+                        "test_tree/leaf_2/asset6.json",
+                    ],
                     "options": {
                         "project-id": "project_id",
                         "model-name": "model_name",
-                        "from-csv": "labels_to_import.csv",
                     },
                     "flags": ["prediction"],
                     "mutation_to_call": "create_predictions",
@@ -102,7 +84,6 @@ class TestCLIProjectImport:
         _, _ = mocker, name
         runner = CliRunner()
         with runner.isolated_filesystem():
-
             os.mkdir("test_tree")
             # pylint: disable=unspecified-encoding
             with open("test_tree/asset1.json", "w") as outfile:
@@ -119,11 +100,6 @@ class TestCLIProjectImport:
                 json.dump(mock_label, outfile)
             with open("test_tree/leaf_2/asset6.json", "w") as outfile:
                 json.dump(mock_label, outfile)
-            with open("labels_to_import.csv", "w") as f:
-                writer = csv.writer(f)
-                writer.writerow(["label_asset_external_id", "path"])
-                writer.writerow(["asset1", "test_tree/asset1.json"])
-                writer.writerow(["asset6", "test_tree/leaf_2/asset6.json"])
 
             kili_client.append_to_labels = append_to_labels_mock = MagicMock()
             arguments = test_case["files"]
@@ -144,13 +120,16 @@ class TestCLIProjectImport:
         "name,test_case",
         [
             (
-                "AAU, when I import Yolo v4 predictions from a CSV, I see a success",
+                "AAU, when I import Yolo v4 predictions, I see a success",
                 {
-                    "files": [],
+                    "files": [
+                        "test_tree/leaf_1/",
+                        "test_tree/asset1.json",
+                        "test_tree/leaf_2/**.json",
+                    ],
                     "options": {
                         "project-id": "project_id",
                         "model-name": "model_name",
-                        "from-csv": "labels_to_import.csv",
                         "metadata-file": "classes.txt",
                         "input-format": "yolo_v4",
                         "target-job": "job_0",
@@ -158,8 +137,7 @@ class TestCLIProjectImport:
                     "flags": ["prediction"],
                     "expected_service_call": (
                         ANY,
-                        "labels_to_import.csv",
-                        [],
+                        ["test_tree/leaf_1/", "test_tree/asset1.json", "test_tree/leaf_2/**.json"],
                         "classes.txt",
                         "project_id",
                         "yolo_v4",
@@ -172,13 +150,16 @@ class TestCLIProjectImport:
                 },
             ),
             (
-                "AAU, when I import Yolo v5 predictions from a CSV, I see a success",
+                "AAU, when I import Yolo v5 predictions, I see a success",
                 {
-                    "files": [],
+                    "files": [
+                        "test_tree/leaf_1/",
+                        "test_tree/asset1.json",
+                        "test_tree/leaf_2/**.json",
+                    ],
                     "options": {
                         "project-id": "project_id",
                         "model-name": "model_name",
-                        "from-csv": "labels_to_import.csv",
                         "metadata-file": "classes.yaml",
                         "input-format": "yolo_v5",
                         "target-job": "job_0",
@@ -186,8 +167,7 @@ class TestCLIProjectImport:
                     "flags": ["prediction"],
                     "expected_service_call": (
                         ANY,
-                        "labels_to_import.csv",
-                        [],
+                        ["test_tree/leaf_1/", "test_tree/asset1.json", "test_tree/leaf_2/**.json"],
                         "classes.yaml",
                         "project_id",
                         "yolo_v5",
@@ -205,7 +185,6 @@ class TestCLIProjectImport:
         _ = name
         runner = CliRunner()
         with runner.isolated_filesystem():
-
             with patch(
                 "kili.services.label_import.import_labels_from_files"
             ) as mocked_import_labels_service:

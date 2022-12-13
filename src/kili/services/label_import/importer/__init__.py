@@ -10,10 +10,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Type, cast
 import yaml
 
 from kili.helpers import get_file_paths_to_upload
-from kili.services.helpers import (
-    check_exclusive_options,
-    get_external_id_from_file_path,
-)
+from kili.services.helpers import get_external_id_from_file_path
 from kili.services.label_import.exceptions import (
     LabelParsingError,
     MissingExternalIdError,
@@ -54,8 +51,7 @@ class AbstractLabelImporter(ABC):
 
     def process_from_files(  # pylint: disable=too-many-arguments
         self,
-        labels_file_path: Optional[Path],
-        labels_files: Optional[List[Path]],
+        labels_files: List[Path],
         meta_file_path: Optional[Path],
         project_id: ProjectId,
         target_job_name: Optional[str],
@@ -71,7 +67,7 @@ class AbstractLabelImporter(ABC):
         label_parser = label_parser_class(class_by_id, target_job_name)
 
         self.logger.warning("Importing labels")
-        labels = self.extract_from_files(labels_file_path, labels_files)
+        labels = self.extract_from_files(labels_files)
         if is_prediction:
             assert model_name
             self._import_as_predictions(labels, label_parser, project_id, model_name)
@@ -148,38 +144,27 @@ class AbstractLabelImporter(ABC):
     def _get_label_file_extension(self) -> str:
         pass
 
-    def extract_from_files(
-        self, labels_file_path: Optional[Path], labels_files: Optional[List[Path]]
-    ) -> List[LabelToImport]:
+    def extract_from_files(self, labels_files: List[Path]) -> List[LabelToImport]:
         """
         Extracts the labels files and their metadata from the label files (given
         explicitely or through a CSV)
         """
-        check_exclusive_options(labels_file_path, labels_files)
 
         labels = []
-        if labels_files is not None and len(labels_files) > 0:
-            label_paths = get_file_paths_to_upload(
-                [str(f) for f in labels_files],
-                lambda path: path.endswith(self._get_label_file_extension()),
-                verbose=self.logger_params.level in ["INFO", "DEBUG"],
+        label_paths = get_file_paths_to_upload(
+            [str(f) for f in labels_files],
+            lambda path: path.endswith(self._get_label_file_extension()),
+            verbose=self.logger_params.level in ["INFO", "DEBUG"],
+        )
+        if len(label_paths) == 0:
+            raise ValueError(
+                "No label files to upload. Check that the paths exist and file types are .json"
             )
-            if len(label_paths) == 0:
-                raise ValueError(
-                    "No label files to upload. "
-                    "Check that the paths exist and file types are .json"
-                )
-            external_ids = [get_external_id_from_file_path(Path(path)) for path in label_paths]
-            labels = [
-                LabelToImport(path=p, label_asset_external_id=e_id)
-                for (p, e_id) in zip(label_paths, external_ids)
-            ]
-
-        elif labels_file_path is not None:
-            labels = self._read_labels_file_path(labels_file_path)
-
-            if len(labels) == 0:
-                raise ValueError(f"No label file was found in csv: {labels_file_path}")
+        external_ids = [get_external_id_from_file_path(Path(path)) for path in label_paths]
+        labels = [
+            LabelToImport(path=p, label_asset_external_id=e_id)
+            for (p, e_id) in zip(label_paths, external_ids)
+        ]
         return labels
 
     @classmethod
