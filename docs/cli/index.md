@@ -120,7 +120,11 @@ Ouput:
 
 To import labels, provide a list of files or folders.
 
-Label's files are json with the json_response to upload
+You can provide several paths separated by spaces.<br>
+Label files are JSON files containing labels in the Kili format: the value corresponding to the
+jsonResponse field of a label
+(see [here](https://docs.kili-technology.com/reference/export-classification) for example). <br>
+File's name must be equal to asset's external_id.
 
 ```
 kili project label \

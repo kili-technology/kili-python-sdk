@@ -76,8 +76,11 @@ def import_labels(
     """
     Import labels or predictions
 
-    Files can be paths to files or to folders. You can provide several paths separated by spaces.
-    The labels to import have to be in the Kili format and stored in a json file.
+    Files can be paths to files or to folders. <br>
+    You can provide several paths separated by spaces.
+    Label files are JSON files containing labels in the Kili format: the value corresponding to the
+    jsonResponse field of a label
+    (see [here](https://docs.kili-technology.com/reference/export-classification) for example).<br>
     File's name must be equal to asset's external_id.
 
     \b
