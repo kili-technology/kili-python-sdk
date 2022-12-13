@@ -42,6 +42,12 @@ jobs:
         run: |
           python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
           python -m twine upload dist/*
+
+      - name: Get release version
+        run: |
+          version=$(python -c 'from kili import __version__; print(__version__)')
+          echo "RELEASE_VERSION=$version" >> $GITHUB_ENV
+
       - name: Slack notification
         id: slack
         if: success()
@@ -49,13 +55,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Kili SDK released on Pypi: https://pypi.org/project/kili/",
+              "text": "Kili SDK ${{ env.RELEASE_VERSION }} released!\nGitHub: https://github.com/kili-technology/kili-python-sdk/releases\nPyPI: https://pypi.org/project/kili/",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Kili SDK released on Pypi: https://pypi.org/project/kili/"
+                    "text": "Kili SDK ${{ env.RELEASE_VERSION }} released!\nGitHub: https://github.com/kili-technology/kili-python-sdk/releases\nPyPI: https://pypi.org/project/kili/"
                   }
                 }
               ]
@@ -63,6 +69,14 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: create PR to merge release branch and master
+        run: |
+          git checkout release/${{ env.RELEASE_VERSION }}
+          git checkout -b merge_release/${{ env.RELEASE_VERSION }}
+          git merge master
+          git push
+          gh pr create --fill
 
   deploy-documentation:
     name: Deploy technical documentation
