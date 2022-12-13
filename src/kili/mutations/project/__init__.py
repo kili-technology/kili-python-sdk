@@ -35,7 +35,7 @@ class MutationsProject:
     @typechecked
     def append_to_roles(
         self, project_id: str, user_email: str, role: str = "LABELER"
-    ) -> Dict[str, Union[str, dict, list]]:
+    ) -> Dict[str, Union[str, dict, list, None]]:
         """Add a user to a project.
 
         !!! info
