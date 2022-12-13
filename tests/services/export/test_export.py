@@ -133,6 +133,21 @@ def get_file_tree(folder: str):
                 },
             },
         ),
+        (
+            "Export to Pascal VOC format with merged file",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "pascal_voc",
+                    "split_option": "merged",
+                },
+                "file_tree_expected": {
+                    "images": {"remote_assets.csv": {}},
+                    "labels": {"car_1.xml": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
     ],
 )
 def test_export_service(name, test_case):
@@ -190,6 +205,18 @@ def test_export_service(name, test_case):
                 "export_kwargs": {
                     "project_id": "object_detection",
                     "label_format": "yolo_v4",
+                    "split_option": "merged",
+                    "single_file": True,
+                },
+            },
+            NotCompatibleOptions,
+        ),
+        (
+            "Export Pascal VOC format with single file to throw error",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "pascal_voc",
                     "split_option": "merged",
                     "single_file": True,
                 },

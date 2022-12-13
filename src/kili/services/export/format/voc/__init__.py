@@ -161,7 +161,9 @@ class VocExporter(AbstractExporter):
         return width, height
 
 
-def _parse_annotations(response, xml_label, width, height):
+def _parse_annotations(
+    response: dict, xml_label: ET.Element, img_width: int, img_height: int
+) -> None:
     # pylint: disable=too-many-locals
     for _, job_response in response.items():
         if "annotations" in job_response:
@@ -182,8 +184,8 @@ def _parse_annotations(response, xml_label, width, height):
                     occluded = ET.SubElement(annotation_category, "occluded")
                     occluded.text = "0"
                     bndbox = ET.SubElement(annotation_category, "bndbox")
-                    x_vertices = [int(round(v["x"] * width)) for v in vertices]
-                    y_vertices = [int(round(v["y"] * height)) for v in vertices]
+                    x_vertices = [int(round(v["x"] * img_width)) for v in vertices]
+                    y_vertices = [int(round(v["y"] * img_height)) for v in vertices]
                     xmin = ET.SubElement(bndbox, "xmin")
                     xmin.text = str(min(x_vertices))
                     xmax = ET.SubElement(bndbox, "xmax")
@@ -194,7 +196,9 @@ def _parse_annotations(response, xml_label, width, height):
                     ymax.text = str(max(y_vertices))
 
 
-def _provide_voc_headers(xml_label, width, height, parameters):
+def _provide_voc_headers(
+    xml_label: ET.Element, img_width: int, img_height: int, parameters: dict
+) -> None:
     folder = ET.SubElement(xml_label, "folder")
     folder.text = parameters.get("folder", "")
 
@@ -210,9 +214,9 @@ def _provide_voc_headers(xml_label, width, height, parameters):
 
     size = ET.SubElement(xml_label, "size")
     width_xml = ET.SubElement(size, "width")
-    width_xml.text = str(width)
+    width_xml.text = str(img_width)
     height_xml = ET.SubElement(size, "height")
-    height_xml.text = str(height)
+    height_xml.text = str(img_height)
     depth = ET.SubElement(size, "depth")
     depth.text = parameters.get("depth", "3")
 
@@ -220,12 +224,14 @@ def _provide_voc_headers(xml_label, width, height, parameters):
     segmented.text = 0
 
 
-def _convert_from_kili_to_voc_format(response, width, height, parameters):
+def _convert_from_kili_to_voc_format(
+    response: dict, img_width: int, img_height: int, parameters: dict
+) -> str:
     xml_label = ET.Element("annotation")
 
-    _provide_voc_headers(xml_label, width, height, parameters=parameters)
+    _provide_voc_headers(xml_label, img_width, img_height, parameters=parameters)
 
-    _parse_annotations(response, xml_label, width, height)
+    _parse_annotations(response, xml_label, img_width, img_height)
 
     xmlstr = minidom.parseString(ET.tostring(xml_label)).toprettyxml(indent="   ")
 
