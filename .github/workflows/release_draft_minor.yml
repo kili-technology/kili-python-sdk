@@ -53,13 +53,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready: ${{ env.LINK_TO_DRAFT }}",
+              "text": "Draft release ${{ inputs.releaseVersion }} is ready: ${{ env.LINK_TO_DRAFT }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready: ${{ env.LINK_TO_DRAFT }}"
+                    "text": "Draft release ${{ inputs.releaseVersion }} is ready: ${{ env.LINK_TO_DRAFT }}"
                   }
                 }
               ]
