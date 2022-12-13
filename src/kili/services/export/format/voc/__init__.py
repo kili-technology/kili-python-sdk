@@ -5,13 +5,14 @@ Common code for the PASCAL VOC exporter.
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from xml.dom import minidom
 
 from PIL import Image
 
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.repository import AbstractContentRepository
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
@@ -28,6 +29,10 @@ class VocExporter(AbstractExporter):
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not be exported into a single file."
             )
+        if self.split_option != "merged":
+            raise NotCompatibleOptions(
+                "The current implementation only supports merged annotations."
+            )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """
@@ -35,7 +40,9 @@ class VocExporter(AbstractExporter):
         """
         return self._process_and_save_pascal_voc_export(assets, output_filename)
 
-    def _process_and_save_pascal_voc_export(self, assets: List[Dict], output_filename: Path):
+    def _process_and_save_pascal_voc_export(
+        self, assets: List[Dict], output_filename: Path
+    ) -> None:
         # pylint: disable=too-many-locals, too-many-arguments
         """
         Save the assets and annotations to a zip file in the Pascal VOC format.
@@ -71,7 +78,9 @@ class VocExporter(AbstractExporter):
 
         self.logger.warning(output_filename)
 
-    def _process_asset_for_job(self, asset: Dict, images_folder: Path, labels_folder: Path):
+    def _process_asset_for_job(
+        self, asset: Dict, images_folder: Path, labels_folder: Path
+    ) -> Tuple[List, List]:
         # pylint: disable=too-many-locals, too-many-branches
         """
         Process an asset
@@ -96,7 +105,7 @@ class VocExporter(AbstractExporter):
         video_filenames = []
         content_frame = content_frames[idx] if content_frames else asset["content"]
 
-        width, height = self.get_asset_dimensions(content_frame, is_frame)
+        width, height = get_asset_dimensions(self.content_repository, content_frame, is_frame)
         for idx, frame in frames.items():
             if is_frame:
                 filename = f"{asset['externalId']}_{str(idx + 1).zfill(leading_zeros)}"
@@ -134,31 +143,32 @@ class VocExporter(AbstractExporter):
 
         return asset_remote_content, video_filenames
 
-    def get_asset_dimensions(self, url, is_frame):
-        """
-        Download an asset and get width and height
-        """
-        content = url
 
-        # response = requests.get(content, stream=True, headers=headers)
-        response = self.content_repository.get_content_stream(content_url=content, block_size=1024)
-        with NamedTemporaryFile() as downloaded_file:
-            with open(downloaded_file.name, "wb") as fout:
-                for block in response:
-                    if not block:
-                        break
-                    fout.write(block)
-            if is_frame is True:
-                raise NotImplementedError("Export of annotations on videos is not supported yet.")
-                # probe = ffmpeg.probe(downloaded_file.name)
-                # video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
-                # width = video_info["width"]
-                # height = video_info["height"]
-            else:
-                image = Image.open(downloaded_file.name)
-                width, height = image.size
+def get_asset_dimensions(
+    content_repository: AbstractContentRepository, url: str, is_frame: bool
+) -> Tuple:
+    """
+    Download an asset and get width and height
+    """
+    content = url
 
-        return width, height
+    response = content_repository.get_content_stream(content_url=content, block_size=1024)
+    with NamedTemporaryFile() as downloaded_file:
+        with open(downloaded_file.name, "wb") as fout:
+            for block in response:
+                if not block:
+                    break
+                fout.write(block)
+        if is_frame is True:
+            raise NotImplementedError("Export of annotations on videos is not supported yet.")
+            # probe = ffmpeg.probe(downloaded_file.name)
+            # video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
+            # width = video_info["width"]
+            # height = video_info["height"]
+        image = Image.open(downloaded_file.name)
+        width, height = image.size
+
+    return width, height
 
 
 def _parse_annotations(

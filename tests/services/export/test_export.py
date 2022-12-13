@@ -223,6 +223,17 @@ def test_export_service(name, test_case):
             },
             NotCompatibleOptions,
         ),
+        (
+            "Export Pascal VOC format with split labels per job to throw error",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "pascal_voc",
+                    "split_option": "split",
+                },
+            },
+            NotCompatibleOptions,
+        ),
     ],
 )
 def test_export_service_errors(name, test_case, error):
