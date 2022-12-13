@@ -12,6 +12,8 @@ edit_uri: '' #disables edit button
 nav:
   - Python SDK:
       - Getting Started: index.md
+      - Tutorials:
+        - Export: sdk/tutorials/export_a_kili_project.md
       - Reference:
         - API Key: sdk/api_key.md
         - Asset: sdk/asset.md

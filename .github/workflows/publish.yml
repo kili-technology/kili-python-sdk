@@ -97,13 +97,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be usefull to see the latest version",
+              "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be useful to see the latest version",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be usefull to see the latest version"
+                    "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be useful to see the latest version"
                   }
                 }
               ]

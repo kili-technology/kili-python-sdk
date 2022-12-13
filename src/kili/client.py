@@ -6,7 +6,6 @@ import os
 from kili.authentication import KiliAuth
 from kili.exceptions import AuthenticationFailed, NotFound
 from kili.graphql_client import GraphQLClientName
-from kili.mutations.api_key import MutationsApiKey
 from kili.mutations.asset import MutationsAsset
 from kili.mutations.issue import MutationsIssue
 from kili.mutations.label import MutationsLabel
@@ -14,6 +13,7 @@ from kili.mutations.notification import MutationsNotification
 from kili.mutations.organization import MutationsOrganization
 from kili.mutations.plugins import MutationsPlugins
 from kili.mutations.project import MutationsProject
+from kili.mutations.project_user import MutationsProjectUser
 from kili.mutations.project_version import MutationsProjectVersion
 from kili.mutations.user import MutationsUser
 from kili.project import Project
@@ -34,7 +34,6 @@ from kili.subscriptions.label import SubscriptionsLabel
 
 
 class Kili(  # pylint: disable=too-many-ancestors
-    MutationsApiKey,
     MutationsAsset,
     MutationsIssue,
     MutationsLabel,
@@ -42,6 +41,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     MutationsOrganization,
     MutationsPlugins,
     MutationsProject,
+    MutationsProjectUser,
     MutationsProjectVersion,
     MutationsUser,
     QueriesApiKey,

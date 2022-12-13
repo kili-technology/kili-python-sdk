@@ -92,8 +92,7 @@ class MutationsAsset:
 
         !!! example "Recipe"
             - For more detailed examples on how to import assets,
-                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_assets.ipynb)
-                or [other examples](https://docs.kili-technology.com/recipes/importing-data) in our documentation.
+                see [the recipe](https://docs.kili-technology.com/recipes/importing-data).
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
@@ -143,9 +142,9 @@ class MutationsAsset:
         """Update the properties of one or more assets.
 
         Args:
-            asset_ids : The asset IDs to modify
+            asset_ids: The asset IDs to modify
             external_ids: Change the external id of the assets
-            priorities : You can change the priority of the assets
+            priorities: You can change the priority of the assets.
                 By default, all assets have a priority of 0.
             json_metadatas: The metadata given to an asset should be stored
                 in a json like dict with keys `imageUrl`, `text`, `url`:
