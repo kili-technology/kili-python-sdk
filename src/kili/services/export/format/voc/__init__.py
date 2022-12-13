@@ -16,8 +16,6 @@ from kili.services.export.repository import AbstractContentRepository
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
-from ..yolo import _write_remote_content_file, _write_video_metadata_file
-
 
 class VocExporter(AbstractExporter):
     """
@@ -68,10 +66,10 @@ class VocExporter(AbstractExporter):
                 remote_content.extend(asset_remote_content)
 
             if video_metadata:
-                _write_video_metadata_file(video_metadata, base_folder)
+                self.write_video_metadata_file(video_metadata, base_folder)
 
             if len(remote_content) > 0:
-                _write_remote_content_file(remote_content, images_folder)
+                self.write_remote_content_file(remote_content, images_folder)
 
             self.create_readme_kili_file(folder)
             self.make_archive(folder, output_filename)

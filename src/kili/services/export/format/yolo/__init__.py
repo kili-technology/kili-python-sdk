@@ -2,8 +2,6 @@
 Common code for the yolo exporter.
 """
 
-import csv
-import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
@@ -136,10 +134,10 @@ class YoloExporter(AbstractExporter):
             remote_content.extend(asset_remote_content)
 
         if video_metadata:
-            _write_video_metadata_file(video_metadata, base_folder)
+            self.write_video_metadata_file(video_metadata, base_folder)
 
         if len(remote_content) > 0:
-            _write_remote_content_file(remote_content, images_folder)
+            self.write_remote_content_file(remote_content, images_folder)
 
     def _write_jobs_labels_into_split_folders(
         self,
@@ -400,24 +398,3 @@ def _write_labels_to_file(
     with (labels_folder / f"{filename}.txt").open("wb") as fout:
         for category_idx, _x_, _y_, _w_, _h_ in annotations:
             fout.write(f"{category_idx} {_x_} {_y_} {_w_} {_h_}\n".encode())
-
-
-def _write_video_metadata_file(video_metadata: Dict, base_folder: Path) -> None:
-    """
-    Write video metadata file
-    """
-    video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
-    if video_metadata_json is not None:
-        with (base_folder / "video_meta.json").open("wb") as output_file:
-            output_file.write(video_metadata_json.encode("utf-8"))
-
-
-def _write_remote_content_file(remote_content: List[str], images_folder: Path) -> None:
-    """
-    Write remote content file
-    """
-    remote_content_header = ["external id", "url", "label file"]
-    with (images_folder / "remote_assets.csv").open("w", encoding="utf8") as file:
-        writer = csv.writer(file)
-        writer.writerow(remote_content_header)
-        writer.writerows(remote_content)
