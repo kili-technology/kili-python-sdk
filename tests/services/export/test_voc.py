@@ -1,15 +1,7 @@
-import os
 from pathlib import Path
-from unittest import TestCase
 
 from kili.services.export.format.voc import _convert_from_kili_to_voc_format
-from kili.utils.tempfile import TemporaryDirectory
-from tests.services.export.fakes.fake_content_repository import FakeContentRepository
-from tests.services.export.fakes.fake_data import (
-    asset_image_1,
-    asset_video,
-    category_ids,
-)
+from tests.services.export.fakes.fake_data import asset_image_1
 
 
 def test__convert_from_kili_to_voc_format():

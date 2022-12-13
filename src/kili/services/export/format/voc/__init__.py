@@ -60,8 +60,8 @@ class VocExporter(AbstractExporter):
             video_metadata = {}
 
             for asset in tqdm(assets, disable=self.disable_tqdm):
-                asset_remote_content, video_filenames = self._process_asset_for_job(
-                    asset, images_folder, labels_folder
+                asset_remote_content, video_filenames = _process_asset_for_job(
+                    self.content_repository, asset, images_folder, labels_folder
                 )
                 if video_filenames:
                     video_metadata[asset["externalId"]] = video_filenames
@@ -78,70 +78,75 @@ class VocExporter(AbstractExporter):
 
         self.logger.warning(output_filename)
 
-    def _process_asset_for_job(
-        self, asset: Dict, images_folder: Path, labels_folder: Path
-    ) -> Tuple[List, List]:
-        # pylint: disable=too-many-locals, too-many-branches
-        """
-        Process an asset
-        """
-        frames = {}
-        is_frame = False
-        asset_remote_content = []
 
-        if "jsonResponse" in asset["latestLabel"]:
-            number_of_frames = len(asset["latestLabel"]["jsonResponse"])
-            leading_zeros = len(str(number_of_frames))
-            for idx in range(number_of_frames):
-                if str(idx) in asset["latestLabel"]["jsonResponse"]:
-                    is_frame = True
-                    frame_asset = asset["latestLabel"]["jsonResponse"][str(idx)]
-                    frames[idx] = {"latestLabel": {"jsonResponse": frame_asset}}
+def _process_asset_for_job(
+    content_repository: AbstractContentRepository,
+    asset: Dict,
+    images_folder: Path,
+    labels_folder: Path,
+) -> Tuple[List, List]:
+    # pylint: disable=too-many-locals, too-many-branches
+    """
+    Process an asset
+    """
+    frames = {}
+    is_frame = False
+    asset_remote_content = []
 
-        if not frames:
-            frames[-1] = asset
+    idx = leading_zeros = 0
+    if "jsonResponse" in asset["latestLabel"]:
+        number_of_frames = len(asset["latestLabel"]["jsonResponse"])
+        leading_zeros = len(str(number_of_frames))
+        for idx in range(number_of_frames):
+            if str(idx) in asset["latestLabel"]["jsonResponse"]:
+                is_frame = True
+                frame_asset = asset["latestLabel"]["jsonResponse"][str(idx)]
+                frames[idx] = {"latestLabel": {"jsonResponse": frame_asset}}
 
-        content_frames = self.content_repository.get_content_frames_paths(asset)
-        video_filenames = []
-        content_frame = content_frames[idx] if content_frames else asset["content"]
+    if not frames:
+        frames[-1] = asset
 
-        width, height = get_asset_dimensions(self.content_repository, content_frame, is_frame)
-        for idx, frame in frames.items():
-            if is_frame:
-                filename = f"{asset['externalId']}_{str(idx + 1).zfill(leading_zeros)}"
-                video_filenames.append(filename)
-            else:
-                filename = asset["externalId"]
-            latest_label = frame["latestLabel"]
-            json_response = latest_label["jsonResponse"]
+    content_frames = content_repository.get_content_frames_paths(asset)
+    video_filenames = []
+    content_frame = content_frames[idx] if content_frames else asset["content"]
 
-            parameters = {"filename": f"{filename}.xml"}
-            annotations = _convert_from_kili_to_voc_format(json_response, width, height, parameters)
+    width, height = get_asset_dimensions(content_repository, content_frame, is_frame)
+    for idx, frame in frames.items():
+        if is_frame:
+            filename = f"{asset['externalId']}_{str(idx + 1).zfill(leading_zeros)}"
+            video_filenames.append(filename)
+        else:
+            filename = asset["externalId"]
+        latest_label = frame["latestLabel"]
+        json_response = latest_label["jsonResponse"]
 
-            if not annotations:
-                continue
+        parameters = {"filename": f"{filename}.xml"}
+        annotations = _convert_from_kili_to_voc_format(json_response, width, height, parameters)
 
-            with open(labels_folder / f"{filename}.xml", "wb") as fout:
-                fout.write(f"{annotations}\n".encode())
+        if not annotations:
+            continue
 
-            asset_remote_content.append([asset["externalId"], content_frame, f"{filename}.xml"])
+        with open(labels_folder / f"{filename}.xml", "wb") as fout:
+            fout.write(f"{annotations}\n".encode())
 
-            is_served_by_kili = self.content_repository.is_serving(content_frame)
-            if is_served_by_kili or asset.get("isProcessingAuthorized", False):
-                if content_frames or not is_frame:
-                    response = self.content_repository.get_content_stream(
-                        content_url=content_frame, block_size=1024
-                    )
-                    with open(images_folder / f"{filename}.jpg", "wb") as fout:
-                        for block in response:
-                            if not block:
-                                break
-                            fout.write(block)
+        asset_remote_content.append([asset["externalId"], content_frame, f"{filename}.xml"])
 
-        if not content_frames and is_frame and self.content_repository.is_serving(asset["content"]):
-            raise NotImplementedError("Export of annotations on videos is not supported yet.")
+        is_served_by_kili = content_repository.is_serving(content_frame)
+        if is_served_by_kili or asset.get("isProcessingAuthorized", False):
+            if content_frames or not is_frame:
+                response = content_repository.get_content_stream(
+                    content_url=content_frame, block_size=1024
+                )
+                with open(images_folder / f"{filename}.jpg", "wb") as fout:
+                    for block in response:
+                        if not block:
+                            break
+                        fout.write(block)
 
-        return asset_remote_content, video_filenames
+    if not content_frames and is_frame and content_repository.is_serving(asset["content"]):
+        raise NotImplementedError("Export of annotations on videos is not supported yet.")
+
+    return asset_remote_content, video_filenames
 
 
 def get_asset_dimensions(
@@ -231,7 +236,7 @@ def _provide_voc_headers(
     depth.text = parameters.get("depth", "3")
 
     segmented = ET.SubElement(xml_label, "segmented")
-    segmented.text = 0
+    segmented.text = None
 
 
 def _convert_from_kili_to_voc_format(
