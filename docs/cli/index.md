@@ -15,7 +15,7 @@ For the actions it supports, the CLI offers a more compact way to manage your pr
   ```
 
 !!! info
-    While launching commands, you can also provide you API key through the `--api-key` option. If you set your api key in the `KILI_API_KEY` environment variable and provide it once again through the `--api-key` option, Kili CLI will use the api key value provided in command options.
+While launching commands, you can also provide you API key through the `--api-key` option. If you set your api key in the `KILI_API_KEY` environment variable and provide it once again through the `--api-key` option, Kili CLI will use the api key value provided in command options.
 
 ## Usage
 
@@ -118,27 +118,25 @@ Ouput:
 
 ### Import labels to your project
 
-To import labels, provide a list of files or folders (you can also procide a csv file external_id and label's paths).
+To import labels, provide a list of files or folders.
 
-Label's files are json with the json_response to upload
-
-!!! Examples "CSV file template"
-    ```
-    external_id;json_response_path
-    asset1; ./labels/label_asset1.json
-    asset2;./labels/label_asset2.json
-    ```
+You can provide several paths separated by spaces.<br>
+Label files are JSON files containing labels in the Kili format: the value corresponding to the
+jsonResponse field of a label
+(see [here](https://docs.kili-technology.com/reference/export-classification) for example). <br>
+File's name must be equal to asset's external_id.<br>
+In the demo folder, the labels are in a folder called ground_truths
 
 ```
 kili project label \
-    --project-id $project_id \
-    --from-csv labels.csv
+    ground_truths \
+    --project-id $project_id
 ```
 
 Outputs:
 
 ```
-10 labels have been successfully imported
+40 labels have been successfully imported
 ```
 
 If you have run a pre-annotation model, you can also import labels as predictions.
@@ -146,8 +144,8 @@ These labels will be seen as pre-annotation in the labeling interface.
 
 ```
 kili project label \
+    ground_truths \
     --project-id $project_id \
-    --from-csv labels.csv \
     --prediction \
     --model-name YOLO-run-3
 ```
@@ -155,7 +153,7 @@ kili project label \
 Outputs:
 
 ```
-10 labels have been successfully imported
+40 labels have been successfully imported
 ```
 
 ### Get metrics of your project

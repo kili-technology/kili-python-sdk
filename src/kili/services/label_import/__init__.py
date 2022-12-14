@@ -24,8 +24,7 @@ from kili.utils import pagination
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
     kili,
-    labels_files_paths_csv: Optional[str],
-    labels_files: Optional[List[str]],
+    labels_files: List[str],
     meta_file_path: Optional[str],
     project_id: str,
     input_format: str,
@@ -40,6 +39,9 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     """
     if kili.count_projects(project_id=project_id) == 0:
         raise NotFound(f"project ID: {project_id}")
+
+    if len(labels_files) == 0:
+        raise ValueError("You must specify files to upload")
 
     if is_prediction and model_name is None:
         raise ValueError("If predictions are uploaded, a model name should be specified")
@@ -60,8 +62,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, log_level))
     label_importer = label_importer_class(kili, logger_params, cast(LabelFormat, input_format))
     label_importer.process_from_files(
-        Path(labels_files_paths_csv) if labels_files_paths_csv is not None else None,
-        [Path(lf) for lf in labels_files] if labels_files is not None else None,
+        [Path(lf) for lf in labels_files],
         Path(meta_file_path) if meta_file_path is not None else None,
         cast(ProjectId, project_id),
         target_job_name,
