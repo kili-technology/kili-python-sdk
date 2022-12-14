@@ -1,45 +1,29 @@
 YOLO_V4_TEST_CASE = {
     "description": "AAU, I import assets with all the asset attributes in the CSV, yolo_v4",
     "inputs": {
-        "labels": {
-            "headers": [
-                "path",
-                "author_id",
-                "label_asset_external_id",
-                "label_asset_id",
-                "label_type",
-                "seconds_to_label",
-            ],
-            "rows": [
-                {
-                    "yolo_data": [
-                        [
-                            1,
-                            0.0889384562446663,
-                            0.5530594818041775,
-                            0.08369207111544572,
-                            0.13280688368534332,
-                        ],
-                        [
-                            3,
-                            0.7116800205440644,
-                            0.8181361143179348,
-                            0.08755478209000467,
-                            0.07899719805421301,
-                        ],
+        "labels": [
+            {
+                "yolo_data": [
+                    [
+                        1,
+                        0.0889384562446663,
+                        0.5530594818041775,
+                        0.08369207111544572,
+                        0.13280688368534332,
                     ],
-                    "path": "one_yolo_label.txt",
-                    "author_id": "Jean-Pierre",
-                    "label_asset_external_id": "un_asset",
-                    "label_asset_id": None,
-                    "label_type": "DEFAULT",
-                    "seconds_to_label": 0,
-                }
-            ],
-        },
+                    [
+                        3,
+                        0.7116800205440644,
+                        0.8181361143179348,
+                        0.08755478209000467,
+                        0.07899719805421301,
+                    ],
+                ],
+                "path": "un_asset.txt",
+            }
+        ],
         "project_id": "yolo!",
         "target_job_name": "JOB_0",
-        "label_csv_path": "yolo_all_labels.txt",
         "meta_path": "yolo_classes.txt",
         "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
         "label_format": "yolo_v4",
@@ -103,10 +87,7 @@ YOLO_V4_TEST_CASE = {
                         ]
                     }
                 },
-                "author_id": "Jean-Pierre",
                 "label_asset_external_id": "un_asset",
-                "label_type": "DEFAULT",
-                "seconds_to_label": 0,
                 "project_id": "yolo!",
             }
         ]
@@ -131,39 +112,33 @@ TEST_CASES = [
     YOLO_V5_TEST_CASE,
     YOLO_V7_TEST_CASE,
     {
-        "description": "AAU, I import assets with the minimum amount of asset attributes in the CSV",
+        "description": (
+            "AAU, I import assets with the minimum amount of asset attributes in the CSV"
+        ),
         "inputs": {
-            "labels": {
-                "headers": [
-                    "path",
-                    "label_asset_external_id",
-                ],
-                "rows": [
-                    {
-                        "yolo_data": [
-                            [
-                                1,
-                                0.0889384562446663,
-                                0.5530594818041775,
-                                0.08369207111544572,
-                                0.13280688368534332,
-                            ],
-                            [
-                                3,
-                                0.7116800205440644,
-                                0.8181361143179348,
-                                0.08755478209000467,
-                                0.07899719805421301,
-                            ],
+            "labels": [
+                {
+                    "yolo_data": [
+                        [
+                            1,
+                            0.0889384562446663,
+                            0.5530594818041775,
+                            0.08369207111544572,
+                            0.13280688368534332,
                         ],
-                        "path": "one_yolo_label.txt",
-                        "label_asset_external_id": "un_asset",
-                    }
-                ],
-            },
+                        [
+                            3,
+                            0.7116800205440644,
+                            0.8181361143179348,
+                            0.08755478209000467,
+                            0.07899719805421301,
+                        ],
+                    ],
+                    "path": "un_asset.txt",
+                }
+            ],
             "project_id": "yolo!",
             "target_job_name": "JOB_0",
-            "label_csv_path": "yolo_all_labels.txt",
             "meta_path": "yolo_classes.txt",
             "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
             "label_format": "yolo_v4",
@@ -234,39 +209,33 @@ TEST_CASES = [
         },
     },
     {
-        "description": "AAU, I import assets with the minimum amount of asset attributes in the CSV and ids",
+        "description": (
+            "AAU, I import assets with the minimum amount of asset attributes in the CSV and ids"
+        ),
         "inputs": {
-            "labels": {
-                "headers": [
-                    "path",
-                    "label_asset_id",
-                ],
-                "rows": [
-                    {
-                        "yolo_data": [
-                            [
-                                1,
-                                0.0889384562446663,
-                                0.5530594818041775,
-                                0.08369207111544572,
-                                0.13280688368534332,
-                            ],
-                            [
-                                3,
-                                0.7116800205440644,
-                                0.8181361143179348,
-                                0.08755478209000467,
-                                0.07899719805421301,
-                            ],
+            "labels": [
+                {
+                    "yolo_data": [
+                        [
+                            1,
+                            0.0889384562446663,
+                            0.5530594818041775,
+                            0.08369207111544572,
+                            0.13280688368534332,
                         ],
-                        "path": "one_yolo_label.txt",
-                        "label_asset_id": "id1",
-                    }
-                ],
-            },
+                        [
+                            3,
+                            0.7116800205440644,
+                            0.8181361143179348,
+                            0.08755478209000467,
+                            0.07899719805421301,
+                        ],
+                    ],
+                    "path": "id1.txt",
+                }
+            ],
             "project_id": "yolo!",
             "target_job_name": "JOB_0",
-            "label_csv_path": "yolo_all_labels.txt",
             "meta_path": "yolo_classes.txt",
             "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
             "label_format": "yolo_v4",
@@ -330,46 +299,40 @@ TEST_CASES = [
                             ]
                         }
                     },
-                    "label_asset_id": "id1",
+                    "label_asset_external_id": "id1",
                     "project_id": "yolo!",
                 }
             ]
         },
     },
     {
-        "description": "AAU, I import assets with the minimum amount of asset attributes in the CSV and ids",
+        "description": (
+            "AAU, I import assets with the minimum amount of asset attributes in the CSV and ids"
+        ),
         "inputs": {
-            "labels": {
-                "headers": [
-                    "path",
-                    "label_asset_id",
-                ],
-                "rows": [
-                    {
-                        "yolo_data": [
-                            [
-                                1,
-                                0.0889384562446663,
-                                0.5530594818041775,
-                                0.08369207111544572,
-                                0.13280688368534332,
-                            ],
-                            [
-                                3,
-                                0.7116800205440644,
-                                0.8181361143179348,
-                                0.08755478209000467,
-                                0.07899719805421301,
-                            ],
+            "labels": [
+                {
+                    "yolo_data": [
+                        [
+                            1,
+                            0.0889384562446663,
+                            0.5530594818041775,
+                            0.08369207111544572,
+                            0.13280688368534332,
                         ],
-                        "path": "one_yolo_label.txt",
-                        "label_asset_id": "id1",
-                    }
-                ],
-            },
+                        [
+                            3,
+                            0.7116800205440644,
+                            0.8181361143179348,
+                            0.08755478209000467,
+                            0.07899719805421301,
+                        ],
+                    ],
+                    "path": "id1.txt",
+                }
+            ],
             "project_id": "yolo!",
             "target_job_name": "JOB_0",
-            "label_csv_path": "yolo_all_labels.txt",
             "meta_path": "yolo_classes.txt",
             "yolo_classes": [[0, "A"], [1, "B"], [2, "C"], [3, "D"]],
             "label_format": "yolo_v7",
@@ -433,7 +396,7 @@ TEST_CASES = [
                             ]
                         }
                     },
-                    "label_asset_id": "id1",
+                    "label_asset_external_id": "id1",
                     "project_id": "yolo!",
                 }
             ]

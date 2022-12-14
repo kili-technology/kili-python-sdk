@@ -5,7 +5,7 @@ import csv
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, NamedTuple, Optional, Type, cast
+from typing import Dict, List, NamedTuple, Optional, Type
 
 import yaml
 
@@ -23,7 +23,7 @@ from kili.services.label_import.parser import (
     YoloLabelParser,
 )
 from kili.services.label_import.types import Classes, LabelFormat, LabelToImport
-from kili.services.types import LabelType, LogLevel, ProjectId
+from kili.services.types import LogLevel, ProjectId
 from kili.utils.tqdm import tqdm
 
 
@@ -166,44 +166,6 @@ class AbstractLabelImporter(ABC):
             for (p, e_id) in zip(label_paths, external_ids)
         ]
         return labels
-
-    @classmethod
-    def _read_labels_file_path(cls, labels_file: Path) -> List[LabelToImport]:
-        """
-        Read CSV and fill a list of labels to import.
-        """
-        data = []
-        with labels_file.open("r") as l_f:
-            csv_reader = csv.reader(l_f)
-            data = []
-            headers = []
-            for ind, row in enumerate(csv_reader):
-                if ind == 0:
-                    headers = row
-                else:
-                    headers_row = zip(headers, row)
-                    str_dict = dict(headers_row)
-
-                    typed_dict: Dict[str, Any] = {
-                        "path": str_dict["path"],
-                    }
-                    if len(str_dict.get("label_asset_id", "")):
-                        typed_dict["label_asset_id"] = str_dict["label_asset_id"]
-
-                    if len(str_dict.get("label_asset_external_id", "")):
-                        typed_dict["label_asset_external_id"] = str_dict["label_asset_external_id"]
-
-                    if len(str_dict.get("label_type", "")):
-                        typed_dict["label_type"] = cast(LabelType, str_dict["label_type"])
-
-                    if len(str_dict.get("seconds_to_label", "")):
-                        typed_dict["seconds_to_label"] = int(str_dict["seconds_to_label"])
-
-                    if len(str_dict.get("author_id", "")):
-                        typed_dict["author_id"] = str_dict["author_id"]
-
-                    data.append(LabelToImport(**typed_dict))
-        return data
 
 
 class YoloLabelImporter(AbstractLabelImporter):
