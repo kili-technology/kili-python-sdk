@@ -124,11 +124,12 @@ You can provide several paths separated by spaces.<br>
 Label files are JSON files containing labels in the Kili format: the value corresponding to the
 jsonResponse field of a label
 (see [here](https://docs.kili-technology.com/reference/export-classification) for example). <br>
-File's name must be equal to asset's external_id.
+File's name must be equal to asset's external_id.<br>
+In the demo folder, the labels are in a folder called ground_truths
 
 ```
 kili project label \
-    labels \
+    ground_truths \
     --project-id $project_id
 ```
 
@@ -143,7 +144,7 @@ These labels will be seen as pre-annotation in the labeling interface.
 
 ```
 kili project label \
-    labels \
+    ground_truths \
     --project-id $project_id \
     --prediction \
     --model-name YOLO-run-3
