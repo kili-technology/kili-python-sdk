@@ -72,27 +72,6 @@ jobs:
           git push
           gh pr create --fill
 
-      - name: The merge has failed
-        if: failure()
-        uses: slackapi/slack-github-action@v1.18.0
-        with:
-          payload: |
-            {
-              "text": "❗❗❗ Failed to create PR! Please, merge the release branch into master manually.",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "❗❗❗ Failed to create PR! Please, merge the release branch into master manually."
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-
   deploy-documentation:
     name: Deploy technical documentation
     runs-on: ubuntu-latest
