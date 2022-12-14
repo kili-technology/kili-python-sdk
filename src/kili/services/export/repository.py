@@ -59,33 +59,37 @@ class SDKContentRepository(AbstractContentRepository):
     """
 
     def get_frames(self, content_url: str) -> List[str]:
+        frames: List[str] = []
         headers = None
         if content_url.startswith(self.router_endpoint):
             headers = self.router_headers
-
         json_content_resp = requests.get(
             content_url, headers=headers, verify=self.verify_ssl, timeout=30
         )
 
-        frames: List[str] = []
         if json_content_resp.ok:
             frames = list(json_content_resp.json().values())
-
         return frames
 
     def get_content_stream(self, content_url: str, block_size: int) -> Iterator[Any]:
-        headers = None
-        if content_url.startswith(self.router_endpoint):
-            headers = self.router_headers
-
         response = requests.get(
             content_url,
             stream=True,
-            headers=headers,
+            headers=None,
             verify=self.verify_ssl,
             timeout=30,
         )
+
         if not response.ok:
-            raise DownloadError(f"Error while downloading image {content_url}")
+            response = requests.get(
+                content_url,
+                stream=True,
+                headers=self.router_headers,  # pass the API key if first request failed
+                verify=self.verify_ssl,
+                timeout=30,
+            )
+
+            if not response.ok:
+                raise DownloadError(f"Error while downloading image {content_url}")
 
         return response.iter_content(block_size)
