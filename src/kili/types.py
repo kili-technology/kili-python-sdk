@@ -128,7 +128,7 @@ class ProjectWithoutDataset(TypedDict, total=False):
     canNavigateBetweenAssets: bool
     canSkipAsset: bool
     consensusMark: float
-    consensusMarkPerCateg: int
+    consensusMarkPerCategory: Dict
     consensusTotCoverage: int
     createdAt: str
     description: str
