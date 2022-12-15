@@ -28,6 +28,7 @@ dev_extra = [
     # tests
     "pytest",
     "pytest-mock",
+    "pytest-cov",
     # documentation
     "mkdocs",
     "mkdocs-material",
