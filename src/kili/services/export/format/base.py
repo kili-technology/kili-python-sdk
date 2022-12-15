@@ -2,6 +2,8 @@
 Base class for all formatters and other utility classes.
 """
 
+import csv
+import json
 import logging
 import shutil
 from abc import ABC, abstractmethod
@@ -61,7 +63,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     @abstractmethod
     def _check_arguments_compatibility(self):
         """
-        Checks if the format can accept the
+        Checks if the format is compatible with the export options.
         """
 
     @abstractmethod
@@ -113,6 +115,27 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             fout.write(f'- Export date: {datetime.now().strftime("%Y%m%d-%H%M%S")}\n'.encode())
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
+
+    @staticmethod
+    def write_video_metadata_file(video_metadata: Dict, base_folder: Path) -> None:
+        """
+        Write video metadata file
+        """
+        video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
+        if video_metadata_json is not None:
+            with (base_folder / "video_meta.json").open("wb") as output_file:
+                output_file.write(video_metadata_json.encode("utf-8"))
+
+    @staticmethod
+    def write_remote_content_file(remote_content: List[str], images_folder: Path) -> None:
+        """
+        Write remote content file
+        """
+        remote_content_header = ["external id", "url", "label file"]
+        with (images_folder / "remote_assets.csv").open("w", encoding="utf8") as file:
+            writer = csv.writer(file)
+            writer.writerow(remote_content_header)
+            writer.writerows(remote_content)
 
     def export_project(
         self,

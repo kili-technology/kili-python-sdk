@@ -37,7 +37,7 @@ You can refer to this [Kili documentation page](https://docs.kili-technology.com
 | YOLO V4       | ✅   | ✅             | ✅                      |
 | YOLO V5       | ✅   | ✅             | ✅                      |
 | YOLO V7       | ❌   | ✅             | ✅                      |
-| Pascal VOC    | ✅   | ❌             | ❌                      |
+| Pascal VOC    | ✅   | ✅             | ✅                      |
 | COCO          | ❌   | ✅             | ✅                      |
 
 

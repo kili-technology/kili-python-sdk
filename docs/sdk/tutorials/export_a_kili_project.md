@@ -104,7 +104,7 @@ There is also a method to export the whole project into specific export formats.
 | YOLO V4       | ✅   | ✅             | ✅                      |
 | YOLO V5       | ✅   | ✅             | ✅                      |
 | YOLO V7       | ❌   | ✅             | ✅                      |
-| Pascal VOC    | ✅   | ❌             | ❌                      |
+| Pascal VOC    | ✅   | ✅             | ✅                      |
 | COCO          | ❌   | ✅             | ✅                      |
 
 

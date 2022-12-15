@@ -330,6 +330,8 @@ class QueriesLabel:
             asset_ids: Optional list of the assets from which to export the labels.
             layout: Layout of the exported files: "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            single_file: Layout of the exported labels. Single file mode is
+                only available for some specific formats (COCO and Kili).
             disable_tqdm: Disable the progress bar if True.
 
         !!! Info
@@ -341,7 +343,7 @@ class QueriesLabel:
 
             - COCO for semantic segmentation tasks (bounding box and semantic segmentation)
 
-            - Pascal VOC (coming soon) for object detection tasks.
+            - Pascal VOC for object detection tasks.
 
         !!! Example
             ```

@@ -387,6 +387,24 @@ class TestCLIProject:
                     "localhost",
                 ],
             ),
+            (
+                "Export to Pascal VOC format using CLI",
+                [
+                    "--output-format",
+                    "pascal_voc",
+                    "--output-file",
+                    "export.zip",
+                    "--project-id",
+                    "object_detection",
+                    "--layout",
+                    "merged",
+                    "--verbose",
+                    "--api-key",
+                    "toto",
+                    "--endpoint",
+                    "localhost",
+                ],
+            ),
         ],
     )
     def test_export(self, mocker, name, test_case):

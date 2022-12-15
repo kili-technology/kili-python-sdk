@@ -1,5 +1,5 @@
 """
-Common code for the yolo exporter.
+Common code for the Kili exporter.
 """
 
 import json

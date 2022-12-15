@@ -43,16 +43,18 @@ class Project:  # pylint: disable=too-few-public-methods
         from kili.client import Kili
         kili = Kili()
         project = kili.get_project("your_project_id")
-        project.export("export.zip", output_format="yolo_v4")
+        project.export("export.zip", fmt="yolo_v4")
         ```
 
         Args:
             filename: Relative or full path of the archive that will contain
                 the exported data.
-            output_format: Format of the exported labels.
+            fmt: Format of the exported labels.
             asset_ids: Optional list of the assets from which to export the labels.
             layout: Layout of the exported files: "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            single_file: Layout of the exported labels. Single file mode is
+                only available for some specific formats (COCO and Kili).
             disable_tqdm: Disable the progress bar if True.
             log_level: Level of debugging.
         """
