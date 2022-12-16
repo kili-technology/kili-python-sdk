@@ -298,7 +298,7 @@ class MutationsAsset:
         """Send assets back to queue.
 
         Args:
-            asset_ids: The asset IDs to add to review
+            asset_ids: The IDs of the assets to send back to queue.
 
         Returns:
             A result object which indicates if the mutation was successful,
