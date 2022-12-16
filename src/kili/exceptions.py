@@ -44,7 +44,7 @@ class GraphQLError(Exception):
     def __init__(self, error, batch_number=None):
         if isinstance(error, list):
             error = error[0]
-        if isinstance(error, dict):
+        if isinstance(error, dict) and "message" in error:
             error_msg = error["message"]
         else:
             error_msg = str(error)
