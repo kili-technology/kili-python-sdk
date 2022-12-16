@@ -164,14 +164,14 @@ class MutationsLabel:
     @typechecked
     def append_labels(
         self,
-        asset_id_array: List[str],
-        asset_external_id_array: List[str],
         json_response_array: List[Dict],
         author_id_array: Optional[List[str]] = None,
         seconds_to_label_array: Optional[List[int]] = None,
         model_name: Optional[str] = None,
         label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
+        asset_id_array: Optional[List[str]] = None,
+        asset_external_id_array: Optional[List[str]] = None,
     ) -> List:
         """Append labels to assets.
 
@@ -222,11 +222,11 @@ class MutationsLabel:
             }
             for (asset_id, asset_external_id, json_response, seconds_to_label, author_id,) in list(
                 zip(
-                    asset_id_array or [None] * len(asset_id_array),
-                    asset_external_id_array or [None] * len(asset_id_array),
+                    asset_id_array or [None] * len(json_response_array),
+                    asset_external_id_array or [None] * len(json_response_array),
                     json_response_array,
-                    seconds_to_label_array or [None] * len(asset_id_array),
-                    author_id_array or [None] * len(asset_id_array),
+                    seconds_to_label_array or [None] * len(json_response_array),
+                    author_id_array or [None] * len(json_response_array),
                 )
             )
         ]

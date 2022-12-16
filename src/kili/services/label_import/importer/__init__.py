@@ -5,15 +5,15 @@ import csv
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Type
+from typing import List, NamedTuple, Optional, Type
 
 import yaml
 
 from kili.helpers import get_file_paths_to_upload
+from kili.services import label_import
 from kili.services.helpers import get_external_id_from_file_path
 from kili.services.label_import.exceptions import (
     LabelParsingError,
-    MissingExternalIdError,
     MissingMetadataError,
     MissingTargetJobError,
 )
@@ -22,9 +22,8 @@ from kili.services.label_import.parser import (
     KiliRawLabelParser,
     YoloLabelParser,
 )
-from kili.services.label_import.types import Classes, LabelFormat, LabelToImport
+from kili.services.label_import.types import Classes, LabelFormat
 from kili.services.types import LogLevel, ProjectId
-from kili.utils.tqdm import tqdm
 
 
 class LoggerParams(NamedTuple):
@@ -67,60 +66,17 @@ class AbstractLabelImporter(ABC):
         label_parser = label_parser_class(class_by_id, target_job_name)
 
         self.logger.warning("Importing labels")
-        labels = self.extract_from_files(labels_files)
-        if is_prediction:
-            assert model_name
-            self._import_as_predictions(labels, label_parser, project_id, model_name)
-        else:
-            self._import_as_labels(labels, label_parser, project_id)
+        labels = self.extract_from_files(labels_files, label_parser)
+        label_type = "PREDICTION" if is_prediction else "DEFAULT"
+        label_import.import_labels_from_dict(
+            kili=self.kili,
+            project_id=project_id,
+            labels=labels,
+            label_type=label_type,
+            model_name=model_name,
+        )
 
         self.logger.warning(print(f"{len(labels)} labels have been successfully imported"))
-
-    def _import_as_labels(
-        self, labels: List[LabelToImport], label_parser: AbstractLabelParser, project_id: ProjectId
-    ):
-        for label in tqdm(labels, disable=self.logger_params.disable_tqdm):
-            kwargs = dict(label.copy())
-            del kwargs["path"]
-            try:
-                json_response = label_parser.parse(Path(label["path"]))
-            except Exception as exc:
-                path = label["path"]
-                raise LabelParsingError(f"Failed to parse the file {path}") from exc
-
-            self.kili.append_to_labels(
-                json_response=json_response,
-                project_id=project_id,
-                **kwargs,
-            )
-
-    def _import_as_predictions(
-        self,
-        labels: List[LabelToImport],
-        label_parser: AbstractLabelParser,
-        project_id: ProjectId,
-        model_name: str,
-    ):
-        assert model_name
-        json_response_array: List[Dict] = []
-        external_id_array: List[str] = []
-        model_name_array: List[str] = []
-        for label in tqdm(labels, disable=self.logger_params.disable_tqdm):
-            kwargs = dict(label.copy())
-            del kwargs["path"]
-            json_response_array.append(label_parser.parse(Path(label["path"])))
-            external_id = label.get("label_asset_external_id")
-            if external_id is None:
-                path = label["path"]
-                raise MissingExternalIdError(f"There is no associated asset external id to {path}")
-            external_id_array.append(external_id)
-            model_name_array.append(model_name)
-        self.kili.create_predictions(
-            json_response_array=json_response_array,
-            external_id_array=external_id_array,
-            model_name_array=model_name_array,
-            project_id=project_id,
-        )
 
     @staticmethod
     @abstractmethod
@@ -144,13 +100,11 @@ class AbstractLabelImporter(ABC):
     def _get_label_file_extension(self) -> str:
         pass
 
-    def extract_from_files(self, labels_files: List[Path]) -> List[LabelToImport]:
+    def extract_from_files(self, labels_files: List[Path], label_parser: AbstractLabelParser):
         """
-        Extracts the labels files and their metadata from the label files (given
-        explicitely or through a CSV)
+        Extracts the labels files and their metadata from the label files
         """
 
-        labels = []
         label_paths = get_file_paths_to_upload(
             [str(f) for f in labels_files],
             lambda path: path.endswith(self._get_label_file_extension()),
@@ -160,11 +114,17 @@ class AbstractLabelImporter(ABC):
             raise ValueError(
                 "No label files to upload. Check that the paths exist and file types are .json"
             )
-        external_ids = [get_external_id_from_file_path(Path(path)) for path in label_paths]
-        labels = [
-            LabelToImport(path=p, label_asset_external_id=e_id)
-            for (p, e_id) in zip(label_paths, external_ids)
-        ]
+        labels = []
+        for path in label_paths:
+            try:
+                labels.append(
+                    {
+                        "json_response": label_parser.parse(Path(path)),
+                        "asset_external_id": get_external_id_from_file_path(Path(path)),
+                    }
+                )
+            except Exception as exc:
+                raise LabelParsingError(f"Failed to parse the file {path}") from exc
         return labels
 
 

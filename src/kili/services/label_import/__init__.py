@@ -22,7 +22,7 @@ from kili.services.label_import.importer import (
 )
 from kili.services.label_import.types import LabelFormat, _ClientInputLabelsValidator
 from kili.services.types import LabelType, LogLevel, ProjectId
-from kili.utils import pagination
+from kili.utils import pagination, tqdm
 
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
@@ -92,7 +92,9 @@ def import_labels_from_dict(
         assert project_id
         asset_external_ids = [label["asset_external_id"] for label in labels]
         asset_id_map = infer_ids_from_external_ids(kili, asset_external_ids, project_id)
-        labels = [{**label, "asset_id": asset_id_map[label.get("external_id")]} for label in labels]
+        labels = [
+            {**label, "asset_id": asset_id_map[label.get("asset_external_id")]} for label in labels
+        ]
     labels_data = [
         {
             "jsonResponse": dumps(label.get("json_response")),
@@ -105,11 +107,13 @@ def import_labels_from_dict(
     ]
     batch_generator = pagination.batch_iterator_builder(labels_data)
     result = []
-    for batch_labels in batch_generator:
-        variables = {
-            "data": {"labelType": label_type, "labelsData": batch_labels},
-            "where": {"idIn": [label["assetID"] for label in batch_labels]},
-        }
-        batch_result = kili.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
-        result.extend(format_result("data", batch_result, Label))
+    with tqdm.tqdm(total=len(labels_data)) as pbar:
+        for batch_labels in batch_generator:
+            variables = {
+                "data": {"labelType": label_type, "labelsData": batch_labels},
+                "where": {"idIn": [label["assetID"] for label in batch_labels]},
+            }
+            batch_result = kili.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
+            result.extend(format_result("data", batch_result, Label))
+            pbar.update(len(batch_labels))
     return result
