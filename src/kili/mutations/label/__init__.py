@@ -3,14 +3,13 @@ Label mutations
 """
 
 import warnings
-from itertools import repeat
 from json import dumps
 from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
 from kili.enums import LabelType
-from kili.helpers import deprecate, format_result, infer_id_from_external_id
+from kili.helpers import deprecate, format_result
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
@@ -18,6 +17,10 @@ from kili.mutations.label.queries import (
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
+from kili.services.helpers import (
+    assert_all_arrays_have_same_size,
+    infer_ids_from_external_ids,
+)
 from kili.services.label_import import import_labels_from_dict
 from kili.utils.pagination import _mutate_from_paginated_call
 
@@ -140,9 +143,12 @@ class MutationsLabel:
         """
         if author_id is None:
             author_id = self.auth.user_id
-        label_asset_id = infer_id_from_external_id(
-            self, label_asset_id, label_asset_external_id, project_id
-        )
+        if label_asset_id is None:
+            if label_asset_external_id is None or project_id is None:
+                raise Exception("Either provide asset_id or external_id and project_id")
+            label_asset_id = infer_ids_from_external_ids(
+                self, [label_asset_external_id], project_id
+            )[label_asset_external_id]
         variables = {
             "data": {
                 "authorID": author_id,
@@ -159,11 +165,13 @@ class MutationsLabel:
     def append_labels(
         self,
         asset_id_array: List[str],
+        asset_external_id_array: List[str],
         json_response_array: List[Dict],
         author_id_array: Optional[List[str]] = None,
         seconds_to_label_array: Optional[List[int]] = None,
         model_name: Optional[str] = None,
         label_type: LabelType = "DEFAULT",
+        project_id: Optional[str] = None,
     ) -> List:
         """Append labels to assets.
 
@@ -186,32 +194,43 @@ class MutationsLabel:
                     json_response_array=[{...}, {...}]
                 )
         """
-        if label_type == "PREDICTION" and model_name is None:
-            raise ValueError("You must provide model_name when uploading predictions")
-        if len(asset_id_array) != len(json_response_array):
-            raise ValueError("asset_id_array and json_response_array should have the same length")
-        for array in [seconds_to_label_array, author_id_array]:
-            if array is not None and len(array) != len(asset_id_array):
-                raise ValueError("All arrays should have the same length")
+        assert_all_arrays_have_same_size(
+            [
+                seconds_to_label_array,
+                author_id_array,
+                json_response_array,
+                asset_external_id_array,
+                asset_id_array,
+            ]
+        )
+        project_id_error_message = (
+            "It is now required to provide a project_id when calling append_labels"
+        )
+        if project_id is None:
+            if asset_id_array is None:
+                raise ValueError(project_id_error_message)
+            else:
+                warnings.warn(project_id_error_message, DeprecationWarning)
+
         labels = [
             {
                 "asset_id": asset_id,
+                "asset_external_id": asset_external_id,
                 "json_response": json_response,
                 "seconds_to_label": seconds_to_label,
-                "model_name": model_name,
                 "author_id": author_id,
             }
-            for (asset_id, json_response, seconds_to_label, author_id, model_name) in list(
+            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id,) in list(
                 zip(
-                    asset_id_array,
+                    asset_id_array or [None] * len(asset_id_array),
+                    asset_external_id_array or [None] * len(asset_id_array),
                     json_response_array,
                     seconds_to_label_array or [None] * len(asset_id_array),
                     author_id_array or [None] * len(asset_id_array),
-                    repeat(model_name),
                 )
             )
         ]
-        return import_labels_from_dict(self, labels, label_type)
+        return import_labels_from_dict(self, project_id, labels, label_type, model_name)
 
     @typechecked
     def update_properties_in_label(
@@ -274,7 +293,12 @@ class MutationsLabel:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        asset_id = infer_id_from_external_id(self, asset_id, asset_external_id, project_id)
+        if asset_id is None:
+            if asset_external_id is None or project_id is None:
+                raise Exception("Either provide asset_id or external_id and project_id")
+            asset_id = infer_ids_from_external_ids(self, [asset_external_id], project_id)[
+                asset_external_id
+            ]
 
         variables = {
             "data": {"jsonResponse": dumps(json_response)},

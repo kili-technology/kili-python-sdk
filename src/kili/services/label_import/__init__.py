@@ -10,14 +10,17 @@ from kili.exceptions import NotFound
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.helpers import format_result
 from kili.orm import Label
-from kili.services.helpers import is_target_job_in_json_interface
+from kili.services.helpers import (
+    infer_ids_from_external_ids,
+    is_target_job_in_json_interface,
+)
 from kili.services.label_import.importer import (
     AbstractLabelImporter,
     KiliRawLabelImporter,
     LoggerParams,
     YoloLabelImporter,
 )
-from kili.services.label_import.types import LabelFormat, _LabelsValidator
+from kili.services.label_import.types import LabelFormat, _ClientInputLabelsValidator
 from kili.services.types import LabelType, LogLevel, ProjectId
 from kili.utils import pagination
 
@@ -71,17 +74,31 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     )
 
 
-def import_labels_from_dict(kili, labels: List[Dict], label_type: LabelType) -> List:
+def import_labels_from_dict(
+    kili,
+    project_id: Optional[str],
+    labels: List[Dict],
+    label_type: LabelType,
+    model_name: Optional[str] = None,
+) -> List:
     """
     Imports labels from a list of dictionaries
     """
-    _LabelsValidator(labels=labels)
+    _ClientInputLabelsValidator(labels=labels)
+    if label_type == "PREDICTION" and not model_name:
+        raise ValueError("You must provide model_name when uploading predictions")
+    should_retrieve_asset_ids = labels[0].get("asset_id") is None
+    if should_retrieve_asset_ids:
+        assert project_id
+        asset_external_ids = [label["asset_external_id"] for label in labels]
+        asset_id_map = infer_ids_from_external_ids(kili, asset_external_ids, project_id)
+        labels = [{**label, "asset_id": asset_id_map[label.get("external_id")]} for label in labels]
     labels_data = [
         {
             "jsonResponse": dumps(label.get("json_response")),
             "assetID": label.get("asset_id"),
             "secondsToLabel": label.get("seconds_to_label"),
-            "modelName": label.get("model_name"),
+            "modelName": model_name,
             "authorID": label.get("author_id"),
         }
         for label in labels
