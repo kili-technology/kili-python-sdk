@@ -84,7 +84,7 @@ def infer_ids_from_external_ids(kili, asset_external_ids: List[str], project_id:
 
 def assert_all_arrays_have_same_size(arrays: List[Optional[List[Any]]], raise_error=True):
     """Assert that all given arrays have the same size if they are not None"""
-    sizes_arrays = set([len(array) for array in arrays if array is not None])
+    sizes_arrays = {len(array) for array in arrays if array is not None}
     if len(sizes_arrays) > 1:
         if raise_error:
             raise ValueError("All arrays should have the same length")

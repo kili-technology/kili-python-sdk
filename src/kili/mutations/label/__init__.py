@@ -209,8 +209,7 @@ class MutationsLabel:
         if project_id is None:
             if asset_id_array is None:
                 raise ValueError(project_id_error_message)
-            else:
-                warnings.warn(project_id_error_message, DeprecationWarning)
+            warnings.warn(project_id_error_message, DeprecationWarning)
 
         labels = [
             {
