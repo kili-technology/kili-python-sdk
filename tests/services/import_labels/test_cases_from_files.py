@@ -32,7 +32,6 @@ YOLO_V4_TEST_CASE = {
     },
     "outputs": {
         "call": {
-            "kili": ANY,
             "label_type": "DEFAULT",
             "model_name": None,
             "labels": [
@@ -152,7 +151,6 @@ TEST_CASES = [
         },
         "outputs": {
             "call": {
-                "kili": ANY,
                 "label_type": "DEFAULT",
                 "model_name": None,
                 "labels": [
@@ -254,7 +252,6 @@ TEST_CASES = [
         },
         "outputs": {
             "call": {
-                "kili": ANY,
                 "label_type": "DEFAULT",
                 "model_name": None,
                 "labels": [
@@ -356,7 +353,6 @@ TEST_CASES = [
         },
         "outputs": {
             "call": {
-                "kili": ANY,
                 "label_type": "DEFAULT",
                 "model_name": None,
                 "labels": [

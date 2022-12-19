@@ -8,6 +8,7 @@ from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
+from kili import services
 from kili.enums import LabelType
 from kili.helpers import deprecate, format_result
 from kili.mutations.label.queries import (
@@ -17,7 +18,6 @@ from kili.mutations.label.queries import (
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
-from kili.services import import_labels_from_dict
 from kili.services.helpers import (
     assert_all_arrays_have_same_size,
     infer_ids_from_external_ids,
@@ -229,7 +229,7 @@ class MutationsLabel:
                 )
             )
         ]
-        return import_labels_from_dict(self, project_id, labels, label_type, model_name)
+        return services.import_labels_from_dict(self, project_id, labels, label_type, model_name)
 
     @typechecked
     def update_properties_in_label(

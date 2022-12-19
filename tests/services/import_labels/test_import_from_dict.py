@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pydantic
 import pytest
 
+from kili import services
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
-from kili.services.label_import import import_labels_from_dict
 
 
 class TestImportLabelsFromDict:
@@ -49,7 +49,7 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
         self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call)
 
     def test_import_default_labels_with_external_id(self):
@@ -90,7 +90,7 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
         self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call)
 
     def test_import_labels_with_optional_params(self):
@@ -124,7 +124,7 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id"]},
         }
 
-        import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
         self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call)
 
     def test_return_error_when_give_unexisting_label_field(self):
@@ -135,7 +135,7 @@ class TestImportLabelsFromDict:
             {"json_response": self.json_response, "asset_id": "asset_id", "unexisting_field": 3}
         ]
         with pytest.raises(pydantic.ValidationError):
-            import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
 
     def test_return_error_when_give_wrong_field_type(self):
         project_id = "project_id"
@@ -149,7 +149,7 @@ class TestImportLabelsFromDict:
             }
         ]
         with pytest.raises(pydantic.ValidationError):
-            import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
 
     def test_import_predictions(self):
         self.kili.assets = MagicMock(
@@ -176,7 +176,7 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id"]},
         }
 
-        import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
         self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call)
 
     def test_import_predictions_without_giving_model_name(self):
@@ -189,4 +189,4 @@ class TestImportLabelsFromDict:
         labels = [{"json_response": self.json_response, "asset_external_id": "asset_external_id"}]
 
         with pytest.raises(ValueError):
-            import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)

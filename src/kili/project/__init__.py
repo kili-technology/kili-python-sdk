@@ -4,7 +4,6 @@ from typing import List, Optional, cast
 from typeguard import typechecked
 
 from kili import services
-from kili.services import import_labels_from_dict
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
 
@@ -108,4 +107,6 @@ class Project:  # pylint: disable=too-few-public-methods
                 )
 
         """
-        return import_labels_from_dict(self.client, self.project_id, labels, label_type, model_name)
+        return services.import_labels_from_dict(
+            self.client, self.project_id, labels, label_type, model_name
+        )
