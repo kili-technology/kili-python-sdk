@@ -1,3 +1,5 @@
+"""CLI's project copy subcommand"""
+
 from typing import Optional
 
 import click
@@ -27,6 +29,7 @@ from kili.cli.helpers import get_kili_client
 @click.option(
     "--with-members/--without-members", required=False, default=True, help="Copy members."
 )
+# pylint: disable=too-many-arguments
 def copy_project(
     api_key: Optional[str],
     endpoint: Optional[str],

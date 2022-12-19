@@ -1,3 +1,6 @@
+"""
+Copy project implementation.
+"""
 from typing import Dict, Optional
 
 from kili.authentication import KiliAuth
@@ -6,7 +9,11 @@ from kili.queries.project import QueriesProject
 from kili.queries.project_user import QueriesProjectUser
 
 
-class CopyProject:
+class CopyProject:  # pylint: disable=too-few-public-methods
+    """
+    Class for copying an existing project.
+    """
+
     FIELDS_PROJECT = ["title", "jsonInterface", "inputType", "description", "id"]
     FIELDS_QUALITY_SETTINGS = [
         "consensusTotCoverage",
@@ -30,7 +37,7 @@ class CopyProject:
         self.update_properties_in_project = mutations_project.update_properties_in_project
         self.project_users = queries_project_user.project_users
 
-    def copy_project(
+    def copy_project(  # pylint: disable=too-many-arguments
         self,
         from_project_id: str,
         title: Optional[str] = None,
@@ -110,8 +117,8 @@ class CopyProject:
             project_id=from_project_id,
             fields=["activated", "role", "user.email", "invitationStatus"],
         )
-        members = [m for m in members if m["invitationStatus"] != "DEFAULT_ACCEPTED"]
-        members = [m for m in members if m["activated"]]
+        members = [memb for memb in members if memb["invitationStatus"] != "DEFAULT_ACCEPTED"]
+        members = [memb for memb in members if memb["activated"]]
 
         for m in members:
             self.append_to_roles(
