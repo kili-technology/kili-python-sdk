@@ -1,24 +1,7 @@
 import json
 
-import pytest
-
 from kili.client import Kili
-from kili.exceptions import NotFound
-from kili.project import Project
 from kili.services.copy_project import CopyProject
-
-# test name copied or set
-# test description set
-# test json interface copied
-# test quality settings copied
-# test members properly copied
-
-# quel projet source?
-# on peut en créer un
-
-# on fait un test avec un vrai projet sur le staging
-
-# et un qu'on peut mocker pour les assets
 
 
 def test_copy_project_e2e_no_assets_no_labels():
@@ -47,6 +30,15 @@ def test_copy_project_e2e_no_assets_no_labels():
     src_proj = kili.projects(project_id=src_proj["id"], fields=proj_fields)[0]  # type: ignore
     new_proj = kili.projects(project_id=new_proj_id, fields=proj_fields)[0]  # type: ignore
 
+    members_src = kili.project_users(
+        project_id=src_proj["id"],
+        fields=["activated", "role", "user.email", "invitationStatus"],
+    )
+    members_new = kili.project_users(
+        project_id=new_proj_id,
+        fields=["activated", "role", "user.email", "invitationStatus"],
+    )
+
     kili.delete_project(src_proj["id"])
     kili.delete_project(new_proj_id)
 
@@ -58,3 +50,5 @@ def test_copy_project_e2e_no_assets_no_labels():
 
     for field_name in CopyProject.FIELDS_QUALITY_SETTINGS:
         assert new_proj[field_name] == src_proj[field_name]
+
+    assert members_src == members_new
