@@ -3,6 +3,7 @@ from typing import Optional
 from kili.authentication import KiliAuth
 from kili.mutations.project import MutationsProject
 from kili.queries.project import QueriesProject
+from kili.queries.project_user import QueriesProjectUser
 
 
 class CopyProject:
@@ -11,11 +12,13 @@ class CopyProject:
 
         mutations_project = MutationsProject(self.auth)
         queries_project = QueriesProject(self.auth)
+        queries_project_user = QueriesProjectUser(self.auth)
 
         self.projects = queries_project.projects
         self.create_project = mutations_project.create_project
         self.append_to_roles = mutations_project.append_to_roles
         self.update_properties_in_project = mutations_project.update_properties_in_project
+        self.project_users = queries_project_user.project_users
 
     def copy_project(
         self,
@@ -46,7 +49,7 @@ class CopyProject:
         Examples:
             >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
         """
-        src_project = self.projects(
+        src_project = self.projects(  # type: ignore
             project_id=from_project_id,
             fields=[
                 "title",
@@ -57,8 +60,6 @@ class CopyProject:
                 "consensusMark",
                 "consensusTotCoverage",
                 "minConsensusSize",
-                "roles.role",
-                "roles.user.email",
                 "honeypotMark",
                 "useHoneyPot",
                 "reviewCoverage",
@@ -85,6 +86,13 @@ class CopyProject:
         )["id"]
 
         if copy_members:
+            members = self.project_users(
+                project_id=from_project_id,
+                fields=["activated", "role", "user.email", "invitationStatus"],
+            )
+            members = [m for m in members if m["invitationStatus"] != "DEFAULT_ACCEPTED"]
+            members = [m for m in members if m["activated"]]
+
             for members in src_project["roles"]:
                 self.append_to_roles(
                     project_id=new_project_id,

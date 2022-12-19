@@ -36,7 +36,7 @@ def copy_project(
     with_json_interface: bool = True,
     with_quality_settings: bool = True,
     with_members: bool = True,
-):
+) -> None:
     """Copy a Kili project.
 
     The copy can include or not the json interface, quality settings
@@ -70,5 +70,5 @@ def copy_project(
         copy_quality_settings=with_quality_settings,
         copy_members=with_members,
     )
-    title = kili.projects(project_id=new_proj_id, fields=["title"])[0]["title"]
+    title = kili.projects(project_id=new_proj_id, fields=["title"])[0]["title"]  # type: ignore
     print(f'Project copied successfully. New project id: "{new_proj_id}", with title: "{title}"')
