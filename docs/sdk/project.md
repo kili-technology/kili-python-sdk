@@ -8,3 +8,5 @@
         filters:
             - '!internal_delete_project'
             - '!^__'
+## Services
+::: kili.services.copy_project.__init__.CopyProject

@@ -28,6 +28,7 @@ from kili.queries.project import QueriesProject
 from kili.queries.project_user import QueriesProjectUser
 from kili.queries.project_version import QueriesProjectVersion
 from kili.queries.user import QueriesUser
+from kili.services.copy_project import CopyProject
 from kili.services.types import ProjectId
 from kili.subscriptions.label import SubscriptionsLabel
 
@@ -54,6 +55,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     QueriesProjectUser,
     QueriesProjectVersion,
     QueriesUser,
+    CopyProject,
     SubscriptionsLabel,
 ):
     """
