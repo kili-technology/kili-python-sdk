@@ -185,9 +185,7 @@ class TestCLIProjectImport:
         _ = name
         runner = CliRunner()
         with runner.isolated_filesystem():
-            with patch(
-                "kili.services.label_import.import_labels_from_files"
-            ) as mocked_import_labels_service:
+            with patch("kili.services.import_labels_from_files") as mocked_import_labels_service:
                 arguments = test_case["files"]
                 for k, v in test_case["options"].items():
                     arguments.append("--" + k)

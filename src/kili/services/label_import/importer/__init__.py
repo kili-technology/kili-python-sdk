@@ -9,8 +9,8 @@ from typing import List, NamedTuple, Optional, Type
 
 import yaml
 
+from kili import services
 from kili.helpers import get_file_paths_to_upload
-from kili.services import label_import
 from kili.services.helpers import get_external_id_from_file_path
 from kili.services.label_import.exceptions import (
     LabelParsingError,
@@ -68,7 +68,7 @@ class AbstractLabelImporter(ABC):
         self.logger.warning("Importing labels")
         labels = self.extract_from_files(labels_files, label_parser)
         label_type = "PREDICTION" if is_prediction else "DEFAULT"
-        label_import.import_labels_from_dict(
+        services.import_labels_from_dict(
             kili=self.kili,
             project_id=project_id,
             labels=labels,

@@ -4,8 +4,8 @@ from typing import List, Optional, cast
 from typeguard import typechecked
 
 from kili import services
+from kili.services import import_labels_from_dict
 from kili.services.export.types import LabelFormat, SplitOption
-from kili.services.label_import import import_labels_from_dict
 from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
 
 

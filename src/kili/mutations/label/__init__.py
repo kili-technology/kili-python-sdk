@@ -17,11 +17,11 @@ from kili.mutations.label.queries import (
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
+from kili.services import import_labels_from_dict
 from kili.services.helpers import (
     assert_all_arrays_have_same_size,
     infer_ids_from_external_ids,
 )
-from kili.services.label_import import import_labels_from_dict
 from kili.utils.pagination import _mutate_from_paginated_call
 
 
