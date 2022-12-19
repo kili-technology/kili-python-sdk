@@ -120,11 +120,11 @@ class CopyProject:  # pylint: disable=too-few-public-methods
         members = [memb for memb in members if memb["invitationStatus"] != "DEFAULT_ACCEPTED"]
         members = [memb for memb in members if memb["activated"]]
 
-        for m in members:
+        for member in members:
             self.append_to_roles(
                 project_id=new_project_id,
-                user_email=m["user"]["email"],
-                role=m["role"],
+                user_email=member["user"]["email"],
+                role=member["role"],
             )
 
     def _copy_quality_settings(self, new_project_id: str, src_project: Dict) -> None:
