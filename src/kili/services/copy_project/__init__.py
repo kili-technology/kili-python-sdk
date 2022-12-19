@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Optional
 
 from kili.authentication import KiliAuth
 from kili.mutations.project import MutationsProject
@@ -7,6 +7,16 @@ from kili.queries.project_user import QueriesProjectUser
 
 
 class CopyProject:
+    FIELDS_PROJECT = ["title", "jsonInterface", "inputType", "description", "id"]
+    FIELDS_QUALITY_SETTINGS = [
+        "consensusTotCoverage",
+        "consensusMark",
+        "minConsensusSize",
+        "honeypotMark",
+        "useHoneyPot",
+        "reviewCoverage",
+    ]
+
     def __init__(self, auth: KiliAuth) -> None:
         self.auth = auth
 
@@ -49,30 +59,22 @@ class CopyProject:
         Examples:
             >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
         """
+        fields = self.FIELDS_PROJECT
+        if copy_quality_settings:
+            fields = fields + self.FIELDS_QUALITY_SETTINGS
+
         src_project = self.projects(  # type: ignore
             project_id=from_project_id,
-            fields=[
-                "title",
-                "jsonInterface",
-                "inputType",
-                "description",
-                "consensusTotCoverage",
-                "consensusMark",
-                "consensusTotCoverage",
-                "minConsensusSize",
-                "honeypotMark",
-                "useHoneyPot",
-                "reviewCoverage",
-            ],
+            fields=fields,
         )[0]
 
-        new_proj_title = title
-        if new_proj_title is None:
-            new_proj_title = self._generate_project_title(src_title=src_project["title"])
+        new_project_title = title
+        if new_project_title is None:
+            new_project_title = self._generate_project_title(src_title=src_project["title"])
 
-        new_proj_description = description
-        if new_proj_description is None:
-            new_proj_description = ""
+        new_project_description = description
+        if new_project_description is None:
+            new_project_description = ""
 
         json_interface = {"jobs": {}}
         if copy_json_interface:
@@ -81,35 +83,15 @@ class CopyProject:
         new_project_id = self.create_project(
             input_type=src_project["inputType"],
             json_interface=json_interface,
-            title=new_proj_title,
-            description=new_proj_description,
+            title=new_project_title,
+            description=new_project_description,
         )["id"]
 
         if copy_members:
-            members = self.project_users(
-                project_id=from_project_id,
-                fields=["activated", "role", "user.email", "invitationStatus"],
-            )
-            members = [m for m in members if m["invitationStatus"] != "DEFAULT_ACCEPTED"]
-            members = [m for m in members if m["activated"]]
-
-            for members in src_project["roles"]:
-                self.append_to_roles(
-                    project_id=new_project_id,
-                    user_email=members["user"]["email"],
-                    role=members["role"],
-                )
+            self._copy_members(from_project_id, new_project_id)
 
         if copy_quality_settings:
-            self.update_properties_in_project(
-                project_id=new_project_id,
-                consensus_mark=src_project["consensusMark"],
-                consensus_tot_coverage=src_project["consensusTotCoverage"],
-                honeypot_mark=src_project["honeypotMark"],
-                min_consensus_size=src_project["minConsensusSize"],
-                use_honeypot=src_project["useHoneyPot"],
-                review_coverage=src_project["reviewCoverage"],
-            )
+            self._copy_quality_settings(new_project_id, src_project)
 
         return new_project_id
 
@@ -122,3 +104,29 @@ class CopyProject:
             new_title = f"{src_title} (copy {i})"
             i += 1
         return new_title
+
+    def _copy_members(self, from_project_id: str, new_project_id: str) -> None:
+        members = self.project_users(
+            project_id=from_project_id,
+            fields=["activated", "role", "user.email", "invitationStatus"],
+        )
+        members = [m for m in members if m["invitationStatus"] != "DEFAULT_ACCEPTED"]
+        members = [m for m in members if m["activated"]]
+
+        for m in members:
+            self.append_to_roles(
+                project_id=new_project_id,
+                user_email=m["user"]["email"],
+                role=m["role"],
+            )
+
+    def _copy_quality_settings(self, new_project_id: str, src_project: Dict) -> None:
+        self.update_properties_in_project(
+            project_id=new_project_id,
+            consensus_mark=src_project["consensusMark"],
+            consensus_tot_coverage=src_project["consensusTotCoverage"],
+            honeypot_mark=src_project["honeypotMark"],
+            min_consensus_size=src_project["minConsensusSize"],
+            use_honeypot=src_project["useHoneyPot"],
+            review_coverage=src_project["reviewCoverage"],
+        )
