@@ -29,6 +29,7 @@ class License(TypedDict):
 
     api: bool
     apiPriority: bool
+    canUsePlugins: bool
     enableSmartTools: bool
     expiryDate: str
     inputType: InputType
