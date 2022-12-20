@@ -11,6 +11,7 @@ from typeguard import typechecked
 from kili import services
 from kili.enums import LabelType
 from kili.helpers import deprecate, format_result
+from kili.mutations.label.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
@@ -143,9 +144,13 @@ class MutationsLabel:
         """
         if author_id is None:
             author_id = self.auth.user_id
+        check_asset_identifier_arguments(
+            project_id,
+            [label_asset_id] if label_asset_id else None,
+            [label_asset_external_id] if label_asset_external_id else None,
+        )
         if label_asset_id is None:
-            if label_asset_external_id is None or project_id is None:
-                raise Exception("Either provide asset_id or external_id and project_id")
+            assert label_asset_external_id and project_id
             label_asset_id = infer_ids_from_external_ids(
                 self, [label_asset_external_id], project_id
             )[label_asset_external_id]
@@ -194,6 +199,7 @@ class MutationsLabel:
                     json_response_array=[{...}, {...}]
                 )
         """
+        check_asset_identifier_arguments(project_id, asset_id_array, asset_external_id_array)
         assert_all_arrays_have_same_size(
             [
                 seconds_to_label_array,
@@ -203,13 +209,6 @@ class MutationsLabel:
                 asset_id_array,
             ]
         )
-        project_id_error_message = (
-            "It is now required to provide a project_id when calling append_labels"
-        )
-        if project_id is None:
-            if asset_id_array is None:
-                raise ValueError(project_id_error_message)
-            warnings.warn(project_id_error_message, DeprecationWarning)
 
         labels = [
             {

@@ -2,8 +2,9 @@
 Helpers for the services
 """
 from pathlib import Path
-from typing import Any, Iterable, List, Optional, TypeVar
+from typing import Any, Dict, Iterable, List, Optional, TypeVar
 
+from kili.exceptions import NotFound
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
@@ -62,7 +63,7 @@ def infer_ids_from_external_ids(kili, asset_external_ids: List[str], project_id:
         fields=["id", "externalId"],
         disable_tqdm=True,
     )
-    id_map = {}
+    id_map: Dict[str, str] = {}
     for asset in assets:
         id_map[asset["externalId"]] = asset["id"]
 
@@ -70,12 +71,12 @@ def infer_ids_from_external_ids(kili, asset_external_ids: List[str], project_id:
         assets_not_found = [
             external_id for external_id in asset_external_ids if external_id not in id_map
         ]
-        raise Exception(
+        raise NotFound(
             f"The assets whose external_id are: {assets_not_found} have not been found in the"
             f" project of Id {project_id}"
         )
     if len(id_map) > len(asset_external_ids):
-        raise Exception(
+        raise NotFound(
             "Several assets have been found for the same external_id. Please consider using asset"
             " ids instead."
         )

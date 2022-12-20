@@ -99,8 +99,7 @@ class AbstractLabelImporter(ABC):
             asset_external_ids = [label["asset_external_id"] for label in labels]
             asset_id_map = infer_ids_from_external_ids(self.kili, asset_external_ids, project_id)
             labels = [
-                {**label, "asset_id": asset_id_map[label.get("asset_external_id")]}
-                for label in labels
+                {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels
             ]
         labels_data = [
             {
@@ -147,7 +146,9 @@ class AbstractLabelImporter(ABC):
     def _get_label_file_extension(self) -> str:
         pass
 
-    def extract_from_files(self, labels_files: List[Path], label_parser: AbstractLabelParser):
+    def extract_from_files(
+        self, labels_files: List[Path], label_parser: AbstractLabelParser
+    ) -> List[Dict]:
         """
         Extracts the labels files and their metadata from the label files
         """
