@@ -167,15 +167,15 @@ class MutationsLabel:
         return format_result("data", result, Label)
 
     @typechecked
-    def append_labels(
+    def append_labels(  # pylint: disable=dangerous-default-value
         self,
-        json_response_array: List[Dict],
+        asset_id_array: Optional[List[str]] = None,
+        json_response_array: List[Dict] = [],
         author_id_array: Optional[List[str]] = None,
         seconds_to_label_array: Optional[List[int]] = None,
         model_name: Optional[str] = None,
         label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
-        asset_id_array: Optional[List[str]] = None,
         asset_external_id_array: Optional[List[str]] = None,
     ) -> List:
         """Append labels to assets.
@@ -199,6 +199,10 @@ class MutationsLabel:
                     json_response_array=[{...}, {...}]
                 )
         """
+        if len(json_response_array) == 0:
+            raise ValueError(
+                "json_response_array is empty, you must provide at least one label to upload"
+            )
         check_asset_identifier_arguments(project_id, asset_id_array, asset_external_id_array)
         assert_all_arrays_have_same_size(
             [
