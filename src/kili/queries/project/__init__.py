@@ -135,6 +135,7 @@ class QueriesProject:
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
     ) -> int:
+        # pylint: disable=line-too-long
         """
         Counts the number of projects with a search_query
 
