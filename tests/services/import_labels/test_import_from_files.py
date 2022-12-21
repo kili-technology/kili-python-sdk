@@ -5,7 +5,7 @@ import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
@@ -18,7 +18,7 @@ from kili.services.label_import.parser import YoloLabelParser
 from kili.services.label_import.types import Classes
 from kili.services.types import ProjectId
 from tests.services.import_labels import fakes
-from tests.services.import_labels.test_cases import TEST_CASES
+from tests.services.import_labels.test_cases_from_files import TEST_CASES
 
 
 def _generate_label_file(yolo_rows: List[List], filename: str):
@@ -51,7 +51,6 @@ def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
 )
 def test_import_labels_from_files(description, inputs, outputs):
     kili = MagicMock()
-    kili.append_to_labels = MagicMock()
     kili.projects = MagicMock(side_effect=fakes.projects)
 
     with TemporaryDirectory() as label_folders:
@@ -67,26 +66,27 @@ def test_import_labels_from_files(description, inputs, outputs):
 
         _generate_meta_file(yolo_classes, yolo_meta_path, inputs["label_format"])
 
-        import_labels_from_files(
-            kili,
-            label_paths,
-            str(yolo_meta_path),
-            ProjectId(inputs["project_id"]),
-            inputs["label_format"],
-            inputs["target_job_name"],
-            disable_tqdm=False,
-            log_level="INFO",
-            is_prediction=False,
-            model_name=None,
-        )
+        with patch(
+            "kili.services.label_import.importer.AbstractLabelImporter.process_from_dict"
+        ) as process_from_dict_mock:
+            import_labels_from_files(
+                kili,
+                label_paths,
+                str(yolo_meta_path),
+                ProjectId(inputs["project_id"]),
+                inputs["label_format"],
+                inputs["target_job_name"],
+                disable_tqdm=False,
+                log_level="INFO",
+                model_name=None,
+                is_prediction=False,
+            )
 
-        for row in outputs["calls"]:
-            kili.append_to_labels.assert_called_with(**row)
+            process_from_dict_mock.assert_called_with(**outputs["call"])
 
 
 def test_import_labels_from_files_malformed_annotation():
     kili = MagicMock()
-    kili.append_to_labels = MagicMock()
     kili.projects = MagicMock(side_effect=fakes.projects)
 
     inputs = {
@@ -135,7 +135,6 @@ def test_import_labels_from_files_malformed_annotation():
 
 def test_import_labels_wrong_target_job():
     kili = MagicMock()
-    kili.append_to_labels = MagicMock()
     kili.projects = MagicMock(side_effect=fakes.projects)
 
     inputs = {
@@ -177,8 +176,8 @@ def test_import_labels_wrong_target_job():
                 inputs["target_job_name"],
                 disable_tqdm=False,
                 log_level="INFO",
-                is_prediction=False,
                 model_name=None,
+                is_prediction=False,
             )
 
 

@@ -2,8 +2,9 @@
 Helpers for the services
 """
 from pathlib import Path
-from typing import Iterable, Optional, TypeVar
+from typing import Any, Dict, Iterable, List, Optional, TypeVar
 
+from kili.exceptions import NotFound
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
@@ -45,3 +46,48 @@ def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str)
         "jsonInterface"
     ]
     return target_job_name in json_interface["jobs"]
+
+
+def infer_ids_from_external_ids(kili, asset_external_ids: List[str], project_id: str):
+    """
+    Infer asset ids from their external ids and project Id
+
+    Args:
+        asset_id: asset id
+        external_id: external id
+        project_id: project id
+    """
+    assets = kili.assets(
+        external_id_contains=asset_external_ids,
+        project_id=project_id,
+        fields=["id", "externalId"],
+        disable_tqdm=True,
+    )
+    id_map: Dict[str, str] = {}
+    for asset in assets:
+        id_map[asset["externalId"]] = asset["id"]
+
+    if len(id_map) < len(asset_external_ids):
+        assets_not_found = [
+            external_id for external_id in asset_external_ids if external_id not in id_map
+        ]
+        raise NotFound(
+            f"The assets whose external_id are: {assets_not_found} have not been found in the"
+            f" project of Id {project_id}"
+        )
+    if len(id_map) > len(asset_external_ids):
+        raise NotFound(
+            "Several assets have been found for the same external_id. Please consider using asset"
+            " ids instead."
+        )
+    return id_map
+
+
+def assert_all_arrays_have_same_size(arrays: List[Optional[List[Any]]], raise_error=True):
+    """Assert that all given arrays have the same size if they are not None"""
+    sizes_arrays = {len(array) for array in arrays if array is not None}
+    if len(sizes_arrays) > 1:
+        if raise_error:
+            raise ValueError("All arrays should have the same length")
+        return False
+    return True
