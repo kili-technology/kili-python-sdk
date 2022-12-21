@@ -25,9 +25,9 @@ class CopyProject:  # pylint: disable=too-few-public-methods
     def __init__(self, auth: KiliAuth) -> None:
         self.auth = auth
 
-        mutations_project = mutations.project.MutationsProject(self.auth)
-        queries_project = queries.project.QueriesProject(self.auth)
-        queries_project_user = queries.project_user.QueriesProjectUser(self.auth)
+        mutations_project = mutations.project.MutationsProject(self.auth)  # type: ignore
+        queries_project = queries.project.QueriesProject(self.auth)  # type: ignore
+        queries_project_user = queries.project_user.QueriesProjectUser(self.auth)  # type: ignore
 
         self.projects = queries_project.projects
         self.create_project = mutations_project.create_project
