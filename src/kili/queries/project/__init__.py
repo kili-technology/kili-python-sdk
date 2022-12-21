@@ -56,6 +56,7 @@ class QueriesProject:
         Args:
             project_id: Select a specific project through its project_id.
             search_query: Returned projects with a title or a description matching this string.
+                The query must follow the PostgreSQL ILIKE operator [specification](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE).
             should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot or consensus settings.
             updated_at_gte: Returned projects should have a label whose update date is greater or equal
                 to this date.
@@ -140,6 +141,7 @@ class QueriesProject:
         Args:
             project_id: Select a specific project through its project_id.
             search_query: Returned projects have a title or a description that matches this string.
+                The query must follow the PostgreSQL ILIKE operator [specification](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE).
             should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot
                 or consensus settings
             updated_at_gte: Returned projects should have a label
