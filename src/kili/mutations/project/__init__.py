@@ -5,6 +5,9 @@ from typing import Dict, Optional, Union
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
+from kili.services.copy_project import CopyProject
+
 from ...helpers import format_result
 from .helpers import verify_argument_ranges
 from .queries import (
@@ -23,7 +26,7 @@ class MutationsProject:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -351,3 +354,42 @@ class MutationsProject:
 
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result("data", result)
+
+    @typechecked
+    def copy_project(  # pylint: disable=too-many-arguments
+        self,
+        from_project_id: str,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        copy_json_interface: bool = True,
+        copy_quality_settings: bool = True,
+        copy_members: bool = True,
+    ) -> str:
+        """Copy an existing project.
+
+        Copy an existing source project from its ID.
+
+        Args:
+            from_project_id: Project ID to copy from.
+            title: Title for the new project. Defaults to source project
+                title if `None` is provided.
+            description: Description for the new project. Defaults to empty string
+                if `None` is provided.
+            copy_json_interface: Copy the json interface from the source project to the new one.
+            copy_quality_settings: Copy the quality settings from the source project to the new one.
+            copy_members: Copy the members from the source project to the new one.
+
+        Returns:
+            The created project ID.
+
+        Examples:
+            >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
+        """
+        return CopyProject(self.auth).copy_project(
+            from_project_id,
+            title,
+            description,
+            copy_json_interface,
+            copy_quality_settings,
+            copy_members,
+        )

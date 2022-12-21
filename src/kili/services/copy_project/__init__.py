@@ -3,10 +3,9 @@ Copy project implementation.
 """
 from typing import Dict, Optional
 
+from kili import mutations, queries
 from kili.authentication import KiliAuth
-from kili.mutations.project import MutationsProject
-from kili.queries.project import QueriesProject
-from kili.queries.project_user import QueriesProjectUser
+from kili.exceptions import NotFound
 
 
 class CopyProject:  # pylint: disable=too-few-public-methods
@@ -14,12 +13,11 @@ class CopyProject:  # pylint: disable=too-few-public-methods
     Class for copying an existing project.
     """
 
-    FIELDS_PROJECT = ["title", "jsonInterface", "inputType", "description", "id"]
+    FIELDS_PROJECT = ["title", "inputType", "description", "id"]
+    FIELDS_JSON_INTERFACE = ["jsonInterface"]
     FIELDS_QUALITY_SETTINGS = [
         "consensusTotCoverage",
-        "consensusMark",
         "minConsensusSize",
-        "honeypotMark",
         "useHoneyPot",
         "reviewCoverage",
     ]
@@ -27,9 +25,9 @@ class CopyProject:  # pylint: disable=too-few-public-methods
     def __init__(self, auth: KiliAuth) -> None:
         self.auth = auth
 
-        mutations_project = MutationsProject(self.auth)
-        queries_project = QueriesProject(self.auth)
-        queries_project_user = QueriesProjectUser(self.auth)
+        mutations_project = mutations.project.MutationsProject(self.auth)
+        queries_project = queries.project.QueriesProject(self.auth)
+        queries_project_user = queries.project_user.QueriesProjectUser(self.auth)
 
         self.projects = queries_project.projects
         self.create_project = mutations_project.create_project
@@ -40,52 +38,34 @@ class CopyProject:  # pylint: disable=too-few-public-methods
     def copy_project(  # pylint: disable=too-many-arguments
         self,
         from_project_id: str,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        copy_json_interface: bool = True,
-        copy_quality_settings: bool = True,
-        copy_members: bool = True,
+        title: Optional[str],
+        description: Optional[str],
+        copy_json_interface: bool,
+        copy_quality_settings: bool,
+        copy_members: bool,
     ) -> str:
-        """Copy an existing project.
-
-        Copy an existing source project from its ID.
-
-        Args:
-            from_project_id: Project ID to copy from.
-            title: Title for the new project. Defaults to source project
-                title if `None` is provided.
-            description: Description for the new project. Defaults to empty string
-                if `None` is provided.
-            copy_json_interface: Copy the json interface from the source project to the new one.
-            copy_quality_settings: Copy the quality settings from the source project to the new one.
-            copy_members: Copy the members from the source project to the new one.
-
-        Returns:
-            The created project ID.
-
-        Examples:
-            >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
         """
+        Copy an existing project.
+        """
+        if not copy_json_interface and not copy_quality_settings and not copy_members:
+            raise ValueError("At least one element has to be copied.")
+
         fields = self.FIELDS_PROJECT
-        if copy_quality_settings:
-            fields = fields + self.FIELDS_QUALITY_SETTINGS
-
-        src_project = self.projects(  # type: ignore
-            project_id=from_project_id,
-            fields=fields,
-        )[0]
-
-        new_project_title = title
-        if new_project_title is None:
-            new_project_title = self._generate_project_title(src_title=src_project["title"])
-
-        new_project_description = description
-        if new_project_description is None:
-            new_project_description = ""
-
-        json_interface = {"jobs": {}}
         if copy_json_interface:
-            json_interface = src_project["jsonInterface"]
+            fields += self.FIELDS_JSON_INTERFACE
+        if copy_quality_settings:
+            fields += self.FIELDS_QUALITY_SETTINGS
+
+        src_project = self.projects(project_id=from_project_id, fields=fields)
+        if len(src_project) == 0:
+            raise NotFound(f"Cannot find project with id: {from_project_id}")
+        src_project: Dict = src_project[0]
+
+        new_project_title = title or self._generate_project_title(src_title=src_project["title"])
+
+        new_project_description = description or ""
+
+        json_interface = src_project["jsonInterface"] if copy_json_interface else {"jobs": {}}
 
         new_project_id = self.create_project(
             input_type=src_project["inputType"],
@@ -103,7 +83,7 @@ class CopyProject:  # pylint: disable=too-few-public-methods
         return new_project_id
 
     def _generate_project_title(self, src_title: str) -> str:
-        projects = self.projects(fields=["title"])
+        projects = self.projects(fields=["title"], search_query=f"{src_title}%")
         proj_titles = {proj["title"] for proj in projects}
         new_title = f"{src_title} (copy)"
         i = 1
@@ -117,8 +97,12 @@ class CopyProject:  # pylint: disable=too-few-public-methods
             project_id=from_project_id,
             fields=["activated", "role", "user.email", "invitationStatus"],
         )
-        members = [memb for memb in members if memb["invitationStatus"] != "DEFAULT_ACCEPTED"]
-        members = [memb for memb in members if memb["activated"]]
+
+        members = [
+            memb
+            for memb in members
+            if memb["invitationStatus"] != "DEFAULT_ACCEPTED" and memb["activated"]
+        ]
 
         for member in members:
             self.append_to_roles(
@@ -130,9 +114,7 @@ class CopyProject:  # pylint: disable=too-few-public-methods
     def _copy_quality_settings(self, new_project_id: str, src_project: Dict) -> None:
         self.update_properties_in_project(
             project_id=new_project_id,
-            consensus_mark=src_project["consensusMark"],
             consensus_tot_coverage=src_project["consensusTotCoverage"],
-            honeypot_mark=src_project["honeypotMark"],
             min_consensus_size=src_project["minConsensusSize"],
             use_honeypot=src_project["useHoneyPot"],
             review_coverage=src_project["reviewCoverage"],

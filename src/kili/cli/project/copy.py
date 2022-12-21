@@ -42,12 +42,12 @@ def copy_project(
 ) -> None:
     """Copy a Kili project.
 
-    The copy can include or not the json interface, quality settings
-    and members of the source project.
+    The copy can include or not the json interface, quality settings and members of
+    the source project. By default, the json interface, quality settings
+    and projects members are copied.
 
     If no `title` is provided, the source project title will be used.
     If no description is provided, the description will be set to an empty string.
-    By default, the json interface, quality settings and projects members are copied.
 
     Returns the new project id and title once the copy is finished.
 
