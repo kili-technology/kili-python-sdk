@@ -1,6 +1,6 @@
 """Project queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, List, Optional, Union
 
 from typeguard import typechecked
 
@@ -49,7 +49,7 @@ class QueriesProject:
         first: Optional[int] = None,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Union[List[Dict], Generator]:
         # pylint: disable=line-too-long
         """Get a generator or a list of projects that match a set of criteria.
 

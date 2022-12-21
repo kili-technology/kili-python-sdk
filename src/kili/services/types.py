@@ -25,11 +25,9 @@ class JobCategory(NamedTuple):
 YoloAnnotation = Tuple[int, float, float, float, float]
 LabelType = Literal["AUTOSAVE", "DEFAULT", "PREDICTION", "REVIEW", "INFERENCE"]
 
-InputType = Literal["IMAGE", "TEXT"]
 MLTask = Literal["CLASSIFICATION", "NAMED_ENTITIES_RECOGNITION", "OBJECT_DETECTION"]
 Tool = Literal["rectangle", "semantic", "polygon"]
 JobName = NewType("JobName", str)
-ProjectId = NewType("ProjectId", str)
 
 
 class Job(TypedDict):
