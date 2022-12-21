@@ -15,44 +15,46 @@ from kili.services.types import JobName
 class CocoTestCase(TestCase):
     @staticmethod
     def get_asset(content_path: Path, with_annotation: bool) -> Asset:
-        annotations = []
+        json_response = {"author": {"firstname": "Jean-Pierre", "lastname": "Dupont"}}
         if with_annotation:
-            annotations = [
+            json_response.update(
                 {
-                    "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-                    "jobName": "JOB_0",
-                    "mid": "2022040515434712-7532",
-                    "mlTask": "OBJECT_DETECTION",
-                    "boundingPoly": [
-                        {
-                            "normalizedVertices": [
-                                {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                },
-                                {
-                                    "x": 1.0,
-                                    "y": 0.0,
-                                },
-                                {
-                                    "x": 0.0,
-                                    "y": 1.0,
-                                },
-                            ]
-                        }
-                    ],
-                    "type": "semantic",
-                    "children": {},
+                    "JOB_0": {
+                        "annotations": [
+                            {
+                                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                                "jobName": "JOB_0",
+                                "mid": "2022040515434712-7532",
+                                "mlTask": "OBJECT_DETECTION",
+                                "boundingPoly": [
+                                    {
+                                        "normalizedVertices": [
+                                            {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                            },
+                                            {
+                                                "x": 1.0,
+                                                "y": 0.0,
+                                            },
+                                            {
+                                                "x": 0.0,
+                                                "y": 1.0,
+                                            },
+                                        ]
+                                    }
+                                ],
+                                "type": "semantic",
+                                "children": {},
+                            }
+                        ]
+                    }
                 }
-            ]
+            )
+
         return Asset(
             {
-                "latestLabel": {
-                    "jsonResponse": {
-                        "JOB_0": {"annotations": annotations},
-                        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-                    },
-                },
+                "latestLabel": {"jsonResponse": json_response},
                 "externalId": "car_1",
                 "jsonContent": "",
                 "content": str(content_path),
