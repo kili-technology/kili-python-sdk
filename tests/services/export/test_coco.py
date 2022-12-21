@@ -13,6 +13,52 @@ from kili.services.types import JobName
 
 
 class CocoTestCase(TestCase):
+    @staticmethod
+    def get_asset(content_path: Path, with_annotation: bool) -> Asset:
+        annotations = []
+        if with_annotation:
+            annotations = [
+                {
+                    "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                    "jobName": "JOB_0",
+                    "mid": "2022040515434712-7532",
+                    "mlTask": "OBJECT_DETECTION",
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                },
+                                {
+                                    "x": 1.0,
+                                    "y": 0.0,
+                                },
+                                {
+                                    "x": 0.0,
+                                    "y": 1.0,
+                                },
+                            ]
+                        }
+                    ],
+                    "type": "semantic",
+                    "children": {},
+                }
+            ]
+        return Asset(
+            {
+                "latestLabel": {
+                    "jsonResponse": {
+                        "JOB_0": {"annotations": annotations},
+                        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+                    },
+                },
+                "externalId": "car_1",
+                "jsonContent": "",
+                "content": str(content_path),
+            }
+        )
+
     def test__get_coco_image_annotations(self):
         with TemporaryDirectory() as tmp_dir:
             job_name = "JOB_0"
@@ -23,52 +69,7 @@ class CocoTestCase(TestCase):
             local_file_path.open("wb").write(r.content)
             _convert_kili_semantic_to_coco(
                 job_name=JobName(job_name),
-                assets=[
-                    Asset(
-                        {
-                            "latestLabel": {
-                                "jsonResponse": {
-                                    "JOB_0": {
-                                        "annotations": [
-                                            {
-                                                "categories": [
-                                                    {"confidence": 100, "name": "OBJECT_A"}
-                                                ],
-                                                "jobName": "JOB_0",
-                                                "mid": "2022040515434712-7532",
-                                                "mlTask": "OBJECT_DETECTION",
-                                                "boundingPoly": [
-                                                    {
-                                                        "normalizedVertices": [
-                                                            {
-                                                                "x": 0.0,
-                                                                "y": 0.0,
-                                                            },
-                                                            {
-                                                                "x": 1.0,
-                                                                "y": 0.0,
-                                                            },
-                                                            {
-                                                                "x": 0.0,
-                                                                "y": 1.0,
-                                                            },
-                                                        ]
-                                                    }
-                                                ],
-                                                "type": "semantic",
-                                                "children": {},
-                                            }
-                                        ]
-                                    },
-                                    "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-                                },
-                            },
-                            "externalId": "car_1",
-                            "jsonContent": "",
-                            "content": str(local_file_path),
-                        }
-                    ),
-                ],
+                assets=[CocoTestCase.get_asset(local_file_path, with_annotation=True)],
                 output_dir=Path(tmp_dir),
                 job={
                     "mlTask": "OBJECT_DETECTION",
@@ -151,3 +152,43 @@ class CocoTestCase(TestCase):
                     "The date is not in the right format: "
                     + coco_annotation["info"]["date_created"]
                 )
+
+    def test__get_coco_image_annotations_without_annotation(self):
+        with TemporaryDirectory() as tmp_dir:
+            job_name = "JOB_0"
+            output_file = Path(tmp_dir) / job_name / "labels.json"
+            image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+            r = requests.get(image_url, allow_redirects=True, timeout=10)
+            local_file_path = Path("car_1.jpg")
+            local_file_path.open("wb").write(r.content)
+            _convert_kili_semantic_to_coco(
+                job_name=JobName(job_name),
+                assets=[CocoTestCase.get_asset(local_file_path, with_annotation=False)],
+                output_dir=Path(tmp_dir),
+                job={
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {
+                        "categories": {
+                            "OBJECT_A": {"name": "Object A"},
+                            "OBJECT_B": {"name": "Object B"},
+                        }
+                    },
+                    "instruction": "",
+                    "isChild": False,
+                    "isNew": False,
+                    "isVisible": True,
+                    "models": {},
+                    "required": True,
+                    "tools": ["semantic"],
+                },
+                title="Test project",
+            )
+
+            with output_file.open("r", encoding="utf-8") as f:
+                coco_annotation = json.loads(f.read())
+
+                assert "Test project" in coco_annotation["info"]["description"]
+                assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
+                assert coco_annotation["images"][0]["width"] == 1920
+                assert coco_annotation["images"][0]["height"] == 1080
+                assert len(coco_annotation["annotations"]) == 0
