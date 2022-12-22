@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Dict
 
 import requests
 
@@ -17,40 +18,39 @@ def get_asset(content_path: Path, with_annotation: bool) -> Asset:
     # `annotations=[]` should not exist.
     json_response = {"author": {"firstname": "Jean-Pierre", "lastname": "Dupont"}}
     if with_annotation:
-        json_response.update(
-            {
-                "JOB_0": {
-                    "annotations": [
-                        {
-                            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-                            "jobName": "JOB_0",
-                            "mid": "2022040515434712-7532",
-                            "mlTask": "OBJECT_DETECTION",
-                            "boundingPoly": [
-                                {
-                                    "normalizedVertices": [
-                                        {
-                                            "x": 0.0,
-                                            "y": 0.0,
-                                        },
-                                        {
-                                            "x": 1.0,
-                                            "y": 0.0,
-                                        },
-                                        {
-                                            "x": 0.0,
-                                            "y": 1.0,
-                                        },
-                                    ]
-                                }
-                            ],
-                            "type": "semantic",
-                            "children": {},
-                        }
-                    ]
-                }
-            }
-        )
+        json_response = {
+            **json_response,
+            "JOB_0": {
+                "annotations": [
+                    {
+                        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                        "jobName": "JOB_0",
+                        "mid": "2022040515434712-7532",
+                        "mlTask": "OBJECT_DETECTION",
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                    },
+                                    {
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                    },
+                                    {
+                                        "x": 0.0,
+                                        "y": 1.0,
+                                    },
+                                ]
+                            }
+                        ],
+                        "type": "semantic",
+                        "children": {},
+                    }
+                ]
+            },
+        }
 
     return Asset(
         {
