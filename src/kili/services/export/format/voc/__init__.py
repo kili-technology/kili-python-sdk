@@ -96,9 +96,6 @@ def _process_asset_for_job(
         parameters = {"filename": f"{filename}.xml"}
         annotations = _convert_from_kili_to_voc_format(json_response, width, height, parameters)
 
-        if not annotations:
-            continue
-
         with open(labels_folder / f"{filename}.xml", "wb") as fout:
             fout.write(f"{annotations}\n".encode())
 
