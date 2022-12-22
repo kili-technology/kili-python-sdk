@@ -48,8 +48,8 @@ asset_image_1_without_annotation = {
         "jsonResponse": {},
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
     },
-    "externalId": "car_2",
-    "content": "https://storage.googleapis.com/label-public-staging/car/car_2.jpg",
+    "externalId": "car_1",
+    "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
     "jsonContent": "",
 }
 

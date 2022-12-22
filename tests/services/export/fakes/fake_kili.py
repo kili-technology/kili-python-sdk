@@ -6,7 +6,11 @@ from typing import List, Optional
 
 from kili.orm import Asset
 from kili.queries.asset.helpers import get_post_assets_call_process
-from tests.services.export.fakes.fake_data import asset_image_1, asset_image_2
+from tests.services.export.fakes.fake_data import (
+    asset_image_1,
+    asset_image_1_without_annotation,
+    asset_image_2,
+)
 
 
 class FakeAuth:
@@ -40,6 +44,8 @@ class FakeKili:
         def _assets():
             if project_id == "object_detection":
                 return [Asset(asset_image_1)]
+            elif project_id == "object_detection_with_empty_annotation":
+                return [Asset(asset_image_1_without_annotation)]
             elif project_id == "text_classification":
                 return []
             elif project_id == "semantic_segmentation":
@@ -69,12 +75,12 @@ class FakeKili:
         Fake projects
         """
         _ = fields, disable_tqdm
-        if project_id == "object_detection":
+        if project_id in ["object_detection", "object_detection_with_empty_annotation"]:
             job_payload = {
                 "mlTask": "OBJECT_DETECTION",
                 "tools": ["rectangle"],
                 "instruction": "Categories",
-                "required": 1,
+                "required": 1 if project_id == "object_detection" else 0,
                 "isChild": False,
                 "content": {
                     "categories": {
