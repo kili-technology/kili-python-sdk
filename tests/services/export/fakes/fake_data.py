@@ -43,7 +43,7 @@ asset_image_1 = {
     "jsonContent": "",
 }
 
-asset_image_1_without_label = {
+asset_image_1_without_annotation = {
     "latestLabel": {
         "jsonResponse": {},
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},

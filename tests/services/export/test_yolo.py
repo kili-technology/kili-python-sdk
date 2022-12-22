@@ -12,7 +12,7 @@ from kili.utils.tempfile import TemporaryDirectory
 from tests.services.export.fakes.fake_content_repository import FakeContentRepository
 from tests.services.export.fakes.fake_data import (
     asset_image_1,
-    asset_image_1_without_label,
+    asset_image_1_without_annotation,
     asset_video,
     category_ids,
 )
@@ -93,7 +93,7 @@ class YoloTestCase(TestCase):
 
     def test_convert_from_kili_to_yolo_format_no_annotation(self):
         converted_annotations = _convert_from_kili_to_yolo_format(
-            "JOB_0", asset_image_1_without_label["latestLabel"], category_ids
+            "JOB_0", asset_image_1_without_annotation["latestLabel"], category_ids
         )
         assert len(converted_annotations) == 0
 
