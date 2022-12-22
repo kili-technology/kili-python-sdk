@@ -185,7 +185,7 @@ def get_file_tree(folder: str):
                     "with_assets": True,
                 },
                 "file_tree_expected": {
-                    "images": {"car_1.jpg": {}},
+                    "assets": {"car_1.jpg": {}},
                     "labels": {"car_1.json": {}},
                     "README.kili.txt": {},
                 },

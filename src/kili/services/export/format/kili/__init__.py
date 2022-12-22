@@ -53,3 +53,10 @@ class KiliExporter(AbstractExporter):
             clean_assets,
             output_filename,
         )
+
+    @property
+    def images_folder(self) -> Path:
+        """
+        Export images folder
+        """
+        return self.base_folder / "assets"
