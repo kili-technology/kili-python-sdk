@@ -65,7 +65,7 @@ class YoloExporter(AbstractExporter):
             )
 
         labels_folder = self.base_folder / "labels"
-        labels_folder.mkdir(parents=True)
+        labels_folder.mkdir(parents=True, exist_ok=True)
         self._write_labels_into_single_folder(
             assets,
             merged_categories_id,
@@ -134,7 +134,7 @@ class YoloExporter(AbstractExporter):
             self.write_video_metadata_file(video_metadata, base_folder)
 
         if len(remote_content) > 0:
-            self.images_folder.mkdir(parents=True)
+            self.images_folder.mkdir(parents=True, exist_ok=True)
             self.write_remote_content_file(remote_content, images_folder)
 
     def _write_jobs_labels_into_split_folders(
@@ -150,7 +150,7 @@ class YoloExporter(AbstractExporter):
         for job_id, category_ids in categories_by_job.items():
             base_folder = root_folder / self.project_id / job_id
             labels_folder = base_folder / "labels"
-            labels_folder.mkdir(parents=True)
+            labels_folder.mkdir(parents=True, exist_ok=True)
 
             self._write_labels_into_single_folder(
                 assets,
@@ -310,9 +310,6 @@ def _process_asset(
             filename = asset["externalId"]
 
         frame_labels = _get_frame_labels(frame, job_ids, category_ids)
-
-        if not frame_labels:
-            continue
 
         _write_labels_to_file(labels_folder, filename, frame_labels)
 
