@@ -115,15 +115,13 @@ The `.export_labels` method enables the export of a full project. It does the fo
 * Only fetches the labels of types `"DEFAULT"` and `"REVIEW"` (see the [label types explanations](https://docs.kili-technology.com/docs/asset-lifecycle#label-types-and-definitions-throughout-an-asset-lifecycle)).
 * If specified, selects a subset of asset ids.
 * Exports labels to one of the standard formats (only available for a restricted set of ML tasks).
-* Depending on the export type, it downloads the asset media:
-     * Kili: ❌
-     * YOLO: ❌
-     * COCO: ✅
+* The `with_assets` argument lets you decide if you want to include the assets in the export.
 * The `export_type` argument tells if the latest label or all the labels are exported.
 * The `split_option` argument tells if the export contains one folder for all the jobs, or one folder per job.
 * The `single_file` argument tells if the labels data should be exported into one single file. Note that some formats are single_file only, and that some others cannot be output into a single file.
      * Kili: single file or multiple files.
      * YOLO: multiple files only.
+     * Pascal VOC: multiple files only.
      * COCO: single-file only.
 
 For all the formats, in the output archive, a README.kili.txt file is also created. Here is an example of its contents:
