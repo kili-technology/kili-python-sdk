@@ -70,7 +70,7 @@ class CocoTestCase(TestCase):
             output_file = Path(tmp_dir) / job_name / "labels.json"
             image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
             r = requests.get(image_url, allow_redirects=True)
-            local_file_path = Path("car_1.jpg")
+            local_file_path = tmp_dir / Path("car_1.jpg")
             local_file_path.open("wb").write(r.content)
             _convert_kili_semantic_to_coco(
                 job_name=JobName(job_name),
@@ -164,7 +164,7 @@ class CocoTestCase(TestCase):
             output_file = Path(tmp_dir) / job_name / "labels.json"
             image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
             r = requests.get(image_url, allow_redirects=True, timeout=10)
-            local_file_path = Path("car_1.jpg")
+            local_file_path = tmp_dir / Path("car_1.jpg")
             local_file_path.open("wb").write(r.content)
             _convert_kili_semantic_to_coco(
                 job_name=JobName(job_name),
