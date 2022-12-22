@@ -192,16 +192,13 @@ def _get_coco_images_and_annotations(
 ) -> Tuple[List[_CocoImage], List[_CocoAnnotation]]:
     coco_images = []
     coco_annotations = []
-    annotation_offset = -1
+    annotation_offset = 0
     for asset_i, asset in tqdm(
         enumerate(assets),
         desc="Convert to coco format",
     ):
-        if job_name not in asset["latestLabel"]["jsonResponse"]:
-            continue
         file_name = Path(shutil.copy(asset["content"], data_dir))
         width, height = Image.open(asset["content"]).size
-
         coco_image = _CocoImage(
             id=asset_i,
             license=0,
@@ -210,13 +207,18 @@ def _get_coco_images_and_annotations(
             width=width,
             date_captured=None,
         )
+
         coco_images.append(coco_image)
-        coco_img_annotations, annotation_offset = _get_coco_image_annotations(
-            asset["latestLabel"]["jsonResponse"][job_name]["annotations"],
-            cat_kili_id_to_coco_id,
-            annotation_offset,
-            coco_image,
-        )
+        if job_name not in asset["latestLabel"]["jsonResponse"]:
+            coco_img_annotations = []
+            # annotation offset is unchanged
+        else:
+            coco_img_annotations, annotation_offset = _get_coco_image_annotations(
+                asset["latestLabel"]["jsonResponse"][job_name]["annotations"],
+                cat_kili_id_to_coco_id,
+                annotation_offset,
+                coco_image,
+            )
         coco_annotations.extend(coco_img_annotations)
     return coco_images, coco_annotations
 
