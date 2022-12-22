@@ -43,6 +43,16 @@ asset_image_1 = {
     "jsonContent": "",
 }
 
+asset_image_1_without_label = {
+    "latestLabel": {
+        "jsonResponse": {},
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+    },
+    "externalId": "car_2",
+    "content": "https://storage.googleapis.com/label-public-staging/car/car_2.jpg",
+    "jsonContent": "",
+}
+
 asset_image_2 = {
     "latestLabel": {
         "jsonResponse": job_object_detection,
@@ -52,6 +62,7 @@ asset_image_2 = {
     "content": "https://storage.googleapis.com/label-public-staging/car/car_2.jpg",
     "jsonContent": "",
 }
+
 
 asset_video = {
     "latestLabel": {

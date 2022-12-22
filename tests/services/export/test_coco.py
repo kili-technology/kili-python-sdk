@@ -15,6 +15,9 @@ from kili.services.types import JobName
 class CocoTestCase(TestCase):
     @staticmethod
     def get_asset(content_path: Path, with_annotation: bool) -> Asset:
+        # without annotation means that: there is a label for the asset
+        # but there is no labeling data for the job.
+        # `annotations=[]` should not exist.
         json_response = {"author": {"firstname": "Jean-Pierre", "lastname": "Dupont"}}
         if with_annotation:
             json_response.update(
