@@ -175,7 +175,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         Export images folder
         """
-        return self.base_folder / "images"
+        return self.base_folder / "assets"
 
     @staticmethod
     def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:

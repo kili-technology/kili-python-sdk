@@ -17,7 +17,7 @@ def get_file_tree(folder: str):
     Returns the file tree in the shape of a dictionary.
     Example:
     {
-        "images": {"remote_assets.csv": {}},
+        "assets": {"remote_assets.csv": {}},
         "JOB_0": {
             "labels": {
                 "car_1.txt": {},
@@ -56,7 +56,7 @@ def get_file_tree(folder: str):
                     "with_assets": False,
                 },
                 "file_tree_expected": {
-                    "images": {"remote_assets.csv": {}},
+                    "assets": {"remote_assets.csv": {}},
                     "JOB_0": {
                         "labels": {
                             "car_1.txt": {},
@@ -80,7 +80,7 @@ def get_file_tree(folder: str):
                     "with_assets": True,
                 },
                 "file_tree_expected": {
-                    "images": {"car_1.jpg": {}},
+                    "assets": {"car_1.jpg": {}},
                     "JOB_0": {
                         "labels": {
                             "car_1.txt": {},
@@ -104,7 +104,7 @@ def get_file_tree(folder: str):
                     "with_assets": False,
                 },
                 "file_tree_expected": {
-                    "images": {"remote_assets.csv": {}},
+                    "assets": {"remote_assets.csv": {}},
                     "labels": {"car_1.txt": {}},
                     "data.yaml": {},
                     "README.kili.txt": {},
@@ -121,7 +121,7 @@ def get_file_tree(folder: str):
                     "with_assets": True,
                 },
                 "file_tree_expected": {
-                    "images": {"car_1.jpg": {}},
+                    "assets": {"car_1.jpg": {}},
                     "labels": {"car_1.txt": {}},
                     "data.yaml": {},
                     "README.kili.txt": {},
@@ -138,7 +138,7 @@ def get_file_tree(folder: str):
                     "with_assets": False,
                 },
                 "file_tree_expected": {
-                    "images": {"remote_assets.csv": {}},
+                    "assets": {"remote_assets.csv": {}},
                     "labels": {"car_1.txt": {}},
                     "classes.txt": {},
                     "README.kili.txt": {},
@@ -155,7 +155,7 @@ def get_file_tree(folder: str):
                     "with_assets": True,
                 },
                 "file_tree_expected": {
-                    "images": {"car_1.jpg": {}},
+                    "assets": {"car_1.jpg": {}},
                     "labels": {"car_1.txt": {}},
                     "classes.txt": {},
                     "README.kili.txt": {},
@@ -185,7 +185,7 @@ def get_file_tree(folder: str):
                     "with_assets": True,
                 },
                 "file_tree_expected": {
-                    "images": {"car_1.jpg": {}},
+                    "assets": {"car_1.jpg": {}},
                     "labels": {"car_1.json": {}},
                     "README.kili.txt": {},
                 },
@@ -219,7 +219,7 @@ def get_file_tree(folder: str):
                     "split_option": "merged",
                 },
                 "file_tree_expected": {
-                    "images": {"car_1.jpg": {}},
+                    "assets": {"car_1.jpg": {}},
                     "labels": {"car_1.xml": {}},
                     "README.kili.txt": {},
                 },
