@@ -95,30 +95,6 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to YOLO v5 format with splitted files and download assets",
-            {
-                "export_kwargs": {
-                    "project_id": "object_detection",
-                    "label_format": "yolo_v5",
-                    "split_option": "split",
-                    "with_assets": True,
-                },
-                "file_tree_expected": {
-                    "images": {"car_1.jpg": {}},
-                    "JOB_0": {
-                        "labels": {
-                            "car_1.txt": {},
-                        },
-                        "data.yaml": {},
-                    },
-                    "JOB_1": {"labels": {"car_1.txt": {}}, "data.yaml": {}},
-                    "JOB_2": {"labels": {"car_1.txt": {}}, "data.yaml": {}},
-                    "JOB_3": {"labels": {"car_1.txt": {}}, "data.yaml": {}},
-                    "README.kili.txt": {},
-                },
-            },
-        ),
-        (
             "Export to YOLO v5 format with merged file",
             {
                 "export_kwargs": {
