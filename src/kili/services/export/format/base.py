@@ -6,7 +6,6 @@ import csv
 import json
 import logging
 import shutil
-import warnings
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
@@ -39,8 +38,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     """
     Abstract class defining the interface for all exporters.
     """
-
-    THRESHOLD_WARN_MANY_ASSETS = 1000
 
     def __init__(
         self,
@@ -151,10 +148,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self._check_arguments_compatibility()
 
         self.logger.warning("Fetching assets...")
-        if self.with_assets:
-            count = self.kili.count_assets(project_id=self.project_id)
-            if count > self.THRESHOLD_WARN_MANY_ASSETS:
-                warnings.warn(f"Downloading {count} assets. This might take a while.")
 
         with TemporaryDirectory() as export_root_folder:
             self.export_root_folder = export_root_folder
