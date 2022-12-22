@@ -28,6 +28,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     output_file: str,
     disable_tqdm: bool,
     log_level: LogLevel,
+    with_assets: bool,
 ) -> None:
     """
     Export the selected assets into the required format, and save it into a file archive.
@@ -43,6 +44,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         split_option=split_option,
         single_file=single_file,
         output_file=Path(output_file),
+        with_assets=with_assets,
     )
 
     logger = get_logger(log_level)

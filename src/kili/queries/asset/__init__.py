@@ -113,7 +113,7 @@ class QueriesAsset:
             as_generator: If `True`, a generator on the assets is returned.
             label_category_search: Returned assets should have a label that follows this category search query.
             download_media: Tell is the media have to be downloaded or not.
-            local_media_dir: Directory where the media is downloaded if `download_media` is True.
+            local_media_dir: Directory where the media are downloaded if `download_media` is True.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"

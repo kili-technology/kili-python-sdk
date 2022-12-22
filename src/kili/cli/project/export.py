@@ -42,6 +42,12 @@ from kili.services.types import ProjectId
         " (COCO and Kili)."
     ),
 )
+@click.option(
+    "--with-assets/--without-assets",
+    type=bool,
+    default=True,
+    help="Download assets in the export.",
+)
 @Options.api_key
 @Options.endpoint
 @Options.project_id
@@ -57,6 +63,7 @@ def export_labels(
     endpoint: Optional[str],
     project_id: str,
     verbose: bool,  # pylint: disable=unused-argument
+    with_assets: bool,
 ):
     """
     Export the Kili labels of a project to a given format.
@@ -105,6 +112,7 @@ def export_labels(
             output_file=output_file,
             disable_tqdm=not verbose,
             log_level="INFO" if verbose else "WARNING",
+            with_assets=with_assets,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))

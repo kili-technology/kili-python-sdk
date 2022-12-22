@@ -319,6 +319,7 @@ class QueriesLabel:
         layout: SplitOption = "split",
         single_file: bool = False,
         disable_tqdm: bool = False,
+        with_assets: bool = True,
     ):
         """
         Export the project labels with the requested format into the requested output path.
@@ -333,6 +334,7 @@ class QueriesLabel:
             single_file: Layout of the exported labels. Single file mode is
                 only available for some specific formats (COCO and Kili).
             disable_tqdm: Disable the progress bar if True.
+            with_assets: Download the assets in the export.
 
         !!! Info
             The supported formats are:
@@ -365,6 +367,7 @@ class QueriesLabel:
                 output_file=filename,
                 disable_tqdm=disable_tqdm,
                 log_level="WARNING",
+                with_assets=with_assets,
             )
         except NoCompatibleJobError as excp:
             print(str(excp))
