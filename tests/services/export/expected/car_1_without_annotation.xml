@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<annotation>
+   <folder/>
+   <filename>car_1.xml</filename>
+   <path/>
+   <source>
+      <database>Kili Technology</database>
+   </source>
+   <size>
+      <width>1920</width>
+      <height>1080</height>
+      <depth>3</depth>
+   </size>
+   <segmented/>
+</annotation>

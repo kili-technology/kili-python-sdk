@@ -5,7 +5,6 @@ from typeguard import typechecked
 
 from kili import services
 from kili.services.export.types import LabelFormat, SplitOption
-from kili.services.label_import import import_labels_from_dict
 from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
 
 
@@ -75,17 +74,23 @@ class Project:  # pylint: disable=too-few-public-methods
         )
 
     @typechecked
-    def append_labels(self, labels: List[dict], label_type: LabelType = "DEFAULT"):
+    def append_labels(
+        self,
+        labels: List[dict],
+        label_type: LabelType = "DEFAULT",
+        model_name: Optional[str] = None,
+    ):
         """Append labels to assets.
 
         !!! info "fields of labels to append"
+            Either provide an asset_id or an external_id
             ```
             class LabelData:
-                asset_id: Required[str]
+                asset_id: str
+                asset_external_id: str
                 json_response: Required[Dict]
                 author_id: str
                 seconds_to_label: int
-                modelName: str
             ```
 
         Args:
@@ -105,4 +110,6 @@ class Project:  # pylint: disable=too-few-public-methods
                 )
 
         """
-        return import_labels_from_dict(self.client, labels, label_type)
+        return services.import_labels_from_dict(
+            self.client, self.project_id, labels, label_type, model_name
+        )

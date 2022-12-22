@@ -57,3 +57,11 @@ class GraphQLError(Exception):
 
 class NonExistingFieldError(ValueError):
     """Raised when querying a field that does not exist on an object"""
+
+
+class MissingArgumentError(ValueError):
+    """Raised when an required argument was not given by the user"""
+
+
+class IncompatibleArgumentsError(ValueError):
+    """Raised when the user gave at least two incompatible arguments"""

@@ -35,15 +35,18 @@ class TestCLIProjectImport:
                         "project-id": "project_id",
                     },
                     "flags": [],
-                    "mutation_to_call": "append_to_labels",
-                    "expected_mutation_payload": {
-                        "project_id": "project_id",
-                        "json_response": {
-                            "JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}
-                        },
-                        "label_asset_external_id": "asset6",
-                    },
-                    "expected_mutation_call_count": 5,
+                    "expected_service_call": (
+                        ANY,
+                        ["test_tree/leaf_1/", "test_tree/asset1.json", "test_tree/leaf_2/**.json"],
+                        None,
+                        "project_id",
+                        "kili",
+                        None,
+                        True,
+                        "WARNING",
+                        None,
+                        False,
+                    ),
                 },
             ),
             (
@@ -59,28 +62,32 @@ class TestCLIProjectImport:
                     },
                     "flags": ["prediction"],
                     "mutation_to_call": "create_predictions",
-                    "expected_mutation_payload": {
-                        "project_id": "project_id",
-                        "json_response_array": [
-                            {
-                                "JOB_0": {
-                                    "categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]
-                                }
-                            }
-                        ]
-                        * 2,
-                        "external_id_array": ["asset1", "asset6"],
-                        "model_name_array": ["model_name"] * 2,
-                    },
+                    "expected_service_call": (
+                        ANY,
+                        ["test_tree/asset1.json", "test_tree/leaf_2/asset6.json"],
+                        None,
+                        "project_id",
+                        "kili",
+                        None,
+                        True,
+                        "WARNING",
+                        "model_name",
+                        True,
+                    ),
                 },
             ),
         ],
     )
-    def test_import_labels(self, mocker, name, test_case):
+    def test_import_labels(
+        self,
+        mocker,
+        name,
+        test_case,
+    ):
         """
-        Legacy tests that call the Kili import. To split into a CLI tests and
-        a service test.
+        Test that the CLI properly calls the label_import service
         """
+        print()
         _, _ = mocker, name
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -100,21 +107,16 @@ class TestCLIProjectImport:
                 json.dump(mock_label, outfile)
             with open("test_tree/leaf_2/asset6.json", "w") as outfile:
                 json.dump(mock_label, outfile)
-
-            kili_client.append_to_labels = append_to_labels_mock = MagicMock()
-            arguments = test_case["files"]
-            for k, v in test_case["options"].items():
-                arguments.append("--" + k)
-                arguments.append(v)
-            if test_case.get("flags"):
-                arguments.extend(["--" + flag for flag in test_case["flags"]])
+                arguments = test_case["files"]
+                for k, v in test_case["options"].items():
+                    arguments.append("--" + k)
+                    arguments.append(v)
+                if test_case.get("flags"):
+                    arguments.extend(["--" + flag for flag in test_case["flags"]])
+        with patch("kili.services.import_labels_from_files") as mocked_import_labels_service:
             result = runner.invoke(import_labels, arguments)
             debug_subprocess_pytest(result)
-            if test_case["mutation_to_call"] == "append_to_labels":
-                assert append_to_labels_mock.call_count == test_case["expected_mutation_call_count"]
-                append_to_labels_mock.assert_any_call(**test_case["expected_mutation_payload"])
-            else:
-                create_predictions_mock.assert_called_with(**test_case["expected_mutation_payload"])
+            mocked_import_labels_service.assert_called_with(*test_case["expected_service_call"])
 
     @pytest.mark.parametrize(
         "name,test_case",
@@ -185,9 +187,7 @@ class TestCLIProjectImport:
         _ = name
         runner = CliRunner()
         with runner.isolated_filesystem():
-            with patch(
-                "kili.services.label_import.import_labels_from_files"
-            ) as mocked_import_labels_service:
+            with patch("kili.services.import_labels_from_files") as mocked_import_labels_service:
                 arguments = test_case["files"]
                 for k, v in test_case["options"].items():
                     arguments.append("--" + k)

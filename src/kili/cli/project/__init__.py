@@ -3,6 +3,7 @@
 import click
 
 from kili.cli.common_args import CONTEXT_SETTINGS
+from kili.cli.project.copy import copy_project
 from kili.cli.project.create import create_project
 from kili.cli.project.describe import describe_project
 from kili.cli.project.export import export_labels
@@ -24,3 +25,4 @@ project.add_command(import_labels, name="label")
 project.add_command(list_projects, name="list")
 project.add_command(member, name="member")
 project.add_command(export_labels, name="export")
+project.add_command(copy_project, name="copy")

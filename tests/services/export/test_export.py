@@ -227,7 +227,7 @@ def get_file_tree(folder: str):
         ),
     ],
 )
-def test_export_service(name, test_case):
+def test_export_service_layout(name, test_case):
     with TemporaryDirectory() as export_folder:
         with TemporaryDirectory() as extract_folder:
             path_zipfile = Path(export_folder) / "export.zip"
