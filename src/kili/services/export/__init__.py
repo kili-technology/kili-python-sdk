@@ -43,7 +43,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         count = kili.count_assets(project_id)
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
-                "Downloading many assets ({count}). This might take a while. Consider disabling"
+                f"Downloading many assets ({count}). This might take a while. Consider disabling"
                 " assets download in the options."
             )
 
