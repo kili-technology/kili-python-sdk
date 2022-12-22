@@ -16,6 +16,7 @@ from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import ProjectId
+from kili.utils.tempfile import TemporaryDirectory
 
 
 class ExportParams(NamedTuple):
@@ -30,15 +31,13 @@ class ExportParams(NamedTuple):
     split_option: SplitOption
     single_file: bool
     output_file: Path
+    with_assets: bool
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
-
     """
     Abstract class defining the interface for all exporters.
     """
-
-    download_media = False  # Whether or not we need to download the media for the given format.
 
     def __init__(
         self,
@@ -59,9 +58,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.logger: logging.Logger = logger
         self.content_repository: AbstractContentRepository = content_repository
         self.output_file = export_params.output_file
+        self.with_assets: bool = export_params.with_assets
+        self.export_root_folder: Path = Path()
 
     @abstractmethod
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """
         Checks if the format is compatible with the export options.
         """
@@ -145,17 +146,36 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Return the name of the exported archive file in the bucket.
         """
         self._check_arguments_compatibility()
+
         self.logger.warning("Fetching assets...")
-        assets = fetch_assets(
-            self.kili,
-            project_id=self.project_id,
-            asset_ids=self.assets_ids,
-            export_type=self.export_type,
-            label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=self.disable_tqdm,
-            download_media=self.download_media,
-        )
-        self.process_and_save(assets, self.output_file)
+
+        with TemporaryDirectory() as export_root_folder:
+            self.export_root_folder = export_root_folder
+            assets = fetch_assets(
+                self.kili,
+                project_id=self.project_id,
+                asset_ids=self.assets_ids,
+                export_type=self.export_type,
+                label_type_in=["DEFAULT", "REVIEW"],
+                disable_tqdm=self.disable_tqdm,
+                download_media=self.with_assets,
+                local_media_dir=str(self.images_folder),
+            )
+            self.process_and_save(assets, self.output_file)
+
+    @property
+    def base_folder(self) -> Path:
+        """
+        Export base folder
+        """
+        return self.export_root_folder / self.project_id
+
+    @property
+    def images_folder(self) -> Path:
+        """
+        Export images folder
+        """
+        return self.base_folder / "images"
 
     @staticmethod
     def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:

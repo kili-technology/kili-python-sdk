@@ -29,6 +29,7 @@ class YoloTestCase(TestCase):
                     labels_folder,
                     category_ids,
                     fake_content_repository,
+                    with_assets=False,
                 )
 
                 nb_files = len(
@@ -56,6 +57,7 @@ class YoloTestCase(TestCase):
                     labels_folder,
                     category_ids,
                     fake_content_repository,
+                    with_assets=False,
                 )
 
                 nb_files = len(

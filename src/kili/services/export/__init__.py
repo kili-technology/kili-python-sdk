@@ -1,5 +1,6 @@
 """Service for exporting kili objects """
 
+import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Type
 
@@ -16,6 +17,8 @@ from kili.services.export.repository import SDKContentRepository
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import LogLevel, ProjectId
 
+THRESHOLD_WARN_MANY_ASSETS = 1000
+
 
 def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     kili,
@@ -28,12 +31,21 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     output_file: str,
     disable_tqdm: bool,
     log_level: LogLevel,
+    with_assets: bool,
 ) -> None:
     """
     Export the selected assets into the required format, and save it into a file archive.
     """
     if kili.count_projects(project_id=project_id) == 0:
         raise NotFound(f"project ID: {project_id}")
+
+    if with_assets:
+        count = kili.count_assets(project_id)
+        if count > THRESHOLD_WARN_MANY_ASSETS:
+            warnings.warn(
+                f"Downloading many assets ({count}). This might take a while. Consider disabling"
+                " assets download in the options."
+            )
 
     export_params = ExportParams(
         assets_ids=asset_ids,
@@ -43,6 +55,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         split_option=split_option,
         single_file=single_file,
         output_file=Path(output_file),
+        with_assets=with_assets,
     )
 
     logger = get_logger(log_level)

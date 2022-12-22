@@ -53,9 +53,34 @@ def get_file_tree(folder: str):
                     "project_id": "object_detection",
                     "label_format": "yolo_v5",
                     "split_option": "split",
+                    "with_assets": False,
                 },
                 "file_tree_expected": {
                     "images": {"remote_assets.csv": {}},
+                    "JOB_0": {
+                        "labels": {
+                            "car_1.txt": {},
+                        },
+                        "data.yaml": {},
+                    },
+                    "JOB_1": {"labels": {}, "data.yaml": {}},
+                    "JOB_2": {"labels": {}, "data.yaml": {}},
+                    "JOB_3": {"labels": {}, "data.yaml": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "Export to YOLO v5 format with splitted files and download assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "yolo_v5",
+                    "split_option": "split",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "images": {"car_1.jpg": {}},
                     "JOB_0": {
                         "labels": {
                             "car_1.txt": {},
@@ -76,9 +101,27 @@ def get_file_tree(folder: str):
                     "project_id": "object_detection",
                     "label_format": "yolo_v5",
                     "split_option": "merged",
+                    "with_assets": False,
                 },
                 "file_tree_expected": {
                     "images": {"remote_assets.csv": {}},
+                    "labels": {"car_1.txt": {}},
+                    "data.yaml": {},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "Export to YOLO v5 format with merged file and download media",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "yolo_v5",
+                    "split_option": "merged",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "images": {"car_1.jpg": {}},
                     "labels": {"car_1.txt": {}},
                     "data.yaml": {},
                     "README.kili.txt": {},
@@ -92,9 +135,27 @@ def get_file_tree(folder: str):
                     "project_id": "object_detection",
                     "label_format": "yolo_v4",
                     "split_option": "merged",
+                    "with_assets": False,
                 },
                 "file_tree_expected": {
                     "images": {"remote_assets.csv": {}},
+                    "labels": {"car_1.txt": {}},
+                    "classes.txt": {},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "Export to YOLO v4 format with merged file and download assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "yolo_v4",
+                    "split_option": "merged",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "images": {"car_1.jpg": {}},
                     "labels": {"car_1.txt": {}},
                     "classes.txt": {},
                     "README.kili.txt": {},
@@ -107,8 +168,24 @@ def get_file_tree(folder: str):
                 "export_kwargs": {
                     "project_id": "object_detection",
                     "label_format": "raw",
+                    "with_assets": False,
                 },
                 "file_tree_expected": {
+                    "labels": {"car_1.json": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "Export to Kili raw format",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "raw",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "assets": {"car_1.jpg": {}},
                     "labels": {"car_1.json": {}},
                     "README.kili.txt": {},
                 },
@@ -142,7 +219,7 @@ def get_file_tree(folder: str):
                     "split_option": "merged",
                 },
                 "file_tree_expected": {
-                    "images": {"remote_assets.csv": {}},
+                    "images": {"car_1.jpg": {}},
                     "labels": {"car_1.xml": {}},
                     "README.kili.txt": {},
                 },
@@ -165,6 +242,7 @@ def test_export_service_layout(name, test_case):
                 "output_file": str(path_zipfile),
                 "disable_tqdm": True,
                 "log_level": "INFO",
+                "with_assets": True,
             }
 
             default_kwargs.update(test_case["export_kwargs"])
@@ -250,6 +328,7 @@ def test_export_service_errors(name, test_case, error):
             "output_file": str(path_zipfile),
             "disable_tqdm": True,
             "log_level": "INFO",
+            "with_assets": True,
         }
 
         default_kwargs.update(test_case["export_kwargs"])

@@ -14,7 +14,7 @@ from kili.cli.project.import_ import import_assets
 from kili.cli.project.list_ import list_projects
 
 from ...utils import debug_subprocess_pytest
-from .mocks.assets import mocked__project_assets
+from .mocks.assets import mocked__project_assets, mocked__project_count_assets
 from .mocks.projects import mocked__projects
 
 kili_client = MagicMock()
@@ -23,6 +23,7 @@ kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
 kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
 kili_client.create_project = create_project_mock = MagicMock()
 kili_client.assets = assets_mock = MagicMock(side_effect=mocked__project_assets)
+kili_client.count_assets = count_assets_mock = MagicMock(side_effect=mocked__project_count_assets)
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
@@ -367,6 +368,7 @@ class TestCLIProject:
                     "toto",
                     "--endpoint",
                     "localhost",
+                    "--without-assets",
                 ],
             ),
             (
@@ -385,24 +387,7 @@ class TestCLIProject:
                     "toto",
                     "--endpoint",
                     "localhost",
-                ],
-            ),
-            (
-                "Export to Pascal VOC format using CLI",
-                [
-                    "--output-format",
-                    "pascal_voc",
-                    "--output-file",
-                    "export.zip",
-                    "--project-id",
-                    "object_detection",
-                    "--layout",
-                    "merged",
-                    "--verbose",
-                    "--api-key",
-                    "toto",
-                    "--endpoint",
-                    "localhost",
+                    "--without-assets",
                 ],
             ),
         ],

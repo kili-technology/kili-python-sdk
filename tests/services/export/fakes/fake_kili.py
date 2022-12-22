@@ -56,6 +56,12 @@ class FakeKili:
 
         return post_call_process(_assets())
 
+    def count_assets(self, project_id: str):
+        """
+        Count assets.
+        """
+        return len(self.assets(project_id=project_id, fields=[""]))
+
     def projects(
         self, project_id: str, fields: Optional[List[str]] = None, disable_tqdm: bool = False
     ):

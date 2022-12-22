@@ -34,6 +34,7 @@ class Project:  # pylint: disable=too-few-public-methods
         single_file: bool = False,
         disable_tqdm: bool = False,
         log_level: LogLevel = "INFO",
+        with_assets: bool = True,
     ) -> None:
         """Export the project assets with the requested format into the requested output path.
 
@@ -56,6 +57,7 @@ class Project:  # pylint: disable=too-few-public-methods
                 only available for some specific formats (COCO and Kili).
             disable_tqdm: Disable the progress bar if True.
             log_level: Level of debugging.
+            with_assets: Download the assets in the export.
         """
         services.export_labels(
             self.client,
@@ -68,6 +70,7 @@ class Project:  # pylint: disable=too-few-public-methods
             output_file=filename,
             disable_tqdm=disable_tqdm,
             log_level=log_level,
+            with_assets=with_assets,
         )
 
     @typechecked

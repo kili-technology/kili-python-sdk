@@ -10,7 +10,6 @@ from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleO
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
-from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
 
@@ -44,17 +43,14 @@ class YoloExporter(AbstractExporter):
                 f"that can be converted to the {self.label_format} format."
             )
 
-        with TemporaryDirectory() as root_folder:
-            images_folder = root_folder / self.project_id / "images"
-            images_folder.mkdir(parents=True)
-            self._write_jobs_labels_into_split_folders(
-                assets,
-                categories_by_job,
-                root_folder,
-                images_folder,
-            )
-            self.create_readme_kili_file(root_folder)
-            self.make_archive(root_folder, output_filename)
+        self._write_jobs_labels_into_split_folders(
+            assets,
+            categories_by_job,
+            self.export_root_folder,
+            self.images_folder,
+        )
+        self.create_readme_kili_file(self.export_root_folder)
+        self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -68,21 +64,17 @@ class YoloExporter(AbstractExporter):
                 f"that can be converted to the {self.label_format} format."
             )
 
-        with TemporaryDirectory() as root_folder:
-            base_folder = root_folder / self.project_id
-            images_folder = base_folder / "images"
-            labels_folder = base_folder / "labels"
-            images_folder.mkdir(parents=True)
-            labels_folder.mkdir(parents=True)
-            self._write_labels_into_single_folder(
-                assets,
-                merged_categories_id,
-                labels_folder,
-                images_folder,
-                base_folder,
-            )
-            self.create_readme_kili_file(root_folder)
-            self.make_archive(root_folder, output_filename)
+        labels_folder = self.base_folder / "labels"
+        labels_folder.mkdir(parents=True)
+        self._write_labels_into_single_folder(
+            assets,
+            merged_categories_id,
+            labels_folder,
+            self.images_folder,
+            self.base_folder,
+        )
+        self.create_readme_kili_file(self.export_root_folder)
+        self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -127,7 +119,12 @@ class YoloExporter(AbstractExporter):
 
         for asset in tqdm(assets, disable=self.disable_tqdm):
             asset_remote_content, video_filenames = _process_asset(
-                asset, images_folder, labels_folder, categories_id, self.content_repository
+                asset,
+                images_folder,
+                labels_folder,
+                categories_id,
+                self.content_repository,
+                self.with_assets,
             )
             if video_filenames:
                 video_metadata[asset["externalId"]] = video_filenames
@@ -137,6 +134,7 @@ class YoloExporter(AbstractExporter):
             self.write_video_metadata_file(video_metadata, base_folder)
 
         if len(remote_content) > 0:
+            self.images_folder.mkdir(parents=True)
             self.write_remote_content_file(remote_content, images_folder)
 
     def _write_jobs_labels_into_split_folders(
@@ -289,8 +287,9 @@ def _process_asset(
     labels_folder: Path,
     category_ids: Dict[str, JobCategory],
     content_repository: AbstractContentRepository,
+    with_assets: bool,
 ) -> Tuple[List[Tuple[str, str, str]], List[str]]:
-    # pylint: disable=too-many-locals, too-many-branches
+    # pylint: disable=too-many-locals, too-many-branches, too-many-arguments
     """
     Process an asset for all job_ids of category_ids.
     """
@@ -316,6 +315,9 @@ def _process_asset(
             continue
 
         _write_labels_to_file(labels_folder, filename, frame_labels)
+
+        if with_assets:
+            continue
 
         content_frame = content_frames[idx] if content_frames else asset["content"]
         if content_repository.is_serving(content_frame):

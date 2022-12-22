@@ -2,10 +2,10 @@
 Common code for the PASCAL VOC exporter.
 """
 
+import warnings
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from tempfile import NamedTemporaryFile
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 from xml.dom import minidom
 
 from PIL import Image
@@ -13,7 +13,6 @@ from PIL import Image
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository
-from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
 
@@ -21,6 +20,14 @@ class VocExporter(AbstractExporter):
     """
     Common code for VOC exporter.
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.with_assets:
+            warnings.warn(
+                "For an export to the Pascal VOC format, the download of assets cannot be disabled."
+            )
+        self.with_assets = True
 
     def _check_arguments_compatibility(self):
         if self.single_file:
@@ -39,32 +46,14 @@ class VocExporter(AbstractExporter):
         # pylint: disable=too-many-locals, too-many-arguments
         self.logger.info("Exporting VOC format")
 
-        with TemporaryDirectory() as folder:
-            base_folder = folder / self.project_id
-            images_folder = base_folder / "images"
-            labels_folder = base_folder / "labels"
-            images_folder.mkdir(parents=True)
-            labels_folder.mkdir(parents=True)
+        labels_folder = self.base_folder / "labels"
+        labels_folder.mkdir(parents=True)
 
-            remote_content = []
-            video_metadata = {}
+        for asset in tqdm(assets, disable=self.disable_tqdm):
+            _process_asset_for_job(self.content_repository, asset, labels_folder)
 
-            for asset in tqdm(assets, disable=self.disable_tqdm):
-                asset_remote_content, video_filenames = _process_asset_for_job(
-                    self.content_repository, asset, images_folder, labels_folder
-                )
-                if video_filenames:
-                    video_metadata[asset["externalId"]] = video_filenames
-                remote_content.extend(asset_remote_content)
-
-            if video_metadata:
-                self.write_video_metadata_file(video_metadata, base_folder)
-
-            if len(remote_content) > 0:
-                self.write_remote_content_file(remote_content, images_folder)
-
-            self.create_readme_kili_file(folder)
-            self.make_archive(folder, output_filename)
+        self.create_readme_kili_file(self.export_root_folder)
+        self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -72,93 +61,51 @@ class VocExporter(AbstractExporter):
 def _process_asset_for_job(
     content_repository: AbstractContentRepository,
     asset: Dict,
-    images_folder: Path,
     labels_folder: Path,
-) -> Tuple[List, List]:
+) -> None:
     # pylint: disable=too-many-locals, too-many-branches
     """
     Process an asset
     """
     frames = {}
     is_frame = False
-    asset_remote_content = []
 
-    idx = leading_zeros = 0
+    idx = 0
     if "jsonResponse" in asset["latestLabel"]:
         number_of_frames = len(asset["latestLabel"]["jsonResponse"])
-        leading_zeros = len(str(number_of_frames))
         for idx in range(number_of_frames):
             if str(idx) in asset["latestLabel"]["jsonResponse"]:
                 is_frame = True
                 frame_asset = asset["latestLabel"]["jsonResponse"][str(idx)]
                 frames[idx] = {"latestLabel": {"jsonResponse": frame_asset}}
 
+    if is_frame:
+        raise NotImplementedError("Export of annotations on videos is not supported yet.")
+
     if not frames:
         frames[-1] = asset
 
     content_frames = content_repository.get_content_frames_paths(asset)
-    video_filenames = []
     content_frame = content_frames[idx] if content_frames else asset["content"]
 
-    width, height = get_asset_dimensions(content_repository, content_frame, is_frame)
-    for idx, frame in frames.items():
-        if is_frame:
-            filename = f"{asset['externalId']}_{str(idx + 1).zfill(leading_zeros)}"
-            video_filenames.append(filename)
-        else:
-            filename = asset["externalId"]
+    filename = asset["externalId"]
+    width, height = get_asset_dimensions(content_frame)
+    for frame in frames.values():
         latest_label = frame["latestLabel"]
         json_response = latest_label["jsonResponse"]
-
         parameters = {"filename": f"{filename}.xml"}
         annotations = _convert_from_kili_to_voc_format(json_response, width, height, parameters)
-
-        if not annotations:
-            continue
 
         with open(labels_folder / f"{filename}.xml", "wb") as fout:
             fout.write(f"{annotations}\n".encode())
 
-        asset_remote_content.append([asset["externalId"], content_frame, f"{filename}.xml"])
 
-        is_served_by_kili = content_repository.is_serving(content_frame)
-        if is_served_by_kili or asset.get("isProcessingAuthorized", False):
-            if content_frames or not is_frame:
-                response = content_repository.get_content_stream(
-                    content_url=content_frame, block_size=1024
-                )
-                with open(images_folder / f"{filename}.jpg", "wb") as fout:
-                    for block in response:
-                        if not block:
-                            break
-                        fout.write(block)
-
-    if not content_frames and is_frame and content_repository.is_serving(asset["content"]):
-        raise NotImplementedError("Export of annotations on videos is not supported yet.")
-
-    return asset_remote_content, video_filenames
-
-
-def get_asset_dimensions(
-    content_repository: AbstractContentRepository, url: str, is_frame: bool
-) -> Tuple:
+def get_asset_dimensions(file_path: Union[Path, str]) -> Tuple:
     """
-    Download an asset and get width and height
+    Get an asset width and height
     """
-    content = url
-
-    response = content_repository.get_content_stream(content_url=content, block_size=1024)
-    with NamedTemporaryFile() as downloaded_file:
-        with open(downloaded_file.name, "wb") as fout:
-            for block in response:
-                if not block:
-                    break
-                fout.write(block)
-        if is_frame is True:
-            raise NotImplementedError("Export of annotations on videos is not supported yet.")
-        image = Image.open(downloaded_file.name)
-        width, height = image.size
-
+    image = Image.open(file_path)
+    width, height = image.size
     return width, height
 
 
