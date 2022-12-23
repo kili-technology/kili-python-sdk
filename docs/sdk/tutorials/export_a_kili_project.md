@@ -51,7 +51,7 @@ for asset in assets:
 
 
 ### Filtering specific labels per asset through the method filters
-You can specify label filters directly in the `.assets`(https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) and the `.labels`(https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.labels) methods. The available filters are listed in the arguments
+You can specify label filters directly in the [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) and the [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.labels) methods. The available filters are listed in the arguments
 of these methods.
 
 When done, you can write the conversion code to obtain the data in the format that you need.
@@ -158,7 +158,7 @@ The `.export_labels` method enables the export of a full project. It does the fo
 * The `with_assets` argument lets you decide if you want to include the assets in the export.
 * The `export_type` argument tells if the latest label or all the labels are exported.
 * The `split_option` argument tells if the export contains one folder for all the jobs, or one folder per job.
-* The `single_file` argument tells if the labels data should be exported into one single file. Note that some formats are single_file only, and that some others cannot be output into a single file.
+* The `single_file` argument tells if the labels data should be exported into one single file. Note that some formats are single file or multiple files only:
      * Kili: single file or multiple files.
      * YOLO: multiple files only.
      * Pascal VOC: multiple files only.
