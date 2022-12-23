@@ -17,5 +17,11 @@ class NoCompatibleJobError(Exception):
 
 class NotCompatibleOptions(ValueError):
     """
-    Exception thrown when two export options are not compatible
+    Exception thrown when export options are not compatible with the format.
+    """
+
+
+class NotCompatibleInputType(ValueError):
+    """
+    Exception thrown when project input type is not compatible with the export format.
     """

@@ -8,7 +8,11 @@ from zipfile import ZipFile
 import pytest
 
 from kili.services import export_labels
-from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotCompatibleInputType,
+    NotCompatibleOptions,
+)
 from tests.services.export.fakes.fake_kili import FakeKili
 
 
@@ -307,7 +311,7 @@ def test_export_service_layout(name, test_case):
                     "split_option": "merged",
                 },
             },
-            NoCompatibleJobError,
+            NotCompatibleInputType,
         ),
         (
             "Export Yolo format with single file to throw error",
@@ -343,6 +347,28 @@ def test_export_service_layout(name, test_case):
                 },
             },
             NotCompatibleOptions,
+        ),
+        (
+            "Export text classification to pascal format to throw error",
+            {
+                "export_kwargs": {
+                    "project_id": "text_classification",
+                    "label_format": "pascal_voc",
+                    "split_option": "merged",
+                },
+            },
+            NotCompatibleInputType,
+        ),
+        (
+            "Export text classification to pascal format to throw error",
+            {
+                "export_kwargs": {
+                    "project_id": "semantic_segmentation",
+                    "label_format": "pascal_voc",
+                    "split_option": "merged",
+                },
+            },
+            NoCompatibleJobError,
         ),
     ],
 )

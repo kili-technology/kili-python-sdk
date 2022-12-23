@@ -108,6 +108,7 @@ class FakeKili:
                     "id": "object_detection",
                     "description": "This is a test project",
                     "jsonInterface": json_interface,
+                    "inputType": "IMAGE",
                 }
             ]
         elif project_id == "text_classification":
@@ -140,6 +141,7 @@ class FakeKili:
                     "id": "text_classification",
                     "description": "This is a TC test project",
                     "jsonInterface": json_interface,
+                    "inputType": "TEXT",
                 }
             ]
         elif project_id == "semantic_segmentation":

@@ -69,7 +69,14 @@ class CocoExporter(AbstractExporter):
         self.with_assets = True
 
     def _check_arguments_compatibility(self):
-        pass
+        """
+        Checks if the export label format is compatible with the export options.
+        """
+
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project type.
+        """
 
     @property
     def images_folder(self) -> Path:

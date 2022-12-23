@@ -6,7 +6,12 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
-from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
+from kili.orm import JobMLTask, JobTool
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotCompatibleInputType,
+    NotCompatibleOptions,
+)
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
@@ -18,11 +23,63 @@ class YoloExporter(AbstractExporter):
     Common code for Yolo exporters.
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.split_option == "merged":
+            self.merged_categories_id = self._get_merged_categories(
+                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+            )
+        else:
+            self.categories_by_job = self._get_categories_by_job(
+                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+            )
+
     def _check_arguments_compatibility(self):
+        """
+        Checks if the export label format is compatible with the export options.
+        """
         if self.single_file:
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not be exported into a single file."
             )
+
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project type.
+        """
+        if self.project_input_type == "VIDEO":
+            raise NotImplementedError("Export of annotations on videos is not supported yet.")
+        if self.project_input_type != "IMAGE":
+            raise NotCompatibleInputType(
+                f"Project with input type '{self.project_input_type}' not compatible with YOLO"
+                " export format."
+            )
+
+        jobs = self.project_json_interface["jobs"]
+        jobs = {
+            job_name: job
+            for job_name, job in jobs.items()
+            if job["mlTask"] == JobMLTask.ObjectDetection
+            and any(tool == JobTool.Rectangle for tool in job["tools"])
+        }
+        if not jobs:
+            raise NoCompatibleJobError(
+                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
+            )
+
+        if self.split_option == "merged":
+            if not self.merged_categories_id:
+                raise NoCompatibleJobError(
+                    f"Error: There is no job in project {self.project_id} "
+                    f"that can be converted to the {self.label_format} format."
+                )
+        else:
+            if not self.categories_by_job:
+                raise NoCompatibleJobError(
+                    f"Error: There is no job in project {self.project_id} "
+                    f"that can be converted to the {self.label_format} format."
+                )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """
@@ -35,17 +92,9 @@ class YoloExporter(AbstractExporter):
     def _process_and_save_split(self, assets: List[Dict], output_filename: Path) -> None:
         self.logger.info("Exporting to yolo format split...")
 
-        json_interface, ml_task, tool = self.get_project_and_init()
-        categories_by_job = self._get_categories_by_job(json_interface, ml_task, tool)
-        if not categories_by_job:
-            raise NoCompatibleJobError(
-                f"Error: There is no job in project {self.project_id} "
-                f"that can be converted to the {self.label_format} format."
-            )
-
         self._write_jobs_labels_into_split_folders(
             assets,
-            categories_by_job,
+            self.categories_by_job,
             self.export_root_folder,
             self.images_folder,
         )
@@ -56,19 +105,12 @@ class YoloExporter(AbstractExporter):
 
     def _process_and_save_merge(self, assets: List[Dict], output_filename: Path) -> None:
         self.logger.info("Exporting to yolo format merged...")
-        json_interface, ml_task, tool = self.get_project_and_init()
-        merged_categories_id = self._get_merged_categories(json_interface, ml_task, tool)
-        if not merged_categories_id:
-            raise NoCompatibleJobError(
-                f"Error: There is no job in project {self.project_id} "
-                f"that can be converted to the {self.label_format} format."
-            )
 
         labels_folder = self.base_folder / "labels"
         labels_folder.mkdir(parents=True, exist_ok=True)
         self._write_labels_into_single_folder(
             assets,
-            merged_categories_id,
+            self.merged_categories_id,
             labels_folder,
             self.images_folder,
             self.base_folder,
