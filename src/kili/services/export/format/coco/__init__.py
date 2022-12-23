@@ -13,7 +13,8 @@ import numpy as np
 from PIL import Image
 from typing_extensions import TypedDict
 
-from kili.orm import Asset
+from kili.orm import Asset, JobMLTask, JobTool
+from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job, JobName, Jobs, ProjectId
 from kili.utils.tqdm import tqdm
@@ -77,6 +78,23 @@ class CocoExporter(AbstractExporter):
         """
         Checks if the export label format is compatible with the project.
         """
+        if self.project_input_type != "IMAGE":
+            raise NotCompatibleInputType(
+                f"Project with input type '{self.project_input_type}' not compatible with COCO"
+                " export format."
+            )
+
+        jobs = self.project_json_interface["jobs"]
+        jobs = {
+            job_name: job
+            for job_name, job in jobs.items()
+            if job["mlTask"] == JobMLTask.ObjectDetection
+            and any(tool == JobTool.Semantic for tool in job["tools"])
+        }
+        if not jobs:
+            raise NoCompatibleJobError(
+                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
+            )
 
     @property
     def images_folder(self) -> Path:
