@@ -10,7 +10,12 @@ from xml.dom import minidom
 
 from PIL import Image
 
-from kili.services.export.exceptions import NotCompatibleOptions
+from kili.orm import JobMLTask, JobTool
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotCompatibleInputType,
+    NotCompatibleOptions,
+)
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository
 from kili.utils.tqdm import tqdm
@@ -30,6 +35,9 @@ class VocExporter(AbstractExporter):
         self.with_assets = True
 
     def _check_arguments_compatibility(self):
+        """
+        Checks if the export label format is compatible with the export options.
+        """
         if self.single_file:
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not be exported into a single file."
@@ -37,6 +45,30 @@ class VocExporter(AbstractExporter):
         if self.split_option != "merged":
             raise NotCompatibleOptions(
                 "The current implementation only supports merged annotations."
+            )
+
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project.
+        """
+        if self.project_input_type == "VIDEO":
+            raise NotImplementedError("Export of annotations on videos is not supported yet.")
+        if self.project_input_type != "IMAGE":
+            raise NotCompatibleInputType(
+                f"Project with input type '{self.project_input_type}' not compatible with Pascal"
+                " VOC export format."
+            )
+
+        jobs = self.project_json_interface["jobs"]
+        jobs = {
+            job_name: job
+            for job_name, job in jobs.items()
+            if job["mlTask"] == JobMLTask.ObjectDetection
+            and any(tool == JobTool.Rectangle for tool in job["tools"])
+        }
+        if not jobs:
+            raise NoCompatibleJobError(
+                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
             )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:

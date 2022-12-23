@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, cast
 
-from kili.orm import Asset, JobMLTask, JobTool, Label
+from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
@@ -61,10 +61,22 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.with_assets: bool = export_params.with_assets
         self.export_root_folder: Path = Path()
 
+        project_info = self.kili.projects(
+            project_id=self.project_id, fields=["jsonInterface", "inputType"], disable_tqdm=True
+        )[0]
+        self.project_json_interface = project_info["jsonInterface"]
+        self.project_input_type = project_info["inputType"]
+
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
         """
-        Checks if the format is compatible with the export options.
+        Checks if the export label format is compatible with the export options.
+        """
+
+    @abstractmethod
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project.
         """
 
     @abstractmethod
@@ -81,21 +93,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         path_archive = shutil.make_archive(str(path_folder), "zip", path_folder)
         shutil.copy(path_archive, output_filename)
         return output_filename
-
-    def get_project_and_init(self):
-        """
-        Get and validate the project
-        """
-        json_interface = list(
-            self.kili.projects(
-                project_id=self.project_id, fields=["jsonInterface"], disable_tqdm=True
-            )
-        )[0]["jsonInterface"]
-
-        ml_task = JobMLTask.ObjectDetection
-        tool = JobTool.Rectangle
-
-        return json_interface, ml_task, tool
 
     def create_readme_kili_file(self, root_folder: Path) -> None:
         """
@@ -146,6 +143,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Return the name of the exported archive file in the bucket.
         """
         self._check_arguments_compatibility()
+        self._check_project_compatibility()
 
         self.logger.warning("Fetching assets...")
 
