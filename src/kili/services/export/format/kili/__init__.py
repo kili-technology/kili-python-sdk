@@ -22,7 +22,7 @@ class KiliExporter(AbstractExporter):
 
     def _check_project_compatibility(self) -> None:
         """
-        Checks if the export label format is compatible with the project type.
+        Checks if the export label format is compatible with the project.
         """
 
     def _save_assets_export(self, assets: List[Asset], output_filename: Path):

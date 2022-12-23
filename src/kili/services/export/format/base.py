@@ -76,7 +76,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     @abstractmethod
     def _check_project_compatibility(self) -> None:
         """
-        Checks if the export label format is compatible with the project type.
+        Checks if the export label format is compatible with the project.
         """
 
     @abstractmethod

@@ -49,7 +49,7 @@ class VocExporter(AbstractExporter):
 
     def _check_project_compatibility(self) -> None:
         """
-        Checks if the export label format is compatible with the project type.
+        Checks if the export label format is compatible with the project.
         """
         if self.project_input_type == "VIDEO":
             raise NotImplementedError("Export of annotations on videos is not supported yet.")
