@@ -70,7 +70,7 @@ class QueriesLabel:
             project_id: Identifier of the project.
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
-                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
+                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             author_in: Returned labels should have a label whose status belongs to that list, if given.
             created_at: Returned labels should have a label whose creation date is equal to this date.
