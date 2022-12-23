@@ -96,7 +96,7 @@ for asset in assets:
 ```
 
 ### Filtering the latest label per annotator
-When working on project with the [consensus](https://docs.kili-technology.com/docs/consensus-overview) activated, it can be worth it export the latest label done by each annotator:
+When working on project with [consensus](https://docs.kili-technology.com/docs/consensus-overview) enabled, it can be useful to export the latest label made by each annotator:
 ```python
 from kili.client import Kili
 from collections import defaultdict
