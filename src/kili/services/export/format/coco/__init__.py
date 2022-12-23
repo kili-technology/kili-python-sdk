@@ -93,7 +93,7 @@ class CocoExporter(AbstractExporter):
         }
         if not jobs:
             raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
+                f"Project needs at least one {JobMLTask.ObjectDetection} task."
             )
 
     @property
