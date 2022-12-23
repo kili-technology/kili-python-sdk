@@ -360,7 +360,7 @@ def test_export_service_layout(name, test_case):
             NotCompatibleInputType,
         ),
         (
-            "Export text classification to pascal format to throw error",
+            "Export semantic segmentation to pascal format to throw error",
             {
                 "export_kwargs": {
                     "project_id": "semantic_segmentation",
