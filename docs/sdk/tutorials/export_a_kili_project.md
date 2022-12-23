@@ -79,6 +79,10 @@ will directly return a list of labels authored by John Smith. In the `author_in`
 ### Filtering specific labels per asset through the label properties
 You can also look for specific labels, for example the last "review" status label per user, and dump the result into a json file. You can use the field `"labels.isLatestReviewLabelForUser"` to check if the label is the latest per user.
 ```python
+from kili.client import Kili
+from pathlib import Path
+import json
+
 assets = kili.assets("<your_project_id>", fields=["externalId", "labels.jsonResponse", "labels.isLatestReviewLabelForUser"])
 
 for asset in assets:
@@ -89,6 +93,42 @@ for asset in assets:
                 with (Path("/tmp") / (asset["externalId"] + ".json")).open("w", encoding="utf-8") as f:
                     f.write(json.dumps(annotation))
                 break # once we find a latest label done by a reviewer, we move on to the next asset.
+```
+
+### Filtering the latest label per annotator
+When working on project with [consensus](https://docs.kili-technology.com/docs/consensus-overview) enabled, it can be useful to export the latest label made by each annotator:
+```python
+from kili.client import Kili
+from collections import defaultdict
+from pathlib import Path
+import json
+
+
+kili = Kili()
+assets = kili.assets(
+    "clb54wfkn01zb0kyadscgaf5j",
+    fields=[
+        "externalId",
+        "labels.author.email",
+        "labels.createdAt",
+        "labels.labelType",
+        "labels.jsonResponse",
+    ],
+)
+
+for asset in assets:
+    if asset["labels"]:
+        latest_label_by_user = defaultdict(list)
+        for label in asset["labels"]:
+            if label["labelType"] == "DEFAULT":
+                latest_label_by_user[label["author"]["email"]].append(label)
+        latest_label_per_user = {
+            email: max(labels, key=lambda x: x["createdAt"])
+            for email, labels in latest_label_by_user.items()
+        }
+        with (Path("/tmp") / (asset["externalId"] + ".json")).open("w", encoding="utf-8") as f:
+            f.write(json.dumps(latest_label_per_user))
+
 ```
 
 ## Exporting a whole project
