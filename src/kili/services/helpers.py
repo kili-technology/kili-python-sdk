@@ -67,7 +67,7 @@ def infer_ids_from_external_ids(kili, asset_external_ids: List[str], project_id:
     for asset in assets:
         id_map[asset["externalId"]] = asset["id"]
 
-    if len(id_map) < len(asset_external_ids):
+    if len(id_map) < len(set(asset_external_ids)):
         assets_not_found = [
             external_id for external_id in asset_external_ids if external_id not in id_map
         ]
@@ -75,7 +75,7 @@ def infer_ids_from_external_ids(kili, asset_external_ids: List[str], project_id:
             f"The assets whose external_id are: {assets_not_found} have not been found in the"
             f" project of Id {project_id}"
         )
-    if len(id_map) > len(asset_external_ids):
+    if len(id_map) > len(set(asset_external_ids)):
         raise NotFound(
             "Several assets have been found for the same external_id. Please consider using asset"
             " ids instead."
