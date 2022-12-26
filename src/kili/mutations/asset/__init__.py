@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
 from kili.helpers import format_result
 from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
 from kili.mutations.asset.queries import (
@@ -18,6 +19,8 @@ from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.utils.pagination import _mutate_from_paginated_call
 
+from ...queries.asset import QueriesAsset
+
 
 class MutationsAsset:
     """
@@ -26,7 +29,7 @@ class MutationsAsset:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -160,7 +163,8 @@ class MutationsAsset:
                 is a text formatted using RichText
                 - For a Video project, the`json_content` is a json containg urls pointing
                     to each frame of the video.
-            status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`, `REVIEWED`
+            status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`,
+                `TO_REVIEW`, `REVIEWED`
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not
             is_honeypot_array: Whether to use the asset for honeypot
 
@@ -170,19 +174,16 @@ class MutationsAsset:
 
         Examples:
             >>> kili.update_properties_in_assets(
-                    asset_ids=["ckg22d81r0jrg0885unmuswj8",
-                        "ckg22d81s0jrh0885pdxfd03n"],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     consensus_marks=[1, 0.7],
                     contents=[None, 'https://to/second/asset.png'],
-                    external_ids=['external-id-of-your-choice-1',
-                        'external-id-of-your-choice-2'],
+                    external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
                     honeypot_marks=[0.8, 0.5],
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
                     priorities=[None, 2],
                     status_array=['LABELED', 'REVIEWED'],
-                    to_be_labeled_by_array=[
-                        ['test+pierre@kili-technology.com'], None],
+                    to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
             )
         """
 
@@ -260,25 +261,27 @@ class MutationsAsset:
         return format_result("data", results[0], Asset)
 
     @typechecked
-    def add_to_review(self, asset_ids: List[str]) -> Dict:
+    def add_to_review(self, asset_ids: List[str]) -> Optional[Dict[str, Any]]:
         """Add assets to review.
 
         !!! warning
             Assets without any label will be ignored.
 
         Args:
-            asset_ids: The asset IDs to add to review
+            asset_ids: The asset IDs to add to review.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict object with the project `id` and the `asset_ids` of assets moved to review.
+            `None` if no assets have changed status (already had `TO_REVIEW` status for example).
+            An error message if mutation failed.
 
         Examples:
             >>> kili.add_to_review(
                     asset_ids=[
                         "ckg22d81r0jrg0885unmuswj8",
-                        "ckg22d81s0jrh0885pdxfd03n"
+                        "ckg22d81s0jrh0885pdxfd03n",
                         ],
+                )
         """
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -291,25 +294,37 @@ class MutationsAsset:
             generate_variables,
             GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
         )
-        return format_result("data", results[0])
+        result = format_result("data", results[0])
+        if isinstance(result, dict) and "id" in result:
+            assets_in_review = QueriesAsset(self.auth).assets(
+                project_id=result["id"],
+                asset_id_in=asset_ids,
+                fields=["id"],
+                disable_tqdm=True,
+                status_in=["TO_REVIEW"],
+            )
+            result["asset_ids"] = [asset["id"] for asset in assets_in_review]
+            return result
+        return result
 
     @typechecked
-    def send_back_to_queue(self, asset_ids: List[str]) -> Dict[str, str]:
+    def send_back_to_queue(self, asset_ids: List[str]) -> Dict[str, Any]:
         """Send assets back to queue.
 
         Args:
             asset_ids: The IDs of the assets to send back to queue.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict object with the project `id` and the `asset_ids` of assets moved to queue.
+            An error message if mutation failed.
 
         Examples:
             >>> kili.send_back_to_queue(
                     asset_ids=[
                         "ckg22d81r0jrg0885unmuswj8",
-                        "ckg22d81s0jrh0885pdxfd03n"
+                        "ckg22d81s0jrh0885pdxfd03n",
                         ],
+                )
         """
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -319,4 +334,13 @@ class MutationsAsset:
         results = _mutate_from_paginated_call(
             self, properties_to_batch, generate_variables, GQL_SEND_BACK_ASSETS_TO_QUEUE
         )
-        return format_result("data", results[0])
+        result = format_result("data", results[0])
+        assets_in_queue = QueriesAsset(self.auth).assets(
+            project_id=result["id"],
+            asset_id_in=asset_ids,
+            fields=["id"],
+            disable_tqdm=True,
+            status_in=["ONGOING"],
+        )
+        result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
+        return result
