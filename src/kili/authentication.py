@@ -8,9 +8,10 @@ from requests import adapters
 from urllib3 import Retry
 
 from kili import __version__
+from kili.graphql import QueryOptions
+from kili.graphql.operations.api_key.queries import ApiKeyQuery, APIKeyWhere
 from kili.graphql_client import GraphQLClient, GraphQLClientName
 from kili.helpers import format_result
-from kili.queries.api_key import QueriesApiKey
 from kili.queries.user.queries import GQL_ME
 from kili.types import User
 
@@ -111,8 +112,12 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         """
         duration_days = 365
         warn_days = 30
-        queries = QueriesApiKey(self)
-        key_object = queries.api_keys(api_key=api_key, fields=["createdAt"], disable_tqdm=True)
+        key_object = ApiKeyQuery(
+            client=self.client,
+            fields=["createdAt"],
+            where=APIKeyWhere(api_key=api_key),
+            options=QueryOptions(disable_tqdm=True),
+        )
         key_creation = datetime.strptime(list(key_object)[0]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
         key_expiry = key_creation + timedelta(days=duration_days)
         key_remaining_time = key_expiry - datetime.now()
