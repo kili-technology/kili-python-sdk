@@ -4,20 +4,6 @@ Queries of label mutations
 
 from .fragments import LABEL_FRAGMENT, LABEL_FRAGMENT_ID
 
-GQL_CREATE_PREDICTIONS = f"""
-mutation(
-    $data: CreatePredictionsData!
-    $where: AssetWhere!
-) {{
-  data: createPredictions(
-    data: $data
-    where: $where
-  ) {{
-      {LABEL_FRAGMENT_ID}
-  }}
-}}
-"""
-
 GQL_APPEND_TO_LABELS = f"""
 mutation(
     $data: AppendToLabelsData!
