@@ -74,7 +74,7 @@ class QueriesProjectUser:
             project_id=project_id, email=email, id=id, organization_id=organization_id
         )
         options = QueryOptions(first, skip, disable_tqdm, as_generator)
-        return ProjectUserQuery(self.auth.client, where, fields, options)
+        return ProjectUserQuery(self.auth.client)(where, fields, options)
 
     # pylint: disable=invalid-name
     @typechecked
@@ -99,4 +99,4 @@ class QueriesProjectUser:
         where = ProjectUserWhere(
             project_id=project_id, email=email, id=id, organization_id=organization_id
         )
-        return ProjectUserQuery.count(self.auth.client, where)
+        return ProjectUserQuery(self.auth.client).count(where)

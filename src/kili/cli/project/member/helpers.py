@@ -61,8 +61,7 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
     try:
         existing_members = cast(
             List[Dict],
-            ProjectUserQuery(
-                kili.auth.client,
+            ProjectUserQuery(kili.auth.client)(
                 ProjectUserWhere(project_id=project_id_source),
                 fields=["role", "user.email", "activated"],
             ),

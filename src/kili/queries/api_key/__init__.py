@@ -67,7 +67,7 @@ class QueriesApiKey:
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
         options = QueryOptions(first, skip, disable_tqdm, as_generator)
-        return APIKeyQuery(self.auth.client, where, fields, options)
+        return APIKeyQuery(self.auth.client)(where, fields, options)
 
     @typechecked
     def count_api_keys(
@@ -94,4 +94,4 @@ class QueriesApiKey:
             1
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        return APIKeyQuery.count(self.auth.client, where)
+        return APIKeyQuery(self.auth.client).count(where)

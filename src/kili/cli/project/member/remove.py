@@ -84,8 +84,7 @@ def remove_member(
     count = 0
     existing_members = cast(
         List[Dict],
-        ProjectUserQuery(
-            kili.auth.client,
+        ProjectUserQuery(kili.auth.client)(
             ProjectUserWhere(project_id=project_id),
             fields=[
                 "activated",

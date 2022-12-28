@@ -35,8 +35,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     members = cast(
         List[Dict],
-        ProjectUserQuery(
-            kili.auth.client,
+        ProjectUserQuery(kili.auth.client)(
             ProjectUserWhere(project_id=project_id),
             fields=[
                 "role",

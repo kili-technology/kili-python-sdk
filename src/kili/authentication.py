@@ -111,8 +111,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         """
         duration_days = 365
         warn_days = 30
-        key_object = APIKeyQuery(
-            client=self.client,
+        key_object = APIKeyQuery(self.client)(
             fields=["createdAt"],
             where=APIKeyWhere(api_key=api_key),
         )
