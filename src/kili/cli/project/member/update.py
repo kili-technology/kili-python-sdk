@@ -81,7 +81,7 @@ def update_member(
     existing_members = cast(
         List[Dict],
         ProjectUserQuery(kili.auth.client)(
-            ProjectUserWhere(project_id=project_id),
+            where=ProjectUserWhere(project_id=project_id),
             fields=["role", "activated", "user.email", "id", "user.id"],
         ),
     )

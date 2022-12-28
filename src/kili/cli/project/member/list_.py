@@ -36,7 +36,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
     members = cast(
         List[Dict],
         ProjectUserQuery(kili.auth.client)(
-            ProjectUserWhere(project_id=project_id),
+            where=ProjectUserWhere(project_id=project_id),
             fields=[
                 "role",
                 "activated",
@@ -49,7 +49,6 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         ),
     )
     members = pd.DataFrame(members)
-    print(members)
     members = pd.concat([members.drop(["user"], axis=1), members["user"].apply(pd.Series)], axis=1)
     members = pd.concat(
         [members.drop(["organization"], axis=1), members["organization"].apply(pd.Series)],

@@ -14,9 +14,8 @@ from kili.graphql.operations.project_user.queries import ProjectUserQuery
 from ...utils import debug_subprocess_pytest
 
 
-def mocked__project_user_query(*args, **kwargs):
-    print(args, kwargs)
-    if where.project_id == "project_id_source":
+def mocked__project_user_query(**kwargs):
+    if kwargs["where"].project_id == "project_id_source":
         return [
             {
                 "activated": True,
@@ -67,7 +66,7 @@ def mocked__project_user_query(*args, **kwargs):
                 },
             },
         ]
-    elif where.project_id == "new_project":
+    elif kwargs["where"].project_id == "new_project":
         return []
     else:
         return [
@@ -108,7 +107,7 @@ kili = MagicMock()
 kili.Kili = MagicMock(return_value=kili_client)
 
 
-@patch.object(ProjectUserQuery, "__call__", new_callable=mocked__project_user_query)
+@patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
 @patch("kili.client.Kili.__new__", return_value=kili_client)
 class TestCLIProjectMember:
     """

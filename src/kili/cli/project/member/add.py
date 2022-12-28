@@ -77,7 +77,7 @@ def add_member(
 
     count = 0
     existing_members = ProjectUserQuery(kili.auth.client)(
-        ProjectUserWhere(project_id=project_id),
+        where=ProjectUserWhere(project_id=project_id),
         fields=[
             "activated",
             "user.email",
