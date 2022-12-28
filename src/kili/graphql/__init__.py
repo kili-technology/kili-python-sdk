@@ -1,3 +1,7 @@
+"""
+GraphQL module
+"""
+
 from typing import Any, Callable, Dict, Iterable, List, NamedTuple, Optional, Type
 
 from tqdm import tqdm
@@ -9,6 +13,8 @@ from ..graphql_client import GraphQLClient
 
 
 class QueryOptions(NamedTuple):
+    """Options when calling GraphQLQuery from the SDK"""
+
     first: Optional[int] = None
     skip: int = 0
     disable_tqdm: bool = True
@@ -16,6 +22,11 @@ class QueryOptions(NamedTuple):
 
 
 class GraphQLQuery:
+    """
+    Query class for querying Kili objects.
+    It factorizes code for executing paginated queries
+    """
+
     def __init__(
         self,
         _type: Type,
