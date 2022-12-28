@@ -33,7 +33,6 @@ class GraphQLQuery(ABC):
         client: GraphQLClient,
     ):
         self.client = client
-        self.default_options = QueryOptions()
 
     @staticmethod
     @abstractmethod
@@ -73,7 +72,7 @@ class GraphQLQuery(ABC):
         options: Optional[QueryOptions] = None,
     ) -> Iterable[Dict]:
         """Query objects of the specified type"""
-        options = options or self.default_options
+        options = options or QueryOptions()
         fragment = fragment_builder(fields, self.TYPE)
         where_payload = self.where_payload_builder(where)
         query = self.query(fragment)
@@ -124,7 +123,7 @@ class GraphQLQuery(ABC):
         if options.as_generator and not options.disable_tqdm:
             options._replace(disable_tqdm=True)
         total_rows_queried = self.get_number_of_elements_to_query(where_payload, options)
-        count_rows_query_per_call = min(100, options.first or 100)
+        batch_size = min(100, options.first or 100)
 
         if total_rows_queried == 0:
             yield from ()
@@ -133,7 +132,7 @@ class GraphQLQuery(ABC):
                 count_rows_retrieved = 0
                 while True:
                     skip = count_rows_retrieved + options.skip
-                    payload.update({"skip": skip, "first": count_rows_query_per_call})
+                    payload.update({"skip": skip, "first": batch_size})
                     rows = api_throttle(self.client.execute)(query, payload)
                     rows = format_result("data", rows)
 
