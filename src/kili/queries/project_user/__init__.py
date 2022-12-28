@@ -1,6 +1,6 @@
 """Project user queries."""
 
-from typing import Generator, List, Optional, Union
+from typing import List, Optional
 
 from typeguard import typechecked
 
@@ -44,7 +44,7 @@ class QueriesProjectUser:
         skip: int = 0,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Union[List[dict], Generator[dict, None, None]]:
+    ):
         # pylint: disable=line-too-long
         """Return project users (possibly with their KPIs) that match a set of criteria
 

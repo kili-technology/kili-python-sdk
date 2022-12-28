@@ -33,12 +33,15 @@ def query(fragment):
   """
 
 
-count_query = """
+GQL_COUNT_API_KEYS = """
   query countApiKeys($where: ApiKeyWhere!) {
     data: countApiKeys(where: $where)
   }
   """
 
 APIKeyQuery = GraphQLQuery(
-    _type=ApiKey, query=query, count_query=count_query, where_payload_builder=where_payload_builder
+    _type=ApiKey,
+    query=query,
+    count_query=GQL_COUNT_API_KEYS,
+    where_payload_builder=where_payload_builder,
 )

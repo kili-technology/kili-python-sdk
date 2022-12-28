@@ -14,7 +14,7 @@ def query(fragment):
     Return the GraphQL projectUsers query
     """
     return f"""
-query($where: ProjectUserWhere!, $first: PageSize!, $skip: Int!) {{
+query projectUsers($where: ProjectUserWhere!, $first: PageSize!, $skip: Int!) {{
   data: projectUsers(where: $where, first: $first, skip: $skip) {{
     {fragment}
   }}
@@ -22,8 +22,8 @@ query($where: ProjectUserWhere!, $first: PageSize!, $skip: Int!) {{
 """
 
 
-count_query = """
-query($where: ProjectUserWhere!) {
+GQL_COUNT_PROJECT_USERS = """
+query countProjectUsers($where: ProjectUserWhere!) {
   data: countProjectUsers(where: $where)
 }
 """
@@ -54,6 +54,6 @@ def where_payload_builder(where: ProjectUserWhere):
 ProjectUserQuery = GraphQLQuery(
     _type=ProjectUser,
     query=query,
-    count_query=count_query,
+    count_query=GQL_COUNT_PROJECT_USERS,
     where_payload_builder=where_payload_builder,
 )
