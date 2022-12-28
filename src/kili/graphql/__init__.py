@@ -11,7 +11,7 @@ from ..graphql_client import GraphQLClient
 class QueryOptions(NamedTuple):
     first: Optional[int] = None
     skip: int = 0
-    disable_tqdm: bool = False
+    disable_tqdm: bool = True
     as_generator: bool = False
 
 

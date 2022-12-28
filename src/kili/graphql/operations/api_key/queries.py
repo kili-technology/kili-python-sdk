@@ -39,6 +39,6 @@ count_query = """
   }
   """
 
-ApiKeyQuery = GraphQLQuery(
+APIKeyQuery = GraphQLQuery(
     _type=ApiKey, query=query, count_query=count_query, where_payload_builder=where_payload_builder
 )

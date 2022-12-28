@@ -7,7 +7,7 @@ from typing import Dict, Iterable, List, Optional
 from typeguard import typechecked
 
 from kili.graphql import QueryOptions
-from kili.graphql.operations.api_key.queries import ApiKeyQuery, APIKeyWhere
+from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 
 
 class QueriesApiKey:
@@ -65,11 +65,9 @@ class QueriesApiKey:
             >>> kili.api_keys(api_key=api_key)
             >>> kili.api_keys(api_key=api_key, as_generator=False)
         """
-        disable_tqdm = disable_tqdm or as_generator
-
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
         options = QueryOptions(first, skip, disable_tqdm, as_generator)
-        return ApiKeyQuery(self.auth.client, where, fields, options)
+        return APIKeyQuery(self.auth.client, where, fields, options)
 
     @typechecked
     def count_api_keys(
@@ -96,4 +94,4 @@ class QueriesApiKey:
             1
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        return ApiKeyQuery.count(self.auth.client, where)
+        return APIKeyQuery.count(self.auth.client, where)
