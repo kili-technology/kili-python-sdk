@@ -33,7 +33,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
 
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    users = cast(
+    members = cast(
         List[Dict],
         ProjectUserQuery(
             kili.auth.client,
@@ -49,22 +49,23 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
             ],
         ),
     )
-    users = pd.DataFrame(users)
-    users = pd.concat([users.drop(["user"], axis=1), users["user"].apply(pd.Series)], axis=1)
-    users = pd.concat(
-        [users.drop(["organization"], axis=1), users["organization"].apply(pd.Series)],
+    members = pd.DataFrame(members)
+    print(members)
+    members = pd.concat([members.drop(["user"], axis=1), members["user"].apply(pd.Series)], axis=1)
+    members = pd.concat(
+        [members.drop(["organization"], axis=1), members["organization"].apply(pd.Series)],
         axis=1,
     )
-    users = users.loc[users["activated"]]
-    users.rename(
+    members = members.loc[members["activated"]]
+    members.rename(
         columns={"role": "ROLE", "email": "EMAIL", "id": "ID", "name": "ORGANIZATION"},
         inplace=True,
     )
-    users["NAME"] = users["firstname"].str.title() + " " + users["lastname"].str.title()
-    users = users.sort_values(
+    members["NAME"] = members["firstname"].str.title() + " " + members["lastname"].str.title()
+    members = members.sort_values(
         by=["ROLE", "lastname"],
         ascending=True,
         key=lambda column: column.map(ROLE_ORDER) if column.name == "ROLE" else column,
     )
-    users = users[["ROLE", "NAME", "EMAIL", "ID", "ORGANIZATION"]]
-    print(tabulate(users, headers="keys", tablefmt=tablefmt, showindex=False))
+    members = members[["ROLE", "NAME", "EMAIL", "ID", "ORGANIZATION"]]
+    print(tabulate(members, headers="keys", tablefmt=tablefmt, showindex=False))
