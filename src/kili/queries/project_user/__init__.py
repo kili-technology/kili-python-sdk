@@ -4,10 +4,11 @@ from typing import Generator, List, Optional, Union
 
 from typeguard import typechecked
 
-from kili.helpers import format_result, fragment_builder
-from kili.queries.project_user.queries import GQL_PROJECT_USERS_COUNT, gql_project_users
-from kili.types import ProjectUser
-from kili.utils.pagination import row_generator_from_paginated_calls
+from kili.graphql import QueryOptions
+from kili.graphql.operations.project_user.queries import (
+    ProjectUserQuery,
+    ProjectUserWhere,
+)
 
 
 class QueriesProjectUser:
@@ -69,48 +70,11 @@ class QueriesProjectUser:
             >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
             ```
         """
-        count_args = {
-            "email": email,
-            "id": id,
-            "organization_id": organization_id,
-            "project_id": project_id,
-        }
-        disable_tqdm = disable_tqdm or as_generator
-        payload_query = {
-            "where": {
-                "id": id,
-                "project": {
-                    "id": project_id,
-                },
-                "user": {
-                    "email": email,
-                    "organization": {
-                        "id": organization_id,
-                    },
-                },
-            }
-        }
-
-        project_users_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_project_users,
-            count_args,
-            self._query_project_users,
-            payload_query,
-            fields,
-            disable_tqdm,
+        where = ProjectUserWhere(
+            project_id=project_id, email=email, id=id, organization_id=organization_id
         )
-
-        if as_generator:
-            return project_users_generator
-        return list(project_users_generator)
-
-    def _query_project_users(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_project_users = gql_project_users(fragment_builder(fields, ProjectUser))
-        result = self.auth.client.execute(_gql_project_users, payload)
-        return format_result("data", result)
+        options = QueryOptions(first, skip, disable_tqdm, as_generator)
+        return ProjectUserQuery(self.auth.client, where, fields, options)
 
     # pylint: disable=invalid-name
     @typechecked
@@ -132,19 +96,7 @@ class QueriesProjectUser:
         Returns:
             The number of project users with the parameters provided
         """
-        variables = {
-            "where": {
-                "id": id,
-                "project": {
-                    "id": project_id,
-                },
-                "user": {
-                    "email": email,
-                    "organization": {
-                        "id": organization_id,
-                    },
-                },
-            }
-        }
-        result = self.auth.client.execute(GQL_PROJECT_USERS_COUNT, variables)
-        return format_result("data", result, int)
+        where = ProjectUserWhere(
+            project_id=project_id, email=email, id=id, organization_id=organization_id
+        )
+        return ProjectUserQuery.count(self.auth.client, where)
