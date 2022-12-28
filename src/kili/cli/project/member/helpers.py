@@ -6,6 +6,10 @@ from typing import Dict, Iterable, List, Optional, cast
 
 from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
+from kili.graphql.operations.project_user.queries import (
+    ProjectUserQuery,
+    ProjectUserWhere,
+)
 
 REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 
@@ -49,31 +53,33 @@ def collect_members_from_csv(csv_path: str, role: Optional[str]):
 
 def collect_members_from_project(kili, project_id_source: str, role: Optional[str]):
     """copy members from project of id project_id_source"""
-    members = []
+    activated_members = []
 
     if role is not None:
         raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
 
     try:
-        users = cast(
+        existing_members = cast(
             List[Dict],
-            kili.project_users(
-                project_id=project_id_source,
+            ProjectUserQuery(
+                kili.auth.client,
+                ProjectUserWhere(project_id=project_id_source),
                 fields=["role", "user.email", "activated"],
-                disable_tqdm=True,
             ),
         )
-        for user in users:
-            if user["activated"]:
-                members.append({"email": user["user"]["email"], "role": user["role"]})
+        for existing_member in existing_members:
+            if existing_member["activated"]:
+                activated_members.append(
+                    {"email": existing_member["user"]["email"], "role": existing_member["role"]}
+                )
     except:
         # pylint: disable=raise-missing-from
         raise ValueError(f"{project_id_source} is not recognized as a Kili project_id")
 
-    if len(members) == 0:
+    if len(activated_members) == 0:
         raise ValueError(f"No active member were found in project with id {project_id_source}")
 
-    return members
+    return activated_members
 
 
 def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):

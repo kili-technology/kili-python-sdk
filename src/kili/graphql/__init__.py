@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, NamedTuple, Optional, Type
+from typing import Any, Callable, Dict, Iterable, List, NamedTuple, Optional, Type
 
 from tqdm import tqdm
 
@@ -37,7 +37,7 @@ class GraphQLQuery:
         where,
         fields: List[str],
         options: Optional[QueryOptions] = None,
-    ):
+    ) -> Iterable[Dict]:
         """Query objects of the specified type"""
         options = options or self.default_options
         fragment = fragment_builder(fields, self.type)

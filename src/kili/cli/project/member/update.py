@@ -1,7 +1,7 @@
 """CLI's project member update subcommand"""
 
 import warnings
-from typing import Iterable, Optional
+from typing import Dict, Iterable, List, Optional, cast
 
 import click
 
@@ -12,6 +12,10 @@ from kili.cli.project.member.helpers import (
     collect_members_from_csv,
     collect_members_from_emails,
     collect_members_from_project,
+)
+from kili.graphql.operations.project_user.queries import (
+    ProjectUserQuery,
+    ProjectUserWhere,
 )
 
 
@@ -74,7 +78,14 @@ def update_member(
 
     count = 0
 
-    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
+    existing_members = cast(
+        List[Dict],
+        ProjectUserQuery(
+            kili.auth.client,
+            ProjectUserWhere(project_id=project_id),
+            fields=["role", "activated", "user.email", "id", "user.id"],
+        ),
+    )
     existing_members = {
         member["user"]["email"]: {
             "role_id": member["id"],

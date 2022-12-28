@@ -13,6 +13,10 @@ from kili.cli.project.member.helpers import (
     collect_members_from_emails,
     collect_members_from_project,
 )
+from kili.graphql.operations.project_user.queries import (
+    ProjectUserQuery,
+    ProjectUserWhere,
+)
 
 
 # pylint: disable=too-many-arguments
@@ -72,13 +76,20 @@ def add_member(
         members_to_add = collect_members_from_emails(emails, role)
 
     count = 0
-    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
-    existing_members = [
+    existing_members = ProjectUserQuery(
+        kili.auth.client,
+        ProjectUserWhere(project_id=project_id),
+        fields=[
+            "activated",
+            "user.email",
+        ],
+    )
+    existing_members_email = [
         member["user"]["email"] for member in existing_members if member["activated"]
     ]
 
     for member in members_to_add:
-        if member["email"] in existing_members:
+        if member["email"] in existing_members_email:
             already_member = member["email"]
             warnings.warn(
                 f"{already_member} is already an active member of the project."
