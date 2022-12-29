@@ -2,20 +2,6 @@
 Constants for the asset_import services
 """
 
-from uuid import uuid4
-
-from .types import AssetLike
-
-ASSET_FIELDS_DEFAULT_VALUE = AssetLike(
-    content="",
-    json_content="",
-    external_id=uuid4().hex,
-    status="TODO",
-    json_metadata="{}",
-    is_honeypot=False,
-    id="",
-)
-
 mime_extensions = {
     "Audio": "audio/x-flac,audio/mpeg,video/mp4",
     "Csv": "text/csv",
