@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       releaseVersion:
-        description: "Latest minor release branch version (X.XXX.0)"
+        description: "Enter latest minor release branch version (X.XXX.0):"
         required: true
         type: string
         default: "X.XXX.0"
