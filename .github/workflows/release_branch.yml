@@ -1,6 +1,10 @@
 name: Create release branch
 on:
   workflow_dispatch:
+    inputs:
+      warn_user_no_patch:
+        description: "Do not create a release branch for a patch release! Use the 'Create draft release patch' workflow instead on the latest minor branch."
+        required: false
 
 jobs:
   create_release_branch:
