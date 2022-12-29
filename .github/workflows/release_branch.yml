@@ -5,7 +5,8 @@ on:
       warn_user_no_patch:
         description: "Do not create a release branch for a patch release! Use the 'Create draft release patch' workflow instead on the latest minor branch."
         required: false
-        type: environment
+        type: string
+        default: "Click 'Run workflow' to create release branch"
 
 jobs:
   create_release_branch:
