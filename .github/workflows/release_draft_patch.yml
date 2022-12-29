@@ -3,10 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       releaseVersion:
-        description: "Latest minor release branch version"
+        description: "Enter latest minor release branch version (X.XXX.0):"
         required: true
         type: string
-        default: "X.XXX.X"
+        default: "X.XXX.0"
 
 jobs:
   create_draft_release:
@@ -45,6 +45,8 @@ jobs:
         run: |
           current_version=$(python -c 'from kili import __version__; print(__version__)')
           new_version=$(./entrypoint.sh bump_version commit patch)
+          echo "NEW_PATCH_VERSION=$new_version"
+          echo "CURRENT_PATCH_VERSION=$current_version"
           echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
           echo "CURRENT_PATCH_VERSION=$current_version" >> $GITHUB_ENV
           git push
