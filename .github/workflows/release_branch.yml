@@ -7,7 +7,7 @@ on:
         required: false
         type: choice
         options:
-          - minor release
+          - minor release branch
 
 jobs:
   create_release_branch:
