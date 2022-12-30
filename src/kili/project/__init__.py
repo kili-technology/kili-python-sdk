@@ -5,7 +5,6 @@ from typeguard import typechecked
 
 from kili import services
 from kili.services.export.types import LabelFormat, SplitOption
-from kili.services.label_import import import_labels_from_dict
 from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
 
 
@@ -35,6 +34,7 @@ class Project:  # pylint: disable=too-few-public-methods
         single_file: bool = False,
         disable_tqdm: bool = False,
         log_level: LogLevel = "INFO",
+        with_assets: bool = True,
     ) -> None:
         """Export the project assets with the requested format into the requested output path.
 
@@ -43,18 +43,21 @@ class Project:  # pylint: disable=too-few-public-methods
         from kili.client import Kili
         kili = Kili()
         project = kili.get_project("your_project_id")
-        project.export("export.zip", output_format="yolo_v4")
+        project.export("export.zip", fmt="yolo_v4")
         ```
 
         Args:
             filename: Relative or full path of the archive that will contain
                 the exported data.
-            output_format: Format of the exported labels.
+            fmt: Format of the exported labels.
             asset_ids: Optional list of the assets from which to export the labels.
             layout: Layout of the exported files: "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            single_file: Layout of the exported labels. Single file mode is
+                only available for some specific formats (COCO and Kili).
             disable_tqdm: Disable the progress bar if True.
             log_level: Level of debugging.
+            with_assets: Download the assets in the export.
         """
         services.export_labels(
             self.client,
@@ -67,20 +70,27 @@ class Project:  # pylint: disable=too-few-public-methods
             output_file=filename,
             disable_tqdm=disable_tqdm,
             log_level=log_level,
+            with_assets=with_assets,
         )
 
     @typechecked
-    def append_labels(self, labels: List[dict], label_type: LabelType = "DEFAULT"):
+    def append_labels(
+        self,
+        labels: List[dict],
+        label_type: LabelType = "DEFAULT",
+        model_name: Optional[str] = None,
+    ):
         """Append labels to assets.
 
         !!! info "fields of labels to append"
+            Either provide an asset_id or an external_id
             ```
             class LabelData:
-                asset_id: Required[str]
+                asset_id: str
+                asset_external_id: str
                 json_response: Required[Dict]
                 author_id: str
                 seconds_to_label: int
-                modelName: str
             ```
 
         Args:
@@ -100,4 +110,6 @@ class Project:  # pylint: disable=too-few-public-methods
                 )
 
         """
-        return import_labels_from_dict(self.client, labels, label_type)
+        return services.import_labels_from_dict(
+            self.client, self.project_id, labels, label_type, model_name
+        )

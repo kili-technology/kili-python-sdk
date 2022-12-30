@@ -155,8 +155,8 @@ prediction_examples = [
 kili.create_predictions(
         project_id=project_id,
         external_id_array=[p["external_id"] for p in prediction_examples],
-        model_name_array=["My SOTA model"] * len(prediction_examples),
-        json_response_array=[p["json_response"] for p in prediction_examples])
+        json_response_array=[p["json_response"] for p in prediction_examples],
+        model_name="My SOTA model"
 
 ```
 

@@ -33,6 +33,7 @@ def mocked__projects(project_id=None, **_):
                 "id": "object_detection",
                 "description": "This is a test project",
                 "jsonInterface": json_interface,
+                "inputType": "IMAGE",
             }
         ]
     if project_id == "frame_project":

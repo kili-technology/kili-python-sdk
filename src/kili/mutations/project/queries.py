@@ -108,29 +108,6 @@ mutation($where: ProjectUserWhere!) {{
 }}
 """
 
-GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER = f"""
-mutation(
-    $projectUserID: ID!
-    $totalDuration: Int
-    $numberOfLabeledAssets: Int
-    $starred: Boolean
-    $consensusMark: Float
-    $honeypotMark: Float
-) {{
-  data: updatePropertiesInProjectUser(
-    where: {{id: $projectUserID}},
-    data: {{
-      totalDuration: $totalDuration
-      numberOfLabeledAssets: $numberOfLabeledAssets
-      starred: $starred
-      consensusMark: $consensusMark
-      honeypotMark: $honeypotMark
-    }}
-  ) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
-"""
 
 GQL_DELETE_PROJECT = f"""
 mutation($projectID: ID!) {{

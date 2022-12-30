@@ -20,11 +20,11 @@ def process_notebook(notebook_filename):
 @pytest.mark.parametrize(
     "notebook_file",
     [
-        "tests/integration/create_project.ipynb",
-        "tests/integration/export_labels.ipynb",
+        "tests/e2e/create_project.ipynb",
+        "tests/e2e/export_labels.ipynb",
         "recipes/frame_dicom_data.ipynb",
-        "tests/integration/import_assets.ipynb",
-        "tests/integration/import_predictions.ipynb",
+        "tests/e2e/import_assets.ipynb",
+        "tests/e2e/import_predictions.ipynb",
         "recipes/import_text_assets.ipynb",
         "recipes/inference_labels.ipynb",
         "recipes/medical_imaging.ipynb",

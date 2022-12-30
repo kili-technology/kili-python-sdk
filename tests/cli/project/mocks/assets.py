@@ -50,3 +50,7 @@ def mocked__project_assets(project_id=None, **_):
             Asset({"externalId": "asset5"}),
             Asset({"externalId": "asset6"}),
         ]
+
+
+def mocked__project_count_assets(project_id=None, **_):
+    return len(mocked__project_assets(project_id=project_id))

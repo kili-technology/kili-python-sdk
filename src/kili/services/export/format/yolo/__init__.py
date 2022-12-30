@@ -2,17 +2,19 @@
 Common code for the yolo exporter.
 """
 
-import csv
-import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
-from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
+from kili.orm import JobMLTask, JobTool
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotCompatibleInputType,
+    NotCompatibleOptions,
+)
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
-from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
 
@@ -21,11 +23,63 @@ class YoloExporter(AbstractExporter):
     Common code for Yolo exporters.
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.split_option == "merged":
+            self.merged_categories_id = self._get_merged_categories(
+                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+            )
+        else:
+            self.categories_by_job = self._get_categories_by_job(
+                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+            )
+
     def _check_arguments_compatibility(self):
+        """
+        Checks if the export label format is compatible with the export options.
+        """
         if self.single_file:
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not be exported into a single file."
             )
+
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project.
+        """
+        if self.project_input_type == "VIDEO":
+            raise NotImplementedError("Export of annotations on videos is not supported yet.")
+        if self.project_input_type != "IMAGE":
+            raise NotCompatibleInputType(
+                f"Project with input type '{self.project_input_type}' not compatible with YOLO"
+                " export format."
+            )
+
+        jobs = self.project_json_interface["jobs"]
+        jobs = {
+            job_name: job
+            for job_name, job in jobs.items()
+            if job["mlTask"] == JobMLTask.ObjectDetection
+            and any(tool == JobTool.Rectangle for tool in job["tools"])
+        }
+        if not jobs:
+            raise NoCompatibleJobError(
+                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
+            )
+
+        if self.split_option == "merged":
+            if not self.merged_categories_id:
+                raise NoCompatibleJobError(
+                    f"Error: There is no job in project {self.project_id} "
+                    f"that can be converted to the {self.label_format} format."
+                )
+        else:
+            if not self.categories_by_job:
+                raise NoCompatibleJobError(
+                    f"Error: There is no job in project {self.project_id} "
+                    f"that can be converted to the {self.label_format} format."
+                )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """
@@ -38,53 +92,31 @@ class YoloExporter(AbstractExporter):
     def _process_and_save_split(self, assets: List[Dict], output_filename: Path) -> None:
         self.logger.info("Exporting to yolo format split...")
 
-        json_interface, ml_task, tool = self.get_project_and_init()
-        categories_by_job = self._get_categories_by_job(json_interface, ml_task, tool)
-        if not categories_by_job:
-            raise NoCompatibleJobError(
-                f"Error: There is no job in project {self.project_id} "
-                f"that can be converted to the {self.label_format} format."
-            )
-
-        with TemporaryDirectory() as root_folder:
-            images_folder = root_folder / self.project_id / "images"
-            images_folder.mkdir(parents=True)
-            self._write_jobs_labels_into_split_folders(
-                assets,
-                categories_by_job,
-                root_folder,
-                images_folder,
-            )
-            self.create_readme_kili_file(root_folder)
-            self.make_archive(root_folder, output_filename)
+        self._write_jobs_labels_into_split_folders(
+            assets,
+            self.categories_by_job,
+            self.export_root_folder,
+            self.images_folder,
+        )
+        self.create_readme_kili_file(self.export_root_folder)
+        self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
     def _process_and_save_merge(self, assets: List[Dict], output_filename: Path) -> None:
         self.logger.info("Exporting to yolo format merged...")
-        json_interface, ml_task, tool = self.get_project_and_init()
-        merged_categories_id = self._get_merged_categories(json_interface, ml_task, tool)
-        if not merged_categories_id:
-            raise NoCompatibleJobError(
-                f"Error: There is no job in project {self.project_id} "
-                f"that can be converted to the {self.label_format} format."
-            )
 
-        with TemporaryDirectory() as root_folder:
-            base_folder = root_folder / self.project_id
-            images_folder = base_folder / "images"
-            labels_folder = base_folder / "labels"
-            images_folder.mkdir(parents=True)
-            labels_folder.mkdir(parents=True)
-            self._write_labels_into_single_folder(
-                assets,
-                merged_categories_id,
-                labels_folder,
-                images_folder,
-                base_folder,
-            )
-            self.create_readme_kili_file(root_folder)
-            self.make_archive(root_folder, output_filename)
+        labels_folder = self.base_folder / "labels"
+        labels_folder.mkdir(parents=True, exist_ok=True)
+        self._write_labels_into_single_folder(
+            assets,
+            self.merged_categories_id,
+            labels_folder,
+            self.images_folder,
+            self.base_folder,
+        )
+        self.create_readme_kili_file(self.export_root_folder)
+        self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -129,17 +161,23 @@ class YoloExporter(AbstractExporter):
 
         for asset in tqdm(assets, disable=self.disable_tqdm):
             asset_remote_content, video_filenames = _process_asset(
-                asset, images_folder, labels_folder, categories_id, self.content_repository
+                asset,
+                images_folder,
+                labels_folder,
+                categories_id,
+                self.content_repository,
+                self.with_assets,
             )
             if video_filenames:
                 video_metadata[asset["externalId"]] = video_filenames
             remote_content.extend(asset_remote_content)
 
         if video_metadata:
-            _write_video_metadata_file(video_metadata, base_folder)
+            self.write_video_metadata_file(video_metadata, base_folder)
 
         if len(remote_content) > 0:
-            _write_remote_content_file(remote_content, images_folder)
+            self.images_folder.mkdir(parents=True, exist_ok=True)
+            self.write_remote_content_file(remote_content, images_folder)
 
     def _write_jobs_labels_into_split_folders(
         self,
@@ -154,7 +192,7 @@ class YoloExporter(AbstractExporter):
         for job_id, category_ids in categories_by_job.items():
             base_folder = root_folder / self.project_id / job_id
             labels_folder = base_folder / "labels"
-            labels_folder.mkdir(parents=True)
+            labels_folder.mkdir(parents=True, exist_ok=True)
 
             self._write_labels_into_single_folder(
                 assets,
@@ -291,8 +329,9 @@ def _process_asset(
     labels_folder: Path,
     category_ids: Dict[str, JobCategory],
     content_repository: AbstractContentRepository,
+    with_assets: bool,
 ) -> Tuple[List[Tuple[str, str, str]], List[str]]:
-    # pylint: disable=too-many-locals, too-many-branches
+    # pylint: disable=too-many-locals, too-many-branches, too-many-arguments
     """
     Process an asset for all job_ids of category_ids.
     """
@@ -314,10 +353,10 @@ def _process_asset(
 
         frame_labels = _get_frame_labels(frame, job_ids, category_ids)
 
-        if not frame_labels:
-            continue
-
         _write_labels_to_file(labels_folder, filename, frame_labels)
+
+        if with_assets:
+            continue
 
         content_frame = content_frames[idx] if content_frames else asset["content"]
         if content_repository.is_serving(content_frame):
@@ -400,24 +439,3 @@ def _write_labels_to_file(
     with (labels_folder / f"{filename}.txt").open("wb") as fout:
         for category_idx, _x_, _y_, _w_, _h_ in annotations:
             fout.write(f"{category_idx} {_x_} {_y_} {_w_} {_h_}\n".encode())
-
-
-def _write_video_metadata_file(video_metadata: Dict, base_folder: Path) -> None:
-    """
-    Write video metadata file
-    """
-    video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
-    if video_metadata_json is not None:
-        with (base_folder / "video_meta.json").open("wb") as output_file:
-            output_file.write(video_metadata_json.encode("utf-8"))
-
-
-def _write_remote_content_file(remote_content: List[str], images_folder: Path) -> None:
-    """
-    Write remote content file
-    """
-    remote_content_header = ["external id", "url", "label file"]
-    with (images_folder / "remote_assets.csv").open("w", encoding="utf8") as file:
-        writer = csv.writer(file)
-        writer.writerow(remote_content_header)
-        writer.writerows(remote_content)

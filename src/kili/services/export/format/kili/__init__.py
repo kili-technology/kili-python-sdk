@@ -1,5 +1,5 @@
 """
-Common code for the yolo exporter.
+Common code for the Kili exporter.
 """
 
 import json
@@ -8,7 +8,6 @@ from typing import List
 
 from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
-from kili.utils.tempfile import TemporaryDirectory
 
 
 class KiliExporter(AbstractExporter):
@@ -18,7 +17,12 @@ class KiliExporter(AbstractExporter):
 
     def _check_arguments_compatibility(self):
         """
-        Checks if the format can accept the export options
+        Checks if the export label format is compatible with the export options.
+        """
+
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project.
         """
 
     def _save_assets_export(self, assets: List[Asset], output_filename: Path):
@@ -27,23 +31,21 @@ class KiliExporter(AbstractExporter):
         """
         self.logger.info("Exporting to kili format...")
 
-        with TemporaryDirectory() as root_folder:
-            base_folder = root_folder / self.project_id
-            base_folder.mkdir(parents=True)
-            if self.single_file:
-                project_json = json.dumps(assets, sort_keys=True, indent=4)
-                with (base_folder / "data.json").open("wb") as output_file:
-                    output_file.write(project_json.encode("utf-8"))
-            else:
-                labels_folder = base_folder / "labels"
-                labels_folder.mkdir(parents=True)
-                for asset in assets:
-                    external_id = asset["externalId"].replace(" ", "_")
-                    asset_json = json.dumps(asset, sort_keys=True, indent=4)
-                    with (labels_folder / f"{external_id}.json").open("wb") as output_file:
-                        output_file.write(asset_json.encode("utf-8"))
-            self.create_readme_kili_file(root_folder)
-            self.make_archive(root_folder, output_filename)
+        if self.single_file:
+            project_json = json.dumps(assets, sort_keys=True, indent=4)
+            with (self.base_folder / "data.json").open("wb") as output_file:
+                output_file.write(project_json.encode("utf-8"))
+        else:
+            labels_folder = self.base_folder / "labels"
+            labels_folder.mkdir(parents=True)
+            for asset in assets:
+                external_id = asset["externalId"].replace(" ", "_")
+                asset_json = json.dumps(asset, sort_keys=True, indent=4)
+                with (labels_folder / f"{external_id}.json").open("wb") as output_file:
+                    output_file.write(asset_json.encode("utf-8"))
+        self.create_readme_kili_file(self.export_root_folder)
+
+        self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -56,3 +58,10 @@ class KiliExporter(AbstractExporter):
             clean_assets,
             output_filename,
         )
+
+    @property
+    def images_folder(self) -> Path:
+        """
+        Export images folder
+        """
+        return self.base_folder / "assets"

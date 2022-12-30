@@ -38,7 +38,7 @@ jobs:
         run: pytest -sv tests/test_notebooks.py
 
       - name: Integration tests
-        run: pytest -sv tests/integration -k ".py"
+        run: pytest -sv tests/e2e -k ".py"
 
       - name: Slack notification if failure
         if: failure()

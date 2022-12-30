@@ -149,7 +149,6 @@ if __name__ == "__main__":
                 "external_id": filepath,
                 "escaped_text": escaped_text,
                 "json_response": json_response,
-                "model_name": "google_natural_language_ner",
             }
 
     print("Creating asset list")
@@ -167,5 +166,5 @@ if __name__ == "__main__":
         project_id=project_id,
         external_id_array=[a["external_id"] for a in assets],
         json_response_array=[a["json_response"] for a in assets],
-        model_name_array=[a["model_name"] for a in assets],
+        model_name="google_natural_language_ner",
     )

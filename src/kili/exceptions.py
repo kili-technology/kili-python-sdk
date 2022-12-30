@@ -1,5 +1,4 @@
 """Exceptions of the package."""
-import ast
 
 
 class NotFound(Exception):
@@ -42,14 +41,27 @@ class GraphQLError(Exception):
     Used when the GraphQL call returns an error
     """
 
-    def __init__(self, error: Exception, batch_number=None):
-        if batch_number is None:
-            super().__init__(f'error: "{ast.literal_eval(str(error))[0]["message"]}"')
+    def __init__(self, error, batch_number=None):
+        if isinstance(error, list):
+            error = error[0]
+        if isinstance(error, dict) and "message" in error:
+            error_msg = error["message"]
         else:
-            super().__init__(
-                f'error at index {100*batch_number}: {ast.literal_eval(str(error))[0]["message"]}"'
-            )
+            error_msg = str(error)
+
+        if batch_number is None:
+            super().__init__(f'error: "{error_msg}"')
+        else:
+            super().__init__(f'error at index {100*batch_number}: {error_msg}"')
 
 
 class NonExistingFieldError(ValueError):
     """Raised when querying a field that does not exist on an object"""
+
+
+class MissingArgumentError(ValueError):
+    """Raised when an required argument was not given by the user"""
+
+
+class IncompatibleArgumentsError(ValueError):
+    """Raised when the user gave at least two incompatible arguments"""

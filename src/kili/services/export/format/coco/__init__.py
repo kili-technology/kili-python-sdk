@@ -3,8 +3,8 @@ Common code for the coco exporter.
 """
 
 import json
-import shutil
 import time
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -13,10 +13,10 @@ import numpy as np
 from PIL import Image
 from typing_extensions import TypedDict
 
-from kili.orm import Asset
+from kili.orm import Asset, JobMLTask, JobTool
+from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job, JobName, Jobs, ProjectId
-from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
 DATA_SUBDIR = "data"
@@ -58,13 +58,50 @@ class _CocoFormat(TypedDict):
 
 class CocoExporter(AbstractExporter):
     """
-    Common code for Kili exporters.
+    Common code for COCO exporter.
     """
 
-    download_media = True  # COCO is self-contained and requires paths to the media files
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.with_assets:
+            warnings.warn(
+                "For an export to the COCO format, the download of assets cannot be disabled."
+            )
+        self.with_assets = True
 
     def _check_arguments_compatibility(self):
-        pass
+        """
+        Checks if the export label format is compatible with the export options.
+        """
+
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project.
+        """
+        if self.project_input_type != "IMAGE":
+            raise NotCompatibleInputType(
+                f"Project with input type '{self.project_input_type}' not compatible with COCO"
+                " export format."
+            )
+
+        jobs = self.project_json_interface["jobs"]
+        jobs = {
+            job_name: job
+            for job_name, job in jobs.items()
+            if job["mlTask"] == JobMLTask.ObjectDetection
+            and any(tool == JobTool.Semantic for tool in job["tools"])
+        }
+        if not jobs:
+            raise NoCompatibleJobError(
+                f"Project needs at least one {JobMLTask.ObjectDetection} task."
+            )
+
+    @property
+    def images_folder(self) -> Path:
+        """
+        Export images folder
+        """
+        return self.base_folder / DATA_SUBDIR
 
     def process_and_save(self, assets: List[Asset], output_filename: Path):
         """
@@ -72,13 +109,12 @@ class CocoExporter(AbstractExporter):
         """
         clean_assets = self.process_assets(assets, self.label_format)
 
-        with TemporaryDirectory() as tmp_dir:
-            self._save_assets_export(
-                clean_assets,
-                tmp_dir,
-            )
-            self.create_readme_kili_file(tmp_dir)
-            self.make_archive(tmp_dir, output_filename)
+        self._save_assets_export(
+            clean_assets,
+            self.export_root_folder,
+        )
+        self.create_readme_kili_file(self.export_root_folder)
+        self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
@@ -159,15 +195,11 @@ def _convert_kili_semantic_to_coco(
         annotations=[],
     )
 
-    # Prepare output folder
-    data_dir = output_dir / DATA_SUBDIR
-    data_dir.mkdir(parents=True, exist_ok=True)
-
     # Mapping category - category id
     cat_kili_id_to_coco_id = _get_kili_cat_id_to_coco_cat_id_mapping(job)
     labels_json["categories"] = _get_coco_categories(cat_kili_id_to_coco_id)
     labels_json["images"], labels_json["annotations"] = _get_coco_images_and_annotations(
-        job_name, assets, data_dir, cat_kili_id_to_coco_id
+        job_name, assets, cat_kili_id_to_coco_id
     )
 
     label_file_name = output_dir / job_name / "labels.json"
@@ -188,18 +220,17 @@ def _get_kili_cat_id_to_coco_cat_id_mapping(job: Job) -> Dict[str, int]:
 
 
 def _get_coco_images_and_annotations(
-    job_name, assets, data_dir, cat_kili_id_to_coco_id
+    job_name, assets, cat_kili_id_to_coco_id
 ) -> Tuple[List[_CocoImage], List[_CocoAnnotation]]:
     coco_images = []
     coco_annotations = []
-    annotation_offset = -1
+    annotation_offset = 0
     for asset_i, asset in tqdm(
         enumerate(assets),
         desc="Convert to coco format",
     ):
-        file_name = Path(shutil.copy(asset["content"], data_dir))
+        file_name = Path(asset["content"])
         width, height = Image.open(asset["content"]).size
-
         coco_image = _CocoImage(
             id=asset_i,
             license=0,
@@ -208,13 +239,18 @@ def _get_coco_images_and_annotations(
             width=width,
             date_captured=None,
         )
+
         coco_images.append(coco_image)
-        coco_img_annotations, annotation_offset = _get_coco_image_annotations(
-            asset["latestLabel"]["jsonResponse"][job_name]["annotations"],
-            cat_kili_id_to_coco_id,
-            annotation_offset,
-            coco_image,
-        )
+        if job_name not in asset["latestLabel"]["jsonResponse"]:
+            coco_img_annotations = []
+            # annotation offset is unchanged
+        else:
+            coco_img_annotations, annotation_offset = _get_coco_image_annotations(
+                asset["latestLabel"]["jsonResponse"][job_name]["annotations"],
+                cat_kili_id_to_coco_id,
+                annotation_offset,
+                coco_image,
+            )
         coco_annotations.extend(coco_img_annotations)
     return coco_images, coco_annotations
 

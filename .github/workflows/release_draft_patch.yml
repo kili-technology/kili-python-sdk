@@ -1,0 +1,86 @@
+name: Create draft release patch
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: "Enter latest minor release branch version (X.XXX.0):"
+        required: true
+        type: string
+        default: "X.XXX.0"
+
+jobs:
+  create_draft_release:
+    runs-on: ubuntu-latest
+    name: create draft release
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bump2version
+
+      - name: Install kili
+        run: pip install -e .
+
+      - name: Set git identity
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: checkout to latest minor release branch
+        run: |
+          git fetch origin release/${{ inputs.releaseVersion }}
+          git checkout release/${{ inputs.releaseVersion }}
+          git status
+
+      - name: bump patch version, commit and push
+        run: |
+          current_version=$(python -c 'from kili import __version__; print(__version__)')
+          new_version=$(./entrypoint.sh bump_version commit patch)
+          echo "NEW_PATCH_VERSION=$new_version"
+          echo "CURRENT_PATCH_VERSION=$current_version"
+          echo "NEW_PATCH_VERSION=$new_version" >> $GITHUB_ENV
+          echo "CURRENT_PATCH_VERSION=$current_version" >> $GITHUB_ENV
+          git push
+
+      - name: Tag patch commit and push
+        run: |
+          git tag -f -a ${{ env.NEW_PATCH_VERSION }} -m "Release ${{ env.NEW_PATCH_VERSION }}"
+          git push origin ${{ env.NEW_PATCH_VERSION }}
+
+      - name: Create draft release
+        run: |
+          link_to_draft=$(gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes --notes-start-tag ${{ env.CURRENT_PATCH_VERSION }})
+          echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Slack notification
+        id: slack
+        if: success()
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready: ${{ env.LINK_TO_DRAFT }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Draft release ${{ env.NEW_PATCH_VERSION }} is ready: ${{ env.LINK_TO_DRAFT }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

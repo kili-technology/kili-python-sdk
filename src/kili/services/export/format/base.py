@@ -2,6 +2,8 @@
 Base class for all formatters and other utility classes.
 """
 
+import csv
+import json
 import logging
 import shutil
 from abc import ABC, abstractmethod
@@ -9,11 +11,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, cast
 
-from kili.orm import Asset, JobMLTask, JobTool, Label
+from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.types import ProjectId
+from kili.utils.tempfile import TemporaryDirectory
 
 
 class ExportParams(NamedTuple):
@@ -28,15 +31,13 @@ class ExportParams(NamedTuple):
     split_option: SplitOption
     single_file: bool
     output_file: Path
+    with_assets: bool
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
-
     """
     Abstract class defining the interface for all exporters.
     """
-
-    download_media = False  # Whether or not we need to download the media for the given format.
 
     def __init__(
         self,
@@ -57,11 +58,25 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.logger: logging.Logger = logger
         self.content_repository: AbstractContentRepository = content_repository
         self.output_file = export_params.output_file
+        self.with_assets: bool = export_params.with_assets
+        self.export_root_folder: Path = Path()
+
+        project_info = self.kili.projects(
+            project_id=self.project_id, fields=["jsonInterface", "inputType"], disable_tqdm=True
+        )[0]
+        self.project_json_interface = project_info["jsonInterface"]
+        self.project_input_type = project_info["inputType"]
 
     @abstractmethod
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """
-        Checks if the format can accept the
+        Checks if the export label format is compatible with the export options.
+        """
+
+    @abstractmethod
+    def _check_project_compatibility(self) -> None:
+        """
+        Checks if the export label format is compatible with the project.
         """
 
     @abstractmethod
@@ -78,21 +93,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         path_archive = shutil.make_archive(str(path_folder), "zip", path_folder)
         shutil.copy(path_archive, output_filename)
         return output_filename
-
-    def get_project_and_init(self):
-        """
-        Get and validate the project
-        """
-        json_interface = list(
-            self.kili.projects(
-                project_id=self.project_id, fields=["jsonInterface"], disable_tqdm=True
-            )
-        )[0]["jsonInterface"]
-
-        ml_task = JobMLTask.ObjectDetection
-        tool = JobTool.Rectangle
-
-        return json_interface, ml_task, tool
 
     def create_readme_kili_file(self, root_folder: Path) -> None:
         """
@@ -114,6 +114,27 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
 
+    @staticmethod
+    def write_video_metadata_file(video_metadata: Dict, base_folder: Path) -> None:
+        """
+        Write video metadata file
+        """
+        video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
+        if video_metadata_json is not None:
+            with (base_folder / "video_meta.json").open("wb") as output_file:
+                output_file.write(video_metadata_json.encode("utf-8"))
+
+    @staticmethod
+    def write_remote_content_file(remote_content: List[str], images_folder: Path) -> None:
+        """
+        Write remote content file
+        """
+        remote_content_header = ["external id", "url", "label file"]
+        with (images_folder / "remote_assets.csv").open("w", encoding="utf8") as file:
+            writer = csv.writer(file)
+            writer.writerow(remote_content_header)
+            writer.writerows(remote_content)
+
     def export_project(
         self,
     ) -> None:
@@ -122,17 +143,37 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Return the name of the exported archive file in the bucket.
         """
         self._check_arguments_compatibility()
+        self._check_project_compatibility()
+
         self.logger.warning("Fetching assets...")
-        assets = fetch_assets(
-            self.kili,
-            project_id=self.project_id,
-            asset_ids=self.assets_ids,
-            export_type=self.export_type,
-            label_type_in=["DEFAULT", "REVIEW"],
-            disable_tqdm=self.disable_tqdm,
-            download_media=self.download_media,
-        )
-        self.process_and_save(assets, self.output_file)
+
+        with TemporaryDirectory() as export_root_folder:
+            self.export_root_folder = export_root_folder
+            assets = fetch_assets(
+                self.kili,
+                project_id=self.project_id,
+                asset_ids=self.assets_ids,
+                export_type=self.export_type,
+                label_type_in=["DEFAULT", "REVIEW"],
+                disable_tqdm=self.disable_tqdm,
+                download_media=self.with_assets,
+                local_media_dir=str(self.images_folder),
+            )
+            self.process_and_save(assets, self.output_file)
+
+    @property
+    def base_folder(self) -> Path:
+        """
+        Export base folder
+        """
+        return self.export_root_folder / self.project_id
+
+    @property
+    def images_folder(self) -> Path:
+        """
+        Export images folder
+        """
+        return self.base_folder / "images"
 
     @staticmethod
     def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:

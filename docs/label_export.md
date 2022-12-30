@@ -5,8 +5,7 @@ There are several ways to export labels from a Kili project.
 ## With the CLI
 You can export a project using the `kili project export` command:
 ```bash
-
-    kili project export \
+kili project export \
         --project-id <project_id> \
         --output-format yolo_v5 \
         --output-file /tmp/export.zip
@@ -38,7 +37,7 @@ You can refer to this [Kili documentation page](https://docs.kili-technology.com
 | YOLO V4       | ✅   | ✅             | ✅                      |
 | YOLO V5       | ✅   | ✅             | ✅                      |
 | YOLO V7       | ❌   | ✅             | ✅                      |
-| Pascal VOC    | ✅   | ❌             | ❌                      |
+| Pascal VOC    | ✅   | ✅             | ✅                      |
 | COCO          | ❌   | ✅             | ✅                      |
 
 

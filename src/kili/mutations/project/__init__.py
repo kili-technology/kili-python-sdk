@@ -5,6 +5,9 @@ from typing import Dict, Optional, Union
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
+from kili.services.copy_project import CopyProject
+
 from ...helpers import format_result
 from .helpers import verify_argument_ranges
 from .queries import (
@@ -12,7 +15,6 @@ from .queries import (
     GQL_CREATE_PROJECT,
     GQL_DELETE_FROM_ROLES,
     GQL_DELETE_PROJECT,
-    GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
     GQL_UPDATE_PROPERTIES_IN_PROJECT,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
@@ -24,7 +26,7 @@ class MutationsProject:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -188,10 +190,10 @@ class MutationsProject:
         """Create a project.
 
         Args:
-            input_type : Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, VIDEO_LEGACY, NA}
+            input_type: Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, VIDEO_LEGACY, NA}
             json_interface: The json parameters of the project, see Edit your interface.
-            title : Title of the project
-            description : Description of the project
+            title: Title of the project
+            description: Description of the project
             project_type:
                 Currently, one of {
                     `IMAGE_CLASSIFICATION_SINGLE`,
@@ -219,7 +221,7 @@ class MutationsProject:
 
         !!! example "Recipe"
             For more detailed examples on how to create projects,
-                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/create_project.ipynb).
+                see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).
         """
         variables = {
             "data": {
@@ -269,7 +271,7 @@ class MutationsProject:
         """Delete users by their role_id.
 
         Args:
-            role_id : Identifier of the project user (not the ID of the user)
+            role_id: Identifier of the project user (not the ID of the user)
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -277,48 +279,6 @@ class MutationsProject:
         """
         variables = {"where": {"id": role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
-        return format_result("data", result)
-
-    @typechecked
-    def update_properties_in_project_user(
-        self,
-        project_user_id: str,
-        consensus_mark: Optional[float] = None,
-        honeypot_mark: Optional[float] = None,
-        number_of_labeled_assets: Optional[int] = None,
-        starred: Optional[bool] = None,
-        total_duration: Optional[int] = None,
-    ):
-        """
-        Update properties of a project-user tuple
-
-        Args:
-            project_user_id : Identifier of the project user
-            consensus_mark: Should be between 0 and 1.
-            honeypot_mark: Should be between 0 and 1.
-            number_of_labeled_assets: Number of assets the user labeled in the project.
-            starred: Whether to star the project in the project list.
-            total_duration: Total time the user spent in the project.
-
-        Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
-
-        Examples:
-            >>> for project_user in project_users:
-            ...     kili.update_properties_in_project_user(
-                        project_user_id=project_user['id'],
-                        honeypot_mark=0)
-        """
-        variables = {
-            "consensusMark": consensus_mark,
-            "honeypotMark": honeypot_mark,
-            "numberOfLabeledAssets": number_of_labeled_assets,
-            "projectUserID": project_user_id,
-            "starred": starred,
-            "totalDuration": total_duration,
-        }
-        result = self.auth.client.execute(GQL_GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
         return format_result("data", result)
 
     @typechecked
@@ -394,3 +354,42 @@ class MutationsProject:
 
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result("data", result)
+
+    @typechecked
+    def copy_project(  # pylint: disable=too-many-arguments
+        self,
+        from_project_id: str,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        copy_json_interface: bool = True,
+        copy_quality_settings: bool = True,
+        copy_members: bool = True,
+    ) -> str:
+        """Copy an existing project.
+
+        Copy an existing source project from its ID.
+
+        Args:
+            from_project_id: Project ID to copy from.
+            title: Title for the new project. Defaults to source project
+                title if `None` is provided.
+            description: Description for the new project. Defaults to empty string
+                if `None` is provided.
+            copy_json_interface: Copy the json interface from the source project to the new one.
+            copy_quality_settings: Copy the quality settings from the source project to the new one.
+            copy_members: Copy the members from the source project to the new one.
+
+        Returns:
+            The created project ID.
+
+        Examples:
+            >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
+        """
+        return CopyProject(self.auth).copy_project(
+            from_project_id,
+            title,
+            description,
+            copy_json_interface,
+            copy_quality_settings,
+            copy_members,
+        )

@@ -70,7 +70,7 @@ class QueriesLabel:
             project_id: Identifier of the project.
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
-                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
+                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             author_in: Returned labels should have a label whose status belongs to that list, if given.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -319,6 +319,7 @@ class QueriesLabel:
         layout: SplitOption = "split",
         single_file: bool = False,
         disable_tqdm: bool = False,
+        with_assets: bool = True,
     ):
         """
         Export the project labels with the requested format into the requested output path.
@@ -330,7 +331,10 @@ class QueriesLabel:
             asset_ids: Optional list of the assets from which to export the labels.
             layout: Layout of the exported files: "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            single_file: Layout of the exported labels. Single file mode is
+                only available for some specific formats (COCO and Kili).
             disable_tqdm: Disable the progress bar if True.
+            with_assets: Download the assets in the export.
 
         !!! Info
             The supported formats are:
@@ -341,7 +345,7 @@ class QueriesLabel:
 
             - COCO for semantic segmentation tasks (bounding box and semantic segmentation)
 
-            - Pascal VOC (coming soon) for object detection tasks.
+            - Pascal VOC for object detection tasks.
 
         !!! Example
             ```
@@ -363,6 +367,7 @@ class QueriesLabel:
                 output_file=filename,
                 disable_tqdm=disable_tqdm,
                 log_level="WARNING",
+                with_assets=with_assets,
             )
         except NoCompatibleJobError as excp:
             print(str(excp))

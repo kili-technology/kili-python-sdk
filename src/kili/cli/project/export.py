@@ -28,13 +28,25 @@ from kili.services.types import ProjectId
     "--layout",
     type=click.Choice(get_args(SplitOption)),
     default="merged",
-    help="Layout of the label files",
+    help=(
+        "Layout of the label files: 'split' to group labels per job, 'merged' to have one folder"
+        " with every labels."
+    ),
 )
 @click.option(
     "--single-file",
     type=bool,
     is_flag=True,
-    help="Layout of the label files",
+    help=(
+        "Layout of the label files. Single file mode is only available for some specific formats"
+        " (COCO and Kili)."
+    ),
+)
+@click.option(
+    "--with-assets/--without-assets",
+    type=bool,
+    default=True,
+    help="Download assets in the export.",
 )
 @Options.api_key
 @Options.endpoint
@@ -51,16 +63,18 @@ def export_labels(
     endpoint: Optional[str],
     project_id: str,
     verbose: bool,  # pylint: disable=unused-argument
+    with_assets: bool,
 ):
     """
     Export the Kili labels of a project to a given format.
 
     \b
     The supported formats are:
+
     - YOLO V4, V5, V7 for object detection tasks (bounding box).
     - Kili (a.k.a raw) for all tasks.
     - COCO for object detection tasks (semantic or bounding box)
-    - Pascal VOC (coming soon) for object detection tasks.
+    - Pascal VOC for object detection tasks.
     \b
     \b
     !!! Examples
@@ -99,6 +113,7 @@ def export_labels(
             output_file=output_file,
             disable_tqdm=not verbose,
             log_level="INFO" if verbose else "WARNING",
+            with_assets=with_assets,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))
