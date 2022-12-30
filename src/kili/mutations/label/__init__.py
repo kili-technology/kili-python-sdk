@@ -45,7 +45,7 @@ class MutationsLabel:
         model_name_array: Optional[List[str]] = None,
         json_response_array: Optional[List[dict]] = None,
         model_name: Optional[str] = None,
-    ) -> List[dict]:
+    ) -> dict:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
@@ -102,7 +102,7 @@ class MutationsLabel:
             )
         ]
         services.import_labels_from_dict(self, project_id, labels, "PREDICTION", model_name)
-        return [{"id": project_id}]
+        return {"id": project_id}
 
     @deprecate(
         msg=(
