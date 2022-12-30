@@ -3,7 +3,7 @@
 # Usage:
 # - To create a release branch:
 # ./entrypoint.sh release:branch <bump_type> <commit_hash>
-# bump_type: minor or patch.
+# bump_type: minor only.
 # commit_hash: no argument will default to HEAD. Else, the commit hash provided.
 
 # - To create a draft release:
@@ -29,8 +29,14 @@ function bump_version() {
 function create_release_branch() {
     release_type=$1
 
-    if [ "$release_type" != "patch" ] && [ "$release_type" != "minor" ]; then
-        echo "Wrong Bump type. It should be minor or patch. Received: $release_type"
+    if [ "$release_type" == "patch" ]; then
+        echo "Do not create a release branch for patch!"
+        echo "Just use the 'Create draft release patch' on GitHub and enter the lastest minor release branch X.XXX.0 version."
+        exit 1
+    fi
+
+    if [ "$release_type" != "minor" ]; then
+        echo "Wrong Bump type. It should be 'minor'. Received: $release_type"
         exit 1
     fi
 
@@ -116,7 +122,7 @@ if [[ "$1" == 'bump_version' ]]; then
 fi
 
 if [[ "$1" == 'release:branch' ]]; then
-    create_release_branch $2 $3  # pass bump type (minor or patch) and commit hash to create branch from
+    create_release_branch $2 $3  # pass bump type (minor) and commit hash to create branch from
 fi
 
 if [[ "$1" == 'release:draft' ]]; then
