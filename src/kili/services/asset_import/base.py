@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from pathlib import Path
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
+from uuid import uuid4
 
 from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.mutations import (
@@ -17,7 +18,6 @@ from kili.helpers import T, format_result, is_url
 from kili.orm import Asset
 from kili.queries.asset import QueriesAsset
 from kili.services.asset_import.constants import (
-    ASSET_FIELDS_DEFAULT_VALUE,
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
 )
@@ -133,9 +133,18 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         """
         fill empty fields with their default value
         """
-        field_names = ASSET_FIELDS_DEFAULT_VALUE.keys()
+        asset_fields_default_value = AssetLike(
+            content="",
+            json_content="",
+            external_id=uuid4().hex,
+            status="TODO",
+            json_metadata="{}",
+            is_honeypot=False,
+            id="",
+        )
+        field_names = asset_fields_default_value.keys()
         return KiliResolverAsset(
-            **{field: asset.get(field, ASSET_FIELDS_DEFAULT_VALUE[field]) for field in field_names}
+            **{field: asset.get(field, asset_fields_default_value[field]) for field in field_names}
         )
 
     @staticmethod
