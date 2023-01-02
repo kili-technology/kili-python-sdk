@@ -1,7 +1,7 @@
 """Project mutations."""
 
 from json import dumps
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from typeguard import typechecked
 
@@ -90,7 +90,7 @@ class MutationsProject:
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[dict] = None,
-    ) -> Dict[str, str]:
+    ) -> Dict[str, Any]:
         """Update properties of a project.
 
         Args:
