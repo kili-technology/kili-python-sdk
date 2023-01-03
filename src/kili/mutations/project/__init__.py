@@ -1,7 +1,7 @@
 """Project mutations."""
 
 from json import dumps
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from typeguard import typechecked
 
@@ -9,6 +9,7 @@ from kili.authentication import KiliAuth
 from kili.services.copy_project import CopyProject
 
 from ...helpers import format_result
+from ...queries.project import QueriesProject
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
@@ -89,7 +90,7 @@ class MutationsProject:
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[dict] = None,
-    ) -> Dict[str, str]:
+    ) -> Dict[str, Any]:
         """Update properties of a project.
 
         Args:
@@ -124,8 +125,8 @@ class MutationsProject:
                 Currently, possible types are: `string`, `number`
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict with the changed properties which indicates if the mutation was successful,
+                else an error message.
 
         Examples:
             >>> kili.update_properties_in_project(project_id=project_id, title='New title')
@@ -175,7 +176,17 @@ class MutationsProject:
             "useHoneyPot": use_honeypot,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        return format_result("data", result)
+        result = format_result("data", result)
+
+        variables.pop("projectID")
+        variables = {k: v for k, v in variables.items() if v is not None}
+
+        new_project_settings = QueriesProject(self.auth).projects(  # type:ignore
+            project_id=project_id, fields=list(variables.keys()), disable_tqdm=True
+        )[0]
+
+        result = {**result, **new_project_settings}
+        return result
 
     @typechecked
     def create_project(

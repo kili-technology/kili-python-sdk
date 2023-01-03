@@ -95,7 +95,7 @@ class QueriesAsset:
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
             honeypot_mark_lt : Maximum amount of honeypot for the asset.
             status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices: `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
+                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose status belongs to that list, if given.
             label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.
