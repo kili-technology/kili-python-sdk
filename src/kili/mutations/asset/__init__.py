@@ -193,7 +193,7 @@ class MutationsAsset:
             warnings.warn(
                 "The use of `external_ids` argument has changed. It is now used to identify which"
                 " properties of which assets to update. Please use"
-                " `kili.change_asset_external_id()` method instead to change asset external IDs.",
+                " `kili.change_asset_external_ids()` method instead to change asset external IDs.",
                 DeprecationWarning,
             )
             raise ValueError("Please provide either `asset_ids` or `external_ids`.")
@@ -251,7 +251,7 @@ class MutationsAsset:
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
-    def change_asset_external_id(
+    def change_asset_external_ids(
         self,
         asset_ids: List[str],
         new_external_ids: List[str],
@@ -267,7 +267,7 @@ class MutationsAsset:
                 or an error message.
 
         Examples:
-            >>> kili.change_asset_external_id(
+            >>> kili.change_asset_external_ids(
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     new_external_ids=["asset1", "asset2"],
                 )
