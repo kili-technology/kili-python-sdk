@@ -6,7 +6,6 @@ import pandas as pd
 from typeguard import typechecked
 
 from kili import services
-from kili.client import KiliAuth
 from kili.constants import NO_ACCESS_RIGHT
 from kili.helpers import format_result, fragment_builder, validate_category_search_query
 from kili.queries.asset import QueriesAsset
@@ -25,7 +24,7 @@ class QueriesLabel:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth: KiliAuth):
+    def __init__(self, auth):
         """Initialize the subclass.
 
         Args:
