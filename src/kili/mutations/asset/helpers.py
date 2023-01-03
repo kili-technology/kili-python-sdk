@@ -3,6 +3,7 @@ Helpers for the asset mutations
 """
 from typing import Dict, List, Optional
 
+from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.services.helpers import infer_ids_from_external_ids
 
 from ...helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
@@ -37,22 +38,18 @@ def process_update_properties_in_assets_parameters(properties) -> Dict:
 
 def get_asset_ids_or_throw_error(
     kili,
-    asset_ids: Optional[List[str]] = None,
-    external_ids: Optional[List[str]] = None,
-    project_id: Optional[str] = None,
+    asset_ids: Optional[List[str]],
+    external_ids: Optional[List[str]],
+    project_id: Optional[str],
 ) -> List[str]:
     """
-    Check if external id to internal id is valid and needed.
+    Check if external id to internal id conversion is valid and needed.
     """
-    if asset_ids is None and external_ids is None:
-        raise ValueError("Please provide either `asset_ids` or `external_ids`.")
+    check_asset_identifier_arguments(project_id, asset_ids, external_ids)
 
-    if external_ids is not None and asset_ids is None:
-        if project_id is None:
-            raise ValueError("Please provide `project_id` if `external_ids` is given.")
-        id_map = infer_ids_from_external_ids(
-            kili=kili, asset_external_ids=external_ids, project_id=project_id
-        )
-        asset_ids = [id_map[id] for id in external_ids]
+    id_map = infer_ids_from_external_ids(
+        kili=kili, asset_external_ids=external_ids, project_id=project_id  # type: ignore
+    )
+    asset_ids = [id_map[id] for id in external_ids]  # type: ignore
 
     return asset_ids  # type: ignore

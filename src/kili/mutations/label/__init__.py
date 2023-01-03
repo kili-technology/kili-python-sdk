@@ -11,7 +11,7 @@ from typeguard import typechecked
 from kili import services
 from kili.enums import LabelType
 from kili.helpers import deprecate, format_result
-from kili.mutations.label.helpers import check_asset_identifier_arguments
+from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,

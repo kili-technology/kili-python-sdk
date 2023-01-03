@@ -105,7 +105,7 @@ def test_send_back_to_queue(kili, src_project):
 def test_change_asset_external_ids(kili, src_project):
     assets = kili.assets(src_project["id"], fields=["id"])
     asset_ids = [asset["id"] for asset in assets]
-    ret = kili.change_asset_external_ids(asset_ids[:2], new_external_ids=["111", "222"])
+    ret = kili.change_asset_external_ids(asset_ids=asset_ids[:2], new_external_ids=["111", "222"])
 
     assert len(ret) == 2
     assert sorted([asset["id"] for asset in ret]) == sorted(asset_ids[:2])

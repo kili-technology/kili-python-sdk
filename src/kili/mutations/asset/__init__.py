@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Union
 from typeguard import typechecked
 
 from kili.authentication import KiliAuth
+from kili.exceptions import MissingArgumentError
 from kili.helpers import format_result
 from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
 from kili.mutations.asset.queries import (
@@ -196,7 +197,7 @@ class MutationsAsset:
                 " `kili.change_asset_external_ids()` method instead to change asset external IDs.",
                 DeprecationWarning,
             )
-            raise ValueError("Please provide either `asset_ids` or `external_ids`.")
+            raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
         asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
 
@@ -253,14 +254,18 @@ class MutationsAsset:
     @typechecked
     def change_asset_external_ids(
         self,
-        asset_ids: List[str],
         new_external_ids: List[str],
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
+        project_id: Optional[str] = None,
     ) -> List[Dict]:
-        """Update the names (external IDs) of one or more assets.
+        """Update the external IDs of one or more assets.
 
         Args:
-            asset_ids: The asset IDs to modify.
             new_external_ids: The new external IDs of the assets.
+            asset_ids: The asset IDs to modify.
+            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
+            project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -268,10 +273,11 @@ class MutationsAsset:
 
         Examples:
             >>> kili.change_asset_external_ids(
-                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     new_external_ids=["asset1", "asset2"],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 )
         """
+        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
 
         parameters = {
             "asset_ids": asset_ids,
