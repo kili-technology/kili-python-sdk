@@ -55,4 +55,4 @@ def get_asset_ids_or_throw_error(
         )
         asset_ids = [id_map[id] for id in external_ids]
 
-    return asset_ids
+    return asset_ids  # type: ignore
