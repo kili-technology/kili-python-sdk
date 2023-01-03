@@ -17,6 +17,7 @@ from kili.mutations.asset.queries import (
 )
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
+from kili.services.helpers import infer_ids_from_external_ids
 from kili.utils.pagination import _mutate_from_paginated_call
 
 from ...queries.asset import QueriesAsset
@@ -240,16 +241,34 @@ class MutationsAsset:
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
-    def delete_many_from_dataset(self, asset_ids: List[str]) -> Asset:
+    def delete_many_from_dataset(
+        self,
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
+        project_id: Optional[str] = None,
+    ) -> Asset:
         """Delete assets from a project.
 
         Args:
-            asset_ids: The list of identifiers of the assets to delete.
+            asset_ids: The list of asset internal IDs to delete.
+            external_ids: The list of asset external IDs to delete.
+            project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
+        if asset_ids is None and external_ids is None:
+            raise ValueError("Please provide either `asset_ids` or `external_ids`.")
+
+        if external_ids is not None and asset_ids is None:
+            if project_id is None:
+                raise ValueError("Please provide `project_id` if `external_ids` is given.")
+            id_map = infer_ids_from_external_ids(
+                kili=self, asset_external_ids=external_ids, project_id=project_id
+            )
+            asset_ids = [id_map[id] for id in external_ids]
+
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
@@ -261,14 +280,21 @@ class MutationsAsset:
         return format_result("data", results[0], Asset)
 
     @typechecked
-    def add_to_review(self, asset_ids: List[str]) -> Optional[Dict[str, Any]]:
+    def add_to_review(
+        self,
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
+        project_id: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
         """Add assets to review.
 
         !!! warning
             Assets without any label will be ignored.
 
         Args:
-            asset_ids: The asset IDs to add to review.
+            asset_ids: The asset internal IDs to add to review.
+            external_ids: The asset external IDs to add to review.
+            project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to review.
@@ -283,6 +309,17 @@ class MutationsAsset:
                         ],
                 )
         """
+        if asset_ids is None and external_ids is None:
+            raise ValueError("Please provide either `asset_ids` or `external_ids`.")
+
+        if external_ids is not None and asset_ids is None:
+            if project_id is None:
+                raise ValueError("Please provide `project_id` if `external_ids` is given.")
+            id_map = infer_ids_from_external_ids(
+                kili=self, asset_external_ids=external_ids, project_id=project_id
+            )
+            asset_ids = [id_map[id] for id in external_ids]
+
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):
@@ -308,11 +345,18 @@ class MutationsAsset:
         return result
 
     @typechecked
-    def send_back_to_queue(self, asset_ids: List[str]) -> Dict[str, Any]:
+    def send_back_to_queue(
+        self,
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
+        project_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """Send assets back to queue.
 
         Args:
-            asset_ids: The IDs of the assets to send back to queue.
+            asset_ids: List of internal IDs of assets to send back to queue.
+            external_ids: List of external IDs of assets to send back to queue.
+            project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to queue.
@@ -326,6 +370,17 @@ class MutationsAsset:
                         ],
                 )
         """
+        if asset_ids is None and external_ids is None:
+            raise ValueError("Please provide either `asset_ids` or `external_ids`.")
+
+        if external_ids is not None and asset_ids is None:
+            if project_id is None:
+                raise ValueError("Please provide `project_id` if `external_ids` is given.")
+            id_map = infer_ids_from_external_ids(
+                kili=self, asset_external_ids=external_ids, project_id=project_id
+            )
+            asset_ids = [id_map[id] for id in external_ids]
+
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
         def generate_variables(batch):

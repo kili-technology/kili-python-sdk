@@ -6,6 +6,7 @@ import pandas as pd
 from typeguard import typechecked
 
 from kili import services
+from kili.client import KiliAuth
 from kili.constants import NO_ACCESS_RIGHT
 from kili.helpers import format_result, fragment_builder, validate_category_search_query
 from kili.queries.asset import QueriesAsset
@@ -13,6 +14,7 @@ from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 from kili.queries.project import QueriesProject
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import ProjectId
 from kili.types import Label as LabelType
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -23,7 +25,7 @@ class QueriesLabel:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -320,21 +322,24 @@ class QueriesLabel:
         single_file: bool = False,
         disable_tqdm: bool = False,
         with_assets: bool = True,
+        external_ids: Optional[List[str]] = None,
     ):
         """
         Export the project labels with the requested format into the requested output path.
 
         Args:
+            project_id: Identifier of the project.
             filename: Relative or full path of the archive that will contain
                 the exported data.
             fmt: Format of the exported labels.
-            asset_ids: Optional list of the assets from which to export the labels.
+            asset_ids: Optional list of the assets internal IDs from which to export the labels.
             layout: Layout of the exported files: "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
             single_file: Layout of the exported labels. Single file mode is
                 only available for some specific formats (COCO and Kili).
             disable_tqdm: Disable the progress bar if True.
             with_assets: Download the assets in the export.
+            external_ids: Optional list of the assets external IDs from which to export the labels.
 
         !!! Info
             The supported formats are:
@@ -354,6 +359,11 @@ class QueriesLabel:
             kili.export_labels("your_project_id", "export.zip", "yolo_v4")
             ```
         """
+        if external_ids is not None and asset_ids is None:
+            id_map = infer_ids_from_external_ids(
+                kili=self, asset_external_ids=external_ids, project_id=project_id
+            )
+            asset_ids = [id_map[id] for id in external_ids]
 
         try:
             services.export_labels(

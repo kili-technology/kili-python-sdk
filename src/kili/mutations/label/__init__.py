@@ -41,20 +41,22 @@ class MutationsLabel:
     def create_predictions(
         self,
         project_id: str,
-        external_id_array: List[str],
+        external_id_array: Optional[List[str]] = None,
         model_name_array: Optional[List[str]] = None,
         json_response_array: Optional[List[dict]] = None,
         model_name: Optional[str] = None,
+        asset_id_array: Optional[List[str]] = None,
     ) -> dict:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
         Args:
-            project_id: Identifier of the project
-            external_id_array: The external identifiers of the assets for which we want to add predictions
-            model_name_array: In case you want to precise from which model the label originated
+            project_id: Identifier of the project.
+            external_id_array: The external IDs of the assets for which we want to add predictions.
+            model_name_array: In case you want to precise from which model the label originated.
             json_response_array: The predictions are given here. For examples,
                 see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
+            asset_id_array: The internal IDs of the assets for which we want to add predictions.
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -67,11 +69,7 @@ class MutationsLabel:
                 "json_response_array is empty, you must provide at least one prediction to upload"
             )
         assert_all_arrays_have_same_size(
-            [
-                external_id_array,
-                json_response_array,
-                model_name_array,
-            ]
+            [external_id_array, json_response_array, model_name_array, asset_id_array]
         )
         if model_name is None:
             if model_name_array is None:
@@ -91,11 +89,13 @@ class MutationsLabel:
 
         labels = [
             {
+                "asset_id": asset_id,
                 "asset_external_id": asset_external_id,
                 "json_response": json_response,
             }
-            for (asset_external_id, json_response) in list(
+            for (asset_id, asset_external_id, json_response) in list(
                 zip(
+                    asset_id_array or [None] * len(json_response_array),
                     external_id_array or [None] * len(json_response_array),
                     json_response_array,
                 )
@@ -187,13 +187,15 @@ class MutationsLabel:
         """Append labels to assets.
 
         Args:
-            asset_id_array: list of asset ids to append labels on
+            asset_id_array: list of asset internal ids to append labels on
             json_response_array: list of labels to append
             author_id_array: list of the author id of the labels
             seconds_to_label_array: list of times taken to produce the label, in seconds
             model_name: Only useful when uploading predictions.
                 Name of the model when uploading predictions
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
+            project_id: Identifier of the project
+            asset_external_id_array: list of asset external ids to append labels on
 
         Returns:
             A result object which indicates if the mutation was successful,
