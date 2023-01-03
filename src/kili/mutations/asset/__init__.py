@@ -2,6 +2,7 @@
 Asset mutations
 """
 
+import warnings
 from typing import Any, Dict, List, Optional, Union
 
 from typeguard import typechecked
@@ -130,7 +131,7 @@ class MutationsAsset:
     # pylint: disable=unused-argument
     def update_properties_in_assets(
         self,
-        asset_ids: List[str],
+        asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         priorities: Optional[List[int]] = None,
         json_metadatas: Optional[List[Union[dict, str]]] = None,
@@ -142,32 +143,34 @@ class MutationsAsset:
         status_array: Optional[List[str]] = None,
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
-    ) -> List[dict]:
+        project_id: Optional[str] = None,
+    ) -> List[Dict]:
         """Update the properties of one or more assets.
 
         Args:
-            asset_ids: The asset IDs to modify
-            external_ids: Change the external id of the assets
+            asset_ids: The internal asset IDs to modify.
+            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
             priorities: You can change the priority of the assets.
                 By default, all assets have a priority of 0.
             json_metadatas: The metadata given to an asset should be stored
                 in a json like dict with keys `imageUrl`, `text`, `url`:
                 `json_metadata = {'imageUrl': '','text': '','url': ''}`
-            consensus_marks: Should be between 0 and 1
-            honeypot_marks: Should be between 0 and 1
+            consensus_marks: Should be between 0 and 1.
+            honeypot_marks: Should be between 0 and 1.
             to_be_labeled_by_array: If given, each element of the list should contain the emails of
                 the labelers authorized to label the asset.
-            contents: - For a NLP project, the content can be directly in text format
+            contents: - For a NLP project, the content can be directly in text format.
                 - For an Image / Video / Pdf project, the content must be hosted on a web server,
-                and you point Kili to your data by giving the URLs
+                and you point Kili to your data by giving the URLs.
             json_contents: - For a NLP project, the `json_content`
-                is a text formatted using RichText
+                is a text formatted using RichText.
                 - For a Video project, the`json_content` is a json containg urls pointing
                     to each frame of the video.
             status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`,
-                `TO_REVIEW`, `REVIEWED`
-            is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not
-            is_honeypot_array: Whether to use the asset for honeypot
+                `TO_REVIEW`, `REVIEWED`.
+            is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
+            is_honeypot_array: Whether to use the asset for honeypot.
+            project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -178,15 +181,33 @@ class MutationsAsset:
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     consensus_marks=[1, 0.7],
                     contents=[None, 'https://to/second/asset.png'],
-                    external_ids=['external-id-of-your-choice-1', 'external-id-of-your-choice-2'],
                     honeypot_marks=[0.8, 0.5],
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
                     priorities=[None, 2],
                     status_array=['LABELED', 'REVIEWED'],
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
-            )
+                )
         """
+        if asset_ids is None and external_ids is None:
+            raise ValueError("Please provide either `asset_ids` or `external_ids`.")
+
+        if asset_ids is not None and external_ids is not None:
+            warnings.warn(
+                "The use of `external_ids` argument has changed. It is now used to identify which"
+                " properties of which assets to update. Please use `kili.rename_assets()` method"
+                " instead to change asset names (external IDs).",
+                DeprecationWarning,
+            )
+            raise ValueError("Please provide either `asset_ids` or `external_ids`.")
+
+        if external_ids is not None and asset_ids is None:
+            if project_id is None:
+                raise ValueError("Please provide `project_id` if `external_ids` is given.")
+            id_map = infer_ids_from_external_ids(
+                kili=self, asset_external_ids=external_ids, project_id=project_id
+            )
+            asset_ids = [id_map[id] for id in external_ids]
 
         saved_args = locals()
         parameters = {
@@ -195,7 +216,6 @@ class MutationsAsset:
             if k
             in [
                 "asset_ids",
-                "external_ids",
                 "priorities",
                 "json_metadatas",
                 "consensus_marks",
@@ -212,7 +232,6 @@ class MutationsAsset:
 
         def generate_variables(batch: Dict) -> Dict:
             data = {
-                "externalId": batch["external_ids"],
                 "priority": batch["priorities"],
                 "jsonMetadata": batch["json_metadatas"],
                 "consensusMark": batch["consensus_marks"],
@@ -224,6 +243,59 @@ class MutationsAsset:
                 "status": batch["status_array"],
                 "isUsedForConsensus": batch["is_used_for_consensus_array"],
                 "isHoneypot": batch["is_honeypot_array"],
+            }
+            data_array = [dict(zip(data, t)) for t in zip(*data.values())]
+            return {
+                "whereArray": [{"id": asset_id} for asset_id in batch["asset_ids"]],
+                "dataArray": data_array,
+            }
+
+        results = _mutate_from_paginated_call(
+            self,
+            properties_to_batch,
+            generate_variables,
+            GQL_UPDATE_PROPERTIES_IN_ASSETS,
+        )
+        formated_results = [format_result("data", result, Asset) for result in results]
+        return [item for batch_list in formated_results for item in batch_list]
+
+    @typechecked
+    def rename_assets(
+        self,
+        asset_ids: List[str],
+        new_external_ids: List[str],
+    ) -> List[Dict]:
+        """Update the names (external IDs) of one or more assets.
+
+        Args:
+            asset_ids: The asset IDs to modify.
+            new_external_ids: The new external IDs of the assets.
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.rename_assets(
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    new_external_ids=["asset1", "asset2"],
+                )
+        """
+
+        parameters = {
+            "asset_ids": asset_ids,
+            "new_external_ids": new_external_ids,
+            "json_metadatas": None,
+            "to_be_labeled_by_array": None,
+        }
+        properties_to_batch = process_update_properties_in_assets_parameters(parameters)
+
+        def generate_variables(batch: Dict) -> Dict:
+            data = {
+                "externalId": batch["new_external_ids"],
+                "jsonMetadata": batch["json_metadatas"],
+                "toBeLabeledBy": batch["to_be_labeled_by_array"],
+                "shouldResetToBeLabeledBy": batch["should_reset_to_be_labeled_by_array"],
             }
             data_array = [dict(zip(data, t)) for t in zip(*data.values())]
             return {
