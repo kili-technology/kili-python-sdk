@@ -130,12 +130,12 @@ def test_update_properties_in_assets_external_id(kili, src_project):
 
     ret = kili.update_properties_in_assets(
         external_ids=[asset["externalId"] for asset in assets],
-        is_honeypot_array=[True, False, False],
+        priorities=[1, 0, 0],
         project_id=src_project["id"],
     )
     assert len(ret) == 3
 
-    assets_new = kili.assets(src_project["id"], fields=["id", "externalId", "isHoneypot"])
+    assets_new = kili.assets(src_project["id"], fields=["id", "externalId", "priority"])
 
     assert [asset["externalId"] for asset in assets_new] == ["1", "2", "3"]
-    assert [asset["isHoneypot"] for asset in assets_new] == [True, False, False]
+    assert [asset["priority"] for asset in assets_new] == [1, 0, 0]
