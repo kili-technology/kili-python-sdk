@@ -23,18 +23,23 @@ class QueryOptions(NamedTuple):
 
 
 class BaseQueryWhere(ABC):
+    """
+    Abtsract class for defining the where payload to send in a graphQL query
+    """
+
     def __init__(self):
         self._graphql_payload = self.graphql_where_builder()
 
     @abstractmethod
     def graphql_where_builder(self) -> Dict:
-        """Build the GraphQL Where payload sent in the resolver from the
-        SDK Query arguments given in the BaseQueryWhere class
+        """Build the GraphQL where payload sent in the resolver from the
+        arguments given to the where class
         """
         raise NotImplementedError
 
     @property
     def graphql_payload(self):
+        """where payload to send in the graphQL query"""
         return self._graphql_payload
 
 

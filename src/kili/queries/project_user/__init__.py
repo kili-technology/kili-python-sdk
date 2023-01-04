@@ -1,6 +1,6 @@
 """Project user queries."""
 
-from typing import List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
@@ -44,7 +44,7 @@ class QueriesProjectUser:
         skip: int = 0,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ):
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Return project users (possibly with their KPIs) that match a set of criteria
 
@@ -97,6 +97,6 @@ class QueriesProjectUser:
             The number of project users with the parameters provided
         """
         where = ProjectUserWhere(
-            project_id=project_id, email=email, id=id, organization_id=organization_id
+            project_id=project_id, email=email, _id=id, organization_id=organization_id
         )
         return ProjectUserQuery(self.auth.client).count(where)
