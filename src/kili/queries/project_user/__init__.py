@@ -71,7 +71,7 @@ class QueriesProjectUser:
             ```
         """
         where = ProjectUserWhere(
-            project_id=project_id, email=email, id=id, organization_id=organization_id
+            project_id=project_id, email=email, _id=id, organization_id=organization_id
         )
         options = QueryOptions(first, skip, disable_tqdm, as_generator)
         return ProjectUserQuery(self.auth.client)(where, fields, options)

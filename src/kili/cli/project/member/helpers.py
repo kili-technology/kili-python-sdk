@@ -58,25 +58,24 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
     if role is not None:
         raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
 
-    try:
-        existing_members = cast(
-            List[Dict],
-            ProjectUserQuery(kili.auth.client)(
-                where=ProjectUserWhere(project_id=project_id_source),
-                fields=["role", "user.email", "activated"],
-            ),
-        )
-        for existing_member in existing_members:
-            if existing_member["activated"]:
-                activated_members.append(
-                    {"email": existing_member["user"]["email"], "role": existing_member["role"]}
-                )
-    except:
-        # pylint: disable=raise-missing-from
-        raise ValueError(f"{project_id_source} is not recognized as a Kili project_id")
+    existing_members = cast(
+        List[Dict],
+        ProjectUserQuery(kili.auth.client)(
+            where=ProjectUserWhere(project_id=project_id_source),
+            fields=["role", "user.email", "activated"],
+        ),
+    )
+    for existing_member in existing_members:
+        if existing_member["activated"]:
+            activated_members.append(
+                {"email": existing_member["user"]["email"], "role": existing_member["role"]}
+            )
 
     if len(activated_members) == 0:
-        raise ValueError(f"No active member were found in project with id {project_id_source}")
+        raise ValueError(
+            f"No active member were found in project with id {project_id_source} or the project"
+            " does not exist"
+        )
 
     return activated_members
 

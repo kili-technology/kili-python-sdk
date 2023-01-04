@@ -8,8 +8,8 @@ from requests import adapters
 from urllib3 import Retry
 
 from kili import __version__
+from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
-from kili.graphql_client import GraphQLClient, GraphQLClientName
 from kili.helpers import format_result
 from kili.queries.user.queries import GQL_ME
 from kili.types import User

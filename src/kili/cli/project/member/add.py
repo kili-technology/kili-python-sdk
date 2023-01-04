@@ -83,12 +83,12 @@ def add_member(
             "user.email",
         ],
     )
-    existing_members_email = [
+    existing_member_emails = set(
         member["user"]["email"] for member in existing_members if member["activated"]
-    ]
+    )
 
     for member in members_to_add:
-        if member["email"] in existing_members_email:
+        if member["email"] in existing_member_emails:
             already_member = member["email"]
             warnings.warn(
                 f"{already_member} is already an active member of the project."

@@ -10,7 +10,7 @@ from tqdm import tqdm
 from kili.helpers import format_result, fragment_builder
 from kili.utils.pagination import api_throttle
 
-from ..graphql_client import GraphQLClient
+from .graphql_client import GraphQLClient
 
 
 class QueryOptions(NamedTuple):
@@ -18,8 +18,24 @@ class QueryOptions(NamedTuple):
 
     first: Optional[int] = None
     skip: int = 0
-    disable_tqdm: bool = True
+    disable_tqdm: Optional[bool] = True
     as_generator: bool = False
+
+
+class BaseQueryWhere(ABC):
+    def __init__(self):
+        self._graphql_payload = self.graphql_where_builder()
+
+    @abstractmethod
+    def graphql_where_builder(self) -> Dict:
+        """Build the GraphQL Where payload sent in the resolver from the
+        SDK Query arguments given in the BaseQueryWhere class
+        """
+        raise NotImplementedError
+
+    @property
+    def graphql_payload(self):
+        return self._graphql_payload
 
 
 class GraphQLQuery(ABC):
@@ -47,15 +63,6 @@ class GraphQLQuery(ABC):
         """
         raise NotImplementedError
 
-    @staticmethod
-    @abstractmethod
-    def where_payload_builder(where) -> Dict:
-        """Build the where payload to be sent to graphQL to restrict the query.
-        It takes the SDK flatten Where as input and
-        convert it into the right where needed to call the resolver
-        """
-        raise NotImplementedError
-
     COUNT_QUERY: str = NotImplemented
 
     TYPE: Type = NotImplemented
@@ -67,14 +74,14 @@ class GraphQLQuery(ABC):
 
     def __call__(
         self,
-        where,
+        where: BaseQueryWhere,
         fields: List[str],
         options: Optional[QueryOptions] = None,
     ) -> Iterable[Dict]:
         """Query objects of the specified type"""
         options = options or QueryOptions()
         fragment = fragment_builder(fields, self.TYPE)
-        where_payload = self.where_payload_builder(where)
+        where_payload = where.graphql_payload
         query = self.query(fragment)
 
         result_gen = self.execute_query_from_paginated_call(query, where_payload, options)
