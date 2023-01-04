@@ -47,9 +47,10 @@ def get_asset_ids_or_throw_error(
     """
     check_asset_identifier_arguments(project_id, asset_ids, external_ids)
 
-    id_map = infer_ids_from_external_ids(
-        kili=kili, asset_external_ids=external_ids, project_id=project_id  # type: ignore
-    )
-    asset_ids = [id_map[id] for id in external_ids]  # type: ignore
+    if asset_ids is None:
+        id_map = infer_ids_from_external_ids(
+            kili=kili, asset_external_ids=external_ids, project_id=project_id  # type: ignore
+        )
+        asset_ids = [id_map[id] for id in external_ids]  # type: ignore
 
-    return asset_ids  # type: ignore
+    return asset_ids
