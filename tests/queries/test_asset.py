@@ -28,7 +28,7 @@ TEST_CASES = [
         ),
         "args": {"project_id": "abcdef", "as_generator": True, "first": 3, "skip": 20},
         "expected_result": [{"id": i} for i in range(20, 23)],
-        "expected_type": "generator",
+        "expected_type": "TypeCheckedGenerator",
     },
     {
         "case": (
@@ -49,7 +49,7 @@ TEST_CASES = [
 
 def test_assets(mocker):
     """
-    Test return type of que assets method
+    Test return type of the assets method
     """
     mocker.patch("kili.queries.asset.QueriesAsset._query_assets", side_effect=mocked_query_method)
     mocker.patch("kili.queries.asset.QueriesAsset.count_assets", return_value=mocked_count_method)
