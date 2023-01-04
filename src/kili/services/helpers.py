@@ -48,9 +48,13 @@ def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str)
     return target_job_name in json_interface["jobs"]
 
 
-def infer_ids_from_external_ids(kili, asset_external_ids: List[str], project_id: str):
+def infer_ids_from_external_ids(
+    kili, asset_external_ids: List[str], project_id: str
+) -> Dict[str, str]:
     """
-    Infer asset ids from their external ids and project Id
+    Infer asset ids from their external ids and project Id.
+
+    Returns a dict that maps external ids to internal ids.
 
     Args:
         asset_id: asset id
