@@ -28,7 +28,7 @@ TEST_CASES = [
         ),
         "args": {"project_id": "abcdef", "as_generator": True, "first": 3, "skip": 20},
         "expected_result": [{"id": i} for i in range(20, 23)],
-        "expected_type": "TypeCheckedGenerator",
+        "expected_type": "generator",
     },
     {
         "case": (
