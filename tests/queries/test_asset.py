@@ -49,7 +49,7 @@ TEST_CASES = [
 
 def test_assets(mocker):
     """
-    Test return type of que assets method
+    Test return type of the assets method
     """
     mocker.patch("kili.queries.asset.QueriesAsset._query_assets", side_effect=mocked_query_method)
     mocker.patch("kili.queries.asset.QueriesAsset.count_assets", return_value=mocked_count_method)
