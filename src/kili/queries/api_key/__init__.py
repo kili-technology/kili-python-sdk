@@ -66,7 +66,7 @@ class QueriesApiKey:
             >>> kili.api_keys(api_key=api_key, as_generator=False)
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        options = QueryOptions(first, skip, disable_tqdm, as_generator)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
         return APIKeyQuery(self.auth.client)(where, fields, options)
 
     @typechecked

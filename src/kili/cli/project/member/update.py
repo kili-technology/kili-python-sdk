@@ -13,6 +13,7 @@ from kili.cli.project.member.helpers import (
     collect_members_from_emails,
     collect_members_from_project,
 )
+from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
@@ -83,6 +84,7 @@ def update_member(
         ProjectUserQuery(kili.auth.client)(
             where=ProjectUserWhere(project_id=project_id),
             fields=["role", "activated", "user.email", "id", "user.id"],
+            options=QueryOptions(disable_tqdm=True),
         ),
     )
     existing_members = {

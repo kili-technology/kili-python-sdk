@@ -73,7 +73,7 @@ class QueriesProjectUser:
         where = ProjectUserWhere(
             project_id=project_id, email=email, _id=id, organization_id=organization_id
         )
-        options = QueryOptions(first, skip, disable_tqdm, as_generator)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
         return ProjectUserQuery(self.auth.client)(where, fields, options)
 
     # pylint: disable=invalid-name

@@ -16,9 +16,9 @@ from .graphql_client import GraphQLClient
 class QueryOptions(NamedTuple):
     """Options when calling GraphQLQuery from the SDK"""
 
+    disable_tqdm: Optional[bool]
     first: Optional[int] = None
     skip: int = 0
-    disable_tqdm: Optional[bool] = True
     as_generator: bool = False
 
 
@@ -81,10 +81,9 @@ class GraphQLQuery(ABC):
         self,
         where: BaseQueryWhere,
         fields: List[str],
-        options: Optional[QueryOptions] = None,
+        options: QueryOptions,
     ) -> Iterable[Dict]:
         """Query objects of the specified type"""
-        options = options or QueryOptions()
         fragment = fragment_builder(fields, self.TYPE)
         where_payload = where.graphql_payload
         query = self.query(fragment)

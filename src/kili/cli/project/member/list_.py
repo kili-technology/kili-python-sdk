@@ -8,6 +8,7 @@ from tabulate import tabulate
 
 from kili.cli.common_args import Arguments, Options
 from kili.cli.helpers import get_kili_client
+from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
@@ -46,6 +47,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
                 "user.lastname",
                 "user.organization.name",
             ],
+            options=QueryOptions(disable_tqdm=True),
         ),
     )
     members = pd.DataFrame(members)

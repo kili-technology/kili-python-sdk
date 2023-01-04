@@ -13,6 +13,7 @@ from kili.cli.project.member.helpers import (
     collect_members_from_emails,
     collect_members_from_project,
 )
+from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
@@ -82,6 +83,7 @@ def add_member(
             "activated",
             "user.email",
         ],
+        options=QueryOptions(disable_tqdm=True),
     )
     existing_member_emails = set(
         member["user"]["email"] for member in existing_members if member["activated"]

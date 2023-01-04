@@ -6,6 +6,7 @@ from typing import Dict, Iterable, List, Optional, cast
 
 from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
+from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
@@ -63,6 +64,7 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
         ProjectUserQuery(kili.auth.client)(
             where=ProjectUserWhere(project_id=project_id_source),
             fields=["role", "user.email", "activated"],
+            options=QueryOptions(disable_tqdm=True),
         ),
     )
     for existing_member in existing_members:
