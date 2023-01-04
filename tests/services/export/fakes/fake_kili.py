@@ -5,7 +5,7 @@ Fake Kili object
 from typing import List, Optional
 
 from kili.orm import Asset
-from kili.queries.asset.helpers import get_post_assets_call_process
+from kili.queries.asset.helpers import MediaDownloader
 from tests.services.export.fakes.fake_data import (
     asset_image_1,
     asset_image_1_without_annotation,
@@ -56,11 +56,16 @@ class FakeKili:
             else:
                 return []
 
-        post_call_process = get_post_assets_call_process(
-            bool(download_media), local_media_dir, project_id
-        )
+        if bool(download_media):
+            projects = self.projects(project_id=project_id, fields=["project.inputType"])
+            project_input_type = projects[0]["inputType"]
+            post_call_process = MediaDownloader(
+                local_media_dir, project_id, False, project_input_type
+            ).download_assets
+        else:
+            post_call_process = lambda assets: assets
 
-        return post_call_process(_assets())
+        return post_call_process(_assets())  # type: ignore
 
     def count_assets(self, project_id: str):
         """
