@@ -71,7 +71,7 @@ def src_project_image(kili):
         description="test_query_assets_download_media.py",
     )
 
-    with NamedTemporaryFile(mode="w+b", suffix=".png") as temp:
+    with NamedTemporaryFile(mode="w+b", suffix=".png", delete=False) as temp:
         with requests.get(
             "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/docs/assets/kili_logo.png",
             timeout=20,
@@ -84,6 +84,7 @@ def src_project_image(kili):
             content_array=[temp.name, temp.name],
             external_id_array=["kili_logo", "kili_logo.png"],
         )
+    os.remove(temp.name)
 
     yield project
 
@@ -343,7 +344,7 @@ def src_project_big_image(kili):
         description="test_query_assets_download_media.py",
     )
 
-    with NamedTemporaryFile(mode="w+b", suffix=".png") as temp:
+    with NamedTemporaryFile(mode="w+b", suffix=".png", delete=False) as temp:
         width = 3800
         height = 3800
 
@@ -359,6 +360,7 @@ def src_project_big_image(kili):
             content_array=[temp.name],
             external_id_array=["randimage"],
         )
+    os.remove(temp.name)
 
     count_assets = 0
     while count_assets < 1:
