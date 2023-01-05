@@ -67,6 +67,7 @@ jobs:
 
       - name: create PR to merge release branch and master
         run: |
+          git fetch
           git checkout release/${{ github.ref_name }}
           git checkout -b merge_release/${{ github.ref_name }}
           git push
