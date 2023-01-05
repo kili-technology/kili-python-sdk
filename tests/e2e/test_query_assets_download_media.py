@@ -351,7 +351,7 @@ def src_project_big_image(kili):
 
         # fill image with random data to avoid image compression
         random_data = [random.randint(0, 255) for _ in range(width * height)]
-        img.putdata(list(zip(random_data, random_data, random_data)))
+        img.putdata(list(zip(random_data, random_data, random_data)))  # type: ignore
 
         img.save(temp, "PNG")
         kili.append_many_to_dataset(
