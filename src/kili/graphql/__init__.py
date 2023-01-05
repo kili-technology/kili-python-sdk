@@ -120,15 +120,10 @@ class GraphQLQuery(ABC):
         Builds a row generator from paginated calls.
 
         Args:
-            skip: Number of assets to skip
-                (they are ordered by their date of creation, first to last).
-            first: Maximum number of assets to return.
-            count_method: Callable returning the number of available assets given `count_args`.
-            count_kwargs: Keyword arguments passed to the `count_method`.
-            paged_call_method: Callable returning the list of samples.
-            paged_call_payload: Payload for the GraphQL query.
-            fields: The list of strings to retrieved.
-            disable_tqdm: If `True`, disables tqdm.
+            query: The object query to execute and to send to graphQL, in string format
+            where_payload: The where payload to be sent to graphQL,
+                as a value of the 'where' key in the global payload
+            options: The query options
         """
         payload: Dict[str, Any] = {"where": where_payload}
         if options.as_generator and not options.disable_tqdm:
