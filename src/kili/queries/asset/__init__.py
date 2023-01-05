@@ -7,7 +7,7 @@ from typeguard import typechecked
 
 from kili.helpers import format_result, fragment_builder, validate_category_search_query
 from kili.orm import Asset
-from kili.queries.asset.helpers import MediaDownloader
+from kili.queries.asset.helpers import get_post_assets_call_process
 from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 from kili.types import Asset as AssetType
 from kili.utils.pagination import row_generator_from_paginated_calls
@@ -220,20 +220,9 @@ class QueriesAsset:
             },
         }
 
-        if download_media:
-            projects = self.projects(  # type:ignore # pylint: disable=no-member
-                project_id, fields=["inputType"]
-            )
-            project_input_type = projects[0]["inputType"]
-            jsoncontent_field_added = False
-            if project_input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
-                fields.append("jsonContent")
-                jsoncontent_field_added = True
-            post_call_process = MediaDownloader(
-                local_media_dir, project_id, jsoncontent_field_added, project_input_type
-            ).download_assets
-        else:
-            post_call_process = None
+        post_call_process = get_post_assets_call_process(
+            download_media, self, project_id, fields, local_media_dir
+        )
 
         asset_generator = row_generator_from_paginated_calls(
             skip,

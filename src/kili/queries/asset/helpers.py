@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import requests
 from tenacity import retry
@@ -13,6 +13,25 @@ from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
 from kili.queries.asset.exceptions import MissingPropertyError
+
+
+def get_post_assets_call_process(
+    download_media: bool, kili, project_id: str, fields: List, local_media_dir: Optional[str]
+) -> Callable:
+    """get post call process for assets"""
+    if download_media:
+        projects = kili.projects(project_id, fields=["inputType"])
+        project_input_type = projects[0]["inputType"]
+        jsoncontent_field_added = False
+        if project_input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
+            fields.append("jsonContent")
+            jsoncontent_field_added = True
+        post_call_process = MediaDownloader(
+            local_media_dir, project_id, jsoncontent_field_added, project_input_type
+        ).download_assets
+        return post_call_process
+
+    return lambda assets: assets
 
 
 class MediaDownloader:
