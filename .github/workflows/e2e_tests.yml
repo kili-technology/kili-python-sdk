@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'release/**'
+      - "release/**"
       - master
 jobs:
   recipes:
-    timeout-minutes: 11
+    timeout-minutes: 13
     name: Recipes test
     strategy:
       matrix:
