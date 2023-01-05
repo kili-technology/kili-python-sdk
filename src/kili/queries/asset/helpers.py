@@ -18,7 +18,11 @@ from kili.queries.asset.exceptions import MissingPropertyError
 def get_post_assets_call_process(
     download_media: bool, kili, project_id: str, fields: List, local_media_dir: Optional[str]
 ) -> Callable:
-    """get post call process for assets"""
+    """
+    Define the function to apply on assets after a paginated call of assets
+    Call the download_asset_media with the right parameters if download_media is True
+    Otherwise return assets without any post-processing
+    """
     if download_media:
         projects = kili.projects(project_id, fields=["inputType"])
         project_input_type = projects[0]["inputType"]
