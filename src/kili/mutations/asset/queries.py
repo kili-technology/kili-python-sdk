@@ -8,14 +8,14 @@ GQL_UPDATE_PROPERTIES_IN_ASSETS = """
 mutation(
     $whereArray: [AssetWhere!]!
     $dataArray: [AssetData!]!
-) {{
+) {
   data: updatePropertiesInAssets(
     where: $whereArray,
     data: $dataArray
-  ) {{
+  ) {
     id
-  }}
-}}
+  }
+}
 """
 
 GQL_DELETE_MANY_FROM_DATASET = f"""
