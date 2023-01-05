@@ -57,7 +57,7 @@ class FakeKili:
                 return []
 
         if bool(download_media):
-            projects = self.projects(project_id=project_id, fields=["project.inputType"])
+            projects = self.projects(project_id=project_id)
             project_input_type = projects[0]["inputType"]
             post_call_process = MediaDownloader(
                 local_media_dir, project_id, False, project_input_type

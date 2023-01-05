@@ -222,9 +222,9 @@ class QueriesAsset:
 
         if download_media:
             projects = self.projects(  # type:ignore # pylint: disable=no-member
-                project_id=project_id, fields=["project.inputType"]
+                project_id, fields=["inputType"]
             )
-            project_input_type = projects[0]["project"]["inputType"]
+            project_input_type = projects[0]["inputType"]
             jsoncontent_field_added = False
             if project_input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
                 fields.append("jsonContent")
