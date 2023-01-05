@@ -122,3 +122,31 @@ def test_download_single_asset_jsoncontent(input_asset):
         assert len(frames) == 130
         assert sorted(frames)[0] == f'{input_asset["externalId"]}_001.jpg'
         assert output_asset["externalId"] == input_asset["externalId"]
+
+
+def test_download_media_jsoncontent_field_added_but_useless():
+    """should remove jsonContent field"""
+    with TemporaryDirectory() as tmp_dir:
+        media_downloader = MediaDownloader(
+            tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="IMAGE"
+        )
+        assets = [{"content": "", "externalId": "", "jsonContent": ""}]
+        ret = media_downloader.download_assets(assets)[0]
+        assert "jsonContent" not in ret.keys()
+
+
+def test_download_media_jsoncontent_field_added_but_useful():
+    """should warn jsoncontent field added and downloaded"""
+    with TemporaryDirectory() as tmp_dir:
+        media_downloader = MediaDownloader(
+            tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="VIDEO"
+        )
+        assets = [
+            {
+                "content": "",
+                "externalId": "",
+                "jsonContent": "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json",
+            }
+        ]
+        with pytest.warns():
+            media_downloader.download_assets(assets)

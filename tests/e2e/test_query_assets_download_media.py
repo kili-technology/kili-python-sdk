@@ -344,16 +344,14 @@ def src_project_big_image(kili):
     )
 
     with NamedTemporaryFile(mode="wb", suffix=".png") as temp:
-        width = 4500
-        height = 4500
+        width = 3800
+        height = 3800
 
-        img = Image.new(mode="RGB", size=(width, height), color=(209, 123, 193))
+        img = Image.new(mode="RGB", size=(width, height))
 
         # fill image with random data to avoid image compression
-        for i in range(img.size[0]):
-            for j in range(img.size[1]):
-                rand_ = random.randint(0, 255)
-                img.putpixel((i, j), (rand_, rand_, rand_))
+        random_data = [random.randint(0, 255) for _ in range(width * height)]
+        img.putdata(list(zip(random_data, random_data, random_data)))
 
         img.save(temp, "PNG")
         kili.append_many_to_dataset(
@@ -382,6 +380,8 @@ def test_download_single_asset_big_image(kili, src_project_big_image):
             fields=["externalId", "content", "jsonContent", "project.inputType"],
         )
 
+        assert assets[0]["jsonContent"] != ""
+
         media_dl = MediaDownloader(
             tmp_dir,
             src_project_big_image["id"],
@@ -394,8 +394,7 @@ def test_download_single_asset_big_image(kili, src_project_big_image):
             asset,
             expected_externalid="randimage",
             check_is_file=asset["content"],
-            expected_content=os.path.join(str(tmp_dir.resolve()), "randimage"),
-            expected_json_content="",
+            expected_content=os.path.join(str(tmp_dir.resolve()), "randimage.png"),
         )
 
 
