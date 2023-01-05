@@ -88,16 +88,25 @@ class MediaDownloader:
                         repeat(self.local_dir_path),
                     )
                     asset["jsonContent"] = list(paths_gen)
+                return asset  # we skip video "content" download
+
+            # big images
+            elif self.project_input_type == "IMAGE":
+                # the "jsonContent" contains some information but not the image
+                response = requests.get(asset["jsonContent"], timeout=20)
+                response = response.json()
+                asset["jsonContent"] = response
 
             else:
                 raise NotImplementedError(
                     f"jsonContent download for type {self.project_input_type} not implemented yet."
                 )
 
-        elif asset["content"] != "":
+        if asset["content"] != "":
             asset["content"] = download_file(
                 asset["content"], asset["externalId"], self.local_dir_path
             )
+            return asset
 
         return asset
 

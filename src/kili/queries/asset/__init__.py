@@ -233,9 +233,7 @@ class QueriesAsset:
                 local_media_dir, project_id, jsoncontent_field_added, project_input_type
             ).download_assets
         else:
-            post_call_process = (
-                lambda assets: assets  # pylint: disable=unnecessary-lambda-assignment # noqa: E731
-            )
+            post_call_process = None
 
         asset_generator = row_generator_from_paginated_calls(
             skip,

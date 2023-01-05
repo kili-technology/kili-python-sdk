@@ -7,6 +7,7 @@ import random
 import time
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import Dict, List, Optional, Union
 
 import pytest
 import requests
@@ -15,6 +16,23 @@ from PIL import Image
 from kili.client import Kili
 from kili.queries.asset.helpers import MediaDownloader, get_json_content_urls_video
 from kili.utils.tempfile import TemporaryDirectory
+
+
+def assert_helper_for_asset(
+    asset: Dict,
+    expected_externalid: Optional[str] = None,
+    check_is_file: Optional[Union[Path, str]] = None,
+    expected_content: Optional[str] = None,
+    expected_json_content: Optional[Union[str, List]] = None,
+):
+    if expected_content is not None:
+        assert asset["content"] == expected_content
+    if expected_externalid is not None:
+        assert asset["externalId"] == expected_externalid
+    if check_is_file is not None:
+        assert Path(check_is_file).is_file()
+    if expected_json_content is not None:
+        assert asset["jsonContent"] == expected_json_content
 
 
 @pytest.fixture
@@ -49,8 +67,8 @@ def src_project_image(kili):
     project = kili.create_project(
         input_type="IMAGE",
         json_interface=interface,
-        title="test_asset.py",
-        description="test_asset.py",
+        title="test_query_assets_download_media.py",
+        description="test_query_assets_download_media.py",
     )
 
     with NamedTemporaryFile(mode="wb", suffix=".png") as temp:
@@ -87,15 +105,21 @@ def test_download_assets_protected_content_images(kili, src_project_image):
         )
         assets = media_dl.download_assets(assets)
 
-        assert assets[0]["content"] == os.path.join(str(tmp_dir.resolve()), "kili_logo.png")
-        assert Path(assets[0]["content"]).is_file()
-        assert assets[0]["jsonContent"] == ""
-        assert assets[0]["externalId"] == "kili_logo"
+        assert_helper_for_asset(
+            assets[0],
+            expected_externalid="kili_logo",
+            check_is_file=assets[0]["content"],
+            expected_content=os.path.join(str(tmp_dir.resolve()), "kili_logo.png"),
+            expected_json_content="",
+        )
 
-        assert assets[1]["content"] == os.path.join(str(tmp_dir.resolve()), "kili_logo.png")
-        assert Path(assets[1]["content"]).is_file()
-        assert assets[1]["jsonContent"] == ""
-        assert assets[1]["externalId"] == "kili_logo.png"
+        assert_helper_for_asset(
+            assets[1],
+            expected_externalid="kili_logo.png",
+            check_is_file=assets[1]["content"],
+            expected_content=os.path.join(str(tmp_dir.resolve()), "kili_logo.png"),
+            expected_json_content="",
+        )
 
 
 @pytest.fixture()
@@ -124,8 +148,8 @@ def src_project_video_frames(kili):
     project = kili.create_project(
         input_type="VIDEO",
         json_interface=interface,
-        title="test_asset.py",
-        description="test_asset.py",
+        title="test_query_assets_download_media.py",
+        description="test_query_assets_download_media.py",
     )
 
     with TemporaryDirectory() as tmp_dir:
@@ -172,14 +196,15 @@ def test_download_single_asset_protected_content_videos(kili, src_project_video_
         )
         asset = media_dl.download_single_asset(assets[0])
 
-        assert asset["content"] == ""
-        frames = [filename for filename in os.listdir(tmp_dir) if filename.startswith("vid 2_")]
-        assert len(frames) == 5
-        assert sorted(frames)[0] == "vid 2_1"
-        assert isinstance(asset["jsonContent"], list)
-        assert len(asset["jsonContent"]) == 5
-        assert asset["jsonContent"][0] == os.path.join(str(tmp_dir.resolve()), "vid 2_1")
-        assert asset["externalId"] == "vid 2"
+        assert_helper_for_asset(
+            asset,
+            expected_content="",
+            expected_externalid="vid 2",
+            check_is_file=asset["jsonContent"][0],
+            expected_json_content=[
+                os.path.join(str(tmp_dir.resolve()), f"vid 2_{i+1}") for i in range(5)
+            ],
+        )
 
 
 @pytest.fixture()
@@ -208,13 +233,13 @@ def src_project_text(kili):
     project = kili.create_project(
         input_type="TEXT",
         json_interface=interface,
-        title="test_asset.py",
-        description="test_asset.py",
+        title="test_query_assets_download_media.py",
+        description="test_query_assets_download_media.py",
     )
 
     kili.append_many_to_dataset(
         project_id=project["id"],
-        content_array=["kili", "kili"],  # md5 hash: b11cc6e320a7bf4880c1d18714962f2d
+        content_array=["kili", "kili"],
         external_id_array=["text1", "text1.txt"],
         json_content_array=None,
     )
@@ -263,21 +288,28 @@ def test_download_assets_text(kili, src_project_text):
         )
         assets = media_dl.download_assets(assets)
 
-        assert assets[0]["content"] == os.path.join(str(tmp_dir.resolve()), "text1")
-        assert Path(assets[0]["content"]).is_file()
-        assert assets[0]["jsonContent"] == ""
-        assert assets[0]["externalId"] == "text1"
-
-        assert assets[1]["content"] == os.path.join(str(tmp_dir.resolve()), "text1.txt")
-        assert Path(assets[1]["content"]).is_file()
-        assert assets[1]["jsonContent"] == ""
-        assert assets[1]["externalId"] == "text1.txt"
-
+        assert_helper_for_asset(
+            assets[0],
+            expected_externalid="text1",
+            check_is_file=assets[0]["content"],
+            expected_content=os.path.join(str(tmp_dir.resolve()), "text1"),
+            expected_json_content="",
+        )
+        assert_helper_for_asset(
+            assets[1],
+            expected_externalid="text1.txt",
+            check_is_file=assets[1]["content"],
+            expected_content=os.path.join(str(tmp_dir.resolve()), "text1.txt"),
+            expected_json_content="",
+        )
         # asset[2] is jsoncontent richtext
-        assert assets[2]["content"] == ""
-        assert Path(tmp_dir / assets[2]["externalId"]).is_file()
-        assert assets[2]["jsonContent"] == os.path.join(str(tmp_dir.resolve()), "richtext")
-        assert assets[2]["externalId"] == "richtext"
+        assert_helper_for_asset(
+            assets[2],
+            expected_externalid="richtext",
+            check_is_file=assets[2]["jsonContent"],
+            expected_content="",
+            expected_json_content=os.path.join(str(tmp_dir.resolve()), "richtext"),
+        )
 
 
 @pytest.fixture()
@@ -307,8 +339,8 @@ def src_project_big_image(kili):
     project = kili.create_project(
         input_type="IMAGE",
         json_interface=interface,
-        title="test_asset.py",
-        description="test_asset.py",
+        title="test_query_assets_download_media.py",
+        description="test_query_assets_download_media.py",
     )
 
     with NamedTemporaryFile(mode="wb", suffix=".png") as temp:
@@ -358,11 +390,13 @@ def test_download_single_asset_big_image(kili, src_project_big_image):
         )
         asset = media_dl.download_single_asset(assets[0])
 
-        assert Path(asset["content"]).is_file()
-        assert asset["externalId"] == "randimage"
-        assert isinstance(asset["jsonContent"], list)
-        assert asset["jsonContent"][0]["width"] == 4500
-        assert asset["jsonContent"][0]["height"] == 4500
+        assert_helper_for_asset(
+            asset,
+            expected_externalid="randimage",
+            check_is_file=asset["content"],
+            expected_content=os.path.join(str(tmp_dir.resolve()), "randimage"),
+            expected_json_content="",
+        )
 
 
 @pytest.fixture()
@@ -391,8 +425,8 @@ def src_project_video_content_and_jsoncontent(kili):
     project = kili.create_project(
         input_type="VIDEO",
         json_interface=interface,
-        title="test_asset.py",
-        description="test_asset.py",
+        title="test_query_assets_download_media.py",
+        description="test_query_assets_download_media.py",
     )
 
     kili.append_many_to_dataset(
@@ -417,7 +451,7 @@ def src_project_video_content_and_jsoncontent(kili):
         count_assets = kili.count_assets(
             project_id=project["id"],
         )
-        time.sleep(2)  # it takes some time for the asset to be created in the backend
+        time.sleep(2)  # it takes some time for the frames to be created in the backend
 
     yield project
 
@@ -442,9 +476,12 @@ def test_download_single_asset_video_content_and_jsoncontent(
         )
         asset = media_dl.download_single_asset(assets[0])
 
-        assert Path(asset["content"]).is_file()
-        assert asset["content"] == os.path.join(str(tmp_dir.resolve()), "short_vid.mp4")
-        assert asset["externalId"] == "short_vid"
-        assert isinstance(asset["jsonContent"], list)
-        assert len(asset["jsonContent"]) > 20
-        assert Path(asset["jsonContent"][0]).is_file()
+        assert_helper_for_asset(
+            asset,
+            expected_externalid="short_vid",
+            check_is_file=asset["jsonContent"][0],
+            expected_json_content=[
+                os.path.join(str(tmp_dir.resolve()), f"short_vid_{f'{i+1}'.zfill(2)}")
+                for i in range(28)  # 28 frames in video short_video.mp4
+            ],
+        )
