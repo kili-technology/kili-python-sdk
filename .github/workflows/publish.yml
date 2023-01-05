@@ -71,6 +71,8 @@ jobs:
           git checkout -b merge_release/${{ github.ref_name }}
           git push
           gh pr create --fill
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   deploy-documentation:
     name: Deploy technical documentation
