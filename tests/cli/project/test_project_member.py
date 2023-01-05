@@ -1,7 +1,6 @@
 """Tests the Kili CLI project member commands"""
 
 import csv
-import os
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
@@ -10,12 +9,13 @@ from kili.cli.project.member.add import add_member
 from kili.cli.project.member.list_ import list_members
 from kili.cli.project.member.remove import remove_member
 from kili.cli.project.member.update import update_member
+from kili.graphql.operations.project_user.queries import ProjectUserQuery
 
 from ...utils import debug_subprocess_pytest
 
 
-def mocked__project_users(project_id=None, **_):
-    if project_id == "project_id_source":
+def mocked__project_user_query(**kwargs):
+    if kwargs["where"].project_id == "project_id_source":
         return [
             {
                 "activated": True,
@@ -66,7 +66,7 @@ def mocked__project_users(project_id=None, **_):
                 },
             },
         ]
-    elif project_id == "new_project":
+    elif kwargs["where"].project_id == "new_project":
         return []
     else:
         return [
@@ -99,7 +99,6 @@ def mocked__project_users(project_id=None, **_):
 
 kili_client = MagicMock()
 kili_client.auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
-kili_client.project_users = project_users_mock = MagicMock(side_effect=mocked__project_users)
 kili_client.append_to_roles = append_to_roles_mock = MagicMock()
 kili_client.update_properties_in_role = update_properties_in_role_mock = MagicMock()
 kili_client.delete_from_roles = delete_from_roles_mock = MagicMock()
@@ -108,19 +107,20 @@ kili = MagicMock()
 kili.Kili = MagicMock(return_value=kili_client)
 
 
+@patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
 @patch("kili.client.Kili.__new__", return_value=kili_client)
 class TestCLIProjectMember:
     """
     test the CLI functions of the project member commands
     """
 
-    def test_list_members(self, mocker):
+    def test_list_members(self, *_):
         runner = CliRunner()
         result = runner.invoke(list_members, ["project_id"])
         debug_subprocess_pytest(result)
         assert (result.output.count("Jane Doe") == 1) and (result.output.count("@test.com") == 2)
 
-    def test_add_member(self, mocker):
+    def test_add_member(self, *_):
         TEST_CASES = [
             {
                 "case_name": "AAU, when I add one user with email adress, I see a success",
@@ -179,7 +179,7 @@ class TestCLIProjectMember:
                 assert append_to_roles_mock.call_count == 2 * (i + 1)
                 append_to_roles_mock.assert_called_with(**test_case["expected_mutation_payload"])
 
-    def test_update_member(self, mocker):
+    def test_update_member(self, *_):
         TEST_CASES = [
             {
                 "case_name": "AAU, when I update user's role with email adress, I see a success",
@@ -244,7 +244,7 @@ class TestCLIProjectMember:
                     **test_case["expected_mutation_payload"]
                 )
 
-    def test_remove_member(self, mocker):
+    def test_remove_member(self, *_):
         TEST_CASES = [
             {
                 "case_name": "AAU, when I remove users with email adress, I see a success",
