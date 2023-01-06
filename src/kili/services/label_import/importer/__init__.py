@@ -83,7 +83,7 @@ class AbstractLabelImporter(ABC):
 
         self.logger.warning(print(f"{len(labels)} labels have been successfully imported"))
 
-    def process_from_dict(
+    def process_from_dict(  # pylint: disable=too-many-arguments,too-many-locals
         self,
         project_id: Optional[str],
         labels: List[Dict],
@@ -113,7 +113,7 @@ class AbstractLabelImporter(ABC):
         ]
         batch_generator = pagination.batch_iterator_builder(labels_data)
         result = []
-        with tqdm.tqdm(total=len(labels_data)) as pbar:
+        with tqdm.tqdm(total=len(labels_data), disable=self.logger_params.disable_tqdm) as pbar:
             for batch_labels in batch_generator:
                 variables = {
                     "data": {"labelType": label_type, "labelsData": batch_labels},

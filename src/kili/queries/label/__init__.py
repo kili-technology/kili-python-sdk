@@ -259,6 +259,7 @@ class QueriesLabel:
         """Get the number of labels for the given parameters.
 
         Args:
+            project_id: Identifier of the project.
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
@@ -270,7 +271,6 @@ class QueriesLabel:
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
             label_id: Identifier of the label.
-            project_id: Identifier of the project.
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
 
