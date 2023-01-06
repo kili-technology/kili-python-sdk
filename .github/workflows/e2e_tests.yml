@@ -34,11 +34,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Notebook tests
-        run: pytest -sv tests/test_notebooks.py
-
       - name: Integration tests
         run: pytest -sv tests/e2e -k ".py"
+
+      - name: Notebook tests
+        run: pytest -sv tests/test_notebooks.py
 
       - name: Slack notification if failure
         if: failure()
