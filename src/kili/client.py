@@ -5,7 +5,7 @@ import os
 
 from kili.authentication import KiliAuth
 from kili.exceptions import AuthenticationFailed, NotFound
-from kili.graphql_client import GraphQLClientName
+from kili.graphql.graphql_client import GraphQLClientName
 from kili.mutations.asset import MutationsAsset
 from kili.mutations.issue import MutationsIssue
 from kili.mutations.label import MutationsLabel

@@ -6,10 +6,8 @@ from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import format_result, fragment_builder
-from kili.queries.api_key.queries import GQL_API_KEYS_COUNT, gql_api_keys
-from kili.types import ApiKey as ApiKeyType
-from kili.utils.pagination import row_generator_from_paginated_calls
+from kili.graphql import QueryOptions
+from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 
 
 class QueriesApiKey:
@@ -67,40 +65,9 @@ class QueriesApiKey:
             >>> kili.api_keys(api_key=api_key)
             >>> kili.api_keys(api_key=api_key, as_generator=False)
         """
-
-        saved_args = locals()
-        count_args = {
-            k: v for (k, v) in saved_args.items() if k in ["user_id", "api_key_id", "api_key"]
-        }
-        disable_tqdm = disable_tqdm or as_generator
-
-        payload_query = {
-            "where": {
-                "user": {"id": user_id, "apiKey": api_key},
-                "id": api_key_id,
-            },
-        }
-
-        api_keys_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_api_keys,
-            count_args,
-            self._query_api_keys,
-            payload_query,
-            fields,
-            disable_tqdm,
-        )
-
-        if as_generator:
-            return api_keys_generator
-        return list(api_keys_generator)
-
-    def _query_api_keys(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_api_keys = gql_api_keys(fragment_builder(fields, ApiKeyType))
-        result = self.auth.client.execute(_gql_api_keys, payload)
-        return format_result("data", result)
+        where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        return APIKeyQuery(self.auth.client)(where, fields, options)
 
     @typechecked
     def count_api_keys(
@@ -126,11 +93,5 @@ class QueriesApiKey:
             >>> kili.count_api_keys(api_key=api_key)
             1
         """
-        variables = {
-            "where": {
-                "user": {"id": user_id, "apiKey": api_key},
-                "id": api_key_id,
-            },
-        }
-        result = self.auth.client.execute(GQL_API_KEYS_COUNT, variables)
-        return format_result("data", result, int)
+        where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
+        return APIKeyQuery(self.auth.client).count(where)

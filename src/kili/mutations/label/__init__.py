@@ -11,11 +11,10 @@ from typeguard import typechecked
 from kili import services
 from kili.enums import LabelType
 from kili.helpers import deprecate, format_result
-from kili.mutations.label.helpers import check_asset_identifier_arguments
+from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
-    GQL_CREATE_PREDICTIONS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
@@ -23,7 +22,6 @@ from kili.services.helpers import (
     assert_all_arrays_have_same_size,
     infer_ids_from_external_ids,
 )
-from kili.utils.pagination import _mutate_from_paginated_call
 
 
 class MutationsLabel:
@@ -43,19 +41,22 @@ class MutationsLabel:
     def create_predictions(
         self,
         project_id: str,
-        external_id_array: List[str],
-        model_name_array: List[str],
-        json_response_array: List[dict],
-    ) -> Label:
+        external_id_array: Optional[List[str]] = None,
+        model_name_array: Optional[List[str]] = None,
+        json_response_array: Optional[List[dict]] = None,
+        model_name: Optional[str] = None,
+        asset_id_array: Optional[List[str]] = None,
+    ) -> dict:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
         Args:
-            project_id: Identifier of the project
-            external_id_array: The external identifiers of the assets for which we want to add predictions
-            model_name_array: In case you want to precise from which model the label originated
+            project_id: Identifier of the project.
+            external_id_array: The external IDs of the assets for which we want to add predictions.
+            model_name_array: In case you want to precise from which model the label originated.
             json_response_array: The predictions are given here. For examples,
                 see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
+            asset_id_array: The internal IDs of the assets for which we want to add predictions.
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -63,40 +64,45 @@ class MutationsLabel:
         !!! example "Recipe"
             For more detailed examples on how to create predictions, see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
         """
-        assert len(external_id_array) == len(
-            json_response_array
-        ), "IDs list and predictions list should have the same length"
-        assert len(external_id_array) == len(
-            model_name_array
-        ), "IDs list and model names list should have the same length"
-        if len(external_id_array) == 0:
-            warnings.warn("Empty IDs and prediction list")
-
-        properties_to_batch = {
-            "external_id_array": external_id_array,
-            "model_name_array": model_name_array,
-            "json_response_array": json_response_array,
-        }
-
-        def generate_variables(batch):
-            return {
-                "data": {
-                    "modelNameArray": batch["model_name_array"],
-                    "jsonResponseArray": [dumps(elem) for elem in batch["json_response_array"]],
-                },
-                "where": {
-                    "externalIdStrictlyIn": batch["external_id_array"],
-                    "project": {"id": project_id},
-                },
-            }
-
-        results = _mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_CREATE_PREDICTIONS,
+        if json_response_array is None or len(json_response_array) == 0:
+            raise ValueError(
+                "json_response_array is empty, you must provide at least one prediction to upload"
+            )
+        assert_all_arrays_have_same_size(
+            [external_id_array, json_response_array, model_name_array, asset_id_array]
         )
-        return format_result("data", results[0], Label)
+        if model_name is None:
+            if model_name_array is None:
+                raise ValueError("You must provide a model name with the model_name argument ")
+            if len(set(model_name_array)) > 1:
+                raise ValueError(
+                    "Creating predictions from different models is not supported anymore. Separate"
+                    " your calls by models."
+                )
+            warnings.warn(
+                "The use of `model_name_array` is deprecated. Creating predictions from different"
+                " models is not supported anymore. Please use `model_name` argument instead to"
+                " provide the predictions model name.",
+                DeprecationWarning,
+            )
+            model_name = model_name_array[0]
+
+        labels = [
+            {
+                "asset_id": asset_id,
+                "asset_external_id": asset_external_id,
+                "json_response": json_response,
+            }
+            for (asset_id, asset_external_id, json_response) in list(
+                zip(
+                    asset_id_array or [None] * len(json_response_array),
+                    external_id_array or [None] * len(json_response_array),
+                    json_response_array,
+                )
+            )
+        ]
+        services.import_labels_from_dict(self, project_id, labels, "PREDICTION", model_name)
+        return {"id": project_id}
 
     @deprecate(
         msg=(
@@ -181,13 +187,15 @@ class MutationsLabel:
         """Append labels to assets.
 
         Args:
-            asset_id_array: list of asset ids to append labels on
+            asset_id_array: list of asset internal ids to append labels on
             json_response_array: list of labels to append
             author_id_array: list of the author id of the labels
             seconds_to_label_array: list of times taken to produce the label, in seconds
             model_name: Only useful when uploading predictions.
                 Name of the model when uploading predictions
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
+            project_id: Identifier of the project
+            asset_external_id_array: list of asset external ids to append labels on
 
         Returns:
             A result object which indicates if the mutation was successful,

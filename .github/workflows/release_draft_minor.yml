@@ -3,10 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       releaseVersion:
-        description: "Release branch version release/X.XXX.X"
+        description: "Enter the release branch version release/X.XXX.0 (use 'Create release branch' workflow beforehand to create the branch)"
         required: true
         type: string
-        default: "X.XXX.X"
+        default: "X.XXX.0"
 
 jobs:
   create_draft_release:
@@ -45,6 +45,8 @@ jobs:
         run: |
           link_to_draft=$(./entrypoint.sh release:draft ${{ inputs.releaseVersion }}")
           echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Slack notification
         id: slack

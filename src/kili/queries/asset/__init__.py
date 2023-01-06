@@ -1,16 +1,17 @@
 """Asset queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Union
 
 import pandas as pd
 from typeguard import typechecked
 
 from kili.helpers import format_result, fragment_builder, validate_category_search_query
 from kili.orm import Asset
-from kili.queries.asset.helpers import get_post_assets_call_process
 from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 from kili.types import Asset as AssetType
 from kili.utils.pagination import row_generator_from_paginated_calls
+
+from .helpers import get_post_assets_call_process
 
 
 class QueriesAsset:
@@ -29,6 +30,7 @@ class QueriesAsset:
         self.auth = auth
 
     # pylint: disable=dangerous-default-value
+    @typechecked
     def assets(
         self,
         project_id: str,
@@ -76,7 +78,7 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
-    ) -> Iterable[Dict]:
+    ) -> Union[Iterable[Dict], pd.DataFrame]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
@@ -95,7 +97,7 @@ class QueriesAsset:
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
             honeypot_mark_lt : Maximum amount of honeypot for the asset.
             status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices: `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
+                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose status belongs to that list, if given.
             label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.
@@ -220,7 +222,7 @@ class QueriesAsset:
         }
 
         post_call_process = get_post_assets_call_process(
-            download_media, local_media_dir, project_id
+            download_media, self, project_id, fields, local_media_dir
         )
 
         asset_generator = row_generator_from_paginated_calls(

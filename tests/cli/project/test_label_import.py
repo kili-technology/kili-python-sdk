@@ -61,7 +61,6 @@ class TestCLIProjectImport:
                         "model-name": "model_name",
                     },
                     "flags": ["prediction"],
-                    "mutation_to_call": "create_predictions",
                     "expected_service_call": (
                         ANY,
                         ["test_tree/asset1.json", "test_tree/leaf_2/asset6.json"],

@@ -57,7 +57,7 @@ class FakeKili:
                 return []
 
         post_call_process = get_post_assets_call_process(
-            bool(download_media), local_media_dir, project_id
+            bool(download_media), self, project_id, [], local_media_dir
         )
 
         return post_call_process(_assets())
