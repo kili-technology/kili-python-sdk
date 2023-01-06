@@ -46,6 +46,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         self.disable_tqdm = disable_tqdm
 
         logger = logging.getLogger("kili.services.copy_project")
+        logger.setLevel(logging.INFO)
 
         if not any(
             (copy_json_interface, copy_quality_settings, copy_members, copy_assets, copy_labels)
@@ -92,22 +93,22 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             title=new_project_title,
             description=new_project_description,
         )["id"]
-        logger.warning(f"Creating new project with id: '{new_project_id}'")
+        logger.info(f"Creating new project with id: '{new_project_id}'")
 
         if copy_members:
-            logger.warning("Copying members...")
+            logger.info("Copying members...")
             self._copy_members(from_project_id, new_project_id)
 
         if copy_quality_settings:
-            logger.warning("Copying quality settings...")
+            logger.info("Copying quality settings...")
             self._copy_quality_settings(new_project_id, src_project)
 
         if copy_assets:
-            logger.warning("Copying assets...")
+            logger.info("Copying assets...")
             self._copy_assets(from_project_id, new_project_id)
 
         if copy_labels:
-            logger.warning("Copying labels...")
+            logger.info("Copying labels...")
             self._copy_labels(from_project_id, new_project_id)
 
         return new_project_id
