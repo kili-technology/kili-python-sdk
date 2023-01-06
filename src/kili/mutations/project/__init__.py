@@ -9,6 +9,7 @@ from ...authentication import KiliAuth
 from ...helpers import format_result
 from ...queries.project import QueriesProject
 from ...services.copy_project import ProjectCopier
+from ...types import Project
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
@@ -177,14 +178,13 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         result = format_result("data", result)
 
-        variables.pop("projectID")
-        variables = {k: v for k, v in variables.items() if v is not None}
+        fields = [k for k, v in variables.items() if v is not None and k in Project.__annotations__]
+        if fields:
+            new_project_settings = QueriesProject(self.auth).projects(  # type:ignore
+                project_id=project_id, fields=fields, disable_tqdm=True
+            )[0]
 
-        new_project_settings = QueriesProject(self.auth).projects(  # type:ignore
-            project_id=project_id, fields=list(variables.keys()), disable_tqdm=True
-        )[0]
-
-        result = {**result, **new_project_settings}
+            result = {**result, **new_project_settings}
         return result
 
     @typechecked
