@@ -141,6 +141,7 @@ class ProjectWithoutDataset(TypedDict, total=False):
     interface: Dict
     interfaceCompute: Dict
     jsonInterface: Dict
+    metadataTypes: Dict
     minConsensusSize: int
     mlTasks: str
     mlTasksCompute: str
