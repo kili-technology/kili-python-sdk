@@ -68,10 +68,11 @@ jobs:
       - name: create PR to merge release branch and master
         run: |
           git fetch
-          git checkout release/${{ github.ref_name }}
-          git checkout -b merge_release/${{ github.ref_name }}
-          git push
-          gh pr create --fill
+          release_branch_version=$(git branch -a --contains ${{ github.ref_name }} | awk -F '/' '{print $NF}')
+          git checkout release/$release_branch_version
+          git checkout -b merge_release/$release_branch_version
+          git push --set-upstream origin merge_release/$release_branch_version
+          gh pr create --fill --reviewer kili-technology/ml
         env:
           GH_TOKEN: ${{ github.token }}
 
