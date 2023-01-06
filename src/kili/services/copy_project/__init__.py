@@ -45,6 +45,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         """
         self.disable_tqdm = disable_tqdm
 
+        logging.basicConfig()
         logger = logging.getLogger("kili.services.copy_project")
         logger.setLevel(logging.INFO)
 
