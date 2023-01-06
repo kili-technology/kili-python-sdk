@@ -7,10 +7,11 @@ from typeguard import typechecked
 
 from kili.helpers import format_result, fragment_builder, validate_category_search_query
 from kili.orm import Asset
-from kili.queries.asset.helpers import get_post_assets_call_process
 from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
 from kili.types import Asset as AssetType
 from kili.utils.pagination import row_generator_from_paginated_calls
+
+from .helpers import get_post_assets_call_process
 
 
 class QueriesAsset:
@@ -221,7 +222,7 @@ class QueriesAsset:
         }
 
         post_call_process = get_post_assets_call_process(
-            download_media, local_media_dir, project_id
+            download_media, self, project_id, fields, local_media_dir
         )
 
         asset_generator = row_generator_from_paginated_calls(
