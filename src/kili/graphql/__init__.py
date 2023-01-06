@@ -139,8 +139,8 @@ class GraphQLQuery(ABC):
                     rows = api_throttle(self.client.execute)(query, payload)
                     rows = format_result("data", rows)
 
-                    # if rows is None or len(rows) == 0:
-                    #     break
+                    if rows is None or len(rows) == 0:
+                        break
 
                     # to be implemented when adding the asset query with the new architecture
                     # if self.post_call_process is not None:
