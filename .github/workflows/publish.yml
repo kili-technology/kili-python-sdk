@@ -65,6 +65,11 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
+      - name: Set git identity
+        run: |
+          git config --global user.name github-actions[bot]
+          git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
+
       - name: create PR to merge release branch and master
         run: |
           git fetch
