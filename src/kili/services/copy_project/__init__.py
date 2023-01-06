@@ -5,10 +5,9 @@ import itertools
 import logging
 from typing import Dict, Optional
 
-from tqdm import tqdm
-
 from kili.exceptions import NotFound
 from kili.utils.tempfile import TemporaryDirectory
+from kili.utils.tqdm import tqdm
 
 
 class ProjectCopier:  # pylint: disable=too-few-public-methods
