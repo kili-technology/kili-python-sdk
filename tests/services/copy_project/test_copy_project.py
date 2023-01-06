@@ -1,7 +1,17 @@
+"""
+Test copy project service
+"""
 import pytest
 
-from kili.client import Kili
-from kili.services.copy_project import CopyProject
+from kili.services.copy_project import ProjectCopier
+
+
+class FakeKili:
+    def __init__(self) -> None:
+        pass
+
+    def projects(self):
+        pass
 
 
 @pytest.mark.parametrize(
@@ -13,7 +23,7 @@ from kili.services.copy_project import CopyProject
     ],
 )
 def test__generate_project_title(existing_projects, expected, mocker):
-    kili = Kili()
-    copy_proj = CopyProject(kili.auth)
-    mocker.patch.object(copy_proj, "projects", return_value=existing_projects)
+    kili = FakeKili()
+    mocker.patch.object(kili, "projects", return_value=existing_projects)
+    copy_proj = ProjectCopier(kili)
     assert copy_proj._generate_project_title("Title") == expected

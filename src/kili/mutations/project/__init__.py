@@ -5,11 +5,10 @@ from typing import Any, Dict, Optional, Union
 
 from typeguard import typechecked
 
-from kili.authentication import KiliAuth
-from kili.services.copy_project import CopyProject
-
+from ...authentication import KiliAuth
 from ...helpers import format_result
 from ...queries.project import QueriesProject
+from ...services.copy_project import ProjectCopier
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
@@ -375,10 +374,11 @@ class MutationsProject:
         copy_json_interface: bool = True,
         copy_quality_settings: bool = True,
         copy_members: bool = True,
+        copy_assets: bool = False,
+        copy_labels: bool = False,
+        disable_tqdm: bool = False,
     ) -> str:
-        """Copy an existing project.
-
-        Copy an existing source project from its ID.
+        """Create new project from an existing project.
 
         Args:
             from_project_id: Project ID to copy from.
@@ -386,9 +386,12 @@ class MutationsProject:
                 title if `None` is provided.
             description: Description for the new project. Defaults to empty string
                 if `None` is provided.
-            copy_json_interface: Copy the json interface from the source project to the new one.
-            copy_quality_settings: Copy the quality settings from the source project to the new one.
-            copy_members: Copy the members from the source project to the new one.
+            copy_json_interface: Include json interface in the copy.
+            copy_quality_settings: Include quality settings in the copy.
+            copy_members: Include members in the copy.
+            copy_assets: Include assets in the copy.
+            copy_labels: Include labels in the copy.
+            disable_tqdm: Disable tqdm progress bars.
 
         Returns:
             The created project ID.
@@ -396,11 +399,14 @@ class MutationsProject:
         Examples:
             >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
         """
-        return CopyProject(self.auth).copy_project(
+        return ProjectCopier(self).copy_project(
             from_project_id,
             title,
             description,
             copy_json_interface,
             copy_quality_settings,
             copy_members,
+            copy_assets,
+            copy_labels,
+            disable_tqdm,
         )

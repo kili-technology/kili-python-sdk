@@ -66,12 +66,13 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     )
 
 
-def import_labels_from_dict(
+def import_labels_from_dict(  # pylint: disable=too-many-arguments
     kili,
     project_id: Optional[str],
     labels: List[Dict],
     label_type: LabelType,
     model_name: Optional[str] = None,
+    disable_tqdm: bool = False,
 ) -> List:
     """
     Imports labels from a list of dictionaries
@@ -79,7 +80,7 @@ def import_labels_from_dict(
     _ClientInputLabelsValidator(labels=labels)
     if label_type == "PREDICTION" and not model_name:
         raise ValueError("You must provide model_name when uploading predictions")
-    logger_params = LoggerParams(disable_tqdm=False, level=cast(LogLevel, "WARNING"))
+    logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, "WARNING"))
     label_importer = KiliRawLabelImporter(kili, logger_params, cast(LabelFormat, "kili"))
     return label_importer.process_from_dict(
         labels=labels, project_id=project_id, label_type=label_type, model_name=model_name
