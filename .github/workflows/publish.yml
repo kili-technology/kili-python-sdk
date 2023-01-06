@@ -68,7 +68,7 @@ jobs:
       - name: create PR to merge release branch and master
         run: |
           git fetch
-          release_branch_version=$(git branch -a --contains ${{ github.ref_name }} | awk -F '/' '{print $NF}')
+          release_branch_version=$(git branch -a --contains ${{ github.ref_name }} | grep remotes/origin/release | awk -F '/' '{print $NF}')
           git checkout release/$release_branch_version
           git checkout -b merge_release/$release_branch_version
           git push --set-upstream origin merge_release/$release_branch_version
