@@ -14,7 +14,7 @@ import requests
 from PIL import Image
 
 from kili.client import Kili
-from kili.queries.asset import helpers
+from kili.queries.asset.helpers import MediaDownloader, get_json_content_urls_video
 from kili.utils.tempfile import TemporaryDirectory
 
 
@@ -98,7 +98,7 @@ def test_download_assets_protected_content_images(kili, src_project_image):
             project_id=src_project_image["id"],
             fields=["externalId", "content", "jsonContent", "project.inputType"],
         )
-        media_dl = helpers.MediaDownloader(
+        media_dl = MediaDownloader(
             tmp_dir,
             src_project_image["id"],
             jsoncontent_field_added=False,
@@ -154,7 +154,7 @@ def src_project_video_frames(kili):
     )
 
     with TemporaryDirectory() as tmp_dir:
-        urls = helpers.get_json_content_urls_video(
+        urls = get_json_content_urls_video(
             "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json"
         )
         for i, url in enumerate(urls):
@@ -189,7 +189,7 @@ def test_download_single_asset_protected_content_videos(kili, src_project_video_
             fields=["externalId", "content", "jsonContent", "project.inputType"],
         )
 
-        media_dl = helpers.MediaDownloader(
+        media_dl = MediaDownloader(
             tmp_dir,
             src_project_video_frames["id"],
             jsoncontent_field_added=False,
@@ -281,7 +281,7 @@ def test_download_assets_text(kili, src_project_text):
             fields=["externalId", "content", "jsonContent", "project.inputType"],
         )
 
-        media_dl = helpers.MediaDownloader(
+        media_dl = MediaDownloader(
             tmp_dir,
             src_project_text["id"],
             jsoncontent_field_added=False,
@@ -384,7 +384,7 @@ def test_download_single_asset_big_image(kili, src_project_big_image):
 
         assert assets[0]["jsonContent"] != ""
 
-        media_dl = helpers.MediaDownloader(
+        media_dl = MediaDownloader(
             tmp_dir,
             src_project_big_image["id"],
             jsoncontent_field_added=False,
@@ -469,7 +469,7 @@ def test_download_single_asset_video_content_and_jsoncontent(
             fields=["externalId", "content", "jsonContent", "project.inputType"],
         )
 
-        media_dl = helpers.MediaDownloader(
+        media_dl = MediaDownloader(
             tmp_dir,
             src_project_video_content_and_jsoncontent["id"],
             jsoncontent_field_added=False,
