@@ -1,7 +1,6 @@
 """
     Tests labels query.
 """
-import os
 from unittest.mock import MagicMock
 
 from kili.queries.label import QueriesLabel

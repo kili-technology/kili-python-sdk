@@ -221,7 +221,7 @@ class QueriesAsset:
         }
 
         post_call_process = get_post_assets_call_process(
-            download_media, local_media_dir, project_id
+            download_media, self, project_id, fields, local_media_dir
         )
 
         asset_generator = row_generator_from_paginated_calls(
