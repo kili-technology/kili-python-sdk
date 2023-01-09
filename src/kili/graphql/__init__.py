@@ -20,6 +20,7 @@ class QueryOptions(NamedTuple):
     first: Optional[int] = None
     skip: int = 0
     as_generator: bool = False
+    post_call_process_arguments: Optional[NamedTuple] = None
 
 
 class BaseQueryWhere(ABC):
