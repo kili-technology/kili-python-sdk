@@ -13,6 +13,7 @@ nav:
   - Python SDK:
       - Getting Started: index.md
       - Tutorials:
+        - Basic Project Setup: sdk/tutorials/basic_project_setup.md
         - Export: sdk/tutorials/export_a_kili_project.md
       - Reference:
         - API Key: sdk/api_key.md
