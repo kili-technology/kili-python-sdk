@@ -5,7 +5,7 @@ import itertools
 import logging
 from typing import Dict, Optional
 
-from kili.exceptions import NotFound
+from kili import services
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
@@ -75,12 +75,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         if copy_quality_settings:
             fields = fields + self.FIELDS_QUALITY_SETTINGS
 
-        src_project = self.kili.projects(
-            project_id=from_project_id, fields=fields, disable_tqdm=True
-        )
-        if len(src_project) == 0:
-            raise NotFound(f"Cannot find project with id: {from_project_id}")
-        src_project: Dict = src_project[0]
+        src_project = services.get_project(self.kili, from_project_id, fields)
 
         new_project_title = title or self._generate_project_title(src_title=src_project["title"])
 

@@ -11,6 +11,8 @@ from tabulate import tabulate
 
 from kili.cli.common_args import Options
 from kili.cli.helpers import get_kili_client
+from kili.graphql import QueryOptions
+from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 
 
 @click.command(name="list")
@@ -38,8 +40,9 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     projects = cast(
         List[Dict],
-        kili.projects(
-            fields=[
+        ProjectQuery(kili.auth.client)(
+            ProjectWhere(),
+            [
                 "title",
                 "id",
                 "description",
@@ -47,8 +50,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
                 "numberOfRemainingAssets",
                 "numberOfReviewedAssets",
             ],
-            first=first,
-            disable_tqdm=True,
+            QueryOptions(disable_tqdm=True, first=first),
         ),
     )
     projects = pd.DataFrame(projects)

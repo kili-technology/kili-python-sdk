@@ -2,14 +2,14 @@
 
 import os
 import urllib.request
-from typing import Dict, Iterable, List, Optional, cast
+from typing import Iterable, Optional
 
 import click
 from typeguard import typechecked
 
+from kili import services
 from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.helpers import collect_from_csv, get_kili_client
-from kili.exceptions import NotFound
 from kili.helpers import get_file_paths_to_upload
 from kili.services import asset_import
 from kili.services.helpers import (
@@ -121,14 +121,7 @@ def import_assets(
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    try:
-        input_type = cast(
-            List[Dict], kili.projects(project_id, disable_tqdm=True, fields=["inputType"])
-        )[0]["inputType"]
-    except:
-        # pylint: disable=raise-missing-from
-        raise NotFound(f"project ID: {project_id}")
-
+    input_type = services.get_project(kili, project_id, ["inputType"])["inputType"]
     if input_type not in ("VIDEO_LEGACY", "VIDEO") and (fps is not None or as_frames is True):
         illegal_option = "fps and frames are"
         if not as_frames:

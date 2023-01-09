@@ -5,9 +5,10 @@ from typing import Any, Dict, Optional, Union
 
 from typeguard import typechecked
 
+from kili import services
+
 from ...authentication import KiliAuth
 from ...helpers import format_result
-from ...queries.project import QueriesProject
 from ...services.copy_project import ProjectCopier
 from .helpers import verify_argument_ranges
 from .queries import (
@@ -180,9 +181,7 @@ class MutationsProject:
         variables.pop("projectID")
         variables = {k: v for k, v in variables.items() if v is not None}
 
-        new_project_settings = QueriesProject(self.auth).projects(  # type:ignore
-            project_id=project_id, fields=list(variables.keys()), disable_tqdm=True
-        )[0]
+        new_project_settings = services.get_project(self, project_id, list(variables.keys()))
 
         result = {**result, **new_project_settings}
         return result

@@ -12,6 +12,7 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
+from kili import services
 from kili.queries.asset.exceptions import MissingPropertyError
 
 
@@ -24,8 +25,7 @@ def get_post_assets_call_process(
     Otherwise return assets without any post-processing
     """
     if download_media:
-        projects = kili.projects(project_id, fields=["inputType"])
-        project_input_type = projects[0]["inputType"]
+        project_input_type = services.get_project(kili, project_id, ["inputType"])["inputType"]
         jsoncontent_field_added = False
         if project_input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
             fields.append("jsonContent")
