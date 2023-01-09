@@ -1,7 +1,6 @@
 """Issue queries."""
 
 import warnings
-from dataclasses import dataclass
 from typing import Iterable, List, Optional
 
 from typeguard import typechecked
@@ -10,7 +9,6 @@ from kili.graphql import QueryOptions
 from kili.graphql.operations.issue.queries import IssueQuery, IssueWhere
 
 
-@dataclass
 class QueriesIssue:
     """Set of Issue queries."""
 
