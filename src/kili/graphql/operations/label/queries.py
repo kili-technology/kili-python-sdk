@@ -1,5 +1,5 @@
 """
-GraphQL Queries of Project Users
+GraphQL Queries of Labels
 """
 
 
@@ -52,7 +52,7 @@ class LabelWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK ProjectUserWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK LabelWhere"""
         return {
             "id": self.label_id,
             "asset": {
