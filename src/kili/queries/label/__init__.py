@@ -1,22 +1,21 @@
 """Label queries."""
 
-from typing import Dict, Generator, Iterable, List, Optional, Union, cast
+from typing import Dict, Iterable, List, Optional, cast
 
 import pandas as pd
 from typeguard import typechecked
 
 from kili import services
 from kili.constants import NO_ACCESS_RIGHT
-from kili.helpers import format_result, fragment_builder, validate_category_search_query
+from kili.graphql import QueryOptions
+from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
+from kili.helpers import validate_category_search_query
 from kili.queries.asset import QueriesAsset
-from kili.queries.label.queries import GQL_LABELS_COUNT, gql_labels
 from kili.queries.project import QueriesProject
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import ProjectId
-from kili.types import Label as LabelType
-from kili.utils.pagination import row_generator_from_paginated_calls
 
 
 class QueriesLabel:
@@ -63,7 +62,7 @@ class QueriesLabel:
         disable_tqdm: bool = False,
         as_generator: bool = False,
         category_search: Optional[str] = None,
-    ) -> Union[List[dict], Generator[dict, None, None]]:
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
 
@@ -89,6 +88,7 @@ class QueriesLabel:
             user_id: Identifier of the user.
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the labels is returned.
+            category_search: Query to filter labels based on the content of their jsonResponse
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -120,77 +120,28 @@ class QueriesLabel:
                 category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
 
-        saved_args = locals()
-        count_args = {
-            k: v
-            for (k, v) in saved_args.items()
-            if k
-            not in [
-                "as_generator",
-                "disable_tqdm",
-                "fields",
-                "first",
-                "id_contains",
-                "self",
-                "skip",
-                "message",
-            ]
-        }
-
-        # using tqdm with a generator is messy, so it is always disabled
-        disable_tqdm = disable_tqdm or as_generator
-
         if category_search:
             validate_category_search_query(category_search)
 
-        payload_query = {
-            "where": {
-                "id": label_id,
-                "asset": {
-                    "id": asset_id,
-                    "externalIdStrictlyIn": asset_external_id_in,
-                    "statusIn": asset_status_in,
-                },
-                "project": {
-                    "id": project_id,
-                },
-                "user": {
-                    "id": user_id,
-                },
-                "createdAt": created_at,
-                "createdAtGte": created_at_gte,
-                "createdAtLte": created_at_lte,
-                "authorIn": author_in,
-                "honeypotMarkGte": honeypot_mark_gte,
-                "honeypotMarkLte": honeypot_mark_lte,
-                "idIn": id_contains,
-                "search": category_search,
-                "typeIn": type_in,
-            },
-        }
-
-        labels_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_labels,
-            count_args,
-            self._query_labels,
-            payload_query,
-            fields,
-            disable_tqdm,
+        where = LabelWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_status_in=asset_status_in,
+            asset_external_id_in=asset_external_id_in,
+            author_in=author_in,
+            created_at=created_at,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
+            id_contains=id_contains,
+            label_id=label_id,
+            type_in=type_in,
+            user_id=user_id,
+            category_search=category_search,
         )
-
-        if as_generator:
-            return labels_generator
-        return list(labels_generator)
-
-    def _query_labels(
-        self, skip: int, first: int, payload: dict, fields: List[str]
-    ) -> Iterable[Dict]:
-        payload.update({"skip": skip, "first": first})
-        _gql_labels = gql_labels(fragment_builder(fields, LabelType))
-        result = self.auth.client.execute(_gql_labels, payload)
-        return format_result("data", result, _object=List[LabelType])  # type:ignore
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        return LabelQuery(self.auth.client)(where, fields, options)
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -254,11 +205,13 @@ class QueriesLabel:
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
         category_search: Optional[str] = None,
+        id_contains: Optional[List[str]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Get the number of labels for the given parameters.
 
         Args:
+            project_id: Identifier of the project.
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
@@ -270,9 +223,10 @@ class QueriesLabel:
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
             label_id: Identifier of the label.
-            project_id: Identifier of the project.
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
+            category_search: Query to filter labels based on the content of their jsonResponse
+            id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -284,32 +238,24 @@ class QueriesLabel:
         if category_search:
             validate_category_search_query(category_search)
 
-        variables = {
-            "where": {
-                "id": label_id,
-                "asset": {
-                    "id": asset_id,
-                    "externalIdStrictlyIn": asset_external_id_in,
-                    "statusIn": asset_status_in,
-                },
-                "project": {
-                    "id": project_id,
-                },
-                "user": {
-                    "id": user_id,
-                },
-                "createdAt": created_at,
-                "createdAtGte": created_at_gte,
-                "createdAtLte": created_at_lte,
-                "authorIn": author_in,
-                "honeypotMarkGte": honeypot_mark_gte,
-                "honeypotMarkLte": honeypot_mark_lte,
-                "search": category_search,
-                "typeIn": type_in,
-            }
-        }
-        result = self.auth.client.execute(GQL_LABELS_COUNT, variables)
-        return format_result("data", result, int)
+        where = LabelWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_status_in=asset_status_in,
+            asset_external_id_in=asset_external_id_in,
+            author_in=author_in,
+            created_at=created_at,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
+            id_contains=id_contains,
+            label_id=label_id,
+            type_in=type_in,
+            user_id=user_id,
+            category_search=category_search,
+        )
+        return LabelQuery(self.auth.client).count(where)
 
     def export_labels(
         self,

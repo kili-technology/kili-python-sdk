@@ -5,7 +5,7 @@ from typing import Callable
 
 from typeguard import typechecked
 
-from ...graphql_client import SubscriptionGraphQLClient
+from ...graphql.graphql_client import SubscriptionGraphQLClient
 from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 
 

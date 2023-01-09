@@ -1,7 +1,7 @@
 """CLI's project member remove subcommand"""
 
 import warnings
-from typing import Iterable, Optional
+from typing import Dict, Iterable, List, Optional, cast
 
 import click
 
@@ -12,6 +12,11 @@ from kili.cli.project.member.helpers import (
     collect_members_from_csv,
     collect_members_from_emails,
     collect_members_from_project,
+)
+from kili.graphql import QueryOptions
+from kili.graphql.operations.project_user.queries import (
+    ProjectUserQuery,
+    ProjectUserWhere,
 )
 
 
@@ -78,15 +83,26 @@ def remove_member(
         members_to_rm = collect_members_from_emails(emails, None)
 
     count = 0
-    existing_members = kili.project_users(project_id=project_id, disable_tqdm=True)
-    existing_members = {
+    existing_members = cast(
+        List[Dict],
+        ProjectUserQuery(kili.auth.client)(
+            where=ProjectUserWhere(project_id=project_id),
+            fields=[
+                "activated",
+                "user.email",
+                "id",
+            ],
+            options=QueryOptions(disable_tqdm=True),
+        ),
+    )
+    existing_members_email_map = {
         member["user"]["email"]: member["id"] for member in existing_members if member["activated"]
     }
 
     for member in members_to_rm:
         email = member["email"]
-        if email in existing_members.keys():
-            kili.delete_from_roles(role_id=existing_members[email])
+        if email in existing_members_email_map.keys():
+            kili.delete_from_roles(role_id=existing_members_email_map[email])
             count += 1
         else:
             warnings.warn(f"{email} is not an active member of the project.")

@@ -7,8 +7,10 @@ from typing import Dict, List, Optional, cast
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili.graphql import QueryOptions
+from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
+
 from ...helpers import format_result
-from ...queries.label import QueriesLabel
 from .helpers import get_issue_number
 from .queries import GQL_APPEND_TO_ISSUES
 
@@ -50,14 +52,16 @@ class MutationsIssue:
         """
         issue_number = get_issue_number(self.auth, project_id, type_)
         try:
+            options = QueryOptions(disable_tqdm=True)
+            where = LabelWhere(
+                project_id=project_id,
+                label_id=label_id,
+            )
             asset_id = cast(
                 List[Dict],
                 list(
-                    QueriesLabel(self.auth).labels(
-                        project_id=project_id,
-                        label_id=label_id,
-                        fields=["labelOf.id"],
-                        disable_tqdm=True,
+                    LabelQuery(self.auth.client)(
+                        where=where, fields=["labelOf.id"], options=options
                     )
                 )[0]["labelOf"]["id"],
             )

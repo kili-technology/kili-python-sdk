@@ -183,6 +183,7 @@ class MutationsLabel:
         label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
+        disable_tqdm: bool = False,
     ) -> List:
         """Append labels to assets.
 
@@ -240,7 +241,9 @@ class MutationsLabel:
                 )
             )
         ]
-        return services.import_labels_from_dict(self, project_id, labels, label_type, model_name)
+        return services.import_labels_from_dict(
+            self, project_id, labels, label_type, model_name, disable_tqdm
+        )
 
     @typechecked
     def update_properties_in_label(

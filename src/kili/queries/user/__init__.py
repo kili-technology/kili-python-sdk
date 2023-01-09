@@ -1,13 +1,11 @@
 """User queries."""
 
-from typing import Generator, List, Optional, Union
+from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import format_result, fragment_builder
-from kili.queries.user.queries import GQL_USERS_COUNT, gql_users
-from kili.types import User
-from kili.utils.pagination import row_generator_from_paginated_calls
+from kili.graphql import QueryOptions
+from kili.graphql.operations.user.queries import UserQuery, UserWhere
 
 
 class QueriesUser:
@@ -35,7 +33,7 @@ class QueriesUser:
         skip: int = 0,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Union[List[dict], Generator[dict, None, None]]:
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of users given a set of criteria
 
@@ -63,41 +61,17 @@ class QueriesUser:
             ```
         """
 
-        count_args = {"organization_id": organization_id}
-        disable_tqdm = disable_tqdm or as_generator or (api_key or email) is not None
-        payload_query = {
-            "where": {
-                "apiKey": api_key,
-                "email": email,
-                "organization": {
-                    "id": organization_id,
-                },
-            }
-        }
-
-        users_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_users,
-            count_args,
-            self._query_users,
-            payload_query,
-            fields,
-            disable_tqdm,
-        )
-
-        if as_generator:
-            return users_generator
-        return list(users_generator)
-
-    def _query_users(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_users = gql_users(fragment_builder(fields, User))
-        result = self.auth.client.execute(_gql_users, payload)
-        return format_result("data", result)
+        where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        return UserQuery(self.auth.client)(where, fields, options)
 
     @typechecked
-    def count_users(self, organization_id: Optional[str] = None) -> int:
+    def count_users(
+        self,
+        organization_id: Optional[str] = None,
+        api_key: Optional[str] = None,
+        email: Optional[str] = None,
+    ) -> int:
         """Get user count based on a set of constraints.
 
         Args:
@@ -106,12 +80,5 @@ class QueriesUser:
         Returns:
             The number of organizations with the parameters provided
         """
-        variables = {
-            "where": {
-                "organization": {
-                    "id": organization_id,
-                }
-            }
-        }
-        result = self.auth.client.execute(GQL_USERS_COUNT, variables)
-        return format_result("data", result, int)
+        where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
+        return UserQuery(self.auth.client).count(where)
