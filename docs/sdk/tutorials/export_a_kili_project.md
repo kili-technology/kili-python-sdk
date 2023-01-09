@@ -168,6 +168,7 @@ The [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/la
     * Whether to create one folder for all the jobs or one folder per job
     * Whether or not to export the label-related data into one single file
 Note that some formats are by default single-file, while others use many files:
+
 |Format|Single file|Multiple files|
 |---|---|---|
 |Kili|✅ |✅ |
