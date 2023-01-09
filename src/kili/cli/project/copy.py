@@ -29,6 +29,8 @@ from kili.cli.helpers import get_kili_client
 @click.option(
     "--with-members/--without-members", required=False, default=True, help="Copy members."
 )
+@click.option("--with-assets/--without-assets", required=False, default=False, help="Copy assets.")
+@click.option("--with-labels/--without-labels", required=False, default=False, help="Copy labels.")
 # pylint: disable=too-many-arguments
 def copy_project(
     api_key: Optional[str],
@@ -39,12 +41,15 @@ def copy_project(
     with_json_interface: bool = True,
     with_quality_settings: bool = True,
     with_members: bool = True,
+    with_assets: bool = False,
+    with_labels: bool = False,
 ) -> None:
-    """Copy a Kili project.
+    """Copy an existing Kili project.
 
-    The copy can include or not the json interface, quality settings and members of
-    the source project. By default, the json interface, quality settings
-    and projects members are copied.
+    The copy can include or not the json interface, quality settings, members, assets and labels of
+    the source project.
+
+    By default, only the json interface, quality settings and project members are copied.
 
     If no `title` is provided, the source project title will be used.
     If no description is provided, the description will be set to an empty string.
@@ -74,6 +79,8 @@ def copy_project(
         copy_json_interface=with_json_interface,
         copy_quality_settings=with_quality_settings,
         copy_members=with_members,
+        copy_assets=with_assets,
+        copy_labels=with_labels,
     )
     title = kili.projects(project_id=new_proj_id, fields=["title"])[0]["title"]  # type: ignore
     print(f'Project copied successfully. New project id: "{new_proj_id}", with title: "{title}"')

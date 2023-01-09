@@ -65,13 +65,19 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
+      - name: Set git identity
+        run: |
+          git config user.name ci-bot
+          git config user.email ci-bot@example.com
+
       - name: create PR to merge release branch and master
         run: |
           git fetch
-          git checkout release/${{ github.ref_name }}
-          git checkout -b merge_release/${{ github.ref_name }}
-          git push
-          gh pr create --fill
+          release_branch_version=$(git branch -a --contains ${{ github.ref_name }} | grep remotes/origin/release | awk -F '/' '{print $NF}')
+          git checkout release/$release_branch_version
+          git checkout -b merge_release/$release_branch_version
+          git push --set-upstream origin merge_release/$release_branch_version
+          gh pr create --fill --reviewer kili-technology/ml
         env:
           GH_TOKEN: ${{ github.token }}
 
