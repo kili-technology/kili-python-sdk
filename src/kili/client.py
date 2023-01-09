@@ -20,7 +20,6 @@ from kili.queries.api_key import QueriesApiKey
 from kili.queries.asset import QueriesAsset
 from kili.queries.issue import QueriesIssue
 from kili.queries.label import QueriesLabel
-from kili.queries.lock import QueriesLock
 from kili.queries.notification import QueriesNotification
 from kili.queries.organization import QueriesOrganization
 from kili.queries.plugins import QueriesPlugins
@@ -46,7 +45,6 @@ class Kili(  # pylint: disable=too-many-ancestors
     QueriesAsset,
     QueriesIssue,
     QueriesLabel,
-    QueriesLock,
     QueriesNotification,
     QueriesOrganization,
     QueriesPlugins,

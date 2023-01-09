@@ -46,7 +46,7 @@ class LockQuery(GraphQLQuery):
     """
 
     COUNT_QUERY = """
-    query locks($where: LockWhere!) {
+    query countLocks($where: LockWhere!) {
     data: countLocks(where: $where)
     }
     """
