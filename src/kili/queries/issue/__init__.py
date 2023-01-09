@@ -79,7 +79,7 @@ class QueriesIssue:
         if not project_id:
             warnings.warn(
                 "It is now required to provide a project_id when calling count_issues. This change"
-                " will be enforced from 23/01/2023",
+                " will be enforced from 01/02/2023",
                 DeprecationWarning,
             )
         where = IssueWhere(project_id=project_id)
