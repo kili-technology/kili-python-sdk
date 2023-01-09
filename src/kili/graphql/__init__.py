@@ -3,7 +3,7 @@ GraphQL module
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Type
+from typing import Dict, Iterable, List, NamedTuple, Optional, Type
 
 from tqdm import tqdm
 
@@ -85,36 +85,34 @@ class GraphQLQuery(ABC):
     ) -> Iterable[Dict]:
         """Query objects of the specified type"""
         fragment = fragment_builder(fields, self.TYPE)
-        where_payload = where.graphql_payload
         query = self.query(fragment)
 
-        result_gen = self.execute_query_from_paginated_call(query, where_payload, options)
+        result_gen = self.execute_query_from_paginated_call(query, where, options)
         if options.as_generator:
             return result_gen
         return list(result_gen)
 
-    def count(self, where_payload):
+    def count(self, where: BaseQueryWhere):
         """Count the number of objects matching the given where payload"""
-        payload = {"where": where_payload}
+        payload = {"where": where.graphql_payload}
         count_result = self.client.execute(self.COUNT_QUERY, payload)
         return format_result("data", count_result, int)
 
-    def get_number_of_elements_to_query(self, where_payload: Dict, options):
+    def get_number_of_elements_to_query(self, where: BaseQueryWhere, options: QueryOptions):
         """Return the total number of element to query for one query.
         It uses both the argument first given by the user
         and the total number of available objects obtained with a graphQL count query
         """
         first = options.first
-        if not options.disable_tqdm:
-            count_rows_available = self.count(where_payload)
-            if first is None:
-                return count_rows_available
-            return min(count_rows_available, first)
-        # dummy value that won't have any impact since tqdm is disabled
-        return 1 if first != 0 else 0
+        skip = options.skip
+        count_rows_available = self.count(where)
+        count_objects_queried = max(count_rows_available - skip, 0)
+        if first is None:
+            return count_objects_queried
+        return min(count_objects_queried, first)
 
     def execute_query_from_paginated_call(
-        self, query: str, where_payload: Dict, options: QueryOptions
+        self, query: str, where: BaseQueryWhere, options: QueryOptions
     ):
         """
         Builds a row generator from paginated calls.
@@ -125,10 +123,9 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
-        payload: Dict[str, Any] = {"where": where_payload}
         if options.as_generator and not options.disable_tqdm:
             options._replace(disable_tqdm=True)
-        total_rows_queried = self.get_number_of_elements_to_query(where_payload, options)
+        total_rows_queried = self.get_number_of_elements_to_query(where, options)
         batch_size = min(100, options.first or 100)
 
         if total_rows_queried == 0:
@@ -136,9 +133,9 @@ class GraphQLQuery(ABC):
         else:
             with tqdm(total=total_rows_queried, disable=options.disable_tqdm) as pbar:
                 count_rows_retrieved = 0
-                while True:
+                while count_rows_retrieved < total_rows_queried:
                     skip = count_rows_retrieved + options.skip
-                    payload.update({"skip": skip, "first": batch_size})
+                    payload = {"where": where.graphql_payload, "skip": skip, "first": batch_size}
                     rows = api_throttle(self.client.execute)(query, payload)
                     rows = format_result("data", rows)
 
@@ -154,5 +151,3 @@ class GraphQLQuery(ABC):
 
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
-                    if options.first is not None and count_rows_retrieved >= options.first:
-                        break
