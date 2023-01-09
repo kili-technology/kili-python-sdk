@@ -1,13 +1,11 @@
 """Project queries."""
 
-from typing import Dict, Generator, List, Optional, Union
+from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from kili.helpers import format_result, fragment_builder
-from kili.queries.project.queries import GQL_PROJECTS_COUNT, gql_projects
-from kili.types import Project
-from kili.utils.pagination import row_generator_from_paginated_calls
+from kili.graphql import QueryOptions
+from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 
 
 class QueriesProject:
@@ -49,7 +47,7 @@ class QueriesProject:
         first: Optional[int] = None,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Union[List[Dict], Generator]:
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of projects that match a set of criteria.
 
@@ -79,51 +77,15 @@ class QueriesProject:
             >>> kili.projects()
         """
 
-        saved_args = locals()
-        count_args = {
-            k: v
-            for (k, v) in saved_args.items()
-            if k
-            in [
-                "project_id",
-                "search_query",
-                "should_relaunch_kpi_computation",
-                "updated_at_gte",
-                "updated_at_lte",
-            ]
-        }
-        disable_tqdm = disable_tqdm or as_generator
-
-        payload_query = {
-            "where": {
-                "id": project_id,
-                "searchQuery": search_query,
-                "shouldRelaunchKpiComputation": should_relaunch_kpi_computation,
-                "updatedAtGte": updated_at_gte,
-                "updatedAtLte": updated_at_lte,
-            },
-        }
-
-        projects_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_projects,
-            count_args,
-            self._query_projects,
-            payload_query,
-            fields,
-            disable_tqdm,
+        where = ProjectWhere(
+            project_id=project_id,
+            search_query=search_query,
+            should_relaunch_kpi_computation=should_relaunch_kpi_computation,
+            updated_at_gte=updated_at_gte,
+            updated_at_lte=updated_at_lte,
         )
-
-        if as_generator:
-            return projects_generator
-        return list(projects_generator)
-
-    def _query_projects(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_projects = gql_projects(fragment_builder(fields, Project))
-        result = self.auth.client.execute(_gql_projects, payload)
-        return format_result("data", result)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        return ProjectQuery(self.auth.client)(where, fields, options)
 
     @typechecked
     def count_projects(
@@ -155,14 +117,11 @@ class QueriesProject:
         Returns:
             The number of projects with the parameters provided
         """
-        variables = {
-            "where": {
-                "id": project_id,
-                "searchQuery": search_query,
-                "shouldRelaunchKpiComputation": should_relaunch_kpi_computation,
-                "updatedAtGte": updated_at_gte,
-                "updatedAtLte": updated_at_lte,
-            }
-        }
-        result = self.auth.client.execute(GQL_PROJECTS_COUNT, variables)
-        return format_result("data", result, int)
+        where = ProjectWhere(
+            project_id=project_id,
+            search_query=search_query,
+            should_relaunch_kpi_computation=should_relaunch_kpi_computation,
+            updated_at_gte=updated_at_gte,
+            updated_at_lte=updated_at_lte,
+        )
+        return ProjectQuery(self.auth.client).count(where)
