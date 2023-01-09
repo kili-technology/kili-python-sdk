@@ -5,14 +5,16 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
 import requests
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili import services
+from kili.exceptions import NotFound
+from kili.graphql import QueryOptions
+from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.queries.asset.exceptions import MissingPropertyError
 
 
@@ -25,7 +27,17 @@ def get_post_assets_call_process(
     Otherwise return assets without any post-processing
     """
     if download_media:
-        project_input_type = services.get_project(kili, project_id, ["inputType"])["inputType"]
+        where = ProjectWhere(
+            project_id=project_id,
+        )
+        options = QueryOptions(disable_tqdm=True)
+        projects = cast(List[Dict], ProjectQuery(kili.auth.client)(where, ["inputType"], options))
+        if len(projects) == 0:
+            NotFound(
+                f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of"
+                " the project."
+            )
+        project_input_type = projects[0]["inputType"]
         jsoncontent_field_added = False
         if project_input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
             fields.append("jsonContent")

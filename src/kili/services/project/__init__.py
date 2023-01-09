@@ -14,7 +14,7 @@ def get_project(kili, project_id: str, fields: List[str]):
         ),
     )
     if len(projects) == 0:
-        NotFound(
+        raise NotFound(
             f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of the"
             " project."
         )

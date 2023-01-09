@@ -10,3 +10,7 @@ mocked_upload_data_via_rest = MagicMock(side_effect=lambda signed_urls, _a, _b: 
 mocked_unique_id = MagicMock(return_value="unique_id")
 
 mocked_auth = MagicMock()
+
+
+def mocked_project_input_type(input_type: str):
+    return lambda *_: [{"inputType": input_type}]

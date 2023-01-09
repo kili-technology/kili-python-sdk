@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
+from kili.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
-from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
@@ -14,18 +14,14 @@ from tests.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-@patch.object(
-    QueriesProject,
-    "projects",
-    MagicMock(return_value=[{"inputType": "TEXT"}]),
-)
+@patch.object(ProjectQuery, "__call__", side_effect=lambda *args: [{"inputType": "TEXT"}])
 @patch.object(
     QueriesAsset,
     "assets",
     MagicMock(return_value=[]),
 )
 class TextTestCase(ImportTestCase):
-    def test_upload_from_one_local_text_file(self):
+    def test_upload_from_one_local_text_file(self, _mocker):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local text file"}]
@@ -41,9 +37,7 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_hosted_text_file(
-        self,
-    ):
+    def test_upload_from_one_hosted_text_file(self, _mocker):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -53,7 +47,7 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_raw_text(self):
+    def test_upload_from_raw_text(self, _mocker):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
@@ -67,7 +61,7 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_rich_text(self):
+    def test_upload_from_one_rich_text(self, _mocker):
         json_content = [
             {
                 "children": [
@@ -92,5 +86,5 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_several_batches(self):
+    def test_upload_from_several_batches(self, _mocker):
         self.assert_upload_several_batches()
