@@ -190,7 +190,6 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
 
     Also checks if markdown files are in mkdocs.yml.
     """
-    modified_files = sorted(modified_files)
     groupby_iter = groupby(modified_files, key=lambda path: path.stem)
     for filename, group in groupby_iter:
         group = list(group)
@@ -201,7 +200,9 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
             raise ValueError(
                 f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}."
             )
-        ipynb_filepath, md_filepath = group
+        ipynb_filepath, md_filepath = sorted(group)
+        assert ipynb_filepath.suffix == ".ipynb", ipynb_filepath
+        assert md_filepath.suffix == ".md", md_filepath
         ipynb_filepath = ipynb_filepath.resolve()
         md_filepath = md_filepath.resolve()
         if not is_markdown_up_to_date(
