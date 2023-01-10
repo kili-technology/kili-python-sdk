@@ -23,3 +23,14 @@ repos:
           - flake8-black>=0.1.1
           - flake8-bugbear>=20.0.0
           - flake8-unused-arguments
+  - repo: local
+    hooks:
+      - id: notebook-markdown-tutorials
+        name: Check markdown tutorials are up-to-date with notebooks
+        language: python
+        entry: python -m docs.utils notebook_tutorials_commit_hook
+        files: (.*)(\.md|\.ipynb)$
+        stages: [commit]
+        always_run: false
+        pass_filenames: true
+        additional_dependencies: [click, nbconvert]
