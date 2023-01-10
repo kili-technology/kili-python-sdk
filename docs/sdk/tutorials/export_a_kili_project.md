@@ -2,7 +2,6 @@
 ## Outline
 This tutorial explains the multiple ways to export a Kili project. It describes:
 
- * A per-label method involving label filtering
  * Methods to export the labels one by one, after filtering
  * The solutions for performing a full-project export
 
