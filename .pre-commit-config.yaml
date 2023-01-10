@@ -10,6 +10,7 @@ repos:
     hooks:
       - id: black
       - id: black-jupyter
+        files: ^.*docs\/sdk\/tutorials.*$
   - repo: https://github.com/pycqa/isort
     rev: 5.10.1
     hooks:
