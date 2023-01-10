@@ -248,6 +248,7 @@ kili.export_labels(
 ```
 
 Note that a standard YOLO file format must also include:
+
 * The path root to the assets
 * The `train`, `val` and `test` subfolders
 
