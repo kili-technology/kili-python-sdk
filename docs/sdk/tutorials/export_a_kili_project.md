@@ -46,7 +46,7 @@ assets = kili.assets("<your_project_id>", fields=["externalId", "latestLabel.jso
 print(assets[0])
 {'latestLabel': {'jsonResponse': {'CLASSIFICATION_JOB': {'categories': [{'name': 'VEHICLE'}]}}}, 'externalId': '0'}
 ```
-  3. You can now get your label, and write the category name into a `0.txt` file, for example::
+  3. You can now get your label, and write the category name into a text file, for example:
 ```python
 for asset in assets:
     if asset["latestLabel"]: # covers the assets without label
@@ -62,19 +62,19 @@ for each one of these methods.
 
 When done, you can write the conversion code to get the data in the format that you need.
 
-**Get only the assets that have labels with a consensus mark above 0.7**
+**Get only the assets that have labels with a consensus mark above 0.7:**
 ```python
 assets = kili.assets("<your_project_id>", fields=["externalId", "labels.jsonResponse"], label_consensus_mark_gt=0.7)
 # + asset conversion code
 ```
 
-**Get all the labels with a consensus mark above 0.7**
+**Get all the labels with a consensus mark above 0.7:**
 ```python
 labels = kili.labels("<your_project_id>", fields=["labelOf.externalId", "jsonResponse"], consensus_mark_gt=0.7)
 # + label conversion code
 ```
 
-**Get all the labels added by a specific project member**
+**Get all the labels added by a specific project member:**
 ```python
 labels = kili.labels("<your_project_id>", fields=["labelOf.externalId", "jsonResponse"], author_in=["John Smith"])
 # + label conversion code
@@ -250,7 +250,8 @@ kili.export_labels(
 Note that a standard YOLO file format must also include:
 * The path root to the assets
 * The `train`, `val` and `test` subfolders
-Placing specific data in specific folders is the decision of an ML engineer or a Data scientist, so we're not providing a code snippet here.
+
+Placing specific data in specific folders is the decision of an ML engineer or a Data scientist, so we are not providing a code snippet here.
 
 
 ### COCO format
