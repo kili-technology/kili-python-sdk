@@ -196,6 +196,9 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         # check only notebooks modified in docs/sdk/tutorials
         if "docs/sdk/tutorials" not in str(group[0].parent):
             continue
+        # skip single markdown files, probably hand written tutorials without notebooks
+        if len(group) == 1 and str(group[0]).endswith(".md"):
+            continue
         if len(group) != 2:
             raise ValueError(
                 f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}."
