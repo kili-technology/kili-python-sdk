@@ -30,7 +30,7 @@ repos:
         name: Check markdown tutorials are up-to-date with notebooks
         language: python
         entry: python -m docs.utils notebook_tutorials_commit_hook
-        files: ^.*\.(ipynb|md)$
+        files: ^.*docs\/sdk\/tutorials.*\.(ipynb|md)$
         stages: [commit]
         always_run: false
         pass_filenames: true
