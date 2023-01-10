@@ -194,6 +194,9 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     groupby_iter = groupby(modified_files, key=lambda path: path.stem)
     for filename, group in groupby_iter:
         group = list(group)
+        # check only notebooks modified in /docs/sdk/tutorials
+        if "/docs/sdk/tutorials" not in str(group[0].parent):
+            continue
         if len(group) != 2:
             raise ValueError(
                 f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}."
