@@ -116,7 +116,7 @@ def notebook_to_markdown(
     ipynb_filepath = ipynb_filepath.resolve()
     md_output_filepath = md_output_filepath.resolve()
 
-    if not str(md_output_filepath).endswith(".md"):
+    if md_output_filepath.suffix != ".md":
         raise ValueError("md_output_filepath must end with .md")
 
     md_exporter = MarkdownExporter()
@@ -197,7 +197,7 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         if "docs/sdk/tutorials" not in str(group[0].parent):
             continue
         # skip single markdown files, probably hand written tutorials without notebooks
-        if len(group) == 1 and str(group[0]).endswith(".md"):
+        if len(group) == 1 and group[0].suffix == ".md":
             continue
         if len(group) != 2:
             raise ValueError(
