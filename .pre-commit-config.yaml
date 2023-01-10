@@ -31,7 +31,7 @@ repos:
         language: python
         entry: python -m docs.utils notebook_tutorials_commit_hook
         files: ^.*docs\/sdk\/tutorials.*\.(ipynb|md)$
-        stages: [commit]
+        stages: [commit, merge-commit]
         always_run: false
         pass_filenames: true
         additional_dependencies: [click, nbconvert]
