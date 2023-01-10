@@ -203,8 +203,10 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         ipynb_filepath, md_filepath = sorted(group)
         assert ipynb_filepath.suffix == ".ipynb", ipynb_filepath
         assert md_filepath.suffix == ".md", md_filepath
+
         ipynb_filepath = ipynb_filepath.resolve()
         md_filepath = md_filepath.resolve()
+
         if not is_markdown_up_to_date(
             ipynb_filepath=ipynb_filepath,
             md_filepath=md_filepath,
