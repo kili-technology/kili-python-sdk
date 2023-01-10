@@ -2,7 +2,8 @@
 ## Outline
 This tutorial explains the multiple ways to export a Kili project. It describes:
 
- * A per-label method involving label filtering and conversion
+ * A per-label method involving label filtering
+ * Methods to export the labels one by one, after filtering
  * The solutions for performing a full-project export
 
 The methods are illustrated with code snippets.
@@ -22,7 +23,7 @@ With Kili, once you have annotated enough assets, you can export the data progra
  ```bash
  export KILI_API_KEY=<YOUR_API_KEY>
  ```
- 3. In Kili has not been installed yet, install Kili.
+ 3. If Kili has not been installed yet, install Kili.
 ```bash
 pip install --upgrade kili
 ```
@@ -46,7 +47,7 @@ assets = kili.assets("<your_project_id>", fields=["externalId", "latestLabel.jso
 print(assets[0])
 {'latestLabel': {'jsonResponse': {'CLASSIFICATION_JOB': {'categories': [{'name': 'VEHICLE'}]}}}, 'externalId': '0'}
 ```
-  3. You can now get your label, for example, write the category name into a `0.txt` file:
+  3. You can now get your label, and write the category name into a `0.txt` file, for example::
 ```python
 for asset in assets:
     if asset["latestLabel"]: # covers the assets without label
@@ -139,7 +140,7 @@ for asset in assets:
 ```
 
 ## Exporting a whole project
-Kili has method to export the whole project into specific export formats. It can be useful when your goal is to use one of the standard output formats.
+Kili has a method to export the whole project into specific export formats. It can be useful when your goal is to use one of the standard output formats.
 
 ### Available formats
 
