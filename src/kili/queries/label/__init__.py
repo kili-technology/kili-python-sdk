@@ -70,7 +70,8 @@ class QueriesLabel:
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
-            author_in: Returned labels should have a label whose status belongs to that list, if given.
+            author_in: Returned labels should have been made by authors in that list, if given.
+                An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
             created_at_gte: Returned labels should have a label whose creation date is greater than this date.
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
