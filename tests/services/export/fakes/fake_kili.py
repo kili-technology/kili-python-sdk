@@ -190,6 +190,3 @@ class FakeKili:
         Count assets.
         """
         return len(self.assets(project_id=project_id, fields=[""]))
-
-    # def count_projects(self, project_id: str) -> int:
-    #     return len(self.projects(project_id=project_id))

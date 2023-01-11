@@ -2,6 +2,7 @@
 
 from typing import Dict, List
 
+from kili.authentication import KiliAuth
 from kili.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
@@ -10,9 +11,6 @@ from kili.services.asset_import.video import VideoDataImporter
 from kili.services.project import get_project
 
 from .base import LoggerParams, ProcessingParams, ProjectParams
-
-# from kili.authentication import KiliAuth
-
 
 importer_by_type = {
     "PDF": PdfDataImporter,
@@ -24,7 +22,7 @@ importer_by_type = {
 
 
 def import_assets(
-    auth,
+    auth: KiliAuth,
     project_id: str,
     assets: List[Dict],
     raise_error=True,
