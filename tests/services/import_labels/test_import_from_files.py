@@ -11,6 +11,7 @@ import pytest
 import yaml
 
 from kili.exceptions import NotFound
+from kili.graphql.operations.project.queries import ProjectQuery
 from kili.services import import_labels_from_files
 from kili.services.label_import.exceptions import LabelParsingError
 from kili.services.label_import.importer import YoloLabelImporter
@@ -49,9 +50,9 @@ def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
         for test_case in TEST_CASES
     ],
 )
-def test_import_labels_from_files(description, inputs, outputs):
+@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
+def test_import_labels_from_files(mocker, description, inputs, outputs):
     kili = MagicMock()
-    kili.projects = MagicMock(side_effect=fakes.projects)
 
     with TemporaryDirectory() as label_folders:
         label_paths = []
@@ -85,9 +86,9 @@ def test_import_labels_from_files(description, inputs, outputs):
             process_from_dict_mock.assert_called_with(**outputs["call"])
 
 
-def test_import_labels_from_files_malformed_annotation():
+@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
+def test_import_labels_from_files_malformed_annotation(mocker):
     kili = MagicMock()
-    kili.projects = MagicMock(side_effect=fakes.projects)
 
     inputs = {
         "labels": [
@@ -133,9 +134,9 @@ def test_import_labels_from_files_malformed_annotation():
             )
 
 
-def test_import_labels_wrong_target_job():
+@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
+def test_import_labels_wrong_target_job(mocker):
     kili = MagicMock()
-    kili.projects = MagicMock(side_effect=fakes.projects)
 
     inputs = {
         "labels": [

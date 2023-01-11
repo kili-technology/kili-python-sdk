@@ -15,6 +15,7 @@ from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
+from kili.services.project import get_project
 from kili.services.types import ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -61,9 +62,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.with_assets: bool = export_params.with_assets
         self.export_root_folder: Path = Path()
 
-        project_info = self.kili.projects(
-            project_id=self.project_id, fields=["jsonInterface", "inputType"], disable_tqdm=True
-        )[0]
+        project_info = get_project(self.kili, self.project_id, ["jsonInterface", "inputType"])
         self.project_json_interface = project_info["jsonInterface"]
         self.project_input_type = project_info["inputType"]
 
@@ -99,11 +98,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Create a README.kili.txt file to give information about exported labels
         """
         readme_file_name = root_folder / self.project_id / "README.kili.txt"
-        project_info = list(
-            self.kili.projects(
-                project_id=self.project_id, fields=["title", "id", "description"], disable_tqdm=True
-            )
-        )[0]
+        project_info = get_project(self.kili, self.project_id, ["title", "id", "description"])
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
             fout.write("Exported Labels from KILI\n=========================\n\n".encode())

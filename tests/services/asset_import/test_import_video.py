@@ -1,11 +1,12 @@
 import json
 from unittest.mock import MagicMock, patch
 
+from kili.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
-from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
+    mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
     mocked_upload_data_via_rest,
@@ -15,18 +16,14 @@ from tests.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-@patch.object(
-    QueriesProject,
-    "projects",
-    MagicMock(return_value=[{"inputType": "VIDEO"}]),
-)
+@patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO"))
 @patch.object(
     QueriesAsset,
     "assets",
     MagicMock(return_value=[]),
 )
 class VideoTestCase(ImportTestCase):
-    def test_upload_from_one_local_video_file_to_native(self):
+    def test_upload_from_one_local_video_file_to_native(self, _mocker):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
@@ -51,9 +48,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_hosted_video_file_to_native(
-        self,
-    ):
+    def test_upload_from_one_hosted_video_file_to_native(self, _mocker):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -78,7 +73,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_local_video_to_frames(self):
+    def test_upload_one_local_video_to_frames(self, _mocker):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [
@@ -112,7 +107,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_hosted_video_to_frames(self):
+    def test_upload_one_hosted_video_to_frames(self, _mocker):
         assets = [
             {
                 "content": "https://hosted-data",
@@ -145,7 +140,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_video_from_local_frames(self):
+    def test_upload_one_video_from_local_frames(self, _mocker):
         hosted_frame_folder = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/frames/"
         )
@@ -180,7 +175,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_video_from_hosted_frames(self):
+    def test_upload_one_video_from_hosted_frames(self, _mocker):
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
         url_frame3 = "https://frame3"
@@ -212,7 +207,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_frames_call_from_label_import(self):
+    def test_upload_frames_call_from_label_import(self, _mocker):
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
         url_frame3 = "https://frame3"
@@ -245,7 +240,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_import_one_video_with_metadata(self):
+    def test_import_one_video_with_metadata(self, _mocker):
         assets = [
             {
                 "content": "https://hosted-data",
@@ -281,20 +276,14 @@ class VideoTestCase(ImportTestCase):
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-@patch.object(
-    QueriesProject,
-    "projects",
-    MagicMock(return_value=[{"inputType": "VIDEO_LEGACY"}]),
-)
+@patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))
 @patch.object(
     QueriesAsset,
     "assets",
     MagicMock(return_value=[]),
 )
 class VideoLegacyTestCase(ImportTestCase):
-    def test_upload_from_one_hosted_video_file_to_video_legacy_project(
-        self,
-    ):
+    def test_upload_from_one_hosted_video_file_to_video_legacy_project(self, _mocker):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]

@@ -1,5 +1,3 @@
-from unittest.mock import ANY
-
 YOLO_V4_TEST_CASE = {
     "description": "AAU, I import assets with all the asset attributes in the CSV, yolo_v4",
     "inputs": {

@@ -3,17 +3,19 @@ import glob
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 from zipfile import ZipFile
 
 import pytest
 
+from kili.graphql.operations.project.queries import ProjectQuery
 from kili.services import export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from tests.services.export.fakes.fake_kili import FakeKili
+from tests.services.export.fakes.fake_kili import FakeKili, mocked_ProjectQuery
 
 
 def get_file_tree(folder: str):
@@ -263,7 +265,8 @@ def get_file_tree(folder: str):
         ),
     ],
 )
-def test_export_service_layout(name, test_case):
+@patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+def test_export_service_layout(mocker, name, test_case):
     with TemporaryDirectory() as export_folder:
         with TemporaryDirectory() as extract_folder:
             path_zipfile = Path(export_folder) / "export.zip"
@@ -372,7 +375,8 @@ def test_export_service_layout(name, test_case):
         ),
     ],
 )
-def test_export_service_errors(name, test_case, error):
+@patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+def test_export_service_errors(mocker, name, test_case, error):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
         path_zipfile.parent.mkdir(parents=True, exist_ok=True)
