@@ -98,7 +98,7 @@ def notebook_to_markdown_cmd(
         ipynb_filepath: Path to notebook.
         md_output_filepath: Output path for markdown file.
     """
-    notebook_to_markdown(
+    md_output_filepath = notebook_to_markdown(
         ipynb_filepath=ipynb_filepath,
         md_output_filepath=md_output_filepath,
         remove_cell_tags=DEFAULT_REMOVE_CELL_TAGS,
@@ -110,7 +110,7 @@ def notebook_to_markdown(
     ipynb_filepath: Path,
     md_output_filepath: Optional[Path],
     remove_cell_tags: Sequence,
-):
+) -> Path:
     """Generate markdown from a notebook."""
     md_output_filepath = md_output_filepath or ipynb_filepath.with_suffix(".md")
 
@@ -145,6 +145,8 @@ def notebook_to_markdown(
 
     with open(md_output_filepath, "w", encoding="utf-8") as file:
         file.write(markdown_str)
+
+    return md_output_filepath
 
 
 def check_markdown_up_to_date(ipynb_filepath: Path, md_filepath: Path, remove_cell_tags: Sequence):
@@ -223,7 +225,9 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         # check if group has two files, one .md and one .ipynb
         if len(group) != 2:
             raise ValueError(
-                f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}."
+                f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}. Run"
+                " 'python -m docs.utils convert <notebook_file>' to convert a notebook to"
+                " markdown. Please run 'mkdocs serve' to check the result before committing."
             )
 
         ipynb_filepath, md_filepath = sorted(group)
