@@ -1,17 +1,14 @@
 """Issue queries."""
 
-from dataclasses import dataclass
-from typing import Generator, List, Optional, Union
+import warnings
+from typing import Iterable, List, Optional
 
 from typeguard import typechecked
 
-from ...helpers import format_result, fragment_builder
-from ...types import Issue as IssueType
-from ...utils.pagination import row_generator_from_paginated_calls
-from .queries import GQL_ISSUES_COUNT, gql_issues
+from kili.graphql import QueryOptions
+from kili.graphql.operations.issue.queries import IssueQuery, IssueWhere
 
 
-@dataclass
 class QueriesIssue:
     """Set of Issue queries."""
 
@@ -42,7 +39,7 @@ class QueriesIssue:
         skip: int = 0,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Union[List[dict], Generator[dict, None, None]]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of issues that match a set of criteria.
 
@@ -62,36 +59,9 @@ class QueriesIssue:
         Examples:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
-        count_args = {"project_id": project_id}
-        disable_tqdm = disable_tqdm or as_generator
-        payload_query = {
-            "where": {
-                "project": {
-                    "id": project_id,
-                },
-            },
-        }
-
-        issues_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_issues,
-            count_args,
-            self._query_issues,
-            payload_query,
-            fields,
-            disable_tqdm,
-        )
-
-        if as_generator:
-            return issues_generator
-        return list(issues_generator)
-
-    def _query_issues(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_issues = gql_issues(fragment_builder(fields, IssueType))
-        result = self.auth.client.execute(_gql_issues, payload)
-        return format_result("data", result)
+        where = IssueWhere(project_id=project_id)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        return IssueQuery(self.auth.client)(where, fields, options)
 
     @typechecked
     def count_issues(self, project_id: Optional[str] = None) -> int:
@@ -104,13 +74,11 @@ class QueriesIssue:
             The number of issues with the parameters provided
 
         """
-        variables = {
-            "where": {
-                "project": {
-                    "id": project_id,
-                },
-            },
-        }
-        result = self.auth.client.execute(GQL_ISSUES_COUNT, variables)
-        count = format_result("data", result)
-        return int(count)
+        if not project_id:
+            warnings.warn(
+                "It is now required to provide a project_id when calling count_issues. This change"
+                " will be enforced from 01/02/2023",
+                DeprecationWarning,
+            )
+        where = IssueWhere(project_id=project_id)
+        return IssueQuery(self.auth.client).count(where)
