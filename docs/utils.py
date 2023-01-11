@@ -2,6 +2,7 @@
 
 import base64
 import re
+import shutil
 from binascii import a2b_base64
 from itertools import groupby
 from pathlib import Path
@@ -146,10 +147,12 @@ def notebook_to_markdown(
         file.write(markdown_str)
 
 
-def is_markdown_up_to_date(
-    ipynb_filepath: Path, md_filepath: Path, remove_cell_tags: Sequence
-) -> bool:
-    """Check if markdown file is up to date with its associated notebook."""
+def check_markdown_up_to_date(ipynb_filepath: Path, md_filepath: Path, remove_cell_tags: Sequence):
+    """
+    Check if markdown file is up to date with its associated notebook.
+
+    Overwrites the markdown file if it is not up to date.
+    """
     assert ipynb_filepath.is_file(), f"{ipynb_filepath} does not exist."
     assert md_filepath.is_file(), f"{md_filepath} does not exist."
 
@@ -161,18 +164,33 @@ def is_markdown_up_to_date(
         )
         with open(temp_file.name, "r", encoding="utf-8") as file:
             temp_markdown = file.read()
-    with open(md_filepath, "r", encoding="utf-8") as file:
-        markdown = file.read()
 
-    return temp_markdown == markdown
+        with open(md_filepath, "r", encoding="utf-8") as file:
+            markdown = file.read()
 
-
-class OutdatedMarkdownError(Exception):
-    """Raised when markdown is not up to date with notebook."""
+        if temp_markdown != markdown:
+            shutil.copy(temp_file.name, md_filepath)
+            raise OutdatedMarkdownError(
+                f"{ipynb_filepath} is not up to date with {md_filepath}. {md_filepath.name} has"
+                " been updated. Please run 'mkdocs serve' to check the result before committing."
+            )
 
 
 class OutdatedMkDocs(Exception):
     """Raised when mkdocs.yml is not up to date."""
+
+
+def check_mkdocs_yml_up_to_date(md_filepath: Path):
+    """Check if mkdocs.yml contains the tutorial markdown file."""
+    with open("mkdocs.yml", encoding="utf-8") as file:
+        mkdocs_config = file.read()
+
+    if f"sdk/tutorials/{md_filepath.name}" not in mkdocs_config:
+        raise OutdatedMkDocs(f"sdk/tutorials/{md_filepath.name} is not in mkdocs.yml.")
+
+
+class OutdatedMarkdownError(Exception):
+    """Raised when markdown is not up to date with notebook."""
 
 
 @click.command(name="notebook_tutorials_commit_hook")
@@ -193,35 +211,30 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     groupby_iter = groupby(modified_files, key=lambda path: path.stem)
     for filename, group in groupby_iter:
         group = list(group)
+
         # check only notebooks modified in docs/sdk/tutorials
         if "docs/sdk/tutorials" not in str(group[0].parent):
             continue
+
         # skip single markdown files, probably hand written tutorials without notebooks
         if len(group) == 1 and group[0].suffix == ".md":
             continue
+
+        # check if group has two files, one .md and one .ipynb
         if len(group) != 2:
             raise ValueError(
                 f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}."
             )
+
         ipynb_filepath, md_filepath = sorted(group)
         assert ipynb_filepath.suffix == ".ipynb", ipynb_filepath
         assert md_filepath.suffix == ".md", md_filepath
-
         ipynb_filepath = ipynb_filepath.resolve()
         md_filepath = md_filepath.resolve()
 
-        if not is_markdown_up_to_date(
-            ipynb_filepath=ipynb_filepath,
-            md_filepath=md_filepath,
-            remove_cell_tags=DEFAULT_REMOVE_CELL_TAGS,
-        ):
-            raise OutdatedMarkdownError(f"{ipynb_filepath} is not up to date with {md_filepath}.")
+        check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
 
-        with open("mkdocs.yml", encoding="utf-8") as file:
-            mkdocs_config = file.read()
-
-        if f"sdk/tutorials/{md_filepath.name}" not in mkdocs_config:
-            raise OutdatedMkDocs(f"sdk/tutorials/{md_filepath.name} is not in mkdocs.yml.")
+        check_mkdocs_yml_up_to_date(md_filepath)
 
 
 @click.group()
