@@ -75,9 +75,7 @@ def create_project(
             json_interface = json.load(interface_file)
 
     elif project_id_src is not None:
-        json_interface = services.get_project(kili, project_id_src, ["jsonInterface"])[
-            "jsonInterface"
-        ]
+        json_interface = services.get_project_field(kili, project_id_src, "jsonInterface")
 
     result = cast(
         Dict,

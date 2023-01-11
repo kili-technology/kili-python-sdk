@@ -121,7 +121,7 @@ def import_assets(
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    input_type = services.get_project(kili, project_id, ["inputType"])["inputType"]
+    input_type = services.get_project_field(kili, project_id, "inputType")
     if input_type not in ("VIDEO_LEGACY", "VIDEO") and (fps is not None or as_frames is True):
         illegal_option = "fps and frames are"
         if not as_frames:

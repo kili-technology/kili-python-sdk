@@ -11,7 +11,7 @@ from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
 )
-from kili.services.project import get_project
+from kili.services.project import get_project_field
 
 PathLike = TypeVar("PathLike", Path, str)
 
@@ -45,7 +45,7 @@ def get_external_id_from_file_path(path: PathLike) -> str:
 
 def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str):
     """Tell if the target job id is defined in the project's JSON interface"""
-    json_interface = get_project(kili, project_id, ["jsonInterface"])["jsonInterface"]
+    json_interface = get_project_field(kili, project_id, "jsonInterface")
     return target_job_name in json_interface["jobs"]
 
 

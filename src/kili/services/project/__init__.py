@@ -1,3 +1,5 @@
+"""Service module for projects"""
+
 from typing import Dict, List, cast
 
 from kili.exceptions import NotFound
@@ -19,3 +21,10 @@ def get_project(kili, project_id: str, fields: List[str]):
             " project."
         )
     return projects[0]
+
+
+def get_project_field(kili, project_id: str, field: str):
+    """Get one project field from a the project id or raise a NotFound Error
+    if the project is not found
+    """
+    return get_project(kili, project_id, [field])[field]
