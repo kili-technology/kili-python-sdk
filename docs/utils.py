@@ -1,0 +1,252 @@
+"""Utils for inserting notebooks in Python SDK doc."""
+
+import base64
+import re
+import shutil
+from binascii import a2b_base64
+from itertools import groupby
+from pathlib import Path
+from tempfile import NamedTemporaryFile
+from typing import Dict, Optional, Sequence
+
+import click
+from nbconvert import MarkdownExporter
+from nbconvert.preprocessors.base import Preprocessor
+from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
+
+
+class ExtractAttachmentsPreprocessor(Preprocessor):
+    """
+    Extract attachments in markdown cells.
+
+    This preprocessor aims at adding image data
+    to `metadata["outputs"]` for images copy-pasted in the notebook.
+    """
+
+    def preprocess_cell(self, cell, resources, cell_index):  # pylint: disable=arguments-renamed
+        """Extract attachments in a markdown cell."""
+
+        if "attachments" not in cell or not cell["attachments"]:
+            return cell, resources
+
+        resources["outputs"] = resources["outputs"] or {}
+
+        for img_name, attachment in cell["attachments"].items():
+            for mime, img_data in attachment.items():
+                if mime in {"image/png", "image/jpeg"}:
+                    img_data = a2b_base64(img_data)  # base64 to binary
+                elif mime in {"image/svg+xml"}:
+                    img_data = img_data.encode("UTF-8")  # SVG and XML already binary
+                else:
+                    raise ValueError(f"Unexpected mime type {mime}")
+
+                new_img_name = f"attach_{cell_index}_{img_name}"
+
+                if img_name.endswith(".gif") and mime == "image/png":
+                    new_img_name = new_img_name.replace(".gif", ".png")
+
+                resources["outputs"][new_img_name] = img_data
+
+                if "source" in cell:
+                    cell["source"] = cell["source"].replace("attachment:" + img_name, new_img_name)
+
+        return cell, resources
+
+
+def embed_images_in_markdown(markdown: str, images: Dict[str, bytes], notebook_dir: Path) -> str:
+    """Embed images in markdown in base64."""
+    md_img_pattern = r"!\[(.*?)\]\((.*?)\)"  # matches ![]()
+    matched_images = re.findall(md_img_pattern, markdown)
+    for img_text, img_content in matched_images:
+        if img_content in images:
+            img_bytes = images[img_content]
+        elif Path(notebook_dir / img_content).is_file():
+            with open(Path(notebook_dir / img_content), "rb") as file:
+                img_bytes = file.read()
+        else:
+            raise ValueError(f"Image {img_content} not found.")
+
+        extension = img_content.split(".")[-1]
+        encoded_img = base64.b64encode(img_bytes).decode("utf-8")
+        after = f"![{img_text}](data:image/{extension};base64,{encoded_img})"
+        markdown = markdown.replace(f"![{img_text}]({img_content})", after)
+    return markdown
+
+
+DEFAULT_REMOVE_CELL_TAGS = ("remove", "remove_cell", "test", "test_cell", "skip", "skip_cell")
+
+
+@click.command(name="convert")
+@click.argument(
+    "ipynb_filepath",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    required=True,
+)
+@click.option(
+    "--md-output-filepath",
+    type=click.Path(exists=False, path_type=Path),
+    required=False,
+    help="Output markdown.",
+)
+def notebook_to_markdown_cmd(
+    ipynb_filepath: Path,
+    md_output_filepath: Optional[Path] = None,
+):
+    """Command to generate markdown from a notebook.
+
+    Args:
+        ipynb_filepath: Path to notebook.
+        md_output_filepath: Output path for markdown file.
+    """
+    md_output_filepath = notebook_to_markdown(
+        ipynb_filepath=ipynb_filepath,
+        md_output_filepath=md_output_filepath,
+        remove_cell_tags=DEFAULT_REMOVE_CELL_TAGS,
+    )
+    print(f"Wrote {md_output_filepath}")
+
+
+def notebook_to_markdown(
+    ipynb_filepath: Path,
+    md_output_filepath: Optional[Path],
+    remove_cell_tags: Sequence,
+) -> Path:
+    """Generate markdown from a notebook."""
+    md_output_filepath = md_output_filepath or ipynb_filepath.with_suffix(".md")
+
+    ipynb_filepath = ipynb_filepath.resolve()
+    md_output_filepath = md_output_filepath.resolve()
+
+    if md_output_filepath.suffix != ".md":
+        raise ValueError("md_output_filepath must end with .md")
+
+    md_exporter = MarkdownExporter()
+
+    if remove_cell_tags is not None:
+        tag_removal_preprocessor = TagRemovePreprocessor(
+            remove_cell_tags=remove_cell_tags, enabled=True
+        )
+        md_exporter.register_preprocessor(tag_removal_preprocessor, enabled=True)
+
+    md_exporter.register_preprocessor(ExtractAttachmentsPreprocessor(enable=True), enabled=True)
+
+    output = md_exporter.from_filename(str(ipynb_filepath))
+
+    markdown_str, metadata = output
+    markdown_str = embed_images_in_markdown(
+        markdown_str, metadata["outputs"], Path(metadata["metadata"]["path"])
+    )
+
+    # remove trailing spaces so that markdown file can pass
+    # trailing-whitespace and end-of-file-fixer precommit hooks
+    markdown_split_str = [line.rstrip() for line in markdown_str.splitlines()]
+    markdown_split_str.append("")  # add last empty line
+    markdown_str = "\n".join(markdown_split_str)
+
+    with open(md_output_filepath, "w", encoding="utf-8") as file:
+        file.write(markdown_str)
+
+    return md_output_filepath
+
+
+def check_markdown_up_to_date(ipynb_filepath: Path, md_filepath: Path, remove_cell_tags: Sequence):
+    """
+    Check if markdown file is up to date with its associated notebook.
+
+    Overwrites the markdown file if it is not up to date.
+    """
+    assert ipynb_filepath.is_file(), f"{ipynb_filepath} does not exist."
+    assert md_filepath.is_file(), f"{md_filepath} does not exist."
+
+    with NamedTemporaryFile(suffix=".md") as temp_file:
+        notebook_to_markdown(
+            ipynb_filepath=ipynb_filepath,
+            md_output_filepath=Path(temp_file.name),
+            remove_cell_tags=remove_cell_tags,
+        )
+        with open(temp_file.name, "r", encoding="utf-8") as file:
+            temp_markdown = file.read()
+
+        with open(md_filepath, "r", encoding="utf-8") as file:
+            markdown = file.read()
+
+        if temp_markdown != markdown:
+            shutil.copy(temp_file.name, md_filepath)
+            raise OutdatedMarkdownError(
+                f"{ipynb_filepath} is not up to date with {md_filepath}. {md_filepath.name} has"
+                " been updated. Please run 'mkdocs serve' to check the result before committing."
+            )
+
+
+class OutdatedMkDocs(Exception):
+    """Raised when mkdocs.yml is not up to date."""
+
+
+def check_mkdocs_yml_up_to_date(md_filepath: Path):
+    """Check if mkdocs.yml contains the tutorial markdown file."""
+    with open("mkdocs.yml", encoding="utf-8") as file:
+        mkdocs_config = file.read()
+
+    if f"sdk/tutorials/{md_filepath.name}" not in mkdocs_config:
+        raise OutdatedMkDocs(f"sdk/tutorials/{md_filepath.name} is not in mkdocs.yml.")
+
+
+class OutdatedMarkdownError(Exception):
+    """Raised when markdown is not up to date with notebook."""
+
+
+@click.command(name="notebook_tutorials_commit_hook")
+@click.argument(
+    "modified_files",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    required=True,
+    nargs=-1,
+)
+def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
+    """
+    Check if all notebooks in staging are up-to-date with their markdown files.
+
+    Assumes that markdown files are in the same directory as notebooks, and have the same name.
+
+    Also checks if markdown files are in mkdocs.yml.
+    """
+    groupby_iter = groupby(modified_files, key=lambda path: path.stem)
+    for filename, group in groupby_iter:
+        group = list(group)
+
+        # check only notebooks modified in docs/sdk/tutorials
+        if "docs/sdk/tutorials" not in str(group[0].parent):
+            continue
+
+        # skip single markdown files, probably hand written tutorials without notebooks
+        if len(group) == 1 and group[0].suffix == ".md":
+            continue
+
+        # check if group has two files, one .md and one .ipynb
+        if len(group) != 2:
+            raise ValueError(
+                f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}. Run"
+                " 'python -m docs.utils convert <notebook_file>' to convert a notebook to"
+                " markdown. Please run 'mkdocs serve' to check the result before committing."
+            )
+
+        ipynb_filepath, md_filepath = sorted(group)
+        assert ipynb_filepath.suffix == ".ipynb", ipynb_filepath
+        assert md_filepath.suffix == ".md", md_filepath
+        ipynb_filepath = ipynb_filepath.resolve()
+        md_filepath = md_filepath.resolve()
+
+        check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
+
+        check_mkdocs_yml_up_to_date(md_filepath)
+
+
+@click.group()
+def main():
+    """Main"""
+
+
+if __name__ == "__main__":
+    main.add_command(notebook_to_markdown_cmd)
+    main.add_command(notebook_tutorials_commit_hook)
+    main()
