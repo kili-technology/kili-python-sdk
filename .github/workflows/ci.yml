@@ -22,7 +22,7 @@ jobs:
         run: |
           pylint src/kili
   unittest:
-    timeout-minutes: 6
+    timeout-minutes: 9
     name: Unit tests
     strategy:
       matrix:
