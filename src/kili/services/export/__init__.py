@@ -6,7 +6,6 @@ from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
-from kili.exceptions import NotFound
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.kili import KiliExporter
@@ -15,6 +14,7 @@ from kili.services.export.format.yolo import YoloExporter
 from kili.services.export.logger import get_logger
 from kili.services.export.repository import SDKContentRepository
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
+from kili.services.project import get_project
 from kili.services.types import LogLevel, ProjectId
 
 THRESHOLD_WARN_MANY_ASSETS = 1000
@@ -36,8 +36,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     """
     Export the selected assets into the required format, and save it into a file archive.
     """
-    if kili.count_projects(project_id=project_id) == 0:
-        raise NotFound(f"project ID: {project_id}")
+    get_project(kili, project_id, ["id"])
 
     if with_assets:
         count = kili.count_assets(project_id)

@@ -12,27 +12,27 @@ from kili.cli.project.describe import describe_project
 from kili.cli.project.export import export_labels
 from kili.cli.project.import_ import import_assets
 from kili.cli.project.list_ import list_projects
+from kili.graphql.operations.project.queries import ProjectQuery
 
 from ...utils import debug_subprocess_pytest
 from .mocks.assets import mocked__project_assets, mocked__project_count_assets
-from .mocks.projects import mocked__projects
+from .mocks.projects import mocked__ProjectsQuery
 
 kili_client = MagicMock()
 kili_client.auth.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
-kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
-kili_client.count_projects = count_projects_mock = MagicMock(return_value=1)
 kili_client.create_project = create_project_mock = MagicMock()
 kili_client.assets = assets_mock = MagicMock(side_effect=mocked__project_assets)
 kili_client.count_assets = count_assets_mock = MagicMock(side_effect=mocked__project_count_assets)
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
+@patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectsQuery)
 class TestCLIProject:
     """
     test the CLI functions of the project command
     """
 
-    def test_list(self, mocker):
+    def test_list(self, *_):
         runner = CliRunner()
         result = runner.invoke(list_projects)
         assert (
@@ -42,7 +42,7 @@ class TestCLIProject:
             and (result.output.count("nan") == 1)
         )
 
-    def test_create_project(self, mocker):
+    def test_create_project(self, *_):
         runner = CliRunner()
         runner.invoke(
             create_project,
@@ -58,7 +58,7 @@ class TestCLIProject:
             ],
         )
 
-    def test_describe_project(self, mocker):
+    def test_describe_project(self, *_):
         runner = CliRunner()
         result = runner.invoke(describe_project, ["project_id"])
         debug_subprocess_pytest(result)
@@ -69,7 +69,7 @@ class TestCLIProject:
             and (result.output.count("project title") == 1)
         )
 
-    def test_import(self, mocker):
+    def test_import(self, *_):
         TEST_CASES = [
             {
                 "case_name": (
@@ -392,7 +392,7 @@ class TestCLIProject:
             ),
         ],
     )
-    def test_export(self, mocker, name, test_case):
+    def test_export(self, _mocker_project, _mocker_kili, name, test_case):
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(

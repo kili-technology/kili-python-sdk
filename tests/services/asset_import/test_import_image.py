@@ -1,10 +1,11 @@
 from unittest.mock import MagicMock, call, patch
 
+from kili.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
-from kili.queries.project import QueriesProject
 from kili.services.asset_import import import_assets
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
+    mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
     mocked_upload_data_via_rest,
@@ -14,18 +15,14 @@ from tests.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-@patch.object(
-    QueriesProject,
-    "projects",
-    MagicMock(return_value=[{"inputType": "IMAGE"}]),
-)
+@patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
 @patch.object(
     QueriesAsset,
     "assets",
     MagicMock(return_value=[]),
 )
 class PDFTestCase(ImportTestCase):
-    def test_upload_from_one_local_image(self):
+    def test_upload_from_one_local_image(self, _mocker):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local image"}]
@@ -41,9 +38,7 @@ class PDFTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_hosted_image(
-        self,
-    ):
+    def test_upload_from_one_hosted_image(self, _mocker):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -53,7 +48,7 @@ class PDFTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_local_tiff_image(self):
+    def test_upload_from_one_local_tiff_image(self, _mocker):
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local tiff image"}]
@@ -67,7 +62,7 @@ class PDFTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_with_one_tiff_and_one_basic_image(self):
+    def test_upload_with_one_tiff_and_one_basic_image(self, _mocker):
         url_tiff = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         url_basic = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_basic = self.downloader(url_basic)
@@ -96,5 +91,5 @@ class PDFTestCase(ImportTestCase):
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
         self.auth.client.execute.assert_has_calls(calls, any_order=True)
 
-    def test_upload_from_several_batches(self):
+    def test_upload_from_several_batches(self, _mocker):
         self.assert_upload_several_batches()

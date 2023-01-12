@@ -6,12 +6,10 @@ import pandas as pd
 from typeguard import typechecked
 
 from kili import services
-from kili.constants import NO_ACCESS_RIGHT
 from kili.graphql import QueryOptions
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.helpers import validate_category_search_query
 from kili.queries.asset import QueriesAsset
-from kili.queries.project import QueriesProject
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
@@ -72,7 +70,8 @@ class QueriesLabel:
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
-            author_in: Returned labels should have a label whose status belongs to that list, if given.
+            author_in: Returned labels should have been made by authors in that list, if given.
+                An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
             created_at_gte: Returned labels should have a label whose creation date is greater than this date.
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
@@ -171,8 +170,7 @@ class QueriesLabel:
             pandas DataFrame containing the labels.
         """
 
-        projects = QueriesProject(self.auth).projects(project_id)
-        assert len(list(projects)) == 1, NO_ACCESS_RIGHT
+        services.get_project(self, project_id, ["id"])
         assets = QueriesAsset(self.auth).assets(
             project_id=project_id,
             fields=asset_fields + ["labels." + field for field in fields],

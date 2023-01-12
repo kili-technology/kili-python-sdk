@@ -1,4 +1,3 @@
-import csv
 import json
 import os
 from unittest.mock import ANY, MagicMock, patch
@@ -7,18 +6,19 @@ import pytest
 from click.testing import CliRunner
 
 from kili.cli.project.label import import_labels
+from kili.graphql.operations.project.queries import ProjectQuery
 
 from ...utils import debug_subprocess_pytest
-from .mocks.projects import mocked__projects
+from .mocks.projects import mocked__ProjectsQuery
 
 kili_client = MagicMock()
-kili_client.projects = project_mock = MagicMock(side_effect=mocked__projects)
 kili_client.create_predictions = create_predictions_mock = MagicMock()
 
 mock_label = {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}}
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
+@patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectsQuery)
 class TestCLIProjectImport:
     @pytest.mark.parametrize(
         "name,test_case",
@@ -79,7 +79,8 @@ class TestCLIProjectImport:
     )
     def test_import_labels(
         self,
-        mocker,
+        mocker_project,
+        mocker_kili,
         name,
         test_case,
     ):
@@ -87,7 +88,7 @@ class TestCLIProjectImport:
         Test that the CLI properly calls the label_import service
         """
         print()
-        _, _ = mocker, name
+        _, _, _ = mocker_project, mocker_kili, name
         runner = CliRunner()
         with runner.isolated_filesystem():
             os.mkdir("test_tree")
@@ -182,7 +183,7 @@ class TestCLIProjectImport:
             ),
         ],
     )
-    def test_import_labels_yolo(self, mocker, name, test_case):
+    def test_import_labels_yolo(self, _mocker_project, _mocker_kili, name, test_case):
         _ = name
         runner = CliRunner()
         with runner.isolated_filesystem():

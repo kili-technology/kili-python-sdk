@@ -1,11 +1,12 @@
 """CLI's project create subcommand"""
 
 import json
-from typing import Dict, List, Optional, cast
+from typing import Dict, Optional, cast
 
 import click
 from tabulate import tabulate
 
+from kili import services
 from kili.cli.common_args import Options
 from kili.cli.helpers import get_kili_client
 from kili.constants import INPUT_TYPE
@@ -22,8 +23,7 @@ from kili.queries.project.helpers import get_project_url
     "--input-type",
     type=click.Choice(INPUT_TYPE),
     required=True,
-    help="Project input data type. "
-    "Please check your license to see which ones you have access to.",
+    help="Project input data type. Please check your license to see which ones you have access to.",
 )
 @click.option("--description", type=str, default="", help="Project description.")
 @Options.tablefmt
@@ -75,13 +75,7 @@ def create_project(
             json_interface = json.load(interface_file)
 
     elif project_id_src is not None:
-        try:
-            json_interface = cast(
-                List[Dict], kili.projects(project_id=project_id_src, disable_tqdm=True)
-            )[0]["jsonInterface"]
-        except:
-            # pylint: disable=raise-missing-from
-            raise ValueError(f"{project_id_src} is not recognized as a Kili project_id")
+        json_interface = services.get_project_field(kili, project_id_src, "jsonInterface")
 
     result = cast(
         Dict,

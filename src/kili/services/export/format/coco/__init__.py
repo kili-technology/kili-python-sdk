@@ -16,6 +16,7 @@ from typing_extensions import TypedDict
 from kili.orm import Asset, JobMLTask, JobTool
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
+from kili.services.project import get_project
 from kili.services.types import Job, JobName, Jobs, ProjectId
 from kili.utils.tqdm import tqdm
 
@@ -138,17 +139,9 @@ class CocoExporter(AbstractExporter):
 
     @staticmethod
     def _get_project(kili, project_id: ProjectId) -> Tuple[Jobs, str]:
-        projects = kili.projects(
-            project_id=project_id, fields=["inputType", "jsonInterface", "title"], disable_tqdm=True
-        )
-
-        if len(projects) == 0:
-            raise ValueError(
-                "no such project. Maybe your KILI_API_KEY does not belong to a member of the"
-                " project."
-            )
-        jobs = projects[0]["jsonInterface"].get("jobs", {})
-        title = projects[0]["title"]
+        project = get_project(kili, project_id, ["inputType", "jsonInterface", "title"])
+        jobs = project["jsonInterface"].get("jobs", {})
+        title = project["title"]
         return jobs, title
 
     @staticmethod

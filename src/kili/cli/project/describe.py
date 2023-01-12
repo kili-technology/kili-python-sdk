@@ -1,13 +1,13 @@
 """CLI's project describe command"""
 
-from typing import Dict, List, Optional, cast
+from typing import Optional
 
 import click
 from tabulate import tabulate
 
+from kili import services
 from kili.cli.common_args import Arguments, Options
 from kili.cli.helpers import get_kili_client
-from kili.exceptions import NotFound
 from kili.queries.project.helpers import get_project_metadata, get_project_metrics
 
 
@@ -24,35 +24,24 @@ def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id
         ```
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    projects: List[Dict] = []
-    try:
-        projects = cast(
-            List[Dict],
-            kili.projects(
-                project_id=project_id,
-                fields=[
-                    "title",
-                    "id",
-                    "description",
-                    "numberOfAssets",
-                    "numberOfRemainingAssets",
-                    "numberOfReviewedAssets",
-                    "numberOfSkippedAssets",
-                    "honeypotMark",
-                    "consensusMark",
-                    "numberOfOpenIssues",
-                    "numberOfSolvedIssues",
-                    "numberOfOpenQuestions",
-                    "numberOfSolvedQuestions",
-                ],
-                disable_tqdm=True,
-            ),
-        )
-    except:
-        # pylint: disable=raise-missing-from
-        raise NotFound(f"project ID: {project_id}")
-    metadata = get_project_metadata(projects[0], kili.auth.client.endpoint)
-    dataset_metrics, quality_metrics = get_project_metrics(projects[0])
+    query_fields = [
+        "title",
+        "id",
+        "description",
+        "numberOfAssets",
+        "numberOfRemainingAssets",
+        "numberOfReviewedAssets",
+        "numberOfSkippedAssets",
+        "honeypotMark",
+        "consensusMark",
+        "numberOfOpenIssues",
+        "numberOfSolvedIssues",
+        "numberOfOpenQuestions",
+        "numberOfSolvedQuestions",
+    ]
+    project = services.get_project(kili, project_id, query_fields)
+    metadata = get_project_metadata(project, kili.auth.client.endpoint)
+    dataset_metrics, quality_metrics = get_project_metrics(project)
 
     print(tabulate(metadata, tablefmt="plain"), end="\n" * 2)
     print("Dataset KPIs", end="\n" + "-" * len("Dataset KPIs") + "\n")
