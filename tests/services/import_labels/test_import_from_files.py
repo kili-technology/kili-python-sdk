@@ -23,7 +23,8 @@ from tests.services.import_labels.test_cases_from_files import TEST_CASES
 
 
 def _generate_label_file(yolo_rows: List[List], filename: str):
-    with Path(filename).open("w", encoding="utf-8") as y_f:
+    # newline="" to disable universal newlines translation
+    with Path(filename).open("w", newline="", encoding="utf-8") as y_f:
         wrt = csv.writer(y_f, delimiter=" ")
         wrt.writerows((str(a) for a in r) for r in yolo_rows)
 
