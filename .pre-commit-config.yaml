@@ -27,7 +27,7 @@ repos:
   - repo: local
     hooks:
       - id: notebook-markdown-tutorials
-        name: Check markdown tutorials are up-to-date with notebooks
+        name: Checks for notebook and markdown tutorials
         language: python
         entry: python -m docs.utils notebook_tutorials_commit_hook
         files: ^.*docs\/sdk\/tutorials.*\.(ipynb|md)$
