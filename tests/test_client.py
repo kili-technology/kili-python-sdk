@@ -2,7 +2,7 @@
 Tests for the client to return correct ee
 """
 import os
-from unittest import mock
+from unittest.mock import patch
 
 import pytest
 
@@ -10,25 +10,25 @@ from kili.client import Kili
 from kili.exceptions import AuthenticationFailed
 
 
-class TestClient:
-    """
-    test the get_project function
-    """
-
-    @mock.patch.dict(os.environ, {}, clear=True)
-    def test_no_api_key(self, monkeypatch):
+def test_no_api_key():
+    with patch.dict(os.environ):
+        os.environ.pop("KILI_API_KEY")
         with pytest.raises(AuthenticationFailed):
             _ = Kili()
 
-    @mock.patch.dict(os.environ, {}, clear=True)
-    def test_wrong_api_key(self, monkeypatch):
+
+def test_wrong_api_key():
+    with patch.dict(os.environ):
+        os.environ.pop("KILI_API_KEY")
         with pytest.raises(AuthenticationFailed) as e_info:
             _ = Kili(api_key="wrong_api_key")
 
         assert "failed with API key: *********_key" in str(e_info)
 
-    @mock.patch.dict(os.environ, {}, clear=True)
-    def test_wrong_api_key_shot(self, monkeypatch):
+
+def test_wrong_api_key_shot():
+    with patch.dict(os.environ):
+        os.environ.pop("KILI_API_KEY")
         with pytest.raises(AuthenticationFailed) as e_info:
             _ = Kili(api_key="no")
 
