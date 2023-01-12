@@ -90,6 +90,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         path_folder = root_folder / self.project_id
         path_archive = shutil.make_archive(str(path_folder), "zip", path_folder)
+        output_filename.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(path_archive, output_filename)
         return output_filename
 

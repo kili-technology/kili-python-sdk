@@ -86,15 +86,11 @@ class CocoExporter(AbstractExporter):
             )
 
         jobs = self.project_json_interface["jobs"]
-        jobs = {
-            job_name: job
-            for job_name, job in jobs.items()
-            if job["mlTask"] == JobMLTask.ObjectDetection
-            and any(tool == JobTool.Semantic for tool in job["tools"])
-        }
-        if not jobs:
+        has_valid_jobs = any(self._is_coco_compatible(job) for job in jobs.values())
+        if not has_valid_jobs:
             raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.ObjectDetection} task."
+                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes"
+                " or segmentations."
             )
 
     @property
@@ -148,9 +144,9 @@ class CocoExporter(AbstractExporter):
     def _is_coco_compatible(job: Job) -> bool:
         if "tools" not in job:
             return False
-        return ("semantic" in job["tools"] or "rectangle" in job["tools"]) and job[
+        return (JobTool.Semantic in job["tools"] or JobTool.Rectangle in job["tools"]) and job[
             "mlTask"
-        ] == "OBJECT_DETECTION"
+        ] == JobMLTask.ObjectDetection
 
 
 def _convert_kili_semantic_to_coco(

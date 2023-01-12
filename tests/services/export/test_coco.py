@@ -3,12 +3,17 @@ import json
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Dict
+from unittest.mock import patch
 
+import pytest
 import requests
 
 from kili.orm import Asset
-from kili.services.export.format.coco import _convert_kili_semantic_to_coco
+from kili.services.export.exceptions import NoCompatibleJobError
+from kili.services.export.format.coco import (
+    CocoExporter,
+    _convert_kili_semantic_to_coco,
+)
 from kili.services.types import JobName
 
 
@@ -191,3 +196,41 @@ def test__get_coco_image_annotations_without_annotation():
             assert coco_annotation["images"][0]["width"] == 1920
             assert coco_annotation["images"][0]["height"] == 1080
             assert len(coco_annotation["annotations"]) == 0
+
+
+@pytest.mark.parametrize(
+    "jobs,expected_error",
+    [
+        ({"JOB_0": {"tools": ["rectangle"], "mlTask": "SPEECH_TO_TEXT"}}, NoCompatibleJobError),
+        ({"JOB_0": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"}}, None),
+        (
+            {
+                "JOB_0": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"},
+                "OBJECT_DETECTION_JOB": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"]},
+            },
+            None,
+        ),
+        (
+            {
+                "JOB_0": {"tools": ["faketool"], "mlTask": "OBJECT_DETECTION"},
+                "OBJECT_DETECTION_JOB": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"]},
+            },
+            None,  # OBJECT_DETECTION_JOB is valid job
+        ),
+        (
+            {
+                "JOB_0": {"tools": ["tool1"], "mlTask": "OBJECT_DETECTION"},
+                "OBJECT_DETECTION_JOB": {"mlTask": "OBJECT_DETECTION", "tools": ["tool2"]},
+            },
+            NoCompatibleJobError,
+        ),
+    ],
+)
+@patch.object(CocoExporter, "__init__", lambda x: None)
+def test__check_project_compatibility(jobs, expected_error):
+    exporter = CocoExporter()
+    exporter.project_input_type = "IMAGE"
+    exporter.project_json_interface = {"jobs": jobs}
+    if expected_error:
+        with pytest.raises(expected_error):
+            exporter._check_project_compatibility()
