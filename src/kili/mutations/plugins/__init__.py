@@ -28,15 +28,16 @@ class MutationsPlugins:
     @typechecked
     def upload_plugin(
         self,
-        file_path: str,
+        plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
+        **kwargs
     ):
         # pylint: disable=line-too-long
         """Uploads a plugin.
 
         Args:
-            file_path : Path to your .py file
+            plugin_path : Path to your plugin. Either a folder containing a main.py (mandatory) and a requirements.txt (optional) or a .py file
             plugin_name: name of your plugin, if not provided, it will be the name from your file
             verbose: If false, minimal logs are displayed
 
@@ -45,10 +46,18 @@ class MutationsPlugins:
                 or an error message.
 
         Examples:
-            >>> kili.upload_plugin(file_path="./path/to/my/file.py")
+            >>> kili.upload_plugin(plugin_path="./path/to/my/file.py")
         """
 
-        return PluginUploader(self.auth, file_path, plugin_name, verbose).create_plugin()
+        if kwargs.get("file_path"):
+            raise TypeError(
+                '"file_path" has been deprecated for "plugin_path", please use "plugin_path" instead'
+            )
+
+        if not plugin_path:
+            raise TypeError('"plugin_path is nullish, please provide a value')
+
+        return PluginUploader(self.auth, plugin_path, plugin_name, verbose).create_plugin()
 
     @typechecked
     def activate_plugin_on_project(
@@ -123,14 +132,17 @@ class MutationsPlugins:
     @typechecked
     def update_plugin(
         self,
-        file_path: str,
-        plugin_name: str,
+        plugin_path: Optional[str] = None,
+        plugin_name: Optional[str] = None,
         verbose: bool = True,
+        **kwargs
     ):
         """Update a plugin with new code.
 
         Args:
-            file_path : Path to your .py file
+            plugin_path : Path to your plugin. Either:
+             - a folder containing a main.py (mandatory) and a requirements.txt (optional)
+             - a .py file
             plugin_name: Name of the plugin
             verbose: If false, minimal logs are displayed
 
@@ -142,4 +154,16 @@ class MutationsPlugins:
             >>> kili.update_plugin(plugin_name="my_plugin_name")
         """
 
-        return PluginUploader(self.auth, file_path, plugin_name, verbose).update_plugin()
+        if kwargs.get("file_path"):
+            raise TypeError(
+                """ "file_path" has been deprecated for "plugin_path",
+                please use "plugin_path" instead"""
+            )
+
+        if not plugin_path:
+            raise TypeError('"plugin_path is nullish, please provide a value')
+
+        if not plugin_name:
+            raise TypeError('"plugin_name is nullish, please provide a value')
+
+        return PluginUploader(self.auth, plugin_path, plugin_name, verbose).update_plugin()
