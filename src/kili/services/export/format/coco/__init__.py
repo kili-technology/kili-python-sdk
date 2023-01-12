@@ -89,7 +89,8 @@ class CocoExporter(AbstractExporter):
         has_valid_jobs = any(self._is_coco_compatible(job) for job in jobs.values())
         if not has_valid_jobs:
             raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.ObjectDetection} task."
+                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes"
+                " or segmentations."
             )
 
     @property
