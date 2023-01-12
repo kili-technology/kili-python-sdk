@@ -149,6 +149,10 @@ def notebook_to_markdown(
     return md_output_filepath
 
 
+class OutdatedMarkdownError(Exception):
+    """Raised when markdown is not up to date with notebook."""
+
+
 def check_markdown_up_to_date(ipynb_filepath: Path, md_filepath: Path, remove_cell_tags: Sequence):
     """
     Check if markdown file is up to date with its associated notebook.
@@ -191,8 +195,19 @@ def check_mkdocs_yml_up_to_date(md_filepath: Path):
         raise OutdatedMkDocs(f"sdk/tutorials/{md_filepath.name} is not in mkdocs.yml.")
 
 
-class OutdatedMarkdownError(Exception):
-    """Raised when markdown is not up to date with notebook."""
+class NotebookTestMissingError(Exception):
+    """Raised when notebook is not tested in test_notebooks.py."""
+
+
+def check_notebook_tested(ipynb_filepath: Path):
+    """Check if notebook is tested."""
+    with open("tests/test_notebooks.py", encoding="utf-8") as file:
+        test_notebooks_module_str = file.read()
+
+    if f"docs/sdk/tutorials/{ipynb_filepath.name}" not in test_notebooks_module_str:
+        raise NotebookTestMissingError(
+            f"docs/sdk/tutorials/{ipynb_filepath.name} not found in test_notebooks.py."
+        )
 
 
 @click.command(name="notebook_tutorials_commit_hook")
@@ -239,6 +254,8 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
 
         check_mkdocs_yml_up_to_date(md_filepath)
+
+        check_notebook_tested(ipynb_filepath)
 
 
 @click.group()
