@@ -22,12 +22,18 @@ jobs:
         run: |
           pylint src/kili
   unittest:
-    runs-on: ubuntu-latest
     timeout-minutes: 6
     name: Unit tests
     strategy:
       matrix:
-        python-version: ["3.7", "3.11"]
+        include:
+          - os: ubuntu-latest
+            python-version: 3.7
+          - os: windows-latest
+            python-version: 3.7
+          - os: ubuntu-latest
+            python-version: 3.11
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
