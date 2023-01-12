@@ -161,8 +161,9 @@ class TestCLIProjectMember:
         ]
         runner = CliRunner()
         with runner.isolated_filesystem():
-            # pylint: disable=unspecified-encodind
-            with open("user_list.csv", "w") as f:
+            # pylint: disable=unspecified-encoding
+            with open("user_list.csv", "w", newline="") as f:
+                # newline="" to disable universal newlines translation (bug fix for windows)
                 writer = csv.writer(f)
                 writer.writerow(["email"])
                 writer.writerow(["alice@test.com"])
@@ -224,8 +225,9 @@ class TestCLIProjectMember:
         ]
         runner = CliRunner()
         with runner.isolated_filesystem():
-            # pylint: disable=unspecified-encodind
-            with open("user_list.csv", "w") as f:
+            # pylint: disable=unspecified-encoding
+            # newline="" to disable universal newlines translation (bug fix for windows)
+            with open("user_list.csv", "w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["email"])
                 writer.writerow(["john.doe@test.com"])
@@ -281,8 +283,9 @@ class TestCLIProjectMember:
         ]
         runner = CliRunner()
         with runner.isolated_filesystem():
-            # pylint: disable=unspecified-encodind
-            with open("user_list.csv", "w") as f:
+            # pylint: disable=unspecified-encoding
+            # newline="" to disable universal newlines translation (bug fix for windows)
+            with open("user_list.csv", "w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["email"])
                 writer.writerow(["john.doe@test.com"])

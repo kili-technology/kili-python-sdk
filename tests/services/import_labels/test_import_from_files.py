@@ -23,7 +23,7 @@ from tests.services.import_labels.test_cases_from_files import TEST_CASES
 
 
 def _generate_label_file(yolo_rows: List[List], filename: str):
-    # newline="" to disable universal newlines translation
+    # newline="" to disable universal newlines translation (bug fix for windows)
     with Path(filename).open("w", newline="", encoding="utf-8") as y_f:
         wrt = csv.writer(y_f, delimiter=" ")
         wrt.writerows((str(a) for a in r) for r in yolo_rows)
@@ -31,7 +31,8 @@ def _generate_label_file(yolo_rows: List[List], filename: str):
 
 def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
     if input_format == "yolo_v4":
-        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+        # newline="" to disable universal newlines translation (bug fix for windows)
+        with open(yolo_meta_path, "w", newline="", encoding="utf-8") as y_m:
             wrt = csv.writer(y_m, delimiter=" ")
             wrt.writerows((str(a) for a in r) for r in yolo_classes)
     elif input_format == "yolo_v5":
@@ -116,7 +117,8 @@ def test_import_labels_from_files_malformed_annotation(mocker):
         yolo_classes = inputs["yolo_classes"]
         yolo_meta_path = Path(label_folders) / inputs["meta_path"]
 
-        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+        # newline="" to disable universal newlines translation (bug fix for windows)
+        with open(yolo_meta_path, "w", newline="", encoding="utf-8") as y_m:
             wrt = csv.writer(y_m, delimiter=" ")
             wrt.writerows((str(a) for a in r) for r in yolo_classes)
 
@@ -164,7 +166,8 @@ def test_import_labels_wrong_target_job(mocker):
         yolo_classes = inputs["yolo_classes"]
         yolo_meta_path = Path(label_folders) / inputs["meta_path"]
 
-        with open(yolo_meta_path, "w", encoding="utf-8") as y_m:
+        # newline="" to disable universal newlines translation (bug fix for windows)
+        with open(yolo_meta_path, "w", newline="", encoding="utf-8") as y_m:
             wrt = csv.writer(y_m, delimiter=" ")
             wrt.writerows((str(a) for a in r) for r in yolo_classes)
 

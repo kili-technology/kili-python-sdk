@@ -125,7 +125,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Write remote content file
         """
         remote_content_header = ["external id", "url", "label file"]
-        with (images_folder / "remote_assets.csv").open("w", encoding="utf8") as file:
+        # newline="" to disable universal newlines translation (bug fix for windows)
+        with (images_folder / "remote_assets.csv").open("w", newline="", encoding="utf8") as file:
             writer = csv.writer(file)
             writer.writerow(remote_content_header)
             writer.writerows(remote_content)

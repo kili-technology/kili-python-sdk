@@ -322,7 +322,8 @@ class TestCLIProject:
             open("test_tree/leaf/image3.png", "w")
             open("test_tree/leaf/image4.jpg", "w")
             open("test_tree/leaf/texte2.txt", "w")
-            with open("assets_to_import.csv", "w") as f:
+            # newline="" to disable universal newlines translation (bug fix for windows)
+            with open("assets_to_import.csv", "w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["external_id", "content"])
                 writer.writerow(["image3", "test_tree/leaf/image3.png"])
