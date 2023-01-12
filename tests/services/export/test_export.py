@@ -43,7 +43,7 @@ def get_file_tree(folder: str):
     ]
     for f_p in filepaths:
         p = dct
-        for x in f_p.split("/"):
+        for x in f_p.split(os.sep):
             if len(x):
                 p = p.setdefault(x, {})
     return dct

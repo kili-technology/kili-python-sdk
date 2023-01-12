@@ -227,7 +227,7 @@ def _get_coco_images_and_annotations(
         coco_image = _CocoImage(
             id=asset_i,
             license=0,
-            file_name=str("data" / Path(file_name.parts[-1])),
+            file_name=str("data" + "/" + file_name.parts[-1]),
             height=height,
             width=width,
             date_captured=None,
