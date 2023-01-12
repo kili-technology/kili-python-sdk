@@ -11,12 +11,13 @@ class PluginCore:
     """
     Kili Plugin core class
 
-    :param kili: kili instance that plugins can make use of
-    :param project_id: the project on which plugin is ran
+    Args:
+        kili: kili instance that plugins can make use of
+        project_id: the project on which plugin is ran
 
-    Implements
-    on_submit(self, label: Label, asset_id: str, project_id: str)
-    on_review(self, label: Label, asset_id: str, project_id: str)
+    Implements:
+        on_submit(self, label: Label, asset_id: str, project_id: str)
+        on_review(self, label: Label, asset_id: str, project_id: str)
 
     # Warning : if using a custom init, be sure to call super().__init__()
     """
@@ -41,12 +42,16 @@ class PluginCore:
         asset_id: str,
     ) -> None:
         """
-        Handler for the submit action, triggered when a default label is submitted into Kili
-        :param label: label submitted to Kili
-        :param asset_id: id of the asset on which the label was submitted
+        Handler for the submit action, triggered when a default label is submitted into Kili.
+
+        Args:
+            label: label submitted to Kili
+            asset_id: id of the asset on which the label was submitted
+
 
         Example use:
-        def on_submit(self, label: Label, project_id: str, asset_id: str):
+
+        >>> def on_submit(self, label: Label, project_id: str, asset_id: str):
             json_response = label.get('jsonResponse')
             if label_is_respecting_business_rule(json_response):
                 return
@@ -65,11 +70,13 @@ class PluginCore:
     ) -> None:
         """
         Handler for the review action, triggered when a default label is reviewed on Kili
-        :param label: label submitted to Kili
-        :param asset_id: id of the asset on which the label was submitted
+
+        Args:
+            label: label submitted to Kili
+            asset_id: id of the asset on which the label was submitted
 
         Example use:
-        def on_review(self, label: Label, project_id: str, asset_id: str):
+        >>> def on_review(self, label: Label, project_id: str, asset_id: str):
             json_response = label.get('jsonResponse')
             if label_is_respecting_business_rule(json_response):
                 return
