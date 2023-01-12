@@ -28,9 +28,10 @@ class MutationsPlugins:
     @typechecked
     def upload_plugin(
         self,
-        plugin_path: str,
+        plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
+        **kwargs
     ):
         # pylint: disable=line-too-long
         """Uploads a plugin.
@@ -47,6 +48,14 @@ class MutationsPlugins:
         Examples:
             >>> kili.upload_plugin(plugin_path="./path/to/my/file.py")
         """
+
+        if kwargs.get("file_path"):
+            raise TypeError(
+                '"file_path" has been deprecated for "plugin_path", please use "plugin_path" instead'
+            )
+
+        if not plugin_path:
+            raise TypeError('"plugin_path is nullish, please provide a value')
 
         return PluginUploader(self.auth, plugin_path, plugin_name, verbose).create_plugin()
 
@@ -123,9 +132,10 @@ class MutationsPlugins:
     @typechecked
     def update_plugin(
         self,
-        plugin_path: str,
-        plugin_name: str,
+        plugin_path: Optional[str] = None,
+        plugin_name: Optional[str] = None,
         verbose: bool = True,
+        **kwargs
     ):
         """Update a plugin with new code.
 
@@ -143,5 +153,17 @@ class MutationsPlugins:
         Examples:
             >>> kili.update_plugin(plugin_name="my_plugin_name")
         """
+
+        if kwargs.get("file_path"):
+            raise TypeError(
+                """ "file_path" has been deprecated for "plugin_path",
+                please use "plugin_path" instead"""
+            )
+
+        if not plugin_path:
+            raise TypeError('"plugin_path is nullish, please provide a value')
+
+        if not plugin_name:
+            raise TypeError('"plugin_name is nullish, please provide a value')
 
         return PluginUploader(self.auth, plugin_path, plugin_name, verbose).update_plugin()
