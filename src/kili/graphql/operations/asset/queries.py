@@ -3,11 +3,11 @@ GraphQL Queries of Assets
 """
 
 
-from typing import List, NamedTuple, Optional
+from typing import Callable, List, NamedTuple, Optional
 
-from kili.client import Kili
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.queries.asset.helpers import MediaDownloader
+from kili.orm import Asset as AssetFormatType
+from kili.services.media_downloader import MediaDownloader
 from kili.types import Asset
 
 
@@ -103,16 +103,22 @@ class AssetWhere(BaseQueryWhere):
 
 
 class MediaDownloadOptions(NamedTuple):
+    """Options to be given to the get_post_call_function
+    to get a custom post_call_function for the call
+    """
+
     download_media: bool
     project_id: str
     fields: List[str]
-    local_media_dir: str
+    local_media_dir: Optional[str]
+    input_type: Optional[str]
 
 
 class AssetQuery(GraphQLQuery):
     """Asset query."""
 
-    TYPE = Asset
+    FORMAT_TYPE = AssetFormatType
+    FRAGMENT_TYPE = Asset
 
     @staticmethod
     def query(fragment):
@@ -127,24 +133,32 @@ class AssetQuery(GraphQLQuery):
     }}
     """
 
-    GQL_ASSETS_COUNT = """
+    COUNT_QUERY = """
     query countAssets($where: AssetWhere!) {
     data: countAssets(where: $where)
     }
     """
 
-    def post_call_process(self, options: MediaDownloadOptions):
-        if not options.download_media:
+    @staticmethod
+    def get_post_call_function(post_call_options: MediaDownloadOptions) -> Optional[Callable]:
+        """
+        Return the function to be called after each batch of asset query.
+        It is either None or MediaDownloader's download_assets.
+        """
+        fields = post_call_options.fields
+        input_type = post_call_options.input_type
+        if not post_call_options.download_media:
             return None
-        kili = Kili()
-        projects = kili.projects(options.project_id, fields=["inputType"])
-        project_input_type = projects[0]["inputType"]
         jsoncontent_field_added = False
-        if project_input_type in ("TEXT", "VIDEO") and "jsonContent" not in options.fields:
-            options.fields.append("jsonContent")
+        if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
+            fields.append("jsonContent")
             jsoncontent_field_added = True
+        assert input_type
         return MediaDownloader(
-            options.local_media_dir, options.project_id, jsoncontent_field_added, project_input_type
+            post_call_options.local_media_dir,
+            post_call_options.project_id,
+            jsoncontent_field_added,
+            input_type,
         ).download_assets
 
 

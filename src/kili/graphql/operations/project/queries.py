@@ -45,7 +45,8 @@ class ProjectWhere(BaseQueryWhere):
 class ProjectQuery(GraphQLQuery):
     """Project query."""
 
-    TYPE = Project
+    FORMAT_TYPE = Project
+    FRAGMENT_TYPE = Project
 
     @staticmethod
     def query(fragment):
