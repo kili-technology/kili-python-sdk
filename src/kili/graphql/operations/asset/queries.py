@@ -7,9 +7,9 @@ from typing import Callable, Dict, List, NamedTuple, Optional, cast
 
 from kili.exceptions import NotFound
 from kili.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
+from kili.graphql.operations.asset.media_downloader import MediaDownloader
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.orm import Asset as AssetFormatType
-from kili.services.media_downloader import MediaDownloader
 from kili.types import Asset
 
 

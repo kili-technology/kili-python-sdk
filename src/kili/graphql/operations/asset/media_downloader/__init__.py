@@ -12,7 +12,7 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.services.media_downloader.exceptions import MissingPropertyError
+from .exceptions import MissingPropertyError
 
 
 class MediaDownloader:

@@ -8,7 +8,7 @@ from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
 from kili.services.asset_import.video import VideoDataImporter
-from kili.services.project import get_project
+from kili.services.project import get_project_field
 
 from .base import LoggerParams, ProcessingParams, ProjectParams
 
@@ -32,7 +32,7 @@ def import_assets(
     import the selected assets into the specified project
     """
     kili = QueriesProject(auth)
-    input_type = get_project(kili, project_id, ["inputType"])["inputType"]
+    input_type = get_project_field(kili, project_id, "inputType")
 
     project_params = ProjectParams(project_id=project_id, input_type=input_type)
     processing_params = ProcessingParams(raise_error=raise_error)

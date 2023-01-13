@@ -12,6 +12,7 @@ from kili.graphql.operations.asset.queries import (
     AssetWhere,
     MediaDownloadOptions,
 )
+from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
@@ -107,7 +108,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         if copy_assets:
             logger.info("Copying assets...")
-            self._copy_assets(from_project_id, new_project_id, src_project["inputType"])
+            self._copy_assets(from_project_id, new_project_id)
 
         if copy_labels:
             logger.info("Copying labels...")
@@ -157,15 +158,15 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         )
 
     # pylint: disable=too-many-locals
-    def _copy_assets(self, from_project_id: str, new_project_id: str, input_type: str):
+    def _copy_assets(self, from_project_id: str, new_project_id: str):
         """
         Copy assets from a project to another.
 
         Fetches assets by batch since `content` urls expire.
         """
         batch_size = 200
-
-        nb_assets_to_copy = self.kili.count_assets(project_id=from_project_id)
+        asset_query = AssetQuery(self.kili.auth.client)
+        nb_assets_to_copy = asset_query.count(AssetWhere(project_id=from_project_id))
 
         skip = 0
         with tqdm(total=nb_assets_to_copy, disable=self.disable_tqdm) as pbar:
@@ -186,9 +187,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                         local_media_dir=str(tmp_dir.resolve()),
                         fields=fields,
                     )
-                    assets = AssetQuery(self.kili.auth.client)(
-                        where, fields, options, download_options
-                    )
+                    assets = asset_query(where, fields, options, download_options)
 
                     # cannot pass both content_array and json_content_array
                     # to append_many_to_dataset
@@ -245,7 +244,9 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             member["user"]["email"]: member["user"]["id"] for member in members_new_project
         }
 
-        nb_labels_to_copy = self.kili.count_labels(project_id=from_project_id)
+        nb_labels_to_copy = LabelQuery(self.kili.auth.client).count(
+            LabelWhere(project_id=from_project_id)
+        )
         if nb_labels_to_copy == 0:
             return
 
