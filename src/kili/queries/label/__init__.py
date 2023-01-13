@@ -7,9 +7,9 @@ from typeguard import typechecked
 
 from kili import services
 from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.helpers import validate_category_search_query
-from kili.queries.asset import QueriesAsset
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
@@ -171,9 +171,10 @@ class QueriesLabel:
         """
 
         services.get_project(self, project_id, ["id"])
-        assets = QueriesAsset(self.auth).assets(
-            project_id=project_id,
-            fields=asset_fields + ["labels." + field for field in fields],
+        assets = AssetQuery(self.auth.client)(
+            AssetWhere(project_id=project_id),
+            asset_fields + ["labels." + field for field in fields],
+            QueryOptions(disable_tqdm=False),
         )
         labels = [
             dict(

@@ -6,6 +6,12 @@ import logging
 from typing import Dict, Optional
 
 from kili import services
+from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import (
+    AssetQuery,
+    AssetWhere,
+    MediaDownloadOptions,
+)
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
@@ -101,7 +107,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         if copy_assets:
             logger.info("Copying assets...")
-            self._copy_assets(from_project_id, new_project_id)
+            self._copy_assets(from_project_id, new_project_id, src_project["inputType"])
 
         if copy_labels:
             logger.info("Copying labels...")
@@ -151,7 +157,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         )
 
     # pylint: disable=too-many-locals
-    def _copy_assets(self, from_project_id: str, new_project_id: str):
+    def _copy_assets(self, from_project_id: str, new_project_id: str, input_type: str):
         """
         Copy assets from a project to another.
 
@@ -165,20 +171,23 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         with tqdm(total=nb_assets_to_copy, disable=self.disable_tqdm) as pbar:
             while skip < nb_assets_to_copy:
                 with TemporaryDirectory() as tmp_dir:
-                    assets = self.kili.assets(
+                    where = AssetWhere(project_id=from_project_id)
+                    options = QueryOptions(first=batch_size, skip=skip, disable_tqdm=True)
+                    fields = [
+                        "content",
+                        "externalId",
+                        "isHoneypot",
+                        "jsonContent",
+                        "jsonMetadata",
+                    ]
+                    download_options = MediaDownloadOptions(
                         project_id=from_project_id,
-                        fields=[
-                            "content",
-                            "externalId",
-                            "isHoneypot",
-                            "jsonContent",
-                            "jsonMetadata",
-                        ],
-                        skip=skip,
-                        first=batch_size,
                         download_media=True,
                         local_media_dir=str(tmp_dir.resolve()),
-                        disable_tqdm=True,
+                        fields=fields,
+                    )
+                    assets = AssetQuery(self.kili.auth.client)(
+                        where, fields, options, download_options
                     )
 
                     # cannot pass both content_array and json_content_array
@@ -222,8 +231,10 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str):
-        assets_new_project = self.kili.assets(
-            new_project_id, fields=["externalId", "id"], disable_tqdm=True
+        assets_new_project = AssetQuery(self.kili.auth.client)(
+            AssetWhere(project_id=new_project_id),
+            ["id", "externalId"],
+            QueryOptions(disable_tqdm=True),
         )
         assets_new_project_map = {asset["externalId"]: asset["id"] for asset in assets_new_project}
 

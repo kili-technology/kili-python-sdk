@@ -3,6 +3,12 @@ Set of common functions used by different export formats
 """
 from typing import List, Optional
 
+from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import (
+    AssetQuery,
+    AssetWhere,
+    MediaDownloadOptions,
+)
 from kili.services.export.types import ExportType
 
 DEFAULT_FIELDS = [
@@ -89,24 +95,24 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     assets = None
 
     if asset_ids is not None and len(asset_ids) > 0:
-        assets = kili.assets(
+        where = AssetWhere(
             asset_id_in=asset_ids,
             project_id=project_id,
-            fields=fields,
             label_type_in=label_type_in,
-            disable_tqdm=disable_tqdm,
-            download_media=download_media,
-            local_media_dir=local_media_dir,
         )
     else:
-        assets = kili.assets(
+        where = AssetWhere(
             project_id=project_id,
-            fields=fields,
             label_type_in=label_type_in,
-            disable_tqdm=disable_tqdm,
-            download_media=download_media,
-            local_media_dir=local_media_dir,
         )
+    options = QueryOptions(disable_tqdm=disable_tqdm)
+    download_options = MediaDownloadOptions(
+        project_id=project_id,
+        download_media=download_media,
+        local_media_dir=local_media_dir,
+        fields=fields,
+    )
+    assets = AssetQuery(kili.auth.client)(where, fields, options, download_options)
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 
