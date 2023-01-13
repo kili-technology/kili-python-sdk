@@ -2,6 +2,7 @@
 
 import csv
 import os
+from pathlib import Path
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
@@ -75,7 +76,10 @@ class TestCLIProject:
                 "case_name": (
                     "AAU, when I import a list of file to an image project, I see a success"
                 ),
-                "files": ["test_tree/image1.png", "test_tree/leaf/image3.png"],
+                "files": [
+                    str(Path("test_tree") / "image1.png"),
+                    str(Path("test_tree") / "leaf" / "image3.png"),
+                ],
                 "options": {
                     "project-id": "image_project",
                 },
@@ -84,11 +88,11 @@ class TestCLIProject:
                     "image_project",
                     [
                         {
-                            "content": "test_tree/image1.png",
+                            "content": str(Path("test_tree") / "image1.png"),
                             "external_id": "image1",
                         },
                         {
-                            "content": "test_tree/leaf/image3.png",
+                            "content": str(Path("test_tree") / "leaf" / "image3.png"),
                             "external_id": "image3",
                         },
                     ],
@@ -97,7 +101,10 @@ class TestCLIProject:
             },
             {
                 "case_name": "AAU, when I import files with stars, I see a success",
-                "files": ["test_tree/**.jpg", "test_tree/leaf/**.jpg"],
+                "files": [
+                    str(Path("test_tree") / "**.jpg"),
+                    str(Path("test_tree") / "leaf" / "**.jpg"),
+                ],
                 "options": {
                     "project-id": "image_project",
                 },
@@ -106,11 +113,11 @@ class TestCLIProject:
                     "image_project",
                     [
                         {
-                            "content": "test_tree/image2.jpg",
+                            "content": str(Path("test_tree") / "image2.jpg"),
                             "external_id": "image2",
                         },
                         {
-                            "content": "test_tree/leaf/image4.jpg",
+                            "content": str(Path("test_tree") / "leaf" / "image4.jpg"),
                             "external_id": "image4",
                         },
                     ],
@@ -119,20 +126,29 @@ class TestCLIProject:
             },
             {
                 "case_name": "AAU, when I import a files to a text project, I see a success",
-                "files": ["test_tree/", "test_tree/leaf"],
+                "files": [str(Path("test_tree/")), str(Path("test_tree") / "leaf")],
                 "options": {"project-id": "text_project"},
                 "expected_service_payload": (
                     ANY,
                     "text_project",
                     [
-                        {"content": "test_tree/image1.png", "external_id": "image1"},
-                        {"content": "test_tree/image2.jpg", "external_id": "image2"},
-                        {"content": "test_tree/leaf/image3.png", "external_id": "image3"},
-                        {"content": "test_tree/leaf/image4.jpg", "external_id": "image4"},
-                        {"content": "test_tree/leaf/texte2.txt", "external_id": "texte2"},
-                        {"content": "test_tree/texte1.txt", "external_id": "texte1"},
-                        {"content": "test_tree/video1.mp4", "external_id": "video1"},
-                        {"content": "test_tree/video2.mp4", "external_id": "video2"},
+                        {"content": str(Path("test_tree") / "image1.png"), "external_id": "image1"},
+                        {"content": str(Path("test_tree") / "image2.jpg"), "external_id": "image2"},
+                        {
+                            "content": str(Path("test_tree") / "leaf" / "image3.png"),
+                            "external_id": "image3",
+                        },
+                        {
+                            "content": str(Path("test_tree") / "leaf" / "image4.jpg"),
+                            "external_id": "image4",
+                        },
+                        {
+                            "content": str(Path("test_tree") / "leaf" / "texte2.txt"),
+                            "external_id": "texte2",
+                        },
+                        {"content": str(Path("test_tree") / "texte1.txt"), "external_id": "texte1"},
+                        {"content": str(Path("test_tree") / "video1.mp4"), "external_id": "video1"},
+                        {"content": str(Path("test_tree") / "video2.mp4"), "external_id": "video2"},
                     ],
                     ANY,
                 ),
@@ -142,7 +158,7 @@ class TestCLIProject:
                     "AAU, when I import videos to a video project, as native by changing the fps, I"
                     " see a success"
                 ),
-                "files": ["test_tree/"],
+                "files": [str(Path("test_tree/"))],
                 "options": {
                     "project-id": "frame_project",
                     "fps": "10",
@@ -152,7 +168,7 @@ class TestCLIProject:
                     "frame_project",
                     [
                         {
-                            "content": "test_tree/image1.png",
+                            "content": str(Path("test_tree") / "image1.png"),
                             "external_id": "image1",
                             "json_metadata": {
                                 "processingParameters": {
@@ -163,7 +179,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/image2.jpg",
+                            "content": str(Path("test_tree") / "image2.jpg"),
                             "external_id": "image2",
                             "json_metadata": {
                                 "processingParameters": {
@@ -174,7 +190,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/texte1.txt",
+                            "content": str(Path("test_tree") / "texte1.txt"),
                             "external_id": "texte1",
                             "json_metadata": {
                                 "processingParameters": {
@@ -185,7 +201,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/video1.mp4",
+                            "content": str(Path("test_tree") / "video1.mp4"),
                             "external_id": "video1",
                             "json_metadata": {
                                 "processingParameters": {
@@ -196,7 +212,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/video2.mp4",
+                            "content": str(Path("test_tree") / "video2.mp4"),
                             "external_id": "video2",
                             "json_metadata": {
                                 "processingParameters": {
@@ -215,7 +231,7 @@ class TestCLIProject:
                     "AAU, when I import videos to a video project, as frames with the native frame"
                     " rate, I see a success"
                 ),
-                "files": ["test_tree/"],
+                "files": [str(Path("test_tree/"))],
                 "options": {
                     "project-id": "frame_project",
                 },
@@ -225,7 +241,7 @@ class TestCLIProject:
                     "frame_project",
                     [
                         {
-                            "content": "test_tree/image1.png",
+                            "content": str(Path("test_tree") / "image1.png"),
                             "external_id": "image1",
                             "json_metadata": {
                                 "processingParameters": {
@@ -236,7 +252,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/image2.jpg",
+                            "content": str(Path("test_tree") / "image2.jpg"),
                             "external_id": "image2",
                             "json_metadata": {
                                 "processingParameters": {
@@ -247,7 +263,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/texte1.txt",
+                            "content": str(Path("test_tree") / "texte1.txt"),
                             "external_id": "texte1",
                             "json_metadata": {
                                 "processingParameters": {
@@ -258,7 +274,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/video1.mp4",
+                            "content": str(Path("test_tree") / "video1.mp4"),
                             "external_id": "video1",
                             "json_metadata": {
                                 "processingParameters": {
@@ -269,7 +285,7 @@ class TestCLIProject:
                             },
                         },
                         {
-                            "content": "test_tree/video2.mp4",
+                            "content": str(Path("test_tree") / "video2.mp4"),
                             "external_id": "video2",
                             "json_metadata": {
                                 "processingParameters": {
@@ -295,7 +311,7 @@ class TestCLIProject:
                     "image_project",
                     [
                         {
-                            "content": "test_tree/leaf/image3.png",
+                            "content": str(Path("test_tree") / "leaf" / "image3.png"),
                             "external_id": "image3",
                         },
                         {
@@ -322,10 +338,11 @@ class TestCLIProject:
             open("test_tree/leaf/image3.png", "w")
             open("test_tree/leaf/image4.jpg", "w")
             open("test_tree/leaf/texte2.txt", "w")
-            with open("assets_to_import.csv", "w") as f:
+            # newline="" to disable universal newlines translation (bug fix for windows)
+            with open("assets_to_import.csv", "w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["external_id", "content"])
-                writer.writerow(["image3", "test_tree/leaf/image3.png"])
+                writer.writerow(["image3", str(Path("test_tree") / "leaf" / "image3.png")])
                 writer.writerow(
                     [
                         "test",

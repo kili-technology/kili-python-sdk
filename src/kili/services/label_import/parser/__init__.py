@@ -41,6 +41,8 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
         with open(label_file, "r", encoding="ascii") as l_f:
             csv_reader = csv.reader(l_f, delimiter=" ")
             for row in csv_reader:
+                if len(row) == 0:
+                    continue
                 vertices, category, proba = self._parse(row)
                 annotations.append(
                     {

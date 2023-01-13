@@ -68,7 +68,10 @@ def mocked_count_method(*_):
 
 
 def debug_subprocess_pytest(result):
-    print(result.output)
+    try:
+        print(result.output)
+    except UnicodeEncodeError:
+        print(result.output.encode("utf-8"))
     if result.exception is not None:
         traceback.print_tb(result.exception.__traceback__)
         print(result.exception)
