@@ -1,7 +1,7 @@
 """
 Set of common functions used by different export formats
 """
-from typing import List, Optional
+from typing import Dict, List, Optional, cast
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import (
@@ -112,7 +112,9 @@ def fetch_assets(  # pylint: disable=too-many-arguments
         local_media_dir=local_media_dir,
         fields=fields,
     )
-    assets = AssetQuery(kili.auth.client)(where, fields, options, download_options)
+    assets = cast(
+        List[Dict], AssetQuery(kili.auth.client)(where, fields, options, download_options)
+    )
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 
