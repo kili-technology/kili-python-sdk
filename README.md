@@ -8,13 +8,13 @@
 
 ---
 
-**SDK Reference**: https://python-sdk-docs.kili-technology.com/
+**SDK Reference**: <https://python-sdk-docs.kili-technology.com/>
 
-**Kili Documentation**: https://docs.kili-technology.com/docs
+**Kili Documentation**: <https://docs.kili-technology.com/docs>
 
-**App**: https://cloud.kili-technology.com/label/
+**App**: <https://cloud.kili-technology.com/label/>
 
-**Website**: https://kili-technology.com/
+**Website**: <https://kili-technology.com/>
 
 ---
 
@@ -93,10 +93,10 @@ json_interface = {
     }
 }
 project_id = kili.create_project(
-        title="Color classification",
-        description="Project ",
-        input_type="IMAGE",
-        json_interface=json_interface
+    title="Color classification",
+    description="Project ",
+    input_type="IMAGE",
+    json_interface=json_interface
 )["id"]
 ```
 
@@ -122,9 +122,9 @@ external_id_array = [a.get("externalId") for a in assets]
 content_array = [a.get("content") for a in assets]
 
 kili.append_many_to_dataset(
-        project_id=project_id,
-        content_array=content_array,
-        external_id_array=external_id_array,
+    project_id=project_id,
+    content_array=content_array,
+    external_id_array=external_id_array,
 )
 ```
 
@@ -153,11 +153,11 @@ prediction_examples = [
 ]
 
 kili.create_predictions(
-        project_id=project_id,
-        external_id_array=[p["external_id"] for p in prediction_examples],
-        json_response_array=[p["json_response"] for p in prediction_examples],
-        model_name="My SOTA model"
-
+    project_id=project_id,
+    external_id_array=[p["external_id"] for p in prediction_examples],
+    json_response_array=[p["json_response"] for p in prediction_examples],
+    model_name="My SOTA model"
+)
 ```
 
 See detailed examples in this [recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
@@ -179,5 +179,13 @@ More ways to export in other formats (YOLO, Pascal VOC) are described [here](doc
 
 ## More examples
 
-You can find all several recipes in this [folder](recipes/).
-For more details, read the [SDK reference](https://python-sdk-docs.kili-technology.com) or the [Kili documentation](https://docs.kili-technology.com/docs)
+Check out our tutorials:
+
+- 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
+- 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
+- 📦 [How to export a project](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/): See how to export your project's assets and labels to different formats.
+- 🛠️ Plugins [development](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) and [example](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/): Learn how to create and use custom plugins in Kili.
+
+You can find several other recipes in this [folder](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
+
+For more details, read the [SDK reference](https://python-sdk-docs.kili-technology.com) or the [Kili documentation](https://docs.kili-technology.com/docs).
