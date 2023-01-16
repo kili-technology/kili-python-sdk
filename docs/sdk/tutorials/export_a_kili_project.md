@@ -105,7 +105,7 @@ print(assets)
 
 
 
-    [{'externalId': 'car_1', 'id': 'clcrqd4ux001gj7vzb6undd6p', 'consensusMark': 0.6504290982818591}]
+    [{'externalId': 'car_1', 'id': 'clcyuykzd0000bgvze2z3wk81', 'consensusMark': 0.6504290982818591}]
 
 
 
@@ -125,7 +125,7 @@ print(labels)
 
 
 
-    [{'author': {'email': 'john.doe@kili-technology.com'}, 'labelOf': {'externalId': 'car_1'}, 'honeypotMark': 0.16527040499137607, 'id': 'clcrqd79309zw0lq23m0yentr'}, {'author': {'email': 'john.smith@kili-technology.com'}, 'labelOf': {'externalId': 'car_1'}, 'honeypotMark': 0.20754115450190522, 'id': 'clcrqd79309zx0lq25wny43sf'}]
+    [{'labelOf': {'externalId': 'car_1'}, 'author': {'email': 'john.doe@kili-technology.com'}, 'honeypotMark': 0.16527040499137607, 'id': 'clcyuynri2fnl0krf0d7pgabo'}, {'labelOf': {'externalId': 'car_1'}, 'author': {'email': 'john.smith@kili-technology.com'}, 'honeypotMark': 0.20754115450190522, 'id': 'clcyuynri2fnm0krfhx934jee'}]
 
 
 
@@ -143,7 +143,7 @@ print(labels)
 
 
 
-    [{'author': {'email': 'john.doe@kili-technology.com'}, 'labelOf': {'externalId': 'car_1'}, 'id': 'clcrqd79309zw0lq23m0yentr'}]
+    [{'labelOf': {'externalId': 'car_1'}, 'author': {'email': 'john.doe@kili-technology.com'}, 'id': 'clcyuynri2fnl0krf0d7pgabo'}]
 
 
 
@@ -353,7 +353,9 @@ kili.export_labels(
 )
 ```
 
-    Project needs at least one OBJECT_DETECTION task.
+    Fetching assets...
+    Convert to coco format: 1it [00:00, 54.94it/s]
+    /tmp/export.zip
 
 
 This will create an archive containing both:
