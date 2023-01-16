@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from kili.graphql.operations.asset.media_downloader import MediaDownloader
+from kili.queries.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
 

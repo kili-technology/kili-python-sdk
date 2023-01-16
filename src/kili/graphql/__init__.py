@@ -20,7 +20,6 @@ class QueryOptions(NamedTuple):
     first: Optional[int] = None
     skip: int = 0
     as_generator: bool = False
-    post_call_process_arguments: Optional[NamedTuple] = None
 
 
 class BaseQueryWhere(ABC):
@@ -75,32 +74,16 @@ class GraphQLQuery(ABC):
 
     FRAGMENT_TYPE: Type = NotImplemented
 
-    # pylint: disable=useless-return
-    def get_post_call_function(self, post_call_options: Optional[NamedTuple]) -> Optional[Callable]:
-        """
-        Return the function to execute after each batch on the formated graphQL request result.
-        Args:
-            post_call_options: options given from the call of the GraphQL Query
-        Returns:
-            func: a function that takes the list of formated result from graphQL request and
-            return another list of formated result
-        """
-        _ = self, post_call_options
-        return None
-
     def __call__(
         self,
         where: BaseQueryWhere,
         fields: List[str],
         options: QueryOptions,
-        post_call_options: Optional[NamedTuple] = None,
+        post_call_function: Optional[Callable] = None,
     ) -> Iterable[Dict]:
         """Query objects of the specified type"""
         fragment = fragment_builder(fields, self.FRAGMENT_TYPE)
         query = self.query(fragment)
-        post_call_function = self.get_post_call_function(  # pylint: disable=assignment-from-none
-            post_call_options
-        )
 
         result_gen = self.execute_query_from_paginated_call(
             query, where, options, post_call_function

@@ -6,12 +6,9 @@ import pandas as pd
 from typeguard import typechecked
 
 from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import (
-    AssetQuery,
-    AssetWhere,
-    MediaDownloadOptions,
-)
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.helpers import validate_category_search_query
+from kili.queries.asset.media_downloader import get_download_assets_function
 
 
 class QueriesAsset:
@@ -194,10 +191,10 @@ class QueriesAsset:
             label_category_search=label_category_search,
         )
         options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        post_call_options = MediaDownloadOptions(
-            download_media, project_id, fields, local_media_dir
+        post_call_function = get_download_assets_function(
+            self, download_media, fields, project_id, local_media_dir
         )
-        assets = AssetQuery(self.auth.client)(where, fields, options, post_call_options)
+        assets = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
 
         if format == "pandas":
             return pd.DataFrame(assets)

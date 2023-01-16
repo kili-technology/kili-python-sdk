@@ -14,7 +14,7 @@ import requests
 from PIL import Image
 
 from kili.client import Kili
-from kili.graphql.operations.asset.media_downloader import (
+from kili.queries.asset.media_downloader import (
     MediaDownloader,
     get_json_content_urls_video,
 )

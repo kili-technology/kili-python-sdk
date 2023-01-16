@@ -3,12 +3,9 @@ GraphQL Queries of Assets
 """
 
 
-from typing import Callable, Dict, List, NamedTuple, Optional, cast
+from typing import List, Optional
 
-from kili.exceptions import NotFound
-from kili.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
-from kili.graphql.operations.asset.media_downloader import MediaDownloader
-from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.graphql import BaseQueryWhere, GraphQLQuery
 from kili.orm import Asset as AssetFormatType
 from kili.types import Asset
 
@@ -104,17 +101,6 @@ class AssetWhere(BaseQueryWhere):
         }
 
 
-class MediaDownloadOptions(NamedTuple):
-    """Options to be given to the get_post_call_function
-    to get a custom post_call_function for the call
-    """
-
-    download_media: bool
-    project_id: str
-    fields: List[str]
-    local_media_dir: Optional[str]
-
-
 class AssetQuery(GraphQLQuery):
     """Asset query."""
 
@@ -139,42 +125,6 @@ class AssetQuery(GraphQLQuery):
     data: countAssets(where: $where)
     }
     """
-
-    def get_post_call_function(
-        self,
-        post_call_options: Optional[MediaDownloadOptions],
-    ) -> Optional[Callable]:
-        """
-        Return the function to be called after each batch of asset query.
-        It is either None or MediaDownloader's download_assets.
-        """
-        if post_call_options is None or not post_call_options.download_media:
-            return None
-        fields = post_call_options.fields
-        projects = cast(
-            List[Dict],
-            ProjectQuery(self.client)(
-                ProjectWhere(project_id=post_call_options.project_id),
-                ["inputType"],
-                QueryOptions(disable_tqdm=True),
-            ),
-        )
-        if len(projects) == 0:
-            raise NotFound(
-                f"project ID: {post_call_options.project_id}. Maybe your KILI_API_KEY does not"
-                " belong to a member of the project."
-            )
-        input_type = projects[0]["inputType"]
-        jsoncontent_field_added = False
-        if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
-            fields.append("jsonContent")
-            jsoncontent_field_added = True
-        return MediaDownloader(
-            post_call_options.local_media_dir,
-            post_call_options.project_id,
-            jsoncontent_field_added,
-            input_type,
-        ).download_assets
 
 
 GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS = """

@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 from kili.graphql.operations.asset.queries import AssetQuery
 from kili.orm import Asset
+from kili.queries.asset.media_downloader import get_download_assets_function
 from tests.services.export.fakes.fake_data import (
     asset_image_1,
     asset_image_1_without_annotation,
@@ -140,7 +141,7 @@ def mocked_ProjectQuery(where, _fields, _options):
         return []
 
 
-def mocked_AssetQuery(where, _fields, _options, post_call_options):
+def mocked_AssetQuery(where, _fields, _options, post_call_function):
     """
     Fake assets
     """
@@ -161,9 +162,8 @@ def mocked_AssetQuery(where, _fields, _options, post_call_options):
         else:
             return []
 
-    post_call_process = AssetQuery(FakeKili().auth.client).get_post_call_function(post_call_options)
-    if post_call_process:
-        return post_call_process(_assets())
+    if post_call_function:
+        return post_call_function(_assets())
     return _assets()
 
 

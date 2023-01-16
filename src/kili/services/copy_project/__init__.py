@@ -7,12 +7,9 @@ from typing import Dict, Optional
 
 from kili import services
 from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import (
-    AssetQuery,
-    AssetWhere,
-    MediaDownloadOptions,
-)
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
+from kili.queries.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
@@ -164,69 +161,66 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         Fetches assets by batch since `content` urls expire.
         """
-        batch_size = 200
-        asset_query = AssetQuery(self.kili.auth.client)
-        nb_assets_to_copy = asset_query.count(AssetWhere(project_id=from_project_id))
+        where = AssetWhere(project_id=from_project_id)
+        options = QueryOptions(disable_tqdm=False)
+        fields = [
+            "content",
+            "externalId",
+            "isHoneypot",
+            "jsonContent",
+            "jsonMetadata",
+        ]
 
-        skip = 0
-        with tqdm(total=nb_assets_to_copy, disable=self.disable_tqdm) as pbar:
-            while skip < nb_assets_to_copy:
-                with TemporaryDirectory() as tmp_dir:
-                    where = AssetWhere(project_id=from_project_id)
-                    options = QueryOptions(first=batch_size, skip=skip, disable_tqdm=True)
-                    fields = [
-                        "content",
-                        "externalId",
-                        "isHoneypot",
-                        "jsonContent",
-                        "jsonMetadata",
-                    ]
-                    download_options = MediaDownloadOptions(
-                        project_id=from_project_id,
-                        download_media=True,
-                        local_media_dir=str(tmp_dir.resolve()),
-                        fields=fields,
-                    )
-                    assets = asset_query(where, fields, options, download_options)
+        def download_and_upload_assets(assets):
+            with TemporaryDirectory() as tmp_dir:
+                downloaded_assets = self._download_assets(from_project_id, fields, tmp_dir, assets)
+                return self._upload_assets(new_project_id, downloaded_assets)
 
-                    # cannot pass both content_array and json_content_array
-                    # to append_many_to_dataset
-                    # we sort and group by (asset["content"], asset["jsonContent"])
-                    assets = sorted(
-                        assets,
-                        key=lambda asset: (asset["content"] != "", asset["jsonContent"] != ""),
-                    )
-                    assets_iterator = itertools.groupby(
-                        assets,
-                        key=lambda asset: (asset["content"] != "", asset["jsonContent"] != ""),
-                    )
+        return AssetQuery(self.kili.auth.client)(where, fields, options, download_and_upload_assets)
 
-                    for key, group in assets_iterator:
-                        has_content, has_jsoncontent = key
-                        group = list(group)
+    def _download_assets(self, from_project_id, fields, tmp_dir, assets):
+        download_function = get_download_assets_function(
+            self.kili,
+            download_media=True,
+            fields=fields,
+            project_id=from_project_id,
+            local_media_dir=str(tmp_dir.resolve()),
+        )
+        assert download_function
+        return download_function(assets)
 
-                        content_array = (
-                            [asset["content"] for asset in group] if has_content else None
-                        )
-                        external_id_array = [asset["externalId"] for asset in group]
-                        is_honeypot_array = [asset["isHoneypot"] for asset in group]
-                        json_content_array = (
-                            [asset["jsonContent"] for asset in group] if has_jsoncontent else None
-                        )
-                        json_metadata_array = [asset["jsonMetadata"] for asset in group]
+    def _upload_assets(self, new_project_id, assets):
+        assets = sorted(
+            assets,
+            key=lambda asset: (asset["content"] != "", asset["jsonContent"] != ""),
+        )
+        assets_iterator = itertools.groupby(
+            assets,
+            key=lambda asset: (asset["content"] != "", asset["jsonContent"] != ""),
+        )
 
-                        self.kili.append_many_to_dataset(
-                            project_id=new_project_id,
-                            content_array=content_array,
-                            external_id_array=external_id_array,
-                            is_honeypot_array=is_honeypot_array,
-                            json_content_array=json_content_array,
-                            json_metadata_array=json_metadata_array,
-                            disable_tqdm=True,
-                        )
+        for key, group in assets_iterator:
+            has_content, has_jsoncontent = key
+            group = list(group)
 
-                        skip += len(group)
-                        pbar.update(skip)
+            content_array = [asset["content"] for asset in group] if has_content else None
+            external_id_array = [asset["externalId"] for asset in group]
+            is_honeypot_array = [asset["isHoneypot"] for asset in group]
+            json_content_array = (
+                [asset["jsonContent"] for asset in group] if has_jsoncontent else None
+            )
+            json_metadata_array = [asset["jsonMetadata"] for asset in group]
+
+            self.kili.append_many_to_dataset(
+                project_id=new_project_id,
+                content_array=content_array,
+                external_id_array=external_id_array,
+                is_honeypot_array=is_honeypot_array,
+                json_content_array=json_content_array,
+                json_metadata_array=json_metadata_array,
+                disable_tqdm=True,
+            )
+        return assets
 
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str):
