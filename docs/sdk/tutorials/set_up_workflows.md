@@ -283,8 +283,3 @@ For more information on asset statuses, refer to our [documentation](https://doc
 Done!
 
 We have learned how to handle the review workflow, set up consensus and honeypot in a project, assign specific labelers to specific assets, and how to prioritize assets in the labeling queue.
-
-
-```python
-
-```
