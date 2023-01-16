@@ -22,6 +22,7 @@ nav:
         - Label: sdk/label.md
         - Notification: sdk/notification.md
         - Organization: sdk/organization.md
+        - Plugins: sdk/plugins.md
         - Project: sdk/project.md
         - Project User: sdk/project_user.md
         - Project Version: sdk/project_version.md
