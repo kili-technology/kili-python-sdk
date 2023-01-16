@@ -6,6 +6,7 @@ from typeguard import typechecked
 from kili.authentication import KiliAuth
 from kili.services.plugins import (
     PluginUploader,
+    WebhookUploader,
     activate_plugin,
     deactivate_plugin,
     delete_plugin,
@@ -58,6 +59,64 @@ class MutationsPlugins:
             raise TypeError('"plugin_path is nullish, please provide a value')
 
         return PluginUploader(self.auth, plugin_path, plugin_name, verbose).create_plugin()
+
+    @typechecked
+    def create_webhook(
+        self,
+        webhook_url: str,
+        plugin_name: str,
+        header: Optional[str] = None,
+        verbose: bool = True,
+    ):
+        # pylint: disable=line-too-long
+        """Create a webhook linked to Kili's events.
+
+        Args:
+            webhook_url: URL receiving post requests on events on Kili
+            plugin_name: name of your plugin
+            header: Authorization header to access the routes
+            verbose: If false, minimal logs are displayed
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
+        """
+
+        return WebhookUploader(
+            self.auth, webhook_url, plugin_name, header, verbose
+        ).create_webhook()
+
+    @typechecked
+    def update_webhook(
+        self,
+        new_webhook_url: str,
+        plugin_name: str,
+        new_header: Optional[str] = None,
+        verbose: bool = True,
+    ):
+        # pylint: disable=line-too-long
+        """Update a webhook linked to Kili's events.
+
+        Args:
+            new_webhook_url: New URL receiving post requests on events on Kili
+            plugin_name: name of your plugin
+            new_header: Authorization header to access the routes
+            verbose: If false, minimal logs are displayed
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
+        """
+
+        return WebhookUploader(
+            self.auth, new_webhook_url, plugin_name, new_header, verbose
+        ).update_webhook()
 
     @typechecked
     def activate_plugin_on_project(
