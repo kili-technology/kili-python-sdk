@@ -24,7 +24,7 @@ import time
 kili = Kili()
 ```
 
-## Step 2 : Create the project
+## Step 2: Create the project
 
 First, we need to create a new project. In our example, we will use an `IMAGE` type project with the following `jsonInterace`:
 
@@ -108,7 +108,7 @@ At the end, we want to calculate accuracy and insert the accuracy score in the `
 
 To iterate on the plugin code, you can refer to the *plugins_development.ipynb* notebook.
 
-## The plugin
+## Step 3: Write the plugin
 
 ```python
 from kili.plugins import PluginCore
@@ -169,7 +169,7 @@ urllib.request.urlretrieve(
 );
 ```
 
-## Step 3: Uploading the plugin
+## Step 4: Upload the plugin
 
 With the plugin defined in a separate `Python` file, we can now upload it and activate it on our project.
 
@@ -201,7 +201,7 @@ kili.activate_plugin_on_project(plugin_name, project_id=project_id);
     Plugin with name "Plugin bbox count" activated on project "clcysbp9o2d7w0krfghuf7le1"
 
 
-## Step 4: The plugin in action
+## Step 5: Plugin in action
 
 Wait for the plugin to be successfully deployed.
 
@@ -359,7 +359,7 @@ The status of your asset should have now changed to `LABELED`. In this plugin, p
 
 Well done! You can now iterate on the script. To learn how to avoid latency when building and deploying your plugin, refer to the *plugins_development.ipynb* tutorial.
 
-## Step 5 : Monitoring the plugin
+## Step 6: Monitor the plugin
 To monitor a certain plugin, you can get its logs by using the following command:
 
 
@@ -431,7 +431,7 @@ print(json.dumps(logs_json, indent=4))
     ]
 
 
-## Step 6: Managing the plugin
+## Step 7: Manage the plugin
 
 You also have several other methods to manage your plugins.
 
