@@ -53,6 +53,35 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
         return cell, resources
 
 
+class RemoveTqdmOutputPreprocessor(Preprocessor):
+    """
+    Remove tqdm progress bar output.
+    """
+
+    TQDM_PATTERNS = ("%|█", "█|", "/", " [", ":", "<", "it", "]")
+
+    def is_tqdm_line(self, line):
+        """Check if a line is a tqdm progress bar."""
+        return all(pattern in line for pattern in self.TQDM_PATTERNS)
+
+    def preprocess_cell(self, cell, resources, index):  # pylint: disable=arguments-renamed
+        """Remove tqdm progress bar in a cell."""
+
+        if "outputs" not in cell or not cell["outputs"]:
+            return cell, resources
+
+        for output in cell["outputs"]:
+            if "text" in output:
+                text = "\n".join(
+                    [line for line in output["text"].splitlines() if not self.is_tqdm_line(line)]
+                )
+                if len(text) > 0 and output["text"].endswith("\n") and not text.endswith("\n"):
+                    text += "\n"
+                output["text"] = text
+
+        return cell, resources
+
+
 def embed_images_in_markdown(markdown: str, images: Dict[str, bytes], notebook_dir: Path) -> str:
     """Embed images in markdown in base64."""
     md_img_pattern = r"!\[(.*?)\]\((.*?)\)"  # matches ![]()
@@ -130,6 +159,7 @@ def notebook_to_markdown(
         md_exporter.register_preprocessor(tag_removal_preprocessor, enabled=True)
 
     md_exporter.register_preprocessor(ExtractAttachmentsPreprocessor(enable=True), enabled=True)
+    md_exporter.register_preprocessor(RemoveTqdmOutputPreprocessor(enable=True), enabled=True)
 
     output = md_exporter.from_filename(str(ipynb_filepath))
 
@@ -230,6 +260,7 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         - markdown files are in mkdocs.yml.
         - notebooks are tested in test_notebooks.py.
     """
+    modified_files = sorted(modified_files, key=lambda path: path.stem)  # sort before grouping
     groupby_iter = groupby(modified_files, key=lambda path: path.stem)  # group by filename
     for filename, group in groupby_iter:
         group = list(group)
