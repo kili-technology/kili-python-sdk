@@ -37,6 +37,8 @@ def process_notebook(notebook_filename):
         "recipes/getting-started/getting_started-image_classification.ipynb",
         "recipes/getting-started/getting_started-image_semantic_segmentation.ipynb",
         "recipes/getting-started/getting_started-named-entity-recognition.ipynb",
+        "recipes/tutorials/plugins_development.ipynb",
+        "recipes/tutorials/plugins_example.ipynb",
     ],
 )
 def test_all_recipes(notebook_file):
