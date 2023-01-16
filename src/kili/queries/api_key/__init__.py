@@ -84,7 +84,7 @@ class QueriesApiKey:
             api_key: Value of the api key.
 
         Returns:
-            A result object which contains the query if it was successful,
+            The number of API Keys matching params if it was successful,
                 or an error message.
 
         Examples:
