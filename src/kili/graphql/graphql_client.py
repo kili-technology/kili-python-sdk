@@ -104,6 +104,8 @@ class GraphQLClient:
                         break
                     if req.status_code == 401:
                         raise Exception("Invalid API KEY")
+                    if req.status_code == 400 and errors_in_response:
+                        break
                     if trial_number == number_of_trials - 1 and errors_in_response:
                         break
                     time.sleep(1)
