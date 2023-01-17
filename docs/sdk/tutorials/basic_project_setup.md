@@ -148,23 +148,14 @@ If you already have users in your organization, here's how you can easily access
 
 
 ```python
-kili.organizations()
+org_id = kili.organizations()[0]["id"]
 ```
-
-
-
-
-
-
-    [{'id': 'cjx0vz05w0tmq08390mrl76bd', 'name': 'Kili Technology'}]
-
-
 
 2) Then, based on your org ID, retrieve the full list of org users, with their e-mails:
 
 
 ```python
-all_org_users = kili.users(organization_id="cjx0vz05w0tmq08390mrl76bd")
+all_org_users = kili.users(organization_id=org_id)
 
 all_emails = [i["email"] for i in all_org_users]
 ```
