@@ -1,7 +1,8 @@
 from kili.orm import Asset
 
 
-def mocked__project_assets(project_id=None, **_):
+def mocked__project_assets(where, *_):
+    project_id = where.project_id
     if project_id in ["object_detection", "project_id"]:
         job_object_detection = {
             "JOB_0": {
@@ -52,5 +53,5 @@ def mocked__project_assets(project_id=None, **_):
         ]
 
 
-def mocked__project_count_assets(project_id=None, **_):
-    return len(mocked__project_assets(project_id=project_id))
+# def mocked__project_count_assets(project_id=None, **_):
+#     return len(mocked__project_assets(project_id=project_id))

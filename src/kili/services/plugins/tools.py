@@ -26,11 +26,12 @@ def check_errors_plugin_activation(result, plugin_name: str, project_id: str):
     Check if the error during upload is because the plugin already
     exists and print the upload function for the user
     """
-    if "errors" in result and DUPLICATE_ACTIVATE_ERROR_SUBSTRING in result["errors"][0]["message"]:
+    has_errors = "errors" in result
+    if has_errors and DUPLICATE_ACTIVATE_ERROR_SUBSTRING in result["errors"][0]["message"]:
         print(
             f'Warning: A plugin with the name "{plugin_name}" is',
             f'already activated on the project with id "{project_id}"',
         )
-        return True
+        return has_errors, True
 
-    return False
+    return has_errors, False

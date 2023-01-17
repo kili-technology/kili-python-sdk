@@ -94,18 +94,18 @@ class GraphQLClient:
                     number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
                 except ValueError:
                     number_of_trials = 10
-                for trial_number in range(number_of_trials):
+                for _ in range(number_of_trials):
                     self.session.verify = self.verify
                     req = self.session.post(
                         self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
                     )
                     errors_in_response = "errors" in req.json()
-                    if req.status_code == 200 and not errors_in_response:
+                    bad_request_error = req.status_code == 400 and errors_in_response
+                    sucessful_request = req.status_code == 200 and not errors_in_response
+                    if sucessful_request or bad_request_error:
                         break
                     if req.status_code == 401:
                         raise Exception("Invalid API KEY")
-                    if trial_number == number_of_trials - 1 and errors_in_response:
-                        break
                     time.sleep(1)
                 return req.json()  # type:ignore X
             except Exception as exception:

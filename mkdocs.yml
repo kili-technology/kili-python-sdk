@@ -16,6 +16,8 @@ nav:
         - Basic Project Setup: sdk/tutorials/basic_project_setup.md
         - Export: sdk/tutorials/export_a_kili_project.md
         - Workflows: sdk/tutorials/set_up_workflows.md
+        - Plugins Development: sdk/tutorials/plugins_development.md
+        - Plugins Example: sdk/tutorials/plugins_example.md
       - Reference:
         - API Key: sdk/api_key.md
         - Asset: sdk/asset.md
@@ -23,6 +25,7 @@ nav:
         - Label: sdk/label.md
         - Notification: sdk/notification.md
         - Organization: sdk/organization.md
+        - Plugins: sdk/plugins.md
         - Project: sdk/project.md
         - Project User: sdk/project_user.md
         - Project Version: sdk/project_version.md
