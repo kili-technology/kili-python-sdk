@@ -172,7 +172,7 @@ class PluginUploader:
         with ZipFile(zip_path, "w") as archive:
             archive.write(script_path, "main.py")
             if requirements_path:
-                archive.write(requirements_path)
+                archive.write(requirements_path, "requirements.txt")
 
         return zip_path
 
