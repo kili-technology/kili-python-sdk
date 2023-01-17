@@ -150,7 +150,7 @@ print(labels)
 
 This code will return a list of labels authored by John Doe.
 
-One can also use the `author_in` parameter to filter by name directly.
+You can also use the `author_in` parameter to filter by name directly.
 
 ### Filtering specific labels per asset through the label properties
 
@@ -179,7 +179,7 @@ for asset in assets:
 
 ### Filtering the latest label per annotator
 
-When working on project with [consensus](https://docs.kili-technology.com/docs/consensus-overview) enabled, it can be useful to export the latest label made by each annotator:
+When working on a project with [consensus](https://docs.kili-technology.com/docs/consensus-overview) enabled, it can be useful to export the latest label made by each annotator:
 
 
 ```python
