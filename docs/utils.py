@@ -271,7 +271,6 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
 
         # check if group has two files, one .md and one .ipynb
         if len(group) != 2:
-            print(modified_files)
             raise ValueError(
                 f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}. Run"
                 " 'python -m docs.utils convert <notebook_file>' to convert a notebook to"
