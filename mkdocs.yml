@@ -15,6 +15,7 @@ nav:
       - Tutorials:
         - Basic Project Setup: sdk/tutorials/basic_project_setup.md
         - Export: sdk/tutorials/export_a_kili_project.md
+        - Workflows: sdk/tutorials/set_up_workflows.md
         - Plugins Development: sdk/tutorials/plugins_development.md
         - Plugins Example: sdk/tutorials/plugins_example.md
       - Reference:
