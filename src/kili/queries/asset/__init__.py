@@ -5,13 +5,10 @@ from typing import Dict, Iterable, List, Optional, Union
 import pandas as pd
 from typeguard import typechecked
 
-from kili.helpers import format_result, fragment_builder, validate_category_search_query
-from kili.orm import Asset
-from kili.queries.asset.queries import GQL_ASSETS_COUNT, gql_assets
-from kili.types import Asset as AssetType
-from kili.utils.pagination import row_generator_from_paginated_calls
-
-from .helpers import get_post_assets_call_process
+from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.helpers import validate_category_search_query
+from kili.queries.asset.media_downloader import get_download_assets_function
 
 
 class QueriesAsset:
@@ -165,89 +162,42 @@ class QueriesAsset:
                 'Argument values as_generator==True and format=="pandas" are not compatible.'
             )
 
-        saved_args = locals()
-        count_args = {
-            k: v
-            for (k, v) in saved_args.items()
-            if k
-            not in [
-                "skip",
-                "first",
-                "disable_tqdm",
-                "format",
-                "fields",
-                "self",
-                "as_generator",
-                "message",
-                "download_media",
-                "local_media_dir",
-            ]
-        }
-
-        # using tqdm with a generator is messy, so it is always disabled
-        disable_tqdm = disable_tqdm or as_generator
         if label_category_search:
             validate_category_search_query(label_category_search)
 
-        payload_query = {
-            "where": {
-                "id": asset_id,
-                "project": {
-                    "id": project_id,
-                },
-                "externalIdStrictlyIn": external_id_contains,
-                "statusIn": status_in,
-                "consensusMarkGte": consensus_mark_gt,
-                "consensusMarkLte": consensus_mark_lt,
-                "honeypotMarkGte": honeypot_mark_gt,
-                "honeypotMarkLte": honeypot_mark_lt,
-                "idIn": asset_id_in,
-                "metadata": metadata_where,
-                "label": {
-                    "typeIn": label_type_in,
-                    "authorIn": label_author_in,
-                    "consensusMarkGte": label_consensus_mark_gt,
-                    "consensusMarkLte": label_consensus_mark_lt,
-                    "createdAt": label_created_at,
-                    "createdAtGte": label_created_at_gt,
-                    "createdAtLte": label_created_at_lt,
-                    "honeypotMarkGte": label_honeypot_mark_gt,
-                    "honeypotMarkLte": label_honeypot_mark_lt,
-                    "search": label_category_search,
-                },
-                "skipped": skipped,
-                "updatedAtGte": updated_at_gte,
-                "updatedAtLte": updated_at_lte,
-            },
-        }
-
-        post_call_process = get_post_assets_call_process(
-            download_media, self, project_id, fields, local_media_dir
+        where = AssetWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_id_in=asset_id_in,
+            consensus_mark_gt=consensus_mark_gt,
+            consensus_mark_lt=consensus_mark_lt,
+            external_id_contains=external_id_contains,
+            honeypot_mark_gt=honeypot_mark_gt,
+            honeypot_mark_lt=honeypot_mark_lt,
+            label_author_in=label_author_in,
+            label_consensus_mark_gt=label_consensus_mark_gt,
+            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_created_at=label_created_at,
+            label_created_at_gt=label_created_at_gt,
+            label_created_at_lt=label_created_at_lt,
+            label_honeypot_mark_gt=label_honeypot_mark_gt,
+            label_honeypot_mark_lt=label_honeypot_mark_lt,
+            label_type_in=label_type_in,
+            metadata_where=metadata_where,
+            skipped=skipped,
+            status_in=status_in,
+            updated_at_gte=updated_at_gte,
+            updated_at_lte=updated_at_lte,
+            label_category_search=label_category_search,
         )
-
-        asset_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_assets,
-            count_args,
-            self._query_assets,
-            payload_query,
-            fields,
-            disable_tqdm,
-            post_call_process,
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        post_call_function = get_download_assets_function(
+            self, download_media, fields, project_id, local_media_dir
         )
+        assets = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
 
         if format == "pandas":
-            return pd.DataFrame(list(asset_generator))
-        if as_generator:
-            return asset_generator
-        return list(asset_generator)
-
-    def _query_assets(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_assets = gql_assets(fragment_builder(fields, AssetType))
-        result = self.auth.client.execute(_gql_assets, payload)
-        assets = format_result("data", result, _object=List[Asset])
+            return pd.DataFrame(assets)
         return assets
 
     @typechecked
@@ -342,36 +292,29 @@ class QueriesAsset:
         if label_category_search:
             validate_category_search_query(label_category_search)
 
-        variables = {
-            "where": {
-                "id": asset_id,
-                "project": {
-                    "id": project_id,
-                },
-                "externalIdStrictlyIn": external_id_contains,
-                "statusIn": status_in,
-                "consensusMarkGte": consensus_mark_gt,
-                "consensusMarkLte": consensus_mark_lt,
-                "honeypotMarkGte": honeypot_mark_gt,
-                "honeypotMarkLte": honeypot_mark_lt,
-                "idIn": asset_id_in,
-                "metadata": metadata_where,
-                "label": {
-                    "typeIn": label_type_in,
-                    "authorIn": label_author_in,
-                    "consensusMarkGte": label_consensus_mark_gt,
-                    "consensusMarkLte": label_consensus_mark_lt,
-                    "createdAt": label_created_at,
-                    "createdAtGte": label_created_at_gt,
-                    "createdAtLte": label_created_at_lt,
-                    "honeypotMarkGte": label_honeypot_mark_gt,
-                    "honeypotMarkLte": label_honeypot_mark_lt,
-                    "search": label_category_search,
-                },
-                "skipped": skipped,
-                "updatedAtGte": updated_at_gte,
-                "updatedAtLte": updated_at_lte,
-            }
-        }
-        result = self.auth.client.execute(GQL_ASSETS_COUNT, variables)
-        return format_result("data", result, int)
+        where = AssetWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_id_in=asset_id_in,
+            consensus_mark_gt=consensus_mark_gt,
+            consensus_mark_lt=consensus_mark_lt,
+            external_id_contains=external_id_contains,
+            honeypot_mark_gt=honeypot_mark_gt,
+            honeypot_mark_lt=honeypot_mark_lt,
+            label_author_in=label_author_in,
+            label_consensus_mark_gt=label_consensus_mark_gt,
+            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_created_at=label_created_at,
+            label_created_at_gt=label_created_at_gt,
+            label_created_at_lt=label_created_at_lt,
+            label_honeypot_mark_gt=label_honeypot_mark_gt,
+            label_honeypot_mark_lt=label_honeypot_mark_lt,
+            label_type_in=label_type_in,
+            metadata_where=metadata_where,
+            skipped=skipped,
+            status_in=status_in,
+            updated_at_gte=updated_at_gte,
+            updated_at_lte=updated_at_lte,
+            label_category_search=label_category_search,
+        )
+        return AssetQuery(self.auth.client).count(where)

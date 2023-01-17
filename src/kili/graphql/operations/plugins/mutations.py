@@ -26,6 +26,22 @@ mutation(
 }
 """
 
+GQL_CREATE_WEBHOOK = """
+mutation(
+  $pluginName: String!
+  $webhookUrl: String!
+  $header: String
+  ) {
+  data: createWebhook(
+    data: {
+      header: $header
+      pluginName: $pluginName
+      webhookUrl: $webhookUrl
+    }
+  )
+}
+"""
+
 GQL_GENERATE_UPDATE_URL = """
 mutation(
   $pluginName: String!
@@ -45,6 +61,22 @@ mutation(
   data: updatePluginRunner(
     data: {
       pluginName: $pluginName
+    }
+  )
+}
+"""
+
+GQL_UPDATE_WEBHOOK = """
+mutation(
+  $pluginName: String!
+  $webhookUrl: String!
+  $header: String
+  ) {
+  data: updateWebhook(
+    data: {
+      header: $header
+      pluginName: $pluginName
+      webhookUrl: $webhookUrl
     }
   )
 }

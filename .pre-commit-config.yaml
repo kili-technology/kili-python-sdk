@@ -33,4 +33,5 @@ repos:
         stages: [commit, merge-commit]
         always_run: false
         pass_filenames: true
+        require_serial: true
         additional_dependencies: [click, nbconvert]

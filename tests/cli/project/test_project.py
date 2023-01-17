@@ -13,21 +13,21 @@ from kili.cli.project.describe import describe_project
 from kili.cli.project.export import export_labels
 from kili.cli.project.import_ import import_assets
 from kili.cli.project.list_ import list_projects
+from kili.graphql.operations.asset.queries import AssetQuery
 from kili.graphql.operations.project.queries import ProjectQuery
 
 from ...utils import debug_subprocess_pytest
-from .mocks.assets import mocked__project_assets, mocked__project_count_assets
-from .mocks.projects import mocked__ProjectsQuery
+from .mocks.assets import mocked__project_assets
+from .mocks.projects import mocked__ProjectQuery
 
 kili_client = MagicMock()
 kili_client.auth.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
 kili_client.create_project = create_project_mock = MagicMock()
-kili_client.assets = assets_mock = MagicMock(side_effect=mocked__project_assets)
-kili_client.count_assets = count_assets_mock = MagicMock(side_effect=mocked__project_count_assets)
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
-@patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectsQuery)
+@patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+@patch.object(AssetQuery, "__call__", side_effect=mocked__project_assets)
 class TestCLIProject:
     """
     test the CLI functions of the project command
@@ -409,7 +409,7 @@ class TestCLIProject:
             ),
         ],
     )
-    def test_export(self, _mocker_project, _mocker_kili, name, test_case):
+    def test_export(self, _mocker_asset, _mocker_project, _mocker_kili, name, test_case):
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(

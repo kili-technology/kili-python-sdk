@@ -10,13 +10,14 @@ from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 from uuid import uuid4
 
 from kili.authentication import KiliAuth
+from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.helpers import T, format_result, is_url
 from kili.orm import Asset
-from kili.queries.asset import QueriesAsset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
@@ -409,8 +410,10 @@ class BaseAssetImporter:
         """Filter out assets whose external_id is already in the project."""
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
-        assets_in_project = QueriesAsset(self.auth).assets(
-            project_id=self.project_params.project_id, fields=["externalId"], disable_tqdm=True
+        assets_in_project = AssetQuery(self.auth.client)(
+            AssetWhere(project_id=self.project_params.project_id),
+            ["externalId"],
+            QueryOptions(disable_tqdm=True),
         )
         external_ids_in_project = [asset["externalId"] for asset in assets_in_project]
         filtered_assets = [
