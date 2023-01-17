@@ -4,6 +4,8 @@ import click
 import pandas as pd
 
 from kili.client import Kili
+from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 
 
 @click.command()
@@ -27,7 +29,11 @@ def main(api_endpoint):
     df = pd.DataFrame(columns=["Project", "Date", "Email"])
     for project_id in source_project_id.split(","):
         project = list(kili.projects(project_id=project_id))[0]
-        assets = kili.assets(project_id=project_id)
+        assets = AssetQuery(kili.auth.client)(
+            AssetWhere(project_id=project_id),
+            ["labels.createdAt", "createdAt.author.email"],
+            QueryOptions(disable_tqdm=False),
+        )
         title = project["title"]
         for asset in assets:
             for label in asset["labels"]:

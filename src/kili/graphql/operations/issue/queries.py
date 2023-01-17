@@ -28,7 +28,8 @@ class IssueWhere(BaseQueryWhere):
 class IssueQuery(GraphQLQuery):
     """Issue query."""
 
-    TYPE = Issue
+    FORMAT_TYPE = Issue
+    FRAGMENT_TYPE = Issue
 
     @staticmethod
     def query(fragment):

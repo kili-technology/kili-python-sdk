@@ -30,7 +30,8 @@ class LockWhere(BaseQueryWhere):
 class LockQuery(GraphQLQuery):
     """Lock query."""
 
-    TYPE = Lock
+    FORMAT_TYPE = Lock
+    FRAGMENT_TYPE = Lock
 
     @staticmethod
     def query(fragment):

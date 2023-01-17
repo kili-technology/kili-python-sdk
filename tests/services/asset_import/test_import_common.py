@@ -1,8 +1,8 @@
 from unittest.mock import MagicMock, patch
 from uuid import UUID
 
+from kili.graphql.operations.asset.queries import AssetQuery
 from kili.graphql.operations.project.queries import ProjectQuery
-from kili.queries.asset import QueriesAsset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
 from tests.services.asset_import.base import ImportTestCase
@@ -18,13 +18,13 @@ from tests.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch.object(
-    QueriesAsset,
-    "assets",
-    MagicMock(return_value=[]),
+    AssetQuery,
+    "__call__",
+    return_value=[],
 )
 class TestContentType(ImportTestCase):
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))
-    def test_cannot_upload_an_image_to_video_project(self, _mocker):
+    def test_cannot_upload_an_image_to_video_project(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
@@ -32,21 +32,21 @@ class TestContentType(ImportTestCase):
             import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
-    def test_cannot_import_files_not_found_to_an_image_project(self, _mocker):
+    def test_cannot_import_files_not_found_to_an_image_project(self, *_):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
             import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
-    def test_cannot_upload_raw_text_to_pdf_project(self, _mocker):
+    def test_cannot_upload_raw_text_to_pdf_project(self, *_):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
             import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
-    def test_generate_different_uuid4_external_ids_if_not_given(self, _mocker):
+    def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
         import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         self.auth.client.execute.assert_called_once()

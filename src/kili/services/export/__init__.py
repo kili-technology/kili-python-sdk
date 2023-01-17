@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.kili import KiliExporter
@@ -39,7 +40,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     get_project(kili, project_id, ["id"])
 
     if with_assets:
-        count = kili.count_assets(project_id)
+        count = AssetQuery(kili.auth.client).count(AssetWhere(project_id=project_id))
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
                 f"Downloading many assets ({count}). This might take a while. Consider disabling"

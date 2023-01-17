@@ -39,7 +39,8 @@ class UserWhere(BaseQueryWhere):
 class UserQuery(GraphQLQuery):
     """User query."""
 
-    TYPE = User
+    FORMAT_TYPE = User
+    FRAGMENT_TYPE = User
 
     @staticmethod
     def query(fragment):

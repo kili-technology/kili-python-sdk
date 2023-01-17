@@ -37,7 +37,8 @@ class APIKeyWhere(BaseQueryWhere):
 class APIKeyQuery(GraphQLQuery):
     """ProjectUser query."""
 
-    TYPE = ApiKey
+    FORMAT_TYPE = ApiKey
+    FRAGMENT_TYPE = ApiKey
 
     @staticmethod
     def query(fragment):

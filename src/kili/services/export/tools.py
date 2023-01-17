@@ -1,8 +1,11 @@
 """
 Set of common functions used by different export formats
 """
-from typing import List, Optional
+from typing import Dict, List, Optional, cast
 
+from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.queries.asset.media_downloader import get_download_assets_function
 from kili.services.export.types import ExportType
 
 DEFAULT_FIELDS = [
@@ -89,24 +92,23 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     assets = None
 
     if asset_ids is not None and len(asset_ids) > 0:
-        assets = kili.assets(
+        where = AssetWhere(
             asset_id_in=asset_ids,
             project_id=project_id,
-            fields=fields,
             label_type_in=label_type_in,
-            disable_tqdm=disable_tqdm,
-            download_media=download_media,
-            local_media_dir=local_media_dir,
         )
     else:
-        assets = kili.assets(
+        where = AssetWhere(
             project_id=project_id,
-            fields=fields,
             label_type_in=label_type_in,
-            disable_tqdm=disable_tqdm,
-            download_media=download_media,
-            local_media_dir=local_media_dir,
         )
+    options = QueryOptions(disable_tqdm=disable_tqdm)
+    post_call_function = get_download_assets_function(
+        kili, download_media, fields, project_id, local_media_dir
+    )
+    assets = cast(
+        List[Dict], AssetQuery(kili.auth.client)(where, fields, options, post_call_function)
+    )
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 

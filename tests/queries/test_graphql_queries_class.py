@@ -15,7 +15,8 @@ def mocked_client_execute(query, payload):
 
 
 class FakeQuery(GraphQLQuery):
-    TYPE = Label
+    FORMAT_TYPE = Label
+    FRAGMENT_TYPE = Label
 
     @staticmethod
     def query(_):

@@ -3,7 +3,7 @@ GraphQL module
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Iterable, List, NamedTuple, Optional, Type
+from typing import Callable, Dict, Iterable, List, NamedTuple, Optional, Type
 
 from tqdm import tqdm
 
@@ -70,24 +70,24 @@ class GraphQLQuery(ABC):
 
     COUNT_QUERY: str = NotImplemented
 
-    TYPE: Type = NotImplemented
+    FORMAT_TYPE: Type = NotImplemented
 
-    # to be implemented when adding the asset query with the new architecture
-    # @staticmethod
-    # @abstractmethod
-    # def post_call_process():
+    FRAGMENT_TYPE: Type = NotImplemented
 
     def __call__(
         self,
         where: BaseQueryWhere,
         fields: List[str],
         options: QueryOptions,
+        post_call_function: Optional[Callable] = None,
     ) -> Iterable[Dict]:
         """Query objects of the specified type"""
-        fragment = fragment_builder(fields, self.TYPE)
+        fragment = fragment_builder(fields, self.FRAGMENT_TYPE)
         query = self.query(fragment)
 
-        result_gen = self.execute_query_from_paginated_call(query, where, options)
+        result_gen = self.execute_query_from_paginated_call(
+            query, where, options, post_call_function
+        )
         if options.as_generator:
             return result_gen
         return list(result_gen)
@@ -112,7 +112,11 @@ class GraphQLQuery(ABC):
         return min(count_objects_queried, first)
 
     def execute_query_from_paginated_call(
-        self, query: str, where: BaseQueryWhere, options: QueryOptions
+        self,
+        query: str,
+        where: BaseQueryWhere,
+        options: QueryOptions,
+        post_call_function: Optional[Callable],
     ):
         """
         Builds a row generator from paginated calls.
@@ -137,14 +141,13 @@ class GraphQLQuery(ABC):
                     skip = count_rows_retrieved + options.skip
                     payload = {"where": where.graphql_payload, "skip": skip, "first": batch_size}
                     rows = api_throttle(self.client.execute)(query, payload)
-                    rows = format_result("data", rows)
+                    rows = format_result("data", rows, _object=self.FORMAT_TYPE)
 
                     if rows is None or len(rows) == 0:
                         break
 
-                    # to be implemented when adding the asset query with the new architecture
-                    # if self.post_call_process is not None:
-                    #     rows = self.post_call_process(rows)
+                    if post_call_function is not None:
+                        rows = post_call_function(rows)
 
                     for row in rows:
                         yield row

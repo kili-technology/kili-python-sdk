@@ -1,11 +1,19 @@
 import json
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pydantic
 import pytest
 
 from kili import services
+from kili.graphql.operations.asset.queries import AssetQuery
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
+
+
+def mocked_AssetQuery(*_):
+    return [
+        {"id": "asset_id_1", "externalId": "asset_external_id_1"},
+        {"id": "asset_id_2", "externalId": "asset_external_id_2"},
+    ]
 
 
 class TestImportLabelsFromDict:
@@ -52,13 +60,8 @@ class TestImportLabelsFromDict:
         services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
         self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call)
 
-    def test_import_default_labels_with_external_id(self):
-        self.kili.assets = MagicMock(
-            return_value=[
-                {"id": "asset_id_1", "externalId": "asset_external_id_1"},
-                {"id": "asset_id_2", "externalId": "asset_external_id_2"},
-            ]
-        )
+    @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+    def test_import_default_labels_with_external_id(self, mocker):
         project_id = "project_id"
         label_type = "DEFAULT"
         model_name = None
@@ -151,29 +154,41 @@ class TestImportLabelsFromDict:
         with pytest.raises(pydantic.ValidationError):
             services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
 
-    def test_import_predictions(self):
-        self.kili.assets = MagicMock(
-            return_value=[{"id": "asset_id", "externalId": "asset_external_id"}]
-        )
+    @patch.object(
+        AssetQuery,
+        "__call__",
+        side_effect=mocked_AssetQuery,
+    )
+    def test_import_predictions(self, mocker):
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = "model_name"
-        labels = [{"json_response": self.json_response, "asset_external_id": "asset_external_id"}]
+        labels = [
+            {"json_response": self.json_response, "asset_external_id": "asset_external_id_1"},
+            {"json_response": self.json_response, "asset_external_id": "asset_external_id_2"},
+        ]
 
         call = {
             "data": {
                 "labelType": "PREDICTION",
                 "labelsData": [
                     {
-                        "assetID": "asset_id",
+                        "assetID": "asset_id_1",
                         "authorID": None,
                         "jsonResponse": json.dumps(self.json_response),
                         "modelName": model_name,
                         "secondsToLabel": None,
-                    }
+                    },
+                    {
+                        "assetID": "asset_id_2",
+                        "authorID": None,
+                        "jsonResponse": json.dumps(self.json_response),
+                        "modelName": model_name,
+                        "secondsToLabel": None,
+                    },
                 ],
             },
-            "where": {"idIn": ["asset_id"]},
+            "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
         services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)

@@ -14,7 +14,10 @@ import requests
 from PIL import Image
 
 from kili.client import Kili
-from kili.queries.asset.helpers import MediaDownloader, get_json_content_urls_video
+from kili.queries.asset.media_downloader import (
+    MediaDownloader,
+    get_json_content_urls_video,
+)
 from kili.utils.tempfile import TemporaryDirectory
 
 
