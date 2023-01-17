@@ -52,7 +52,7 @@ kili = Kili(
 project_id = "<YOUR PROJECT ID>"
 ```
 
-For information on how to set up a Kili project, refer to the `basic_project_setup.ipynb` tutorial.
+For information on how to set up a Kili project, refer to the [basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) tutorial.
 
 ## Managing reviews
 
@@ -78,7 +78,7 @@ Consensus works by having more than one labeler annotate the same asset. When th
 This is a key measure for controlling label production quality.
 
 To set up consensus, you will need to have at least two project members.
-For information on how to add users and assign them to your project, refer to the `basic_project_setup.ipynb` tutorial.
+For information on how to add users and assign them to your project, refer to the [basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) tutorial.
 
 ### Setting consensus for a specific percentage of project assets
 
@@ -166,9 +166,9 @@ The `to_be_labeled_by_array` argument is a list of lists. Each of the sub-lists 
 
 For example:
 
-`to_be_labeled_by_array = [["example1@example.com"], ["example1@example.com", "example2@example.com"], ]"example3@example.com"]]`
+`to_be_labeled_by_array = [["example1@example.com"], ["example1@example.com", "example2@example.com"], ["example3@example.com"]]`
 
-For information on how to add users and assign them to your project, refer to the `basic_project_setup.ipynb` tutorial.
+For information on how to add users and assign them to your project, refer to the [basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) tutorial.
 For information on assigning assets to users, refer to our [documentation](https://docs.kili-technology.com/docs/queue-prioritization).
 
 ## Prioritizing assets in the labeling queue
