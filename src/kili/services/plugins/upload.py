@@ -66,69 +66,22 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
 
 
-class WebhookUploader:
-    """
-    Class to create a webhook
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self,
-        auth: KiliAuth,
-        webhook_url: str,
-        plugin_name: str,
-        header: Optional[str],
-        verbose: bool,
-    ) -> None:
-        self.auth = auth
-        self.webhook_url = webhook_url
-        self.plugin_name = plugin_name or self.webhook_url
-        self.header = header
-        self.verbose = verbose
-
-    def create_webhook(self):
-        """
-        Create a webhook receiving Kili events
-        """
-
-        variables = {
-            "pluginName": self.plugin_name,
-            "webhookUrl": self.webhook_url,
-            "header": self.header,
-        }
-
-        result = self.auth.client.execute(GQL_CREATE_WEBHOOK, variables)
-
-        return format_result("data", result)
-
-    def update_webhook(self):
-        """
-        Update a webhook receiving Kili events
-        """
-
-        variables = {
-            "pluginName": self.plugin_name,
-            "webhookUrl": self.webhook_url,
-            "header": self.header,
-        }
-
-        result = self.auth.client.execute(GQL_UPDATE_WEBHOOK, variables)
-
-        return format_result("data", result)
-
-        
 def check_file_contain_handler(name: str, path: str):
     """
     Return true if the file contain PluginHandler Class
     """
     spec = importlib.util.spec_from_file_location(name, path)
+
     if not spec:
         return False
+
     plugin = importlib.util.module_from_spec(spec)
     sys.modules[name] = plugin
     loader = spec.loader
+
     if not loader:
         return False
+
     loader.exec_module(plugin)
     try:
         plugin.PluginHandler
