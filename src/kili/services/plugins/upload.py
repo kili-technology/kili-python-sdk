@@ -121,15 +121,21 @@ def check_file_contain_handler(name: str, path: str):
     """
     Return true if the file contain PluginHandler Class
     """
+
     spec = importlib.util.spec_from_file_location(name, path)
+
     if not spec:
         return False
+
     plugin = importlib.util.module_from_spec(spec)
     sys.modules[name] = plugin
     loader = spec.loader
+
     if not loader:
         return False
+
     loader.exec_module(plugin)
+
     try:
         plugin.PluginHandler
     except AttributeError:
