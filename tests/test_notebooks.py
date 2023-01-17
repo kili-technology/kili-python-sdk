@@ -39,6 +39,7 @@ def process_notebook(notebook_filename):
         "recipes/getting-started/getting_started-named-entity-recognition.ipynb",
         "recipes/tutorials/plugins_development.ipynb",
         "recipes/tutorials/plugins_example.ipynb",
+        "recipes/tutorials/basic_project_setup.ipynb",
     ],
 )
 def test_all_recipes(notebook_file):
