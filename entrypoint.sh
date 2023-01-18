@@ -103,8 +103,8 @@ function create_draft_release() {
     fi
 
     # tag and push the tag
-    git tag -f -a $release_version -m "Release $release_version"
-    git push origin $release_version
+    # git tag -f -a $release_version -m "Release $release_version"
+    # git push origin $release_version
 
     # install gh if needed on macOS
     if [[ $OSTYPE == 'darwin'* ]] && ! [[ -x "$(command -v gh)" ]]; then
