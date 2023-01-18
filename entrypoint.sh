@@ -102,7 +102,7 @@ function create_draft_release() {
         exit 1
     fi
 
-    tag and push the tag
+    # tag and push the tag
     git tag -f -a $release_version -m "Release $release_version"
     git push origin $release_version
 
@@ -112,7 +112,7 @@ function create_draft_release() {
     fi
 
     # create draft release
-    link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes)
+    link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes --notes-start-tag $latest_release)
 
     echo $link_to_draft
 }
