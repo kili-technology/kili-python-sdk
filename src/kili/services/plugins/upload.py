@@ -138,25 +138,30 @@ class PluginUploader:
             self.plugin_name = self.plugin_path.name
         self.verbose = verbose
 
-    def _retrieve_script(self) -> Path:
+    def _retrieve_plugin_src(self) -> List[Path]:
         """
         Retrieve script from plugin_path and execute it
         to prevent an upload with indentation errors
         """
 
         if self.plugin_path.is_dir():
+
             file_path = self.plugin_path / "main.py"
             if not file_path.is_file():
                 raise FileNotFoundError(
                     f"No main.py file in the provided folder: {self.plugin_path.absolute()}"
                 )
-        else:
-            file_path = self.plugin_path
+
+            file_paths = list(self.plugin_path.glob("**/*.py"))
+
+            return file_paths
+
+        file_path = self.plugin_path
 
         if not check_file_is_py(file_path, self.verbose):
             raise ValueError("Wrong file format.")
 
-        return file_path
+        return [file_path]
 
     def _retrieve_requirements(self) -> Union[Path, None]:
         """
@@ -181,16 +186,15 @@ class PluginUploader:
         return file_path
 
     @staticmethod
-    def _parse_script(script_path: Path):
+    def _parse_script(file_path: Path):
         """
         Method to detect indentation errors in the script
         """
-        with script_path.open("r", encoding="utf-8") as file:
+        with file_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
         # We execute the source code to prevent the upload of a file with SyntaxError
-        # pylint: disable=exec-used
-        exec(source_code, globals())
+        compile(source_code, "<string>", "exec")
 
     @staticmethod
     def _upload_file(zip_path: Path, url: str):
@@ -214,8 +218,9 @@ class PluginUploader:
         upload_url = format_result("data", result)
         return upload_url
 
-    @staticmethod
-    def _create_zip(script_path: Path, requirements_path: Optional[Path], tmp_directory: Path):
+    def _create_zip(
+        self, file_paths: List[Path], requirements_path: Optional[Path], tmp_directory: Path
+    ):
         """
         Create a zip file from python file and requirements.txt
         (if user has defined a path to a requirements.txt)
@@ -223,9 +228,16 @@ class PluginUploader:
         zip_path = tmp_directory / "archive.zip"
 
         with ZipFile(zip_path, "w") as archive:
-            archive.write(script_path, "main.py")
+
+            if len(file_paths) == 0:
+                archive.write(file_paths[0], "main.py")
+
+            else:
+                for path in file_paths:
+                    archive.write(path, path.relative_to(self.plugin_path))
+
             if requirements_path:
-                archive.write(requirements_path, "requirements.txt")
+                archive.write(requirements_path, requirements_path.relative_to(self.plugin_path))
 
         return zip_path
 
@@ -236,14 +248,16 @@ class PluginUploader:
 
         upload_url = self._retrieve_upload_url(is_updating_plugin)
 
-        script_path = self._retrieve_script()
-        self._parse_script(script_path)
+        file_paths = self._retrieve_plugin_src()
+
+        for path in file_paths:
+            self._parse_script(path)
 
         requirements = self._retrieve_requirements()
 
         with TemporaryDirectory() as tmp_directory:
 
-            zip_path = self._create_zip(script_path, requirements, tmp_directory)
+            zip_path = self._create_zip(file_paths, requirements, tmp_directory)
 
             self._upload_file(zip_path, upload_url)
 
@@ -276,7 +290,7 @@ class PluginUploader:
 
             status = self.get_plugin_runner_status()
 
-            if status == "ACTIVE":
+            if status in ("ACTIVE", "FAILED"):
                 break
 
             logger.info(f"Status : {status}...")
