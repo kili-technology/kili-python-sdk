@@ -44,6 +44,8 @@ jobs:
       - name: create draft release
         run: |
           link_to_draft=$(./entrypoint.sh release:draft ${{ inputs.releaseVersion }})
+          link_to_draft=$(echo $link_to_draft | grep -o 'https://[^ ]*')
+          echo $link_to_draft
           echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ github.token }}

@@ -112,7 +112,7 @@ function create_draft_release() {
     fi
 
     # create draft release
-    link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes)
+    link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes --notes-start-tag $latest_release)
 
     echo $link_to_draft
 }
