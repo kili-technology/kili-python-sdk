@@ -44,7 +44,12 @@ jobs:
       - name: create draft release
         run: |
           link_to_draft=$(./entrypoint.sh release:draft ${{ inputs.releaseVersion }})
+          echo "step1"
           echo $link_to_draft
+          echo "step2"
+          echo "LINK_TO_DRAFT=$link_to_draft"
+          echo "step3"
           echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
+          echo "step4"
         env:
           GH_TOKEN: ${{ github.token }}
