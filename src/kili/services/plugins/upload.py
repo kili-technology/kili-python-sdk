@@ -2,6 +2,8 @@
 Class to upload a plugin
 """
 
+import importlib.util
+import sys
 import time
 from pathlib import Path
 from typing import List, Optional, Union
@@ -62,6 +64,30 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     Returns true if the mime type of the file corresponds to a .txt file
     """
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
+
+
+def check_file_contain_handler(name: str, path: str):
+    """
+    Return true if the file contain PluginHandler Class
+    """
+    spec = importlib.util.spec_from_file_location(name, path)
+
+    if not spec:
+        return False
+
+    plugin = importlib.util.module_from_spec(spec)
+    sys.modules[name] = plugin
+    loader = spec.loader
+
+    if not loader:
+        return False
+
+    loader.exec_module(plugin)
+    try:
+        plugin.PluginHandler
+    except AttributeError:
+        return False
+    return True
 
 
 class WebhookUploader:
