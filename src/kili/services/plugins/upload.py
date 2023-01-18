@@ -212,11 +212,14 @@ class PluginUploader:
         return file_path
 
     @staticmethod
-    def _parse_script(file_path: Path):
+    def _parse_script(script_path: Path, name: str):
         """
         Method to detect indentation errors in the script
         """
-        with file_path.open("r", encoding="utf-8") as file:
+        if not check_file_contain_handler(name, str(script_path)):
+            raise ValueError("Do not contain PluginHandler Class. ")
+
+        with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
         # We execute the source code to prevent the upload of a file with SyntaxError
@@ -277,7 +280,7 @@ class PluginUploader:
         file_paths = self._retrieve_plugin_src()
 
         for path in file_paths:
-            self._parse_script(path)
+            self._parse_script(path, self.plugin_name)
 
         requirements = self._retrieve_requirements()
 
