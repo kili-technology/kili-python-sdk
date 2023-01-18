@@ -77,7 +77,7 @@ jobs:
           git checkout release/$release_branch_version
           git checkout -b merge_release/$release_branch_version
           git push --set-upstream origin merge_release/$release_branch_version
-          gh pr create --fill --reviewer kili-technology/ml
+          gh pr create --fill
         env:
           GH_TOKEN: ${{ github.token }}
 
