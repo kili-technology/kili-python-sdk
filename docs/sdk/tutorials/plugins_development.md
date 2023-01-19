@@ -45,8 +45,6 @@ class PluginHandler(PluginCore):
         # Do something...
 ```
 
-**IMPORTANT**: Imports of packages inside the plugin are not permitted at the moment (except for `numpy`, & the various kili types).
-
 Do not hesitate to reach out to us if you need more.
 
 **NB: The plugin capabilities of Kili are under active development, and compatible with version 2.125.2 and later of Kili. Don't hesitate to reach out via Github or Kili support to provide feedback.**

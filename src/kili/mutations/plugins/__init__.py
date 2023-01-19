@@ -47,6 +47,7 @@ class MutationsPlugins:
                 or an error message.
 
         Examples:
+            >>> kili.upload_plugin(plugin_path="./path/to/my/folder")
             >>> kili.upload_plugin(plugin_path="./path/to/my/file.py")
         """
 
