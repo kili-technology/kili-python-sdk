@@ -82,7 +82,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
   deploy-documentation:
-    uses: ./.github/workflows/deploy_doc.yml@master
+    uses: ./.github/workflows/deploy_doc.yml
     if: ${{ always() }}
     needs: [publish]
     secrets: inherit
