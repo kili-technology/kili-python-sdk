@@ -1,6 +1,15 @@
 name: Deploy SDK doc
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Deploy doc of which branch?"
+        required: false
+        type: choice
+        default: "master"
+        options:
+          - master
+          - latest minor release branch
   workflow_call:
 
 jobs:
@@ -12,9 +21,10 @@ jobs:
         run: |
           last_version_tag=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
           echo $last_version_tag
-          echo "LAST_VERSION=$last_version_tag" >> $GITHUB_ENV
+          echo "LAST_VERSION_TAG=$last_version_tag" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
+        if: ${{ inputs.branch == 'latest minor release branch' }}
         with:
           ref: ${{ env.LAST_VERSION }}
 
