@@ -229,7 +229,7 @@ class PluginUploader:
 
         with ZipFile(zip_path, "w") as archive:
 
-            if len(file_paths) == 0:
+            if len(file_paths) == 1:
                 archive.write(file_paths[0], "main.py")
 
             else:
