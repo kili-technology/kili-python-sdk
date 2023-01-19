@@ -6,7 +6,7 @@ Notebooks are stored in recipes/ and are converted to markdown using this script
 Run 'python -m docs.utils convert <notebook_file>' at the root of repository to convert a notebook
 to markdown.
 
-Markdown files are stored in docs/source/recipes/ and are inserted in the doc with mkdocs.yml.
+Markdown files are stored in docs/sdk/tutorials/ and are inserted in the doc with mkdocs.yml.
 
 Please run 'mkdocs serve' to check the result before committing your changes.
 """
