@@ -216,7 +216,7 @@ class PluginUploader:
         """
         Method to detect indentation and class errors in the script
         """
-        if str(script_path) == "main.py" and not check_file_contains_handler(
+        if str(script_path.name) == "main.py" and not check_file_contains_handler(
             name, str(script_path)
         ):
             raise ValueError("PluginHandler class is not present in your main.py file.")
