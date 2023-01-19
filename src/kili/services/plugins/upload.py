@@ -214,10 +214,12 @@ class PluginUploader:
     @staticmethod
     def _parse_script(script_path: Path, name: str):
         """
-        Method to detect indentation errors in the script
+        Method to detect indentation and class errors in the script
         """
-        if not check_file_contains_handler(name, str(script_path)):
-            raise ValueError("Do not contain PluginHandler Class. ")
+        if str(script_path) == "main.py" and not check_file_contains_handler(
+            name, str(script_path)
+        ):
+            raise ValueError("PluginHandler class is not present in your main.py file.")
 
         with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
