@@ -262,15 +262,20 @@ def check_notebook_tested(ipynb_filepath: Path):
 )
 def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     """
-    Check if all notebooks in staging are up-to-date with their markdown files.
+    Check if all notebooks in commit are up-to-date with their markdown files.
 
-    Assumes that markdown files are in docs/sdk/tutorials/
-    and notebooks in recipes/, and have the same file names.
+    `modified_files` are the files in commit that match:
+        - markdown files in docs/sdk/tutorials/
+        - notebooks in recipes/
 
     Also checks:
         - markdown files are in mkdocs.yml.
         - notebooks are tested in test_notebooks.py.
     """
+    # get existing tutorials names
+    existing_tutorials = list(Path("docs/sdk/tutorials").glob("*.md"))
+    existing_tutorials = [tutorial.stem for tutorial in existing_tutorials]
+
     # group files by tutorial name (filename or notebooks and markdowns without extension)
     modified_files = sorted(modified_files, key=lambda path: path.stem)  # sort before grouping
     groupby_iter = groupby(modified_files, key=lambda path: path.stem)  # group by filename
@@ -278,16 +283,17 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     for tutorial_name, group in groupby_iter:
         group = list(group)
 
-        # skip single files, can be:
-        # - hand written tutorials without notebooks
-        # - notebooks that are not in the SDK doc, and thus have no markdown
-        if len(group) == 1:
+        # skip files that are not tutorials
+        if tutorial_name not in existing_tutorials:
             continue
 
         # group must have two files, one .md and one .ipynb
         if len(group) != 2:
             raise ValueError(
-                f"Expected two files (.md and .ipynb) in staging for '{tutorial_name}', got {group}"
+                f"Expected two files (.md and .ipynb) in staging for tutorial '{tutorial_name}',"
+                f" got {group}. Run 'python -m docs.utils convert <notebook_file>' at the root of"
+                " repository to convert a notebook to markdown. Please run 'mkdocs serve' to check"
+                " the result before committing your changes."
             )
 
         ipynb_filepath, md_filepath = sorted(group, key=lambda path: path.suffix)
