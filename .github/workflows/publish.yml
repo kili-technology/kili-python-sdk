@@ -85,4 +85,3 @@ jobs:
     uses: ./.github/workflows/deploy_doc.yml
     if: ${{ always() }}
     needs: [publish]
-    secrets: inherit
