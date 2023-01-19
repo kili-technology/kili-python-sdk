@@ -4,13 +4,13 @@ Fake Kili object
 
 from unittest.mock import MagicMock
 
-from kili.graphql.operations.asset.queries import AssetQuery
 from kili.orm import Asset
-from kili.queries.asset.media_downloader import get_download_assets_function
 from tests.services.export.fakes.fake_data import (
     asset_image_1,
     asset_image_1_without_annotation,
     asset_image_2,
+    asset_video_content_no_json_content,
+    asset_video_no_content_and_json_content,
 )
 
 
@@ -59,6 +59,35 @@ def mocked_ProjectQuery(where, _fields, _options):
                 "description": "This is a test project",
                 "jsonInterface": json_interface,
                 "inputType": "IMAGE",
+            }
+        ]
+    elif project_id == "object_detection_video_project":
+        json_interface = {
+            "jobs": {
+                "JOB_0": {
+                    "content": {
+                        "categories": {
+                            "OBJECT_A": {"children": [], "color": "#472CED", "name": "A"},
+                            "OBJECT_B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                        },
+                        "input": "radio",
+                    },
+                    "instruction": "dfgdfg",
+                    "mlTask": "OBJECT_DETECTION",
+                    "required": 1,
+                    "tools": ["rectangle"],
+                    "isChild": False,
+                    "models": {"tracking": {}},
+                }
+            }
+        }
+        return [
+            {
+                "title": "test OD video project",
+                "id": "object_detection_video_project_id",
+                "description": "This is a test project",
+                "jsonInterface": json_interface,
+                "inputType": "VIDEO",
             }
         ]
     elif project_id == "text_classification":
@@ -158,6 +187,11 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function):
             return [
                 Asset(asset_image_1),
                 Asset(asset_image_2),
+            ]
+        elif project_id == "object_detection_video_project":
+            return [
+                Asset(asset_video_content_no_json_content),
+                Asset(asset_video_no_content_and_json_content),
             ]
         else:
             return []

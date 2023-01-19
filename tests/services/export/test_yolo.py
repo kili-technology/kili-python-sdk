@@ -30,6 +30,7 @@ class YoloTestCase(TestCase):
                     category_ids,
                     fake_content_repository,
                     with_assets=False,
+                    project_input_type="IMAGE",
                 )
 
                 nb_files = len(
@@ -58,6 +59,7 @@ class YoloTestCase(TestCase):
                     category_ids,
                     fake_content_repository,
                     with_assets=False,
+                    project_input_type="VIDEO",
                 )
 
                 nb_files = len(

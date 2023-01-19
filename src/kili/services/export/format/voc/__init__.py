@@ -5,10 +5,8 @@ Common code for the PASCAL VOC exporter.
 import warnings
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Sequence
 from xml.dom import minidom
-
-from PIL import Image
 
 from kili.orm import JobMLTask, JobTool
 from kili.services.export.exceptions import (
@@ -17,8 +15,11 @@ from kili.services.export.exceptions import (
     NotCompatibleOptions,
 )
 from kili.services.export.format.base import AbstractExporter
-from kili.services.export.repository import AbstractContentRepository
+from kili.services.types import Job
 from kili.utils.tqdm import tqdm
+
+from ...tools_image import get_image_dimensions
+from ...tools_video import cut_video, get_video_dimensions
 
 
 class VocExporter(AbstractExporter):
@@ -36,11 +37,11 @@ class VocExporter(AbstractExporter):
 
     def _check_arguments_compatibility(self):
         """
-        Checks if the export label format is compatible with the export options.
+        Check if the export label format is compatible with the export options.
         """
         if self.single_file:
             raise NotCompatibleOptions(
-                f"The label format {self.label_format} can not be exported into a single file."
+                "The Pascal VOC annotation format can not be exported into a single file."
             )
         if self.split_option != "merged":
             raise NotCompatibleOptions(
@@ -49,40 +50,38 @@ class VocExporter(AbstractExporter):
 
     def _check_project_compatibility(self) -> None:
         """
-        Checks if the export label format is compatible with the project.
+        Check if the export label format is compatible with the project.
         """
-        if self.project_input_type == "VIDEO":
-            raise NotImplementedError("Export of annotations on videos is not supported yet.")
-        if self.project_input_type != "IMAGE":
+        if self.project_input_type not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
-                f"Project with input type '{self.project_input_type}' not compatible with Pascal"
-                " VOC export format."
+                f"Project with input type '{self.project_input_type}' not compatible with"
+                " Pascal VOC export format."
             )
 
-        jobs = self.project_json_interface["jobs"]
-        jobs = {
-            job_name: job
-            for job_name, job in jobs.items()
-            if job["mlTask"] == JobMLTask.ObjectDetection
-            and any(tool == JobTool.Rectangle for tool in job["tools"])
-        }
-        if not jobs:
+        if len(self.compatible_jobs) == 0:
             raise NoCompatibleJobError(
                 f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
             )
+
+    def _is_job_compatibile(self, job: Job) -> bool:
+        """
+        Check job compatibility with the Pascal VOC format.
+        """
+        if "tools" not in job:
+            return False
+        return JobTool.Rectangle in job["tools"] and job["mlTask"] == JobMLTask.ObjectDetection
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """
         Save the assets and annotations to a zip file in the Pascal VOC format.
         """
-        # pylint: disable=too-many-locals, too-many-arguments
         self.logger.info("Exporting VOC format")
 
         labels_folder = self.base_folder / "labels"
         labels_folder.mkdir(parents=True)
 
         for asset in tqdm(assets, disable=self.disable_tqdm):
-            _process_asset_for_job(self.content_repository, asset, labels_folder)
+            _process_asset(asset, labels_folder, self.project_input_type, self.compatible_jobs)
 
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
@@ -90,62 +89,68 @@ class VocExporter(AbstractExporter):
         self.logger.warning(output_filename)
 
 
-def _process_asset_for_job(
-    content_repository: AbstractContentRepository,
-    asset: Dict,
-    labels_folder: Path,
+# pylint: disable=too-many-locals
+def _process_asset(
+    asset: Dict, labels_folder: Path, project_input_type: str, valid_jobs: Sequence[str]
 ) -> None:
-    # pylint: disable=too-many-locals, too-many-branches
     """
     Process an asset
     """
-    frames = {}
-    is_frame = False
+    if project_input_type == "VIDEO":
+        nbr_frames = len(asset.get("latestLabel", {}).get("jsonResponse", {}))
+        if nbr_frames < 1:
+            return
+        leading_zeros = len(str(nbr_frames))
 
-    idx = 0
-    if "jsonResponse" in asset["latestLabel"]:
-        number_of_frames = len(asset["latestLabel"]["jsonResponse"])
-        for idx in range(number_of_frames):
-            if str(idx) in asset["latestLabel"]["jsonResponse"]:
-                is_frame = True
-                frame_asset = asset["latestLabel"]["jsonResponse"][str(idx)]
-                frames[idx] = {"latestLabel": {"jsonResponse": frame_asset}}
+        width = height = 0
+        frame_ext = ""
+        # jsonContent with frames
+        if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
+            width, height = get_image_dimensions(asset["jsonContent"][0])
+            frame_ext = Path(asset["jsonContent"][0]).suffix
 
-    if is_frame:
-        raise NotImplementedError("Export of annotations on videos is not supported yet.")
+        # video with shouldUseNativeVideo set to True (no frames available)
+        elif Path(asset["content"]).is_file():
+            width, height = get_video_dimensions(asset["content"])
+            cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
+            frame_ext = ".jpg"
 
-    if not frames:
-        frames[-1] = asset
+        else:
+            raise FileNotFoundError(f"Could not find frames or video for asset {asset}")
 
-    content_frames = content_repository.get_content_frames_paths(asset)
-    content_frame = content_frames[idx] if content_frames else asset["content"]
+        for frame_id, json_response in asset["latestLabel"]["jsonResponse"].items():
+            frame_name = f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}'
+            parameters = {"filename": f"{frame_name}{frame_ext}"}
+            annotations = _convert_from_kili_to_voc_format(
+                json_response, width, height, parameters, valid_jobs
+            )
+            xml_filename = f"{frame_name}.xml"
+            with open(labels_folder / xml_filename, "wb") as fout:
+                fout.write(f"{annotations}\n".encode())
 
-    filename = asset["externalId"]
-    width, height = get_asset_dimensions(content_frame)
-    for frame in frames.values():
-        latest_label = frame["latestLabel"]
-        json_response = latest_label["jsonResponse"]
-        parameters = {"filename": f"{filename}.xml"}
-        annotations = _convert_from_kili_to_voc_format(json_response, width, height, parameters)
-
-        with open(labels_folder / f"{filename}.xml", "wb") as fout:
+    elif project_input_type == "IMAGE":
+        json_response = asset["latestLabel"]["jsonResponse"]
+        width, height = get_image_dimensions(asset["content"])
+        parameters = {"filename": Path(asset["content"]).name}
+        annotations = _convert_from_kili_to_voc_format(
+            json_response, width, height, parameters, valid_jobs
+        )
+        xml_filename = f'{asset["externalId"]}.xml'
+        with open(labels_folder / xml_filename, "wb") as fout:
             fout.write(f"{annotations}\n".encode())
 
 
-def get_asset_dimensions(file_path: Union[Path, str]) -> Tuple:
-    """
-    Get an asset width and height
-    """
-    image = Image.open(file_path)
-    width, height = image.size
-    return width, height
-
-
 def _parse_annotations(
-    response: Dict, xml_label: ET.Element, img_width: int, img_height: int
+    response: Dict,
+    xml_label: ET.Element,
+    img_width: int,
+    img_height: int,
+    valid_jobs: Sequence[str],
 ) -> None:
     # pylint: disable=too-many-locals
-    for _, job_response in response.items():
+    for job_name, job_response in response.items():
+        if job_name not in valid_jobs:
+            continue
         if "annotations" in job_response:
             annotations = job_response["annotations"]
             for annotation in annotations:
@@ -155,6 +160,8 @@ def _parse_annotations(
                     annotation_category = ET.SubElement(xml_label, "object")
                     name = ET.SubElement(annotation_category, "name")
                     name.text = category["name"]
+                    job_name_field = ET.SubElement(annotation_category, "job_name")
+                    job_name_field.text = str(job_name)
                     pose = ET.SubElement(annotation_category, "pose")
                     pose.text = "Unspecified"
                     truncated = ET.SubElement(annotation_category, "truncated")
@@ -205,13 +212,13 @@ def _provide_voc_headers(
 
 
 def _convert_from_kili_to_voc_format(
-    response: Dict, img_width: int, img_height: int, parameters: Dict
+    response: Dict, img_width: int, img_height: int, parameters: Dict, valid_jobs: Sequence[str]
 ) -> str:
     xml_label = ET.Element("annotation")
 
     _provide_voc_headers(xml_label, img_width, img_height, parameters=parameters)
 
-    _parse_annotations(response, xml_label, img_width, img_height)
+    _parse_annotations(response, xml_label, img_width, img_height, valid_jobs)
 
     xmlstr = minidom.parseString(ET.tostring(xml_label)).toprettyxml(indent="   ")
 

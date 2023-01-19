@@ -22,6 +22,7 @@ install_requires = [
     "cuid",
     "pydantic",
     "urllib3>=1.26",
+    "ffmpeg-python",
 ]
 
 dev_extra = [

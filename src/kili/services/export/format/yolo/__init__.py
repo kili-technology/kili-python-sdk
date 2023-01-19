@@ -15,7 +15,10 @@ from kili.services.export.exceptions import (
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
+from kili.services.types import Job
 from kili.utils.tqdm import tqdm
+
+from ...tools_video import cut_video
 
 
 class YoloExporter(AbstractExporter):
@@ -48,22 +51,13 @@ class YoloExporter(AbstractExporter):
         """
         Checks if the export label format is compatible with the project.
         """
-        if self.project_input_type == "VIDEO":
-            raise NotImplementedError("Export of annotations on videos is not supported yet.")
-        if self.project_input_type != "IMAGE":
+        if self.project_input_type not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
                 f"Project with input type '{self.project_input_type}' not compatible with YOLO"
                 " export format."
             )
 
-        jobs = self.project_json_interface["jobs"]
-        jobs = {
-            job_name: job
-            for job_name, job in jobs.items()
-            if job["mlTask"] == JobMLTask.ObjectDetection
-            and any(tool == JobTool.Rectangle for tool in job["tools"])
-        }
-        if not jobs:
+        if len(self.compatible_jobs) == 0:
             raise NoCompatibleJobError(
                 f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
             )
@@ -80,6 +74,14 @@ class YoloExporter(AbstractExporter):
                     f"Error: There is no job in project {self.project_id} "
                     f"that can be converted to the {self.label_format} format."
                 )
+
+    def _is_job_compatibile(self, job: Job) -> bool:
+        """
+        Check job compatibility with the YOLO format.
+        """
+        if "tools" not in job:
+            return False
+        return JobTool.Rectangle in job["tools"] and job["mlTask"] == JobMLTask.ObjectDetection
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """
@@ -167,6 +169,7 @@ class YoloExporter(AbstractExporter):
                 categories_id,
                 self.content_repository,
                 self.with_assets,
+                self.project_input_type,
             )
             if video_filenames:
                 video_metadata[asset["externalId"]] = video_filenames
@@ -330,6 +333,7 @@ def _process_asset(
     category_ids: Dict[str, JobCategory],
     content_repository: AbstractContentRepository,
     with_assets: bool,
+    project_input_type: str,
 ) -> Tuple[List[Tuple[str, str, str]], List[str]]:
     # pylint: disable=too-many-locals, too-many-branches, too-many-arguments
     """
@@ -340,7 +344,24 @@ def _process_asset(
 
     label_frames = _LabelFrames.from_asset(asset, job_ids)
 
-    content_frames = content_repository.get_content_frames_paths(asset)
+    leading_zeros = 0
+    if label_frames.is_frame_group:
+        nbr_frames = label_frames.number_frames
+        leading_zeros = len(str(nbr_frames))
+
+    # If the asset is a video, we need to cut it into frames
+    if project_input_type == "VIDEO" and asset["jsonContent"] == "" and with_assets:
+        asset["jsonContent"] = cut_video(
+            video_path=asset["content"],
+            asset=asset,
+            leading_zeros=leading_zeros,
+            output_dir=images_folder,
+        )
+
+    content_frames = []
+    if isinstance(asset["jsonContent"], list):
+        content_frames = asset["jsonContent"]
+        content_frames = [str(path) for path in content_frames]
 
     video_filenames = []
 
@@ -355,6 +376,7 @@ def _process_asset(
 
         _write_labels_to_file(labels_folder, filename, frame_labels)
 
+        # no need to write asset urls since they are already downloaded
         if with_assets:
             continue
 
@@ -370,13 +392,6 @@ def _process_asset(
                     logging.warning("for asset %s: %s", asset_id, str(download_error))
         else:
             asset_remote_content.append([asset["externalId"], content_frame, f"{filename}.txt"])
-
-    if (
-        not content_frames
-        and label_frames.is_frame_group
-        and content_repository.is_serving(asset["content"])
-    ):
-        raise NotImplementedError("Export of annotations on videos is not supported yet.")
 
     return asset_remote_content, video_filenames
 

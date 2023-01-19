@@ -3,6 +3,7 @@ Tests for copy project service.
 """
 
 import hashlib
+import os
 from pathlib import Path
 from time import sleep
 from typing import Union
@@ -395,8 +396,7 @@ def test_copy_project_e2e(kili, src_project):
         for asset_src, asset_new in zip(assets_src, assets_new):
             assert asset_src["externalId"] == asset_new["externalId"]
 
-            # Path("https://...").is_file() crashes on windows with python 3.7
-            if not asset_src["content"].startswith("http") and Path(asset_src["content"]).is_file():
+            if not asset_src["content"].startswith("http") and os.path.isfile(asset_src["content"]):
                 assert md5_hash(asset_src["content"]) == md5_hash(asset_new["content"])
             else:
                 assert asset_src["content"] == asset_new["content"]
