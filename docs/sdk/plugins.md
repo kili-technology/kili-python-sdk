@@ -5,7 +5,7 @@
 A plugin is a set of :
 
 - a `python` file
-- a non mendatory `requirements.txt` file listing all the dependencies you need for you plugin.
+- a non mandatory `requirements.txt` file listing all the dependencies you need for you plugin.
 
 The plugin you are going to upload has to contain a `class` and two methods for the different types of events:
 
@@ -49,8 +49,13 @@ class PluginHandler(PluginCore):
     The plugins run has some limitations, it can use a maximum of 512mb of ram and will timeout after 60sec of run
 
 ## Model for Plugins
+
 ::: kili.services.plugins.model.PluginCore
+
 ## Queries
-::: kili.queries.plugins.__init__.QueriesPlugins
+
+::: kili.queries.plugins.**init**.QueriesPlugins
+
 ## Mutations
-::: kili.mutations.plugins.__init__.MutationsPlugins
+
+::: kili.mutations.plugins.**init**.MutationsPlugins
