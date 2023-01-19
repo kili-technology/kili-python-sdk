@@ -17,16 +17,26 @@ jobs:
     name: Deploy technical documentation
     runs-on: ubuntu-latest
     steps:
-      - name: get last release number
+      - name: set ref branch for checkout
+        if: ${{ github.event_name == 'workflow_call'}}
+        run: |
+          echo "REF=master" >> $GITHUB_ENV
+
+      - name: set ref branch for checkout if master branch
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch == 'master' }}
+        run: |
+          echo "REF=master" >> $GITHUB_ENV
+
+      - name: set ref branch for checkout if latest minor release branch
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch == 'latest minor release branch' }}
         run: |
           last_version_tag=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
           echo $last_version_tag
-          echo "LAST_VERSION_TAG=$last_version_tag" >> $GITHUB_ENV
+          echo "REF=$last_version_tag" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
-        if: ${{ inputs.branch == 'latest minor release branch' }}
         with:
-          ref: ${{ env.LAST_VERSION_TAG }}
+          ref: ${{ env.REF }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
