@@ -192,7 +192,7 @@ pandas==1.5.1
 git+https://github.com/yzhao062/pyod.git
 
 ```python
-requirements_path = plugin_folder / "requirements.txt"
+requirements_path = os.path.join(plugin_folder, "requirements.txt")
 
 packages_list = [
     "numpy\n",
