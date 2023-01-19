@@ -28,7 +28,11 @@ class APIKeyWhere(BaseQueryWhere):
 
     def graphql_where_builder(self):
         """Build the GraphQL Where payload sent in the resolver from the SDK APIKeyWhere"""
-        return {"user": {"id": self.user_id}, "id": self.api_key_id, "key": self.api_key}
+        return {
+            "user": {"id": self.user_id},
+            "id": self.api_key_id,
+            "key": self.api_key,
+        }
 
 
 class APIKeyQuery(GraphQLQuery):
