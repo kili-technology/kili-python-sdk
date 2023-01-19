@@ -1,0 +1,79 @@
+name: Deploy SDK doc
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Deploy doc of which branch?"
+        required: false
+        type: choice
+        default: "master"
+        options:
+          - master
+          - latest minor release branch
+  workflow_call:
+
+jobs:
+  deploy-documentation:
+    name: Deploy technical documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: set checkout to master branch
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch == 'master' }}
+        run: |
+          echo "REF=master" >> $GITHUB_ENV
+
+      - name: set checkout to latest release branch
+        if: ${{ github.event_name == 'workflow_call' || (github.event_name == 'workflow_dispatch' && github.event.inputs.branch == 'latest minor release branch') }}
+        run: |
+          last_version_tag=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
+          echo $last_version_tag
+          echo "REF=$last_version_tag" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.REF }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: setup git
+        run: |
+          git config user.name ci-bot
+          git config user.email ci-bot@example.com
+
+      - name: Deploy doc
+        run: |
+          pip install -e .
+          export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:2]))')
+          git fetch origin gh-pages --depth=1
+          mike deploy --push --update-aliases $version latest
+
+      - name: Slack notification
+        id: slack
+        if: success()
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be useful to see the latest version",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be useful to see the latest version"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

@@ -82,49 +82,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
   deploy-documentation:
-    name: Deploy technical documentation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-          cache: "pip"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev]"
-
-      - name: Deploy doc
-        run: |
-          git config user.name ci-bot
-          git config user.email ci-bot@example.com
-          pip install -e .
-          export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:2]))')
-          git fetch origin gh-pages --depth=1
-          mike deploy --push --update-aliases $version latest
-
-      - name: Slack notification
-        id: slack
-        if: success()
-        uses: slackapi/slack-github-action@v1.18.0
-        with:
-          payload: |
-            {
-              "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be useful to see the latest version",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Kili technical documentation released: https://python-sdk-docs.kili-technology.com/. \nA Hard refresh may be useful to see the latest version"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+    uses: ./.github/workflows/deploy_doc.yml
+    if: ${{ always() }}
+    needs: [publish]
