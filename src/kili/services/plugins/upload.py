@@ -66,7 +66,7 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
 
 
-def check_file_contain_handler(name: str, path: str):
+def check_file_contains_handler(name: str, path: str):
     """
     Return true if the file contain PluginHandler Class
     """
@@ -216,7 +216,7 @@ class PluginUploader:
         """
         Method to detect indentation errors in the script
         """
-        if not check_file_contain_handler(name, str(script_path)):
+        if not check_file_contains_handler(name, str(script_path)):
             raise ValueError("Do not contain PluginHandler Class. ")
 
         with script_path.open("r", encoding="utf-8") as file:
