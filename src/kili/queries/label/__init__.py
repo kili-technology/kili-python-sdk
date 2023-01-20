@@ -277,7 +277,7 @@ class QueriesLabel:
                 the exported data.
             fmt: Format of the exported labels.
             asset_ids: Optional list of the assets internal IDs from which to export the labels.
-            layout: Layout of the exported files: "split" means there is one folder
+            layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
             single_file: Layout of the exported labels. Single file mode is
                 only available for some specific formats (COCO and Kili).

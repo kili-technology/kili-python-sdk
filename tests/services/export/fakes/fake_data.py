@@ -78,26 +78,32 @@ asset_video = {
     "jsonContent": "",
 }
 
-asset_video_frames = {
+asset_video_content_no_json_content = {
     "latestLabel": {
-        "jsonResponse": [
-            {
-                "0": job_object_detection,
-                "1": job_object_detection,
-                "2": job_object_detection,
-                "3": job_object_detection,
-            },
-            {
-                "0": job_object_detection,
-                "1": job_object_detection,
-                "2": job_object_detection,
-                "3": job_object_detection,
-            },
-        ]
+        "jsonResponse": {
+            "0": job_object_detection,
+            "1": job_object_detection,
+            **{str(i): {} for i in range(2, 28)},
+        },
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
     },
-    "externalId": "video_1",
-    "content": "https://storage.googleapis.com/label-public-staging/video1/video1.mp4",
+    "externalId": "short_video",
+    "content": "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4",  # 28 frames
     "jsonContent": "",
+}
+
+asset_video_no_content_and_json_content = {
+    "latestLabel": {
+        "jsonResponse": {
+            "0": job_object_detection,
+            "1": job_object_detection,
+            **{str(i): {} for i in range(2, 130)},
+        },
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+    },
+    "externalId": "video2",
+    "content": "",
+    "jsonContent": "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json",  # 130 frames
 }
 
 # Data for Kili format export test
