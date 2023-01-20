@@ -19,7 +19,7 @@
         <link rel="next" href="../user/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
     
     
       
@@ -883,7 +883,7 @@
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">],</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of project versions respecting a set of criteria.</span>
 
@@ -901,33 +901,11 @@
 <span class="sd">            A result object which contains the query if it was successful,</span>
 <span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">count_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;project_id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm</span> <span class="ow">or</span> <span class="n">as_generator</span>
-        <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">}</span>
-        <span class="n">project_versions_generator</span> <span class="o">=</span> <span class="n">row_generator_from_paginated_calls</span><span class="p">(</span>
-            <span class="n">skip</span><span class="p">,</span>
-            <span class="n">first</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">count_project_versions</span><span class="p">,</span>
-            <span class="n">count_args</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_query_project_versions</span><span class="p">,</span>
-            <span class="n">payload_query</span><span class="p">,</span>
-            <span class="n">fields</span><span class="p">,</span>
-            <span class="n">disable_tqdm</span><span class="p">,</span>
+        <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">project_versions_generator</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">project_versions_generator</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_query_project_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-        <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;skip&quot;</span><span class="p">:</span> <span class="n">skip</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">first</span><span class="p">})</span>
-        <span class="n">_gql_project_version</span> <span class="o">=</span> <span class="n">gql_project_version</span><span class="p">(</span><span class="n">fragment_builder</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">ProjectVersionType</span><span class="p">))</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_gql_project_version</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_project_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -939,19 +917,16 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of project versions with the parameters provided</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
-        <span class="p">}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_PROJECT_VERSION_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="n">count</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
 
 
   <div class="doc doc-children">
-
 
 
 
@@ -1021,12 +996,10 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of project versions with the parameters provided</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
-    <span class="p">}</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_PROJECT_VERSION_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1110,7 +1083,7 @@ of creation, first to last).</p></td>
   </thead>
   <tbody>
     <tr>
-      <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
+      <td><code>Iterable[Dict]</code></td>
       <td><p>A result object which contains the query if it was successful,
     or an error message.</p></td>
     </tr>
@@ -1127,7 +1100,7 @@ of creation, first to last).</p></td>
     <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">],</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of project versions respecting a set of criteria.</span>
 
@@ -1145,27 +1118,11 @@ of creation, first to last).</p></td>
 <span class="sd">        A result object which contains the query if it was successful,</span>
 <span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">count_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;project_id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm</span> <span class="ow">or</span> <span class="n">as_generator</span>
-    <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-    <span class="n">project_versions_generator</span> <span class="o">=</span> <span class="n">row_generator_from_paginated_calls</span><span class="p">(</span>
-        <span class="n">skip</span><span class="p">,</span>
-        <span class="n">first</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count_project_versions</span><span class="p">,</span>
-        <span class="n">count_args</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_query_project_versions</span><span class="p">,</span>
-        <span class="n">payload_query</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">,</span>
-        <span class="n">disable_tqdm</span><span class="p">,</span>
+    <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">project_versions_generator</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">project_versions_generator</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

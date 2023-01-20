@@ -19,7 +19,7 @@
         <link rel="next" href="../issue/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
     
     
       
@@ -1081,89 +1081,42 @@
                 <span class="s1">&#39;Argument values as_generator==True and format==&quot;pandas&quot; are not compatible.&#39;</span>
             <span class="p">)</span>
 
-        <span class="n">saved_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
-        <span class="n">count_args</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">saved_args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">k</span>
-            <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="s2">&quot;skip&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;first&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;format&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;fields&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;self&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;as_generator&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;message&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;download_media&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;local_media_dir&quot;</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-
-        <span class="c1"># using tqdm with a generator is messy, so it is always disabled</span>
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm</span> <span class="ow">or</span> <span class="n">as_generator</span>
         <span class="k">if</span> <span class="n">label_category_search</span><span class="p">:</span>
             <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">label_category_search</span><span class="p">)</span>
 
-        <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-                <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-                <span class="p">},</span>
-                <span class="s2">&quot;externalIdStrictlyIn&quot;</span><span class="p">:</span> <span class="n">external_id_contains</span><span class="p">,</span>
-                <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">asset_id_in</span><span class="p">,</span>
-                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata_where</span><span class="p">,</span>
-                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">label_type_in</span><span class="p">,</span>
-                    <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">label_author_in</span><span class="p">,</span>
-                    <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_gt</span><span class="p">,</span>
-                    <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_lt</span><span class="p">,</span>
-                    <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">label_created_at</span><span class="p">,</span>
-                    <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">label_created_at_gt</span><span class="p">,</span>
-                    <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">label_created_at_lt</span><span class="p">,</span>
-                    <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
-                    <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
-                    <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">label_category_search</span><span class="p">,</span>
-                <span class="p">},</span>
-                <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-                <span class="s2">&quot;updatedAtGte&quot;</span><span class="p">:</span> <span class="n">updated_at_gte</span><span class="p">,</span>
-                <span class="s2">&quot;updatedAtLte&quot;</span><span class="p">:</span> <span class="n">updated_at_lte</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">}</span>
-
-        <span class="n">post_call_process</span> <span class="o">=</span> <span class="n">get_post_assets_call_process</span><span class="p">(</span>
-            <span class="n">download_media</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">local_media_dir</span>
+        <span class="n">where</span> <span class="o">=</span> <span class="n">AssetWhere</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+            <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
+            <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
+            <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
+            <span class="n">external_id_contains</span><span class="o">=</span><span class="n">external_id_contains</span><span class="p">,</span>
+            <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="n">honeypot_mark_gt</span><span class="p">,</span>
+            <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="n">honeypot_mark_lt</span><span class="p">,</span>
+            <span class="n">label_author_in</span><span class="o">=</span><span class="n">label_author_in</span><span class="p">,</span>
+            <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="n">label_consensus_mark_gt</span><span class="p">,</span>
+            <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="n">label_consensus_mark_lt</span><span class="p">,</span>
+            <span class="n">label_created_at</span><span class="o">=</span><span class="n">label_created_at</span><span class="p">,</span>
+            <span class="n">label_created_at_gt</span><span class="o">=</span><span class="n">label_created_at_gt</span><span class="p">,</span>
+            <span class="n">label_created_at_lt</span><span class="o">=</span><span class="n">label_created_at_lt</span><span class="p">,</span>
+            <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
+            <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
+            <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
+            <span class="n">metadata_where</span><span class="o">=</span><span class="n">metadata_where</span><span class="p">,</span>
+            <span class="n">skipped</span><span class="o">=</span><span class="n">skipped</span><span class="p">,</span>
+            <span class="n">status_in</span><span class="o">=</span><span class="n">status_in</span><span class="p">,</span>
+            <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
+            <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
+            <span class="n">label_category_search</span><span class="o">=</span><span class="n">label_category_search</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="n">asset_generator</span> <span class="o">=</span> <span class="n">row_generator_from_paginated_calls</span><span class="p">(</span>
-            <span class="n">skip</span><span class="p">,</span>
-            <span class="n">first</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">count_assets</span><span class="p">,</span>
-            <span class="n">count_args</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_query_assets</span><span class="p">,</span>
-            <span class="n">payload_query</span><span class="p">,</span>
-            <span class="n">fields</span><span class="p">,</span>
-            <span class="n">disable_tqdm</span><span class="p">,</span>
-            <span class="n">post_call_process</span><span class="p">,</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
+        <span class="n">post_call_function</span> <span class="o">=</span> <span class="n">get_download_assets_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">download_media</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">local_media_dir</span>
         <span class="p">)</span>
+        <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">asset_generator</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">asset_generator</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">asset_generator</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_query_assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-        <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;skip&quot;</span><span class="p">:</span> <span class="n">skip</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">first</span><span class="p">})</span>
-        <span class="n">_gql_assets</span> <span class="o">=</span> <span class="n">gql_assets</span><span class="p">(</span><span class="n">fragment_builder</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">AssetType</span><span class="p">))</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_gql_assets</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-        <span class="n">assets</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">_object</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">Asset</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">assets</span>
 
     <span class="nd">@typechecked</span>
@@ -1258,46 +1211,38 @@
         <span class="k">if</span> <span class="n">label_category_search</span><span class="p">:</span>
             <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">label_category_search</span><span class="p">)</span>
 
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-                <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-                <span class="p">},</span>
-                <span class="s2">&quot;externalIdStrictlyIn&quot;</span><span class="p">:</span> <span class="n">external_id_contains</span><span class="p">,</span>
-                <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">asset_id_in</span><span class="p">,</span>
-                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata_where</span><span class="p">,</span>
-                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">label_type_in</span><span class="p">,</span>
-                    <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">label_author_in</span><span class="p">,</span>
-                    <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_gt</span><span class="p">,</span>
-                    <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_lt</span><span class="p">,</span>
-                    <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">label_created_at</span><span class="p">,</span>
-                    <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">label_created_at_gt</span><span class="p">,</span>
-                    <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">label_created_at_lt</span><span class="p">,</span>
-                    <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
-                    <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
-                    <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">label_category_search</span><span class="p">,</span>
-                <span class="p">},</span>
-                <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-                <span class="s2">&quot;updatedAtGte&quot;</span><span class="p">:</span> <span class="n">updated_at_gte</span><span class="p">,</span>
-                <span class="s2">&quot;updatedAtLte&quot;</span><span class="p">:</span> <span class="n">updated_at_lte</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSETS_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">where</span> <span class="o">=</span> <span class="n">AssetWhere</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+            <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
+            <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
+            <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
+            <span class="n">external_id_contains</span><span class="o">=</span><span class="n">external_id_contains</span><span class="p">,</span>
+            <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="n">honeypot_mark_gt</span><span class="p">,</span>
+            <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="n">honeypot_mark_lt</span><span class="p">,</span>
+            <span class="n">label_author_in</span><span class="o">=</span><span class="n">label_author_in</span><span class="p">,</span>
+            <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="n">label_consensus_mark_gt</span><span class="p">,</span>
+            <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="n">label_consensus_mark_lt</span><span class="p">,</span>
+            <span class="n">label_created_at</span><span class="o">=</span><span class="n">label_created_at</span><span class="p">,</span>
+            <span class="n">label_created_at_gt</span><span class="o">=</span><span class="n">label_created_at_gt</span><span class="p">,</span>
+            <span class="n">label_created_at_lt</span><span class="o">=</span><span class="n">label_created_at_lt</span><span class="p">,</span>
+            <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
+            <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
+            <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
+            <span class="n">metadata_where</span><span class="o">=</span><span class="n">metadata_where</span><span class="p">,</span>
+            <span class="n">skipped</span><span class="o">=</span><span class="n">skipped</span><span class="p">,</span>
+            <span class="n">status_in</span><span class="o">=</span><span class="n">status_in</span><span class="p">,</span>
+            <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
+            <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
+            <span class="n">label_category_search</span><span class="o">=</span><span class="n">label_category_search</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
 
 
   <div class="doc doc-children">
-
 
 
 
@@ -1717,83 +1662,43 @@ label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_
             <span class="s1">&#39;Argument values as_generator==True and format==&quot;pandas&quot; are not compatible.&#39;</span>
         <span class="p">)</span>
 
-    <span class="n">saved_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
-    <span class="n">count_args</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">saved_args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">k</span>
-        <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;skip&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;first&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;format&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fields&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;self&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;as_generator&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;download_media&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;local_media_dir&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
-
-    <span class="c1"># using tqdm with a generator is messy, so it is always disabled</span>
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm</span> <span class="ow">or</span> <span class="n">as_generator</span>
     <span class="k">if</span> <span class="n">label_category_search</span><span class="p">:</span>
         <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">label_category_search</span><span class="p">)</span>
 
-    <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-            <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;externalIdStrictlyIn&quot;</span><span class="p">:</span> <span class="n">external_id_contains</span><span class="p">,</span>
-            <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
-            <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_gt</span><span class="p">,</span>
-            <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_lt</span><span class="p">,</span>
-            <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gt</span><span class="p">,</span>
-            <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lt</span><span class="p">,</span>
-            <span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">asset_id_in</span><span class="p">,</span>
-            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata_where</span><span class="p">,</span>
-            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">label_type_in</span><span class="p">,</span>
-                <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">label_author_in</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">label_created_at</span><span class="p">,</span>
-                <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">label_created_at_gt</span><span class="p">,</span>
-                <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">label_created_at_lt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">label_category_search</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-            <span class="s2">&quot;updatedAtGte&quot;</span><span class="p">:</span> <span class="n">updated_at_gte</span><span class="p">,</span>
-            <span class="s2">&quot;updatedAtLte&quot;</span><span class="p">:</span> <span class="n">updated_at_lte</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-
-    <span class="n">post_call_process</span> <span class="o">=</span> <span class="n">get_post_assets_call_process</span><span class="p">(</span>
-        <span class="n">download_media</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">local_media_dir</span>
+    <span class="n">where</span> <span class="o">=</span> <span class="n">AssetWhere</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+        <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
+        <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
+        <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
+        <span class="n">external_id_contains</span><span class="o">=</span><span class="n">external_id_contains</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="n">honeypot_mark_gt</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="n">honeypot_mark_lt</span><span class="p">,</span>
+        <span class="n">label_author_in</span><span class="o">=</span><span class="n">label_author_in</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="n">label_consensus_mark_gt</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="n">label_consensus_mark_lt</span><span class="p">,</span>
+        <span class="n">label_created_at</span><span class="o">=</span><span class="n">label_created_at</span><span class="p">,</span>
+        <span class="n">label_created_at_gt</span><span class="o">=</span><span class="n">label_created_at_gt</span><span class="p">,</span>
+        <span class="n">label_created_at_lt</span><span class="o">=</span><span class="n">label_created_at_lt</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
+        <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
+        <span class="n">metadata_where</span><span class="o">=</span><span class="n">metadata_where</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="o">=</span><span class="n">skipped</span><span class="p">,</span>
+        <span class="n">status_in</span><span class="o">=</span><span class="n">status_in</span><span class="p">,</span>
+        <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
+        <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
+        <span class="n">label_category_search</span><span class="o">=</span><span class="n">label_category_search</span><span class="p">,</span>
     <span class="p">)</span>
-
-    <span class="n">asset_generator</span> <span class="o">=</span> <span class="n">row_generator_from_paginated_calls</span><span class="p">(</span>
-        <span class="n">skip</span><span class="p">,</span>
-        <span class="n">first</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count_assets</span><span class="p">,</span>
-        <span class="n">count_args</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_query_assets</span><span class="p">,</span>
-        <span class="n">payload_query</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">,</span>
-        <span class="n">disable_tqdm</span><span class="p">,</span>
-        <span class="n">post_call_process</span><span class="p">,</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
+    <span class="n">post_call_function</span> <span class="o">=</span> <span class="n">get_download_assets_function</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">download_media</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">local_media_dir</span>
     <span class="p">)</span>
+    <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">asset_generator</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">asset_generator</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">asset_generator</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">assets</span>
 </code></pre></div>
         </details>
     </div>
@@ -2107,39 +2012,32 @@ whose update date is lower or equal to this date.</p></td>
     <span class="k">if</span> <span class="n">label_category_search</span><span class="p">:</span>
         <span class="n">validate_category_search_query</span><span class="p">(</span><span class="n">label_category_search</span><span class="p">)</span>
 
-    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span>
-            <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;externalIdStrictlyIn&quot;</span><span class="p">:</span> <span class="n">external_id_contains</span><span class="p">,</span>
-            <span class="s2">&quot;statusIn&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
-            <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_gt</span><span class="p">,</span>
-            <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">consensus_mark_lt</span><span class="p">,</span>
-            <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_gt</span><span class="p">,</span>
-            <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">honeypot_mark_lt</span><span class="p">,</span>
-            <span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">asset_id_in</span><span class="p">,</span>
-            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata_where</span><span class="p">,</span>
-            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;typeIn&quot;</span><span class="p">:</span> <span class="n">label_type_in</span><span class="p">,</span>
-                <span class="s2">&quot;authorIn&quot;</span><span class="p">:</span> <span class="n">label_author_in</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkGte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;consensusMarkLte&quot;</span><span class="p">:</span> <span class="n">label_consensus_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="n">label_created_at</span><span class="p">,</span>
-                <span class="s2">&quot;createdAtGte&quot;</span><span class="p">:</span> <span class="n">label_created_at_gt</span><span class="p">,</span>
-                <span class="s2">&quot;createdAtLte&quot;</span><span class="p">:</span> <span class="n">label_created_at_lt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkGte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
-                <span class="s2">&quot;honeypotMarkLte&quot;</span><span class="p">:</span> <span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
-                <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">label_category_search</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
-            <span class="s2">&quot;updatedAtGte&quot;</span><span class="p">:</span> <span class="n">updated_at_gte</span><span class="p">,</span>
-            <span class="s2">&quot;updatedAtLte&quot;</span><span class="p">:</span> <span class="n">updated_at_lte</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSETS_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+    <span class="n">where</span> <span class="o">=</span> <span class="n">AssetWhere</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+        <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
+        <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
+        <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
+        <span class="n">external_id_contains</span><span class="o">=</span><span class="n">external_id_contains</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="n">honeypot_mark_gt</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="n">honeypot_mark_lt</span><span class="p">,</span>
+        <span class="n">label_author_in</span><span class="o">=</span><span class="n">label_author_in</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="n">label_consensus_mark_gt</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="n">label_consensus_mark_lt</span><span class="p">,</span>
+        <span class="n">label_created_at</span><span class="o">=</span><span class="n">label_created_at</span><span class="p">,</span>
+        <span class="n">label_created_at_gt</span><span class="o">=</span><span class="n">label_created_at_gt</span><span class="p">,</span>
+        <span class="n">label_created_at_lt</span><span class="o">=</span><span class="n">label_created_at_lt</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="n">label_honeypot_mark_gt</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="n">label_honeypot_mark_lt</span><span class="p">,</span>
+        <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
+        <span class="n">metadata_where</span><span class="o">=</span><span class="n">metadata_where</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="o">=</span><span class="n">skipped</span><span class="p">,</span>
+        <span class="n">status_in</span><span class="o">=</span><span class="n">status_in</span><span class="p">,</span>
+        <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
+        <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
+        <span class="n">label_category_search</span><span class="o">=</span><span class="n">label_category_search</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2527,12 +2425,10 @@ whose update date is lower or equal to this date.</p></td>
         <span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-                <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-                <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">],</span>
+            <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+                <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">]),</span>
+                <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="n">result</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_review</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">result</span>
@@ -2575,12 +2471,10 @@ whose update date is lower or equal to this date.</p></td>
             <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span>
         <span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">],</span>
+        <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+            <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">]),</span>
+            <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">result</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_queue</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">result</span>
@@ -2721,12 +2615,10 @@ An error message if mutation failed.</p></td>
     <span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-        <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">],</span>
+        <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+            <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">]),</span>
+            <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">result</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_review</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">result</span>
@@ -3316,12 +3208,10 @@ An error message if mutation failed.</p></td>
         <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span>
     <span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-        <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-        <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">],</span>
+    <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+        <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">]),</span>
+        <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+        <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="n">result</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_queue</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">result</span>
