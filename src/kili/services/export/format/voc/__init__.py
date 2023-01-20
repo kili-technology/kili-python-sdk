@@ -18,8 +18,8 @@ from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
-from ...tools.image import get_image_dimensions
-from ...tools.video import cut_video, get_video_dimensions
+from ...media.image import get_image_dimensions
+from ...media.video import cut_video, get_video_dimensions
 
 
 class VocExporter(AbstractExporter):
