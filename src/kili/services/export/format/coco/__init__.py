@@ -207,10 +207,7 @@ def _get_coco_images_and_annotations(
     coco_images = []
     coco_annotations = []
     annotation_offset = 0
-    for asset_i, asset in tqdm(
-        enumerate(assets),
-        desc="Convert to coco format",
-    ):
+    for asset_i, asset in tqdm(enumerate(assets), desc="Convert to coco format"):
         if project_input_type == "IMAGE":
             width, height = get_image_dimensions(asset["content"])
             coco_image = _CocoImage(
@@ -255,12 +252,12 @@ def _get_coco_images_and_annotations(
             else:
                 raise FileNotFoundError(f"Could not find frames or video for asset {asset}")
 
-            for i, (frame_id, json_response) in enumerate(
+            for frame_i, (frame_id, json_response) in enumerate(
                 asset["latestLabel"]["jsonResponse"].items()
             ):
                 frame_name = f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}'
                 coco_image = _CocoImage(
-                    id=i + len(assets),
+                    id=frame_i + len(assets),  # add offset to avoid duplicate ids
                     license=0,
                     file_name=str(DATA_SUBDIR + "/" + f"{frame_name}{frame_ext}"),
                     height=height,

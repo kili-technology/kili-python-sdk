@@ -296,6 +296,7 @@ def test_coco_video_jsoncontent():
         "content": "",
         "jsonContent": [],
     }
+    # fill asset with jsonContent frames on disk
     with TemporaryDirectory() as tmp_dir_for_frames:
         for i, filelink in enumerate(
             [
@@ -325,7 +326,7 @@ def test_coco_video_jsoncontent():
             )
 
             assert len(labels_json["images"]) == 5
-            assert len(labels_json["annotations"]) == 2
+            assert len(labels_json["annotations"]) == 2  # 2 frames with annotations
 
             assert [img["file_name"] for img in labels_json["images"]] == [
                 f"data/video2_{i+1}.jpg" for i in range(5)
