@@ -238,7 +238,7 @@ Alternatively, you can also create a plugin directly from a `.py` file.
 
 
 ```python
-path_to_plugin = "main.py"
+path_to_plugin = Path(plugin_folder) / "main.py"
 plugin_name = "Plugin bbox count"
 
 from kili.exceptions import GraphQLError
