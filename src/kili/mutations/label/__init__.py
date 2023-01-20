@@ -53,9 +53,10 @@ class MutationsLabel:
         Args:
             project_id: Identifier of the project.
             external_id_array: The external IDs of the assets for which we want to add predictions.
-            model_name_array: In case you want to precise from which model the label originated.
+            model_name_array: [Deprecated] use `model_name` instead.
             json_response_array: The predictions are given here. For examples,
                 see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
+            model_name: The name of the model that generated the predictions
             asset_id_array: The internal IDs of the assets for which we want to add predictions.
 
         Returns:
@@ -63,6 +64,11 @@ class MutationsLabel:
 
         !!! example "Recipe"
             For more detailed examples on how to create predictions, see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
+
+        !!! warning "model name"
+            The use of `model_name_array` is deprecated. Creating predictions from different
+            models is not supported anymore. Please use `model_name` argument instead to
+            provide the predictions model name."
         """
         if json_response_array is None or len(json_response_array) == 0:
             raise ValueError(
