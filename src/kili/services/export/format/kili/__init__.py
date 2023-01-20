@@ -33,11 +33,12 @@ class KiliExporter(AbstractExporter):
 
         if self.single_file:
             project_json = json.dumps(assets, sort_keys=True, indent=4)
+            self.base_folder.mkdir(parents=True, exist_ok=True)
             with (self.base_folder / "data.json").open("wb") as output_file:
                 output_file.write(project_json.encode("utf-8"))
         else:
             labels_folder = self.base_folder / "labels"
-            labels_folder.mkdir(parents=True)
+            labels_folder.mkdir(parents=True, exist_ok=True)
             for asset in assets:
                 external_id = asset["externalId"].replace(" ", "_")
                 asset_json = json.dumps(asset, sort_keys=True, indent=4)
