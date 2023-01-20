@@ -16,8 +16,6 @@ class OrganizationWhere(BaseQueryWhere):
     Tuple to be passed to the OrganizationQuery to restrict query
     """
 
-    # pylint: disable=too-many-arguments,too-many-locals,too-many-instance-attributes
-
     def __init__(
         self,
         email: Optional[str] = None,
@@ -41,8 +39,6 @@ class OrganizationMetricsWhere(BaseQueryWhere):
     """
     Tuple to be passed to the OrganizationQuery to restrict query
     """
-
-    # pylint: disable=too-many-arguments,too-many-locals,too-many-instance-attributes
 
     def __init__(
         self,

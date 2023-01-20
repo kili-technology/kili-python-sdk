@@ -14,8 +14,6 @@ class NotificationWhere(BaseQueryWhere):
     Tuple to be passed to the NotificationQuery to restrict query
     """
 
-    # pylint: disable=too-many-arguments,too-many-locals,too-many-instance-attributes
-
     def __init__(
         self,
         has_been_seen: Optional[bool] = None,
