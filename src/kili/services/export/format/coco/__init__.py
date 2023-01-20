@@ -192,7 +192,7 @@ def _convert_kili_semantic_to_coco(
     )
 
     label_file_name = output_dir / job_name / "labels.json"
-    label_file_name.parent.mkdir(parents=True)
+    label_file_name.parent.mkdir(parents=True, exist_ok=True)
     with (output_dir / job_name / "labels.json").open("w") as outfile:
         json.dump(labels_json, outfile)
 

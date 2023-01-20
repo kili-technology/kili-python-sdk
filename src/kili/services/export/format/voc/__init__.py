@@ -79,7 +79,7 @@ class VocExporter(AbstractExporter):
         self.logger.info("Exporting VOC format")
 
         labels_folder = self.base_folder / "labels"
-        labels_folder.mkdir(parents=True)
+        labels_folder.mkdir(parents=True, exist_ok=True)
 
         for asset in tqdm(assets, disable=self.disable_tqdm):
             _process_asset_for_job(self.content_repository, asset, labels_folder)
