@@ -1,17 +1,15 @@
 """Organization queries."""
 
 from datetime import datetime
-from typing import Generator, List, Optional, Union
+from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from ...helpers import format_result, fragment_builder
-from ...types import Organization
-from ...utils.pagination import row_generator_from_paginated_calls
-from .queries import (
-    GQL_ORGANIZATION_METRICS,
-    GQL_ORGANIZATIONS_COUNT,
-    gql_organizations,
+from kili.graphql import QueryOptions
+from kili.graphql.operations.organization.queries import (
+    OrganizationMetricsWhere,
+    OrganizationQuery,
+    OrganizationWhere,
 )
 
 
@@ -41,7 +39,7 @@ class QueriesOrganization:
         skip: int = 0,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Union[List[dict], Generator[dict, None, None]]:
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of organizations that match a set of criteria.
 
@@ -64,38 +62,12 @@ class QueriesOrganization:
             [{'users': [{'email': 'john@doe.com'}]}]
         """
 
-        count_args = {"email": email, "organization_id": organization_id}
-        disable_tqdm = disable_tqdm or as_generator
-
-        payload_query = {
-            "where": {
-                "id": organization_id,
-                "user": {
-                    "email": email,
-                },
-            }
-        }
-
-        organizations_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_organizations,
-            count_args,
-            self._query_organizations,
-            payload_query,
-            fields,
-            disable_tqdm,
+        where = OrganizationWhere(
+            email=email,
+            organization_id=organization_id,
         )
-
-        if as_generator:
-            return organizations_generator
-        return list(organizations_generator)
-
-    def _query_organizations(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_organizations = gql_organizations(fragment_builder(fields, Organization))
-        result = self.auth.client.execute(_gql_organizations, payload)
-        return format_result("data", result)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        return OrganizationQuery(self.auth.client)(where, fields, options)
 
     @typechecked
     def count_organizations(
@@ -111,23 +83,18 @@ class QueriesOrganization:
             A result object which contains the query if it was successful,
                 or an error message.
         """
-        variables = {
-            "where": {
-                "id": organization_id,
-                "user": {
-                    "email": email,
-                },
-            }
-        }
-        result = self.auth.client.execute(GQL_ORGANIZATIONS_COUNT, variables)
-        return format_result("data", result, int)
+        where = OrganizationWhere(
+            email=email,
+            organization_id=organization_id,
+        )
+        return OrganizationQuery(self.auth.client).count(where)
 
     @typechecked
     def organization_metrics(
         self,
         organization_id: str,
-        start_date: datetime,
-        end_date: datetime,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
     ):
         """Get organization metrics.
 
@@ -144,12 +111,7 @@ class QueriesOrganization:
             start_date = datetime.now()
         if end_date is None:
             end_date = datetime.now()
-        variables = {
-            "where": {
-                "organizationId": organization_id,
-                "startDate": start_date.isoformat(sep="T", timespec="milliseconds") + "Z",
-                "endDate": end_date.isoformat(sep="T", timespec="milliseconds") + "Z",
-            }
-        }
-        result = self.auth.client.execute(GQL_ORGANIZATION_METRICS, variables)
-        return format_result("data", result)
+        where = OrganizationMetricsWhere(
+            organization_id=organization_id, start_date=start_date, end_date=end_date
+        )
+        return OrganizationQuery(self.auth.client).metrics(where)
