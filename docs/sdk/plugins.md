@@ -54,8 +54,8 @@ class PluginHandler(PluginCore):
 
 ## Queries
 
-::: kili.queries.plugins.**init**.QueriesPlugins
+::: kili.queries.plugins.__init__.QueriesPlugins
 
 ## Mutations
 
-::: kili.mutations.plugins.**init**.MutationsPlugins
+::: kili.mutations.plugins.__init__.MutationsPlugins
