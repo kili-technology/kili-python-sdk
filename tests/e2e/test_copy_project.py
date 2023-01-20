@@ -3,7 +3,6 @@ Tests for copy project service.
 """
 
 import hashlib
-import os
 from pathlib import Path
 from time import sleep
 from typing import Union
