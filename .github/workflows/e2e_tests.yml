@@ -35,10 +35,10 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Integration tests
-        run: pytest -sv tests/e2e -k ".py"
+        run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
 
       - name: Notebook tests
-        run: pytest -sv tests/test_notebooks.py
+        run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
 
       - name: Slack notification if failure
         if: failure()
