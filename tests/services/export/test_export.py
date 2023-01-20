@@ -221,6 +221,22 @@ def get_file_tree(folder: str):
             },
         ),
         (
+            "Export to Kili raw format single file",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "kili",
+                    "split_option": "merged",
+                    "single_file": True,
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "data.json": {},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
             "COCO format",
             {
                 "export_kwargs": {
