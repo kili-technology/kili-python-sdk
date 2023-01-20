@@ -396,7 +396,8 @@ def test_copy_project_e2e(kili, src_project):
         for asset_src, asset_new in zip(assets_src, assets_new):
             assert asset_src["externalId"] == asset_new["externalId"]
 
-            if not asset_src["content"].startswith("http") and os.path.isfile(asset_src["content"]):
+            # Path("https://...").is_file() crashes on windows with python 3.7
+            if not asset_src["content"].startswith("http") and Path(asset_src["content"]).is_file():
                 assert md5_hash(asset_src["content"]) == md5_hash(asset_new["content"])
             else:
                 assert asset_src["content"] == asset_new["content"]
