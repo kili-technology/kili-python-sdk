@@ -9,14 +9,14 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, cast
+from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
 from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
 from kili.services.export.types import ExportType, LabelFormat, SplitOption
 from kili.services.project import get_project
-from kili.services.types import ProjectId
+from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
 
@@ -62,9 +62,12 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.with_assets: bool = export_params.with_assets
         self.export_root_folder: Path = Path()
 
-        project_info = get_project(self.kili, self.project_id, ["jsonInterface", "inputType"])
+        project_info = get_project(
+            self.kili, self.project_id, ["jsonInterface", "inputType", "title"]
+        )
         self.project_json_interface = project_info["jsonInterface"]
         self.project_input_type = project_info["inputType"]
+        self.project_title = project_info["title"]
 
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
@@ -77,6 +80,23 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         Checks if the export label format is compatible with the project.
         """
+
+    def _is_job_compatibile(self, job: Job) -> bool:
+        """
+        Check if the export label format is compatible with the job.
+        """
+        raise NotImplementedError
+
+    @property
+    def compatible_jobs(self) -> Tuple[str]:
+        """
+        Get all job names compatible with the export format.
+        """
+        return tuple(
+            job_name
+            for job_name, job in self.project_json_interface["jobs"].items()
+            if self._is_job_compatibile(job)
+        )
 
     @abstractmethod
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
@@ -137,7 +157,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """
         Export a project to a json.
-        Return the name of the exported archive file in the bucket.
+
+        Return the name of the exported archive file.
         """
         self._check_arguments_compatibility()
         self._check_project_compatibility()

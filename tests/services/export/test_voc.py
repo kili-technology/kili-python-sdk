@@ -14,6 +14,7 @@ def test__convert_from_kili_to_voc_format():
         img_width=1920,
         img_height=1080,
         parameters=parameters,
+        valid_jobs=["JOB_0"],
     )
     expected_annotations = Path("./tests/services/export/expected/car_1.xml").read_text(
         encoding="utf-8"
@@ -28,6 +29,7 @@ def test__convert_from_kili_to_voc_format_no_annotation():
         img_width=1920,
         img_height=1080,
         parameters=parameters,
+        valid_jobs=["JOB_0"],
     )
     expected_annotations = Path(
         "./tests/services/export/expected/car_1_without_annotation.xml"
