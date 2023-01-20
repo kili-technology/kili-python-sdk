@@ -29,7 +29,7 @@ repos:
         name: Checks for notebook and markdown tutorials
         language: python
         entry: python -m docs.utils notebook_tutorials_commit_hook
-        files: recipes\/tutorials\/.*\.ipynb$|docs\/sdk\/tutorials\/.*\.md$
+        files: recipes\/.*\.ipynb$|docs\/sdk\/tutorials\/.*\.md$
         stages: [commit, merge-commit]
         always_run: false
         pass_filenames: true
