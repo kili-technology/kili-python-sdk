@@ -571,6 +571,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#plugins-structure" class="md-nav__link">
+    Plugins structure
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#model-for-plugins" class="md-nav__link">
     Model for Plugins
   </a>
@@ -868,6 +875,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#plugins-structure" class="md-nav__link">
+    Plugins structure
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#model-for-plugins" class="md-nav__link">
     Model for Plugins
   </a>
@@ -1014,6 +1028,49 @@
 
 
 <h1 id="plugin-module">Plugin module</h1>
+<h2 id="plugins-structure">Plugins structure</h2>
+<p>A plugin is a set of :</p>
+<ul>
+<li>a <code>python</code> file</li>
+<li>a non mandatory <code>requirements.txt</code> file listing all the dependencies you need for you plugin.</li>
+</ul>
+<p>The plugin you are going to upload has to contain a <code>class</code> and two methods for the different types of events:</p>
+<ul>
+<li><code>on_submit</code></li>
+<li><code>on_review</code></li>
+</ul>
+<p>You can add custom methods in your class as well.</p>
+<p>Some attributes are available in the class:</p>
+<ul>
+<li><code>self.kili</code></li>
+<li><code>self.project_id</code></li>
+</ul>
+<p>The skeleton of the plugin should look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
+<span class="kn">from</span> <span class="nn">kili.types</span> <span class="kn">import</span> <span class="n">Label</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">custom_function</span><span class="p">():</span>
+    <span class="c1"># Do something...</span>
+
+<span class="k">class</span> <span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom plugin&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">custom_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Do something...</span>
+
+    <span class="k">def</span> <span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Review action&quot;&quot;&quot;</span>
+        <span class="c1"># Do something...</span>
+
+    <span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Submit action&quot;&quot;&quot;</span>
+        <span class="c1"># Do something...</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The plugins run has some limitations, it can use a maximum of 512mb of ram and will timeout after 60sec of run</p>
+</div>
 <h2 id="model-for-plugins">Model for Plugins</h2>
 
 
@@ -1789,6 +1846,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/folder&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/file.py&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2664,7 +2722,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">&quot;./path/to/my/file.py&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">&quot;./path/to/my/folder&quot;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">&quot;./path/to/my/file.py&quot;</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -2690,6 +2749,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/folder&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/file.py&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

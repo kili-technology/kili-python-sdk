@@ -1139,9 +1139,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-        <span class="n">assets</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
+        <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+            <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">),</span>
+            <span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
+            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">dict</span><span class="p">(</span>
@@ -1244,7 +1245,7 @@
 <span class="sd">                the exported data.</span>
 <span class="sd">            fmt: Format of the exported labels.</span>
 <span class="sd">            asset_ids: Optional list of the assets internal IDs from which to export the labels.</span>
-<span class="sd">            layout: Layout of the exported files: &quot;split&quot; means there is one folder</span>
+<span class="sd">            layout: Layout of the exported files. &quot;split&quot; means there is one folder</span>
 <span class="sd">                per job, &quot;merged&quot; that there is one folder with every labels.</span>
 <span class="sd">            single_file: Layout of the exported labels. Single file mode is</span>
 <span class="sd">                only available for some specific formats (COCO and Kili).</span>
@@ -1575,7 +1576,7 @@ the exported data.</p></td>
       <tr>
         <td><code>layout</code></td>
         <td><code>typing_extensions.Literal[&#39;split&#39;, &#39;merged&#39;]</code></td>
-        <td><p>Layout of the exported files: "split" means there is one folder
+        <td><p>Layout of the exported files. "split" means there is one folder
 per job, "merged" that there is one folder with every labels.</p></td>
         <td><code>&#39;split&#39;</code></td>
       </tr>
@@ -1654,7 +1655,7 @@ kili.export_labels(&quot;your_project_id&quot;, &quot;export.zip&quot;, &quot;yo
 <span class="sd">            the exported data.</span>
 <span class="sd">        fmt: Format of the exported labels.</span>
 <span class="sd">        asset_ids: Optional list of the assets internal IDs from which to export the labels.</span>
-<span class="sd">        layout: Layout of the exported files: &quot;split&quot; means there is one folder</span>
+<span class="sd">        layout: Layout of the exported files. &quot;split&quot; means there is one folder</span>
 <span class="sd">            per job, &quot;merged&quot; that there is one folder with every labels.</span>
 <span class="sd">        single_file: Layout of the exported labels. Single file mode is</span>
 <span class="sd">            only available for some specific formats (COCO and Kili).</span>
@@ -1802,9 +1803,10 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-    <span class="n">assets</span> <span class="o">=</span> <span class="n">QueriesAsset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
+    <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+        <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">),</span>
+        <span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
+        <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
         <span class="nb">dict</span><span class="p">(</span>
@@ -2187,9 +2189,10 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
 <span class="sd">            external_id_array: The external IDs of the assets for which we want to add predictions.</span>
-<span class="sd">            model_name_array: In case you want to precise from which model the label originated.</span>
+<span class="sd">            model_name_array: [Deprecated] use `model_name` instead.</span>
 <span class="sd">            json_response_array: The predictions are given here. For examples,</span>
 <span class="sd">                see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).</span>
+<span class="sd">            model_name: The name of the model that generated the predictions</span>
 <span class="sd">            asset_id_array: The internal IDs of the assets for which we want to add predictions.</span>
 
 <span class="sd">        Returns:</span>
@@ -2197,6 +2200,11 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 
 <span class="sd">        !!! example &quot;Recipe&quot;</span>
 <span class="sd">            For more detailed examples on how to create predictions, see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).</span>
+
+<span class="sd">        !!! warning &quot;model name&quot;</span>
+<span class="sd">            The use of `model_name_array` is deprecated. Creating predictions from different</span>
+<span class="sd">            models is not supported anymore. Please use `model_name` argument instead to</span>
+<span class="sd">            provide the predictions model name.&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">json_response_array</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -2991,7 +2999,7 @@ Either provide asset_id or asset_external_id and project_id</p></td>
       <tr>
         <td><code>model_name_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>In case you want to precise from which model the label originated.</p></td>
+        <td><p>[Deprecated] use <code>model_name</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2999,6 +3007,12 @@ Either provide asset_id or asset_external_id and project_id</p></td>
         <td><code>Optional[List[dict]]</code></td>
         <td><p>The predictions are given here. For examples,
 see <a href="https://docs.kili-technology.com/recipes/importing-labels-and-predictions">the recipe</a>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>model_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>The name of the model that generated the predictions</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -3027,6 +3041,12 @@ see <a href="https://docs.kili-technology.com/recipes/importing-labels-and-predi
 <p class="admonition-title">Recipe</p>
 <p>For more detailed examples on how to create predictions, see <a href="https://docs.kili-technology.com/recipes/importing-labels-and-predictions">the recipe</a>.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">model name</p>
+<p>The use of <code>model_name_array</code> is deprecated. Creating predictions from different
+models is not supported anymore. Please use <code>model_name</code> argument instead to
+provide the predictions model name."</p>
+</div>
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/label/__init__.py</code></summary>
@@ -3046,9 +3066,10 @@ see <a href="https://docs.kili-technology.com/recipes/importing-labels-and-predi
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
 <span class="sd">        external_id_array: The external IDs of the assets for which we want to add predictions.</span>
-<span class="sd">        model_name_array: In case you want to precise from which model the label originated.</span>
+<span class="sd">        model_name_array: [Deprecated] use `model_name` instead.</span>
 <span class="sd">        json_response_array: The predictions are given here. For examples,</span>
 <span class="sd">            see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).</span>
+<span class="sd">        model_name: The name of the model that generated the predictions</span>
 <span class="sd">        asset_id_array: The internal IDs of the assets for which we want to add predictions.</span>
 
 <span class="sd">    Returns:</span>
@@ -3056,6 +3077,11 @@ see <a href="https://docs.kili-technology.com/recipes/importing-labels-and-predi
 
 <span class="sd">    !!! example &quot;Recipe&quot;</span>
 <span class="sd">        For more detailed examples on how to create predictions, see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).</span>
+
+<span class="sd">    !!! warning &quot;model name&quot;</span>
+<span class="sd">        The use of `model_name_array` is deprecated. Creating predictions from different</span>
+<span class="sd">        models is not supported anymore. Please use `model_name` argument instead to</span>
+<span class="sd">        provide the predictions model name.&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">json_response_array</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
