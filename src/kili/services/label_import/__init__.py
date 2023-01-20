@@ -14,6 +14,7 @@ from kili.services.label_import.importer import (
     YoloLabelImporter,
 )
 from kili.services.label_import.types import LabelFormat, _ClientInputLabelsValidator
+from kili.services.project import get_project
 from kili.services.types import LabelType, LogLevel, ProjectId
 
 
@@ -32,8 +33,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     """
     Imports labels from a list of files contained in file path.
     """
-    if kili.count_projects(project_id=project_id) == 0:
-        raise NotFound(f"project ID: {project_id}")
+    get_project(kili, project_id, ["id"])
 
     if len(labels_files) == 0:
         raise ValueError("You must specify files to upload")

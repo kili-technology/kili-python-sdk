@@ -58,6 +58,7 @@ jobs:
           KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
           KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
   markdown-link-check:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master

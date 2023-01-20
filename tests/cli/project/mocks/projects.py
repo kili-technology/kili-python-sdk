@@ -1,4 +1,4 @@
-def mocked__ProjectsQuery(where, *_):
+def mocked__ProjectQuery(where, *_):
     project_id = where.project_id
     if project_id == "text_project":
         return [{"id": "text_project", "inputType": "TEXT"}]

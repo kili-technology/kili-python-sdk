@@ -5,49 +5,38 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import requests
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.exceptions import NotFound
-from kili.graphql import QueryOptions
-from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
-from kili.queries.asset.exceptions import MissingPropertyError
+from kili.services.project import get_project_field
+
+from .exceptions import MissingPropertyError
 
 
-def get_post_assets_call_process(
-    download_media: bool, kili, project_id: str, fields: List, local_media_dir: Optional[str]
-) -> Callable:
+def get_download_assets_function(
+    kili, download_media: bool, fields: List[str], project_id: str, local_media_dir: Optional[str]
+) -> Optional[Callable]:
     """
-    Define the function to apply on assets after a paginated call of assets
-    Call the download_asset_media with the right parameters if download_media is True
-    Otherwise return assets without any post-processing
+    Return the function to be called after each batch of asset query.
+    It is either None or MediaDownloader's download_assets.
     """
-    if download_media:
-        where = ProjectWhere(
-            project_id=project_id,
-        )
-        options = QueryOptions(disable_tqdm=True)
-        projects = cast(List[Dict], ProjectQuery(kili.auth.client)(where, ["inputType"], options))
-        if len(projects) == 0:
-            NotFound(
-                f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of"
-                " the project."
-            )
-        project_input_type = projects[0]["inputType"]
-        jsoncontent_field_added = False
-        if project_input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
-            fields.append("jsonContent")
-            jsoncontent_field_added = True
-        post_call_process = MediaDownloader(
-            local_media_dir, project_id, jsoncontent_field_added, project_input_type
-        ).download_assets
-        return post_call_process
-
-    return lambda assets: assets
+    if not download_media:
+        return None
+    input_type = get_project_field(kili, project_id, "inputType")
+    jsoncontent_field_added = False
+    if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
+        fields.append("jsonContent")
+        jsoncontent_field_added = True
+    return MediaDownloader(
+        local_media_dir,
+        project_id,
+        jsoncontent_field_added,
+        input_type,
+    ).download_assets
 
 
 class MediaDownloader:

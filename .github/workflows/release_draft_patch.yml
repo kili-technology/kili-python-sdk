@@ -59,6 +59,8 @@ jobs:
       - name: Create draft release
         run: |
           link_to_draft=$(gh release create ${{ env.NEW_PATCH_VERSION }} --draft --title "Release ${{ env.NEW_PATCH_VERSION }}" --generate-notes --notes-start-tag ${{ env.CURRENT_PATCH_VERSION }})
+          link_to_draft=$(echo $link_to_draft | grep -o 'https://[^ ]*')
+          echo $link_to_draft
           echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ github.token }}

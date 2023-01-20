@@ -2,11 +2,11 @@
 Fake Kili object
 """
 
-from typing import List, Optional
 from unittest.mock import MagicMock
 
+from kili.graphql.operations.asset.queries import AssetQuery
 from kili.orm import Asset
-from kili.queries.asset.helpers import get_post_assets_call_process
+from kili.queries.asset.media_downloader import get_download_assets_function
 from tests.services.export.fakes.fake_data import (
     asset_image_1,
     asset_image_1_without_annotation,
@@ -141,52 +141,35 @@ def mocked_ProjectQuery(where, _fields, _options):
         return []
 
 
+def mocked_AssetQuery(where, _fields, _options, post_call_function):
+    """
+    Fake assets
+    """
+    project_id = where.project_id
+
+    def _assets():
+        if project_id == "object_detection":
+            return [Asset(asset_image_1)]
+        elif project_id == "object_detection_with_empty_annotation":
+            return [Asset(asset_image_1_without_annotation)]
+        elif project_id == "text_classification":
+            return []
+        elif project_id == "semantic_segmentation":
+            return [
+                Asset(asset_image_1),
+                Asset(asset_image_2),
+            ]
+        else:
+            return []
+
+    if post_call_function:
+        return post_call_function(_assets())
+    return _assets()
+
+
 class FakeKili:
     """
     Handke .assets and .project methods of Kili
     """
 
     auth = FakeAuth()
-
-    def assets(
-        self,
-        project_id: str,
-        fields: List[str],
-        label_type_in: Optional[List[str]] = None,
-        asset_id_in: Optional[List[str]] = None,
-        disable_tqdm: bool = False,
-        download_media: Optional[bool] = None,
-        local_media_dir: Optional[str] = None,
-    ):
-        """
-        Fake assets
-        """
-
-        _ = fields, label_type_in, asset_id_in, disable_tqdm, local_media_dir
-
-        def _assets():
-            if project_id == "object_detection":
-                return [Asset(asset_image_1)]
-            elif project_id == "object_detection_with_empty_annotation":
-                return [Asset(asset_image_1_without_annotation)]
-            elif project_id == "text_classification":
-                return []
-            elif project_id == "semantic_segmentation":
-                return [
-                    Asset(asset_image_1),
-                    Asset(asset_image_2),
-                ]
-            else:
-                return []
-
-        post_call_process = get_post_assets_call_process(
-            bool(download_media), self, project_id, [], local_media_dir
-        )
-
-        return post_call_process(_assets())
-
-    def count_assets(self, project_id: str):
-        """
-        Count assets.
-        """
-        return len(self.assets(project_id=project_id, fields=[""]))
