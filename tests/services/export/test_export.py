@@ -448,7 +448,7 @@ def get_file_tree(folder: str):
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
 @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
-@patch("kili.services.export.tools_video.ffmpeg")
+@patch("kili.services.export.media.video.ffmpeg")
 def test_export_service_layout(mocker_ffmpeg, mocker_asset, mocker_project, name, test_case):
     with TemporaryDirectory() as export_folder:
         with TemporaryDirectory() as extract_folder:
