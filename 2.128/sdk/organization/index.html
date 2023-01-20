@@ -860,7 +860,7 @@
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of organizations that match a set of criteria.</span>
 
@@ -883,12 +883,38 @@
 <span class="sd">            [{&#39;users&#39;: [{&#39;email&#39;: &#39;john@doe.com&#39;}]}]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationWhere</span><span class="p">(</span>
-            <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
-            <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
+        <span class="n">count_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span> <span class="s2">&quot;organization_id&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">}</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm</span> <span class="ow">or</span> <span class="n">as_generator</span>
+
+        <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">,</span>
+                <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">organizations_generator</span> <span class="o">=</span> <span class="n">row_generator_from_paginated_calls</span><span class="p">(</span>
+            <span class="n">skip</span><span class="p">,</span>
+            <span class="n">first</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_organizations</span><span class="p">,</span>
+            <span class="n">count_args</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_organizations</span><span class="p">,</span>
+            <span class="n">payload_query</span><span class="p">,</span>
+            <span class="n">fields</span><span class="p">,</span>
+            <span class="n">disable_tqdm</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">OrganizationQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">organizations_generator</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">organizations_generator</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_query_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;skip&quot;</span><span class="p">:</span> <span class="n">skip</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">first</span><span class="p">})</span>
+        <span class="n">_gql_organizations</span> <span class="o">=</span> <span class="n">gql_organizations</span><span class="p">(</span><span class="n">fragment_builder</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">Organization</span><span class="p">))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_gql_organizations</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_organizations</span><span class="p">(</span>
@@ -904,18 +930,23 @@
 <span class="sd">            A result object which contains the query if it was successful,</span>
 <span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationWhere</span><span class="p">(</span>
-            <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
-            <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">OrganizationQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">,</span>
+                <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ORGANIZATIONS_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">organization_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start_date</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get organization metrics.</span>
 
@@ -932,16 +963,22 @@
             <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-        <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationMetricsWhere</span><span class="p">(</span>
-            <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">OrganizationQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">metrics</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;organizationId&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">,</span>
+                <span class="s2">&quot;startDate&quot;</span><span class="p">:</span> <span class="n">start_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;endDate&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ORGANIZATION_METRICS</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
 
 
   <div class="doc doc-children">
+
 
 
 
@@ -1022,11 +1059,16 @@
 <span class="sd">        A result object which contains the query if it was successful,</span>
 <span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationWhere</span><span class="p">(</span>
-        <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
-        <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">OrganizationQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ORGANIZATIONS_COUNT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1040,7 +1082,7 @@
 
 
 <h3 class="doc doc-heading" id="kili.queries.organization.__init__.QueriesOrganization.organization_metrics">
-<code class="highlight language-python"><span class="n">organization_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">organization_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1068,15 +1110,15 @@
       </tr>
       <tr>
         <td><code>start_date</code></td>
-        <td><code>Optional[datetime.datetime]</code></td>
+        <td><code>datetime</code></td>
         <td><p>Start date of the metrics computation</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>end_date</code></td>
-        <td><code>Optional[datetime.datetime]</code></td>
+        <td><code>datetime</code></td>
         <td><p>End date of the metrics computation</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
       </tr>
   </tbody>
 </table>
@@ -1102,8 +1144,8 @@
 <span class="k">def</span> <span class="nf">organization_metrics</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get organization metrics.</span>
 
@@ -1120,10 +1162,15 @@
         <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-    <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationMetricsWhere</span><span class="p">(</span>
-        <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">OrganizationQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">metrics</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;organizationId&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">,</span>
+            <span class="s2">&quot;startDate&quot;</span><span class="p">:</span> <span class="n">start_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;endDate&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ORGANIZATION_METRICS</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1212,7 +1259,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#organization
   </thead>
   <tbody>
     <tr>
-      <td><code>Iterable[Dict]</code></td>
+      <td><code>Union[List[dict], Generator[dict, NoneType]]</code></td>
       <td><p>A result object which contains the query if it was successful,
     or an error message.</p></td>
     </tr>
@@ -1235,7 +1282,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#organization
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of organizations that match a set of criteria.</span>
 
@@ -1258,12 +1305,32 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#organization
 <span class="sd">        [{&#39;users&#39;: [{&#39;email&#39;: &#39;john@doe.com&#39;}]}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationWhere</span><span class="p">(</span>
-        <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
-        <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
+    <span class="n">count_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span> <span class="s2">&quot;organization_id&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">}</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm</span> <span class="ow">or</span> <span class="n">as_generator</span>
+
+    <span class="n">payload_query</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">organization_id</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">organizations_generator</span> <span class="o">=</span> <span class="n">row_generator_from_paginated_calls</span><span class="p">(</span>
+        <span class="n">skip</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_organizations</span><span class="p">,</span>
+        <span class="n">count_args</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query_organizations</span><span class="p">,</span>
+        <span class="n">payload_query</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">OrganizationQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">organizations_generator</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">organizations_generator</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

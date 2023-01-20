@@ -1,15 +1,4 @@
-"""
-Utils for inserting notebooks in Python SDK doc.
-
-Notebooks are stored in recipes/ and are converted to markdown using this script.
-
-Run 'python -m docs.utils convert <notebook_file>' at the root of repository to convert a notebook
-to markdown.
-
-Markdown files are stored in docs/sdk/tutorials/ and are inserted in the doc with mkdocs.yml.
-
-Please run 'mkdocs serve' to check the result before committing your changes.
-"""
+"""Utils for inserting notebooks in Python SDK doc."""
 
 import base64
 import re
@@ -247,9 +236,9 @@ def check_notebook_tested(ipynb_filepath: Path):
     with open("tests/test_notebooks.py", encoding="utf-8") as file:
         test_notebooks_module_str = file.read()
 
-    if f"recipes/{ipynb_filepath.name}" not in test_notebooks_module_str:
+    if f"recipes/tutorials/{ipynb_filepath.name}" not in test_notebooks_module_str:
         raise NotebookTestMissingError(
-            f"recipes/{ipynb_filepath.name} not found in test_notebooks.py."
+            f"recipes/tutorials/{ipynb_filepath.name} not found in test_notebooks.py."
         )
 
 
@@ -262,38 +251,30 @@ def check_notebook_tested(ipynb_filepath: Path):
 )
 def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     """
-    Check if all notebooks in commit are up-to-date with their markdown files.
+    Check if all notebooks in staging are up-to-date with their markdown files.
 
-    `modified_files` are the files in commit that match:
-        - markdown files in docs/sdk/tutorials/
-        - notebooks in recipes/
+    Assumes that markdown files are in docs/sdk/tutorials
+    and notebooks in recipes/tutorials, and have the same file names.
 
     Also checks:
         - markdown files are in mkdocs.yml.
         - notebooks are tested in test_notebooks.py.
     """
-    # get existing tutorials names
-    existing_tutorials = list(Path("docs/sdk/tutorials").glob("*.md"))
-    existing_tutorials = [tutorial.stem for tutorial in existing_tutorials]
-
-    # group files by tutorial name (filename or notebooks and markdowns without extension)
     modified_files = sorted(modified_files, key=lambda path: path.stem)  # sort before grouping
     groupby_iter = groupby(modified_files, key=lambda path: path.stem)  # group by filename
-
-    for tutorial_name, group in groupby_iter:
+    for filename, group in groupby_iter:
         group = list(group)
 
-        # skip files that are not tutorials
-        if tutorial_name not in existing_tutorials:
+        # skip single markdown files, probably hand written tutorials without notebooks
+        if len(group) == 1 and group[0].suffix == ".md":
             continue
 
-        # group must have two files, one .md and one .ipynb
+        # check if group has two files, one .md and one .ipynb
         if len(group) != 2:
             raise ValueError(
-                f"Expected two files (.md and .ipynb) in staging for tutorial '{tutorial_name}',"
-                f" got {group}. Run 'python -m docs.utils convert <notebook_file>' at the root of"
-                " repository to convert a notebook to markdown. Please run 'mkdocs serve' to check"
-                " the result before committing your changes."
+                f"Expected two files (.md and .ipynb) in staging for '{filename}', got {group}. Run"
+                " 'python -m docs.utils convert <notebook_file>' to convert a notebook to"
+                " markdown. Please run 'mkdocs serve' to check the result before committing."
             )
 
         ipynb_filepath, md_filepath = sorted(group, key=lambda path: path.suffix)
