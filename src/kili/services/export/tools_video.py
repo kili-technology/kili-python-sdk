@@ -19,7 +19,7 @@ def get_video_dimensions(file_path: Union[Path, str]) -> Tuple:
     Get a video width and height
     """
     assert Path(file_path).is_file(), f"File {file_path} does not exist"
-    probe = ffmpeg.probe(file_path)
+    probe = ffmpeg.probe(str(file_path))
     video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
     width = video_info["width"]
     height = video_info["height"]
@@ -44,6 +44,9 @@ def cut_video(
         try:
             probe = ffmpeg.probe(str(video_path))
             video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
+            # avg_frame_rate is total # of frames / total duration
+            # r_frame_rate is the lowest framerate with which all timestamps can be represented
+            # accurately (it is the least common multiple of all framerates in the stream)
             frame_rate_string = video_info["r_frame_rate"].split("/")
             final_framerate = int(frame_rate_string[0]) / int(frame_rate_string[1])
         except ffmpeg.Error as error:

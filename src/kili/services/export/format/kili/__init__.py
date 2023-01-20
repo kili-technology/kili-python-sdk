@@ -36,10 +36,11 @@ class KiliExporter(AbstractExporter):
         """
         self.logger.info("Exporting to kili format...")
 
-        if self.project_input_type == "VIDEO":
-            assets = self._cut_video_assets(assets)
+        if self.with_assets:
+            if self.project_input_type == "VIDEO":
+                assets = self._cut_video_assets(assets)
 
-        assets = self._clean_filepaths(assets)
+            assets = self._clean_filepaths(assets)
 
         if self.single_file:
             project_json = json.dumps(assets, sort_keys=True, indent=4)
