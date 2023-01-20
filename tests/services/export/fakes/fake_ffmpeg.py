@@ -38,10 +38,10 @@ class FakeFFmpegVideoSplitter:
     def __init__(self, video_path) -> None:
         self.video_path = video_path
 
-    def filter(self, filter_name, fps, round_):
+    def filter(self, filter_name, fps, round):
         self.filter_name = filter_name
         self.fps = fps
-        self.round_ = round_
+        self.round = round
         return self
 
     def output(self, output_path_pattern, start_number):
