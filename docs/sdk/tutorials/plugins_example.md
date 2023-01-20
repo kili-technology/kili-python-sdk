@@ -244,7 +244,7 @@ plugin_name = "Plugin bbox count"
 from kili.exceptions import GraphQLError
 
 try:
-    kili.upload_plugin(path_to_plugin, plugin_name)
+    kili.upload_plugin(str(path_to_plugin), plugin_name)
 except GraphQLError as error:
     print(str(error))
 ```
