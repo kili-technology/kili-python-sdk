@@ -12,5 +12,4 @@ def get_image_dimensions(file_path: Union[Path, str]) -> Tuple:
     """
     assert Path(file_path).is_file(), f"File {file_path} does not exist"
     image = Image.open(str(file_path))
-    width, height = image.size
-    return width, height
+    return image.size

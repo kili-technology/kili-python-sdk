@@ -61,7 +61,7 @@ def cut_video(
             for file in os.listdir(temp_dir):
                 idx = int(Path(file).stem)
                 new_filename = f'{asset["externalId"]}_{str(idx+1).zfill(leading_zeros)}.jpg'
-                shutil.move(os.path.join(temp_dir, file), str(output_dir / new_filename))
+                shutil.move(str(temp_dir / file), str(output_dir / new_filename))
                 output_frames.append(output_dir / new_filename)
     except ffmpeg.Error as error:
         raise FFmpegError(f"ffmpeg error for asset {video_path.name}: {str(error)}") from error

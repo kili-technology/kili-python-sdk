@@ -18,7 +18,7 @@ from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
-from ...tools_video import cut_video
+from ...tools.video import cut_video
 
 
 class YoloExporter(AbstractExporter):

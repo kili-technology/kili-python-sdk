@@ -10,7 +10,7 @@ from typing import List
 from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
 
-from ...tools_video import cut_video
+from ...tools.video import cut_video
 
 
 class KiliExporter(AbstractExporter):
