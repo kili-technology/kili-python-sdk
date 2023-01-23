@@ -49,26 +49,26 @@ class PluginQuery(GraphQLQuery):
         $limit: Int
         $skip: Int
     ) {
-    data: getPluginLogs(
-        data: {
-        projectId: $projectId
-        pluginName: $pluginName
-        createdAt: $createdAt
-        limit: $limit
-        skip: $skip
+        data: getPluginLogs(
+            data: {
+            projectId: $projectId
+            pluginName: $pluginName
+            createdAt: $createdAt
+            limit: $limit
+            skip: $skip
+            }
+        ) {
+            content
+            createdAt
+            logType
+            metadata {
+            assetId
+            labelId
+            }
+            pluginName
+            projectId
+            runId
         }
-    ) {
-        {content
-        createdAt
-        logType
-        metadata {
-        assetId
-        labelId
-        }
-        pluginName
-        projectId
-        runId}
-    }
     }
     """
 

@@ -4,7 +4,7 @@ Functions to activate/deactivate a plugin
 
 
 from kili.authentication import KiliAuth
-from kili.graphql.operations.plugins.mutations import (
+from kili.graphql.operations.plugin.mutations import (
     GQL_ACTIVATE_PLUGIN_ON_PROJECT,
     GQL_DEACTIVATE_PLUGIN_ON_PROJECT,
 )

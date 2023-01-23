@@ -6,7 +6,9 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.services.plugins import PluginUploader, get_logs, list_plugins
+from kili.graphql import QueryOptions
+from kili.graphql.operations.plugin.queries import PluginLogsWhere, PluginQuery
+from kili.services.plugins import PluginUploader
 
 from ...authentication import KiliAuth
 
@@ -48,9 +50,13 @@ class QueriesPlugins:
             >>> kili.get_plugin_logs(project_id="my_project_id", plugin_name="my_plugin_name", start_date="1970/01/01")
         """
 
-        plugin = {"project_id": project_id, "plugin_name": plugin_name}
-
-        pretty_result = get_logs(self.auth, plugin, start_date, limit, skip)
+        where = PluginLogsWhere(
+            project_id=project_id, plugin_name=plugin_name, start_date=start_date
+        )
+        options = QueryOptions(
+            first=limit, skip=skip or 0, disable_tqdm=False
+        )  # disable tqm is not implemnted for this query
+        pretty_result = PluginQuery(self.auth.client).get_logs(where, options)
         return json.dumps(pretty_result, sort_keys=True, indent=4)
 
     @typechecked
@@ -100,4 +106,4 @@ class QueriesPlugins:
             >>> kili.list_plugins()
             >>> kili.list_plugins(fields=['name'])
         """
-        return list_plugins(self.auth, fields)
+        return PluginQuery(self.auth.client).list(fields=fields)

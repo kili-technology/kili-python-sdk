@@ -9,7 +9,7 @@ from zipfile import ZipFile
 
 from kili.authentication import KiliAuth
 from kili.constants import mime_extensions_for_py_scripts, mime_extensions_for_txt_files
-from kili.graphql.operations.plugins.mutations import (
+from kili.graphql.operations.plugin.mutations import (
     GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
     GQL_CREATE_WEBHOOK,
@@ -17,7 +17,7 @@ from kili.graphql.operations.plugins.mutations import (
     GQL_UPDATE_PLUGIN_RUNNER,
     GQL_UPDATE_WEBHOOK,
 )
-from kili.graphql.operations.plugins.queries import GQL_GET_PLUGIN_RUNNER_STATUS
+from kili.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
@@ -145,7 +145,6 @@ class PluginUploader:
         """
 
         if self.plugin_path.is_dir():
-
             file_path = self.plugin_path / "main.py"
             if not file_path.is_file():
                 raise FileNotFoundError(
@@ -228,7 +227,6 @@ class PluginUploader:
         zip_path = tmp_directory / "archive.zip"
 
         with ZipFile(zip_path, "w") as archive:
-
             if len(file_paths) == 1:
                 archive.write(file_paths[0], "main.py")
 
@@ -256,7 +254,6 @@ class PluginUploader:
         requirements = self._retrieve_requirements()
 
         with TemporaryDirectory() as tmp_directory:
-
             zip_path = self._create_zip(file_paths, requirements, tmp_directory)
 
             self._upload_file(zip_path, upload_url)
