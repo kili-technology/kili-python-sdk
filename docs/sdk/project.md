@@ -7,7 +7,7 @@
 ## Mutations
 
 ::: kili.mutations.project.__init__.MutationsProject
-selection:
-filters:
-\- '!internal_delete_project'
-\- '!^\_\_'
+    selection:
+        filters:
+            - '!internal_delete_project'
+            - '!^__'

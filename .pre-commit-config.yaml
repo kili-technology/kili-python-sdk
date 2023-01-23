@@ -34,7 +34,7 @@ repos:
         always_run: false
         pass_filenames: true
         additional_dependencies: [mdformat]
-        exclude: docs\/cli\/reference.md|docs\/sdk\/tutorials\/.*\.md$
+        exclude: docs\/sdk\/project.md|docs\/sdk\/plugins.md|docs\/cli\/reference.md|docs\/sdk\/tutorials\/.*\.md$
   - repo: local
     hooks:
       - id: notebook-markdown-tutorials
