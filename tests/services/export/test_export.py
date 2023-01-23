@@ -8,6 +8,7 @@ from zipfile import ZipFile
 
 import pytest
 
+from kili.graphql.operations.asset.queries import AssetQuery
 from kili.graphql.operations.project.queries import ProjectQuery
 from kili.services import export_labels
 from kili.services.export.exceptions import (
@@ -15,7 +16,12 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from tests.services.export.fakes.fake_kili import FakeKili, mocked_ProjectQuery
+from tests.services.export.fakes.fake_ffmpeg import mock_ffmpeg
+from tests.services.export.fakes.fake_kili import (
+    FakeKili,
+    mocked_AssetQuery,
+    mocked_ProjectQuery,
+)
 
 
 def get_file_tree(folder: str):
@@ -53,7 +59,7 @@ def get_file_tree(folder: str):
     "name,test_case",
     [
         (
-            "Export to YOLO v5 format with splitted files",
+            "YOLO v5 format with splitted files",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -77,7 +83,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to YOLO v5 format with splitted files and download assets",
+            "YOLO v5 format with splitted files and download assets",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -101,7 +107,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to YOLO v5 format with merged file",
+            "YOLO v5 format with merged file",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -118,7 +124,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to YOLO v5 format with merged file and no annotation",
+            "YOLO v5 format with merged file and no annotation",
             {
                 "export_kwargs": {
                     "project_id": "object_detection_with_empty_annotation",
@@ -135,7 +141,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to YOLO v5 format with merged file and download media",
+            "YOLO v5 format with merged file and download media",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -152,7 +158,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to YOLO v4 format with merged file",
+            "YOLO v4 format with merged file",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -169,7 +175,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to YOLO v4 format with merged file and download assets",
+            "YOLO v4 format with merged file and download assets",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -186,7 +192,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to Kili raw format",
+            "Kili raw format",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -200,7 +206,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to Kili raw format",
+            "Kili raw format",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -250,7 +256,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to Pascal VOC format with merged file",
+            "Pascal VOC format with merged file",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -265,7 +271,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "Export to Pascal VOC format with merged file and no annotation",
+            "Pascal VOC format with merged file and no annotation",
             {
                 "export_kwargs": {
                     "project_id": "object_detection_with_empty_annotation",
@@ -279,14 +285,193 @@ def get_file_tree(folder: str):
                 },
             },
         ),
+        (
+            "Pascal VOC format video project",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "pascal_voc",
+                    "split_option": "merged",
+                },
+                "file_tree_expected": {
+                    "images": {
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
+                        "short_video.mp4": {},
+                    },
+                    "labels": {
+                        **{f"video2_{str(i+1).zfill(3)}.xml": {} for i in range(130)},
+                        **{f"short_video_{str(i+1).zfill(2)}.xml": {} for i in range(28)},
+                    },
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "COCO format video project",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "coco",
+                },
+                "file_tree_expected": {
+                    "data": {
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
+                        "short_video.mp4": {},
+                    },
+                    "JOB_0": {
+                        "labels.json": {},
+                    },
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "YOLO v4 format video project no assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "yolo_v4",
+                    "split_option": "merged",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "images": {"remote_assets.csv": {}},
+                    "labels": {
+                        "video2_001.txt": {},
+                        "video2_002.txt": {},
+                        "short_video_01.txt": {},
+                        "short_video_02.txt": {},
+                    },
+                    "README.kili.txt": {},
+                    "classes.txt": {},
+                    "video_meta.json": {},
+                },
+            },
+        ),
+        (
+            "YOLO v4 format video project with assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "yolo_v4",
+                    "split_option": "merged",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "images": {
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
+                        "short_video.mp4": {},
+                    },
+                    "labels": {
+                        "video2_001.txt": {},
+                        "video2_002.txt": {},
+                        "short_video_01.txt": {},
+                        "short_video_02.txt": {},
+                    },
+                    "README.kili.txt": {},
+                    "classes.txt": {},
+                    "video_meta.json": {},
+                },
+            },
+        ),
+        (
+            "YOLO v5 format video project with assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "yolo_v5",
+                    "split_option": "merged",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "images": {
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
+                        "short_video.mp4": {},
+                    },
+                    "labels": {
+                        "video2_001.txt": {},
+                        "video2_002.txt": {},
+                        "short_video_01.txt": {},
+                        "short_video_02.txt": {},
+                    },
+                    "README.kili.txt": {},
+                    "data.yaml": {},
+                    "video_meta.json": {},
+                },
+            },
+        ),
+        (
+            "YOLO v5 format video project no assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "yolo_v5",
+                    "split_option": "merged",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "images": {"remote_assets.csv": {}},
+                    "labels": {
+                        "video2_001.txt": {},
+                        "video2_002.txt": {},
+                        "short_video_01.txt": {},
+                        "short_video_02.txt": {},
+                    },
+                    "README.kili.txt": {},
+                    "data.yaml": {},
+                    "video_meta.json": {},
+                },
+            },
+        ),
+        (
+            "Kili raw format video project with assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "raw",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "assets": {
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
+                        "short_video.mp4": {},
+                    },
+                    "labels": {"video2.json": {}, "short_video.json": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "Kili raw format video project no assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "raw",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"video2.json": {}, "short_video.json": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-def test_export_service_layout(mocker, name, test_case):
+@patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+@patch("kili.services.export.media.video.ffmpeg")
+def test_export_service_layout(mocker_ffmpeg, mocker_asset, mocker_project, name, test_case):
     with TemporaryDirectory() as export_folder:
         with TemporaryDirectory() as extract_folder:
             path_zipfile = Path(export_folder) / "export.zip"
             path_zipfile.parent.mkdir(parents=True, exist_ok=True)
+
+            mock_ffmpeg(mocker_ffmpeg)
 
             fake_kili = FakeKili()
             default_kwargs = {
@@ -392,7 +577,8 @@ def test_export_service_layout(mocker, name, test_case):
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-def test_export_service_errors(mocker, name, test_case, error):
+@patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+def test_export_service_errors(mocket_asset, mocker_project, name, test_case, error):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
         path_zipfile.parent.mkdir(parents=True, exist_ok=True)

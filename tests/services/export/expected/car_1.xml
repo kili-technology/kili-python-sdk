@@ -14,6 +14,7 @@
    <segmented/>
    <object>
       <name>OBJECT_A</name>
+      <job_name>JOB_0</job_name>
       <pose>Unspecified</pose>
       <truncated>0</truncated>
       <difficult>0</difficult>

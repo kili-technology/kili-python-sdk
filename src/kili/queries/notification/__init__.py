@@ -1,13 +1,14 @@
 """Notification queries."""
 
-from typing import Generator, List, Optional, Union
+from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
-from ...helpers import format_result, fragment_builder
-from ...types import Notification
-from ...utils.pagination import row_generator_from_paginated_calls
-from .queries import GQL_NOTIFICATIONS_COUNT, gql_notifications
+from kili.graphql import QueryOptions
+from kili.graphql.operations.notification.queries import (
+    NotificationQuery,
+    NotificationWhere,
+)
 
 
 class QueriesNotification:
@@ -42,7 +43,7 @@ class QueriesNotification:
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
         as_generator: bool = False,
-    ) -> Union[List[dict], Generator[dict, None, None]]:
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of notifications respecting a set of criteria.
 
@@ -63,41 +64,20 @@ class QueriesNotification:
                 or an error message.
         """
 
-        count_args = {"has_been_seen": has_been_seen, "user_id": user_id}
-        disable_tqdm = disable_tqdm or as_generator or notification_id is not None
-        payload_query = {
-            "where": {
-                "id": notification_id,
-                "user": {
-                    "id": user_id,
-                },
-                "hasBeenSeen": has_been_seen,
-            },
-        }
-        notifications_generator = row_generator_from_paginated_calls(
-            skip,
-            first,
-            self.count_notifications,
-            count_args,
-            self._query_notifications,
-            payload_query,
-            fields,
-            disable_tqdm,
+        where = NotificationWhere(
+            has_been_seen=has_been_seen,
+            notification_id=notification_id,
+            user_id=user_id,
         )
-
-        if as_generator:
-            return notifications_generator
-        return list(notifications_generator)
-
-    def _query_notifications(self, skip: int, first: int, payload: dict, fields: List[str]):
-        payload.update({"skip": skip, "first": first})
-        _gql_notifications = gql_notifications(fragment_builder(fields, Notification))
-        result = self.auth.client.execute(_gql_notifications, payload)
-        return format_result("data", result)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        return NotificationQuery(self.auth.client)(where, fields, options)
 
     @typechecked
     def count_notifications(
-        self, has_been_seen: Optional[bool] = None, user_id: Optional[str] = None
+        self,
+        has_been_seen: Optional[bool] = None,
+        user_id: Optional[str] = None,
+        notification_id: Optional[str] = None,
     ) -> int:
         """Count the number of notifications.
 
@@ -108,13 +88,9 @@ class QueriesNotification:
         Returns:
             The number of notifications with the parameters provided
         """
-        variables = {
-            "where": {
-                "user": {
-                    "id": user_id,
-                },
-                "hasBeenSeen": has_been_seen,
-            },
-        }
-        result = self.auth.client.execute(GQL_NOTIFICATIONS_COUNT, variables)
-        return format_result("data", result, int)
+        where = NotificationWhere(
+            has_been_seen=has_been_seen,
+            notification_id=notification_id,
+            user_id=user_id,
+        )
+        return NotificationQuery(self.auth.client).count(where)

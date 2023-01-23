@@ -9,6 +9,8 @@ from typeguard import typechecked
 
 from kili.authentication import KiliAuth
 from kili.exceptions import MissingArgumentError
+from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.helpers import format_result
 from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
 from kili.mutations.asset.queries import (
@@ -21,7 +23,6 @@ from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.utils.pagination import _mutate_from_paginated_call
 
-from ...queries.asset import QueriesAsset
 from .helpers import get_asset_ids_or_throw_error
 
 
@@ -384,12 +385,10 @@ class MutationsAsset:
         )
         result = format_result("data", results[0])
         if isinstance(result, dict) and "id" in result:
-            assets_in_review = QueriesAsset(self.auth).assets(
-                project_id=result["id"],
-                asset_id_in=asset_ids,
-                fields=["id"],
-                disable_tqdm=True,
-                status_in=["TO_REVIEW"],
+            assets_in_review = AssetQuery(self.auth.client)(
+                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
+                ["id"],
+                QueryOptions(disable_tqdm=True),
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_review]
             return result
@@ -432,12 +431,10 @@ class MutationsAsset:
             self, properties_to_batch, generate_variables, GQL_SEND_BACK_ASSETS_TO_QUEUE
         )
         result = format_result("data", results[0])
-        assets_in_queue = QueriesAsset(self.auth).assets(
-            project_id=result["id"],
-            asset_id_in=asset_ids,
-            fields=["id"],
-            disable_tqdm=True,
-            status_in=["ONGOING"],
+        assets_in_queue = AssetQuery(self.auth.client)(
+            AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
+            ["id"],
+            QueryOptions(disable_tqdm=True),
         )
         result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
         return result

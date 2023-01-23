@@ -37,11 +37,11 @@ def process_notebook(notebook_filename):
         "recipes/getting-started/getting_started-image_classification.ipynb",
         "recipes/getting-started/getting_started-image_semantic_segmentation.ipynb",
         "recipes/getting-started/getting_started-named-entity-recognition.ipynb",
-        "recipes/tutorials/set_up_workflows.ipynb",
-        "recipes/tutorials/export_a_kili_project.ipynb",
-        "recipes/tutorials/plugins_development.ipynb",
-        "recipes/tutorials/plugins_example.ipynb",
-        "recipes/tutorials/basic_project_setup.ipynb",
+        "recipes/set_up_workflows.ipynb",
+        "recipes/export_a_kili_project.ipynb",
+        "recipes/plugins_development.ipynb",
+        "recipes/plugins_example.ipynb",
+        "recipes/basic_project_setup.ipynb",
     ],
 )
 def test_all_recipes(notebook_file):

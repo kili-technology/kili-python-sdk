@@ -7,6 +7,8 @@ from typing import Any, Dict, Iterable, List, Optional, TypeVar
 from typeguard import typechecked
 
 from kili.exceptions import NotFound
+from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
@@ -63,11 +65,10 @@ def infer_ids_from_external_ids(
         external_id: external id
         project_id: project id
     """
-    assets = kili.assets(
-        external_id_contains=asset_external_ids,
-        project_id=project_id,
-        fields=["id", "externalId"],
-        disable_tqdm=True,
+    assets = AssetQuery(kili.auth.client)(
+        AssetWhere(project_id=project_id, external_id_contains=asset_external_ids),
+        ["id", "externalId"],
+        QueryOptions(disable_tqdm=True),
     )
     id_map: Dict[str, str] = {}
     for asset in assets:

@@ -9,7 +9,7 @@ from kili.cli.project.label import import_labels
 from kili.graphql.operations.project.queries import ProjectQuery
 
 from ...utils import debug_subprocess_pytest
-from .mocks.projects import mocked__ProjectsQuery
+from .mocks.projects import mocked__ProjectQuery
 
 kili_client = MagicMock()
 kili_client.create_predictions = create_predictions_mock = MagicMock()
@@ -18,7 +18,7 @@ mock_label = {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
-@patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectsQuery)
+@patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
 class TestCLIProjectImport:
     @pytest.mark.parametrize(
         "name,test_case",
