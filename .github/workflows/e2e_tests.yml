@@ -7,7 +7,7 @@ on:
       - master
 jobs:
   recipes:
-    timeout-minutes: 15
+    timeout-minutes: 20
     name: Recipes test
     strategy:
       matrix:
