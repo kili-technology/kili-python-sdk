@@ -8,6 +8,7 @@ For the actions it supports, the CLI offers a more compact way to manage your pr
 ## Authentication
 
 - Create and copy a [Kili API key](https://docs.kili-technology.com/docs/creating-an-api-key)
+
 - Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value that you copied earlier:
 
   ```bash

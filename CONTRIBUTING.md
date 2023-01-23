@@ -37,4 +37,5 @@ pylint src/kili
 Only code rated 10.00/10 will success in the CI.
 
 ## PR names
+
 The PR titles should follow these [guidelines](https://www.conventionalcommits.org/en/v1.0.0/)

@@ -1,12 +1,12 @@
 # Kili Python SDK
 
-[![Python 3.7](https://img.shields.io/badge/python-3.7%20|%203.8%20|%203.9%20|%203.10%20|%203.11%20-blue.svg)](https://www.python.org/)
+[![Python 3.7](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20-blue.svg)](https://www.python.org/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Code style: flake8](https://img.shields.io/badge/code%20style-flake8-brightgreen.svg)](https://flake8.pycqa.org/)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/kili-technology/kili-python-sdk?label=pypi%20package)
 
----
+______________________________________________________________________
 
 **SDK Reference**: https://python-sdk-docs.kili-technology.com/
 
@@ -16,7 +16,7 @@
 
 **Website**: https://kili-technology.com/
 
----
+______________________________________________________________________
 
 ## What is Kili?
 

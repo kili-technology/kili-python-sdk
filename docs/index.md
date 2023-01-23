@@ -27,6 +27,7 @@ pip install kili
 ## Usage
 
 - Create and copy a [Kili API key](https://docs.kili-technology.com/docs/creating-an-api-key)
+
 - Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value that you copied earlier:
 
   ```bash
