@@ -253,6 +253,22 @@ def check_notebook_tested(ipynb_filepath: Path):
         )
 
 
+class ColabLinkMissingError(Exception):
+    """Raised when notebook does not have a colab link."""
+
+
+def check_colab_link_in_notebook(ipynb_filepath: Path):
+    """Check if notebook has a colab link."""
+    with open(ipynb_filepath, encoding="utf-8") as file:
+        notebook_str = file.read()
+
+    if (
+        "colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/"
+        not in notebook_str
+    ):
+        raise ColabLinkMissingError(f"Colab link not found in {ipynb_filepath.name}.")
+
+
 @click.command(name="notebook_tutorials_commit_hook")
 @click.argument(
     "modified_files",
@@ -302,11 +318,13 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         ipynb_filepath = ipynb_filepath.resolve()
         md_filepath = md_filepath.resolve()
 
-        check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
-
         check_mkdocs_yml_up_to_date(md_filepath)
 
         check_notebook_tested(ipynb_filepath)
+
+        check_colab_link_in_notebook(ipynb_filepath)
+
+        check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
 
 
 @click.group()
