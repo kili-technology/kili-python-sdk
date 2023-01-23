@@ -122,13 +122,12 @@ To show an example of how to upload a local video, we must first download it:
 
 
 ```python
-!pip install wget
-import wget
+import urllib.request
 
-wget.download(
-    "https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rZJIMvhmliwmde8a6/people-and-cars-moving-summer-in-cannes_rihw5icll__fb84d62d88da661f8edd5c5d17d586bf__P360.mp4"
+urllib.request.urlretrieve(
+    "https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rZJIMvhmliwmde8a6/people-and-cars-moving-summer-in-cannes_rihw5icll__fb84d62d88da661f8edd5c5d17d586bf__P360.mp4",
+    "test.mp4",
 )
-!mv people-and-cars-moving-summer-in-cannes_rihw5icll__fb84d62d88da661f8edd5c5d17d586bf__P360.mp4 test.mp4
 ```
 
 Now, we can easily upload the video to our project:
@@ -175,19 +174,18 @@ We can create a video, by using local images as frames. Let's first download som
 
 
 ```python
-wget.download(
-    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+urllib.request.urlretrieve(
+    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
+    "image_1.png",
 )
-wget.download(
-    "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80"
+urllib.request.urlretrieve(
+    "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80",
+    "image_2.png",
 )
-wget.download(
-    "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
+urllib.request.urlretrieve(
+    "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
+    "image_3.png",
 )
-
-!mv photo-1546069901-ba9599a7e63c image_1.png
-!mv photo-1565958011703-44f9829ba187 image_2.png
-!mv photo-1609951651556-5334e2706168 image_3.png
 ```
 
 Now, let's put them together as one video:
