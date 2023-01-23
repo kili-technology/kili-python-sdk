@@ -109,6 +109,9 @@ project_id = result["id"]
 print("Project ID: ", project_id)
 ```
 
+    Project ID:  cld90h71d0ha50jptd28xfjg1
+
+
 ## Importing video assets to Kili
 
 Now, let's add some video assets to be labeled.
@@ -163,7 +166,7 @@ url = "https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rZJIMvhmliwmde8a6/p
 assets = kili.append_many_to_dataset(
     project_id=project_id,
     content_array=[url],
-    external_id_array=["video_2_from_url"],
+    external_id_array=["video_2_from_url_split_frames"],
     json_metadata_array=[{"processingParameters": {"shouldUseNativeVideo": False}}],
 )
 ```

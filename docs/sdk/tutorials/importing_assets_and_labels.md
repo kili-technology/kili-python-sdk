@@ -97,6 +97,9 @@ project_id = result["id"]
 print("Project ID: ", project_id)
 ```
 
+    Project ID:  cld90ffe80l8b0jn9d4vb44tn
+
+
 ## Importing assets to Kili
 
 Now, let's add some assets to be labeled.
@@ -131,6 +134,7 @@ assets = kili.append_many_to_dataset(
 The procedure looks the same for most of other data types, like PDFs or text. For more information on supported file formats, refer to [our documentation](https://docs.kili-technology.com/docs/supported-file-formats).
 
 Because videos and Rich Text assets may be more complex to import, we've created separate tutorials devoted to them:
+
 - For information on importing video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/2.128/sdk/tutorials/importing_video_assets/).
 - For information on importing Rich Text assets, see [here](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
 
@@ -162,6 +166,17 @@ kili.update_properties_in_project(
     },
 )
 ```
+
+
+
+
+    {'id': 'cld90ffe80l8b0jn9d4vb44tn',
+     'metadataTypes': {'sensitiveData': 'string',
+      'customConsensus': 'number',
+      'uploadedFromCloud': 'string',
+      'modelLabelErrorScore': 'number'}}
+
+
 
 Now we can add metadata to our assets:
 
@@ -198,6 +213,13 @@ kili.update_properties_in_assets(
     ],
 )
 ```
+
+
+
+
+    [{'id': 'cld90fmg100009nvzbjvf73jx'}, {'id': 'cld90fmg100019nvzirlsutxz'}]
+
+
 
 If you want to add metadata based on Optical Character Recognition, the process is slightly more complex. To help you with it, we've created a [separate tutorial](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/ocr_pre_annotations.ipynb).
 
@@ -249,6 +271,17 @@ kili.append_labels(
 )
 ```
 
+
+
+
+
+
+    [{'id': 'cld90g9tu0l690joi5hnbc3rj'},
+     {'id': 'cld90g9tu0l6a0joidtsk09q4'},
+     {'id': 'cld90g9tu0l6b0joi1qp69ipz'}]
+
+
+
 You can add prediction-type labels directly, using the `create_predictions` method. The `label_type` will be assigned automatically as `PREDICTION`:
 
 
@@ -262,6 +295,15 @@ kili.create_predictions(
     model_name="MyModel",
 )
 ```
+
+
+
+
+
+
+    {'id': 'cld90ffe80l8b0jn9d4vb44tn'}
+
+
 
 ## Importing pre-existing labels into your project
 
