@@ -68,7 +68,7 @@ kili.update_properties_in_project(project_id=project_id, review_coverage=50)
 
 
 
-    {'id': 'clcym6c6v25fp0lq4ef6xh1hz', 'reviewCoverage': 50}
+    {'id': 'cld95dpne0n2y0joi6wuq3u6v', 'reviewCoverage': 50}
 
 
 
@@ -214,9 +214,9 @@ kili.append_labels(
 
 
 
-    [{'id': 'clcym6xfj276z0krf03o303un'},
-     {'id': 'clcym6xfj27700krf2snc593u'},
-     {'id': 'clcym6xfj27710krf31i1db27'}]
+    [{'id': 'cld95duf80o3k0jpa5f8bdolk'},
+     {'id': 'cld95duf80o3l0jpa6tkv947s'},
+     {'id': 'cld95duf90o3m0jpaccwo0awt'}]
 
 
 
@@ -252,9 +252,9 @@ kili.append_labels(
 
 
 
-    [{'id': 'clcym78zz25gx0lq43sx3fqq8'},
-     {'id': 'clcym78zz25gy0lq4hyzp6ne3'},
-     {'id': 'clcym78zz25gz0lq41z4n99jr'}]
+    [{'id': 'cld95dy130iss0ko864g7c7hr'},
+     {'id': 'cld95dy130ist0ko8fgokak6h'},
+     {'id': 'cld95dy130isu0ko8gb0s1ckc'}]
 
 
 
@@ -269,10 +269,10 @@ kili.send_back_to_queue(project_id=project_id, external_ids=external_ids)
 
 
 
-    {'id': 'clcym6c6v25fp0lq4ef6xh1hz',
-     'asset_ids': ['clcym6clk0000kzvzkk3k0k93',
-      'clcym6clk0001kzvzqydzki85',
-      'clcym6clk0002kzvz2cu22sat']}
+    {'id': 'cld95dpne0n2y0joi6wuq3u6v',
+     'asset_ids': ['cld95dq340006wvszexj8u1uh',
+      'cld95dq340007wvszoxdhet57',
+      'cld95dq340008wvszveinxcy2']}
 
 
 
