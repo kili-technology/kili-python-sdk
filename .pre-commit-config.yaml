@@ -23,6 +23,15 @@ repos:
           - flake8-black>=0.1.1
           - flake8-bugbear>=20.0.0
           - flake8-unused-arguments
+  - repo: https://github.com/srstevenson/nb-clean
+    rev: 2.4.0
+    hooks:
+      - id: nb-clean
+        args:
+          - --preserve-cell-outputs
+          - --preserve-cell-metadata
+          - tags
+          - --
   - repo: local
     hooks:
       - id: notebook-markdown-tutorials
