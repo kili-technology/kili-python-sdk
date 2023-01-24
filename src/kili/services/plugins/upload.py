@@ -2,6 +2,8 @@
 Class to upload a plugin
 """
 
+import importlib.util
+import sys
 import time
 from pathlib import Path
 from typing import List, Optional, Union
@@ -62,6 +64,30 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     Returns true if the mime type of the file corresponds to a .txt file
     """
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
+
+
+def check_file_contains_handler(name: str, path: str):
+    """
+    Return true if the file contain PluginHandler Class
+    """
+    spec = importlib.util.spec_from_file_location(name, path)
+
+    if not spec:
+        return False
+
+    plugin = importlib.util.module_from_spec(spec)
+    sys.modules[name] = plugin
+    loader = spec.loader
+
+    if not loader:
+        return False
+
+    loader.exec_module(plugin)
+    try:
+        plugin.PluginHandler
+    except AttributeError:
+        return False
+    return True
 
 
 class WebhookUploader:
@@ -186,11 +212,16 @@ class PluginUploader:
         return file_path
 
     @staticmethod
-    def _parse_script(file_path: Path):
+    def _parse_script(script_path: Path, name: str):
         """
-        Method to detect indentation errors in the script
+        Method to detect indentation and class errors in the script
         """
-        with file_path.open("r", encoding="utf-8") as file:
+        if str(script_path.name) == "main.py" and not check_file_contains_handler(
+            name, str(script_path)
+        ):
+            raise ValueError("PluginHandler class is not present in your main.py file.")
+
+        with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
         # We execute the source code to prevent the upload of a file with SyntaxError
@@ -251,7 +282,7 @@ class PluginUploader:
         file_paths = self._retrieve_plugin_src()
 
         for path in file_paths:
-            self._parse_script(path)
+            self._parse_script(path, self.plugin_name)
 
         requirements = self._retrieve_requirements()
 
