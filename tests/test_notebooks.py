@@ -42,6 +42,8 @@ def process_notebook(notebook_filename):
         "recipes/plugins_development.ipynb",
         "recipes/plugins_example.ipynb",
         "recipes/basic_project_setup.ipynb",
+        "recipes/importing_assets_and_labels.ipynb",
+        "recipes/importing_video_assets.ipynb",
     ],
 )
 def test_all_recipes(notebook_file):
