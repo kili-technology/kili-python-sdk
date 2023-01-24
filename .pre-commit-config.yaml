@@ -25,6 +25,15 @@ repos:
           - flake8-unused-arguments
   - repo: local
     hooks:
+      - id: clean-notebook-metadata
+        name: Clean notebook metadata
+        language: python
+        entry: jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --ClearMetadataPreprocessor.preserve_cell_metadata_mask tags --inplace
+        files: .*\.ipynb$
+        stages: [commit, merge-commit]
+        always_run: false
+        pass_filenames: true
+        additional_dependencies: [nbconvert]
       - id: notebook-markdown-tutorials
         name: Checks for notebook and markdown tutorials
         language: python

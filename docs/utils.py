@@ -303,8 +303,17 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         if tutorial_name not in existing_tutorials:
             continue
 
+        # case when notebook is modified but not markdown
+        if len(group) == 1 and group[0].suffix == ".ipynb":
+            ipynb_filepath = group[0]
+            md_filepath = Path("docs/sdk/tutorials") / f"{tutorial_name}.md"
+
+        # both notebook and markdown got modified
+        elif len(group) == 2:
+            ipynb_filepath, md_filepath = sorted(group, key=lambda path: path.suffix)
+
         # group must have two files, one .md and one .ipynb
-        if len(group) != 2:
+        else:
             raise ValueError(
                 f"Expected two files (.md and .ipynb) in staging for tutorial '{tutorial_name}',"
                 f" got {group}. Run 'python -m docs.utils convert <notebook_file>' at the root of"
@@ -312,18 +321,14 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
                 " the result before committing your changes."
             )
 
-        ipynb_filepath, md_filepath = sorted(group, key=lambda path: path.suffix)
         assert ipynb_filepath.suffix == ".ipynb", ipynb_filepath
         assert md_filepath.suffix == ".md", md_filepath
         ipynb_filepath = ipynb_filepath.resolve()
         md_filepath = md_filepath.resolve()
 
         check_mkdocs_yml_up_to_date(md_filepath)
-
         check_notebook_tested(ipynb_filepath)
-
         check_colab_link_in_notebook(ipynb_filepath)
-
         check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
 
 
