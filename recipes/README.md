@@ -80,8 +80,6 @@ You can query every asset, label, or project-related information through the API
 A comprehensive example is [our recipe on how to use the query methods](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb) (run it [here](https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/query_methods.ipynb))
 You can also refer to the [SDK reference](https://python-sdk-docs.kili-technology.com/).
 
-<!-- markdown-link-check-disable -->
-
 ## How to use GraphQL Playground to query data
 
 If you prefer, you can directly query GraphQL API without using [Apollo Studio](http://cloud.kili-technology.com/api/label/v2/graphql)
@@ -92,8 +90,6 @@ If you prefer, you can directly query GraphQL API without using [Apollo Studio](
 
 3. In the bottom left corner of the screen, click on `HTTP headers` and write
    the retrieved token in the authorization headers:
-
-<!-- markdown-link-check-enable -->
 
 ```json
 {
