@@ -22,6 +22,14 @@ div.doc-contents:not(.first) {
   color: #b090ef;
 }
 
+.md-typeset {
+  font-size: 15px;
+}
+
+.md-typeset code {
+  font-size: 13px;
+}
+
 .md-grid {
   max-width: 1500px;
 }
