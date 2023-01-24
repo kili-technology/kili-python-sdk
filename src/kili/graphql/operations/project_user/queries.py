@@ -55,15 +55,15 @@ class ProjectUserQuery(GraphQLQuery):
         Return the GraphQL projectUsers query
         """
         return f"""
-    query projectUsers($where: ProjectUserWhere!, $first: PageSize!, $skip: Int!) {{
-    data: projectUsers(where: $where, first: $first, skip: $skip) {{
-        {fragment}
-    }}
-    }}
-    """
+        query projectUsers($where: ProjectUserWhere!, $first: PageSize!, $skip: Int!) {{
+            data: projectUsers(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+            }}
+        }}
+        """
 
     COUNT_QUERY = """
     query countProjectUsers($where: ProjectUserWhere!) {
-    data: countProjectUsers(where: $where)
+        data: countProjectUsers(where: $where)
     }
     """

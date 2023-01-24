@@ -113,16 +113,16 @@ class AssetQuery(GraphQLQuery):
         Return the GraphQL assets query
         """
         return f"""
-    query assets($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{
-    data: assets(where: $where, skip: $skip, first: $first) {{
-        {fragment}
-    }}
-    }}
-    """
+        query assets($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{
+            data: assets(where: $where, skip: $skip, first: $first) {{
+                {fragment}
+            }}
+        }}
+        """
 
     COUNT_QUERY = """
     query countAssets($where: AssetWhere!) {
-    data: countAssets(where: $where)
+        data: countAssets(where: $where)
     }
     """
 

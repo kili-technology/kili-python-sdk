@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import List, NamedTuple, Optional
 
 from kili.graphql import GraphQLQuery, QueryOptions
-from kili.helpers import format_result, fragment_builder
+from kili.helpers import format_result
 from kili.types import Plugin
 
 
@@ -37,7 +37,7 @@ class PluginQuery(GraphQLQuery):
 
     COUNT_QUERY = """
     query countPlugins($where: PluginWhere!) {
-    data: countPlugins(where: $where)
+        data: countPlugins(where: $where)
     }
     """
 
@@ -49,26 +49,26 @@ class PluginQuery(GraphQLQuery):
         $limit: Int
         $skip: Int
     ) {
-    data: getPluginLogs(
-        data: {
-        projectId: $projectId
-        pluginName: $pluginName
-        createdAt: $createdAt
-        limit: $limit
-        skip: $skip
+        data: getPluginLogs(
+            data: {
+                projectId: $projectId
+                pluginName: $pluginName
+                createdAt: $createdAt
+                limit: $limit
+                skip: $skip
+            }
+        ) {
+            content
+            createdAt
+            logType
+            metadata {
+                assetId
+                labelId
+            }
+            pluginName
+            projectId
+            runId
         }
-    ) {
-        {content
-        createdAt
-        logType
-        metadata {
-        assetId
-        labelId
-        }
-        pluginName
-        projectId
-        runId}
-    }
     }
     """
 
@@ -78,18 +78,18 @@ class PluginQuery(GraphQLQuery):
         Return the GraphQL list_plugins query
         """
         return f"""
-    query listPlugins{{
-    data: listPlugins {{
-        {fragment}
-    }}
-    }}
-    """
+        query listPlugins{{
+            data: listPlugins {{
+                {fragment}
+            }}
+        }}
+        """
 
     def list(self, fields: List[str]):
         """
         List plugins
         """
-        fragment = fragment_builder(fields, self.FRAGMENT_TYPE)
+        fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
         return format_result("data", result, self.FORMAT_TYPE)
@@ -117,10 +117,10 @@ class PluginQuery(GraphQLQuery):
 
 GQL_GET_PLUGIN_RUNNER_STATUS = """
     query getPluginRunnerStatus(
-    $name: String!
+        $name: String!
     ) {
-    data: getPluginRunnerStatus(
-        name: $name
-    )
+        data: getPluginRunnerStatus(
+            name: $name
+        )
     }
     """
