@@ -6,8 +6,10 @@ from abc import ABC, abstractmethod
 from typing import Callable, Dict, Iterable, List, NamedTuple, Optional, Type
 
 from tqdm import tqdm
+from typing_extensions import TypedDict, is_typeddict
 
-from kili.helpers import format_result, fragment_builder
+from kili.exceptions import NonExistingFieldError
+from kili.helpers import format_result
 from kili.utils.pagination import api_throttle
 
 from .graphql_client import GraphQLClient
@@ -82,7 +84,7 @@ class GraphQLQuery(ABC):
         post_call_function: Optional[Callable] = None,
     ) -> Iterable[Dict]:
         """Query objects of the specified type"""
-        fragment = fragment_builder(fields, self.FRAGMENT_TYPE)
+        fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
         query = self.query(fragment)
 
         result_gen = self.execute_query_from_paginated_call(
@@ -154,3 +156,43 @@ class GraphQLQuery(ABC):
 
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
+
+    def fragment_builder(self, fields: List[str], typed_dict_class: Type[TypedDict]):
+        """
+        Builds a GraphQL fragment for a list of fields to query
+
+        Args:
+            fields
+            type_of_fields
+        """
+        type_of_fields = typed_dict_class.__annotations__
+        fragment = ""
+        subfields = [field.split(".", 1) for field in fields if "." in field]
+        if subfields:
+            for subquery in {subfield[0] for subfield in subfields}:
+                type_of_fields_subquery = type_of_fields[subquery]
+                if type_of_fields_subquery == str:
+                    raise NonExistingFieldError(f"{subquery} field does not take subfields")
+                if is_typeddict(type_of_fields_subquery):
+                    fields_subquery = [
+                        subfield[1] for subfield in subfields if subfield[0] == subquery
+                    ]
+                    new_fragment = self.fragment_builder(
+                        fields_subquery,
+                        type_of_fields_subquery,  # type: ignore
+                    )
+                    fragment += f" {subquery}{{{new_fragment}}}"
+            fields = [field for field in fields if "." not in field]
+        for field in fields:
+            try:
+                type_of_fields[field]
+            except KeyError as exception:
+                raise NonExistingFieldError(
+                    f"Cannot query field {field} on object {typed_dict_class.__name__}. Admissible"
+                    " fields are: \n- " + "\n- ".join(type_of_fields.keys())
+                ) from exception
+            if isinstance(field, str):
+                fragment += f" {field}"
+            else:
+                raise Exception("Please provide the fields to query as strings")
+        return fragment

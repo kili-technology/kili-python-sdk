@@ -14,10 +14,10 @@ from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
 import requests
-from typing_extensions import TypedDict, get_args, get_origin, is_typeddict
+from typing_extensions import get_args, get_origin
 
 from kili.constants import mime_extensions_for_IV2
-from kili.exceptions import GraphQLError, NonExistingFieldError
+from kili.exceptions import GraphQLError
 
 T = TypeVar("T")
 
@@ -135,45 +135,6 @@ def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D
     if isinstance(result, dict):
         return format_json_dict(result)
     return result
-
-
-def fragment_builder(fields: List[str], typed_dict_class: Type[TypedDict]):
-    """
-    Builds a GraphQL fragment for a list of fields to query
-
-    Args:
-        fields
-        type_of_fields
-    """
-    type_of_fields = typed_dict_class.__annotations__
-    fragment = ""
-    subfields = [field.split(".", 1) for field in fields if "." in field]
-    if subfields:
-        for subquery in {subfield[0] for subfield in subfields}:
-            type_of_fields_subquery = type_of_fields[subquery]
-            if type_of_fields_subquery == str:
-                raise NonExistingFieldError(f"{subquery} field does not take subfields")
-            if is_typeddict(type_of_fields_subquery):
-                fields_subquery = [subfield[1] for subfield in subfields if subfield[0] == subquery]
-                new_fragment = fragment_builder(
-                    fields_subquery,
-                    type_of_fields_subquery,  # type: ignore
-                )
-                fragment += f" {subquery}{{{new_fragment}}}"
-        fields = [field for field in fields if "." not in field]
-    for field in fields:
-        try:
-            type_of_fields[field]
-        except KeyError as exception:
-            raise NonExistingFieldError(
-                f"Cannot query field {field} on object {typed_dict_class.__name__}. Admissible"
-                " fields are: \n- " + "\n- ".join(type_of_fields.keys())
-            ) from exception
-        if isinstance(field, str):
-            fragment += f" {field}"
-        else:
-            raise Exception("Please provide the fields to query as strings")
-    return fragment
 
 
 def deprecate(

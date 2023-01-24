@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import List, NamedTuple, Optional
 
 from kili.graphql import GraphQLQuery, QueryOptions
-from kili.helpers import format_result, fragment_builder
+from kili.helpers import format_result
 from kili.types import Plugin
 
 
@@ -89,7 +89,7 @@ class PluginQuery(GraphQLQuery):
         """
         List plugins
         """
-        fragment = fragment_builder(fields, self.FRAGMENT_TYPE)
+        fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
         return format_result("data", result, self.FORMAT_TYPE)
