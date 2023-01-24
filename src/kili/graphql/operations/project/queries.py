@@ -14,6 +14,8 @@ class ProjectWhere(BaseQueryWhere):
     Tuple to be passed to the ProjectQuery to restrict query
     """
 
+    # pylint: disable=too-many-arguments
+
     def __init__(
         self,
         project_id: Optional[str] = None,
