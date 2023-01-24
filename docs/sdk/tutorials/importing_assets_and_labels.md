@@ -108,9 +108,9 @@ We will use some free off-the-shelf examples from the Internet.
 
 
 ```python
-url1 = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-url2 = "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80"
-url3 = "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
+url1 = "https://storage.googleapis.com/label-public-staging/car/car_2.jpg"
+url2 = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+url3 = "https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"
 
 assets = kili.append_many_to_dataset(
     project_id=project_id,
@@ -135,7 +135,7 @@ The procedure looks the same for most of other data types, like PDFs or text. Fo
 
 Because videos and Rich Text assets may be more complex to import, we've created separate tutorials devoted to them:
 
-- For information on importing video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/2.128/sdk/tutorials/importing_video_assets/).
+- For information on importing video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/).
 - For information on importing Rich Text assets, see [here](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
 
 For more information on importing assets, refer to [our documentation](https://docs.kili-technology.com/docs/adding-assets-to-project).

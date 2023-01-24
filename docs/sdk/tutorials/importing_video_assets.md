@@ -128,7 +128,7 @@ To show an example of how to upload a local video, we must first download it:
 import urllib.request
 
 urllib.request.urlretrieve(
-    "https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rZJIMvhmliwmde8a6/people-and-cars-moving-summer-in-cannes_rihw5icll__fb84d62d88da661f8edd5c5d17d586bf__P360.mp4",
+    "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4",
     "test.mp4",
 )
 ```
@@ -148,7 +148,7 @@ You can of course upload videos using URLs as well. To do so, simply replace `'.
 
 
 ```python
-url = "https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rZJIMvhmliwmde8a6/people-and-cars-moving-summer-in-cannes_rihw5icll__fb84d62d88da661f8edd5c5d17d586bf__P360.mp4"
+url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
 
 assets = kili.append_many_to_dataset(
     project_id=project_id, content_array=[url], external_id_array=["video_2_from_url"]
@@ -161,7 +161,7 @@ To upload your video and be able to label frames separately, as individual image
 
 
 ```python
-url = "https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rZJIMvhmliwmde8a6/people-and-cars-moving-summer-in-cannes_rihw5icll__fb84d62d88da661f8edd5c5d17d586bf__P360.mp4"
+url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
 
 assets = kili.append_many_to_dataset(
     project_id=project_id,
@@ -178,16 +178,16 @@ We can create a video, by using local images as frames. Let's first download som
 
 ```python
 urllib.request.urlretrieve(
-    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-    "image_1.png",
+    "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg",
+    "image_1.jpg",
 )
 urllib.request.urlretrieve(
-    "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80",
-    "image_2.png",
+    "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg",
+    "image_2.jpg",
 )
 urllib.request.urlretrieve(
-    "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-    "image_3.png",
+    "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg",
+    "image_3.jpg",
 )
 ```
 
@@ -197,7 +197,7 @@ Now, let's put them together as one video:
 ```python
 assets = kili.append_many_to_dataset(
     project_id=project_id,
-    json_content_array=[["./image_1.png", "./image_2.png", "./image_3.png"]],
+    json_content_array=[["./image_1.jpg", "./image_2.jpg", "./image_3.jpg"]],
     external_id_array=["video_3_from_local_images"],
     json_metadata_array=[{"processingParameters": {"shouldUseNativeVideo": False}}],
 )
@@ -209,9 +209,9 @@ You can of course upload videos using URLs as well. To do so, simply replace `'.
 
 
 ```python
-url1 = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-url2 = "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80"
-url3 = "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
+url1 = "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg"
+url2 = "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg"
+url3 = "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg"
 
 assets = kili.append_many_to_dataset(
     project_id=project_id,

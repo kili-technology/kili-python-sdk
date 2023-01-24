@@ -105,10 +105,10 @@ We will use some free off-the-shelf examples from the Internet.
 
 
 ```python
-# Image url
-url1 = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-url2 = "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80"
-url3 = "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
+# Image urls
+url1 = "https://storage.googleapis.com/label-public-staging/car/car_2.jpg"
+url2 = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+url3 = "https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"
 
 assets = kili.append_many_to_dataset(
     project_id=project_id,
@@ -116,8 +116,6 @@ assets = kili.append_many_to_dataset(
     external_id_array=["image_1", "image_2", "image_3"],
 )
 ```
-
-
 
 ## Adding users to project
 
@@ -159,8 +157,6 @@ all_org_users = kili.users(organization_id=org_id)
 
 all_emails = [i["email"] for i in all_org_users]
 ```
-
-
 
 3) We will use the e-mail of the new user to add our new user to our project:
 
