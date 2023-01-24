@@ -50,14 +50,14 @@ class NotificationQuery(GraphQLQuery):
 
         return f"""
         query notifications($where: NotificationWhere!, $first: PageSize!, $skip: Int!) {{
-        data: notifications(where: $where, first: $first, skip: $skip) {{
-            {fragment}
-        }}
+            data: notifications(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+            }}
         }}
         """
 
     COUNT_QUERY = """
-query countNotifications($where: NotificationWhere!) {
-  data: countNotifications(where: $where)
-}
-"""
+    query countNotifications($where: NotificationWhere!) {
+        data: countNotifications(where: $where)
+    }
+    """

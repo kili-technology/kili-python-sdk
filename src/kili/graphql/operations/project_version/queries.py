@@ -37,15 +37,15 @@ class ProjectVersionQuery(GraphQLQuery):
         Return the GraphQL projects query
         """
         return f"""
-    query projectVersions($where: ProjectVersionWhere!, $first: PageSize!, $skip: Int!) {{
-    data: projectVersions(where: $where, first: $first, skip: $skip) {{
-        {fragment}
-    }}
-    }}
-    """
+        query projectVersions($where: ProjectVersionWhere!, $first: PageSize!, $skip: Int!) {{
+            data: projectVersions(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+            }}
+        }}
+        """
 
     COUNT_QUERY = """
     query countProjectVersions($where: ProjectVersionWhere!) {
-    data: countProjectVersions(where: $where)
+        data: countProjectVersions(where: $where)
     }
     """

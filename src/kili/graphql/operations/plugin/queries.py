@@ -37,7 +37,7 @@ class PluginQuery(GraphQLQuery):
 
     COUNT_QUERY = """
     query countPlugins($where: PluginWhere!) {
-    data: countPlugins(where: $where)
+        data: countPlugins(where: $where)
     }
     """
 
@@ -51,19 +51,19 @@ class PluginQuery(GraphQLQuery):
     ) {
         data: getPluginLogs(
             data: {
-            projectId: $projectId
-            pluginName: $pluginName
-            createdAt: $createdAt
-            limit: $limit
-            skip: $skip
+                projectId: $projectId
+                pluginName: $pluginName
+                createdAt: $createdAt
+                limit: $limit
+                skip: $skip
             }
         ) {
             content
             createdAt
             logType
             metadata {
-            assetId
-            labelId
+                assetId
+                labelId
             }
             pluginName
             projectId
@@ -78,12 +78,12 @@ class PluginQuery(GraphQLQuery):
         Return the GraphQL list_plugins query
         """
         return f"""
-    query listPlugins{{
-    data: listPlugins {{
-        {fragment}
-    }}
-    }}
-    """
+        query listPlugins{{
+            data: listPlugins {{
+                {fragment}
+            }}
+        }}
+        """
 
     def list(self, fields: List[str]):
         """
@@ -117,10 +117,10 @@ class PluginQuery(GraphQLQuery):
 
 GQL_GET_PLUGIN_RUNNER_STATUS = """
     query getPluginRunnerStatus(
-    $name: String!
+        $name: String!
     ) {
-    data: getPluginRunnerStatus(
-        name: $name
-    )
+        data: getPluginRunnerStatus(
+            name: $name
+        )
     }
     """

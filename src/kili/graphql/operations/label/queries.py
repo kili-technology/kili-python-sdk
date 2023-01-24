@@ -91,7 +91,7 @@ class LabelQuery(GraphQLQuery):
         Return the GraphQL labels query
         """
         return f"""
-            query labels($where: LabelWhere!, $first: PageSize!, $skip: Int!) {{
+        query labels($where: LabelWhere!, $first: PageSize!, $skip: Int!) {{
             data: labels(where: $where, first: $first, skip: $skip) {{
                 {fragment}
             }}
@@ -100,6 +100,6 @@ class LabelQuery(GraphQLQuery):
 
     COUNT_QUERY = """
     query countLabels($where: LabelWhere!) {
-    data: countLabels(where: $where)
+        data: countLabels(where: $where)
     }
     """

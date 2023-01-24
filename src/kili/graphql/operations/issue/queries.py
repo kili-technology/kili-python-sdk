@@ -37,15 +37,15 @@ class IssueQuery(GraphQLQuery):
         Return the GraphQL issues query
         """
         return f"""
-    query issues($where: IssueWhere!, $first: PageSize!, $skip: Int!) {{
-    data: issues(where: $where, first: $first, skip: $skip) {{
-        {fragment}
-    }}
-    }}
-    """
+        query issues($where: IssueWhere!, $first: PageSize!, $skip: Int!) {{
+            data: issues(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+            }}
+        }}
+        """
 
     COUNT_QUERY = """
     query countIssues($where: IssueWhere!) {
-    data: countIssues(where: $where)
+        data: countIssues(where: $where)
     }
     """

@@ -73,25 +73,25 @@ class OrganizationQuery(GraphQLQuery):
         """
         return f"""
         query organizations($where: OrganizationWhere!, $first: PageSize!, $skip: Int!) {{
-        data: organizations(where: $where, first: $first, skip: $skip) {{
-            {fragment}
-        }}
+            data: organizations(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+            }}
         }}
         """
 
     COUNT_QUERY = """
-query countOrganizations($where: OrganizationWhere!) {
-  data: countOrganizations(where: $where)
-}
-"""
+    query countOrganizations($where: OrganizationWhere!) {
+        data: countOrganizations(where: $where)
+    }
+    """
 
     GQL_ORGANIZATION_METRICS = """
     query organizationMetrics($where: OrganizationMetricsWhere!) {
-    data: organizationMetrics(where: $where) {
-        numberOfAnnotations
-        numberOfHours
-        numberOfLabeledAssets
-    }
+        data: organizationMetrics(where: $where) {
+            numberOfAnnotations
+            numberOfHours
+            numberOfLabeledAssets
+        }
     }
     """
 

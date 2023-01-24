@@ -47,15 +47,15 @@ class APIKeyQuery(GraphQLQuery):
         Return the GraphQL apiKeys query
         """
         return f"""
-      query apiKeys($where: ApiKeyWhere!, $first: PageSize!, $skip: Int!) {{
-        data: apiKeys(where: $where, skip: $skip, first: $first) {{
-          {fragment}
+        query apiKeys($where: ApiKeyWhere!, $first: PageSize!, $skip: Int!) {{
+          data: apiKeys(where: $where, skip: $skip, first: $first) {{
+            {fragment}
+          }}
         }}
-      }}
-      """
+        """
 
     COUNT_QUERY = """
-      query countApiKeys($where: ApiKeyWhere!) {
-        data: countApiKeys(where: $where)
-      }
-      """
+    query countApiKeys($where: ApiKeyWhere!) {
+      data: countApiKeys(where: $where)
+    }
+    """

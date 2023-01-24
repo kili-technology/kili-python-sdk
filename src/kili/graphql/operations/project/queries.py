@@ -14,8 +14,6 @@ class ProjectWhere(BaseQueryWhere):
     Tuple to be passed to the ProjectQuery to restrict query
     """
 
-    # pylint: disable=too-many-arguments,too-many-locals,too-many-instance-attributes
-
     def __init__(
         self,
         project_id: Optional[str] = None,
@@ -54,15 +52,15 @@ class ProjectQuery(GraphQLQuery):
         Return the GraphQL projects query
         """
         return f"""
-    query projects($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
-    data: projects(where: $where, first: $first, skip: $skip) {{
-        {fragment}
-    }}
-    }}
-    """
+        query projects($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
+            data: projects(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+            }}
+        }}
+        """
 
     COUNT_QUERY = """
     query countProjects($where: ProjectWhere!) {
-    data: countProjects(where: $where)
+        data: countProjects(where: $where)
     }
     """
