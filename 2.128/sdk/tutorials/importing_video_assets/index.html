@@ -10,20 +10,20 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.128/sdk/tutorials/basic_project_setup/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.128/sdk/tutorials/importing_video_assets/">
       
       
-        <link rel="prev" href="../../..">
+        <link rel="prev" href="../importing_assets_and_labels/">
       
       
-        <link rel="next" href="../importing_assets_and_labels/">
+        <link rel="next" href="../set_up_workflows/">
       
       <link rel="icon" href="../../../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
     
     
       
-        <title>Basic Project Setup - Python SDK</title>
+        <title>Import video assets - Python SDK</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-set-up-a-basic-kili-project" class="md-skip">
+        <a href="#importing-video-assets" class="md-skip">
           Skip to content
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Basic Project Setup
+              Import video assets
             
           </span>
         </div>
@@ -347,87 +347,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Basic Project Setup
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../basic_project_setup/" class="md-nav__link">
         Basic Project Setup
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installing-and-instantiating-kili" class="md-nav__link">
-    Installing and instantiating Kili
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#creating-a-basic-kili-project" class="md-nav__link">
-    Creating a basic Kili project
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-assets-to-project" class="md-nav__link">
-    Adding assets to project
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-users-to-project" class="md-nav__link">
-    Adding users to project
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cleanup" class="md-nav__link">
-    Cleanup
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    Summary
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -451,11 +375,141 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../importing_video_assets/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Import video assets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Import video assets
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-a-simple-kili-project-to-work-with" class="md-nav__link">
+    Setting up a simple Kili project to work with
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up a simple Kili project to work with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installing-and-instantiating-kili" class="md-nav__link">
+    Installing and instantiating Kili
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-basic-kili-project" class="md-nav__link">
+    Creating a basic Kili project
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-video-assets-to-kili" class="md-nav__link">
+    Importing video assets to Kili
+  </a>
+  
+    <nav class="md-nav" aria-label="Importing video assets to Kili">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-using-a-path-to-a-local-file" class="md-nav__link">
+    Uploading a video asset using a path to a local file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-using-an-url" class="md-nav__link">
+    Uploading a video asset using an URL
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-to-label-each-frame-separately" class="md-nav__link">
+    Uploading a video asset to label each frame separately
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-list-of-local-images-as-one-video-asset" class="md-nav__link">
+    Uploading a list of local images as one video asset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-list-of-image-urls-as-one-video-asset" class="md-nav__link">
+    Uploading a list of image URLs as one video asset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-with-a-custom-sampling-rate" class="md-nav__link">
+    Uploading a video asset with a custom sampling rate
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    Cleanup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -808,30 +862,84 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#setting-up-a-simple-kili-project-to-work-with" class="md-nav__link">
+    Setting up a simple Kili project to work with
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up a simple Kili project to work with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#installing-and-instantiating-kili" class="md-nav__link">
     Installing and instantiating Kili
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#creating-a-basic-kili-project" class="md-nav__link">
     Creating a basic Kili project
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-assets-to-project" class="md-nav__link">
-    Adding assets to project
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-users-to-project" class="md-nav__link">
-    Adding users to project
+  <a href="#importing-video-assets-to-kili" class="md-nav__link">
+    Importing video assets to Kili
   </a>
+  
+    <nav class="md-nav" aria-label="Importing video assets to Kili">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-using-a-path-to-a-local-file" class="md-nav__link">
+    Uploading a video asset using a path to a local file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-using-an-url" class="md-nav__link">
+    Uploading a video asset using an URL
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-to-label-each-frame-separately" class="md-nav__link">
+    Uploading a video asset to label each frame separately
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-list-of-local-images-as-one-video-asset" class="md-nav__link">
+    Uploading a list of local images as one video asset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-list-of-image-urls-as-one-video-asset" class="md-nav__link">
+    Uploading a list of image URLs as one video asset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading-a-video-asset-with-a-custom-sampling-rate" class="md-nav__link">
+    Uploading a video asset with a custom sampling rate
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -866,19 +974,25 @@
 
 
 <!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
-<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/basic_project_setup.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<h1 id="how-to-set-up-a-basic-kili-project">How to set up a basic Kili project</h1>
-<p>In this tutorial, we will learn how to set up a basic Kili project.</p>
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/importing_video_assets.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="importing-video-assets">Importing video assets</h1>
+<p>In this tutorial, we will learn how to import video assets to Kili.</p>
 <p>Here are the steps that we will follow:</p>
 <ol>
-<li>Installing and instantiating Kili</li>
-<li>Creating a basic Kili project</li>
-<li>Adding assets to project</li>
-<li>Adding users to project</li>
+<li>Setting up a simple Kili project to work with</li>
+<li>Importing video assets to Kili</li>
+<li>Uploading a video asset using a path to a local file</li>
+<li>Uploading a video asset using an URL</li>
+<li>Uploading a video asset to label each frame separately</li>
+<li>Uploading a list of local images as one video asset</li>
+<li>Uploading a list of image URLs as one video asset</li>
+<li>Uploading a video asset with a custom sampling rate</li>
+<li>Cleanup</li>
 </ol>
-<h2 id="installing-and-instantiating-kili">Installing and instantiating Kili</h2>
+<h2 id="setting-up-a-simple-kili-project-to-work-with">Setting up a simple Kili project to work with</h2>
+<h3 id="installing-and-instantiating-kili">Installing and instantiating Kili</h3>
 <p>First, let's install and import the required modules.</p>
-<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
+<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 <span class="kn">import</span> <span class="nn">getpass</span>
@@ -899,19 +1013,27 @@
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
-<h2 id="creating-a-basic-kili-project">Creating a basic Kili project</h2>
+<h3 id="creating-a-basic-kili-project">Creating a basic Kili project</h3>
 <p>To create a Kili project, you must first set up its interface.</p>
-<p>We will create a simple image project with just one simple classification job and two categories: <code>OBJECT_A</code> and <code>OBJECT_B</code>.</p>
+<p>We will create a video project with just one simple classification job and two categories: <code>OBJECT_A</code> and <code>OBJECT_B</code>.</p>
 <p>To learn more about Kili project interfaces, refer to <a href="https://docs.kili-technology.com/docs/customizing-project-interface">https://docs.kili-technology.com/docs/customizing-project-interface</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">interface</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object A&quot;</span><span class="p">},</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object B&quot;</span><span class="p">}},</span>
+                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object A&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category3&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object B&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category4&quot;</span><span class="p">},</span>
+                <span class="p">},</span>
                 <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
             <span class="p">},</span>
+            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Categories&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;isVisible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -919,7 +1041,7 @@
 <span class="n">result</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Test Project&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;VIDEO&quot;</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -928,59 +1050,96 @@
 <div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project ID: &quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>Project ID:  clcun99cn15wx0lq4c15a4dj7
+<pre><code>Project ID:  cld90h71d0ha50jptd28xfjg1
 </code></pre>
-<p>Now, let's add some assets to be labeled.</p>
-<p>We will use some free off-the-shelf examples from the Internet.</p>
-<h2 id="adding-assets-to-project">Adding assets to project</h2>
-<div class="highlight"><pre><span></span><code><span class="c1"># Image urls</span>
-<span class="n">url1</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_2.jpg&quot;</span>
-<span class="n">url2</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_1.jpg&quot;</span>
-<span class="n">url3</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
+<h2 id="importing-video-assets-to-kili">Importing video assets to Kili</h2>
+<p>Now, let's add some video assets to be labeled.
+You can videos using URLs or use your local assets.</p>
+<p>We will use a free off-the-shelf asset from the Internet.</p>
+<h3 id="uploading-a-video-asset-using-a-path-to-a-local-file">Uploading a video asset using a path to a local file</h3>
+<p>To show an example of how to upload a local video, we must first download it:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">urllib.request</span>
+
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;test.mp4&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Now, we can easily upload the video to our project:</p>
+<div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;./test.mp4&quot;</span><span class="p">],</span> <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_1_from_local&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="uploading-a-video-asset-using-an-url">Uploading a video asset using an URL</h3>
+<p>You can of course upload videos using URLs as well. To do so, simply replace <code>'./test.mp4'</code> with the URL of the video that you want to upload.</p>
+<div class="highlight"><pre><span></span><code><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4&quot;</span>
+
+<span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span> <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_2_from_url&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="uploading-a-video-asset-to-label-each-frame-separately">Uploading a video asset to label each frame separately</h3>
+<p>To upload your video and be able to label frames separately, as individual images, refer to this code:</p>
+<div class="highlight"><pre><span></span><code><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4&quot;</span>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">url1</span><span class="p">,</span> <span class="n">url2</span><span class="p">,</span> <span class="n">url3</span><span class="p">],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">,</span> <span class="s2">&quot;image_3&quot;</span><span class="p">],</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_2_from_url_split_frames&quot;</span><span class="p">],</span>
+    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;shouldUseNativeVideo&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
 <span class="p">)</span>
 </code></pre></div>
-<h2 id="adding-users-to-project">Adding users to project</h2>
-<p>Now we need to add users to our project. Before we do that, we have to add them to our organization. <strong>Note that you have to be an org admin to be able to do that</strong>.</p>
-<p>For more info on roles in an organization, refer to <a href="https://docs.kili-technology.com/docs/user-roles-in-organization">https://docs.kili-technology.com/docs/user-roles-in-organization</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">firstname</span> <span class="o">=</span> <span class="s2">&quot;Jane&quot;</span>
-<span class="n">lastname</span> <span class="o">=</span> <span class="s2">&quot;Doe&quot;</span>
-<span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;no.such.email@no.such.domain.com&quot;</span>
-<span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
-<span class="n">organization_role</span> <span class="o">=</span> <span class="s2">&quot;USER&quot;</span>
+<h3 id="uploading-a-list-of-local-images-as-one-video-asset">Uploading a list of local images as one video asset</h3>
+<p>We can create a video, by using local images as frames. Let's first download some images from the Internet:</p>
+<div class="highlight"><pre><span></span><code><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image_1.jpg&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image_2.jpg&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;image_3.jpg&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Now, let's put them together as one video:</p>
+<div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">json_content_array</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;./image_1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;./image_2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;./image_3.jpg&quot;</span><span class="p">]],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_3_from_local_images&quot;</span><span class="p">],</span>
+    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;shouldUseNativeVideo&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="uploading-a-list-of-image-urls-as-one-video-asset">Uploading a list of image URLs as one video asset</h3>
+<p>You can of course upload videos using URLs as well. To do so, simply replace <code>'./test.mp4'</code> with a set of URLs of images that you want to upload as a video.</p>
+<div class="highlight"><pre><span></span><code><span class="n">url1</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg&quot;</span>
+<span class="n">url2</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg&quot;</span>
+<span class="n">url3</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg&quot;</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">organization_role</span><span class="p">,</span> <span class="n">firstname</span><span class="p">,</span> <span class="n">lastname</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+<span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">json_content_array</span><span class="o">=</span><span class="p">[[</span><span class="n">url1</span><span class="p">,</span> <span class="n">url2</span><span class="p">,</span> <span class="n">url3</span><span class="p">]],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_4_from_image_urls&quot;</span><span class="p">],</span>
+    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;shouldUseNativeVideo&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
+<span class="p">)</span>
 </code></pre></div>
-<pre><code>error: "[noOrganizationRights] You cannot use this function because it seems that you do not have access to this organization. Please contact you organization admin. -- This can be due to: User isn't admin from the organization | trace : false"
-</code></pre>
-<p>If you already have users in your organization, here's how you can easily access their IDs:</p>
-<p>1) First, retrieve your organization ID:</p>
-<div class="highlight"><pre><span></span><code><span class="n">org_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">organizations</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<h3 id="uploading-a-video-asset-with-a-custom-sampling-rate">Uploading a video asset with a custom sampling rate</h3>
+<p>To upload a video with a custom sampling rate (let's say, 10 frames per second), use this code:</p>
+<div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;./test.mp4&quot;</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_5_custom&quot;</span><span class="p">],</span>
+    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;framesPlayedPerSecond&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}}],</span>
+<span class="p">)</span>
 </code></pre></div>
-<p>2) Then, based on your org ID, retrieve the full list of org users, with their e-mails:</p>
-<div class="highlight"><pre><span></span><code><span class="n">all_org_users</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">users</span><span class="p">(</span><span class="n">organization_id</span><span class="o">=</span><span class="n">org_id</span><span class="p">)</span>
-
-<span class="n">all_emails</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_org_users</span><span class="p">]</span>
-</code></pre></div>
-<p>3) We will use the e-mail of the new user to add our new user to our project:</p>
-<div class="highlight"><pre><span></span><code><span class="n">roles</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_to_roles</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;no.such.email@no.such.domain.com&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;LABELER&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">roles</span><span class="p">[</span><span class="s2">&quot;roles&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-</code></pre></div>
-<pre><code>{'user': {'id': 'clcumy1fx15ci0lre0k21fnu7', 'email': 'no.such.email@no.such.domain.com'}, 'role': 'LABELER'}
-</code></pre>
 <h2 id="cleanup">Cleanup</h2>
 <p>To clean up, we need to simply remove the project that we created.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">project_id</span><span class="p">);</span>
 </code></pre></div>
 <h2 id="summary">Summary</h2>
-<p>Done. We've successfully set up a Kili project, defined its interface, created a brand new user, and finally added our new user to the new project. Well done!</p>
+<p>Done. We've successfully set up a video project, defined its interface, and uploaded a bunch of assets to it, using various Kili's upload methods. Well done!</p>
 
 
   

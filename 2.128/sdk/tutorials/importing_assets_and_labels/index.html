@@ -10,20 +10,20 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.128/sdk/tutorials/basic_project_setup/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.128/sdk/tutorials/importing_assets_and_labels/">
       
       
-        <link rel="prev" href="../../..">
+        <link rel="prev" href="../basic_project_setup/">
       
       
-        <link rel="next" href="../importing_assets_and_labels/">
+        <link rel="next" href="../importing_video_assets/">
       
       <link rel="icon" href="../../../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
     
     
       
-        <title>Basic Project Setup - Python SDK</title>
+        <title>Import assets and labels - Python SDK</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-set-up-a-basic-kili-project" class="md-skip">
+        <a href="#importing-assets-and-labels" class="md-skip">
           Skip to content
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Basic Project Setup
+              Import assets and labels
             
           </span>
         </div>
@@ -347,6 +347,20 @@
               
   
   
+  
+    <li class="md-nav__item">
+      <a href="../basic_project_setup/" class="md-nav__link">
+        Basic Project Setup
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -359,12 +373,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Basic Project Setup
+          Import assets and labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Basic Project Setup
+        Import assets and labels
       </a>
       
         
@@ -383,29 +397,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#setting-up-a-simple-kili-project-to-work-with" class="md-nav__link">
+    Setting up a simple Kili project to work with
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up a simple Kili project to work with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#installing-and-instantiating-kili" class="md-nav__link">
     Installing and instantiating Kili
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#creating-a-basic-kili-project" class="md-nav__link">
     Creating a basic Kili project
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#adding-assets-to-project" class="md-nav__link">
-    Adding assets to project
+  <a href="#importing-assets-to-kili" class="md-nav__link">
+    Importing assets to Kili
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-users-to-project" class="md-nav__link">
-    Adding users to project
+  <a href="#adding-metadata-to-assets" class="md-nav__link">
+    Adding metadata to assets
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-model-based-pre-annotations-into-your-project" class="md-nav__link">
+    Importing model-based pre-annotations into your project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-pre-existing-labels-into-your-project" class="md-nav__link">
+    Importing pre-existing labels into your project
   </a>
   
 </li>
@@ -428,20 +469,6 @@
   
 </nav>
       
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../importing_assets_and_labels/" class="md-nav__link">
-        Import assets and labels
-      </a>
     </li>
   
 
@@ -808,29 +835,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#setting-up-a-simple-kili-project-to-work-with" class="md-nav__link">
+    Setting up a simple Kili project to work with
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up a simple Kili project to work with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#installing-and-instantiating-kili" class="md-nav__link">
     Installing and instantiating Kili
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#creating-a-basic-kili-project" class="md-nav__link">
     Creating a basic Kili project
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#adding-assets-to-project" class="md-nav__link">
-    Adding assets to project
+  <a href="#importing-assets-to-kili" class="md-nav__link">
+    Importing assets to Kili
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-users-to-project" class="md-nav__link">
-    Adding users to project
+  <a href="#adding-metadata-to-assets" class="md-nav__link">
+    Adding metadata to assets
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-model-based-pre-annotations-into-your-project" class="md-nav__link">
+    Importing model-based pre-annotations into your project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-pre-existing-labels-into-your-project" class="md-nav__link">
+    Importing pre-existing labels into your project
   </a>
   
 </li>
@@ -866,19 +920,21 @@
 
 
 <!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
-<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/basic_project_setup.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<h1 id="how-to-set-up-a-basic-kili-project">How to set up a basic Kili project</h1>
-<p>In this tutorial, we will learn how to set up a basic Kili project.</p>
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/importing_assets_and_labels.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="importing-assets-and-labels">Importing assets and labels</h1>
+<p>In this tutorial, we will learn how to import assets, add metadata to them, and then import labels to your project.</p>
 <p>Here are the steps that we will follow:</p>
 <ol>
-<li>Installing and instantiating Kili</li>
-<li>Creating a basic Kili project</li>
-<li>Adding assets to project</li>
-<li>Adding users to project</li>
+<li>Setting up a simple Kili project to work with</li>
+<li>Importing assets to Kili</li>
+<li>Adding metadata to assets</li>
+<li>Importing model-based pre-annotations into your project</li>
+<li>Importing pre-existing labels into your project</li>
 </ol>
-<h2 id="installing-and-instantiating-kili">Installing and instantiating Kili</h2>
+<h2 id="setting-up-a-simple-kili-project-to-work-with">Setting up a simple Kili project to work with</h2>
+<h3 id="installing-and-instantiating-kili">Installing and instantiating Kili</h3>
 <p>First, let's install and import the required modules.</p>
-<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
+<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 <span class="kn">import</span> <span class="nn">getpass</span>
@@ -899,7 +955,7 @@
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
-<h2 id="creating-a-basic-kili-project">Creating a basic Kili project</h2>
+<h3 id="creating-a-basic-kili-project">Creating a basic Kili project</h3>
 <p>To create a Kili project, you must first set up its interface.</p>
 <p>We will create a simple image project with just one simple classification job and two categories: <code>OBJECT_A</code> and <code>OBJECT_B</code>.</p>
 <p>To learn more about Kili project interfaces, refer to <a href="https://docs.kili-technology.com/docs/customizing-project-interface">https://docs.kili-technology.com/docs/customizing-project-interface</a>.</p>
@@ -928,13 +984,12 @@
 <div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project ID: &quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>Project ID:  clcun99cn15wx0lq4c15a4dj7
+<pre><code>Project ID:  cld90ffe80l8b0jn9d4vb44tn
 </code></pre>
+<h2 id="importing-assets-to-kili">Importing assets to Kili</h2>
 <p>Now, let's add some assets to be labeled.</p>
 <p>We will use some free off-the-shelf examples from the Internet.</p>
-<h2 id="adding-assets-to-project">Adding assets to project</h2>
-<div class="highlight"><pre><span></span><code><span class="c1"># Image urls</span>
-<span class="n">url1</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_2.jpg&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">url1</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_2.jpg&quot;</span>
 <span class="n">url2</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_1.jpg&quot;</span>
 <span class="n">url3</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
 
@@ -944,43 +999,153 @@
     <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">,</span> <span class="s2">&quot;image_3&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
-<h2 id="adding-users-to-project">Adding users to project</h2>
-<p>Now we need to add users to our project. Before we do that, we have to add them to our organization. <strong>Note that you have to be an org admin to be able to do that</strong>.</p>
-<p>For more info on roles in an organization, refer to <a href="https://docs.kili-technology.com/docs/user-roles-in-organization">https://docs.kili-technology.com/docs/user-roles-in-organization</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">firstname</span> <span class="o">=</span> <span class="s2">&quot;Jane&quot;</span>
-<span class="n">lastname</span> <span class="o">=</span> <span class="s2">&quot;Doe&quot;</span>
-<span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;no.such.email@no.such.domain.com&quot;</span>
-<span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
-<span class="n">organization_role</span> <span class="o">=</span> <span class="s2">&quot;USER&quot;</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">organization_role</span><span class="p">,</span> <span class="n">firstname</span><span class="p">,</span> <span class="n">lastname</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+<p>If you prefer to add your own images, you can use a local file. The code to do that would looks similar to this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Path to local image</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="s1">&#39;project_id&#39;</span>
+<span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;./image_1.jpeg&#39;</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;image_1&#39;</span><span class="p">]</span>
+<span class="p">)</span>
 </code></pre></div>
-<pre><code>error: "[noOrganizationRights] You cannot use this function because it seems that you do not have access to this organization. Please contact you organization admin. -- This can be due to: User isn't admin from the organization | trace : false"
+<p>The procedure looks the same for most of other data types, like PDFs or text. For more information on supported file formats, refer to <a href="https://docs.kili-technology.com/docs/supported-file-formats">our documentation</a>.</p>
+<p>Because videos and Rich Text assets may be more complex to import, we've created separate tutorials devoted to them:</p>
+<ul>
+<li>For information on importing video assets, refer to <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/">this tutorial</a>.</li>
+<li>For information on importing Rich Text assets, see <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb">here</a>.</li>
+</ul>
+<p>For more information on importing assets, refer to <a href="https://docs.kili-technology.com/docs/adding-assets-to-project">our documentation</a>.</p>
+<h2 id="adding-metadata-to-assets">Adding metadata to assets</h2>
+<p>In Kili, you can add extra information to an asset by using asset metadata. This can be information on document language, custom quality metrics, agreement metrics and so on that you can use, for example when using Kili's advanced filters or for Optical Character Recognition.</p>
+<p>Additionally, three specific metadata types can be used as information presented to labelers in Kili interface:</p>
+<ul>
+<li><code>imageUrl</code></li>
+<li><code>text</code></li>
+<li><code>url</code></li>
+</ul>
+<p>First, let's set data types for each type of our metadata. The default data type is <code>string</code>, so you can skip this step, but setting some of your metadata as numbers can really help when you want to filter your assets later.</p>
+<p>Note that we don't need to set data types for <code>imageUrl</code>, <code>text</code>, and <code>url</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">metadata_types</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;customConsensus&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sensitiveData&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;uploadedFromCloud&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;modelLabelErrorScore&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>{'id': 'cld90ffe80l8b0jn9d4vb44tn',
+ 'metadataTypes': {'sensitiveData': 'string',
+  'customConsensus': 'number',
+  'uploadedFromCloud': 'string',
+  'modelLabelErrorScore': 'number'}}
 </code></pre>
-<p>If you already have users in your organization, here's how you can easily access their IDs:</p>
-<p>1) First, retrieve your organization ID:</p>
-<div class="highlight"><pre><span></span><code><span class="n">org_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">organizations</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-</code></pre></div>
-<p>2) Then, based on your org ID, retrieve the full list of org users, with their e-mails:</p>
-<div class="highlight"><pre><span></span><code><span class="n">all_org_users</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">users</span><span class="p">(</span><span class="n">organization_id</span><span class="o">=</span><span class="n">org_id</span><span class="p">)</span>
+<p>Now we can add metadata to our assets:</p>
+<div class="highlight"><pre><span></span><code><span class="n">external_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">]</span>
 
-<span class="n">all_emails</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_org_users</span><span class="p">]</span>
+<span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">external_ids</span><span class="o">=</span><span class="n">external_ids</span><span class="p">,</span>
+    <span class="n">json_metadatas</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;customConsensus&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;sensitiveData&quot;</span><span class="p">:</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;uploadedFromCloud&quot;</span><span class="p">:</span> <span class="s2">&quot;no&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;modelLabelErrorScore&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;customConsensus&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+            <span class="s2">&quot;sensitiveData&quot;</span><span class="p">:</span> <span class="s2">&quot;no&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;uploadedFromCloud&quot;</span><span class="p">:</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;modelLabelErrorScore&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Add metadata that will be visible to labelers in the labeling interface:</span>
+<span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">external_ids</span><span class="o">=</span><span class="n">external_ids</span><span class="p">,</span>
+    <span class="n">json_metadatas</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;imageUrl&quot;</span><span class="p">:</span> <span class="s2">&quot;www.example.com/image.png&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;some text&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;www.example.com&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;imageUrl&quot;</span><span class="p">:</span> <span class="s2">&quot;www.example.com/image.png&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;some text&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;www.example.com&quot;</span><span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
 </code></pre></div>
-<p>3) We will use the e-mail of the new user to add our new user to our project:</p>
-<div class="highlight"><pre><span></span><code><span class="n">roles</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_to_roles</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;no.such.email@no.such.domain.com&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;LABELER&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">roles</span><span class="p">[</span><span class="s2">&quot;roles&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-</code></pre></div>
-<pre><code>{'user': {'id': 'clcumy1fx15ci0lre0k21fnu7', 'email': 'no.such.email@no.such.domain.com'}, 'role': 'LABELER'}
+<pre><code>[{'id': 'cld90fmg100009nvzbjvf73jx'}, {'id': 'cld90fmg100019nvzirlsutxz'}]
 </code></pre>
+<p>If you want to add metadata based on Optical Character Recognition, the process is slightly more complex. To help you with it, we've created a <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/ocr_pre_annotations.ipynb">separate tutorial</a>.</p>
+<p>For more information on adding asset metadata, refer to our <a href="https://docs.kili-technology.com/docs/adding-asset-metadata">documentation</a>.</p>
+<h2 id="importing-model-based-pre-annotations-into-your-project">Importing model-based pre-annotations into your project</h2>
+<p>When you import pre-annotations, you can use two types of labels: <code>PREDICTION</code> and <code>INFERENCE</code>.</p>
+<p><code>PREDICTION</code>-type annotations will be displayed on the asset during the labeling process. Labelers will be able to confirm what model produced, edit, and/or add new annotations.</p>
+<p>Unlike with <code>PREDICTIONS</code>, <code>INFERENCE</code>-type annotations are not displayed on the asset during the labeling process.
+<code>INFERENCE</code>-type labels are used for IoU (intersection over union) calculation if you want to benchmark your model predictions, or labelers' work quality against ground truth.</p>
+<p>For more information on Kili label types, refer to <a href="https://docs.kili-technology.com/docs/asset-lifecycle#label-types-and-definitions-throughout-an-asset-lifecycle">our documentation</a>.</p>
+<p>First, let's prepare some fake predictions:</p>
+<div class="highlight"><pre><span></span><code><span class="n">json_response_array</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">95</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">}]}},</span>
+    <span class="p">{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">79</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">}]}},</span>
+    <span class="p">{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">83</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">}]}},</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>Now, we'll upload them:</p>
+<div class="highlight"><pre><span></span><code><span class="n">asset_external_id_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">,</span> <span class="s2">&quot;image_3&quot;</span><span class="p">]</span>
+
+<span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;MyModel&quot;</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="n">asset_external_id_array</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;MyModel&quot;</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="n">asset_external_id_array</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>[{'id': 'cld90g9tu0l690joi5hnbc3rj'},
+ {'id': 'cld90g9tu0l6a0joidtsk09q4'},
+ {'id': 'cld90g9tu0l6b0joi1qp69ipz'}]
+</code></pre>
+<p>You can add prediction-type labels directly, using the <code>create_predictions</code> method. The <code>label_type</code> will be assigned automatically as <code>PREDICTION</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">external_id_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">,</span> <span class="s2">&quot;image_3&quot;</span><span class="p">]</span>
+
+<span class="n">kili</span><span class="o">.</span><span class="n">create_predictions</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="n">external_id_array</span><span class="p">,</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;MyModel&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>{'id': 'cld90ffe80l8b0jn9d4vb44tn'}
+</code></pre>
+<h2 id="importing-pre-existing-labels-into-your-project">Importing pre-existing labels into your project</h2>
+<p>You can also use existing labels to add them to assets. Here, we'll use existing labels and add them to our assets only if their external IDs match.</p>
+<div class="highlight"><pre><span></span><code><span class="n">external_id_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">,</span> <span class="s2">&quot;image_3&quot;</span><span class="p">]</span>
+
+<span class="n">assets_list</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_list</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">external_id_array</span><span class="p">:</span>
+        <span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
+            <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">]],</span>
+            <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]],</span>
+        <span class="p">)</span>
+</code></pre></div>
 <h2 id="cleanup">Cleanup</h2>
 <p>To clean up, we need to simply remove the project that we created.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">project_id</span><span class="p">);</span>
 </code></pre></div>
 <h2 id="summary">Summary</h2>
-<p>Done. We've successfully set up a Kili project, defined its interface, created a brand new user, and finally added our new user to the new project. Well done!</p>
+<p>Done. We've successfully set up a Kili project, imported assets to it, added metadata to our assets, and then imported various types of labels to our project. Well done!</p>
 
 
   

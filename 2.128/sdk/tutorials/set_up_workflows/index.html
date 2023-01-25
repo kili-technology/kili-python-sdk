@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.128/sdk/tutorials/set_up_workflows/">
       
       
-        <link rel="prev" href="../export_a_kili_project/">
+        <link rel="prev" href="../importing_video_assets/">
       
       
-        <link rel="next" href="../plugins_development/">
+        <link rel="next" href="../export_a_kili_project/">
       
       <link rel="icon" href="../../../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
@@ -363,8 +363,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../export_a_kili_project/" class="md-nav__link">
-        Export
+      <a href="../importing_assets_and_labels/" class="md-nav__link">
+        Import assets and labels
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_video_assets/" class="md-nav__link">
+        Import video assets
       </a>
     </li>
   
@@ -509,6 +523,20 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../export_a_kili_project/" class="md-nav__link">
+        Export
+      </a>
     </li>
   
 
@@ -989,7 +1017,7 @@
 <p>You can set up the percentage of assets that will automatically appear in the review queue (1-100%).</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">review_coverage</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>{'id': 'clcym6c6v25fp0lq4ef6xh1hz', 'reviewCoverage': 50}
+<pre><code>{'id': 'cld95dpne0n2y0joi6wuq3u6v', 'reviewCoverage': 50}
 </code></pre>
 <h2 id="setting-up-consensus">Setting up consensus</h2>
 <p>Consensus works by having more than one labeler annotate the same asset. When the asset is labeled, a consensus score is calculated to measure the agreement level between the different annotations for a given asset.
@@ -1087,9 +1115,9 @@ The method will return the list of newly-added label IDs.</p>
     <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'clcym6xfj276z0krf03o303un'},
- {'id': 'clcym6xfj27700krf2snc593u'},
- {'id': 'clcym6xfj27710krf31i1db27'}]
+<pre><code>[{'id': 'cld95duf80o3k0jpa5f8bdolk'},
+ {'id': 'cld95duf80o3l0jpa6tkv947s'},
+ {'id': 'cld95duf90o3m0jpaccwo0awt'}]
 </code></pre>
 <p>Now, let's place some assets in the review queue. The method will return a project ID and a list of asset IDs placed in the review queue.</p>
 <div class="highlight"><pre><span></span><code><span class="n">external_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;3.jpg&quot;</span><span class="p">]</span>
@@ -1108,18 +1136,18 @@ The method will return the list of newly-added label IDs.</p>
     <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'clcym78zz25gx0lq43sx3fqq8'},
- {'id': 'clcym78zz25gy0lq4hyzp6ne3'},
- {'id': 'clcym78zz25gz0lq41z4n99jr'}]
+<pre><code>[{'id': 'cld95dy130iss0ko864g7c7hr'},
+ {'id': 'cld95dy130ist0ko8fgokak6h'},
+ {'id': 'cld95dy130isu0ko8gb0s1ckc'}]
 </code></pre>
 <p>Now, we will send some of our assets back to the labeling queue. The method will return a project ID and a list of asset IDs that were sent back to the labeling queue.</p>
 <div class="highlight"><pre><span></span><code><span class="n">external_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;3.jpg&quot;</span><span class="p">]</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">send_back_to_queue</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="n">external_ids</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>{'id': 'clcym6c6v25fp0lq4ef6xh1hz',
- 'asset_ids': ['clcym6clk0000kzvzkk3k0k93',
-  'clcym6clk0001kzvzqydzki85',
-  'clcym6clk0002kzvz2cu22sat']}
+<pre><code>{'id': 'cld95dpne0n2y0joi6wuq3u6v',
+ 'asset_ids': ['cld95dq340006wvszexj8u1uh',
+  'cld95dq340007wvszoxdhet57',
+  'cld95dq340008wvszveinxcy2']}
 </code></pre>
 <p>For more information on asset statuses, refer to our <a href="https://docs.kili-technology.com/docs/asset-lifecycle">documentation</a>.</p>
 <h2 id="summary">Summary</h2>

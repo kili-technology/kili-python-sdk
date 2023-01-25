@@ -361,8 +361,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorials/export_a_kili_project/" class="md-nav__link">
-        Export
+      <a href="../tutorials/importing_assets_and_labels/" class="md-nav__link">
+        Import assets and labels
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/importing_video_assets/" class="md-nav__link">
+        Import video assets
       </a>
     </li>
   
@@ -377,6 +391,20 @@
     <li class="md-nav__item">
       <a href="../tutorials/set_up_workflows/" class="md-nav__link">
         Workflows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/export_a_kili_project/" class="md-nav__link">
+        Export
       </a>
     </li>
   
@@ -1430,9 +1458,13 @@ on_review(self, label: Label, asset_id: str)
 <span class="sd">            &gt;&gt;&gt; kili.get_plugin_logs(project_id=&quot;my_project_id&quot;, plugin_name=&quot;my_plugin_name&quot;, start_date=&quot;1970/01/01&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">plugin</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;project_id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;plugin_name&quot;</span><span class="p">:</span> <span class="n">plugin_name</span><span class="p">}</span>
-
-        <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">get_logs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+        <span class="n">where</span> <span class="o">=</span> <span class="n">PluginLogsWhere</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span>
+        <span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
+            <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>  <span class="c1"># disable tqm is not implemnted for this query</span>
+        <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">get_logs</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">pretty_result</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -1482,7 +1514,7 @@ on_review(self, label: Label, asset_id: str)
 <span class="sd">            &gt;&gt;&gt; kili.list_plugins()</span>
 <span class="sd">            &gt;&gt;&gt; kili.list_plugins(fields=[&#39;name&#39;])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">list_plugins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -1601,9 +1633,13 @@ on_review(self, label: Label, asset_id: str)
 <span class="sd">        &gt;&gt;&gt; kili.get_plugin_logs(project_id=&quot;my_project_id&quot;, plugin_name=&quot;my_plugin_name&quot;, start_date=&quot;1970/01/01&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">plugin</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;project_id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;plugin_name&quot;</span><span class="p">:</span> <span class="n">plugin_name</span><span class="p">}</span>
-
-    <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">get_logs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+    <span class="n">where</span> <span class="o">=</span> <span class="n">PluginLogsWhere</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span>
+    <span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
+        <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>  <span class="c1"># disable tqm is not implemnted for this query</span>
+    <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">get_logs</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">pretty_result</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -1783,7 +1819,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">        &gt;&gt;&gt; kili.list_plugins()</span>
 <span class="sd">        &gt;&gt;&gt; kili.list_plugins(fields=[&#39;name&#39;])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">list_plugins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
