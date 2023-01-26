@@ -6,7 +6,7 @@ on:
         description: "Deploy doc of which branch?"
         required: false
         type: choice
-        default: "master"
+        default: "latest minor release branch"
         options:
           - master
           - latest minor release branch
@@ -17,21 +17,20 @@ jobs:
     name: Deploy technical documentation
     runs-on: ubuntu-latest
     steps:
+      - name: set checkout to latest release branch
+        run: |
+          last_version_tag=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
+          echo $last_version_tag
+          echo "REF=release/$last_version_tag" >> $GITHUB_ENV
+
       - name: set checkout to master branch
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch == 'master' }}
         run: |
           echo "REF=master" >> $GITHUB_ENV
 
-      - name: set checkout to latest release branch
-        if: ${{ github.event_name == 'workflow_call' || (github.event_name == 'workflow_dispatch' && github.event.inputs.branch == 'latest minor release branch') }}
-        run: |
-          last_version_tag=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
-          echo $last_version_tag
-          echo "REF=$last_version_tag" >> $GITHUB_ENV
-
       - uses: actions/checkout@v2
         with:
-          ref: ${{ env.REF }}
+          ref: ${{ env.REF }} # checked out branch
 
       - name: Set up Python
         uses: actions/setup-python@v2
