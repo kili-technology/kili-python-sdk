@@ -51,7 +51,7 @@ jobs:
           KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
 
       - name: Slack notification if failure
-        if: failure()
+        if: failure() && (github.event_name != 'workflow_dispatch') # doesn't notify for manual runs
         id: slack
         uses: slackapi/slack-github-action@v1.18.0
         with:
