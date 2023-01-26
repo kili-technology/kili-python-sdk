@@ -4,6 +4,7 @@ import logging
 from typing import Optional
 
 from kili.client import Kili
+from kili.services.plugins.helpers import get_logger
 from kili.types import Label
 
 
@@ -35,7 +36,7 @@ class PluginCore:
         if logger:
             self.logger = logger
         else:
-            self.logger = logging.getLogger()
+            self.logger = get_logger()
 
     def on_submit(
         self,

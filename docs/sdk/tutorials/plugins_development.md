@@ -58,6 +58,9 @@ Do not hesitate to reach out to us if you need more.
 
 
 ```python
+%load_ext autoreload
+%autoreload 2
+
 from kili.client import Kili
 import os
 
@@ -68,8 +71,14 @@ kili = Kili()
 
 The first step is to define the functions that will be called when the event is triggered. You will be able to iterate on these functions locally (more on that in the next section).
 
+The plugin can be defined in two ways: a single `.py` file with everything inside or a module (folder containing multiple `.py` files). In the case of the module type, a file names `main.py` need to be at the root of the folder and will serve as the entrypoint.
+
+ ### 1. Plugin defined in a single file
+
 This cell should be the contents of the `.py` file that you will upload as a plugin at the end.
+
 **This file should define the `PluginHandler` class that will contain the proper methods.**
+
 We recommend using a modern IDE like VScode to get type hints and autocompletion on the methods.
 
 
@@ -117,6 +126,52 @@ class PluginHandler(PluginCore):
         label_id = label.get("id")
 
         self.custom_method(project_id, label_id)
+```
+
+### 2. Plugin defined in a folder
+
+As said previously, the structure of the folder can be the following (the only constraint being the presence of the `main.py` file):
+```
+plugin_folder
+|__ main.py
+|__ other_file.py
+|
+|___helpers
+    |__ helper.py
+```
+
+**Important: The main.py file need to have the same skeleton as the plugin defined in a single file (presence of the class `PluginHandler`), the difference being that it can import and call functions defined in other files**
+
+Depending on where the folder is stored, there are two ways to import the plugin in order to test it:
+- The first way is to use a relative import (having the plugin folder and the notebook in the same folder). It is simpler and we recommend it as it will also allow the IDE to detect the correct methods and propose hints and autocompletion.
+- The second was is to use an absolute path to the plugin folder
+
+#### 2.1 Relative import
+
+
+```python
+# Here replace 'plugin_folder' with the actual name of the folder
+from plugin_folder.main import PluginHandler
+```
+
+#### 2.2 Absolute path import
+
+
+```python
+import os
+import sys
+from pathlib import Path
+
+# Input the path to the plugin folder (it should include the folder), for example '/path/to/plugin_folder'
+plugin_path = "<INSERT PATH TO PLUGIN FOLDER>"
+
+module_path = str(Path(plugin_path).parent.absolute())
+
+# We are inserting the path in the system PATH to be able to import the module in the next line
+sys.path.insert(0, module_path)
+
+# Here replace 'plugin_folder' with the actual name of the folder
+from plugin_folder.main import PluginHandler
 ```
 
 ### Testing the plugin locally
@@ -169,14 +224,6 @@ label = get_label(label_id=label_id, project_id=project_id)
 my_plugin_instance.on_submit(label=Label(**label), asset_id=asset_id)
 ```
 
-
-
-    On submit called
-    custom_method called for label clcyqwn5a2gyk0lpn8d7w486h
-
-
-
-
 ### Test the plugin run on Kili
 
 When you finish debugging the code, you may want to upload it directly into Kili.
@@ -199,19 +246,12 @@ except GraphQLError as error:
     print(str(error))
 ```
 
-    Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin.py", plugin_name="My first kili plugin")
-    error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "My first kili plugin" for field 'name' | trace : false"
-
-
 Plugins must be activated in the project that you want them to run in. Be careful with production projects: your custom workflows or rules will also be applied
 
 
 ```python
-kili.activate_plugin_on_project(plugin_name, project_id=project_id);
+kili.activate_plugin_on_project(plugin_name, project_id=project_id)
 ```
-
-    Plugin with name "My first kili plugin" activated on project "clcyr3xsz2e8j0lrehb1ufte9"
-
 
 ## Monitoring the plugin
 
@@ -249,9 +289,6 @@ plugins = kili.list_plugins()
 print([plugin for plugin in plugins if plugin["name"] == plugin_name])
 ```
 
-    [{'name': 'My first kili plugin', 'projectIds': ['clcyoj8s129ap0krfd5k2cjvl', 'clcyqw5m42e380lredqtzh4tx'], 'id': 'clb12ceii05to019g5wkh9rvz', 'createdAt': '2022-11-28T17:27:35.802Z', 'updatedAt': '2023-01-16T11:00:36.691Z'}]
-
-
 Update a plugin with new source code:
 
 
@@ -271,9 +308,6 @@ Deactivate the plugin on a certain project (the plugin can still be active for o
 ```python
 kili.deactivate_plugin_on_project(plugin_name=plugin_name, project_id=project_id);
 ```
-
-    Plugin My first kili plugin deactivated on project clcyr3xsz2e8j0lrehb1ufte9
-
 
 Delete the plugin completely (deactivates automatically the plugin from all projects):
 
