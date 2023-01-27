@@ -34,7 +34,7 @@ export KILI_API_KEY=<YOUR_API_KEY>
 
 
 ```python
-!pip install --upgrade kili
+!pip install  kili
 ```
 
 4) Import packages and instantiate `Kili`:

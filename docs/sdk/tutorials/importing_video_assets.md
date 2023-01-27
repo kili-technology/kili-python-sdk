@@ -25,7 +25,7 @@ First, let's install and import the required modules.
 
 
 ```python
-!pip install --upgrade kili
+!pip install  kili
 ```
 
 
