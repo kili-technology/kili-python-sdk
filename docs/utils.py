@@ -308,6 +308,11 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
             ipynb_filepath = group[0]
             md_filepath = Path("docs/sdk/tutorials") / f"{tutorial_name}.md"
 
+        # case when markdown is modified but not notebook
+        elif len(group) == 1 and group[0].suffix == ".md":
+            md_filepath = group[0]
+            ipynb_filepath = Path("recipes") / f"{tutorial_name}.ipynb"
+
         # both notebook and markdown got modified
         elif len(group) == 2:
             ipynb_filepath, md_filepath = sorted(group, key=lambda path: path.suffix)
