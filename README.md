@@ -182,8 +182,10 @@ More ways to export in other formats (YOLO, Pascal VOC) are described [here](doc
 Check out our tutorials:
 
 - 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
+- 📂🏷️ [Assets and labels import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/): Learn how to import assets and labels into your Kili project.
+- 🎥 [Video import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/): See how to import video assets into your Kili project.
 - 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
-- 📦 [How to export a project](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/): See how to export your project's assets and labels to different formats.
+- 📦 [Project export](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/): See how to export your project's assets and labels to different formats.
 - 🛠️ Plugins [development](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) and [example](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/): Learn how to create and use custom plugins in Kili.
 
 You can find several other recipes in this [folder](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
