@@ -12,7 +12,7 @@ from .queries import GQL_CREATE_ORGANIZATION, GQL_UPDATE_PROPERTIES_IN_ORGANIZAT
 class MutationsOrganization:
     """Set of Organization mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initializes the subclass.
@@ -25,6 +25,7 @@ class MutationsOrganization:
     @typechecked
     def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str):
         """Create an organization.
+        WARNING: This resolver is for internal use by Kili Technology only.
 
         Each user must be linked to an organization
 
@@ -63,6 +64,7 @@ class MutationsOrganization:
         license: Optional[dict] = None,
     ):  # pylint: disable=redefined-builtin
         """Modify an organization.
+        WARNING: This resolver is for internal use by Kili Technology only.
 
         Args:
             organization_id :
