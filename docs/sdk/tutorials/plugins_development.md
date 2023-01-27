@@ -64,16 +64,20 @@ Do not hesitate to reach out to us if you need more.
 from kili.client import Kili
 import os
 
-kili = Kili()
+api_endpoint = os.getenv("KILI_API_ENDPOINT")
+api_key = os.getenv("KILI_API_KEY")
+
+
+kili = Kili(api_endpoint=api_endpoint, api_key=api_key)
 ```
 
 ## Develop your plugin
 
 The first step is to define the functions that will be called when the event is triggered. You will be able to iterate on these functions locally (more on that in the next section).
 
-The plugin can be defined in two ways: a single `.py` file with everything inside or a module (folder containing multiple `.py` files). In the case of the module type, a file names `main.py` need to be at the root of the folder and will serve as the entrypoint.
+The plugin can be defined in two ways: a single `.py` file with everything inside or a module (folder containing multiple `.py` files). In the case of the module type, a file named `main.py` needs to be at the root of the folder and will serve as the entrypoint.
 
- ### 1. Plugin defined in a single file
+ ### 1. First option - Plugin defined in a single file
 
 This cell should be the contents of the `.py` file that you will upload as a plugin at the end.
 
@@ -128,17 +132,20 @@ class PluginHandler(PluginCore):
         self.custom_method(project_id, label_id)
 ```
 
-### 2. Plugin defined in a folder
+### 2. Second option - Plugin defined in a folder
 
 As said previously, the structure of the folder can be the following (the only constraint being the presence of the `main.py` file):
 ```
 plugin_folder
 |__ main.py
 |__ other_file.py
+|__ requirements.txt
 |
 |___helpers
     |__ helper.py
 ```
+
+You can notice that you can also include a `requirements.txt` file in the folder and the necessary packages will be installed with your plugin. Don't forget to add them, since the plugin could work on your machine if you have them installed, but it won't be possible to create the plugin if there are missing dependencies.
 
 **Important: The main.py file need to have the same skeleton as the plugin defined in a single file (presence of the class `PluginHandler`), the difference being that it can import and call functions defined in other files**
 
@@ -170,7 +177,7 @@ module_path = str(Path(plugin_path).parent.absolute())
 # We are inserting the path in the system PATH to be able to import the module in the next line
 sys.path.insert(0, module_path)
 
-# Here replace 'plugin_folder' with the actual name of the folder
+# In the next line replace 'plugin_folder' with the actual name of the folder
 from plugin_folder.main import PluginHandler
 ```
 
@@ -219,6 +226,8 @@ label_id = "<YOUR_LABEL_ID>"
 
 
 ```python
+from kili.types import Label
+
 label = get_label(label_id=label_id, project_id=project_id)
 
 my_plugin_instance.on_submit(label=Label(**label), asset_id=asset_id)
@@ -279,40 +288,4 @@ kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=
 
 ## Managing your plugin
 
-Here are several other methods to manage your plugins and their lifecycle:
-
-Get the list of all uploaded plugins in your organization:
-
-
-```python
-plugins = kili.list_plugins()
-print([plugin for plugin in plugins if plugin["name"] == plugin_name])
-```
-
-Update a plugin with new source code:
-
-
-```python
-updated_path = "plugin.py"
-```
-
-
-```python
-if updated_path != path_to_plugin:
-    kili.update_plugin(plugin_name=plugin_name, plugin_path=updated_path)
-```
-
-Deactivate the plugin on a certain project (the plugin can still be active for other projects):
-
-
-```python
-kili.deactivate_plugin_on_project(plugin_name=plugin_name, project_id=project_id);
-```
-
-Delete the plugin completely (deactivates automatically the plugin from all projects):
-
-
-```python
-if delete_plugin_from_org:
-    kili.delete_plugin(plugin_name=plugin_name)
-```
+There are several other methods to manage your plugins and their lifecycle. To find out more, you can check the [documentation](https://python-sdk-docs.kili-technology.com/) in the section Reference -> Plugins.
