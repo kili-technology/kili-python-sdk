@@ -64,7 +64,7 @@ class MutationsOrganization:
         license: Optional[dict] = None,
     ):  # pylint: disable=redefined-builtin
         """Modify an organization.
-        WARNING: This method is for internal use by Kili Technology only.
+        WARNING: This method is for internal use only.
 
         Args:
             organization_id :
