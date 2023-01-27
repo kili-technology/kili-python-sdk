@@ -33,7 +33,8 @@ and [many more](https://docs.kili-technology.com/docs/labeling-overview).
 ## What is Kili Python SDK?
 
 **Kili Python SDK** is the Python client for the Kili platform. It allows to query and manipulate the main entities available in Kili, like projects, assets, labels, api keys...
-It comes with several [recipes](recipes/) that demonstrate how to use it in the most frequent use cases.
+
+It comes with several [tutorials](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) that demonstrate how to use it in the most frequent use cases.
 
 ## Requirements
 
