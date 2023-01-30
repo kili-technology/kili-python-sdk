@@ -19,7 +19,13 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     Class for copying an existing project.
     """
 
-    FIELDS_PROJECT = ["title", "inputType", "description", "id"]
+    FIELDS_PROJECT = [
+        "title",
+        "inputType",
+        "description",
+        "id",
+        "dataConnections.dataIntegrationId",
+    ]
     FIELDS_JSON_INTERFACE = ["jsonInterface"]
     FIELDS_QUALITY_SETTINGS = [
         "consensusTotCoverage",
@@ -80,6 +86,9 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             fields = fields + self.FIELDS_QUALITY_SETTINGS
 
         src_project = services.get_project(self.kili, from_project_id, fields)
+
+        if len(src_project["dataConnections"]) > 0 and copy_assets:
+            raise NotImplementedError("Copying projects with remote storage is not supported.")
 
         new_project_title = title or self._generate_project_title(src_title=src_project["title"])
 
