@@ -24,7 +24,6 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "inputType",
         "description",
         "id",
-        "dataConnections.id",
         "dataConnections.dataIntegrationId",
     ]
     FIELDS_JSON_INTERFACE = ["jsonInterface"]
