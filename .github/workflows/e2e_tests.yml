@@ -6,7 +6,7 @@ on:
       - "release/**"
       - master
   schedule:
-    - cron: "0 7,15 * * *" # 8am and 4pm UTC+1
+    - cron: "0 7,15 * * 1-5" # 8am and 4pm UTC+1 every weekday
 jobs:
   recipes:
     name: Recipes test
