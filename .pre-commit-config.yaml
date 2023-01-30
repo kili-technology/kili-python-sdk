@@ -10,17 +10,11 @@ repos:
     hooks:
       - id: black
       - id: black-jupyter
-  - repo: local
+  - repo: https://github.com/pycqa/isort
+    rev: 5.11.5
     hooks:
       - id: isort
         name: isort (python)
-        language: python
-        entry: isort
-        files: .*\.py$
-        stages: [commit, merge-commit]
-        always_run: false
-        pass_filenames: true
-        additional_dependencies: [isort]
   - repo: https://github.com/pycqa/flake8
     rev: 5.0.4
     hooks:
