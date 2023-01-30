@@ -118,6 +118,19 @@ class ProjectUserWithoutProject(TypedDict):
     user: UserWithoutProjectUsers
 
 
+class DataConnection(TypedDict):
+    """
+    A wrapper for DataConnection GraphQL object.
+    """
+
+    id: str
+    isChecking: bool
+    isApplyingDataDifferences: bool
+    numberOfAssets: int
+    projectId: str
+    dataIntegrationId: str
+
+
 class ProjectWithoutDataset(TypedDict, total=False):
     """
     A wrapper for Project GraphQL object.
@@ -134,6 +147,7 @@ class ProjectWithoutDataset(TypedDict, total=False):
     consensusMarkPerCategory: Dict
     consensusTotCoverage: int
     createdAt: str
+    dataConnections: DataConnection
     description: str
     honeypotMark: float
     inputType: InputType
