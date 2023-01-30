@@ -33,7 +33,8 @@ and [many more](https://docs.kili-technology.com/docs/labeling-overview).
 ## What is Kili Python SDK?
 
 **Kili Python SDK** is the Python client for the Kili platform. It allows to query and manipulate the main entities available in Kili, like projects, assets, labels, api keys...
-It comes with several [recipes](recipes/) that demonstrate how to use it in the most frequent use cases.
+
+It comes with several [tutorials](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) that demonstrate how to use it in the most frequent use cases.
 
 ## Requirements
 
@@ -70,6 +71,23 @@ Note that you can also pass the API key as an argument of the `Kili` initializat
 ```python
 kili = Kili(api_key='<your api key value here>')
 ```
+
+For more details, read the [SDK reference](https://python-sdk-docs.kili-technology.com) or the [Kili documentation](https://docs.kili-technology.com/docs).
+
+## Tutorials
+
+Check out our tutorials:
+
+- 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
+- 📂🏷️ [Assets and labels import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/): Learn how to import assets and labels into your Kili project.
+- 🎥 [Video import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/): See how to import video assets into your Kili project.
+- 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
+- 📦 [Project export](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/): See how to export your project's assets and labels to different formats.
+- 🛠️ Plugins [development](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) and [example](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/): Learn how to create and use custom plugins in Kili.
+
+You can find several other recipes in this [folder](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
+
+## Examples
 
 Here is a sample of the operations you can do with the Kili client:
 
@@ -176,16 +194,3 @@ with open("labels.json", "w") as label_file:
 See a detailed example in this [recipe](https://docs.kili-technology.com/recipes/exporting-assets-and-labels).
 
 More ways to export in other formats (YOLO, Pascal VOC) are described [here](docs/label_export.md).
-
-## More examples
-
-Check out our tutorials:
-
-- 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
-- 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
-- 📦 [How to export a project](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/): See how to export your project's assets and labels to different formats.
-- 🛠️ Plugins [development](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) and [example](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/): Learn how to create and use custom plugins in Kili.
-
-You can find several other recipes in this [folder](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
-
-For more details, read the [SDK reference](https://python-sdk-docs.kili-technology.com) or the [Kili documentation](https://docs.kili-technology.com/docs).
