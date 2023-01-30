@@ -14,7 +14,7 @@ This notebook is an end-to-end example that you can follow to: create a project,
 
 
 ```python
-!pip install --upgrade kili
+!pip install  kili
 ```
 
 

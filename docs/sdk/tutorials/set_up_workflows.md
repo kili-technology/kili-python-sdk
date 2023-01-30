@@ -20,7 +20,7 @@ To work with this notebook, you will have to install and instantiate Kili.
 
 
 ```python
-!pip install --upgrade kili
+!pip install kili
 ```
 
 
