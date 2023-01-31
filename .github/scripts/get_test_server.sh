@@ -11,12 +11,12 @@ if [[ $current_branch = release/* ]]; then
     IFS=. read -r major minor patch <<< "$sdk_version"
     sdk_version_major_minor="$major.$minor"
 
-    prod_version=$(curl --silent "https://cloud.kili-technology.com/api/label/v2/version" | jq -r .version)
+    prod_version=$(curl --silent --max-time 5 "https://cloud.kili-technology.com/api/label/v2/version" | jq -r .version)
     echo "prod_version: $prod_version"
     IFS=. read -r major minor patch <<< "$prod_version"
     prod_version_major_minor="$major.$minor"
 
-    preprod_version=$(curl --silent "https://preproduction.cloud.kili-technology.com/api/label/v2/version" | jq -r .version)
+    preprod_version=$(curl --silent --max-time 5 "https://preproduction.cloud.kili-technology.com/api/label/v2/version" | jq -r .version)
     echo "preprod_version: $preprod_version"
     IFS=. read -r major minor patch <<< "$preprod_version"
     preprod_version_major_minor="$major.$minor"
