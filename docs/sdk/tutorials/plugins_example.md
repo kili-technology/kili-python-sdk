@@ -165,7 +165,7 @@ plugin_folder = "plugin_folder"
 
 os.mkdir(plugin_folder)
 urllib.request.urlretrieve(
-    "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/datasets/plugins/plugin.py",
+    "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/datasets/plugins/plugin_image.py",
     "plugin_folder/main.py",
 );
 ```
@@ -499,9 +499,14 @@ Update a plugin with new source code:
 
 
 ```python
-new_path_to_plugin = "plugin.py"
-if new_path_to_plugin != path_to_plugin:
-    kili.update_plugin(plugin_name=plugin_name, plugin_path=new_path_to_plugin)
+# Insert the path to the updated plugin
+new_path_to_plugin = Path(plugin_folder) / "main.py"
+
+# Change to True if you want to update the plugin
+should_update = False
+
+if should_update:
+    kili.update_plugin(plugin_name=plugin_name, plugin_path=str(new_path_to_plugin))
 ```
 
 Deactivate the plugin on a certain project (the plugin can still be active for other projects):
