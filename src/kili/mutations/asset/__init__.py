@@ -111,6 +111,7 @@ class MutationsAsset:
             if content_array is not None
             else len(json_content_array)  # type:ignore
         )
+
         field_mapping = {
             "content": content_array,
             "json_content": json_content_array,

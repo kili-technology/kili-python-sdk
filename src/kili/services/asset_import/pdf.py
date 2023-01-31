@@ -3,6 +3,8 @@ Functions to import assets into a PDF project
 """
 from typing import List
 
+from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
+
 from .base import BaseAssetImporter, BatchParams, ContentBatchImporter
 from .types import AssetLike
 
@@ -18,6 +20,8 @@ class PdfDataImporter(BaseAssetImporter):
         """
         is_hosted = self.is_hosted_content(assets)
         if not is_hosted:
+            if not self._can_upload_from_local_data():
+                raise UploadFromLocalDataForbiddenError("Cannot upload content from local data")
             assets = self.filter_local_assets(assets, self.raise_error)
         assets = self.filter_duplicate_external_ids(assets)
 

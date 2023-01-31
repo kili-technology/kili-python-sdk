@@ -19,7 +19,10 @@ from kili.services.asset_import.constants import (
     FRAME_IMPORT_BATCH_SIZE,
     IMPORT_BATCH_SIZE,
 )
-from kili.services.asset_import.exceptions import ImportValidationError
+from kili.services.asset_import.exceptions import (
+    ImportValidationError,
+    UploadFromLocalDataForbiddenError,
+)
 from kili.services.asset_import.types import AssetLike
 from kili.utils import bucket
 
@@ -216,6 +219,8 @@ class VideoDataImporter(BaseAssetImporter):
         data_type = self.get_data_type(assets)
         assets = self.filter_duplicate_external_ids(assets)
         if data_type == VideoDataType.LOCAL_FILE:
+            if not self._can_upload_from_local_data():
+                raise UploadFromLocalDataForbiddenError("Cannot upload content from local data")
             assets = self.filter_local_assets(assets, self.raise_error)
             as_frames = self.should_cut_into_frames(assets)
             batch_params = BatchParams(is_hosted=False, is_asynchronous=as_frames)

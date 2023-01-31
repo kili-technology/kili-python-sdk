@@ -5,6 +5,8 @@ import mimetypes
 import os
 from typing import List
 
+from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
+
 from .base import BaseAssetImporter, BatchParams, ContentBatchImporter
 from .constants import LARGE_IMAGE_THRESHOLD_SIZE
 from .types import AssetLike
@@ -21,6 +23,8 @@ class ImageDataImporter(BaseAssetImporter):
         """
         is_hosted = self.is_hosted_content(assets)
         if not is_hosted:
+            if not self._can_upload_from_local_data():
+                raise UploadFromLocalDataForbiddenError("Cannot upload content from local data")
             assets = self.filter_local_assets(assets, self.raise_error)
         assets = self.filter_duplicate_external_ids(assets)
         sync_assets, async_assets = self.split_asset_by_upload_type(assets, is_hosted)

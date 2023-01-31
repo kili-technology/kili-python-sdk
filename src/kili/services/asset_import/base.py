@@ -16,6 +16,10 @@ from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.graphql.operations.organization.queries import (
+    OrganizationQuery,
+    OrganizationWhere,
+)
 from kili.helpers import T, format_result, is_url
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
@@ -355,6 +359,17 @@ class BaseAssetImporter:
                 """
             )
         return False
+
+    def _can_upload_from_local_data(self):
+        user_me = self.auth.get_user()
+        where = OrganizationWhere(
+            email=user_me["email"],
+        )
+        options = QueryOptions(disable_tqdm=True)
+        organization = list(
+            OrganizationQuery(self.auth.client)(where, ["license.uploadLocalData"], options)
+        )[0]
+        return organization["license"]["uploadLocalData"]
 
     def filter_local_assets(self, assets: List[AssetLike], raise_error: bool):
         """
