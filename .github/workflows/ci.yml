@@ -50,6 +50,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Set proper test server (prod, preprod, staging).
+        shell: bash
+        run: |
+          test_server_stdout=$(./.github/scripts/get_test_server.sh)
+          if [[ "$test_server_stdout" == *"ERROR"* ]]; then
+            echo $test_server_stdout"
+            exit 1
+          fi
+
+          test_against=$(echo $test_server_stdout | grep "TEST_AGAINST=" | cut -d '=' -f2)
+          echo "test_against: $test_against"
+          echo "TEST_AGAINST=$test_against" >> $GITHUB_ENV
+
+          api_endpoint=$(echo $test_server_stdout | grep "KILI_API_ENDPOINT=" | cut -d '=' -f2)
+          echo "api_endpoint: $api_endpoint"
+          echo "KILI_API_ENDPOINT=$api_endpoint" >> $GITHUB_ENV
+
       - name: Unit tests
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv --ignore tests/test_notebooks.py --ignore tests/e2e/ --cov=src/kili --cov-report=term-missing --cov-config=.coveragerc --cov-fail-under=75
 
@@ -83,6 +100,23 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
+      - name: Set proper test server (prod, preprod, staging).
+        shell: bash
+        run: |
+          test_server_stdout=$(./.github/scripts/get_test_server.sh)
+          if [[ "$test_server_stdout" == *"ERROR"* ]]; then
+            echo $test_server_stdout"
+            exit 1
+          fi
+
+          test_against=$(echo $test_server_stdout | grep "TEST_AGAINST=" | cut -d '=' -f2)
+          echo "test_against: $test_against"
+          echo "TEST_AGAINST=$test_against" >> $GITHUB_ENV
+
+          api_endpoint=$(echo $test_server_stdout | grep "KILI_API_ENDPOINT=" | cut -d '=' -f2)
+          echo "api_endpoint: $api_endpoint"
+          echo "KILI_API_ENDPOINT=$api_endpoint" >> $GITHUB_ENV
+
       - name: Test the Build
         run: |
           python -m pip install . # to install dependencies
@@ -90,5 +124,5 @@ jobs:
           python -m pip install --find-links=dist --no-index kili
           python -c 'from kili.client import Kili; k=Kili(); print("Everything OK!")'
         env:
-          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
-          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
+          KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
+          KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
