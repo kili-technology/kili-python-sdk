@@ -35,7 +35,7 @@ jobs:
           test_server_stdout=$(./.github/scripts/get_test_server.sh)
           echo $test_server_stdout
           if [[ "$test_server_stdout" == *"ERROR"* ]]; then
-            echo $test_server_stdout"
+            echo $test_server_stdout
             exit 1
           fi
 
