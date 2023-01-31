@@ -111,11 +111,11 @@ jobs:
             exit 1
           fi
 
-          test_against=$(echo $test_server_stdout | grep "TEST_AGAINST=" | cut -d '=' -f2)
+          test_against=$(echo $test_server_stdout | grep -o "TEST_AGAINST=.*;" | awk -F "=" '{print $2}' | awk -F ";" '{print $1}')
           echo "test_against: $test_against"
           echo "TEST_AGAINST=$test_against" >> $GITHUB_ENV
 
-          api_endpoint=$(echo $test_server_stdout | grep "KILI_API_ENDPOINT=" | cut -d '=' -f2)
+          api_endpoint=$(echo $test_server_stdout | grep -o "KILI_API_ENDPOINT=.*;" | awk -F "=" '{print $2}' | awk -F ";" '{print $1}')
           echo "api_endpoint: $api_endpoint"
           echo "KILI_API_ENDPOINT=$api_endpoint" >> $GITHUB_ENV
 

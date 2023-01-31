@@ -22,15 +22,15 @@ if [[ $current_branch = release/* ]]; then
     preprod_version_major_minor="$major.$minor"
 
     if [[ $sdk_version_major_minor = $preprod_version_major_minor ]]; then
-        echo "TEST_AGAINST=PREPROD"
-        echo "KILI_API_ENDPOINT=https://preproduction.cloud.kili-technology.com/api/label/v2/graphql"
+        echo "TEST_AGAINST=PREPROD;"
+        echo "KILI_API_ENDPOINT=https://preproduction.cloud.kili-technology.com/api/label/v2/graphql;"
     elif [[ $sdk_version_major_minor = $prod_version_major_minor ]]; then
-        echo "TEST_AGAINST=PROD"
-        echo "KILI_API_ENDPOINT=https://cloud.kili-technology.com/api/label/v2/graphql"
+        echo "TEST_AGAINST=PROD;"
+        echo "KILI_API_ENDPOINT=https://cloud.kili-technology.com/api/label/v2/graphql;"
     else
         echo "ERROR: SDK version $sdk_version_major_minor does not match neither preprod version $preprod_version nor prod version $prod_version"
     fi
 else
-    echo "TEST_AGAINST=STAGING"
-    echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+    echo "TEST_AGAINST=STAGING;"
+    echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql;"
 fi
