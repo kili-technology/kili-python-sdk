@@ -50,7 +50,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Set proper test server (prod, preprod, staging).
+      - name: Set proper test server (prod, preprod, staging)
         shell: bash
         run: |
           test_server_stdout=$(./.github/scripts/get_test_server.sh)
@@ -98,7 +98,7 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
-      - name: Set proper test server (prod, preprod, staging).
+      - name: Set proper test server (prod, preprod, staging)
         shell: bash
         run: |
           test_server_stdout=$(./.github/scripts/get_test_server.sh)
