@@ -20,7 +20,7 @@ jobs:
           pip install -e ".[dev]"
       - name: Analysing the code with pylint
         run: |
-          pylint src/kili
+          pylint --rcfile=.pylintrc src/kili
 
   unittest:
     timeout-minutes: 9

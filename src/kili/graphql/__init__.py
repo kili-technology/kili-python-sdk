@@ -194,5 +194,5 @@ class GraphQLQuery(ABC):
             if isinstance(field, str):
                 fragment += f" {field}"
             else:
-                raise Exception("Please provide the fields to query as strings")
+                raise TypeError("Please provide the fields to query as strings")
         return fragment

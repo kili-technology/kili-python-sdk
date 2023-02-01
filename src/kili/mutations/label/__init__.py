@@ -27,7 +27,7 @@ from kili.services.helpers import (
 class MutationsLabel:
     """Set of Label mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initializes the subclass.
@@ -314,7 +314,7 @@ class MutationsLabel:
         """
         if asset_id is None:
             if asset_external_id is None or project_id is None:
-                raise Exception("Either provide asset_id or external_id and project_id")
+                raise ValueError("Either provide asset_id or external_id and project_id")
             asset_id = infer_ids_from_external_ids(self, [asset_external_id], project_id)[
                 asset_external_id
             ]
