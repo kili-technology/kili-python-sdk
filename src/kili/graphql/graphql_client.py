@@ -101,18 +101,19 @@ class GraphQLClient:
                     req = self.session.post(
                         self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
                     )
+                    if req.status_code == 401:
+                        raise InvalidApiKeyError("Invalid API KEY")
                     errors_in_response = "errors" in req.json()
                     bad_request_error = req.status_code == 400 and errors_in_response
                     sucessful_request = req.status_code == 200 and not errors_in_response
                     if sucessful_request or bad_request_error:
                         break
-                    if req.status_code == 401:
-                        raise InvalidApiKeyError("Invalid API KEY")
                     time.sleep(1)
                 return req.json()  # type:ignore X
             except Exception as exception:
                 if req is not None:
-                    raise exception.__class__(req.content) from exception
+                    # pylint: disable=broad-exception-raised
+                    raise Exception(req.content) from exception
                 raise exception
 
         req = urllib.request.Request(  # type: ignore
