@@ -15,6 +15,8 @@ from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
 from kili.types import User
 
+from .exceptions import UserNotFoundError
+
 MAX_RETRIES = 20
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
@@ -69,7 +71,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         user = self.get_user()
 
         if user is None or user["id"] is None or user["email"] is None:
-            raise Exception("No user attached to the API key was found")
+            raise UserNotFoundError("No user attached to the API key was found")
 
         self.user_id = user["id"]
         self.user_email = user["email"]

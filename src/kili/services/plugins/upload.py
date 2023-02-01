@@ -25,6 +25,7 @@ from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory
 
+from .exceptions import PluginCreationError
 from .helpers import get_logger
 
 NUMBER_TRIES_RUNNER_STATUS = 20
@@ -321,7 +322,11 @@ class PluginUploader:
             n_tries += 1
 
         if status == "DEPLOYING" and n_tries == 20:
+<<<<<<< merge_release/2.129.0 -- Incoming Change
             raise ValueError(
+=======
+            raise RuntimeError(
+>>>>>>> master -- Current Change
                 f"""We could not check your plugin was deployed in time.
 Please check again the status of the plugin after some minutes with the command : \
 kili.get_plugin_status("{self.plugin_name}").
@@ -330,7 +335,11 @@ overwrite the plugin with a new version of the code (you can use kili.update_plu
             )
 
         if status != "ACTIVE":
+<<<<<<< merge_release/2.129.0 -- Incoming Change
             raise ValueError(
+=======
+            raise PluginCreationError(
+>>>>>>> master -- Current Change
                 """There was some error during the creation of the plugin. \
 Please check your plugin's code and try to overwrite the plugin with a new version of the \
 code (you can use kili.update_plugin() for that)."""
