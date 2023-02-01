@@ -207,7 +207,6 @@ class PluginUploader:
         """
         Method to detect indentation and class errors in the script
         """
-
         with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
@@ -269,6 +268,15 @@ class PluginUploader:
         Upload a script to Kili bucket
         """
 
+        file_paths = self._retrieve_plugin_src()
+
+        for path in file_paths:
+            self._parse_script(path)
+
+        requirements = self._retrieve_requirements()
+
+        upload_url = self._retrieve_upload_url(is_updating_plugin)
+
         with TemporaryDirectory() as tmp_directory:
             zip_path = self._create_zip(tmp_directory)
 
@@ -313,7 +321,7 @@ class PluginUploader:
             n_tries += 1
 
         if status == "DEPLOYING" and n_tries == 20:
-            raise RuntimeError(
+            raise ValueError(
                 f"""We could not check your plugin was deployed in time.
 Please check again the status of the plugin after some minutes with the command : \
 kili.get_plugin_status("{self.plugin_name}").
@@ -322,7 +330,7 @@ overwrite the plugin with a new version of the code (you can use kili.update_plu
             )
 
         if status != "ACTIVE":
-            raise PluginCreationError(
+            raise ValueError(
                 """There was some error during the creation of the plugin. \
 Please check your plugin's code and try to overwrite the plugin with a new version of the \
 code (you can use kili.update_plugin() for that)."""
