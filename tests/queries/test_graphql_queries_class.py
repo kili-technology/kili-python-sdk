@@ -1,3 +1,6 @@
+"""Module for testing the graphQLQuery class"""
+
+from typing import Generator
 from unittest import TestCase
 from unittest.mock import MagicMock, call
 
@@ -115,3 +118,8 @@ class TestGraphQLQueries(TestCase):
                 ),
             ]
         )
+
+    def test_return_type(self):
+        options = QueryOptions(disable_tqdm=False)
+        result = self.query(self.where, self.fields, options)
+        assert isinstance(result, Generator)
