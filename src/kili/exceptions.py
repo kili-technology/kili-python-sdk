@@ -75,5 +75,5 @@ class UserNotFoundError(Exception):
     """Raised when the user is not found"""
 
 
-class InvalidApyKeyError(Exception):
+class InvalidApiKeyError(Exception):
     """Raised when the api key is invalid"""

@@ -18,7 +18,7 @@ import websocket
 
 from kili import __version__
 
-from ..exceptions import InvalidApyKeyError
+from ..exceptions import InvalidApiKeyError
 
 
 class GraphQLClientName(Enum):
@@ -107,7 +107,7 @@ class GraphQLClient:
                     if sucessful_request or bad_request_error:
                         break
                     if req.status_code == 401:
-                        raise InvalidApyKeyError("Invalid API KEY")
+                        raise InvalidApiKeyError("Invalid API KEY")
                     time.sleep(1)
                 return req.json()  # type:ignore X
             except Exception as exception:
