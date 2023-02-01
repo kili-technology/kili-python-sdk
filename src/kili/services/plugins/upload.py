@@ -21,11 +21,11 @@ from kili.graphql.operations.plugin.mutations import (
 )
 from kili.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.helpers import format_result, get_data_type
+from kili.services.plugins.exceptions import PluginCreationError
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory
 
-from .exceptions import PluginCreationError
 from .helpers import get_logger
 
 NUMBER_TRIES_RUNNER_STATUS = 20
