@@ -2,12 +2,14 @@
 Api key queries
 """
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
+from kili.helpers import disable_tqdm_if_as_generator
 
 
 class QueriesApiKey:
@@ -15,7 +17,7 @@ class QueriesApiKey:
     Set of ApiKey queries
     """
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -24,6 +26,14 @@ class QueriesApiKey:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def api_keys(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def api_keys(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -36,6 +46,7 @@ class QueriesApiKey:
         fields: List[str] = ["id", "name", "createdAt", "revoked"],
         first: Optional[int] = None,
         disable_tqdm: bool = False,
+        *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
@@ -66,8 +77,13 @@ class QueriesApiKey:
             >>> kili.api_keys(api_key=api_key, as_generator=False)
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return APIKeyQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        api_keys_gen = APIKeyQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return api_keys_gen
+        return list(api_keys_gen)
 
     @typechecked
     def count_api_keys(

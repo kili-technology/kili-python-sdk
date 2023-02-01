@@ -1,20 +1,22 @@
 """Project user queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
 )
+from kili.helpers import disable_tqdm_if_as_generator
 
 
 class QueriesProjectUser:
     """Set of ProjectUser queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -23,6 +25,16 @@ class QueriesProjectUser:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def project_users(
+        self, project_id: str, *, as_generator: Literal[True]
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def project_users(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value,invalid-name
     @typechecked
@@ -43,6 +55,7 @@ class QueriesProjectUser:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
@@ -73,8 +86,13 @@ class QueriesProjectUser:
         where = ProjectUserWhere(
             project_id=project_id, email=email, _id=id, organization_id=organization_id
         )
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return ProjectUserQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        project_users_gen = ProjectUserQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return project_users_gen
+        return list(project_users_gen)
 
     # pylint: disable=invalid-name
     @typechecked
