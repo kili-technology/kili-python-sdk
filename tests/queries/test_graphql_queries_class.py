@@ -50,7 +50,7 @@ class TestGraphQLQueries(TestCase):
 
     def test_query_all_objects_by_paginated_calls(self):
         options = QueryOptions(disable_tqdm=False)
-        self.query(self.where, self.fields, options)
+        list(self.query(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
@@ -71,7 +71,7 @@ class TestGraphQLQueries(TestCase):
     def test_query_first_objects(self):
         FIRST = 3
         options = QueryOptions(disable_tqdm=False, first=FIRST)
-        self.query(self.where, self.fields, options)
+        list(self.query(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
@@ -85,7 +85,7 @@ class TestGraphQLQueries(TestCase):
     def test_query_skip_objects(self):
         SKIP = 30
         options = QueryOptions(disable_tqdm=False, skip=SKIP)
-        self.query(self.where, self.fields, options)
+        list(self.query(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
@@ -108,7 +108,7 @@ class TestGraphQLQueries(TestCase):
         SKIP = 30
         FIRST = 20
         options = QueryOptions(disable_tqdm=False, skip=SKIP, first=FIRST)
-        self.query(self.where, self.fields, options)
+        list(self.query(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
