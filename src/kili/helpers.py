@@ -188,7 +188,7 @@ def format_metadata(metadata):
         return metadata
     if isinstance(metadata, (dict, list)):
         return dumps(metadata)
-    raise Exception(
+    raise TypeError(
         f"Metadata {metadata} of type {type(metadata)} must either be None,"
         " a string a list or a dict."
     )
@@ -204,7 +204,7 @@ def convert_to_list_of_none(array, length):
     """
     if isinstance(array, list):
         if len(array) != length:
-            raise Exception(f"array should have length {length}")
+            raise ValueError(f"array should have length {length}")
         return array
     return [None] * length
 

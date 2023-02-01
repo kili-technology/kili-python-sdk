@@ -21,7 +21,7 @@ def process_update_properties_in_assets_parameters(properties) -> Dict:
         if isinstance(properties["json_metadatas"], list):
             formatted_json_metadatas = list(map(format_metadata, properties["json_metadatas"]))
         else:
-            raise Exception(
+            raise TypeError(
                 "json_metadatas",
                 "Should be either a None or a list of None, string, list or dict",
             )
