@@ -14,7 +14,7 @@ This notebook is an end-to-end example that you can follow to: create a project,
 
 
 ```python
-!pip install  kili
+!pip install kili
 ```
 
 
@@ -80,7 +80,7 @@ project_id = project["id"]
 print(f"Created project {project_id}")
 ```
 
-    Created project clcysbp9o2d7w0krfghuf7le1
+    Created project cldlyo2bq61if0jn9efvn3soo
 
 
 Upload an asset:
@@ -96,8 +96,6 @@ kili.append_many_to_dataset(
 
 asset_id = list(kili.assets(project_id=project_id, fields=["id"], disable_tqdm=True))[0]["id"]
 ```
-
-
 
 This project has one job of bounding box creation with two categories.
 
@@ -163,7 +161,7 @@ import urllib.request
 
 plugin_folder = "plugin_folder"
 
-os.mkdir(plugin_folder)
+Path(plugin_folder).mkdir(parents=True, exist_ok=True)
 urllib.request.urlretrieve(
     "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/datasets/plugins/plugin_image.py",
     "plugin_folder/main.py",
@@ -217,7 +215,7 @@ except GraphQLError as error:
     print(str(error))
 ```
 
-    Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin.py", plugin_name="Plugin bbox count")
+    Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder", plugin_name="Plugin bbox count")
     error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
 
 
@@ -226,7 +224,7 @@ except GraphQLError as error:
 kili.activate_plugin_on_project(plugin_name, project_id=project_id);
 ```
 
-    Plugin with name "Plugin bbox count" activated on project "clcysbp9o2d7w0krfghuf7le1"
+    Plugin with name "Plugin bbox count" activated on project "cldlyo2bq61if0jn9efvn3soo"
 
 
 ## Step 4 bis: Upload the plugin from a .py file
@@ -249,10 +247,17 @@ except GraphQLError as error:
     print(str(error))
 ```
 
+    Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder/main.py", plugin_name="Plugin bbox count")
+    error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
+
+
 
 ```python
 kili.activate_plugin_on_project(plugin_name, project_id=project_id);
 ```
+
+    Warning: A plugin with the name "Plugin bbox count" is already activated on the project with id "cldlyo2bq61if0jn9efvn3soo"
+
 
 ## Step 5: Plugin in action
 
@@ -332,7 +337,7 @@ kili.append_labels(
 
 
 
-    [{'id': 'clcysc83n2asf0lq483rlc5wv'}]
+    [{'id': 'cldlyovj52lfr0joi831qfbao'}]
 
 
 
@@ -355,7 +360,7 @@ print(
 
 
     [{'issues': [], 'status': 'LABELED'}]
-    Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w0krfghuf7le1/menu/queue
+    Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
 
 
 
@@ -402,7 +407,7 @@ print(
 
 
     [{'status': 'LABELED'}]
-    Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w0krfghuf7le1/menu/queue
+    Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
 
 
 
@@ -432,56 +437,7 @@ logs_json = json.loads(logs)
 print(json.dumps(logs_json, indent=4))
 ```
 
-    [
-        {
-            "content": "Issue created!",
-            "createdAt": "2023-01-16T12:31:27.633Z",
-            "logType": "info",
-            "metadata": {
-                "assetId": "clcysbre30000jevzat4b7k4d",
-                "labelId": "clcysc83n2asf0lq483rlc5wv"
-            },
-            "pluginName": "Plugin bbox count",
-            "projectId": "clcysbp9o2d7w0krfghuf7le1",
-            "runId": "clcysc93e07wv014z5nbc0kfc"
-        },
-        {
-            "content": "Creating an issue...",
-            "createdAt": "2023-01-16T12:31:26.620Z",
-            "logType": "info",
-            "metadata": {
-                "assetId": "clcysbre30000jevzat4b7k4d",
-                "labelId": "clcysc83n2asf0lq483rlc5wv"
-            },
-            "pluginName": "Plugin bbox count",
-            "projectId": "clcysbp9o2d7w0krfghuf7le1",
-            "runId": "clcysc93e07wv014z5nbc0kfc"
-        },
-        {
-            "content": "Custom method - checking number of bboxes",
-            "createdAt": "2023-01-16T12:31:26.619Z",
-            "logType": "info",
-            "metadata": {
-                "assetId": "clcysbre30000jevzat4b7k4d",
-                "labelId": "clcysc83n2asf0lq483rlc5wv"
-            },
-            "pluginName": "Plugin bbox count",
-            "projectId": "clcysbp9o2d7w0krfghuf7le1",
-            "runId": "clcysc93e07wv014z5nbc0kfc"
-        },
-        {
-            "content": "On submit called",
-            "createdAt": "2023-01-16T12:31:26.619Z",
-            "logType": "info",
-            "metadata": {
-                "assetId": "clcysbre30000jevzat4b7k4d",
-                "labelId": "clcysc83n2asf0lq483rlc5wv"
-            },
-            "pluginName": "Plugin bbox count",
-            "projectId": "clcysbp9o2d7w0krfghuf7le1",
-            "runId": "clcysc93e07wv014z5nbc0kfc"
-        }
-    ]
+    []
 
 
 ## Step 7: Manage the plugin
@@ -516,7 +472,7 @@ Deactivate the plugin on a certain project (the plugin can still be active for o
 kili.deactivate_plugin_on_project(plugin_name=plugin_name, project_id=project_id);
 ```
 
-    Plugin Plugin bbox count deactivated on project clcysbp9o2d7w0krfghuf7le1
+    Plugin Plugin bbox count deactivated on project cldlyo2bq61if0jn9efvn3soo
 
 
 Delete the plugin completely (deactivates the plugin from all projects):
