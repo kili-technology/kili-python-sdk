@@ -2,6 +2,7 @@
 
 from kili.services.plugins.activation import activate_plugin, deactivate_plugin
 from kili.services.plugins.deletion import delete_plugin
+from kili.services.plugins.exceptions import PluginCreationError
 from kili.services.plugins.upload import PluginUploader, WebhookUploader
 
 __all__ = [
@@ -10,4 +11,5 @@ __all__ = [
     "activate_plugin",
     "deactivate_plugin",
     "delete_plugin",
+    "PluginCreationError",
 ]
