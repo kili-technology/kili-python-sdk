@@ -34,9 +34,9 @@ def test_users_query_return_type(mock, args, kwargs, expected_return_type):
 @pytest.mark.parametrize(
     "args, kwargs, expected_return_type",
     [
-        ("project-id", {}, List[Dict]),
-        ("project-id", {"as_generator": False}, List[Dict]),
-        ("project-id", {"as_generator": True}, Generator[Dict, None, None]),
+        (("project-id",), {}, List[Dict]),
+        (("project-id",), {"as_generator": False}, List[Dict]),
+        (("project-id",), {"as_generator": True}, Generator[Dict, None, None]),
         ((), {"project_id": "project-id"}, List[Dict]),
         ((), {"project_id": "project-id", "as_generator": True}, Generator[Dict, None, None]),
         ((), {"project_id": "project-id", "as_generator": False}, List[Dict]),
