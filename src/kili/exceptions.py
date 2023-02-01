@@ -65,3 +65,7 @@ class MissingArgumentError(ValueError):
 
 class IncompatibleArgumentsError(ValueError):
     """Raised when the user gave at least two incompatible arguments"""
+
+
+class RemovedMethodError(BaseException):
+    """Raised when the method used has been removed from SDK"""
