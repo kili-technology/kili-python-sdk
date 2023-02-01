@@ -18,8 +18,10 @@ import websocket
 
 from kili import __version__
 
+from ..exceptions import InvalidApiKeyError
 
-class GraphQLClientName(Enum):  # pylint: disable=too-few-public-methods
+
+class GraphQLClientName(Enum):
     """GraphQL client name."""
 
     SDK = "python-sdk"
@@ -99,17 +101,18 @@ class GraphQLClient:
                     req = self.session.post(
                         self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
                     )
+                    if req.status_code == 401:
+                        raise InvalidApiKeyError("Invalid API KEY")
                     errors_in_response = "errors" in req.json()
                     bad_request_error = req.status_code == 400 and errors_in_response
                     sucessful_request = req.status_code == 200 and not errors_in_response
                     if sucessful_request or bad_request_error:
                         break
-                    if req.status_code == 401:
-                        raise Exception("Invalid API KEY")
                     time.sleep(1)
                 return req.json()  # type:ignore X
             except Exception as exception:
                 if req is not None:
+                    # pylint: disable=broad-exception-raised
                     raise Exception(req.content) from exception
                 raise exception
 
@@ -152,7 +155,6 @@ class SubscriptionGraphQLClient:
         """
         Handles the connection
         """
-        # pylint: disable=no-member
         self._conn = websocket.create_connection(
             self.ws_url, on_message=self._on_message, subprotocols=[GQL_WS_SUBPROTOCOL]
         )
@@ -282,7 +284,7 @@ class SubscriptionGraphQLClient:
                         _cc(_id, response)  # type:ignore
                     time.sleep(1)
                 except (
-                    websocket._exceptions.WebSocketConnectionClosedException  # pylint: disable=no-member,protected-access
+                    websocket._exceptions.WebSocketConnectionClosedException  # pylint: disable=protected-access
                 ) as error:
                     self.failed_connection_attempts += 1
                     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
