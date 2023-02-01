@@ -184,6 +184,15 @@ class GraphQLQuery(ABC):
             fields = [field for field in fields if "." not in field]
 
         for field in fields:
-            fragment += f" {field}"
-
+            try:
+                type_of_fields[field]
+            except KeyError as exception:
+                raise NonExistingFieldError(
+                    f"Cannot query field {field} on object {typed_dict_class.__name__}. Admissible"
+                    " fields are: \n- " + "\n- ".join(type_of_fields.keys())
+                ) from exception
+            if isinstance(field, str):
+                fragment += f" {field}"
+            else:
+                raise TypeError("Please provide the fields to query as strings")
         return fragment

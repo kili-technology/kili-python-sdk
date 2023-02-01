@@ -12,7 +12,9 @@ from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
 
-from .exceptions import AuthenticationFailed, UserNotFoundError
+from .exceptions import UserNotFoundError
+
+MAX_RETRIES = 20
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -58,7 +60,10 @@ class KiliAuth:
             verify=self.verify,
         )
 
-        self.check_expiry_of_key_is_close()
+        user = self.get_user()
+
+        if user is None or user["id"] is None or user["email"] is None:
+            raise UserNotFoundError("No user attached to the API key was found")
 
         user = self.get_user()
         self.user_id = user["id"]

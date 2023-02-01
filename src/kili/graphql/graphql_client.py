@@ -25,6 +25,8 @@ from typeguard import typechecked
 from kili import __version__
 from kili.exceptions import GraphQLError
 
+from ..exceptions import InvalidApiKeyError
+
 
 class GraphQLClientName(Enum):
     """GraphQL client name."""
@@ -130,11 +132,36 @@ class GraphQLClient:
         """
         Execute a query
 
-        Args:
-            query: the GraphQL query
-            variables: the payload of the query
-        """
-        document = query if isinstance(query, DocumentNode) else gql(query)
+        if self.session is not None:
+            req = None
+            try:
+                try:
+                    number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
+                except ValueError:
+                    number_of_trials = 10
+                for _ in range(number_of_trials):
+                    self.session.verify = self.verify
+                    req = self.session.post(
+                        self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
+                    )
+                    if req.status_code == 401:
+                        raise InvalidApiKeyError("Invalid API KEY")
+                    errors_in_response = "errors" in req.json()
+                    bad_request_error = req.status_code == 400 and errors_in_response
+                    sucessful_request = req.status_code == 200 and not errors_in_response
+                    if sucessful_request or bad_request_error:
+                        break
+                    time.sleep(1)
+                return req.json()  # type:ignore X
+            except Exception as exception:
+                if req is not None:
+                    # pylint: disable=broad-exception-raised
+                    raise Exception(req.content) from exception
+                raise exception
+
+        req = urllib.request.Request(  # type: ignore
+            self.endpoint, json.dumps(data).encode("utf-8"), headers
+        )
         try:
             result = self._gql_client.execute(document=document, variable_values=variables)
         except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
