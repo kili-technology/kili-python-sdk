@@ -14,3 +14,9 @@ class ImportValidationError(Exception):
     """
     Raised when data given to import does not follow a right format
     """
+
+
+class UploadFromLocalDataForbiddenError(Exception):
+    """
+    Raised when data given to import does not follow a right format
+    """

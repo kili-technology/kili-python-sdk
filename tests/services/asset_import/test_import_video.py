@@ -1,11 +1,16 @@
 import json
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+from kili.graphql.operations.organization.queries import OrganizationQuery
 from kili.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
 from kili.services.asset_import import import_assets
+from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
+    mocked_organization_with_upload_from_local,
     mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
@@ -22,8 +27,13 @@ from tests.services.asset_import.mocks import (
     "assets",
     MagicMock(return_value=[]),
 )
+@patch.object(
+    OrganizationQuery,
+    "__call__",
+    side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
+)
 class VideoTestCase(ImportTestCase):
-    def test_upload_from_one_local_video_file_to_native(self, _mocker):
+    def test_upload_from_one_local_video_file_to_native(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
@@ -48,7 +58,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_hosted_video_file_to_native(self, _mocker):
+    def test_upload_from_one_hosted_video_file_to_native(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -73,7 +83,41 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_local_video_to_frames(self, _mocker):
+    def test_upload_from_one_hosted_video_authorized_while_local_forbidden(self, *_):
+        OrganizationQuery.__call__.side_effect = mocked_organization_with_upload_from_local(
+            upload_local_data=False
+        )
+        assets = [
+            {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
+        ]
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+        expected_json_metadata = json.dumps(
+            {
+                "processingParameters": {
+                    "shouldKeepNativeFrameRate": True,
+                    "framesPlayedPerSecond": 30,
+                    "shouldUseNativeVideo": True,
+                }
+            }
+        )
+        expected_parameters = self.get_expected_sync_call(
+            ["https://hosted-data"],
+            ["hosted file"],
+            ["unique_id"],
+            [False],
+            [""],
+            [expected_json_metadata],
+            ["TODO"],
+        )
+        self.auth.client.execute.assert_called_with(*expected_parameters)
+
+        url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
+        path = self.downloader(url)
+        assets = [{"content": path, "external_id": "local video file to native"}]
+        with pytest.raises(UploadFromLocalDataForbiddenError):
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+
+    def test_upload_one_local_video_to_frames(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [
@@ -107,7 +151,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_hosted_video_to_frames(self, _mocker):
+    def test_upload_one_hosted_video_to_frames(self, *_):
         assets = [
             {
                 "content": "https://hosted-data",
@@ -140,7 +184,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_video_from_local_frames(self, _mocker):
+    def test_upload_one_video_from_local_frames(self, *_):
         hosted_frame_folder = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/frames/"
         )
@@ -175,7 +219,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_one_video_from_hosted_frames(self, _mocker):
+    def test_upload_one_video_from_hosted_frames(self, *_):
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
         url_frame3 = "https://frame3"
@@ -207,7 +251,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_frames_call_from_label_import(self, _mocker):
+    def test_upload_frames_call_from_label_import(self, *_):
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
         url_frame3 = "https://frame3"
@@ -240,7 +284,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_import_one_video_with_metadata(self, _mocker):
+    def test_import_one_video_with_metadata(self, *_):
         assets = [
             {
                 "content": "https://hosted-data",
@@ -283,7 +327,7 @@ class VideoTestCase(ImportTestCase):
     MagicMock(return_value=[]),
 )
 class VideoLegacyTestCase(ImportTestCase):
-    def test_upload_from_one_hosted_video_file_to_video_legacy_project(self, _mocker):
+    def test_upload_from_one_hosted_video_file_to_video_legacy_project(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]

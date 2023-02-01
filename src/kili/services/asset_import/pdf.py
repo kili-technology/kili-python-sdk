@@ -16,9 +16,8 @@ class PdfDataImporter(BaseAssetImporter):
         """
         Import PDF assets into Kili.
         """
+        self._check_upload_is_allowed(assets)
         is_hosted = self.is_hosted_content(assets)
-        if not is_hosted:
-            assets = self.filter_local_assets(assets, self.raise_error)
         assets = self.filter_duplicate_external_ids(assets)
 
         batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)

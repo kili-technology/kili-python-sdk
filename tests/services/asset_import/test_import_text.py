@@ -1,10 +1,15 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+from kili.graphql.operations.organization.queries import OrganizationQuery
 from kili.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
 from kili.services.asset_import import import_assets
+from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
+    mocked_organization_with_upload_from_local,
     mocked_request_signed_urls,
     mocked_unique_id,
     mocked_upload_data_via_rest,
@@ -20,8 +25,13 @@ from tests.services.asset_import.mocks import (
     "assets",
     MagicMock(return_value=[]),
 )
+@patch.object(
+    OrganizationQuery,
+    "__call__",
+    side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
+)
 class TextTestCase(ImportTestCase):
-    def test_upload_from_one_local_text_file(self, _mocker):
+    def test_upload_from_one_local_text_file(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local text file"}]
@@ -37,7 +47,7 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_hosted_text_file(self, _mocker):
+    def test_upload_from_one_hosted_text_file(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -47,7 +57,7 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_raw_text(self, _mocker):
+    def test_upload_from_raw_text(self, *_):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
         import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
@@ -61,7 +71,7 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_one_rich_text(self, _mocker):
+    def test_upload_from_one_rich_text(self, *_):
         json_content = [
             {
                 "children": [
@@ -86,5 +96,24 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    def test_upload_from_several_batches(self, _mocker):
+    def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
+
+    def test_upload_from_one_hosted_text_authorized_while_local_forbidden(self, *_):
+        OrganizationQuery.__call__.side_effect = mocked_organization_with_upload_from_local(
+            upload_local_data=False
+        )
+        url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
+        path = self.downloader(url)
+        assets = [{"content": path, "external_id": "local text file"}]
+        with pytest.raises(UploadFromLocalDataForbiddenError):
+            import_assets(self.auth, self.project_id, assets)
+
+        assets = [
+            {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
+        ]
+        import_assets(self.auth, self.project_id, assets)
+        expected_parameters = self.get_expected_sync_call(
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
+        )
+        self.auth.client.execute.assert_called_with(*expected_parameters)

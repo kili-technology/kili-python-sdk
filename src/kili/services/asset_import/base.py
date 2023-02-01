@@ -16,13 +16,21 @@ from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.graphql.operations.organization.queries import (
+    OrganizationQuery,
+    OrganizationWhere,
+)
 from kili.helpers import T, format_result, is_url
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
 )
-from kili.services.asset_import.exceptions import ImportValidationError, MimeTypeError
+from kili.services.asset_import.exceptions import (
+    ImportValidationError,
+    MimeTypeError,
+    UploadFromLocalDataForbiddenError,
+)
 from kili.services.asset_import.types import AssetLike, KiliResolverAsset
 from kili.utils import bucket, pagination
 from kili.utils.tqdm import tqdm
@@ -355,6 +363,21 @@ class BaseAssetImporter:
                 """
             )
         return False
+
+    def _can_upload_from_local_data(self):
+        user_me = self.auth.get_user()
+        where = OrganizationWhere(
+            email=user_me["email"],
+        )
+        options = QueryOptions(disable_tqdm=True)
+        organization = list(
+            OrganizationQuery(self.auth.client)(where, ["license.uploadLocalData"], options)
+        )[0]
+        return organization["license"]["uploadLocalData"]
+
+    def _check_upload_is_allowed(self, assets: List[AssetLike]) -> None:
+        if not self.is_hosted_content(assets) and not self._can_upload_from_local_data():
+            raise UploadFromLocalDataForbiddenError("Cannot upload content from local data")
 
     def filter_local_assets(self, assets: List[AssetLike], raise_error: bool):
         """
