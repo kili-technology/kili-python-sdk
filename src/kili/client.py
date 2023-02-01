@@ -101,7 +101,7 @@ class Kili(  # pylint: disable=too-many-ancestors
                 verify=verify,
             )
             super().__init__(self.auth)
-        except Exception as exception:  # pylint: disable=W0703
+        except Exception as exception:
             exception_str = str(exception)
             if "b'Unauthorized'" in exception_str:
                 raise AuthenticationFailed(api_key, api_endpoint) from exception
