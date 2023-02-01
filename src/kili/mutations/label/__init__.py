@@ -319,7 +319,7 @@ class MutationsLabel:
         if asset_id is None:
             if asset_external_id is None or project_id is None:
                 raise ValueError("Either provide asset_id or external_id and project_id")
-            asset_id = infer_ids_from_external_ids(self.auth, [asset_external_id], project_id)[
+            asset_id = infer_ids_from_external_ids(self, [asset_external_id], project_id)[
                 asset_external_id
             ]
 
