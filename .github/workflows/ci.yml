@@ -50,21 +50,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Set proper test server (prod, preprod, staging)
-        shell: bash
-        run: |
-          test_server_stdout=$(./.github/scripts/get_test_server.sh)
-          if [[ "$test_server_stdout" == *"ERROR"* ]]; then
-            echo $test_server_stdout
-            exit 1
-          fi
-
-          test_against=$(echo $test_server_stdout | grep -o "TEST_AGAINST=.*;" | awk -F "=" '{print $2}' | awk -F ";" '{print $1}')
-          echo "TEST_AGAINST=$test_against" >> $GITHUB_ENV
-
-          api_endpoint=$(echo $test_server_stdout | grep -o "KILI_API_ENDPOINT=.*;" | awk -F "=" '{print $2}' | awk -F ";" '{print $1}')
-          echo "KILI_API_ENDPOINT=$api_endpoint" >> $GITHUB_ENV
-
       - name: Unit tests
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv --ignore tests/test_notebooks.py --ignore tests/e2e/ --cov=src/kili --cov-report=term-missing --cov-config=.coveragerc --cov-fail-under=75
 
