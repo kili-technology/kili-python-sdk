@@ -1,12 +1,14 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from uuid import UUID
 
 from kili.graphql.operations.asset.queries import AssetQuery
+from kili.graphql.operations.organization.queries import OrganizationQuery
 from kili.graphql.operations.project.queries import ProjectQuery
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
+    mocked_organization_with_upload_from_local,
     mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
@@ -21,6 +23,11 @@ from tests.services.asset_import.mocks import (
     AssetQuery,
     "__call__",
     return_value=[],
+)
+@patch.object(
+    OrganizationQuery,
+    "__call__",
+    side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
 )
 class TestContentType(ImportTestCase):
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))

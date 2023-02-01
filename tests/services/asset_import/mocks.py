@@ -12,5 +12,9 @@ mocked_unique_id = MagicMock(return_value="unique_id")
 mocked_auth = MagicMock()
 
 
+def mocked_organization_with_upload_from_local(upload_local_data: bool):
+    return lambda *_: [{"id": "abcdefg", "license": {"uploadLocalData": upload_local_data}}]
+
+
 def mocked_project_input_type(input_type: str):
     return lambda *_: [{"inputType": input_type}]
