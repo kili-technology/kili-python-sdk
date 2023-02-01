@@ -19,6 +19,7 @@ class ImageDataImporter(BaseAssetImporter):
         """
         Import IMAGE assets into Kili.
         """
+        self._check_upload_is_allowed(assets)
         is_hosted = self.is_hosted_content(assets)
         if not is_hosted:
             assets = self.filter_local_assets(assets, self.raise_error)
