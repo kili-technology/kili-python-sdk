@@ -71,9 +71,5 @@ class IncompatibleArgumentsError(ValueError):
     """Raised when the user gave at least two incompatible arguments"""
 
 
-class RemovedMethodError(Exception):
+class RemovedMethodError(BaseException):
     """Raised when the method used has been removed from SDK"""
-
-
-class UserNotFoundError(Exception):
-    """Raised when the user is not found"""
