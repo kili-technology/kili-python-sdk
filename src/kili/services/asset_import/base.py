@@ -32,7 +32,6 @@ from kili.services.asset_import.constants import (
     project_compatible_mimetypes,
 )
 from kili.services.asset_import.exceptions import (
-    BatchImportError,
     ImportValidationError,
     MimeTypeError,
     UploadFromLocalDataForbiddenError,
