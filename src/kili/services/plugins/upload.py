@@ -211,15 +211,10 @@ class PluginUploader:
         return file_path
 
     @staticmethod
-    def _parse_script(script_path: Path, name: str):
+    def _parse_script(script_path: Path):
         """
         Method to detect indentation and class errors in the script
         """
-        if str(script_path.name) == "main.py" and not check_file_contains_handler(
-            name, str(script_path)
-        ):
-            raise ValueError("PluginHandler class is not present in your main.py file.")
-
         with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
@@ -278,7 +273,7 @@ class PluginUploader:
         file_paths = self._retrieve_plugin_src()
 
         for path in file_paths:
-            self._parse_script(path, self.plugin_name)
+            self._parse_script(path)
 
         requirements = self._retrieve_requirements()
 
@@ -326,7 +321,7 @@ class PluginUploader:
             n_tries += 1
 
         if status == "DEPLOYING" and n_tries == 20:
-            raise Exception(
+            raise ValueError(
                 f"""We could not check your plugin was deployed in time.
 Please check again the status of the plugin after some minutes with the command : \
 kili.get_plugin_status("{self.plugin_name}").
@@ -335,7 +330,7 @@ overwrite the plugin with a new version of the code (you can use kili.update_plu
             )
 
         if status != "ACTIVE":
-            raise Exception(
+            raise ValueError(
                 """There was some error during the creation of the plugin. \
 Please check your plugin's code and try to overwrite the plugin with a new version of the \
 code (you can use kili.update_plugin() for that)."""
