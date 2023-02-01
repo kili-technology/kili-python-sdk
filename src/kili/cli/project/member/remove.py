@@ -1,7 +1,7 @@
 """CLI's project member remove subcommand"""
 
 import warnings
-from typing import Dict, Iterable, List, Optional, cast
+from typing import Iterable, Optional
 
 import click
 
@@ -83,17 +83,14 @@ def remove_member(
         members_to_rm = collect_members_from_emails(emails, None)
 
     count = 0
-    existing_members = cast(
-        List[Dict],
-        ProjectUserQuery(kili.auth.client)(
-            where=ProjectUserWhere(project_id=project_id),
-            fields=[
-                "activated",
-                "user.email",
-                "id",
-            ],
-            options=QueryOptions(disable_tqdm=True),
-        ),
+    existing_members = ProjectUserQuery(kili.auth.client)(
+        where=ProjectUserWhere(project_id=project_id),
+        fields=[
+            "activated",
+            "user.email",
+            "id",
+        ],
+        options=QueryOptions(disable_tqdm=True),
     )
     existing_members_email_map = {
         member["user"]["email"]: member["id"] for member in existing_members if member["activated"]
