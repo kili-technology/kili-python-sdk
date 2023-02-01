@@ -7,16 +7,17 @@ from typeguard import typechecked
 from kili.helpers import format_result
 from kili.mutations.user.queries import (
     GQL_CREATE_USER,
-    GQL_RESET_PASSWORD,
     GQL_UPDATE_PASSWORD,
     GQL_UPDATE_PROPERTIES_IN_USER,
 )
+
+from ...exceptions import RemovedMethodError
 
 
 class MutationsUser:
     """Set of User mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -90,23 +91,18 @@ class MutationsUser:
         result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
         return format_result("data", result)
 
-    @typechecked
     def reset_password(self, email: str):
-        """Reset password.
-
-        This resolver only works for on-premise installations without Auth0,
-        if your organization allows Kili to send emails.
-
-        Args:
-            email: Email of the person whose password has to be reset.
-
-        Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
         """
-        variables = {"where": {"email": email}}
-        result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
-        return format_result("data", result)
+        Reset password.
+
+        !!! warning "Method removed"
+            This method is not available anymore.
+            Please use the Kili App instead to reset your password.
+        """
+        raise RemovedMethodError(
+            "reset_password() is not available anymore. Please use the Kili App instead to reset"
+            " your password."
+        )
 
     @typechecked
     def update_properties_in_user(
