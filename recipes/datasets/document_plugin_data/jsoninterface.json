@@ -1,0 +1,126 @@
+{
+    "jobs": {
+        "JOB_0": {
+            "content": {
+                "categories": {
+                    "IBAN": {
+                        "children": [
+                            "TRANSCRIPTION_JOB"
+                        ],
+                        "name": "IBAN",
+                        "color": "#3CD876",
+                        "id": "category6"
+                    },
+                    "CURRENCY": {
+                        "children": [
+                            "TRANSCRIPTION_JOB_2"
+                        ],
+                        "name": "Currency",
+                        "color": "#D33BCE",
+                        "id": "category7"
+                    },
+                    "AMOUNT": {
+                        "children": [
+                            "TRANSCRIPTION_JOB_3"
+                        ],
+                        "name": "Amount",
+                        "color": "#FB753C",
+                        "id": "category8"
+                    }
+                },
+                "input": "radio"
+            },
+            "instruction": "Payment information",
+            "isChild": false,
+            "tools": [
+                "rectangle"
+            ],
+            "mlTask": "OBJECT_DETECTION",
+            "models": {},
+            "isVisible": true,
+            "required": 0,
+            "isNew": false
+        },
+        "TRANSCRIPTION_JOB": {
+            "content": {
+                "input": "textField"
+            },
+            "instruction": "",
+            "mlTask": "TRANSCRIPTION",
+            "required": 0,
+            "isChild": true,
+            "isNew": false
+        },
+        "OBJECT_DETECTION_JOB": {
+            "content": {
+                "categories": {
+                    "BILLING_DATE": {
+                        "children": [
+                            "TRANSCRIPTION_JOB_0"
+                        ],
+                        "color": "#472CED",
+                        "name": "Billing date",
+                        "id": "category9"
+                    },
+                    "PAYMENT_DATE": {
+                        "children": [
+                            "TRANSCRIPTION_JOB_1"
+                        ],
+                        "name": "Payment date",
+                        "color": "#5CE7B7",
+                        "id": "category10"
+                    }
+                },
+                "input": "radio"
+            },
+            "instruction": "Date information",
+            "mlTask": "OBJECT_DETECTION",
+            "required": 0,
+            "tools": [
+                "rectangle"
+            ],
+            "isChild": false,
+            "isNew": false
+        },
+        "TRANSCRIPTION_JOB_0": {
+            "content": {
+                "input": "date"
+            },
+            "instruction": "",
+            "mlTask": "TRANSCRIPTION",
+            "required": 0,
+            "isChild": true,
+            "isNew": false
+        },
+        "TRANSCRIPTION_JOB_1": {
+            "content": {
+                "input": "date"
+            },
+            "instruction": "",
+            "mlTask": "TRANSCRIPTION",
+            "required": 0,
+            "isChild": true,
+            "isNew": false
+        },
+        "TRANSCRIPTION_JOB_2": {
+            "content": {
+                "input": "textField"
+            },
+            "instruction": "",
+            "mlTask": "TRANSCRIPTION",
+            "required": 0,
+            "isChild": true,
+            "isNew": false
+        },
+        "TRANSCRIPTION_JOB_3": {
+            "content": {
+                "input": "number"
+            },
+            "instruction": "",
+            "mlTask": "TRANSCRIPTION",
+            "required": 0,
+            "isChild": true,
+            "isNew": false
+        }
+    }
+}
