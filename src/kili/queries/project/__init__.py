@@ -1,17 +1,19 @@
 """Project queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.helpers import disable_tqdm_if_as_generator
 
 
 class QueriesProject:
     """Set of Project queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -20,6 +22,14 @@ class QueriesProject:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def projects(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def projects(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -46,6 +56,7 @@ class QueriesProject:
         ],
         first: Optional[int] = None,
         disable_tqdm: bool = False,
+        *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
@@ -84,8 +95,13 @@ class QueriesProject:
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
         )
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return ProjectQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        projects_gen = ProjectQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return projects_gen
+        return list(projects_gen)
 
     @typechecked
     def count_projects(
