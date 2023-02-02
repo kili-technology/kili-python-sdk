@@ -201,11 +201,11 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     def _upload_assets(self, new_project_id, assets):
         assets = sorted(
             assets,
-            key=lambda asset: (asset["content"] != "", asset["jsonContent"] != ""),
+            key=lambda asset: (bool(asset["content"]), bool(asset["jsonContent"])),
         )
         assets_iterator = itertools.groupby(
             assets,
-            key=lambda asset: (asset["content"] != "", asset["jsonContent"] != ""),
+            key=lambda asset: (bool(asset["content"]), bool(asset["jsonContent"])),
         )
 
         for key, group in assets_iterator:
