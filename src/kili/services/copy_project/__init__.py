@@ -163,7 +163,6 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             review_coverage=src_project["reviewCoverage"],
         )
 
-    # pylint: disable=too-many-locals
     def _copy_assets(self, from_project_id: str, new_project_id: str):
         """
         Copy assets from a project to another.
@@ -185,10 +184,15 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 downloaded_assets = self._download_assets(from_project_id, fields, tmp_dir, assets)
                 return self._upload_assets(new_project_id, downloaded_assets)
 
-        return AssetQuery(self.kili.auth.client)(where, fields, options, download_and_upload_assets)
+        asset_gen = AssetQuery(self.kili.auth.client)(
+            where, fields, options, download_and_upload_assets
+        )
+        # Generator needs to be iterated over to actually fetch assets
+        for _ in asset_gen:
+            pass
 
     def _download_assets(self, from_project_id, fields, tmp_dir, assets):
-        download_function = get_download_assets_function(
+        download_function, _ = get_download_assets_function(
             self.kili,
             download_media=True,
             fields=fields,
