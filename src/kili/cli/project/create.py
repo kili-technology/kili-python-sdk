@@ -1,7 +1,7 @@
 """CLI's project create subcommand"""
 
 import json
-from typing import Dict, Optional, cast
+from typing import Optional
 
 import click
 from tabulate import tabulate
@@ -77,14 +77,11 @@ def create_project(
     elif project_id_src is not None:
         json_interface = services.get_project_field(kili, project_id_src, "jsonInterface")
 
-    result = cast(
-        Dict,
-        kili.create_project(
-            input_type=input_type,
-            json_interface=json_interface,
-            title=title,
-            description=description,
-        ),
+    result = kili.create_project(
+        input_type=input_type,
+        json_interface=json_interface,
+        title=title,
+        description=description,
     )
     project_id = result["id"]
 

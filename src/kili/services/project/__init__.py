@@ -1,6 +1,6 @@
 """Service module for projects"""
 
-from typing import Dict, List, cast
+from typing import List
 
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
@@ -9,11 +9,10 @@ from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 
 def get_project(kili, project_id: str, fields: List[str]):
     """Get a project from its id or raise a NotFound Error if not found"""
-    projects = cast(
-        List[Dict],
+    projects = list(
         ProjectQuery(kili.auth.client)(
             ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
-        ),
+        )
     )
     if len(projects) == 0:
         raise NotFound(

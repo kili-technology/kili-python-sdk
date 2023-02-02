@@ -6,6 +6,7 @@ import pandas as pd
 from kili.client import Kili
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.services.project import get_project_field
 
 
 @click.command()
@@ -28,19 +29,18 @@ def main(api_endpoint):
 
     df = pd.DataFrame(columns=["Project", "Date", "Email"])
     for project_id in source_project_id.split(","):
-        project = list(kili.projects(project_id=project_id))[0]
+        project_title = get_project_field(kili, project_id, "title")
         assets = AssetQuery(kili.auth.client)(
             AssetWhere(project_id=project_id),
             ["labels.createdAt", "createdAt.author.email"],
             QueryOptions(disable_tqdm=False),
         )
-        title = project["title"]
         for asset in assets:
             for label in asset["labels"]:
                 created_at = label["createdAt"][:10]
                 author_email = label["author"]["email"]
                 df = df.append(
-                    {"Project": title, "Date": created_at, "Email": author_email},
+                    {"Project": project_title, "Date": created_at, "Email": author_email},
                     ignore_index=True,
                 )
     df_grouped = df.groupby(["Project", "Date", "Email"]).size()

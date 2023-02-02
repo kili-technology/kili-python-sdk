@@ -2,7 +2,7 @@
 
 import re
 import warnings
-from typing import Dict, Iterable, List, Optional, cast
+from typing import Iterable, Optional
 
 from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
@@ -59,13 +59,10 @@ def collect_members_from_project(kili, project_id_source: str, role: Optional[st
     if role is not None:
         raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
 
-    existing_members = cast(
-        List[Dict],
-        ProjectUserQuery(kili.auth.client)(
-            where=ProjectUserWhere(project_id=project_id_source),
-            fields=["role", "user.email", "activated"],
-            options=QueryOptions(disable_tqdm=True),
-        ),
+    existing_members = ProjectUserQuery(kili.auth.client)(
+        where=ProjectUserWhere(project_id=project_id_source),
+        fields=["role", "user.email", "activated"],
+        options=QueryOptions(disable_tqdm=True),
     )
     for existing_member in existing_members:
         if existing_member["activated"]:
