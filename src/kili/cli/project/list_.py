@@ -2,7 +2,7 @@
     CLI's project list subcommand
 """
 
-from typing import Dict, List, Optional, cast
+from typing import Optional
 
 import click
 import numpy as np
@@ -38,8 +38,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
 
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    projects = cast(
-        List[Dict],
+    projects = list(
         ProjectQuery(kili.auth.client)(
             ProjectWhere(),
             [

@@ -4,7 +4,7 @@ This script permits to initialize the Kili Python SDK client.
 import os
 
 from kili.authentication import KiliAuth
-from kili.exceptions import AuthenticationFailed, NotFound
+from kili.exceptions import AuthenticationFailed
 from kili.graphql.graphql_client import GraphQLClientName
 from kili.internal import KiliInternal
 from kili.mutations.asset import MutationsAsset
@@ -27,6 +27,7 @@ from kili.queries.project import QueriesProject
 from kili.queries.project_user import QueriesProjectUser
 from kili.queries.project_version import QueriesProjectVersion
 from kili.queries.user import QueriesUser
+from kili.services.project import get_project
 from kili.services.types import ProjectId
 from kili.subscriptions.label import SubscriptionsLabel
 
@@ -119,17 +120,10 @@ class Kili(  # pylint: disable=too-many-ancestors
         raise:
             NotFound if the given `project_id` does not correspond to an existing project
         """
-        projects_response = self.projects(
-            project_id=project_id, disable_tqdm=True, fields=["inputType", "title"]
-        )
-        projects_response = list(projects_response)
-
-        if len(projects_response) == 0:
-            raise NotFound(str(project_id))
-        project_fields = projects_response[0]
-        title = project_fields["title"]
-        input_type = project_fields["inputType"]
-
+        project = get_project(self, project_id, ["inputType", "title"])
         return Project(
-            client=self, project_id=ProjectId(project_id), input_type=input_type, title=title
+            client=self,
+            project_id=ProjectId(project_id),
+            input_type=project["inputType"],
+            title=project["title"],
         )

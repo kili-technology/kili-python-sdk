@@ -2,7 +2,7 @@
 Issue mutations
 """
 
-from typing import Dict, List, Optional, cast
+from typing import Dict, Optional
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -57,14 +57,9 @@ class MutationsIssue:
                 project_id=project_id,
                 label_id=label_id,
             )
-            asset_id = cast(
-                List[Dict],
-                list(
-                    LabelQuery(self.auth.client)(
-                        where=where, fields=["labelOf.id"], options=options
-                    )
-                )[0]["labelOf"]["id"],
-            )
+            asset_id: str = list(
+                LabelQuery(self.auth.client)(where=where, fields=["labelOf.id"], options=options)
+            )[0]["labelOf"]["id"]
         except:
             # pylint: disable=raise-missing-from
             raise ValueError(

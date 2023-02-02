@@ -16,7 +16,7 @@ from ...authentication import KiliAuth
 class QueriesPlugins:
     """Set of Plugins queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.

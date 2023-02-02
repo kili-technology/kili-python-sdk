@@ -1,20 +1,22 @@
 """Notification queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.notification.queries import (
     NotificationQuery,
     NotificationWhere,
 )
+from kili.helpers import disable_tqdm_if_as_generator
 
 
 class QueriesNotification:
     """Set of Notification queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -23,6 +25,14 @@ class QueriesNotification:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def notifications(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def notifications(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -42,6 +52,7 @@ class QueriesNotification:
         skip: int = 0,
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
+        *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
@@ -69,8 +80,13 @@ class QueriesNotification:
             notification_id=notification_id,
             user_id=user_id,
         )
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return NotificationQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        notifications_gen = NotificationQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return notifications_gen
+        return list(notifications_gen)
 
     @typechecked
     def count_notifications(
