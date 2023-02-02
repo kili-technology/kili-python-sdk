@@ -87,7 +87,7 @@ class MediaDownloader:
         assets = list(assets_gen)
 
         if self.jsoncontent_field_added:
-            jsoncontent_not_empty = any(asset["jsonContent"] != "" for asset in assets)
+            jsoncontent_not_empty = any(bool(asset["jsonContent"]) for asset in assets)
             if jsoncontent_not_empty:
                 warnings.warn(
                     "Non empty jsonContent found in assets. Field was automatically added."
@@ -101,7 +101,7 @@ class MediaDownloader:
     def download_single_asset(self, asset: Dict) -> Dict[str, Any]:
         """Download single asset on disk and modify asset attributes"""
 
-        if "jsonContent" in asset and asset["jsonContent"] != "":
+        if "jsonContent" in asset and str(asset["jsonContent"]).startswith("http"):
             # richtext
             if self.project_input_type == "TEXT":
                 asset["jsonContent"] = download_file(
@@ -138,7 +138,7 @@ class MediaDownloader:
                     f"jsonContent download for type {self.project_input_type} not implemented yet."
                 )
 
-        if asset["content"] != "":
+        if str(asset["content"]).startswith("http"):
             asset["content"] = download_file(
                 asset["content"], asset["externalId"], self.local_dir_path
             )

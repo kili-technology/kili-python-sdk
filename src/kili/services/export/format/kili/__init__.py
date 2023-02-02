@@ -67,7 +67,7 @@ class KiliExporter(AbstractExporter):
         Remove TemporaryDirectory() prefix from filepaths in "jsonContent" and "content" fields.
         """
         for asset in assets:
-            if asset["content"] != "" and os.path.isfile(asset["content"]):
+            if os.path.isfile(asset["content"]):
                 asset["content"] = str(Path(self.ASSETS_DIR_NAME) / Path(asset["content"]).name)
 
             json_content_list = []
