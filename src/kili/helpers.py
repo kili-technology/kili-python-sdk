@@ -335,3 +335,14 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
             f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
         )
     return correct_mime_type
+
+
+def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: bool):
+    """Disable tqdm in user-facing queries method if the return type is asked as a generator."""
+    if as_generator and not disable_tqdm:
+        disable_tqdm = True
+        warnings.warn(
+            "tqdm has been forced disabled because its behavior is not compatible with the"
+            " generator return type"
+        )
+    return disable_tqdm

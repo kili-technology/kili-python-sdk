@@ -4,7 +4,7 @@ GraphQL Queries of Organizations
 
 
 from datetime import datetime
-from typing import Optional
+from typing import Dict, Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 from kili.helpers import format_result
@@ -95,7 +95,7 @@ class OrganizationQuery(GraphQLQuery):
     }
     """
 
-    def metrics(self, where: OrganizationMetricsWhere):
+    def metrics(self, where: OrganizationMetricsWhere) -> Dict:
         """execute the organizationMetrics operation"""
         payload = {"where": where.graphql_payload}
         result = self.client.execute(self.GQL_ORGANIZATION_METRICS, payload)

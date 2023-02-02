@@ -1,9 +1,10 @@
 """Organization queries."""
 
 from datetime import datetime
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.organization.queries import (
@@ -11,6 +12,7 @@ from kili.graphql.operations.organization.queries import (
     OrganizationQuery,
     OrganizationWhere,
 )
+from kili.helpers import disable_tqdm_if_as_generator
 
 
 class QueriesOrganization:
@@ -18,7 +20,7 @@ class QueriesOrganization:
     Set of Organization queries
     """
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -27,6 +29,14 @@ class QueriesOrganization:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def organizations(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def organizations(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -38,6 +48,7 @@ class QueriesOrganization:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
@@ -66,8 +77,13 @@ class QueriesOrganization:
             email=email,
             organization_id=organization_id,
         )
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return OrganizationQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        organizations_gen = OrganizationQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return organizations_gen
+        return list(organizations_gen)
 
     @typechecked
     def count_organizations(
@@ -95,7 +111,7 @@ class QueriesOrganization:
         organization_id: str,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-    ):
+    ) -> Dict:
         """Get organization metrics.
 
         Args:
