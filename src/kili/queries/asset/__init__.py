@@ -191,7 +191,7 @@ class QueriesAsset:
             label_category_search=label_category_search,
         )
         options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        post_call_function = get_download_assets_function(
+        post_call_function, fields = get_download_assets_function(
             self, download_media, fields, project_id, local_media_dir
         )
         assets = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
