@@ -105,7 +105,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
             label_type_in=label_type_in,
         )
     options = QueryOptions(disable_tqdm=disable_tqdm)
-    post_call_function = get_download_assets_function(
+    post_call_function, fields = get_download_assets_function(
         kili, download_media, fields, project_id, local_media_dir
     )
     assets = list(AssetQuery(kili.auth.client)(where, fields, options, post_call_function))

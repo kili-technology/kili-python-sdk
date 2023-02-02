@@ -20,11 +20,7 @@ from .exceptions import MissingPropertyError
 
 
 def get_download_assets_function(
-    auth: KiliAuth,
-    download_media: bool,
-    fields: List[str],
-    project_id: str,
-    local_media_dir: Optional[str],
+    kili, download_media: bool, fields: List[str], project_id: str, local_media_dir: Optional[str]
 ) -> Tuple[Optional[Callable], List[str]]:
     """Get the function to be called after each batch of asset query.
 
@@ -34,10 +30,10 @@ def get_download_assets_function(
     if the jsonContent field is necessary.
     """
     if not download_media:
-        return None
+        return None, fields
     projects = list(
         ProjectQuery(kili.auth.client)(
-            ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
+            ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
         )
     )
     if len(projects) == 0:
