@@ -12,7 +12,6 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
@@ -35,10 +34,10 @@ def get_download_assets_function(
     if the jsonContent field is necessary.
     """
     if not download_media:
-        return None, fields
+        return None
     projects = list(
-        ProjectQuery(auth.client)(
-            ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
+        ProjectQuery(kili.auth.client)(
+            ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
         )
     )
     if len(projects) == 0:

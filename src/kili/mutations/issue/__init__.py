@@ -2,8 +2,7 @@
 Issue mutations
 """
 
-from itertools import repeat
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from typeguard import typechecked
 from typing_extensions import Literal

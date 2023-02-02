@@ -30,112 +30,15 @@ class QueriesAsset:
 
     @overload
     def assets(
-        self,
-        project_id: str,
-        asset_id: Optional[str] = None,
-        skip: int = 0,
-        fields: List[str] = [
-            "content",
-            "createdAt",
-            "externalId",
-            "id",
-            "isHoneypot",
-            "jsonMetadata",
-            "labels.author.id",
-            "labels.author.email",
-            "labels.createdAt",
-            "labels.id",
-            "labels.jsonResponse",
-            "skipped",
-            "status",
-        ],
-        asset_id_in: Optional[List[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
-        disable_tqdm: bool = False,
-        external_id_contains: Optional[List[str]] = None,
-        first: Optional[int] = None,
-        format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
-        label_author_in: Optional[List[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
-        label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[str]] = None,
-        metadata_where: Optional[dict] = None,
-        skipped: Optional[bool] = None,
-        status_in: Optional[List[str]] = None,
-        updated_at_gte: Optional[str] = None,
-        updated_at_lte: Optional[str] = None,
-        label_category_search: Optional[str] = None,
-        download_media: bool = False,
-        local_media_dir: Optional[str] = None,
-        created_at_gte: Optional[str] = None,
-        created_at_lte: Optional[str] = None,
-        *,
-        as_generator: Literal[True],
+        self, project_id: str, *, as_generator: Literal[True]
     ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def assets(
-        self,
-        project_id: str,
-        asset_id: Optional[str] = None,
-        skip: int = 0,
-        fields: List[str] = [
-            "content",
-            "createdAt",
-            "externalId",
-            "id",
-            "isHoneypot",
-            "jsonMetadata",
-            "labels.author.id",
-            "labels.author.email",
-            "labels.createdAt",
-            "labels.id",
-            "labels.jsonResponse",
-            "skipped",
-            "status",
-        ],
-        asset_id_in: Optional[List[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
-        disable_tqdm: bool = False,
-        external_id_contains: Optional[List[str]] = None,
-        first: Optional[int] = None,
-        format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
-        label_author_in: Optional[List[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
-        label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[str]] = None,
-        metadata_where: Optional[dict] = None,
-        skipped: Optional[bool] = None,
-        status_in: Optional[List[str]] = None,
-        updated_at_gte: Optional[str] = None,
-        updated_at_lte: Optional[str] = None,
-        label_category_search: Optional[str] = None,
-        download_media: bool = False,
-        local_media_dir: Optional[str] = None,
-        created_at_gte: Optional[str] = None,
-        created_at_lte: Optional[str] = None,
-        *,
-        as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    def assets(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
         ...
 
+    # pylint: disable=dangerous-default-value
     @typechecked
     def assets(
         self,
@@ -183,8 +86,6 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
-        created_at_gte: Optional[str] = None,
-        created_at_lte: Optional[str] = None,
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[Dict], pd.DataFrame]:
@@ -308,8 +209,8 @@ class QueriesAsset:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        post_call_function, fields = get_download_assets_function(
-            self.auth, download_media, fields, project_id, local_media_dir
+        post_call_function = get_download_assets_function(
+            self, download_media, fields, project_id, local_media_dir
         )
         assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
 
