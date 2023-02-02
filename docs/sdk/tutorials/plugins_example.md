@@ -163,7 +163,7 @@ plugin_folder = "plugin_folder"
 
 Path(plugin_folder).mkdir(parents=True, exist_ok=True)
 urllib.request.urlretrieve(
-    "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/plugins_library/plugin_image.py",
+    "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/datasets/plugins/plugin_image.py",
     "plugin_folder/main.py",
 )
 ```
@@ -213,6 +213,10 @@ try:
 except GraphQLError as error:
     print(str(error))
 ```
+
+    Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder", plugin_name="Plugin bbox count")
+    error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
+
 
 
 ```python

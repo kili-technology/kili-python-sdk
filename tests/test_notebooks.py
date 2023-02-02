@@ -38,7 +38,11 @@ def process_notebook(notebook_filename):
         "recipes/pixel_level_masks.ipynb",
         # "recipes/plugins_example.ipynb",
         "recipes/set_up_workflows.ipynb",
-        "recipes/webhooks.ipynb",
+        "recipes/export_a_kili_project.ipynb",
+        "recipes/plugins_example.ipynb",
+        "recipes/basic_project_setup.ipynb",
+        "recipes/importing_assets_and_labels.ipynb",
+        "recipes/importing_video_assets.ipynb",
     ],
 )
 def test_all_recipes(notebook_file):
