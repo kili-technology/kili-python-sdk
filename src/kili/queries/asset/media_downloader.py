@@ -31,17 +31,7 @@ def get_download_assets_function(
     """
     if not download_media:
         return None, fields
-    projects = list(
-        ProjectQuery(kili.auth.client)(
-            ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
-        )
-    )
-    if len(projects) == 0:
-        raise NotFound(
-            f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of the"
-            " project."
-        )
-    input_type = projects[0]["inputType"]
+    input_type = get_project_field(kili, project_id, "inputType")
     jsoncontent_field_added = False
     if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
         fields = fields + ["jsonContent"]

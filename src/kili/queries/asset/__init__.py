@@ -295,8 +295,7 @@ class QueriesAsset:
             updated_at_lte=updated_at_lte,
             label_category_search=label_category_search,
         )
-        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
-        options = QueryOptions(disable_tqdm, first, skip)
+        options = QueryOptions(disable_tqdm, first, skip, as_generator)
         post_call_function, fields = get_download_assets_function(
             self, download_media, fields, project_id, local_media_dir
         )
