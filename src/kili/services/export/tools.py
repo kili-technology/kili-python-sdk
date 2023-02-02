@@ -1,7 +1,7 @@
 """
 Set of common functions used by different export formats
 """
-from typing import Dict, List, Optional, cast
+from typing import Dict, List, Optional
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
@@ -41,7 +41,7 @@ LATEST_LABEL_FIELDS = [
 ]
 
 
-def attach_name_to_assets_labels_author(assets, export_type: ExportType):
+def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportType):
     """
     Adds `name` field for author, by concatenating his/her first and last name
     """
@@ -106,9 +106,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     post_call_function = get_download_assets_function(
         kili, download_media, fields, project_id, local_media_dir
     )
-    assets = cast(
-        List[Dict], AssetQuery(kili.auth.client)(where, fields, options, post_call_function)
-    )
+    assets = list(AssetQuery(kili.auth.client)(where, fields, options, post_call_function))
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 

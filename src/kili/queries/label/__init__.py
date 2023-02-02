@@ -1,15 +1,16 @@
 """Label queries."""
 
-from typing import Dict, Iterable, List, Optional, cast
+from typing import Dict, Generator, Iterable, List, Optional, cast, overload
 
 import pandas as pd
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili import services
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.helpers import validate_category_search_query
+from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
@@ -28,6 +29,16 @@ class QueriesLabel:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def labels(
+        self, project_id: str, *, as_generator: Literal[True]
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def labels(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -58,8 +69,9 @@ class QueriesLabel:
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
-        as_generator: bool = False,
         category_search: Optional[str] = None,
+        *,
+        as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
@@ -139,8 +151,13 @@ class QueriesLabel:
             user_id=user_id,
             category_search=category_search,
         )
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return LabelQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        labels_gen = LabelQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return labels_gen
+        return list(labels_gen)
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -171,7 +188,7 @@ class QueriesLabel:
         """
 
         services.get_project(self, project_id, ["id"])
-        assets = AssetQuery(self.auth.client)(
+        assets_gen = AssetQuery(self.auth.client)(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
@@ -181,7 +198,7 @@ class QueriesLabel:
                 label,
                 **dict((f"asset_{key}", asset[key]) for key in asset if key != "labels"),
             )
-            for asset in assets
+            for asset in assets_gen
             for label in asset["labels"]
         ]
         labels_df = pd.DataFrame(labels)

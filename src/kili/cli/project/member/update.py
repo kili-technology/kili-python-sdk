@@ -1,7 +1,7 @@
 """CLI's project member update subcommand"""
 
 import warnings
-from typing import Dict, Iterable, List, Optional, cast
+from typing import Iterable, Optional
 
 import click
 
@@ -79,13 +79,10 @@ def update_member(
 
     count = 0
 
-    existing_members = cast(
-        List[Dict],
-        ProjectUserQuery(kili.auth.client)(
-            where=ProjectUserWhere(project_id=project_id),
-            fields=["role", "activated", "user.email", "id", "user.id"],
-            options=QueryOptions(disable_tqdm=True),
-        ),
+    existing_members_gen = ProjectUserQuery(kili.auth.client)(
+        where=ProjectUserWhere(project_id=project_id),
+        fields=["role", "activated", "user.email", "id", "user.id"],
+        options=QueryOptions(disable_tqdm=True),
     )
     existing_members = {
         member["user"]["email"]: {
@@ -93,7 +90,7 @@ def update_member(
             "user_id": member["user"]["id"],
             "role": member["role"],
         }
-        for member in existing_members
+        for member in existing_members_gen
         if member["activated"]
     }
 
