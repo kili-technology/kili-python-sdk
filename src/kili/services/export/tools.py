@@ -108,11 +108,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     post_call_function, fields = get_download_assets_function(
         kili, download_media, fields, project_id, local_media_dir
     )
-    assets = cast(
-        List[Dict], AssetQuery(kili.auth.client)(where, fields, options, post_call_function)
-    )
-    assets = list(AssetQuery(auth.client)(where, fields, options, post_call_function))
-    _check_content_presence(assets)
+    assets = list(AssetQuery(kili.auth.client)(where, fields, options, post_call_function))
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 

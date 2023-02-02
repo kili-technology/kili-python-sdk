@@ -79,7 +79,7 @@ class GraphQLQuery(ABC):
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:
         """Get a generator of objects of the specified type in accordance with the provided where"""
-        fragment = self.fragment_builder(fields)
+        fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
         query = self.query(fragment)
 
         return self.execute_query_from_paginated_call(query, where, options, post_call_function)
@@ -119,6 +119,7 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
+        total_rows_queried = self.get_number_of_elements_to_query(where, options)
         batch_size = min(100, options.first or 100)
 
         if isinstance(self.COUNT_QUERY, str):

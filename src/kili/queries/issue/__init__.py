@@ -1,5 +1,6 @@
 """Issue queries."""
 
+import warnings
 from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
@@ -14,7 +15,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 class QueriesIssue:
     """Set of Issue queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
@@ -26,44 +27,15 @@ class QueriesIssue:
 
     @overload
     def issues(
-        self,
-        project_id: str,
-        fields: List[str] = [
-            "id",
-            "createdAt",
-            "hasBeenSeen",
-            "issueNumber",
-            "status",
-            "type",
-        ],
-        first: Optional[int] = None,
-        skip: int = 0,
-        disable_tqdm: bool = False,
-        *,
-        as_generator: Literal[True],
+        self, project_id: str, *, as_generator: Literal[True]
     ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def issues(
-        self,
-        project_id: str,
-        fields: List[str] = [
-            "id",
-            "createdAt",
-            "hasBeenSeen",
-            "issueNumber",
-            "status",
-            "type",
-        ],
-        first: Optional[int] = None,
-        skip: int = 0,
-        disable_tqdm: bool = False,
-        *,
-        as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    def issues(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
         ...
 
+    # pylint: disable=dangerous-default-value
     @typechecked
     def issues(
         self,

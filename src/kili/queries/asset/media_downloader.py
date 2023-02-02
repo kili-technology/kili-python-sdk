@@ -12,7 +12,6 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
@@ -31,8 +30,18 @@ def get_download_assets_function(
     if the jsonContent field is necessary.
     """
     if not download_media:
-        return None, fields
-    input_type = get_project_field(kili, project_id, "inputType")
+        return None
+    projects = list(
+        ProjectQuery(kili.auth.client)(
+            ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
+        )
+    )
+    if len(projects) == 0:
+        raise NotFound(
+            f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of the"
+            " project."
+        )
+    input_type = projects[0]["inputType"]
     jsoncontent_field_added = False
     if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
         fields = fields + ["jsonContent"]
