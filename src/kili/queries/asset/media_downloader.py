@@ -30,7 +30,7 @@ def get_download_assets_function(
         return None
     projects = list(
         ProjectQuery(kili.auth.client)(
-            ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
+            ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
         )
     )
     if len(projects) == 0:
