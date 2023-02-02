@@ -24,10 +24,10 @@ AnnotationFormat = Literal[
 
 @dataclass
 class AssetStatus:
-    # pylint: disable=invalid-name
     """
     List of asset status
     """
+
     Labeled = "LABELED"
     Ongoing = "ONGOING"
     Reviewed = "REVIEWED"
@@ -37,11 +37,10 @@ class AssetStatus:
 
 @dataclass
 class JobMLTask:
-    # pylint: disable=invalid-name
-    # pylint: disable=too-many-instance-attributes
     """
     List of ML Tasks
     """
+
     AssetAnnotation = "ASSET_ANNOTATION"
     Classification = "CLASSIFICATION"
     NamedEntitiesRecognition = "NAMED_ENTITIES_RECOGNITION"
@@ -56,10 +55,10 @@ class JobMLTask:
 
 @dataclass
 class JobTool:
-    # pylint: disable=invalid-name
     """
     List of tools
     """
+
     Marker = "marker"
     Polygon = "polygon"
     Polyline = "polyline"
@@ -149,7 +148,7 @@ class Label(DictClass):
             _format: expected format
         """
         if "jsonResponse" not in self:
-            raise Exception(
+            raise KeyError(
                 f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"'
             )
         if _format == "simple":

@@ -1,18 +1,20 @@
 """Issue queries."""
 
 import warnings
-from typing import Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.issue.queries import IssueQuery, IssueWhere
+from kili.helpers import disable_tqdm_if_as_generator
 
 
 class QueriesIssue:
     """Set of Issue queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -21,6 +23,16 @@ class QueriesIssue:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def issues(
+        self, project_id: str, *, as_generator: Literal[True]
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def issues(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -38,8 +50,9 @@ class QueriesIssue:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        *,
         as_generator: bool = False,
-    ) -> Iterable[dict]:
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of issues that match a set of criteria.
 
@@ -60,8 +73,13 @@ class QueriesIssue:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
         where = IssueWhere(project_id=project_id)
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return IssueQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        issues_gen = IssueQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return issues_gen
+        return list(issues_gen)
 
     @typechecked
     def count_issues(self, project_id: Optional[str] = None) -> int:

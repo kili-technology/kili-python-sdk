@@ -188,7 +188,7 @@ def format_metadata(metadata):
         return metadata
     if isinstance(metadata, (dict, list)):
         return dumps(metadata)
-    raise Exception(
+    raise TypeError(
         f"Metadata {metadata} of type {type(metadata)} must either be None,"
         " a string a list or a dict."
     )
@@ -204,7 +204,7 @@ def convert_to_list_of_none(array, length):
     """
     if isinstance(array, list):
         if len(array) != length:
-            raise Exception(f"array should have length {length}")
+            raise ValueError(f"array should have length {length}")
         return array
     return [None] * length
 
@@ -335,3 +335,14 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
             f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
         )
     return correct_mime_type
+
+
+def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: bool):
+    """Disable tqdm in user-facing queries method if the return type is asked as a generator."""
+    if as_generator and not disable_tqdm:
+        disable_tqdm = True
+        warnings.warn(
+            "tqdm has been forced disabled because its behavior is not compatible with the"
+            " generator return type"
+        )
+    return disable_tqdm

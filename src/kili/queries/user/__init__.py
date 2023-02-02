@@ -1,17 +1,19 @@
 """User queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.user.queries import UserQuery, UserWhere
+from kili.helpers import disable_tqdm_if_as_generator
 
 
 class QueriesUser:
     """Set of User queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -20,6 +22,14 @@ class QueriesUser:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def users(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def users(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -32,6 +42,7 @@ class QueriesUser:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
@@ -62,8 +73,13 @@ class QueriesUser:
         """
 
         where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
-        return UserQuery(self.auth.client)(where, fields, options)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        users_gen = UserQuery(self.auth.client)(where, fields, options)
+
+        if as_generator:
+            return users_gen
+        return list(users_gen)
 
     @typechecked
     def count_users(

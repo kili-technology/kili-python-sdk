@@ -1,13 +1,14 @@
 """Asset queries."""
 
-from typing import Dict, Iterable, List, Optional, Union
+from typing import Dict, Generator, Iterable, List, Optional, Union, overload
 
 import pandas as pd
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.helpers import validate_category_search_query
+from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query
 from kili.queries.asset.media_downloader import get_download_assets_function
 
 
@@ -25,6 +26,16 @@ class QueriesAsset:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def assets(
+        self, project_id: str, *, as_generator: Literal[True]
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def assets(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
+        ...
 
     # pylint: disable=dangerous-default-value
     @typechecked
@@ -71,10 +82,11 @@ class QueriesAsset:
         status_in: Optional[List[str]] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
-        as_generator: bool = False,
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
+        *,
+        as_generator: bool = False,
     ) -> Union[Iterable[Dict], pd.DataFrame]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
@@ -190,15 +202,18 @@ class QueriesAsset:
             updated_at_lte=updated_at_lte,
             label_category_search=label_category_search,
         )
-        options = QueryOptions(disable_tqdm, first, skip, as_generator)
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
         post_call_function, fields = get_download_assets_function(
             self, download_media, fields, project_id, local_media_dir
         )
-        assets = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
+        assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
 
         if format == "pandas":
-            return pd.DataFrame(assets)
-        return assets
+            return pd.DataFrame(list(assets_gen))
+        if as_generator:
+            return assets_gen
+        return list(assets_gen)
 
     @typechecked
     def count_assets(

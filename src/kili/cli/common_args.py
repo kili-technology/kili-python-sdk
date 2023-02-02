@@ -3,7 +3,7 @@ from typing import List
 
 import click
 
-CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
 
 
@@ -14,15 +14,15 @@ class Options:  # pylint: disable=too-few-public-methods
         "--api-key",
         type=str,
         default=None,
-        help=("Your Kili API key. "),
-        show_default=('"KILI_API_KEY" environment variable'),
+        help="Your Kili API key. ",
+        show_default='"KILI_API_KEY" environment variable',
     )
 
     endpoint = click.option(
         "--endpoint",
         type=str,
         default=None,
-        help=("Kili API Endpoint. "),
+        help="Kili API Endpoint. ",
         show_default=(
             '"KILI_API_ENDPOINT" environment variable,'
             ' Kili SAAS: "https://cloud.kili-technology.com/api/label/v2/graphql"'
@@ -36,8 +36,10 @@ class Options:  # pylint: disable=too-few-public-methods
         "tablefmt",
         type=str,
         default="plain",
-        help="Defines how the output table is formatted "
-        "(see https://pypi.org/project/tabulate/, default: plain).",
+        help=(
+            "Defines how the output table is formatted "
+            "(see https://pypi.org/project/tabulate/, default: plain)."
+        ),
     )
 
     from_project = click.option(

@@ -15,6 +15,8 @@ from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
 from kili.types import User
 
+from .exceptions import UserNotFoundError
+
 MAX_RETRIES = 20
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
@@ -69,7 +71,7 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         user = self.get_user()
 
         if user is None or user["id"] is None or user["email"] is None:
-            raise Exception("No user attached to the API key was found")
+            raise UserNotFoundError("No user attached to the API key was found")
 
         self.user_id = user["id"]
         self.user_email = user["email"]
@@ -112,12 +114,12 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
         """
         duration_days = 365
         warn_days = 30
-        key_object = APIKeyQuery(self.client)(
+        api_keys = APIKeyQuery(self.client)(
             fields=["createdAt"],
             where=APIKeyWhere(api_key=api_key),
             options=QueryOptions(disable_tqdm=True),
         )
-        key_creation = datetime.strptime(list(key_object)[0]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        key_creation = datetime.strptime(next(api_keys)["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
         key_expiry = key_creation + timedelta(days=duration_days)
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)

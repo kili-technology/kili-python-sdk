@@ -1,6 +1,6 @@
 """CLI's project member list subcommand"""
 
-from typing import Dict, List, Optional, cast
+from typing import Optional
 
 import click
 import pandas as pd
@@ -34,8 +34,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
 
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    members = cast(
-        List[Dict],
+    members_list = list(
         ProjectUserQuery(kili.auth.client)(
             where=ProjectUserWhere(project_id=project_id),
             fields=[
@@ -48,9 +47,9 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
                 "user.organization.name",
             ],
             options=QueryOptions(disable_tqdm=True),
-        ),
+        )
     )
-    members = pd.DataFrame(members)
+    members = pd.DataFrame(members_list)
     members = pd.concat([members.drop(["user"], axis=1), members["user"].apply(pd.Series)], axis=1)
     members = pd.concat(
         [members.drop(["organization"], axis=1), members["organization"].apply(pd.Series)],

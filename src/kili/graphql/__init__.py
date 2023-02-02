@@ -3,7 +3,7 @@ GraphQL module
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Iterable, List, NamedTuple, Optional, Type
+from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
 
 from tqdm import tqdm
 from typing_extensions import TypedDict, is_typeddict
@@ -21,7 +21,6 @@ class QueryOptions(NamedTuple):
     disable_tqdm: Optional[bool]
     first: Optional[int] = None
     skip: int = 0
-    as_generator: bool = False
 
 
 class BaseQueryWhere(ABC):
@@ -82,17 +81,12 @@ class GraphQLQuery(ABC):
         fields: List[str],
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
-    ) -> Iterable[Dict]:
-        """Query objects of the specified type"""
+    ) -> Generator[Dict, None, None]:
+        """Get a generator of objects of the specified type in accordance with the provided where"""
         fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
         query = self.query(fragment)
 
-        result_gen = self.execute_query_from_paginated_call(
-            query, where, options, post_call_function
-        )
-        if options.as_generator:
-            return result_gen
-        return list(result_gen)
+        return self.execute_query_from_paginated_call(query, where, options, post_call_function)
 
     def count(self, where: BaseQueryWhere):
         """Count the number of objects matching the given where payload"""
@@ -119,7 +113,7 @@ class GraphQLQuery(ABC):
         where: BaseQueryWhere,
         options: QueryOptions,
         post_call_function: Optional[Callable],
-    ):
+    ) -> Generator[Dict, None, None]:
         """
         Builds a row generator from paginated calls.
 
@@ -129,8 +123,6 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
-        if options.as_generator and not options.disable_tqdm:
-            options._replace(disable_tqdm=True)
         total_rows_queried = self.get_number_of_elements_to_query(where, options)
         batch_size = min(100, options.first or 100)
 
@@ -194,5 +186,5 @@ class GraphQLQuery(ABC):
             if isinstance(field, str):
                 fragment += f" {field}"
             else:
-                raise Exception("Please provide the fields to query as strings")
+                raise TypeError("Please provide the fields to query as strings")
         return fragment
