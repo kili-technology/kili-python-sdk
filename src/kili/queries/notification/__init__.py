@@ -17,7 +17,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 class QueriesNotification:
     """Set of Notification queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
@@ -28,49 +28,14 @@ class QueriesNotification:
         self.auth = auth
 
     @overload
-    def notifications(
-        self,
-        fields: List[str] = [
-            "createdAt",
-            "hasBeenSeen",
-            "id",
-            "message",
-            "status",
-            "userID",
-        ],
-        first: Optional[int] = None,
-        has_been_seen: Optional[bool] = None,
-        notification_id: Optional[str] = None,
-        skip: int = 0,
-        user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
-        *,
-        as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    def notifications(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def notifications(
-        self,
-        fields: List[str] = [
-            "createdAt",
-            "hasBeenSeen",
-            "id",
-            "message",
-            "status",
-            "userID",
-        ],
-        first: Optional[int] = None,
-        has_been_seen: Optional[bool] = None,
-        notification_id: Optional[str] = None,
-        skip: int = 0,
-        user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
-        *,
-        as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    def notifications(self, *, as_generator: Literal[False] = False) -> List[Dict]:
         ...
 
+    # pylint: disable=dangerous-default-value
     @typechecked
     def notifications(
         self,

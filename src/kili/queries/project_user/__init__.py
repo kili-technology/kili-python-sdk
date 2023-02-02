@@ -17,7 +17,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 class QueriesProjectUser:
     """Set of ProjectUser queries."""
 
-    # pylint: disable=too-many-arguments,redefined-builtin,dangerous-default-value,invalid-name
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
@@ -29,50 +29,15 @@ class QueriesProjectUser:
 
     @overload
     def project_users(
-        self,
-        project_id: str,
-        email: Optional[str] = None,
-        id: Optional[str] = None,
-        organization_id: Optional[str] = None,
-        fields: List[str] = [
-            "activated",
-            "id",
-            "role",
-            "starred",
-            "user.email",
-            "user.id",
-        ],
-        first: Optional[int] = None,
-        skip: int = 0,
-        disable_tqdm: bool = False,
-        *,
-        as_generator: Literal[True],
+        self, project_id: str, *, as_generator: Literal[True]
     ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def project_users(
-        self,
-        project_id: str,
-        email: Optional[str] = None,
-        id: Optional[str] = None,
-        organization_id: Optional[str] = None,
-        fields: List[str] = [
-            "activated",
-            "id",
-            "role",
-            "starred",
-            "user.email",
-            "user.id",
-        ],
-        first: Optional[int] = None,
-        skip: int = 0,
-        disable_tqdm: bool = False,
-        *,
-        as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    def project_users(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
         ...
 
+    # pylint: disable=dangerous-default-value,invalid-name
     @typechecked
     def project_users(
         self,
