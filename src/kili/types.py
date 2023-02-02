@@ -34,13 +34,16 @@ class License(TypedDict):
     enableSmartTools: bool
     expiryDate: str
     inputType: InputType
+    maxNumberOfAnnotations: int
+    maxNumberOfAnnotationsPerMonth: int
     maxNumberOfLabeledAssets: int
+    maxNumberOfPredictionsPerMonth: int
+    organizationId: int
     seats: int
     startDate: str
     type: LicenseType
     uploadCloudData: bool
     uploadLocalData: bool
-    organizationId: int
 
 
 class OrganizationWithoutUser(TypedDict):
