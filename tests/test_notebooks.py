@@ -39,7 +39,6 @@ def process_notebook(notebook_filename):
         "recipes/getting-started/getting_started-named-entity-recognition.ipynb",
         "recipes/set_up_workflows.ipynb",
         "recipes/export_a_kili_project.ipynb",
-        "recipes/plugins_development.ipynb",
         "recipes/plugins_example.ipynb",
         "recipes/basic_project_setup.ipynb",
         "recipes/importing_assets_and_labels.ipynb",

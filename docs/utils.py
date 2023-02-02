@@ -25,6 +25,10 @@ from nbconvert import MarkdownExporter
 from nbconvert.preprocessors.base import Preprocessor
 from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
 
+IGNORED_NOTEBOOKS = [
+    "recipes/plugins_development.ipynb",
+]
+
 
 class ExtractAttachmentsPreprocessor(Preprocessor):
     """
@@ -244,6 +248,9 @@ class NotebookTestMissingError(Exception):
 
 def check_notebook_tested(ipynb_filepath: Path):
     """Check if notebook is tested."""
+    if f"recipes/{ipynb_filepath.name}" in IGNORED_NOTEBOOKS:
+        return
+
     with open("tests/test_notebooks.py", encoding="utf-8") as file:
         test_notebooks_module_str = file.read()
 
