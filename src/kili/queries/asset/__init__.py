@@ -204,7 +204,7 @@ class QueriesAsset:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        post_call_function = get_download_assets_function(
+        post_call_function, fields = get_download_assets_function(
             self, download_media, fields, project_id, local_media_dir
         )
         assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)

@@ -192,7 +192,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             pass
 
     def _download_assets(self, from_project_id, fields, tmp_dir, assets):
-        download_function = get_download_assets_function(
+        download_function, _ = get_download_assets_function(
             self.kili,
             download_media=True,
             fields=fields,
