@@ -19,24 +19,30 @@ from .exceptions import MissingPropertyError
 
 def get_download_assets_function(
     kili, download_media: bool, fields: List[str], project_id: str, local_media_dir: Optional[str]
-) -> Optional[Callable]:
-    """
-    Return the function to be called after each batch of asset query.
-    It is either None or MediaDownloader's download_assets.
+) -> Tuple[Optional[Callable], List[str]]:
+    """Get the function to be called after each batch of asset query.
+
+    The function is either None or MediaDownloader.download_assets().
+
+    Also returns the fields to be queried, which may be modified
+    if the jsonContent field is necessary.
     """
     if not download_media:
-        return None
+        return None, fields
     input_type = get_project_field(kili, project_id, "inputType")
     jsoncontent_field_added = False
     if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
-        fields.append("jsonContent")
+        fields = fields + ["jsonContent"]
         jsoncontent_field_added = True
-    return MediaDownloader(
-        local_media_dir,
-        project_id,
-        jsoncontent_field_added,
-        input_type,
-    ).download_assets
+    return (
+        MediaDownloader(
+            local_media_dir,
+            project_id,
+            jsoncontent_field_added,
+            input_type,
+        ).download_assets,
+        fields,
+    )
 
 
 class MediaDownloader:
