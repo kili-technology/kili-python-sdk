@@ -23,7 +23,6 @@ jobs:
           echo "REF=master" >> $GITHUB_ENV
 
       - name: set checkout to latest release branch
-        if: ! ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch == 'master' }}
         run: |
           last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
           echo $last_version
