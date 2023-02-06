@@ -186,5 +186,5 @@ def _mutate_from_paginated_call(
         results.append(result)
         if "errors" in result:
             raise GraphQLError(result["errors"], batch_number)
-    sleep(2)  # wait for the mutation to be processed
+    sleep(1)  # wait for the mutation to be processed
     return results
