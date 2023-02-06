@@ -13,7 +13,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 class QueriesProject:
     """Set of Project queries."""
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,dangerous-default-value
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -24,14 +24,63 @@ class QueriesProject:
         self.auth = auth
 
     @overload
-    def projects(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+    def projects(
+        self,
+        project_id: Optional[str] = None,
+        search_query: Optional[str] = None,
+        should_relaunch_kpi_computation: Optional[bool] = None,
+        updated_at_gte: Optional[str] = None,
+        updated_at_lte: Optional[str] = None,
+        skip: int = 0,
+        fields: List[str] = [
+            "consensusTotCoverage",
+            "id",
+            "inputType",
+            "jsonInterface",
+            "minConsensusSize",
+            "reviewCoverage",
+            "roles.id",
+            "roles.role",
+            "roles.user.email",
+            "roles.user.id",
+            "title",
+        ],
+        first: Optional[int] = None,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def projects(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+    def projects(
+        self,
+        project_id: Optional[str] = None,
+        search_query: Optional[str] = None,
+        should_relaunch_kpi_computation: Optional[bool] = None,
+        updated_at_gte: Optional[str] = None,
+        updated_at_lte: Optional[str] = None,
+        skip: int = 0,
+        fields: List[str] = [
+            "consensusTotCoverage",
+            "id",
+            "inputType",
+            "jsonInterface",
+            "minConsensusSize",
+            "reviewCoverage",
+            "roles.id",
+            "roles.role",
+            "roles.user.email",
+            "roles.user.id",
+            "title",
+        ],
+        first: Optional[int] = None,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
         ...
 
-    # pylint: disable=dangerous-default-value
     @typechecked
     def projects(
         self,

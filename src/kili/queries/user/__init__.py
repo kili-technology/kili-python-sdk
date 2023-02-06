@@ -13,7 +13,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 class QueriesUser:
     """Set of User queries."""
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,dangerous-default-value
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -24,14 +24,35 @@ class QueriesUser:
         self.auth = auth
 
     @overload
-    def users(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+    def users(
+        self,
+        api_key: Optional[str] = None,
+        email: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        fields: List[str] = ["email", "id", "firstname", "lastname"],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def users(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+    def users(
+        self,
+        api_key: Optional[str] = None,
+        email: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        fields: List[str] = ["email", "id", "firstname", "lastname"],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
         ...
 
-    # pylint: disable=dangerous-default-value
     @typechecked
     def users(
         self,
