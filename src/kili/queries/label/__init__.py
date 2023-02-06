@@ -20,7 +20,7 @@ from kili.services.types import ProjectId
 class QueriesLabel:
     """Set of Label queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -32,15 +32,72 @@ class QueriesLabel:
 
     @overload
     def labels(
-        self, project_id: str, *, as_generator: Literal[True]
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: List[str] = [
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "secondsToLabel",
+        ],
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        type_in: Optional[List[str]] = None,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def labels(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
+    def labels(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: List[str] = [
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "secondsToLabel",
+        ],
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        type_in: Optional[List[str]] = None,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
         ...
 
-    # pylint: disable=dangerous-default-value
     @typechecked
     def labels(
         self,
@@ -159,7 +216,6 @@ class QueriesLabel:
             return labels_gen
         return list(labels_gen)
 
-    # pylint: disable=dangerous-default-value
     @typechecked
     def export_labels_as_df(
         self,
