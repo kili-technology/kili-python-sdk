@@ -18,10 +18,6 @@ class Project:
     It also allows queries from this project such as its assets, labels etc.
     """
 
-    @deprecate(
-        msg="This class is deprecated. Use `kili.projects(project_id='<MY_PROJECT_ID>')` instead",
-        removed_in="2.131",
-    )
     def __init__(self, project_id: ProjectId, input_type: InputType, title: str, client):
         """Initialize the class."""
         self.project_id = project_id

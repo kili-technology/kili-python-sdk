@@ -21,7 +21,7 @@ class QueriesOrganization:
     Set of Organization queries
     """
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,dangerous-default-value
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
@@ -32,14 +32,33 @@ class QueriesOrganization:
         self.auth = auth
 
     @overload
-    def organizations(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+    def organizations(
+        self,
+        email: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        fields: List[str] = ["id", "name"],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def organizations(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+    def organizations(
+        self,
+        email: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        fields: List[str] = ["id", "name"],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
         ...
 
-    # pylint: disable=dangerous-default-value
     @typechecked
     def organizations(
         self,

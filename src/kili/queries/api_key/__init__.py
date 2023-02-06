@@ -18,7 +18,7 @@ class QueriesApiKey:
     Set of ApiKey queries
     """
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,dangerous-default-value
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
@@ -29,14 +29,35 @@ class QueriesApiKey:
         self.auth = auth
 
     @overload
-    def api_keys(self, *, as_generator: Literal[True]) -> Generator[Dict, None, None]:
+    def api_keys(
+        self,
+        api_key_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+        api_key: Optional[str] = None,
+        skip: int = 0,
+        fields: List[str] = ["id", "name", "createdAt", "revoked"],
+        first: Optional[int] = None,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def api_keys(self, *, as_generator: Literal[False] = False) -> List[Dict]:
+    def api_keys(
+        self,
+        api_key_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+        api_key: Optional[str] = None,
+        skip: int = 0,
+        fields: List[str] = ["id", "name", "createdAt", "revoked"],
+        first: Optional[int] = None,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
         ...
 
-    # pylint: disable=dangerous-default-value
     @typechecked
     def api_keys(
         self,
