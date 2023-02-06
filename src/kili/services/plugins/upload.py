@@ -207,6 +207,7 @@ class PluginUploader:
         """
         Method to detect indentation and class errors in the script
         """
+
         with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
