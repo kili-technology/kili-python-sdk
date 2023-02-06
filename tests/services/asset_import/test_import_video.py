@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from kili.graphql.operations.asset.queries import AssetQuery
 from kili.graphql.operations.organization.queries import OrganizationQuery
 from kili.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
@@ -33,6 +34,7 @@ from tests.services.asset_import.mocks import (
     side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
 )
 class VideoTestCase(ImportTestCase):
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_one_local_video_file_to_native(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
@@ -58,6 +60,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_one_hosted_video_file_to_native(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
@@ -83,6 +86,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_one_hosted_video_authorized_while_local_forbidden(self, *_):
         OrganizationQuery.__call__.side_effect = mocked_organization_with_upload_from_local(
             upload_local_data=False
@@ -117,6 +121,7 @@ class VideoTestCase(ImportTestCase):
         with pytest.raises(UploadFromLocalDataForbiddenError):
             import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_one_local_video_to_frames(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
@@ -151,6 +156,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_one_hosted_video_to_frames(self, *_):
         assets = [
             {
@@ -184,6 +190,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_one_video_from_local_frames(self, *_):
         hosted_frame_folder = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/frames/"
@@ -219,6 +226,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_one_video_from_hosted_frames(self, *_):
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
@@ -251,6 +259,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_frames_call_from_label_import(self, *_):
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
@@ -284,6 +293,7 @@ class VideoTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_import_one_video_with_metadata(self, *_):
         assets = [
             {
@@ -327,6 +337,7 @@ class VideoTestCase(ImportTestCase):
     MagicMock(return_value=[]),
 )
 class VideoLegacyTestCase(ImportTestCase):
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_one_hosted_video_file_to_video_legacy_project(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
