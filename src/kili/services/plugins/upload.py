@@ -2,8 +2,7 @@
 Class to upload a plugin
 """
 
-import importlib.util
-import sys
+import ast
 import time
 from pathlib import Path
 from typing import List, Optional, Union
@@ -67,28 +66,16 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
 
 
-def check_file_contains_handler(name: str, path: str):
+def check_file_contains_handler(path: Path):
     """
     Return true if the file contain PluginHandler Class
     """
-    spec = importlib.util.spec_from_file_location(name, path)
-
-    if not spec:
-        return False
-
-    plugin = importlib.util.module_from_spec(spec)
-    sys.modules[name] = plugin
-    loader = spec.loader
-
-    if not loader:
-        return False
-
-    loader.exec_module(plugin)
-    try:
-        plugin.PluginHandler
-    except AttributeError:
-        return False
-    return True
+    with open(path, "r", encoding="utf-8") as file:
+        module = ast.parse(file.read())
+    for node in module.body:
+        if isinstance(node, ast.ClassDef) and node.name == "PluginHandler":
+            return True
+    return False
 
 
 class WebhookUploader:
@@ -170,13 +157,14 @@ class PluginUploader:
         Retrieve script from plugin_path and execute it
         to prevent an upload with indentation errors
         """
-
         if self.plugin_path.is_dir():
             file_path = self.plugin_path / "main.py"
             if not file_path.is_file():
                 raise FileNotFoundError(
                     f"No main.py file in the provided folder: {self.plugin_path.absolute()}"
                 )
+            if not check_file_contains_handler(file_path):
+                raise ValueError("PluginHandler class is not present in your main.py file.")
 
             file_paths = list(self.plugin_path.glob("**/*.py"))
 
@@ -186,6 +174,9 @@ class PluginUploader:
 
         if not check_file_is_py(file_path, self.verbose):
             raise ValueError("Wrong file format.")
+
+        if not check_file_contains_handler(file_path):
+            raise ValueError("PluginHandler class is not present in your plugin file.")
 
         return [file_path]
 
@@ -216,6 +207,7 @@ class PluginUploader:
         """
         Method to detect indentation and class errors in the script
         """
+
         with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
