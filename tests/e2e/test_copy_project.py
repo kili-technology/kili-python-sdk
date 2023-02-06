@@ -38,112 +38,96 @@ json_response_a = {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": True,
-            "annotations": [],
         }
     },
     "15": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "16": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "17": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "18": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "19": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "20": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "21": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_A"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "22": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": True,
-            "annotations": [],
         }
     },
     "23": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "24": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "25": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "26": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "27": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "28": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "29": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
 }
@@ -155,21 +139,18 @@ json_response_b = {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": True,
-            "annotations": [],
         }
     },
     "3": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
     "4": {
         "JOB_0": {
             "categories": [{"confidence": 100, "name": "OBJECT_B"}],
             "isKeyFrame": False,
-            "annotations": [],
         }
     },
 }
