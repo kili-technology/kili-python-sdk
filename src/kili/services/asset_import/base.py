@@ -119,7 +119,7 @@ class BaseBatchImporter:
         nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
         if len(assets) != nb_assets_in_kili:
             raise BatchImportError(
-                "Number of assets imported is not equal to number of assets in Kili."
+                "Number of assets to upload is not equal to number of assets uploaded in Kili."
             )
 
     def add_ids(self, assets: List[AssetLike]):
