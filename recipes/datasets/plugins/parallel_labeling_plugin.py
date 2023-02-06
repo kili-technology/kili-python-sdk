@@ -11,7 +11,6 @@ class PluginHandler(PluginCore):
     """
 
     def aggregate_classification_label(self, classif_job_key, labels_array):
-
         json_response = {}
 
         for label in labels_array:
@@ -23,7 +22,6 @@ class PluginHandler(PluginCore):
         return json_response
 
     def aggregate_object_detection_label(self, object_job_key, labels_array):
-
         json_response = {}
 
         for key in object_job_key:
@@ -43,8 +41,8 @@ class PluginHandler(PluginCore):
 
         project_id = self.project_id
 
-        project_info = list(
-            self.kili.projects(project_id=project_id, fields=["minConsensusSize", "jsonInterface"])
+        project_info = self.kili.projects(
+            project_id=project_id, fields=["minConsensusSize", "jsonInterface"]
         )[0]
 
         json_interface = project_info["jsonInterface"]
