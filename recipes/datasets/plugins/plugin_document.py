@@ -16,9 +16,9 @@ class PluginHandler(PluginCore):
 
             # Rule 1 - Check IBAN starts by FR
             if bbox["categories"][0]["name"] == "IBAN":
-                tva = bbox["children"]["TRANSCRIPTION_JOB"]["text"]
+                iban = bbox["children"]["TRANSCRIPTION_JOB"]["text"]
 
-                if tva[0:2] != "FR":
+                if iban[0:2] != "FR":
                     issues_array.append("IBAN number should start by FR")
                     mid_issues_array.append(bbox["mid"])
 
