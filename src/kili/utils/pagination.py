@@ -76,15 +76,30 @@ def row_generator_from_paginated_calls(
                     break
 
 
-def batch_iterator_builder(iterable: List, batch_size=MUTATION_BATCH_SIZE):
+class BatchIteratorBuilder:
     """Generate an paginated iterator from a list
     Args:
         iterable: a list to paginate.
         batch_size: the size of the batches to produce
     """
-    iterable_length = len(iterable)
-    for ndx in range(0, iterable_length, batch_size):
-        yield iterable[ndx : min(ndx + batch_size, iterable_length)]
+
+    def __init__(self, iterable: List, batch_size=MUTATION_BATCH_SIZE) -> None:
+        self.iterable = iterable
+        self.batch_size = batch_size
+        self.nb_batches = (len(iterable) - 1) // batch_size + 1
+
+    def __len__(self):
+        return self.nb_batches
+
+    def __next__(self):
+        next_batch = self.iterable[: self.batch_size]
+        self.iterable = self.iterable[self.batch_size :]
+        if len(next_batch) > 0:
+            return next_batch
+        raise StopIteration
+
+    def __iter__(self):
+        return self
 
 
 def batch_object_builder(
@@ -103,7 +118,7 @@ def batch_object_builder(
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {
         k: (
-            batch_iterator_builder(v, batch_size)
+            BatchIteratorBuilder(iterable=v, batch_size=batch_size)
             if v is not None
             else (item for item in [v] * number_of_batches)
         )

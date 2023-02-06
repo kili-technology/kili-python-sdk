@@ -9,6 +9,11 @@ from pathlib import Path
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 from uuid import uuid4
 
+from tenacity import retry
+from tenacity.retry import retry_if_exception_type
+from tenacity.stop import stop_after_delay
+from tenacity.wait import wait_random
+
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.mutations import (
@@ -27,6 +32,7 @@ from kili.services.asset_import.constants import (
     project_compatible_mimetypes,
 )
 from kili.services.asset_import.exceptions import (
+    BatchImportError,
     ImportValidationError,
     MimeTypeError,
     UploadFromLocalDataForbiddenError,
@@ -70,7 +76,7 @@ class LoggerParams(NamedTuple):
     disable_tqdm: bool
 
 
-class BaseBatchImporter:  # pylint: disable=too-few-public-methods
+class BaseBatchImporter:
     """
     Base class for BatchImporters
     """
@@ -86,7 +92,7 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         self.pbar = pbar
 
     @pagination.api_throttle
-    def import_batch(self, assets: List[AssetLike]):
+    def import_batch(self, assets: List[AssetLike], verify: bool):
         """
         Base actions to import a batch of asset
         """
@@ -94,8 +100,27 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
         result_batch = self.import_to_kili(assets_)
+        if verify:
+            self.verify_batch_imported(assets)
         self.pbar.update(n=len(assets))
         return result_batch
+
+    @retry(
+        retry=retry_if_exception_type(BatchImportError),
+        wait=wait_random(1, 2),
+        stop=stop_after_delay(5),
+    )
+    def verify_batch_imported(self, assets: List):
+        """
+        Verifies that the batch has been imported successfully
+        """
+        assets_ids = [asset["id"] for asset in assets]
+        where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
+        nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
+        if len(assets) != nb_assets_in_kili:
+            raise BatchImportError(
+                "Number of assets imported is not equal to number of assets in Kili."
+            )
 
     def add_ids(self, assets: List[AssetLike]):
         """
@@ -222,18 +247,18 @@ class BaseBatchImporter:  # pylint: disable=too-few-public-methods
 
 class ContentBatchImporter(BaseBatchImporter):
     """
-    Class defining the methods to import of a batch of assets with content
+    Class defining the methods to import a batch of assets with content
     """
 
     @pagination.api_throttle
-    def import_batch(self, assets: List[AssetLike]):
+    def import_batch(self, assets: List[AssetLike], verify: bool):
         """
         Method to import a batch of asset with content
         """
         assets = self.add_ids(assets)
         if not self.is_hosted:
             assets = self.upload_local_content_to_bucket(assets)
-        return super().import_batch(assets)
+        return super().import_batch(assets, verify)
 
     def get_content_type_and_data_from_content(
         self, content: Optional[Union[str, bytes]]
@@ -319,14 +344,14 @@ class JsonContentBatchImporter(BaseBatchImporter):
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]
 
     @pagination.api_throttle
-    def import_batch(self, assets: List[AssetLike]):
+    def import_batch(self, assets: List[AssetLike], verify: bool):
         """
         Method to import a batch of asset with json content
         """
         assets = self.add_ids(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets = self.upload_json_content_to_bucket(assets)
-        return super().import_batch(assets)
+        return super().import_batch(assets, verify)
 
 
 class BaseAssetImporter:
@@ -455,10 +480,12 @@ class BaseAssetImporter:
         batch_size=IMPORT_BATCH_SIZE,
     ):
         """Split assets by batch and import them with a given batch importer."""
-        batch_generator = pagination.batch_iterator_builder(assets, batch_size)
+        batch_generator = pagination.BatchIteratorBuilder(assets, batch_size)
         self.pbar.total = len(assets)
         self.pbar.refresh()
+
         responses = []
-        for batch_assets in batch_generator:
-            responses.append(batch_importer.import_batch(batch_assets))
+        for i, batch_assets in enumerate(batch_generator):
+            verify = i == (len(batch_generator) - 1)  # check that last batch is imported
+            responses.append(batch_importer.import_batch(batch_assets, verify))
         return responses[-1]
