@@ -191,6 +191,18 @@ class QueriesLabel:
         if category_search:
             validate_category_search_query(category_search)
 
+        # Add modelName to fields if user requests model-generated labels
+        if (
+            type_in is not None
+            and (
+                type_in == ["INFERENCE"]
+                or type_in == ["PREDICTION"]
+                or sorted(type_in) == ["INFERENCE", "PREDICTION"]
+            )
+            and "modelName" not in fields
+        ):
+            fields.append("modelName")
+
         where = LabelWhere(
             project_id=project_id,
             asset_id=asset_id,
