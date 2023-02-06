@@ -16,7 +16,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 class QueriesProjectVersion:
     """Set of ProjectVersion queries."""
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,dangerous-default-value
 
     def __init__(self, auth):
         """Initialize the subclass.
@@ -28,17 +28,30 @@ class QueriesProjectVersion:
 
     @overload
     def project_version(
-        self, project_id: str, *, as_generator: Literal[True]
+        self,
+        project_id: str,
+        first: Optional[int] = None,
+        skip: int = 0,
+        fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
         ...
 
     @overload
     def project_version(
-        self, project_id: str, *, as_generator: Literal[False] = False
+        self,
+        project_id: str,
+        first: Optional[int] = None,
+        skip: int = 0,
+        fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[False] = False,
     ) -> List[Dict]:
         ...
 
-    # pylint: disable=dangerous-default-value
     @typechecked
     def project_version(
         self,
