@@ -201,7 +201,7 @@ class QueriesLabel:
             )
             and "modelName" not in fields
         ):
-            fields.append("modelName")
+            fields = [*fields, "modelName"]
 
         where = LabelWhere(
             project_id=project_id,
