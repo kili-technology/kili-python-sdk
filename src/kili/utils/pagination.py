@@ -3,6 +3,7 @@ Utils
 """
 import functools
 import time
+from time import sleep
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, TypeVar
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
@@ -175,7 +176,7 @@ def _mutate_from_paginated_call(
                 properties_to_batch=properties_to_batch,
                 generate_variables=generate_variables
                 request= APPEND_MANY_TO_DATASET
-                )
+        )
         '''
     """
     results = []
@@ -185,4 +186,5 @@ def _mutate_from_paginated_call(
         results.append(result)
         if "errors" in result:
             raise GraphQLError(result["errors"], batch_number)
+    sleep(2)  # wait for the mutation to be processed
     return results

@@ -76,7 +76,7 @@ class ImageTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetQuery, "count", return_value=1)  # 2 images are uplaoded in different batches
+    @patch.object(AssetQuery, "count", return_value=1)  # 2 images are uploaded in different batches
     def test_upload_with_one_tiff_and_one_basic_image(self, *_):
         url_tiff = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         url_basic = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
