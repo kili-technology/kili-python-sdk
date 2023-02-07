@@ -64,6 +64,7 @@ class PluginHandler(PluginCore):
                 "jsonResponse",
                 "isLatestLabelForUser",
             ],
+            as_generator=True,
         )
 
         latest_labels = list(filter(lambda x: x["isLatestLabelForUser"] is True, labels_array))
