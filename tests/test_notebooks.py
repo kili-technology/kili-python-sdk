@@ -26,6 +26,7 @@ def process_notebook(notebook_filename):
         "tests/e2e/import_assets.ipynb",
         "tests/e2e/import_predictions.ipynb",
         "tests/e2e/paginated_calls_project_lifecycle.ipynb",
+        "tests/e2e/plugin_workflow.ipynb",
         "recipes/import_text_assets.ipynb",
         "recipes/inference_labels.ipynb",
         "recipes/medical_imaging.ipynb",
