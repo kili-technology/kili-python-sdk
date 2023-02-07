@@ -3,7 +3,6 @@ Utils
 """
 import functools
 import time
-from time import sleep
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, TypeVar
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
@@ -155,6 +154,7 @@ def _mutate_from_paginated_call(
     generate_variables: Callable,
     request: str,
     batch_size: int = MUTATION_BATCH_SIZE,
+    last_batch_callback: Optional[Callable] = None,
 ):
     """Run a mutation by making paginated calls
     Args:
@@ -164,6 +164,8 @@ def _mutate_from_paginated_call(
             a graphQL payload for request for this batch
         request: the GraphQL request to call,
         batch_size: the size of the batches to produce
+        last_batch_callback: a function that takes the last batch and the result of
+            this method as arguments
     Example:
         '''
         properties_to_batch={prop1: [0,1], prop2: ['a', 'b']}
@@ -180,11 +182,14 @@ def _mutate_from_paginated_call(
         '''
     """
     results = []
+    batch = None
     for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
         payload = generate_variables(batch)
         result = api_throttle(self.auth.client.execute)(request, payload)
         results.append(result)
         if "errors" in result:
             raise GraphQLError(result["errors"], batch_number)
-    sleep(1)  # wait for the mutation to be processed
+
+    if batch and results and last_batch_callback:
+        last_batch_callback(batch, results)
     return results

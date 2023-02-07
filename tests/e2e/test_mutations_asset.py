@@ -83,6 +83,17 @@ def src_project(kili):
     kili.delete_project(project["id"])
 
 
+def test_delete_many_from_dataset(kili, src_project):
+    assets = kili.assets(src_project["id"], fields=["id"])
+    asset_ids = [asset["id"] for asset in assets]
+    ret = kili.delete_many_from_dataset(asset_ids=asset_ids[:2])
+
+    assert ret["id"] == src_project["id"]
+
+    assets = kili.assets(src_project["id"], fields=["id"])
+    assert assets[0]["id"] == asset_ids[2]
+
+
 def test_add_to_review(kili, src_project):
     assets = kili.assets(src_project["id"], fields=["id"])
     asset_ids = [asset["id"] for asset in assets]
