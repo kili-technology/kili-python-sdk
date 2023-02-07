@@ -269,15 +269,6 @@ class PluginUploader:
         Upload a script to Kili bucket
         """
 
-        file_paths = self._retrieve_plugin_src()
-
-        for path in file_paths:
-            self._parse_script(path)
-
-        requirements = self._retrieve_requirements()
-
-        upload_url = self._retrieve_upload_url(is_updating_plugin)
-
         with TemporaryDirectory() as tmp_directory:
             zip_path = self._create_zip(tmp_directory)
 
