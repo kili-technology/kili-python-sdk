@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional, Union
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_random
+from tenacity.wait import wait_fixed
 from typeguard import typechecked
 
 from kili import services
@@ -252,7 +252,7 @@ class MutationsProject:
         # We wait for the project to be created
         for attempt in Retrying(
             stop=stop_after_delay(5),
-            wait=wait_random(min=1, max=2),
+            wait=wait_fixed(1),
             retry=retry_if_exception_type(NotFound),
         ):
             with attempt:

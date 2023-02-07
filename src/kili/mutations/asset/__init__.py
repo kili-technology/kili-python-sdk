@@ -5,10 +5,10 @@ Asset mutations
 import warnings
 from typing import Any, Dict, List, Optional, Union
 
-from tenacity import Retrying
+from tenacity import retry
 from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_random
+from tenacity.wait import wait_fixed
 from typeguard import typechecked
 
 from kili.authentication import KiliAuth
@@ -341,23 +341,22 @@ class MutationsAsset:
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
 
+        @retry(
+            stop=stop_after_delay(5),
+            wait=wait_fixed(1),
+            retry=retry_if_exception_type(MutationError),
+        )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been deleted."""
-            for attempt in Retrying(
-                stop=stop_after_delay(5),
-                wait=wait_random(min=1, max=2),
-                retry=retry_if_exception_type(MutationError),
-            ):
-                with attempt:
-                    asset_ids = last_batch["asset_ids"]
-                    nb_assets_in_kili = AssetQuery(self.auth.client).count(
-                        AssetWhere(
-                            project_id=results[0]["data"]["data"]["id"],
-                            asset_id_in=asset_ids,
-                        )
-                    )
-                    if nb_assets_in_kili > 0:
-                        raise MutationError("Failed to delete some assets.")
+            asset_ids = last_batch["asset_ids"]
+            nb_assets_in_kili = AssetQuery(self.auth.client).count(
+                AssetWhere(
+                    project_id=results[0]["data"]["data"]["id"],
+                    asset_id_in=asset_ids,
+                )
+            )
+            if nb_assets_in_kili > 0:
+                raise MutationError("Failed to delete some assets.")
 
         results = _mutate_from_paginated_call(
             self,
@@ -405,24 +404,23 @@ class MutationsAsset:
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
 
+        @retry(
+            stop=stop_after_delay(5),
+            wait=wait_fixed(1),
+            retry=retry_if_exception_type(MutationError),
+        )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
-            for attempt in Retrying(
-                stop=stop_after_delay(5),
-                wait=wait_random(min=1, max=2),
-                retry=retry_if_exception_type(MutationError),
-            ):
-                with attempt:
-                    asset_ids = last_batch["asset_ids"]
-                    nb_assets_in_review = AssetQuery(self.auth.client).count(
-                        AssetWhere(
-                            project_id=results[0]["data"]["data"]["id"],
-                            asset_id_in=asset_ids,
-                            status_in=["TO_REVIEW"],
-                        )
-                    )
-                    if len(asset_ids) != nb_assets_in_review:
-                        raise MutationError("Failed to send some assets to review")
+            asset_ids = last_batch["asset_ids"]
+            nb_assets_in_review = AssetQuery(self.auth.client).count(
+                AssetWhere(
+                    project_id=results[0]["data"]["data"]["id"],
+                    asset_id_in=asset_ids,
+                    status_in=["TO_REVIEW"],
+                )
+            )
+            if len(asset_ids) != nb_assets_in_review:
+                raise MutationError("Failed to send some assets to review")
 
         results = _mutate_from_paginated_call(
             self,
@@ -475,24 +473,23 @@ class MutationsAsset:
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
 
+        @retry(
+            stop=stop_after_delay(5),
+            wait=wait_fixed(1),
+            retry=retry_if_exception_type(MutationError),
+        )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent back to queue."""
-            for attempt in Retrying(
-                stop=stop_after_delay(5),
-                wait=wait_random(min=1, max=2),
-                retry=retry_if_exception_type(MutationError),
-            ):
-                with attempt:
-                    asset_ids = last_batch["asset_ids"]
-                    nb_assets_in_queue = AssetQuery(self.auth.client).count(
-                        AssetWhere(
-                            project_id=results[0]["data"]["data"]["id"],
-                            asset_id_in=asset_ids,
-                            status_in=["ONGOING"],
-                        )
-                    )
-                    if len(asset_ids) != nb_assets_in_queue:
-                        raise MutationError("Failed to send some assets back to queue")
+            asset_ids = last_batch["asset_ids"]
+            nb_assets_in_queue = AssetQuery(self.auth.client).count(
+                AssetWhere(
+                    project_id=results[0]["data"]["data"]["id"],
+                    asset_id_in=asset_ids,
+                    status_in=["ONGOING"],
+                )
+            )
+            if len(asset_ids) != nb_assets_in_queue:
+                raise MutationError("Failed to send some assets back to queue")
 
         results = _mutate_from_paginated_call(
             self,
