@@ -236,13 +236,19 @@ class PluginUploader:
         upload_url = format_result("data", result)
         return upload_url
 
-    def _create_zip(
-        self, file_paths: List[Path], requirements_path: Optional[Path], tmp_directory: Path
-    ):
+    def _create_zip(self, tmp_directory: Path):
         """
         Create a zip file from python file and requirements.txt
         (if user has defined a path to a requirements.txt)
         """
+
+        file_paths = self._retrieve_plugin_src()
+
+        for path in file_paths:
+            self._parse_script(path)
+
+        requirements_path = self._retrieve_requirements()
+
         zip_path = tmp_directory / "archive.zip"
 
         with ZipFile(zip_path, "w") as archive:
@@ -263,17 +269,10 @@ class PluginUploader:
         Upload a script to Kili bucket
         """
 
-        file_paths = self._retrieve_plugin_src()
-
-        for path in file_paths:
-            self._parse_script(path)
-
-        requirements = self._retrieve_requirements()
-
-        upload_url = self._retrieve_upload_url(is_updating_plugin)
-
         with TemporaryDirectory() as tmp_directory:
-            zip_path = self._create_zip(file_paths, requirements, tmp_directory)
+            zip_path = self._create_zip(tmp_directory)
+
+            upload_url = self._retrieve_upload_url(is_updating_plugin)
 
             self._upload_file(zip_path, upload_url)
 
