@@ -91,6 +91,7 @@ def test_delete_many_from_dataset(kili, src_project):
     assert ret["id"] == src_project["id"]
 
     assets = kili.assets(src_project["id"], fields=["id"])
+    assert len(assets) == 1
     assert assets[0]["id"] == asset_ids[2]
 
 
