@@ -26,14 +26,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        if: github.event_name == 'workflow_dispatch'
         with:
           ref: release/${{ github.event.inputs.releaseBranchVersion}}
-
-      - uses: actions/checkout@v3
-        if: github.event_name == 'create'
-        with:
-          ref: ${{ github.event.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
