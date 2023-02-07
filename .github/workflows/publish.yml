@@ -8,10 +8,10 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.7
           cache: "pip"
@@ -46,7 +46,7 @@ jobs:
       - name: Slack notification
         id: slack
         if: success()
-        uses: slackapi/slack-github-action@v1.18.0
+        uses: slackapi/slack-github-action@v1.23.0
         with:
           payload: |
             {
@@ -67,21 +67,29 @@ jobs:
 
       - name: Set git identity
         run: |
-          git config user.name ci-bot
-          git config user.email ci-bot@example.com
+          git config user.name github-actions
+          git config user.email github-actions@github.com
 
       - name: create PR to merge release branch and master
         run: |
-          git fetch
-          release_branch_version=$(git branch -a --contains ${{ github.ref_name }} | grep remotes/origin/release | awk -F '/' '{print $NF}')
-          git checkout release/$release_branch_version
-          git checkout -b merge_release/$release_branch_version
-          git push --set-upstream origin merge_release/$release_branch_version
-          gh pr create --fill
+          git fetch --quiet
+
+          # ${{ github.ref_name }}: The short ref name of the branch or tag that triggered the workflow run.
+          git checkout ${{ github.ref_name }}
+
+          source ./.github/scripts/utils.sh  # to load the function get_sdk_version
+          sdk_version=$(get_sdk_version)
+
+          # create a branch to merge the release branch and master
+          git checkout -b merge_release/$sdk_version
+          git push --set-upstream origin merge_release/$sdk_version
+          gh pr create --title "chore: merge release/$sdk_version into master" --body "Merge release/$sdk_version into master" --base master
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }} # needed for gh cli
 
   deploy-documentation:
     uses: ./.github/workflows/deploy_doc.yml
-    if: ${{ always() }}
-    needs: [publish]
+    if: ${{ always() }} # Run even if the previous job fails
+    needs: [publish] # Run after the previous job
+    secrets:
+      SLACK_WEBHOOK_URL_PYTHON_SDK: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
