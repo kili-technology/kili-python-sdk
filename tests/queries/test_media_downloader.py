@@ -1,9 +1,10 @@
 """
-Unit tests for helpers.py of .assets
+Unit tests for media_downloader.py of kili.queries.assets
 """
 
 import os
 from pathlib import Path
+from unittest import mock
 
 import pytest
 
@@ -150,3 +151,30 @@ def test_download_media_jsoncontent_field_added_but_useful():
         ]
         with pytest.warns():
             media_downloader.download_assets(assets)
+
+
+@pytest.mark.parametrize(
+    "content,jsoncontent,should_call_requests_get",
+    [
+        ("", None, False),
+        ("", "", False),
+        ("", "invalid_url", False),
+        ("", "https://...", True),
+        (None, "", False),
+        ("invalid_url", "", False),
+        ("http://...", "", True),
+    ],
+)
+@mock.patch("kili.queries.asset.media_downloader.requests")
+def test_download_media_jsoncontent_none(
+    mock_requests, content, jsoncontent, should_call_requests_get
+):
+    """requests.get should only be called when valid url"""
+    with TemporaryDirectory() as tmp_dir:
+        _ = MediaDownloader(tmp_dir, "", False, "VIDEO").download_single_asset(
+            {"content": content, "jsonContent": jsoncontent, "externalId": "externalId"}
+        )
+        if should_call_requests_get:
+            mock_requests.get.assert_called()
+        else:
+            mock_requests.get.assert_not_called()
