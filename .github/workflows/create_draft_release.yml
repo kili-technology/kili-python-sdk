@@ -1,0 +1,101 @@
+name: Create draft release
+on:
+  workflow_dispatch:
+    inputs:
+      releaseBranchVersion:
+        description: >
+          "This workflow will create a draft release and a tag.
+          This workflow assumes the bump commit has already been pushed to the release branch.
+          Use 'Create bump commit on release branch' workflow before using this workflow.
+          Only use this workflow once all commits have been cherry-picked!
+          Enter the release branch version release/X.XXX.0:"
+        required: true
+        type: string
+        default: "X.XXX.0"
+
+jobs:
+  create_draft_release:
+    runs-on: ubuntu-latest
+    name: create draft release
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: release/${{ inputs.releaseBranchVersion }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bump2version
+
+      - name: Install kili
+        run: pip install -e .
+
+      - name: Set git identity
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: create draft release
+        run: |
+          source ./.github/scripts/utils.sh   # to load the utils functions
+
+          # Get release version
+          release_version=$(get_sdk_version)
+          echo "Release version: $release_version"
+
+          # make sure release_version is greater than last github release
+          latest_release=$(get_last_release_tag_github)
+          echo "Latest release: $latest_release"
+          if ! [[ $(version_to_int "$release_version") -gt $(version_to_int "$latest_release") ]]; then
+              echo "The release you are trying to create ($release_version) is older than the latest release on github ($latest_release)"
+              exit 1
+          fi
+
+          # tag and push the tag
+          # -f to overwrite the tag if it already exists
+          # -a to create an annotated tag
+          git fetch --quiet
+          git tag -f -a $release_version -m "Release $release_version"
+          git push origin $release_version
+
+          # create draft release
+          link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes --notes-start-tag $latest_release)
+          echo "Link to draft release: $link_to_draft"
+
+          # filter the result to get the link
+          # will match any string that starts with https:// and contains any number of characters that are not spaces.
+          link_to_draft=$(echo "$link_to_draft" | grep -o 'https://[^ ]*')
+          echo "Link to draft release: $link_to_draft"
+
+          echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ github.token }} # needed for gh cli
+
+      - name: Slack notification
+        id: slack
+        if: success()
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "text": "Draft release ${{ inputs.releaseBranchVersion }} is ready: ${{ env.LINK_TO_DRAFT }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Draft release ${{ inputs.releaseBranchVersion }} is ready: ${{ env.LINK_TO_DRAFT }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
