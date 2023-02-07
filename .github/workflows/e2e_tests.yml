@@ -16,10 +16,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python 3.7
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.7
           cache: "pip"
@@ -40,7 +40,7 @@ jobs:
           KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
 
       - name: Notebook tests
-        if: github.event_name != 'push' || github.ref_name != 'master' # doesn't run for push on master
+        if: github.event_name != 'push' || github.ref_name != 'master' # does not run for push on master
         timeout-minutes: 15
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
@@ -53,7 +53,7 @@ jobs:
       - name: Slack notification if failure
         if: failure() && (github.event_name != 'workflow_dispatch') # doesn't notify for manual runs
         id: slack
-        uses: slackapi/slack-github-action@v1.18.0
+        uses: slackapi/slack-github-action@v1.23.0
         with:
           payload: |
             {
