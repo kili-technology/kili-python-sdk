@@ -22,7 +22,7 @@ on:
 jobs:
   create_bump_commit:
     runs-on: ubuntu-latest
-    name: create bump commit
+    name: create bump commit PR
 
     steps:
       - uses: actions/checkout@v3
