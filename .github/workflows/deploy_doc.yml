@@ -28,13 +28,10 @@ jobs:
               last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
               echo "Last version: $last_version"
 
-      - name: set checkout to latest release branch
-        run: |
-          last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
-          echo $last_version
-          IFS=. read -r major minor patch <<< "$last_version"
-          last_minor_version="$major.$minor.0"
-          echo "REF=release/$last_minor_version" >> $GITHUB_ENV
+              IFS=. read -r major minor patch <<< "$last_version"
+              last_minor_version="$major.$minor.0"
+              echo "REF=release/$last_minor_version" >> $GITHUB_ENV
+          fi
 
       - uses: actions/checkout@v3
         with:

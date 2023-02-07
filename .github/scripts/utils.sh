@@ -20,11 +20,9 @@ bump_version() {
 }
 
 # Takes the version to convert to int
-# 2.129.1 -> 2129001
+# 2.129.0 -> 21290
 version_to_int() {
-    version=$1
-    as_int=$(echo "$version" | awk -F. '{ printf("%03d%03d%03d\n", $1,$2,$3); }';)
-    echo "$((10#$as_int))"  # interpret as base 10
+    echo "$@" | awk -F. '{ printf("%03d%03d%03d\n", $1,$2,$3); }';
 }
 
 get_last_release_tag_github() {
