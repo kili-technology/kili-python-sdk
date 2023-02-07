@@ -1,0 +1,72 @@
+name: Create bump commit on release branch
+on:
+  workflow_dispatch:
+    inputs:
+      releaseBranchVersion:
+        description: >
+          "This workflow will create a PR to add a bump version commit on the release branch.
+          Enter the release branch version release/X.XXX.0:"
+        required: true
+        type: string
+        default: "X.XXX.0"
+      bumpCommitType:
+        description: "Choose the type of bump commit:"
+        required: true
+        type: choice
+        default: "minor"
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  create_bump_commit:
+    runs-on: ubuntu-latest
+    name: create bump commit
+
+    steps:
+      - uses: actions/checkout@v3
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          ref: release/${{ github.event.inputs.releaseBranchVersion}}
+
+      - uses: actions/checkout@v3
+        if: github.event_name == 'create'
+        with:
+          ref: ${{ github.event.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bump2version
+
+      - name: Set git identity
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Create PR with the bump commit
+        run: |
+          git fetch --quiet
+
+          source ./.github/scripts/utils.sh   # to get the bump_version function
+
+          # create PR branch
+          git checkout -b workflow/create-bump-commit-release-branch-${{ inputs.releaseBranchVersion }}
+
+          # create bump commit
+          new_version=$(bump_version commit ${{ inputs.bumpCommitType }})
+          echo "New version (bump_version): $new_version"
+
+          # create PR
+          git push --quiet --set-upstream origin workflow/create-bump-commit-release-branch-${{ inputs.releaseBranchVersion }}
+          gh pr create --base release/${{ inputs.releaseBranchVersion }} --title "chore: bump version to $new_version" --body "Bump version to $new_version on branch release/${{ inputs.releaseBranchVersion }}"
+
+        env:
+          GH_TOKEN: ${{ github.token }} # needed for gh cli
