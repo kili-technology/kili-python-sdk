@@ -7,7 +7,7 @@ from typing_extensions import TypedDict
 
 class AssetLike(TypedDict, total=False):
     """
-    General type of an asset obejct through the import functions
+    General type of an asset object through the import functions
     """
 
     content: Union[str, bytes]
