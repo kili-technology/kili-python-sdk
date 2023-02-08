@@ -83,20 +83,17 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
-      - name: Set proper test server (prod, preprod, staging)
+      - name: Set proper test server (preprod, staging)
         shell: bash
         run: |
-          test_server_stdout=$(./.github/scripts/get_test_server.sh)
-          if [[ "$test_server_stdout" == *"ERROR"* ]]; then
-            echo $test_server_stdout
-            exit 1
+          # if branch starts with "release/", then test against preprod
+          if [[ "${{ github.ref_name }}" == release/* ]]; then
+            echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
+            echo "KILI_API_ENDPOINT=https://preproduction.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          else
+            echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
+            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
           fi
-
-          test_against=$(echo $test_server_stdout | grep -o "TEST_AGAINST=.*;" | awk -F "=" '{print $2}' | awk -F ";" '{print $1}')
-          echo "TEST_AGAINST=$test_against" >> $GITHUB_ENV
-
-          api_endpoint=$(echo $test_server_stdout | grep -o "KILI_API_ENDPOINT=.*;" | awk -F "=" '{print $2}' | awk -F ";" '{print $1}')
-          echo "KILI_API_ENDPOINT=$api_endpoint" >> $GITHUB_ENV
 
       - name: Test the Build
         run: |
