@@ -82,12 +82,12 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})
 
-    def import_batch(self, assets: List[AssetLike]):
+    def import_batch(self, assets: List[AssetLike], verify: bool):
         """
         Import a batch of video assets from content into Kili.
         """
         assets = self.loop_on_batch(self.add_video_processing_parameters)(assets)
-        return super().import_batch(assets)
+        return super().import_batch(assets, verify)
 
 
 class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
@@ -104,7 +104,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})
 
-    def import_batch(self, assets: List[AssetLike]):
+    def import_batch(self, assets: List[AssetLike], verify: bool):
         """
         Import a batch of video assets from frames
         """
@@ -113,7 +113,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
             assets = self.loop_on_batch(self.upload_frames_to_bucket)(assets)
         assets = self.loop_on_batch(self.map_frame_urls_to_index)(assets)
         assets = self.loop_on_batch(self.add_video_processing_parameters)(assets)
-        return super().import_batch(assets)
+        return super().import_batch(assets, verify)
 
     def upload_frames_to_bucket(self, asset: AssetLike):
         """
