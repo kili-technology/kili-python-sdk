@@ -83,6 +83,18 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
+      - name: Set proper test server (preprod, staging)
+        shell: bash
+        run: |
+          # if branch starts with "release/", then test against preprod
+          if [[ "${{ github.ref_name }}" == release/* ]]; then
+            echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
+            echo "KILI_API_ENDPOINT=https://preproduction.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          else
+            echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
+            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          fi
+
       - name: Test the Build
         run: |
           python -m pip install . # to install dependencies
@@ -90,5 +102,5 @@ jobs:
           python -m pip install --find-links=dist --no-index kili
           python -c 'from kili.client import Kili; k=Kili(); print("Everything OK!")'
         env:
-          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
-          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
+          KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
+          KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
