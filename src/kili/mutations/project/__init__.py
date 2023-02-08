@@ -249,15 +249,14 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
         result = format_result("data", result)
 
-        # We check during 60s for the project to be created
+        # We wait for the project to be created
         for attempt in Retrying(
-            stop=stop_after_delay(60),
+            stop=stop_after_delay(5),
             wait=wait_fixed(1),
             retry=retry_if_exception_type(NotFound),
-            reraise=True,
         ):
             with attempt:
-                _ = services.get_project(self.auth, project_id=result["id"], fields=["id"])
+                _ = services.get_project(self, project_id=result["id"], fields=["id"])
 
         return result
 

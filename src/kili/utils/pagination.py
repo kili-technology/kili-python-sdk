@@ -191,6 +191,8 @@ def _mutate_from_paginated_call(
         except GraphQLError as err:
             raise GraphQLError(error=err.error, batch_number=batch_number) from err
         results.append(result)
+        if "errors" in result:
+            raise GraphQLError(result["errors"], batch_number)
 
     sleep(1)  # wait for the backend to process the mutations
     if batch and results and last_batch_callback:

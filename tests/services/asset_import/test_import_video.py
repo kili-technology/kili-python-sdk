@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from kili.graphql.operations.asset.queries import AssetQuery
 from kili.graphql.operations.organization.queries import OrganizationQuery
 from kili.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
@@ -32,6 +33,7 @@ from tests.services.asset_import.mocks import (
     "__call__",
     side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
 )
+@patch.object(AssetQuery, "count", return_value=1)
 class VideoTestCase(ImportTestCase):
     def test_upload_from_one_local_video_file_to_native(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
