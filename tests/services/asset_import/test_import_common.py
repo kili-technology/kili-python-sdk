@@ -31,6 +31,7 @@ from tests.services.asset_import.mocks import (
 )
 class TestContentType(ImportTestCase):
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_cannot_upload_an_image_to_video_project(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
@@ -39,6 +40,7 @@ class TestContentType(ImportTestCase):
             import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_cannot_import_files_not_found_to_an_image_project(self, *_):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
@@ -46,6 +48,7 @@ class TestContentType(ImportTestCase):
             import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_cannot_upload_raw_text_to_pdf_project(self, *_):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
@@ -53,6 +56,7 @@ class TestContentType(ImportTestCase):
             import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
+    @patch.object(AssetQuery, "count", return_value=3)
     def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
         import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
