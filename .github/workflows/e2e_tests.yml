@@ -29,15 +29,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Set proper test server (preprod, staging)
+        shell: bash
+        run: |
+          # if branch starts with "release/", then test against preprod
+          if [[ "${{ github.ref_name }}" == release/* ]]; then
+            echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
+            echo "KILI_API_ENDPOINT=https://preproduction.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          else
+            echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
+            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          fi
+
       - name: Integration tests
         timeout-minutes: 10
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
-          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
-          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
-          KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
-          KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
+          KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
+          KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
+          KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
+          KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Notebook tests
         if: github.event_name != 'push' || github.ref_name != 'master' # does not run for push on master
@@ -45,10 +57,10 @@ jobs:
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
-          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
-          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
-          KILI_USER_EMAIL: ${{ secrets.KILI_USER_EMAIL }}
-          KILI_USER_ID: ${{ secrets.KILI_USER_ID }}
+          KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
+          KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
+          KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
+          KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Slack notification if failure
         if: failure() && (github.event_name != 'workflow_dispatch') # doesn't notify for manual runs
