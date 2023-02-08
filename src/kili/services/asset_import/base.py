@@ -11,7 +11,6 @@ from uuid import uuid4
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
-from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 
 from kili.authentication import KiliAuth
@@ -108,7 +107,6 @@ class BaseBatchImporter:
     @retry(
         retry=retry_if_exception_type(BatchImportError),
         wait=wait_fixed(1),
-        stop=stop_after_delay(5),
     )
     def verify_batch_imported(self, assets: List):
         """
