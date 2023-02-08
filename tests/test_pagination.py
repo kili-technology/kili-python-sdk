@@ -1,7 +1,7 @@
 """Tests for utils module"""
 
 from kili.utils.pagination import (
-    batch_iterator_builder,
+    BatchIteratorBuilder,
     batch_object_builder,
     row_generator_from_paginated_calls,
 )
@@ -101,7 +101,7 @@ def test_batch_iterator_builder():
         }
     ]
     for test_case in TEST_CASE:
-        actual = batch_iterator_builder(test_case["iterable"], batch_size=test_case["batch_size"])
+        actual = BatchIteratorBuilder(test_case["iterable"], batch_size=test_case["batch_size"])
         expected = test_case["expected_result"]
         case_name = test_case["case"]
         assert all(a == b for a, b in zip(actual, expected)), f'Test case "{case_name}" failed'

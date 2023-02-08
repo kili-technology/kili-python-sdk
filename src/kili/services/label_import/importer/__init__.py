@@ -111,7 +111,7 @@ class AbstractLabelImporter(ABC):
             }
             for label in labels
         ]
-        batch_generator = pagination.batch_iterator_builder(labels_data)
+        batch_generator = pagination.BatchIteratorBuilder(labels_data)
         result = []
         with tqdm.tqdm(total=len(labels_data), disable=self.logger_params.disable_tqdm) as pbar:
             for batch_labels in batch_generator:
