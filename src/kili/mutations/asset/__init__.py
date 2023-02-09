@@ -333,6 +333,7 @@ class MutationsAsset:
         *,
         wait_until_sucess: Optional[bool] = True,
     ) -> Asset:
+        # pylint: disable=line-too-long
         """Delete assets from a project.
 
         Args:
