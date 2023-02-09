@@ -58,7 +58,8 @@ class MutationsAsset:
         json_content_array: Optional[List[List[Union[dict, str]]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
-        blocking: bool = True,
+        *,
+        wait_until_sucess: bool = True,
     ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
@@ -94,7 +95,8 @@ class MutationsAsset:
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
-            blocking: If `True`, the function will wait until the assets are imported.
+            wait_until_sucess: If `True`, the function will return once the assets are fully imported in Kili (synchronous import).
+                If `False`, the function will return faster but the assets might not be fully imported yet (asynchronous import).
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -137,7 +139,7 @@ class MutationsAsset:
             project_id=project_id,
             assets=assets,
             disable_tqdm=disable_tqdm,
-            blocking=blocking,
+            blocking=wait_until_sucess,
         )
         return result
 
@@ -328,7 +330,8 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-        blocking: Optional[bool] = True,
+        *,
+        wait_until_sucess: Optional[bool] = True,
     ) -> Asset:
         """Delete assets from a project.
 
@@ -336,7 +339,8 @@ class MutationsAsset:
             asset_ids: The list of asset internal IDs to delete.
             external_ids: The list of asset external IDs to delete.
             project_id: The project ID. Only required if `external_ids` argument is provided.
-            blocking: If True, the method will wait until the assets are deleted.
+            wait_until_sucess: If True, the method will wait until the assets are fully deleted (synchronous mode).
+                If False, the method will return faster but the assets may not be fully deleted (asynchronous mode).
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -372,7 +376,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_DELETE_MANY_FROM_DATASET,
-            last_batch_callback=verify_last_batch if blocking else None,
+            last_batch_callback=verify_last_batch if wait_until_sucess else None,
         )
         return format_result("data", results[0], Asset)
 
@@ -382,8 +386,10 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-        blocking: Optional[bool] = True,
+        *,
+        wait_until_sucess: Optional[bool] = True,
     ) -> Optional[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Add assets to review.
 
         !!! warning
@@ -393,7 +399,8 @@ class MutationsAsset:
             asset_ids: The asset internal IDs to add to review.
             external_ids: The asset external IDs to add to review.
             project_id: The project ID. Only required if `external_ids` argument is provided.
-            blocking: If True, the method will wait until the assets are added to review.
+            wait_until_sucess: If True, the method will wait until all the assets are added to review (synchronous mode).
+                If False, the method will return faster but the assets may not be fully added to review (asynchronous mode).
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to review.
@@ -405,7 +412,7 @@ class MutationsAsset:
                     asset_ids=[
                         "ckg22d81r0jrg0885unmuswj8",
                         "ckg22d81s0jrh0885pdxfd03n",
-                        ],
+                    ],
                 )
         """
         asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
@@ -443,7 +450,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
-            last_batch_callback=verify_last_batch if blocking else None,
+            last_batch_callback=verify_last_batch if wait_until_sucess else None,
         )
         result = format_result("data", results[0])
         # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
@@ -464,15 +471,18 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-        blocking: Optional[bool] = True,
+        *,
+        wait_until_sucess: Optional[bool] = True,
     ) -> Dict[str, Any]:
+        # pylint: disable=line-too-long
         """Send assets back to queue.
 
         Args:
             asset_ids: List of internal IDs of assets to send back to queue.
             external_ids: List of external IDs of assets to send back to queue.
             project_id: The project ID. Only required if `external_ids` argument is provided.
-            blocking: If True, the method will wait until the assets are sent back to queue.
+            wait_until_sucess: If True, the method will wait until the assets are all sent back to queue (synchronous mode).
+                If False, the method will return faster but the assets may not be fully sent back to queue (asynchronous mode).
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to queue.
@@ -517,7 +527,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_SEND_BACK_ASSETS_TO_QUEUE,
-            last_batch_callback=verify_last_batch if blocking else None,
+            last_batch_callback=verify_last_batch if wait_until_sucess else None,
         )
         result = format_result("data", results[0])
         assets_in_queue = AssetQuery(self.auth.client)(
