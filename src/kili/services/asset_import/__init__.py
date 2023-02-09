@@ -21,12 +21,13 @@ importer_by_type = {
 }
 
 
-def import_assets(
+def import_assets(  # pylint: disable=too-many-arguments
     auth: KiliAuth,
     project_id: str,
     assets: List[Dict],
     raise_error=True,
     disable_tqdm=False,
+    blocking=True,
 ):
     """
     import the selected assets into the specified project
@@ -35,7 +36,7 @@ def import_assets(
     input_type = get_project_field(kili, project_id, "inputType")
 
     project_params = ProjectParams(project_id=project_id, input_type=input_type)
-    processing_params = ProcessingParams(raise_error=raise_error)
+    processing_params = ProcessingParams(raise_error=raise_error, blocking=blocking)
     logger_params = LoggerParams(disable_tqdm=disable_tqdm)
     importer_params = (auth, project_params, processing_params, logger_params)
 

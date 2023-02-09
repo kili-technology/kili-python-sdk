@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
-from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 from typeguard import typechecked
 
@@ -27,6 +26,7 @@ from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.utils.pagination import _mutate_from_paginated_call
 
+from ...helpers import RetryLongWaitWarner
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error
 
@@ -58,6 +58,7 @@ class MutationsAsset:
         json_content_array: Optional[List[List[Union[dict, str]]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
+        blocking: bool = True,
     ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
@@ -93,6 +94,7 @@ class MutationsAsset:
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
+            blocking: If `True`, the function will wait until the assets are imported.
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -131,7 +133,11 @@ class MutationsAsset:
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         result = import_assets(
-            self.auth, project_id=project_id, assets=assets, disable_tqdm=disable_tqdm
+            self.auth,
+            project_id=project_id,
+            assets=assets,
+            disable_tqdm=disable_tqdm,
+            blocking=blocking,
         )
         return result
 
@@ -322,6 +328,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
+        blocking: Optional[bool] = True,
     ) -> Asset:
         """Delete assets from a project.
 
@@ -329,6 +336,7 @@ class MutationsAsset:
             asset_ids: The list of asset internal IDs to delete.
             external_ids: The list of asset external IDs to delete.
             project_id: The project ID. Only required if `external_ids` argument is provided.
+            blocking: If True, the method will wait until the assets are deleted.
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -342,9 +350,10 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
             wait=wait_fixed(1),
             retry=retry_if_exception_type(MutationError),
+            before_sleep=RetryLongWaitWarner(method_name="delete_many_from_dataset"),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been deleted."""
@@ -363,7 +372,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_DELETE_MANY_FROM_DATASET,
-            last_batch_callback=verify_last_batch,
+            last_batch_callback=verify_last_batch if blocking else None,
         )
         return format_result("data", results[0], Asset)
 
@@ -373,6 +382,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
+        blocking: Optional[bool] = True,
     ) -> Optional[Dict[str, Any]]:
         """Add assets to review.
 
@@ -383,6 +393,7 @@ class MutationsAsset:
             asset_ids: The asset internal IDs to add to review.
             external_ids: The asset external IDs to add to review.
             project_id: The project ID. Only required if `external_ids` argument is provided.
+            blocking: If True, the method will wait until the assets are added to review.
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to review.
@@ -405,12 +416,15 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
             wait=wait_fixed(1),
             retry=retry_if_exception_type(MutationError),
+            before_sleep=RetryLongWaitWarner(method_name="add_to_review"),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
+            if len(results) == 0:
+                return  # No assets sent to review
             asset_ids = last_batch["asset_ids"]
             nb_assets_in_review = AssetQuery(self.auth.client).count(
                 AssetWhere(
@@ -427,10 +441,12 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
-            last_batch_callback=verify_last_batch,
+            last_batch_callback=verify_last_batch if blocking else None,
         )
         result = format_result("data", results[0])
-        if isinstance(result, dict) and "id" in result:
+        # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
+        # it happens when no assets have been sent to review
+        if isinstance(result, dict) and "id" in result:  #
             assets_in_review = AssetQuery(self.auth.client)(
                 AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
                 ["id"],
@@ -446,6 +462,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
+        blocking: Optional[bool] = True,
     ) -> Dict[str, Any]:
         """Send assets back to queue.
 
@@ -453,6 +470,7 @@ class MutationsAsset:
             asset_ids: List of internal IDs of assets to send back to queue.
             external_ids: List of external IDs of assets to send back to queue.
             project_id: The project ID. Only required if `external_ids` argument is provided.
+            blocking: If True, the method will wait until the assets are sent back to queue.
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to queue.
@@ -474,9 +492,10 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
             wait=wait_fixed(1),
             retry=retry_if_exception_type(MutationError),
+            before_sleep=RetryLongWaitWarner(method_name="send_back_to_queue"),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent back to queue."""
@@ -496,7 +515,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_SEND_BACK_ASSETS_TO_QUEUE,
-            last_batch_callback=verify_last_batch,
+            last_batch_callback=verify_last_batch if blocking else None,
         )
         result = format_result("data", results[0])
         assets_in_queue = AssetQuery(self.auth.client)(

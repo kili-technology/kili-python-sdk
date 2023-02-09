@@ -40,6 +40,8 @@ from kili.services.asset_import.types import AssetLike, KiliResolverAsset
 from kili.utils import bucket, pagination
 from kili.utils.tqdm import tqdm
 
+from ...helpers import RetryLongWaitWarner
+
 
 class BatchParams(NamedTuple):
     """
@@ -56,6 +58,7 @@ class ProcessingParams(NamedTuple):
     """
 
     raise_error: bool
+    blocking: bool
 
 
 class ProjectParams(NamedTuple):
@@ -107,6 +110,8 @@ class BaseBatchImporter:
     @retry(
         retry=retry_if_exception_type(BatchImportError),
         wait=wait_fixed(1),
+        before_sleep=RetryLongWaitWarner(method_name="import_batch"),
+        reraise=True,
     )
     def verify_batch_imported(self, assets: List):
         """
@@ -367,6 +372,7 @@ class BaseAssetImporter:
         self.auth = auth
         self.project_params = project_params
         self.raise_error = processing_params.raise_error
+        self.blocking = processing_params.blocking
         self.pbar = tqdm(disable=logger_params.disable_tqdm)
 
     @staticmethod
@@ -484,6 +490,7 @@ class BaseAssetImporter:
 
         responses = []
         for i, batch_assets in enumerate(batch_generator):
-            verify = i == (len(batch_generator) - 1)  # check that last batch is imported
+            # check last batch only
+            verify = i == (len(batch_generator) - 1) and self.blocking
             responses.append(batch_importer.import_batch(batch_assets, verify))
         return responses[-1]

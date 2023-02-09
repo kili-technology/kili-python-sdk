@@ -1,10 +1,13 @@
 import json
+import time
 from typing import List
 
 import pytest
+from tenacity import TryAgain, retry
+from tenacity.wait import wait_fixed
 
 from kili.exceptions import GraphQLError
-from kili.helpers import format_result
+from kili.helpers import RetryLongWaitWarner, format_result
 from kili.orm import Asset
 
 
@@ -148,3 +151,24 @@ def test_format_result_with_type_conversion_int():
     result = json.loads(result)
     ret = format_result("data", result, int)
     assert isinstance(ret, int)
+
+
+def test_retry_long_wait_warner():
+    class MyTestClass:
+        def __init__(self):
+            self.start_time = None
+
+        @retry(
+            wait=wait_fixed(0.05),
+            before_sleep=RetryLongWaitWarner(
+                method_name="my_method_that_takes_some_time", warn_after=0.25
+            ),
+        )
+        def my_method_that_takes_some_time(self):
+            self.start_time = self.start_time or time.time()
+            if time.time() - self.start_time < 0.5:
+                raise TryAgain("Try again")
+            return
+
+    with pytest.warns(RuntimeWarning, match="my_method_that_takes_some_time"):
+        MyTestClass().my_method_that_takes_some_time()

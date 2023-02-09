@@ -14,6 +14,7 @@ from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
 import requests
+import tenacity
 from typing_extensions import get_args, get_origin
 
 from kili.constants import mime_extensions_for_IV2
@@ -346,3 +347,31 @@ def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: bool):
             " generator return type"
         )
     return disable_tqdm
+
+
+class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
+    """Class that warns when retry takes too long."""
+
+    def __init__(
+        self, method_name: str, warn_after: float = 10, warn_message: Optional[str] = None
+    ) -> None:
+        """Class that warns when retry takes too long.
+
+        Args:
+            method_name: method name to be used in the warning message.
+            warn_after: time in seconds after which the warning is raised.
+            warn_message: custom warning message. If not provided, a default message is used.
+        """
+        self.method_name = method_name
+        self.warn_after = warn_after
+        self.warn_message: str = warn_message or (
+            f"Warning: '{self.method_name}' is taking a long time to complete. This may be due"
+            " to a large number of mutations to be processed by the server."
+        )
+
+        self.warned = False
+
+    def __call__(self, retry_state: tenacity.RetryCallState):
+        if not self.warned and float(retry_state.outcome_timestamp or 0) > self.warn_after:
+            warnings.warn(self.warn_message, category=RuntimeWarning)
+            self.warned = True

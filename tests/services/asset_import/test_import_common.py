@@ -72,3 +72,14 @@ class TestContentType(ImportTestCase):
             external_ids_are_uuid4 = False
         assert external_ids_are_uuid4
         assert external_ids_are_uniques
+
+    @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
+    @patch.object(AssetQuery, "count", return_value=1)
+    @patch("kili.services.asset_import.base.BaseBatchImporter.verify_batch_imported")
+    def test_blocking_import_assets(self, mocked_verify_batch_imported, *_):
+        assets = [{"content": "https://hosted-data", "external_id": "externalid"}]
+
+        import_assets(self.auth, "project_id", assets, blocking=False)
+        mocked_verify_batch_imported.assert_not_called()
+        import_assets(self.auth, "project_id", assets, blocking=True)
+        mocked_verify_batch_imported.assert_called_once()
