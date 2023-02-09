@@ -423,12 +423,14 @@ class MutationsAsset:
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
-            if len(results) == 0:
-                return  # No assets sent to review
+            try:
+                project_id = results[0]["data"]["data"]["id"]
+            except TypeError:
+                return  # No assets have changed status
             asset_ids = last_batch["asset_ids"]
             nb_assets_in_review = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=project_id,
                     asset_id_in=asset_ids,
                     status_in=["TO_REVIEW"],
                 )
