@@ -26,7 +26,6 @@ from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.utils.pagination import _mutate_from_paginated_call
 
-from ...helpers import RetryLongWaitWarner
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error
 
@@ -59,7 +58,7 @@ class MutationsAsset:
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         *,
-        wait_until_sucess: bool = True,
+        wait_until_success: bool = True,
     ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
@@ -95,8 +94,8 @@ class MutationsAsset:
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
-            wait_until_sucess: If `True`, the function will return once the assets are fully imported in Kili (synchronous import).
-                If `False`, the function will return faster but the assets might not be fully imported yet (asynchronous import).
+            wait_until_success: If `True`, the function will return once the assets are fully imported in Kili.
+                If `False`, the function will return faster but the assets might not be fully processed by the server.
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -139,7 +138,7 @@ class MutationsAsset:
             project_id=project_id,
             assets=assets,
             disable_tqdm=disable_tqdm,
-            blocking=wait_until_sucess,
+            blocking=wait_until_success,
         )
         return result
 
@@ -330,18 +329,13 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-        *,
-        wait_until_sucess: Optional[bool] = True,
     ) -> Asset:
-        # pylint: disable=line-too-long
         """Delete assets from a project.
 
         Args:
             asset_ids: The list of asset internal IDs to delete.
             external_ids: The list of asset external IDs to delete.
             project_id: The project ID. Only required if `external_ids` argument is provided.
-            wait_until_sucess: If True, the method will wait until the assets are fully deleted (synchronous mode).
-                If False, the method will return faster but the assets may not be fully deleted (asynchronous mode).
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -357,7 +351,6 @@ class MutationsAsset:
         @retry(
             wait=wait_fixed(1),
             retry=retry_if_exception_type(MutationError),
-            before_sleep=RetryLongWaitWarner(method_name="delete_many_from_dataset"),
             reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
@@ -377,7 +370,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_DELETE_MANY_FROM_DATASET,
-            last_batch_callback=verify_last_batch if wait_until_sucess else None,
+            last_batch_callback=verify_last_batch,
         )
         return format_result("data", results[0], Asset)
 
@@ -387,10 +380,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-        *,
-        wait_until_sucess: Optional[bool] = True,
     ) -> Optional[Dict[str, Any]]:
-        # pylint: disable=line-too-long
         """Add assets to review.
 
         !!! warning
@@ -400,8 +390,6 @@ class MutationsAsset:
             asset_ids: The asset internal IDs to add to review.
             external_ids: The asset external IDs to add to review.
             project_id: The project ID. Only required if `external_ids` argument is provided.
-            wait_until_sucess: If True, the method will wait until all the assets are added to review (synchronous mode).
-                If False, the method will return faster but the assets may not be fully added to review (asynchronous mode).
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to review.
@@ -426,7 +414,6 @@ class MutationsAsset:
         @retry(
             wait=wait_fixed(1),
             retry=retry_if_exception_type(MutationError),
-            before_sleep=RetryLongWaitWarner(method_name="add_to_review"),
             reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
@@ -451,7 +438,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
-            last_batch_callback=verify_last_batch if wait_until_sucess else None,
+            last_batch_callback=verify_last_batch,
         )
         result = format_result("data", results[0])
         # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
@@ -472,18 +459,13 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-        *,
-        wait_until_sucess: Optional[bool] = True,
     ) -> Dict[str, Any]:
-        # pylint: disable=line-too-long
         """Send assets back to queue.
 
         Args:
             asset_ids: List of internal IDs of assets to send back to queue.
             external_ids: List of external IDs of assets to send back to queue.
             project_id: The project ID. Only required if `external_ids` argument is provided.
-            wait_until_sucess: If True, the method will wait until the assets are all sent back to queue (synchronous mode).
-                If False, the method will return faster but the assets may not be fully sent back to queue (asynchronous mode).
 
         Returns:
             A dict object with the project `id` and the `asset_ids` of assets moved to queue.
@@ -507,7 +489,6 @@ class MutationsAsset:
         @retry(
             wait=wait_fixed(1),
             retry=retry_if_exception_type(MutationError),
-            before_sleep=RetryLongWaitWarner(method_name="send_back_to_queue"),
             reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
@@ -528,7 +509,7 @@ class MutationsAsset:
             properties_to_batch,
             generate_variables,
             GQL_SEND_BACK_ASSETS_TO_QUEUE,
-            last_batch_callback=verify_last_batch if wait_until_sucess else None,
+            last_batch_callback=verify_last_batch,
         )
         result = format_result("data", results[0])
         assets_in_queue = AssetQuery(self.auth.client)(

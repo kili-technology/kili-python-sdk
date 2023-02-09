@@ -1,6 +1,7 @@
 """
 Common and generic functions to import files into a project
 """
+import logging
 import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -9,7 +10,7 @@ from pathlib import Path
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 from uuid import uuid4
 
-from tenacity import retry
+from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_fixed
 
@@ -93,6 +94,10 @@ class BaseBatchImporter:
         self.is_asynchronous = batch_params.is_asynchronous
         self.pbar = pbar
 
+        logging.basicConfig()
+        self.logger = logging.getLogger("kili.services.asset_import.base")
+        self.logger.setLevel(logging.INFO)
+
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):
         """
@@ -107,23 +112,37 @@ class BaseBatchImporter:
         self.pbar.update(n=len(assets))
         return result_batch
 
-    @retry(
-        retry=retry_if_exception_type(BatchImportError),
-        wait=wait_fixed(1),
-        before_sleep=RetryLongWaitWarner(method_name="import_batch"),
-        reraise=True,
-    )
     def verify_batch_imported(self, assets: List):
         """
         Verifies that the batch has been imported successfully
         """
-        assets_ids = [asset["id"] for asset in assets]
-        where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
-        nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
-        if len(assets) != nb_assets_in_kili:
-            raise BatchImportError(
-                "Number of assets to upload is not equal to number of assets uploaded in Kili."
+        if self.is_asynchronous:
+            logger_func = self.logger.info
+            log_message = (
+                "Import of assets is taking a long time to complete. This maybe be due to files"
+                " being processed by the server."
             )
+        else:
+            logger_func = self.logger.warning
+            log_message = (
+                "Import of assets is taking a long time to complete. This may be due to a large"
+                " number of assets to be processed by the server."
+            )
+        for attempt in Retrying(
+            retry=retry_if_exception_type(BatchImportError),
+            wait=wait_fixed(2),
+            before_sleep=RetryLongWaitWarner(logger_func=logger_func, warn_message=log_message),
+            reraise=True,
+        ):
+            with attempt:
+                assets_ids = [asset["id"] for asset in assets]
+                where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
+                nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
+                if len(assets) != nb_assets_in_kili:
+                    raise BatchImportError(
+                        "Number of assets to upload is not equal to number of assets uploaded in"
+                        " Kili."
+                    )
 
     def add_ids(self, assets: List[AssetLike]):
         """

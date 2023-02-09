@@ -1,5 +1,6 @@
 import json
 import time
+import warnings
 from typing import List
 
 import pytest
@@ -161,14 +162,16 @@ def test_retry_long_wait_warner():
         @retry(
             wait=wait_fixed(0.05),
             before_sleep=RetryLongWaitWarner(
-                method_name="my_method_that_takes_some_time", warn_after=0.25
+                warn_after=0.25,
+                logger_func=warnings.warn,
+                warn_message="warn_message_defined_by_user",
             ),
         )
-        def my_method_that_takes_some_time(self):
+        def my_method_takes_some_time(self):
             self.start_time = self.start_time or time.time()
             if time.time() - self.start_time < 0.5:
                 raise TryAgain("Try again")
             return
 
-    with pytest.warns(RuntimeWarning, match="my_method_that_takes_some_time"):
-        MyTestClass().my_method_that_takes_some_time()
+    with pytest.warns(match="warn_message_defined_by_user"):
+        MyTestClass().my_method_takes_some_time()
