@@ -59,6 +59,7 @@ class TestContentType(ImportTestCase):
     @patch.object(AssetQuery, "count", return_value=3)
     def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
+        self.auth.client.execute.reset_mock()
         import_assets(self.auth, self.project_id, assets, disable_tqdm=True, blocking=False)
         self.auth.client.execute.assert_called_once()
         call_args = self.auth.client.execute.call_args[0]
