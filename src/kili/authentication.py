@@ -40,7 +40,7 @@ class KiliAuth:
         self.verify = verify
 
         try:
-            self.check_versions_match()
+            self.endpoint_kili_version = self.check_versions_match()
         except:  # pylint: disable=bare-except
             message = (
                 "We could not check the version, there might be a version"
@@ -78,6 +78,7 @@ class KiliAuth:
                 + f'Please install version: "pip install kili=={version}"'
             )
             warnings.warn(message, UserWarning)
+        return version
 
     def check_api_key_valid(self):
         """Check that the api_key provided is valid"""

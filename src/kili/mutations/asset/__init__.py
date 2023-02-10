@@ -199,9 +199,12 @@ class MutationsAsset:
         """
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
-                "The use of `external_ids` argument has changed. It is now used to identify which"
-                " properties of which assets to update. Please use"
-                " `kili.change_asset_external_ids()` method instead to change asset external IDs.",
+                (
+                    "The use of `external_ids` argument has changed. It is now used to identify"
+                    " which properties of which assets to update. Please use"
+                    " `kili.change_asset_external_ids()` method instead to change asset external"
+                    " IDs."
+                ),
                 DeprecationWarning,
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
@@ -351,7 +354,7 @@ class MutationsAsset:
             asset_ids = last_batch["asset_ids"]
             nb_assets_in_kili = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
                 )
             )
@@ -414,7 +417,7 @@ class MutationsAsset:
             asset_ids = last_batch["asset_ids"]
             nb_assets_in_review = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
                     status_in=["TO_REVIEW"],
                 )
@@ -483,7 +486,7 @@ class MutationsAsset:
             asset_ids = last_batch["asset_ids"]
             nb_assets_in_queue = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
                     status_in=["ONGOING"],
                 )
