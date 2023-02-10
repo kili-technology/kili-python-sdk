@@ -31,6 +31,8 @@ from kili.services.project import get_project
 from kili.services.types import ProjectId
 from kili.subscriptions.label import SubscriptionsLabel
 
+from .helpers import deprecate
+
 
 class Kili(  # pylint: disable=too-many-ancestors
     MutationsAsset,
@@ -110,6 +112,10 @@ class Kili(  # pylint: disable=too-many-ancestors
 
         self.internal = KiliInternal(self)
 
+    @deprecate(
+        msg="This method is deprecated. Use `kili.projects(project_id='<MY_PROJECT_ID>')` instead",
+        removed_in="2.131",
+    )
     def get_project(self, project_id: str) -> Project:
         """Return a project object corresponding to the project_id given.
         The returned project object inherit from many methods for project management
