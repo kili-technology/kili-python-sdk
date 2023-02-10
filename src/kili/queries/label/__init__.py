@@ -295,8 +295,7 @@ class QueriesLabel:
         # pylint: disable=line-too-long
         """Get prediction labels from a project based on a set of criteria.
 
-        This method is equivalent to the `kili.labels()` method, but it only returns label of type "PREDICTION"
-        made by a model (pre-annotations or real predictions).
+        This method is equivalent to the `kili.labels()` method, but it only returns label of type "PREDICTION".
 
         Args:
             project_id: Identifier of the project.
@@ -439,8 +438,7 @@ class QueriesLabel:
         # pylint: disable=line-too-long
         """Get inference labels from a project based on a set of criteria.
 
-        This method is equivalent to the `kili.labels()` method, but it only returns label of type "INFERENCE"
-        made by a model (pre-annotations or real predictions).
+        This method is equivalent to the `kili.labels()` method, but it only returns label of type "INFERENCE".
 
         Args:
             project_id: Identifier of the project.
