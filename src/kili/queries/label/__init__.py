@@ -216,6 +216,58 @@ class QueriesLabel:
             return labels_gen
         return list(labels_gen)
 
+    @overload
+    def predictions(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def predictions(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
+        ...
+
     @typechecked
     def predictions(
         self,
@@ -307,6 +359,58 @@ class QueriesLabel:
             category_search=category_search,
             as_generator=as_generator,
         )
+
+    @overload
+    def inferences(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def inferences(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
+        ...
 
     @typechecked
     def inferences(
