@@ -356,7 +356,7 @@ class QueriesLabel:
             user_id=user_id,
             disable_tqdm=disable_tqdm,
             category_search=category_search,
-            as_generator=as_generator,
+            as_generator=as_generator,  # type: ignore
         )
 
     @overload
@@ -499,7 +499,7 @@ class QueriesLabel:
             user_id=user_id,
             disable_tqdm=disable_tqdm,
             category_search=category_search,
-            as_generator=as_generator,
+            as_generator=as_generator,  # type: ignore
         )
 
     @typechecked
