@@ -83,7 +83,7 @@ class AbstractLabelImporter(ABC):
 
         self.logger.warning(print(f"{len(labels)} labels have been successfully imported"))
 
-    def process_from_dict(  # pylint: disable=too-many-arguments,too-many-locals
+    def process_from_dict(
         self,
         project_id: Optional[str],
         labels: List[Dict],

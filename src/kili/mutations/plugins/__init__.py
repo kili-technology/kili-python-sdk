@@ -16,8 +16,6 @@ from kili.services.plugins import (
 class MutationsPlugins:
     """Set of Plugins mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
-
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
@@ -53,7 +51,8 @@ class MutationsPlugins:
 
         if kwargs.get("file_path"):
             raise TypeError(
-                '"file_path" has been deprecated for "plugin_path", please use "plugin_path" instead'
+                '"file_path" has been deprecated for "plugin_path", please use "plugin_path"'
+                " instead"
             )
 
         if not plugin_path:
@@ -172,7 +171,6 @@ class MutationsPlugins:
         self,
         plugin_name: str,
     ):
-        # pylint: disable=line-too-long
         """Deletes a plugin.
 
         Args:

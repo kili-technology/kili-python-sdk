@@ -62,7 +62,7 @@ def export_labels(
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
-    verbose: bool,  # pylint: disable=unused-argument
+    verbose: bool,
     with_assets: bool,
 ):
     """

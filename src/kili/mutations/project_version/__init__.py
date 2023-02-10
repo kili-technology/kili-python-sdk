@@ -13,8 +13,6 @@ from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 class MutationsProjectVersion:
     """Set of ProjectVersion mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
-
     def __init__(self, auth):
         """Initialize the subclass.
 

@@ -335,7 +335,7 @@ def _process_asset(
     with_assets: bool,
     project_input_type: str,
 ) -> Tuple[List[Tuple[str, str, str]], List[str]]:
-    # pylint: disable=too-many-locals, too-many-branches, too-many-arguments
+    # pylint: disable=too-many-locals, too-many-arguments
     """
     Process an asset for all job_ids of category_ids.
     """

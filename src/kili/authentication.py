@@ -26,6 +26,7 @@ def get_version_without_patch(version):
     return ".".join(version.split(".")[:-1])
 
 
+# pylint: disable=too-many-instance-attributes
 class KiliAuth:
     """
     Kili authentication class
