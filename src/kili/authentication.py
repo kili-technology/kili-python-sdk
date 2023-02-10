@@ -84,7 +84,7 @@ class KiliAuth:
         """Check that the api_key provided is valid"""
         response = requests.post(
             url=self.api_endpoint,
-            data='{"query":"{ me { id } }"}',
+            data='{"query":"{ me { id email } }"}',
             verify=self.verify,
             timeout=30,
             headers={
@@ -95,7 +95,7 @@ class KiliAuth:
                 "apollographql-client-version": __version__,
             },
         )
-        if response.status_code == 200 and "error" not in response.text and "id" in response.text:
+        if response.status_code == 200 and "email" in response.text and "id" in response.text:
             return
 
         if response.status_code == 401:
