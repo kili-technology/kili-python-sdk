@@ -7,8 +7,10 @@ from kili import services
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
 
+from ..helpers import deprecate
 
-class Project:  # pylint: disable=too-few-public-methods
+
+class Project:
     """
     Object that represents a project in Kili.
     It allows management operations such as uploading assets, uploading predictions,
@@ -16,6 +18,10 @@ class Project:  # pylint: disable=too-few-public-methods
     It also allows queries from this project such as its assets, labels etc.
     """
 
+    @deprecate(
+        msg="This class is deprecated. Use `kili.projects(project_id='<MY_PROJECT_ID>')` instead",
+        removed_in="2.131",
+    )
     def __init__(self, project_id: ProjectId, input_type: InputType, title: str, client):
         """Initialize the class."""
         self.project_id = project_id
@@ -23,6 +29,10 @@ class Project:  # pylint: disable=too-few-public-methods
         self.input_type = input_type
         self.client = client
 
+    @deprecate(
+        msg="This method is deprecated. Use `kili.export_labels()` instead",
+        removed_in="2.131",
+    )
     @typechecked
     def export(  # pylint: disable=too-many-arguments
         self,
@@ -72,6 +82,10 @@ class Project:  # pylint: disable=too-few-public-methods
             with_assets=with_assets,
         )
 
+    @deprecate(
+        msg="This method is deprecated. Use `kili.append_labels()` instead",
+        removed_in="2.131",
+    )
     @typechecked
     def append_labels(
         self,
