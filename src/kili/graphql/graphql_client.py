@@ -57,7 +57,7 @@ class GraphQLClient:
             use_json=True,
             timeout=30,
             verify=verify,
-            retries=10,  # requests.Session retries
+            retries=20,  # requests.Session retries
             method="POST",
             # can add other requests kwargs here
         )

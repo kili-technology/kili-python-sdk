@@ -13,8 +13,8 @@ NUMBER_OBJECT_IN_DB = 250
 def mocked_client_execute(query, payload):
     if query == "object_query":
         first = payload["first"]
-        return {"data": {"data": [{"id": "id"}] * min(first, NUMBER_OBJECT_IN_DB)}}
-    return {"data": {"data": NUMBER_OBJECT_IN_DB}}
+        return {"data": [{"id": "id"}] * min(first, NUMBER_OBJECT_IN_DB)}
+    return {"data": NUMBER_OBJECT_IN_DB}
 
 
 class FakeQuery(GraphQLQuery):
