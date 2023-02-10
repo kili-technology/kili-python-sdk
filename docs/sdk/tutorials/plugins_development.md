@@ -247,11 +247,9 @@ plugin_name = "My first kili plugin"
 
 
 ```python
-from kili.exceptions import GraphQLError
-
 try:
     kili.upload_plugin(path_to_plugin, plugin_name)
-except GraphQLError as error:
+except Exception as error:
     print(str(error))
 ```
 

@@ -3,7 +3,6 @@ GraphQL Client
 """
 
 import json
-import os
 import random
 import string
 import threading
@@ -62,11 +61,6 @@ class GraphQLClient:
             # can add other requests kwargs here
         )
         self.gql_client = Client(transport=self.gql_transport, fetch_schema_from_transport=True)
-
-        try:  # TODO: use this?
-            self.number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
-        except ValueError:
-            self.number_of_trials = 10
 
     @typechecked
     def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:

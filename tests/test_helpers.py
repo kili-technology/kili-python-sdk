@@ -1,8 +1,6 @@
 import json
 from typing import List
 
-import pytest
-
 from kili.helpers import format_result
 from kili.orm import Asset
 

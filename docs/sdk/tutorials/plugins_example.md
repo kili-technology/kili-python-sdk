@@ -207,11 +207,9 @@ with requirements_path.open("w") as f:
 ```python
 plugin_name = "Plugin bbox count"
 
-from kili.exceptions import GraphQLError
-
 try:
     kili.upload_plugin(plugin_folder, plugin_name)
-except GraphQLError as error:
+except Exception as error:
     print(str(error))
 ```
 
@@ -239,11 +237,9 @@ Alternatively, you can also create a plugin directly from a `.py` file.
 path_to_plugin = Path(plugin_folder) / "main.py"
 plugin_name = "Plugin bbox count"
 
-from kili.exceptions import GraphQLError
-
 try:
     kili.upload_plugin(str(path_to_plugin), plugin_name)
-except GraphQLError as error:
+except Exception as error:
     print(str(error))
 ```
 
