@@ -146,9 +146,8 @@ class GraphQLClient:
                     )
                     if req.status_code == 401:
                         raise InvalidApiKeyError("Invalid API KEY")
-                    errors_in_response = "errors" in req.json()
-                    bad_request_error = req.status_code == 400 and errors_in_response
-                    sucessful_request = req.status_code == 200 and not errors_in_response
+                    bad_request_error = req.status_code == 400
+                    sucessful_request = req.status_code == 200
                     if sucessful_request or bad_request_error:
                         break
                     time.sleep(1)
