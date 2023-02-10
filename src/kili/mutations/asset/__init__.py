@@ -57,8 +57,7 @@ class MutationsAsset:
         json_content_array: Optional[List[List[Union[dict, str]]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
-        *,
-        wait_until_success: bool = True,
+        wait_until_availability: bool = True,
     ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
@@ -94,7 +93,7 @@ class MutationsAsset:
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
-            wait_until_success: If `True`, the function will return once the assets are fully imported in Kili.
+            wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
                 If `False`, the function will return faster but the assets might not be fully processed by the server.
 
         Returns:
@@ -138,7 +137,7 @@ class MutationsAsset:
             project_id=project_id,
             assets=assets,
             disable_tqdm=disable_tqdm,
-            blocking=wait_until_success,
+            verify=wait_until_availability,
         )
         return result
 

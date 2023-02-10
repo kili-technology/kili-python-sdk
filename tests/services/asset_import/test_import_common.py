@@ -60,7 +60,7 @@ class TestContentType(ImportTestCase):
     def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
         self.auth.client.execute.reset_mock()
-        import_assets(self.auth, self.project_id, assets, disable_tqdm=True, blocking=False)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
         self.auth.client.execute.assert_called_once()
         call_args = self.auth.client.execute.call_args[0]
         external_id_array_call = call_args[1]["data"]["externalIDArray"]
@@ -77,10 +77,10 @@ class TestContentType(ImportTestCase):
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
     @patch.object(AssetQuery, "count", return_value=1)
     @patch("kili.services.asset_import.base.BaseBatchImporter.verify_batch_imported")
-    def test_blocking_import_assets(self, mocked_verify_batch_imported, *_):
+    def test_import_assets_verify(self, mocked_verify_batch_imported, *_):
         assets = [{"content": "https://hosted-data", "external_id": "externalid"}]
 
-        import_assets(self.auth, "project_id", assets, blocking=False)
+        import_assets(self.auth, "project_id", assets, verify=False)
         mocked_verify_batch_imported.assert_not_called()
-        import_assets(self.auth, "project_id", assets, blocking=True)
+        import_assets(self.auth, "project_id", assets, verify=True)
         mocked_verify_batch_imported.assert_called_once()
