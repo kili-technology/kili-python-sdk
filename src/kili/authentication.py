@@ -12,7 +12,7 @@ from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
 from kili.types import User
 
-from .exceptions import InvalidApiKeyError, UserNotFoundError
+from .exceptions import AuthenticationFailed, UserNotFoundError
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -98,10 +98,15 @@ class KiliAuth:
             return
 
         if response.status_code == 401:
-            raise InvalidApiKeyError("Invalid API key")
+            raise AuthenticationFailed(api_key=self.api_key, api_endpoint=self.api_endpoint)
 
-        raise InvalidApiKeyError(
-            f"Cannot check API key validity: status_code {response.status_code}\n\n{response.text}"
+        raise AuthenticationFailed(
+            api_key=self.api_key,
+            api_endpoint=self.api_endpoint,
+            error_msg=(
+                "Cannot check API key validity: status_code"
+                f" {response.status_code}\n\n{response.text}"
+            ),
         )
 
     def check_expiry_of_key_is_close(self):

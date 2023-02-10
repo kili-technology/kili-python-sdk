@@ -41,6 +41,8 @@ class GraphQLClient:
         client_name: GraphQLClientName,
         verify: bool = True,
     ) -> None:
+        self.endpoint = endpoint
+
         self.gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers={
@@ -121,7 +123,7 @@ class SubscriptionGraphQLClient:
             self.ws_url, on_message=self._on_message, subprotocols=[GQL_WS_SUBPROTOCOL]
         )
         self._created_at = datetime.now()
-        self._conn.on_message = self._on_message
+        self._conn.on_message = self._on_message  # type: ignore
 
     def _reconnect(self):
         """

@@ -1,4 +1,5 @@
 """Exceptions of the package."""
+from typing import Optional
 
 
 class NotFound(Exception):
@@ -23,17 +24,20 @@ class AuthenticationFailed(Exception):
             return "*" * (len(input_str) - 4) + input_str[-4:]
         return input_str
 
-    def __init__(self, api_key, api_endpoint):
+    def __init__(self, api_key, api_endpoint, error_msg: Optional[str] = None):
         if api_key is None:
             super().__init__(
                 "You need to provide an API KEY to connect."
                 " Visit https://docs.kili-technology.com/reference/creating-an-api-key"
             )
         else:
-            super().__init__(
+            raise_msg = (
                 f"Connection to Kili endpoint {api_endpoint} failed with API key:"
                 f" {self._obfuscate(api_key)}. Check your connection and API key."
             )
+            if error_msg is not None:
+                raise_msg += f"\nError message:\n{error_msg}"
+            super().__init__(raise_msg)
 
 
 class GraphQLError(Exception):
@@ -73,7 +77,3 @@ class RemovedMethodError(Exception):
 
 class UserNotFoundError(Exception):
     """Raised when the user is not found"""
-
-
-class InvalidApiKeyError(Exception):
-    """Raised when the api key is invalid"""
