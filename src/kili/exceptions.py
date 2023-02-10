@@ -40,25 +40,6 @@ class AuthenticationFailed(Exception):
             super().__init__(raise_msg)
 
 
-class GraphQLError(Exception):
-    """
-    Used when the GraphQL call returns an error
-    """
-
-    def __init__(self, error, batch_number=None):
-        if isinstance(error, list):
-            error = error[0]
-        if isinstance(error, dict) and "message" in error:
-            error_msg = error["message"]
-        else:
-            error_msg = str(error)
-
-        if batch_number is None:
-            super().__init__(f'error: "{error_msg}"')
-        else:
-            super().__init__(f'error at index {100*batch_number}: {error_msg}"')
-
-
 class NonExistingFieldError(ValueError):
     """Raised when querying a field that does not exist on an object"""
 

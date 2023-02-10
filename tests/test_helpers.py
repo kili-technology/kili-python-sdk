@@ -3,87 +3,8 @@ from typing import List
 
 import pytest
 
-from kili.exceptions import GraphQLError
 from kili.helpers import format_result
 from kili.orm import Asset
-
-
-@pytest.mark.parametrize(
-    "result",
-    [
-        r'{"errors": {"message": "NetworkError when attempting to fetch resource.", "stack": ""}}',
-        r"""
-        {
-          "errors": [
-            {
-              "message": "Syntax Error: Expected Name, found \":\".",
-              "locations": [
-                {
-                  "line": 5,
-                  "column": 10
-                }
-              ],
-              "extensions": {
-                "code": "GRAPHQL_PARSE_FAILED"
-              }
-            }
-          ]
-        }
-        """,
-        r"""
-        {
-          "errors": [
-            {
-              "message": "Field \"emaiel\" is not defined by type \"UserWhere\". Did you mean \"email\"?",
-              "locations": [
-                {
-                  "line": 2,
-                  "column": 31
-                }
-              ],
-              "extensions": {
-                "code": "GRAPHQL_VALIDATION_FAILED"
-              }
-            }
-          ]
-        }
-        """,
-        r"""
-        {
-          "errors": [
-            {
-              "message": "Bad type of input PageSize, expected type integer, got type object.",
-              "extensions": {
-                "code": "GRAPHQL_VALIDATION_FAILED"
-              }
-            },
-            {
-              "message": "Field \"projects\" argument \"where\" of type \"ProjectWhere!\" is required, but it was not provided.",
-              "locations": [
-                {
-                  "line": 2,
-                  "column": 3
-                }
-              ],
-              "extensions": {
-                "code": "GRAPHQL_VALIDATION_FAILED"
-              }
-            }
-          ]
-        }
-        """,
-        (
-            r'{"errors":[{"message":"[accessDenied] Access denied. Please verify your credentials'
-            r" or contact Kili support. -- This can be due to: The data you are trying to mutate"
-            r" does not exist or is not accessible | trace :"
-            r' false","locations":[{"line":8,"column":3}],"path":["data"],"extensions":{"code":"401"}}],"data":{"data":null}}'
-        ),
-    ],
-)
-def test_format_result_error(result):
-    with pytest.raises(GraphQLError):
-        result = json.loads(result)
-        format_result(name="data", result=result)
 
 
 def test_format_result_no_type_conversion_1():
