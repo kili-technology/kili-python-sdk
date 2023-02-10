@@ -442,7 +442,7 @@ class MutationsAsset:
         result = format_result("data", results[0])
         # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
         # it happens when no assets have been sent to review
-        if isinstance(result, dict) and "id" in result:  #
+        if isinstance(result, dict) and "id" in result:
             assets_in_review = AssetQuery(self.auth.client)(
                 AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
                 ["id"],
