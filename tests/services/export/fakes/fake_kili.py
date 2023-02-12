@@ -201,6 +201,10 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function):
     return _assets()
 
 
+def mocked_AssetQuery_count(where) -> int:
+    return len(mocked_AssetQuery(where, None, None, None))
+
+
 class FakeKili:
     """
     Handke .assets and .project methods of Kili

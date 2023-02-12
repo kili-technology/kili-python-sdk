@@ -37,7 +37,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     """
     Export the selected assets into the required format, and save it into a file archive.
     """
-    get_project(kili, project_id, ["id"])
+    get_project(kili, project_id, ["id"])  # check that the project exists
 
     if with_assets:
         count = AssetQuery(kili.auth.client).count(AssetWhere(project_id=project_id))
