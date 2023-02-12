@@ -176,7 +176,7 @@ class MutationsLabel:
             },
             "where": {"id": label_asset_id},
         }
-        result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
+        result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables, Label)
         return format_result("data", result)
 
     @typechecked
@@ -238,7 +238,13 @@ class MutationsLabel:
                 "seconds_to_label": seconds_to_label,
                 "author_id": author_id,
             }
-            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id,) in list(
+            for (
+                asset_id,
+                asset_external_id,
+                json_response,
+                seconds_to_label,
+                author_id,
+            ) in list(
                 zip(
                     asset_id_array or [None] * len(json_response_array),
                     asset_external_id_array or [None] * len(json_response_array),
@@ -282,7 +288,7 @@ class MutationsLabel:
             "modelName": model_name,
             "jsonResponse": formatted_json_response,
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables, Label)
         return format_result("data", result)
 
     @typechecked
