@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List
+from typing import List
 
 from kili.helpers import format_result
 from kili.orm import Asset
