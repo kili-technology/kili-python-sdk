@@ -12,6 +12,7 @@ import yaml
 
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.helpers import format_result, get_file_paths_to_upload
+from kili.orm import Label
 from kili.services.helpers import (
     get_external_id_from_file_path,
     infer_ids_from_external_ids,
@@ -119,7 +120,7 @@ class AbstractLabelImporter(ABC):
                     "where": {"idIn": [label["assetID"] for label in batch_labels]},
                 }
                 batch_result = self.kili.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
-                result.extend(format_result("data", batch_result))
+                result.extend(format_result("data", batch_result, Label))
                 pbar.update(len(batch_labels))
         return result
 

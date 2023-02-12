@@ -1,6 +1,6 @@
 """
 This script defines object-relational mapping helpers to ease
- the manipulation of Kili data structures.
+the manipulation of Kili data structures.
 """
 from dataclasses import dataclass
 
@@ -9,7 +9,7 @@ from typing_extensions import Literal
 
 class DictClass(dict):
     """
-    A python class that acts like dict
+    A python class that acts like dict and can be used to access its attributes as dict keys
     """
 
     def __init__(self, *args, **kwargs):
@@ -182,7 +182,7 @@ class Asset(DictClass):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)  # will add keys in *args and **kwargs to self
         if "labels" in self:
             labels = []
             for label in self["labels"]:

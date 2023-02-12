@@ -26,6 +26,7 @@ from kili.graphql.operations.organization.queries import (
     OrganizationWhere,
 )
 from kili.helpers import T, format_result, is_url
+from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
@@ -214,7 +215,7 @@ class BaseBatchImporter:
             "where": {"id": self.project_id},
         }
         results = self.auth.client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
-        return format_result("data", results)
+        return format_result("data", results, Asset)
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """
@@ -233,7 +234,7 @@ class BaseBatchImporter:
             "where": {"id": self.project_id},
         }
         results = self.auth.client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
-        return format_result("data", results)
+        return format_result("data", results, Asset)
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
         """
