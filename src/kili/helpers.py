@@ -29,7 +29,7 @@ def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) ->
         result: query result to parse
         _object: returned type
     """
-    formatted_json = format_json(result["data"][name])
+    formatted_json = format_json(result[name])
     if _object is None:
         return formatted_json  # type:ignore X
     if isinstance(formatted_json, list):
