@@ -10,26 +10,28 @@ from kili.client import Kili
 from kili.exceptions import AuthenticationFailed
 
 
-def test_no_api_key():
+@patch("kili.authentication.requests")
+def test_no_api_key(mocked_requests):
+    """test fail because no api key is found"""
     with patch.dict(os.environ):
         os.environ.pop("KILI_API_KEY", None)
         with pytest.raises(AuthenticationFailed):
             _ = Kili()
 
 
-def test_wrong_api_key():
+@patch("kili.authentication.requests")
+def test_wrong_api_key(mocked_requests):
+    """test obfuscation of api key"""
     with patch.dict(os.environ):
         os.environ.pop("KILI_API_KEY", None)
-        with pytest.raises(AuthenticationFailed) as e_info:
+        with pytest.raises(AuthenticationFailed, match=r"failed with API key: \*{9}_key"):
             _ = Kili(api_key="wrong_api_key")
 
-        assert "failed with API key: *********_key" in str(e_info)
 
-
-def test_wrong_api_key_shot():
+@patch("kili.authentication.requests")
+def test_wrong_api_key_shot(mocked_requests):
+    """test no need to obfuscate api key"""
     with patch.dict(os.environ):
         os.environ.pop("KILI_API_KEY", None)
-        with pytest.raises(AuthenticationFailed) as e_info:
+        with pytest.raises(AuthenticationFailed, match="failed with API key: no"):
             _ = Kili(api_key="no")
-
-        assert "failed with API key: no" in str(e_info)

@@ -582,7 +582,10 @@ def test_export_service_layout(
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
 @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
-def test_export_service_errors(mocket_asset, mocker_project, name, test_case, error):
+@patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
+def test_export_service_errors(
+    mocker_asset_count, mocker_asset, mocker_project, name, test_case, error
+):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
         path_zipfile.parent.mkdir(parents=True, exist_ok=True)
