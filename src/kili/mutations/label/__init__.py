@@ -9,7 +9,6 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 
 from kili import services
-from kili.enums import LabelType
 from kili.helpers import deprecate, format_result
 from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (
@@ -86,9 +85,11 @@ class MutationsLabel:
                     " your calls by models."
                 )
             warnings.warn(
-                "The use of `model_name_array` is deprecated. Creating predictions from different"
-                " models is not supported anymore. Please use `model_name` argument instead to"
-                " provide the predictions model name.",
+                (
+                    "The use of `model_name_array` is deprecated. Creating predictions from"
+                    " different models is not supported anymore. Please use `model_name` argument"
+                    " instead to provide the predictions model name."
+                ),
                 DeprecationWarning,
             )
             model_name = model_name_array[0]
@@ -176,7 +177,7 @@ class MutationsLabel:
             "where": {"id": label_asset_id},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
-        return format_result("data", result, Label)
+        return format_result("data", result)
 
     @typechecked
     def append_labels(  # pylint: disable=dangerous-default-value
@@ -186,7 +187,7 @@ class MutationsLabel:
         author_id_array: Optional[List[str]] = None,
         seconds_to_label_array: Optional[List[int]] = None,
         model_name: Optional[str] = None,
-        label_type: LabelType = "DEFAULT",
+        label_type: str = "DEFAULT",
         project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
@@ -282,7 +283,7 @@ class MutationsLabel:
             "jsonResponse": formatted_json_response,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
-        return format_result("data", result, Label)
+        return format_result("data", result)
 
     @typechecked
     def create_honeypot(
@@ -324,4 +325,4 @@ class MutationsLabel:
             "where": {"id": asset_id},
         }
         result = self.auth.client.execute(GQL_CREATE_HONEYPOT, variables)
-        return format_result("data", result, Label)
+        return format_result("data", result)

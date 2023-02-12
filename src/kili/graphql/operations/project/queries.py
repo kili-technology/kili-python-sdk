@@ -6,7 +6,6 @@ GraphQL Queries of Projects
 from typing import Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.types import Project
 
 
 class ProjectWhere(BaseQueryWhere):
@@ -44,9 +43,6 @@ class ProjectWhere(BaseQueryWhere):
 
 class ProjectQuery(GraphQLQuery):
     """Project query."""
-
-    FORMAT_TYPE = Project
-    FRAGMENT_TYPE = Project
 
     @staticmethod
     def query(fragment):

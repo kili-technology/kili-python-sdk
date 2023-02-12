@@ -258,7 +258,7 @@ class MutationsAsset:
             generate_variables,
             GQL_UPDATE_PROPERTIES_IN_ASSETS,
         )
-        formated_results = [format_result("data", result, Asset) for result in results]
+        formated_results = [format_result("data", result) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
@@ -316,7 +316,7 @@ class MutationsAsset:
             generate_variables,
             GQL_UPDATE_PROPERTIES_IN_ASSETS,
         )
-        formated_results = [format_result("data", result, Asset) for result in results]
+        formated_results = [format_result("data", result) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
@@ -368,7 +368,7 @@ class MutationsAsset:
             GQL_DELETE_MANY_FROM_DATASET,
             last_batch_callback=verify_last_batch,
         )
-        return format_result("data", results[0], Asset)
+        return format_result("data", results[0])
 
     @typechecked
     def add_to_review(

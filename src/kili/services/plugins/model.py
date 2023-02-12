@@ -1,11 +1,10 @@
 """Develop Plugins for Kili"""
 
 import logging
-from typing import Optional
+from typing import Dict, Optional
 
 from kili.client import Kili
 from kili.services.plugins.helpers import get_logger
-from kili.types import Label
 
 
 class PluginCore:
@@ -40,7 +39,7 @@ class PluginCore:
 
     def on_submit(
         self,
-        label: Label,
+        label: Dict,
         asset_id: str,
     ) -> None:
         """
@@ -67,7 +66,7 @@ class PluginCore:
 
     def on_review(
         self,
-        label: Label,
+        label: Dict,
         asset_id: str,
     ) -> None:
         """

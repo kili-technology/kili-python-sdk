@@ -7,7 +7,6 @@ from typing import List, Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 from kili.orm import Asset as AssetFormatType
-from kili.types import Asset
 
 
 class AssetWhere(BaseQueryWhere):
@@ -103,9 +102,6 @@ class AssetWhere(BaseQueryWhere):
 
 class AssetQuery(GraphQLQuery):
     """Asset query."""
-
-    FORMAT_TYPE = AssetFormatType
-    FRAGMENT_TYPE = Asset
 
     @staticmethod
     def query(fragment):

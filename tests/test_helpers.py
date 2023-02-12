@@ -1,8 +1,7 @@
 import json
-from typing import List
+from typing import Dict
 
 from kili.helpers import format_result
-from kili.orm import Asset
 
 
 def test_format_result_no_type_conversion_1():
@@ -46,22 +45,22 @@ def test_format_result_formatted_json_is_list():
             }
         ]
     }
-    ret = format_result("data", result, _object=List[Asset])
+    ret = format_result("data", result)
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Asset)
+    assert isinstance(ret[0], Dict)
 
 
 def test_format_result_legacy_orm_objects():
     result = r'{"data":[{"id": "clbp1ozzb12345678cl9l85ci"}]}'
     result = json.loads(result)
-    ret = format_result("data", result, Asset)
+    ret = format_result("data", result)
     assert len(ret) == 1
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Asset)
+    assert isinstance(ret[0], Dict)
 
 
 def test_format_result_with_type_conversion_int():
     result = r'{"data":400}'
     result = json.loads(result)
-    ret = format_result("data", result, int)
+    ret = format_result("data", result)
     assert isinstance(ret, int)

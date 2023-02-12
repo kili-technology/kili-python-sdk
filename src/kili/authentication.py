@@ -1,6 +1,7 @@
 """API authentication module"""
 import warnings
 from datetime import datetime, timedelta
+from typing import Dict
 
 import requests
 
@@ -10,7 +11,6 @@ from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
-from kili.types import User
 
 from .exceptions import AuthenticationFailed, UserNotFoundError
 
@@ -34,7 +34,7 @@ class KiliAuth:
 
     def __init__(
         self, api_key: str, api_endpoint: str, client_name: GraphQLClientName, verify=True
-    ):
+    ) -> None:
         self.api_key = api_key
         self.api_endpoint = api_endpoint
         self.client_name = client_name
@@ -64,7 +64,7 @@ class KiliAuth:
         self.user_id = user["id"]
         self.user_email = user["email"]
 
-    def check_versions_match(self):
+    def check_versions_match(self) -> str:
         """Check that the versions of Kili Python SDK and Kili API are the same
 
         Args:
@@ -81,7 +81,7 @@ class KiliAuth:
             warnings.warn(message, UserWarning)
         return version
 
-    def check_api_key_valid(self):
+    def check_api_key_valid(self) -> None:
         """Check that the api_key provided is valid"""
         response = requests.post(
             url=self.api_endpoint,
@@ -99,9 +99,6 @@ class KiliAuth:
         if response.status_code == 200 and "email" in response.text and "id" in response.text:
             return
 
-        if response.status_code == 401:
-            raise AuthenticationFailed(api_key=self.api_key, api_endpoint=self.api_endpoint)
-
         raise AuthenticationFailed(
             api_key=self.api_key,
             api_endpoint=self.api_endpoint,
@@ -111,7 +108,7 @@ class KiliAuth:
             ),
         )
 
-    def check_expiry_of_key_is_close(self):
+    def check_expiry_of_key_is_close(self) -> None:
         """Check that the expiration date of the api_key is not too close.
 
         Args:
@@ -136,7 +133,7 @@ class KiliAuth:
                 You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning)
 
-    def get_user(self) -> User:
+    def get_user(self) -> Dict:
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
         user = format_result("data", result)

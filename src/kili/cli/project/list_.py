@@ -54,9 +54,11 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     )
     projects = pd.DataFrame(projects)
     projects["progress"] = projects.apply(
-        lambda x: round((1 - x["numberOfRemainingAssets"] / x["numberOfAssets"]) * 100, 1)
-        if x["numberOfAssets"] != 0
-        else np.nan,
+        lambda x: (
+            round((1 - x["numberOfRemainingAssets"] / x["numberOfAssets"]) * 100, 1)
+            if x["numberOfAssets"] != 0
+            else np.nan
+        ),
         axis=1,
     )
 
@@ -77,7 +79,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     projects = projects[["TITLE", "ID", "PROGRESS", "DESCRIPTION"]]
     print(
         tabulate(
-            projects,
+            projects,  # type: ignore
             headers="keys",
             tablefmt=tablefmt,
             showindex=False,

@@ -70,7 +70,7 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     kili,
     project_id: Optional[str],
     labels: List[Dict],
-    label_type: LabelType,
+    label_type: str,
     model_name: Optional[str] = None,
     disable_tqdm: bool = False,
 ) -> List:

@@ -5,7 +5,6 @@ from unittest import TestCase
 from unittest.mock import MagicMock, call
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
-from kili.types import Label
 
 NUMBER_OBJECT_IN_DB = 250
 
@@ -18,9 +17,6 @@ def mocked_client_execute(query, payload):
 
 
 class FakeQuery(GraphQLQuery):
-    FORMAT_TYPE = Label
-    FRAGMENT_TYPE = Label
-
     @staticmethod
     def query(_):
         return "object_query"

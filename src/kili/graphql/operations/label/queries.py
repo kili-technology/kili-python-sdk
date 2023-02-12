@@ -6,8 +6,6 @@ GraphQL Queries of Labels
 from typing import List, Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.orm import Label as LabelFormatType
-from kili.types import Label
 
 
 class LabelWhere(BaseQueryWhere):
@@ -81,9 +79,6 @@ class LabelWhere(BaseQueryWhere):
 
 class LabelQuery(GraphQLQuery):
     """Label query."""
-
-    FORMAT_TYPE = LabelFormatType
-    FRAGMENT_TYPE = Label
 
     @staticmethod
     def query(fragment):

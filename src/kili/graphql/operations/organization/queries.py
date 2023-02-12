@@ -8,7 +8,6 @@ from typing import Dict, Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 from kili.helpers import format_result
-from kili.types import Organization
 
 
 class OrganizationWhere(BaseQueryWhere):
@@ -62,9 +61,6 @@ class OrganizationMetricsWhere(BaseQueryWhere):
 
 class OrganizationQuery(GraphQLQuery):
     """Organization query."""
-
-    FORMAT_TYPE = Organization
-    FRAGMENT_TYPE = Organization
 
     @staticmethod
     def query(fragment):

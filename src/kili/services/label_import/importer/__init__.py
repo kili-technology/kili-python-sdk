@@ -87,7 +87,7 @@ class AbstractLabelImporter(ABC):
         self,
         project_id: Optional[str],
         labels: List[Dict],
-        label_type: LabelType,
+        label_type: str,
         model_name: Optional[str] = None,
     ) -> List:
         """
@@ -120,7 +120,7 @@ class AbstractLabelImporter(ABC):
                     "where": {"idIn": [label["assetID"] for label in batch_labels]},
                 }
                 batch_result = self.kili.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
-                result.extend(format_result("data", batch_result, Label))
+                result.extend(format_result("data", batch_result))
                 pbar.update(len(batch_labels))
         return result
 
