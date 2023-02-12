@@ -10,11 +10,10 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Callable, Dict, List, Optional, TypeVar, Union
 
 import pyparsing as pp
 import requests
-from typing_extensions import get_args, get_origin
 
 from kili.constants import mime_extensions_for_IV2
 

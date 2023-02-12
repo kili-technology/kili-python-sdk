@@ -3,13 +3,11 @@ GraphQL module
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
+from typing import Callable, Dict, Generator, List, NamedTuple, Optional
 
 from tqdm import tqdm
 from typeguard import typechecked
-from typing_extensions import TypedDict, is_typeddict
 
-from kili.exceptions import NonExistingFieldError
 from kili.helpers import format_result
 from kili.utils.pagination import api_throttle
 

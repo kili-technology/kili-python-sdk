@@ -6,7 +6,6 @@ GraphQL Queries of Assets
 from typing import List, Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.orm import Asset as AssetFormatType
 
 
 class AssetWhere(BaseQueryWhere):

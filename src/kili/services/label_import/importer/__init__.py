@@ -12,7 +12,6 @@ import yaml
 
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.helpers import format_result, get_file_paths_to_upload
-from kili.orm import Label
 from kili.services.helpers import (
     get_external_id_from_file_path,
     infer_ids_from_external_ids,
@@ -28,7 +27,7 @@ from kili.services.label_import.parser import (
     YoloLabelParser,
 )
 from kili.services.label_import.types import Classes, LabelFormat
-from kili.services.types import LabelType, LogLevel, ProjectId
+from kili.services.types import LogLevel, ProjectId
 from kili.utils import pagination, tqdm
 
 
