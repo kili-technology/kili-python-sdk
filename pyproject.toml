@@ -1,5 +1,6 @@
 [tool.black]
 line-length = 100
+preview = true
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -8,12 +9,11 @@ exclude = '''
   | \.mypy_cache
 )/
 '''
+
 [tool.isort]
 profile = "black"
 py_version=37
 known_first_party= ['kili']
-
-
 
 [tool.pyright]
 exclude = [
