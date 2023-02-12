@@ -24,7 +24,9 @@ def test_wrong_api_key(mocked_requests):
     """test obfuscation of api key"""
     with patch.dict(os.environ):
         os.environ.pop("KILI_API_KEY", None)
-        with pytest.raises(AuthenticationFailed, match=r"failed with API key: \*{9}_key"):
+        with pytest.raises(
+            AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
+        ):
             _ = Kili(api_key="wrong_api_key")
 
 
