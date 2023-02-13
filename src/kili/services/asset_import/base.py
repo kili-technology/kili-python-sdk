@@ -138,7 +138,7 @@ class BaseBatchImporter:
                 assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
                 where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
                 nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
-                if len(assets) != nb_assets_in_kili:
+                if len(assets_ids) != nb_assets_in_kili:
                     raise BatchImportError(
                         "Number of assets to upload is not equal to number of assets uploaded in"
                         " Kili."
