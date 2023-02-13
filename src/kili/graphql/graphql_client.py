@@ -60,7 +60,7 @@ class GraphQLClient:
             method="POST",
             # can add other requests kwargs here
         )
-        self.gql_client = Client(transport=gql_transport, fetch_schema_from_transport=True)
+        self._gql_client = Client(transport=gql_transport, fetch_schema_from_transport=True)
 
     @typechecked
     def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
@@ -83,7 +83,7 @@ class GraphQLClient:
             variables: the payload of the query
         """
         document = query if isinstance(query, DocumentNode) else gql(query)
-        result = self.gql_client.execute(document=document, variable_values=variables)
+        result = self._gql_client.execute(document=document, variable_values=variables)
         return result
 
 

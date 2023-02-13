@@ -22,7 +22,7 @@ def test_gql_bad_query_local_validation(query):
     kili = Kili()  # fetch schema from kili server
 
     mocked_transport_execute = mock.MagicMock()
-    kili.auth.client.gql_client.transport.execute = mocked_transport_execute  # type: ignore
+    kili.auth.client._gql_client.transport.execute = mocked_transport_execute  # type: ignore
 
     with pytest.raises(GraphQLError):
         kili.auth.client.execute(query)
@@ -42,10 +42,10 @@ def test_gql_bad_query_remote_validation():
     }
     """
 
-    kili.auth.client.gql_client.schema = None
-    kili.auth.client.gql_client.fetch_schema_from_transport = False
+    kili.auth.client._gql_client.schema = None
+    kili.auth.client._gql_client.fetch_schema_from_transport = False
     mocked_validate = mock.MagicMock()
-    kili.auth.client.gql_client.validate = mocked_validate
+    kili.auth.client._gql_client.validate = mocked_validate
 
     with pytest.raises(TransportQueryError, match="Cannot query field"):
         kili.auth.client.execute(query)
