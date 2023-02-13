@@ -22,7 +22,7 @@ def test_gql_bad_query_local_validation(query):
     kili = Kili()  # fetch schema from kili server
 
     mocked_transport_execute = mock.MagicMock()
-    kili.auth.client.gql_transport.execute = mocked_transport_execute
+    kili.auth.client.gql_client.transport.execute = mocked_transport_execute
 
     with pytest.raises(GraphQLError):
         kili.auth.client.execute(query)

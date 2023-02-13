@@ -42,7 +42,7 @@ class GraphQLClient:
     ) -> None:
         self.endpoint = endpoint
 
-        self.gql_transport = RequestsHTTPTransport(
+        gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers={
                 "Authorization": f"X-API-Key: {api_key}",
@@ -60,7 +60,7 @@ class GraphQLClient:
             method="POST",
             # can add other requests kwargs here
         )
-        self.gql_client = Client(transport=self.gql_transport, fetch_schema_from_transport=True)
+        self.gql_client = Client(transport=gql_transport, fetch_schema_from_transport=True)
 
     @typechecked
     def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:

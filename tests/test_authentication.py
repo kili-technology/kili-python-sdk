@@ -10,12 +10,14 @@ from kili.graphql.graphql_client import GraphQLClientName
 
 @patch("kili.authentication.requests")
 @patch.object(KiliAuth, "check_versions_match", side_effect=Exception)
-def test_warn_cant_check_kili_version(mocked_requests, mocked_check_versions_match):
-    with pytest.raises(Exception):  # TODO: fix that
-        with pytest.warns(
-            UserWarning, match="We could not check the version, there might be a version"
-        ):
-            _ = KiliAuth(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
+@patch.object(KiliAuth, "check_api_key_valid", return_value=True)
+@patch.object(KiliAuth, "check_expiry_of_key_is_close", return_value=True)
+@patch.object(KiliAuth, "get_user", return_value={"id": "id", "email": "email"})
+def test_warn_cant_check_kili_version(*_):
+    with pytest.warns(
+        UserWarning, match="We could not check the version, there might be a version"
+    ):
+        _ = KiliAuth(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
 
 
 @patch("kili.authentication.requests")
