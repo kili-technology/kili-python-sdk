@@ -7,8 +7,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
-from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_fixed
+from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.authentication import KiliAuth
@@ -58,6 +57,7 @@ class MutationsAsset:
         json_content_array: Optional[List[List[Union[dict, str]]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
+        wait_until_availability: bool = True,
     ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
@@ -93,6 +93,8 @@ class MutationsAsset:
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
+            wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
+                If `False`, the function will return faster but the assets might not be fully processed by the server.
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -131,7 +133,11 @@ class MutationsAsset:
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         result = import_assets(
-            self.auth, project_id=project_id, assets=assets, disable_tqdm=disable_tqdm
+            self.auth,
+            project_id=project_id,
+            assets=assets,
+            disable_tqdm=disable_tqdm,
+            verify=wait_until_availability,
         )
         return result
 
@@ -345,13 +351,13 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been deleted."""
-            asset_ids = last_batch["asset_ids"]
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_kili = AssetQuery(self.auth.client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["data"]["id"],
@@ -397,7 +403,7 @@ class MutationsAsset:
                     asset_ids=[
                         "ckg22d81r0jrg0885unmuswj8",
                         "ckg22d81s0jrh0885pdxfd03n",
-                        ],
+                    ],
                 )
         """
         asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
@@ -408,16 +414,20 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
-            asset_ids = last_batch["asset_ids"]
+            try:
+                project_id = results[0]["data"]["data"]["id"]
+            except TypeError:
+                return  # No assets have changed status
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_review = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=project_id,
                     asset_id_in=asset_ids,
                     status_in=["TO_REVIEW"],
                 )
@@ -433,6 +443,8 @@ class MutationsAsset:
             last_batch_callback=verify_last_batch,
         )
         result = format_result("data", results[0])
+        # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
+        # it happens when no assets have been sent to review
         if isinstance(result, dict) and "id" in result:
             assets_in_review = AssetQuery(self.auth.client)(
                 AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
@@ -477,13 +489,13 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent back to queue."""
-            asset_ids = last_batch["asset_ids"]
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_queue = AssetQuery(self.auth.client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["data"]["id"],

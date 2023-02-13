@@ -168,7 +168,7 @@ def get_download_path(url: str, external_id: str, local_dir_path: Path) -> Path:
     return local_dir_path.resolve()
 
 
-@retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2))
+@retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2), reraise=True)
 def download_file(url: str, external_id: str, local_dir_path: Path) -> str:
     """
     Download a file by streming chunks of 1Mb
