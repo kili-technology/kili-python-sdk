@@ -130,12 +130,12 @@ class BaseBatchImporter:
             )
         for attempt in Retrying(
             retry=retry_if_exception_type(BatchImportError),
-            wait=wait_exponential(multiplier=1, min=1, max=16),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             before_sleep=RetryLongWaitWarner(logger_func=logger_func, warn_message=log_message),
             reraise=True,
         ):
             with attempt:
-                assets_ids = [asset["id"] for asset in assets]
+                assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
                 where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
                 nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
                 if len(assets) != nb_assets_in_kili:

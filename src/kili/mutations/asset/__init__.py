@@ -357,7 +357,7 @@ class MutationsAsset:
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been deleted."""
-            asset_ids = last_batch["asset_ids"]
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_kili = AssetQuery(self.auth.client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["data"]["id"],
@@ -424,7 +424,7 @@ class MutationsAsset:
                 project_id = results[0]["data"]["data"]["id"]
             except TypeError:
                 return  # No assets have changed status
-            asset_ids = last_batch["asset_ids"]
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_review = AssetQuery(self.auth.client).count(
                 AssetWhere(
                     project_id=project_id,
@@ -495,7 +495,7 @@ class MutationsAsset:
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent back to queue."""
-            asset_ids = last_batch["asset_ids"]
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_queue = AssetQuery(self.auth.client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["data"]["id"],
