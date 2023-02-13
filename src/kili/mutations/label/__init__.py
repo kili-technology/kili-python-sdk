@@ -238,13 +238,7 @@ class MutationsLabel:
                 "seconds_to_label": seconds_to_label,
                 "author_id": author_id,
             }
-            for (
-                asset_id,
-                asset_external_id,
-                json_response,
-                seconds_to_label,
-                author_id,
-            ) in list(
+            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in list(
                 zip(
                     asset_id_array or [None] * len(json_response_array),
                     asset_external_id_array or [None] * len(json_response_array),
