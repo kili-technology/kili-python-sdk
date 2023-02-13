@@ -73,7 +73,7 @@ class ImportTestCase(TestCase):
             {"content": "https://hosted-data", "external_id": external_id}
             for external_id in external_id_array
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.auth, self.project_id, assets, verify=False)
         expected_parameters_1 = self.get_expected_sync_call(
             ["https://hosted-data"] * IMPORT_BATCH_SIZE,
             [external_id_array[i] for i in range(IMPORT_BATCH_SIZE)],

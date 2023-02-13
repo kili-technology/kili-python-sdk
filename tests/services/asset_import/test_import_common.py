@@ -37,7 +37,7 @@ class TestContentType(ImportTestCase):
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
         with self.assertRaises(MimeTypeError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
     @patch.object(AssetQuery, "count", return_value=1)
@@ -45,7 +45,7 @@ class TestContentType(ImportTestCase):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
     @patch.object(AssetQuery, "count", return_value=1)
@@ -53,7 +53,7 @@ class TestContentType(ImportTestCase):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
     @patch.object(AssetQuery, "count", return_value=3)
