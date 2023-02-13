@@ -21,10 +21,14 @@ INPUT_TYPE = [
 mime_extensions = {
     "Audio": "audio/x-flac,audio/mpeg,video/mp4",
     "Csv": "text/csv",
-    "Video": "video/mp4,video/x-matroska,video/3gpp,video/x-msvideo,"
-    "video/x-m4v,video/quicktime,video/webm",
-    "Image": "image/jpeg,image/png,image/bmp,image/gif,image/webp,image/x-icon,"
-    "image/tiff,image/vnd.microsoft.icon,image/svg+xml,image/avif,image/apng",
+    "Video": (
+        "video/mp4,video/x-matroska,video/3gpp,video/x-msvideo,"
+        "video/x-m4v,video/quicktime,video/webm"
+    ),
+    "Image": (
+        "image/jpeg,image/png,image/bmp,image/gif,image/webp,image/x-icon,"
+        "image/tiff,image/vnd.microsoft.icon,image/svg+xml,image/avif,image/apng"
+    ),
     "Pdf": "application/pdf",
     "Text": "text/plain",
     "TimeSeries": "text/csv",
