@@ -28,7 +28,6 @@ def test_wrong_plugin_path(kili):
 
 def test_no_pluginhandler_when_creating_zip_from_file(kili):
     with TemporaryDirectory() as tmp_dir:
-
         plugin_path = tmp_dir / "plugin.py"
 
         with plugin_path.open("w", encoding="utf-8") as file:
@@ -56,7 +55,6 @@ def test_zip_creation_from_file(kili):
 
 def test_no_main_when_creating_zip_from_folder(kili):
     with TemporaryDirectory() as tmp_dir:
-
         plugin_path = tmp_dir / "plugin_folder"
         plugin_path.mkdir()
 
@@ -70,7 +68,6 @@ def test_no_main_when_creating_zip_from_folder(kili):
 
 def test_no_pluginhandler_when_creating_zip_from_folder(kili):
     with TemporaryDirectory() as tmp_dir:
-
         plugin_path = tmp_dir / "plugin_folder"
         plugin_path.mkdir()
 
@@ -84,7 +81,6 @@ def test_no_pluginhandler_when_creating_zip_from_folder(kili):
 
 def test_zip_creation_from_folder(kili):
     with TemporaryDirectory() as tmp_dir:
-
         plugin_path = Path(os.path.join("tests", "services", "plugins", "plugin_folder"))
 
         PluginUploader(kili, str(plugin_path), PLUGIN_NAME, False)._create_zip(tmp_dir)

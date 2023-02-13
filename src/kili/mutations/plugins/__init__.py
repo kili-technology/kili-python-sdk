@@ -53,7 +53,8 @@ class MutationsPlugins:
 
         if kwargs.get("file_path"):
             raise TypeError(
-                '"file_path" has been deprecated for "plugin_path", please use "plugin_path" instead'
+                '"file_path" has been deprecated for "plugin_path", please use "plugin_path"'
+                " instead"
             )
 
         if not plugin_path:
