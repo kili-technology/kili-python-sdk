@@ -249,7 +249,7 @@ class MutationsProject:
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
         result = format_result("data", result)
 
-        # We check during 1min for the project to be created
+        # We check during 60s for the project to be created
         for attempt in Retrying(
             stop=stop_after_delay(60),
             wait=wait_fixed(1),

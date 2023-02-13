@@ -12,7 +12,7 @@ from uuid import uuid4
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
-from tenacity.wait import wait_fixed
+from tenacity.wait import wait_exponential
 
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
@@ -130,7 +130,7 @@ class BaseBatchImporter:
             )
         for attempt in Retrying(
             retry=retry_if_exception_type(BatchImportError),
-            wait=wait_fixed(2),
+            wait=wait_exponential(multiplier=1, min=1, max=16),
             before_sleep=RetryLongWaitWarner(logger_func=logger_func, warn_message=log_message),
             reraise=True,
         ):

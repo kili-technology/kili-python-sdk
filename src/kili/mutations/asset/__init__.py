@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
-from tenacity.wait import wait_fixed
+from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.authentication import KiliAuth
@@ -205,9 +205,12 @@ class MutationsAsset:
         """
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
-                "The use of `external_ids` argument has changed. It is now used to identify which"
-                " properties of which assets to update. Please use"
-                " `kili.change_asset_external_ids()` method instead to change asset external IDs.",
+                (
+                    "The use of `external_ids` argument has changed. It is now used to identify"
+                    " which properties of which assets to update. Please use"
+                    " `kili.change_asset_external_ids()` method instead to change asset external"
+                    " IDs."
+                ),
                 DeprecationWarning,
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
@@ -348,7 +351,7 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
@@ -411,7 +414,7 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
@@ -486,7 +489,7 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
