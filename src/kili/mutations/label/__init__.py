@@ -176,8 +176,8 @@ class MutationsLabel:
             },
             "where": {"id": label_asset_id},
         }
-        result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables, Label)
-        return format_result("data", result)
+        result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
+        return format_result("data", result, Label)
 
     @typechecked
     def append_labels(  # pylint: disable=dangerous-default-value
@@ -282,8 +282,8 @@ class MutationsLabel:
             "modelName": model_name,
             "jsonResponse": formatted_json_response,
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables, Label)
-        return format_result("data", result)
+        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
+        return format_result("data", result, Label)
 
     @typechecked
     def create_honeypot(

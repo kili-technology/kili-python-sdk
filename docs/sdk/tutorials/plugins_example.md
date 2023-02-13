@@ -107,9 +107,9 @@ To iterate on the plugin code, you can refer to the plugins_development.ipynb no
 
 ```python
 from kili.plugins import PluginCore
-from kili.types import Label
+from typing import Dict
 
-def check_rules_on_label(label: Label):
+def check_rules_on_label(label: Dict):
     #custom methods
     print('Custom method - checking number of bboxes')
 
@@ -127,7 +127,7 @@ class PluginHandler(PluginCore):
     Custom plugin instance
     """
 
-    def on_submit(self, label: Label, asset_id: str) -> None:
+    def on_submit(self, label: Dict, asset_id: str) -> None:
         """
         Dedicated handler for Submit action
         """
