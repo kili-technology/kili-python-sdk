@@ -325,4 +325,4 @@ class MutationsLabel:
             "where": {"id": asset_id},
         }
         result = self.auth.client.execute(GQL_CREATE_HONEYPOT, variables)
-        return format_result("data", result)
+        return format_result("data", result, Label)
