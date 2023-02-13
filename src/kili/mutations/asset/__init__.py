@@ -421,7 +421,7 @@ class MutationsAsset:
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
             try:
-                project_id = results[0]["data"]["data"]["id"]
+                project_id = results[0]["data"]["id"]
             except TypeError:
                 return  # No assets have changed status
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
