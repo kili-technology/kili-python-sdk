@@ -8,9 +8,8 @@ import pytest
 from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
-from kili.graphql.operations.label.queries import LabelQuery
+from kili.exceptions import GraphQLError
 from kili.helpers import RetryLongWaitWarner, format_result
-from kili.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.orm import Asset
 from tests.services.export.fakes.fake_kili import FakeAuth
 
@@ -98,22 +97,3 @@ def test_retry_long_wait_warner():
 
     with pytest.warns(match="warn_message_defined_by_user"):
         MyTestClass().my_method_takes_some_time()
-
-
-def test_get_labels_asset_ids_map():
-    with patch.object(
-        LabelQuery,
-        "__call__",
-        return_value=iter(
-            [
-                {"id": "label_id_1", "labelOf": {"id": "asset_id_1"}},
-                {"id": "label_id_2", "labelOf": {"id": "asset_id_1"}},
-            ]
-        ),
-    ):
-        assert get_labels_asset_ids_map(
-            FakeAuth, "project_id", ["label_id_1", "label_id_2"]  # type: ignore
-        ) == {
-            "label_id_1": "asset_id_1",
-            "label_id_2": "asset_id_1",
-        }

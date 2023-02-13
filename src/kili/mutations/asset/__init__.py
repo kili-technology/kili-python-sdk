@@ -7,8 +7,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
-from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_fixed
+from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.authentication import KiliAuth
@@ -372,13 +371,13 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been deleted."""
-            asset_ids = last_batch["asset_ids"]
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_kili = AssetQuery(self.auth.client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["data"]["id"],
@@ -435,16 +434,20 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
-            asset_ids = last_batch["asset_ids"]
+            try:
+                project_id = results[0]["data"]["data"]["id"]
+            except TypeError:
+                return  # No assets have changed status
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_review = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=project_id,
                     asset_id_in=asset_ids,
                     status_in=["TO_REVIEW"],
                 )
@@ -506,13 +509,13 @@ class MutationsAsset:
             return {"where": {"idIn": batch["asset_ids"]}}
 
         @retry(
-            stop=stop_after_delay(5),
-            wait=wait_fixed(1),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
             retry=retry_if_exception_type(MutationError),
+            reraise=True,
         )
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent back to queue."""
-            asset_ids = last_batch["asset_ids"]
+            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_queue = AssetQuery(self.auth.client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["data"]["id"],

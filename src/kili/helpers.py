@@ -343,3 +343,31 @@ def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: bool):
             " generator return type"
         )
     return disable_tqdm
+
+
+class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
+    """Class that warns when retry takes too long."""
+
+    def __init__(
+        self,
+        warn_message: str,
+        logger_func: Callable,
+        warn_after: float = 10,
+    ) -> None:
+        """Class that warns when retry takes too long.
+
+        Args:
+            warn_message: custom warning message. If not provided, a default message is used.
+            logger_func: function to log the message (print, warning, logger.warning, etc.)
+            warn_after: time in seconds after which the warning is raised.
+        """
+        self.warn_message = warn_message
+        self.logger_func = logger_func
+        self.warn_after = warn_after
+
+        self.warned = False
+
+    def __call__(self, retry_state: tenacity.RetryCallState):
+        if not self.warned and float(retry_state.outcome_timestamp or 0) > self.warn_after:
+            self.logger_func(self.warn_message)
+            self.warned = True

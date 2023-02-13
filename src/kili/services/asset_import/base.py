@@ -10,10 +10,9 @@ from pathlib import Path
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 from uuid import uuid4
 
-from tenacity import retry
+from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
-from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_fixed
+from tenacity.wait import wait_exponential
 
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
@@ -113,22 +112,37 @@ class BaseBatchImporter:
         self.pbar.update(n=len(assets))
         return result_batch
 
-    @retry(
-        retry=retry_if_exception_type(BatchImportError),
-        wait=wait_fixed(1),
-        stop=stop_after_delay(5),
-    )
     def verify_batch_imported(self, assets: List):
         """
         Verifies that the batch has been imported successfully
         """
-        assets_ids = [asset["id"] for asset in assets]
-        where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
-        nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
-        if len(assets) != nb_assets_in_kili:
-            raise BatchImportError(
-                "Number of assets to upload is not equal to number of assets uploaded in Kili."
+        if self.is_asynchronous:
+            logger_func = self.logger.info
+            log_message = (
+                "Import of assets is taking a long time to complete. This maybe be due to files"
+                " being processed by the server."
             )
+        else:
+            logger_func = self.logger.warning
+            log_message = (
+                "Import of assets is taking a long time to complete. This may be due to a large"
+                " number of assets to be processed by the server."
+            )
+        for attempt in Retrying(
+            retry=retry_if_exception_type(BatchImportError),
+            wait=wait_exponential(multiplier=1, min=1, max=8),
+            before_sleep=RetryLongWaitWarner(logger_func=logger_func, warn_message=log_message),
+            reraise=True,
+        ):
+            with attempt:
+                assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
+                where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
+                nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
+                if len(assets_ids) != nb_assets_in_kili:
+                    raise BatchImportError(
+                        "Number of assets to upload is not equal to number of assets uploaded in"
+                        " Kili."
+                    )
 
     def add_ids(self, assets: List[AssetLike]):
         """
@@ -495,6 +509,7 @@ class BaseAssetImporter:
 
         responses = []
         for i, batch_assets in enumerate(batch_generator):
-            verify = i == (len(batch_generator) - 1)  # check that last batch is imported
+            # check last batch only
+            verify = i == (len(batch_generator) - 1) and self.verify
             responses.append(batch_importer.import_batch(batch_assets, verify))
         return responses[-1]
