@@ -1,6 +1,12 @@
 """Exceptions of the package."""
 from typing import Optional
 
+import graphql
+from gql.transport import exceptions
+
+TransportQueryError = exceptions.TransportQueryError
+GraphQLError = graphql.GraphQLError
+
 
 class NotFound(Exception):
     """Used when a given object is not found in Kili"""
