@@ -52,7 +52,7 @@ def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
     return [*itertools.chain(*map(get_file_batch_urls, file_batches))]
 
 
-@retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2))
+@retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)
 def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str):
     """upload data in buckets' signed URL via REST
     Args:
