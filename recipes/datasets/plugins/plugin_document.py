@@ -17,7 +17,6 @@ class PluginHandler(PluginCore):
         mid_issues_array = []
 
         for bbox in label["jsonResponse"]["JOB_0"]["annotations"]:
-
             # Rule 1 - Check IBAN starts by FR
             if bbox["categories"][0]["name"] == "IBAN":
                 iban = bbox["children"]["TRANSCRIPTION_JOB"]["text"]
@@ -49,7 +48,6 @@ class PluginHandler(PluginCore):
         n_issues = len(text_issues_array)
 
         for i in range(n_issues):
-
             self.kili.append_to_issues(
                 label_id=label["id"],
                 project_id=project_id,

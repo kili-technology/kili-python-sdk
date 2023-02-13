@@ -127,5 +127,13 @@ class QueriesIssue:
             The number of issues with the parameters provided
 
         """
+        if not project_id:
+            warnings.warn(
+                (
+                    "It is now required to provide a project_id when calling count_issues. This"
+                    " change will be enforced from 01/02/2023"
+                ),
+                DeprecationWarning,
+            )
         where = IssueWhere(project_id=project_id)
         return IssueQuery(self.auth.client).count(where)

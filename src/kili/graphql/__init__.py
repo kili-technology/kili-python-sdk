@@ -190,7 +190,8 @@ class GraphQLQuery(ABC):
             except KeyError as exception:
                 raise NonExistingFieldError(
                     f"Cannot query field {field} on object {typed_dict_class.__name__}. Admissible"
-                    " fields are: \n- " + "\n- ".join(type_of_fields.keys())
+                    " fields are: \n- "
+                    + "\n- ".join(type_of_fields.keys())
                 ) from exception
             if isinstance(field, str):
                 fragment += f" {field}"
