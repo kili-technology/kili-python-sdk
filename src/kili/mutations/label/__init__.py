@@ -86,9 +86,11 @@ class MutationsLabel:
                     " your calls by models."
                 )
             warnings.warn(
-                "The use of `model_name_array` is deprecated. Creating predictions from different"
-                " models is not supported anymore. Please use `model_name` argument instead to"
-                " provide the predictions model name.",
+                (
+                    "The use of `model_name_array` is deprecated. Creating predictions from"
+                    " different models is not supported anymore. Please use `model_name` argument"
+                    " instead to provide the predictions model name."
+                ),
                 DeprecationWarning,
             )
             model_name = model_name_array[0]
@@ -237,7 +239,7 @@ class MutationsLabel:
                 "seconds_to_label": seconds_to_label,
                 "author_id": author_id,
             }
-            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id,) in list(
+            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in list(
                 zip(
                     asset_id_array or [None] * len(json_response_array),
                     asset_external_id_array or [None] * len(json_response_array),
