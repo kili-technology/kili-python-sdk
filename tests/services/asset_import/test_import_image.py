@@ -38,7 +38,7 @@ class ImageTestCase(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local image"}]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local image"],
@@ -55,7 +55,7 @@ class ImageTestCase(ImportTestCase):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
@@ -66,7 +66,7 @@ class ImageTestCase(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local tiff image"}]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_async_call(
             ["https://signed_url?id=id"],
             ["local tiff image"],
@@ -86,7 +86,7 @@ class ImageTestCase(ImportTestCase):
             {"content": path_basic, "external_id": "local basic image"},
             {"content": path_tiff, "external_id": "local tiff image"},
         ]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters_sync = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local basic image"],
@@ -106,7 +106,7 @@ class ImageTestCase(ImportTestCase):
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
         self.auth.client.execute.assert_has_calls(calls, any_order=True)
 
-    @patch.object(AssetQuery, "count", return_value=5)
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 
@@ -118,7 +118,7 @@ class ImageTestCase(ImportTestCase):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
@@ -128,4 +128,4 @@ class ImageTestCase(ImportTestCase):
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local image"}]
         with pytest.raises(UploadFromLocalDataForbiddenError):
-            import_assets(self.auth, self.project_id, assets, verify=False)
+            import_assets(self.auth, self.project_id, assets)

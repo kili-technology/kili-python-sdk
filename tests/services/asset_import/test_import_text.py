@@ -37,7 +37,7 @@ class TextTestCase(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local text file"}]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local text file"],
@@ -54,7 +54,7 @@ class TextTestCase(ImportTestCase):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
@@ -63,7 +63,7 @@ class TextTestCase(ImportTestCase):
     @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_raw_text(self, *_):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["raw text"],
@@ -89,7 +89,7 @@ class TextTestCase(ImportTestCase):
             }
         ]
         assets = [{"json_content": json_content, "external_id": "rich text", "id": "unique_id"}]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             [""],
             ["rich text"],
@@ -101,7 +101,7 @@ class TextTestCase(ImportTestCase):
         )
         self.auth.client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetQuery, "count", return_value=5)
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 
@@ -114,12 +114,12 @@ class TextTestCase(ImportTestCase):
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local text file"}]
         with pytest.raises(UploadFromLocalDataForbiddenError):
-            import_assets(self.auth, self.project_id, assets, verify=False)
+            import_assets(self.auth, self.project_id, assets)
 
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets, verify=False)
+        import_assets(self.auth, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )

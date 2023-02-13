@@ -37,7 +37,7 @@ class TestContentType(ImportTestCase):
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
         with self.assertRaises(MimeTypeError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
     @patch.object(AssetQuery, "count", return_value=1)
@@ -45,7 +45,7 @@ class TestContentType(ImportTestCase):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
     @patch.object(AssetQuery, "count", return_value=1)
@@ -53,14 +53,14 @@ class TestContentType(ImportTestCase):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
+            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
-    @patch.object(AssetQuery, "count", return_value=3)
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
         self.auth.client.execute.reset_mock()
-        import_assets(self.auth, self.project_id, assets, disable_tqdm=True, verify=False)
+        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
         self.auth.client.execute.assert_called_once()
         call_args = self.auth.client.execute.call_args[0]
         external_id_array_call = call_args[1]["data"]["externalIDArray"]
