@@ -106,7 +106,7 @@ class ImageTestCase(ImportTestCase):
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
         self.auth.client.execute.assert_has_calls(calls, any_order=True)
 
-    @patch.object(AssetQuery, "count", return_value=5)
+    @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 

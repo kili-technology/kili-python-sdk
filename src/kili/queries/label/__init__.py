@@ -216,6 +216,292 @@ class QueriesLabel:
             return labels_gen
         return list(labels_gen)
 
+    @overload
+    def predictions(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def predictions(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
+        ...
+
+    @typechecked
+    def predictions(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: bool = False,
+    ) -> Iterable[Dict]:
+        # pylint: disable=line-too-long
+        """Get prediction labels from a project based on a set of criteria.
+
+        This method is equivalent to the `kili.labels()` method, but it only returns label of type "PREDICTION".
+
+        Args:
+            project_id: Identifier of the project.
+            asset_id: Identifier of the asset.
+            asset_status_in: Returned labels should have a status that belongs to that list, if given.
+                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
+            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            author_in: Returned labels should have been made by authors in that list, if given.
+                An author can be designated by the first name, the last name, or the first name + last name.
+            created_at: Returned labels should have a label whose creation date is equal to this date.
+            created_at_gte: Returned labels should have a label whose creation date is greater than this date.
+            created_at_lte: Returned labels should have a label whose creation date is lower than this date.
+            fields: All the fields to request among the possible fields for the labels.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+            first: Maximum number of labels to return.
+            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
+            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
+            id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.
+            label_id: Identifier of the label.
+            skip: Number of labels to skip (they are ordered by their date of creation, first to last).
+            user_id: Identifier of the user.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the labels is returned.
+            category_search: Query to filter labels based on the content of their jsonResponse
+
+        Returns:
+            A result object which contains the query if it was successful, else an error message.
+
+        Examples:
+            >>> kili.predictions(project_id=project_id) # returns a list of prediction labels of a project
+        """
+        if fields is None:
+            fields = [
+                "author.email",
+                "author.id",
+                "id",
+                "jsonResponse",
+                "labelType",
+                "modelName",
+            ]
+        return self.labels(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_status_in=asset_status_in,
+            asset_external_id_in=asset_external_id_in,
+            author_in=author_in,
+            created_at=created_at,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
+            fields=fields,
+            first=first,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
+            id_contains=id_contains,
+            label_id=label_id,
+            skip=skip,
+            type_in=["PREDICTION"],
+            user_id=user_id,
+            disable_tqdm=disable_tqdm,
+            category_search=category_search,
+            as_generator=as_generator,  # type: ignore
+        )
+
+    @overload
+    def inferences(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def inferences(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
+        ...
+
+    @typechecked
+    def inferences(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        *,
+        as_generator: bool = False,
+    ) -> Iterable[Dict]:
+        # pylint: disable=line-too-long
+        """Get inference labels from a project based on a set of criteria.
+
+        This method is equivalent to the `kili.labels()` method, but it only returns label of type "INFERENCE".
+
+        Args:
+            project_id: Identifier of the project.
+            asset_id: Identifier of the asset.
+            asset_status_in: Returned labels should have a status that belongs to that list, if given.
+                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
+            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            author_in: Returned labels should have been made by authors in that list, if given.
+                An author can be designated by the first name, the last name, or the first name + last name.
+            created_at: Returned labels should have a label whose creation date is equal to this date.
+            created_at_gte: Returned labels should have a label whose creation date is greater than this date.
+            created_at_lte: Returned labels should have a label whose creation date is lower than this date.
+            fields: All the fields to request among the possible fields for the labels.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+            first: Maximum number of labels to return.
+            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
+            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
+            id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.
+            label_id: Identifier of the label.
+            skip: Number of labels to skip (they are ordered by their date of creation, first to last).
+            user_id: Identifier of the user.
+            disable_tqdm: If `True`, the progress bar will be disabled
+            as_generator: If `True`, a generator on the labels is returned.
+            category_search: Query to filter labels based on the content of their jsonResponse
+
+        Returns:
+            A result object which contains the query if it was successful, else an error message.
+
+        Examples:
+            >>> kili.inferences(project_id=project_id) # returns a list of inference labels of a project
+        """
+        if fields is None:
+            fields = [
+                "author.email",
+                "author.id",
+                "id",
+                "jsonResponse",
+                "labelType",
+                "modelName",
+            ]
+        return self.labels(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_status_in=asset_status_in,
+            asset_external_id_in=asset_external_id_in,
+            author_in=author_in,
+            created_at=created_at,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
+            fields=fields,
+            first=first,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
+            id_contains=id_contains,
+            label_id=label_id,
+            skip=skip,
+            type_in=["INFERENCE"],
+            user_id=user_id,
+            disable_tqdm=disable_tqdm,
+            category_search=category_search,
+            as_generator=as_generator,  # type: ignore
+        )
+
     @typechecked
     def export_labels_as_df(
         self,
