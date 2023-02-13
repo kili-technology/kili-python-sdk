@@ -7,7 +7,6 @@ import pytest
 from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
-from kili.exceptions import GraphQLError
 from kili.helpers import RetryLongWaitWarner, format_result
 from kili.orm import Asset
 
