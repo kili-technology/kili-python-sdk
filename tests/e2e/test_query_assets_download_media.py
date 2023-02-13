@@ -365,13 +365,6 @@ def src_project_big_image(kili):
         )
     os.remove(temp.name)
 
-    count_assets = 0
-    while count_assets < 1:
-        count_assets = kili.count_assets(
-            project_id=project["id"],
-        )
-        time.sleep(2)  # it takes some time for the asset to be created in the backend
-
     yield project
 
     kili.delete_project(project["id"])
