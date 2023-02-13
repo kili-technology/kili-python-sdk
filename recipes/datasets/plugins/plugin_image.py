@@ -38,7 +38,6 @@ class PluginHandler(PluginCore):
             print("Creating an issue...")
 
             for i, _ in enumerate(issues_array):
-
                 self.kili.append_to_issues(
                     label_id=label["id"],
                     project_id=project_id,
