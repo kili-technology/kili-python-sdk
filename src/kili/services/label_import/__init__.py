@@ -15,7 +15,7 @@ from kili.services.label_import.importer import (
 )
 from kili.services.label_import.types import LabelFormat, _ClientInputLabelsValidator
 from kili.services.project import get_project
-from kili.services.types import LogLevel, ProjectId
+from kili.services.types import LabelType, LogLevel, ProjectId
 
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
@@ -70,7 +70,7 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     kili,
     project_id: Optional[str],
     labels: List[Dict],
-    label_type: str,
+    label_type: LabelType,
     model_name: Optional[str] = None,
     disable_tqdm: bool = False,
 ) -> List:

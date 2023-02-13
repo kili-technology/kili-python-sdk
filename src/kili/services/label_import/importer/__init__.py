@@ -28,7 +28,7 @@ from kili.services.label_import.parser import (
     YoloLabelParser,
 )
 from kili.services.label_import.types import Classes, LabelFormat
-from kili.services.types import LogLevel, ProjectId
+from kili.services.types import LabelType, LogLevel, ProjectId
 from kili.utils import pagination, tqdm
 
 
@@ -87,7 +87,7 @@ class AbstractLabelImporter(ABC):
         self,
         project_id: Optional[str],
         labels: List[Dict],
-        label_type: str,
+        label_type: LabelType,
         model_name: Optional[str] = None,
     ) -> List:
         """

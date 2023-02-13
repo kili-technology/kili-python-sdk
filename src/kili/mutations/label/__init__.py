@@ -21,6 +21,7 @@ from kili.services.helpers import (
     assert_all_arrays_have_same_size,
     infer_ids_from_external_ids,
 )
+from kili.services.types import LabelType
 
 
 class MutationsLabel:
@@ -124,7 +125,7 @@ class MutationsLabel:
         author_id: Optional[str] = None,
         label_asset_external_id: Optional[str] = None,
         label_asset_id: Optional[str] = None,
-        label_type: str = "DEFAULT",
+        label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ):
@@ -187,7 +188,7 @@ class MutationsLabel:
         author_id_array: Optional[List[str]] = None,
         seconds_to_label_array: Optional[List[int]] = None,
         model_name: Optional[str] = None,
-        label_type: str = "DEFAULT",
+        label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
