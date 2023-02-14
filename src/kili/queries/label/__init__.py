@@ -644,6 +644,9 @@ class QueriesLabel:
             with_assets: Download the assets in the export.
             external_ids: Optional list of the assets external IDs from which to export the labels.
 
+        !!! warning
+            Export is not allowed for projects connected to a cloud storage.
+
         !!! Info
             The supported formats are:
 
