@@ -2,9 +2,9 @@
 
 
 import pytest
-from gql.transport.exceptions import TransportQueryError
 
 from kili.client import Kili
+from kili.exceptions import TransportQueryError
 
 
 @pytest.fixture

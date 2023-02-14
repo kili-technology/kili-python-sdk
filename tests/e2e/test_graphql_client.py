@@ -4,10 +4,9 @@ Test module for the GraphQL client
 from unittest import mock
 
 import pytest
-from gql.transport.exceptions import TransportQueryError
-from graphql import GraphQLError
 
 from kili.client import Kili
+from kili.exceptions import GraphQLError, TransportQueryError
 
 
 @pytest.mark.parametrize(
