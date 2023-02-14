@@ -77,6 +77,10 @@ def export_labels(
     - Pascal VOC for object detection tasks.
     \b
     \b
+    !!! warning "Cloud storage"
+            Export is not allowed for projects connected to a cloud storage.
+    \b
+    \b
     !!! Examples
         ```
         kili project export \\
