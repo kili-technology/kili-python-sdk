@@ -15,6 +15,7 @@ from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
+    NotExportableAssetError,
 )
 from tests.services.export.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.services.export.fakes.fake_kili import (
@@ -573,6 +574,18 @@ def test_export_service_layout(mocker_ffmpeg, mocker_asset, mocker_project, name
                 },
             },
             NoCompatibleJobError,
+        ),
+        (
+            "YOLO v5 format on an asset on a cloud storage",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_cloud_storage",
+                    "label_format": "yolo_v5",
+                    "split_option": "merged",
+                    "with_assets": True,
+                },
+            },
+            NotExportableAssetError,
         ),
     ],
 )
