@@ -1,6 +1,5 @@
-from typing import Dict
-
 from kili.plugins import PluginCore
+from kili.types import Label
 
 # Aggregate labels labeled from multiple labelers labeling the same assets through consensus
 # Caution - Only working for classification and object detection job - If needed could be extended easily
@@ -35,7 +34,7 @@ class PluginHandler(PluginCore):
 
         return json_response
 
-    def on_submit(self, label: Dict, asset_id: str) -> None:
+    def on_submit(self, label: Label, asset_id: str) -> None:
         """
         Dedicated handler for Submit action
         """

@@ -29,6 +29,10 @@ IGNORED_NOTEBOOKS = [
     "recipes/plugins_development.ipynb",
 ]
 
+IGNORED_TUTORIALS = [
+    "plugins_library",
+]
+
 
 class ExtractAttachmentsPreprocessor(Preprocessor):
     """
