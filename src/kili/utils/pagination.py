@@ -7,6 +7,7 @@ from time import sleep
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, TypeVar
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
+from kili.exceptions import GraphQLError, TransportQueryError
 from kili.utils.tqdm import tqdm
 
 # pylint: disable=too-many-arguments,too-many-locals
@@ -183,9 +184,14 @@ def _mutate_from_paginated_call(
     """
     results = []
     batch = None
-    for batch in batch_object_builder(properties_to_batch, batch_size):
+    for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
         payload = generate_variables(batch)
-        result = api_throttle(self.auth.client.execute)(request, payload)
+        try:
+            result = api_throttle(self.auth.client.execute)(request, payload)
+        except (TransportQueryError, GraphQLError) as err:
+            raise ValueError(
+                f"Error while executing GraphQL request for batch N°{batch_number}"
+            ) from err
         results.append(result)
 
     sleep(1)  # wait for the backend to process the mutations

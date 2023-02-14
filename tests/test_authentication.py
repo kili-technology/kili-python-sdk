@@ -14,9 +14,11 @@ from kili.graphql.graphql_client import GraphQLClientName
 @patch.object(KiliAuth, "check_expiry_of_key_is_close", return_value=True)
 @patch.object(KiliAuth, "get_user", return_value={"id": "id", "email": "email"})
 def test_warn_cant_check_kili_version(*_):
-    with pytest.warns(
-        UserWarning, match="We could not check the version, there might be a version"
-    ):
+    message = (
+        "We could not check the version, there might be a version"
+        "mismatch or the app might be in deployment"
+    )
+    with pytest.warns(UserWarning, match=message):
         _ = KiliAuth(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
 
 
