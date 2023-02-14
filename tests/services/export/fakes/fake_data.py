@@ -63,6 +63,15 @@ asset_image_2 = {
     "jsonContent": "",
 }
 
+asset_image_no_content = {
+    "latestLabel": {
+        "jsonResponse": job_object_detection,
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+    },
+    "externalId": "car_3",
+    "content": "",
+    "jsonContent": "",
+}
 
 asset_video = {
     "latestLabel": {

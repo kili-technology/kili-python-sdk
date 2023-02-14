@@ -9,6 +9,7 @@ from tests.services.export.fakes.fake_data import (
     asset_image_1,
     asset_image_1_without_annotation,
     asset_image_2,
+    asset_image_no_content,
     asset_video_content_no_json_content,
     asset_video_no_content_and_json_content,
 )
@@ -25,7 +26,11 @@ def mocked_ProjectQuery(where, _fields, _options):
     Fake projects
     """
     project_id = where.project_id
-    if project_id in ["object_detection", "object_detection_with_empty_annotation"]:
+    if project_id in [
+        "object_detection",
+        "object_detection_with_empty_annotation",
+        "object_detection_cloud_storage",
+    ]:
         job_payload = {
             "mlTask": "OBJECT_DETECTION",
             "tools": ["rectangle"],
@@ -187,6 +192,11 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function):
             return [
                 Asset(asset_image_1),
                 Asset(asset_image_2),
+            ]
+        elif project_id == "object_detection_cloud_storage":
+            return [
+                Asset(asset_image_no_content),
+                Asset(asset_image_1),
             ]
         elif project_id == "object_detection_video_project":
             return [
