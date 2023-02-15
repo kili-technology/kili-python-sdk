@@ -52,7 +52,7 @@ jobs:
           source ./.github/scripts/utils.sh   # to get the bump_version function
 
           # create PR branch
-          git checkout -b workflow/create-bump-commit-release-branch-${{ inputs.releaseBranchVersion }}
+          git checkout -b workflow-${{ github.run_id }}/create-bump-commit-release-branch-${{ inputs.releaseBranchVersion }}
 
           # create bump commit
           new_version=$(bump_version commit ${{ inputs.bumpCommitType }})
