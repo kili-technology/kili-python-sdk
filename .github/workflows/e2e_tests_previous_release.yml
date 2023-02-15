@@ -1,7 +1,7 @@
 # This workflow runs e2e tests of previous release against master kili sdk
 # To make sure that we are not introducing breaking changes in the master branch
 
-name: E2E tests (previous release tests with SDK from master)
+name: E2E tests previous release against master
 on:
   workflow_dispatch:
   schedule:
@@ -81,13 +81,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "E2E tests (${{ env.REF }} against ${{ env.TEST_AGAINST }}) failed: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "E2E tests previous release against master failed: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "E2E tests (${{ env.REF }} against ${{ env.TEST_AGAINST }}) failed: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "E2E tests previous release against master failed: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]
