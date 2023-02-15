@@ -489,7 +489,7 @@ def test_export_service_layout(mocker_ffmpeg, mocker_asset, mocker_project, name
             default_kwargs.update(test_case["export_kwargs"])
 
             export_labels(
-                fake_kili.auth,
+                fake_kili.auth,  # type: ignore
                 **default_kwargs,
             )
 
@@ -611,6 +611,6 @@ def test_export_service_errors(mocket_asset, mocker_project, name, test_case, er
         default_kwargs.update(test_case["export_kwargs"])
         with pytest.raises(error):
             export_labels(
-                fake_kili.auth,
+                fake_kili.auth,  # type: ignore
                 **default_kwargs,
             )
