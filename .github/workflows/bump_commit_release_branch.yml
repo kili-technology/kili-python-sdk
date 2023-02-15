@@ -59,7 +59,7 @@ jobs:
           echo "New version (bump_version): $new_version"
 
           # create PR
-          git push --quiet --set-upstream origin workflow/create-bump-commit-release-branch-${{ inputs.releaseBranchVersion }}
+          git push --quiet --set-upstream origin workflow-${{ github.run_id }}/create-bump-commit-release-branch-${{ inputs.releaseBranchVersion }}
           gh pr create --base release/${{ inputs.releaseBranchVersion }} --title "chore: bump version to $new_version" --body "Bump version to $new_version on branch release/${{ inputs.releaseBranchVersion }}"
 
         env:
