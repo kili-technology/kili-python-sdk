@@ -5,6 +5,8 @@ from typing import Callable
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
+
 from ...graphql.graphql_client import SubscriptionGraphQLClient
 from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 
@@ -15,7 +17,7 @@ class SubscriptionsLabel:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:

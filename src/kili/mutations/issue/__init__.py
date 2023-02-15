@@ -7,6 +7,7 @@ from typing import Dict, Optional
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 
@@ -20,7 +21,7 @@ class MutationsIssue:
 
     # pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:

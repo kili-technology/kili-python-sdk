@@ -5,6 +5,8 @@ from typing import Optional
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
+
 from ...helpers import format_result
 from .queries import GQL_CREATE_ORGANIZATION, GQL_UPDATE_PROPERTIES_IN_ORGANIZATION
 
@@ -14,7 +16,7 @@ class MutationsOrganization:
 
     # pylint: disable=too-many-arguments
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initializes the subclass.
 
         Args:

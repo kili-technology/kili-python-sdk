@@ -7,6 +7,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili import services
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
@@ -22,7 +23,7 @@ class QueriesLabel:
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:

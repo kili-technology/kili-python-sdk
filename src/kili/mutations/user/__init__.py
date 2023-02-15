@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
 from kili.helpers import format_result
 from kili.mutations.user.queries import (
     GQL_CREATE_USER,
@@ -19,7 +20,7 @@ class MutationsUser:
 
     # pylint: disable=too-many-arguments
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
