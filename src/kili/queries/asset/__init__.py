@@ -216,7 +216,7 @@ class QueriesAsset:
             label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number
             label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number
             skipped: Returned assets should be skipped
-            updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.
+            updated_at_gte: Returned assets should have a label whose update date is greater or equal to this date.
             updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
             format: If equal to 'pandas', returns a pandas DataFrame
             disable_tqdm: If `True`, the progress bar will be disabled
@@ -224,6 +224,8 @@ class QueriesAsset:
             label_category_search: Returned assets should have a label that follows this category search query.
             download_media: Tell is the media have to be downloaded or not.
             local_media_dir: Directory where the media are downloaded if `download_media` is True.
+            created_at_gte: Returned assets should have their import date greater or equal to this date.
+            created_at_lte: Returned assets should have their import date lower or equal to this date.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
