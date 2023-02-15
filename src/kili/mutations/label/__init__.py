@@ -109,7 +109,7 @@ class MutationsLabel:
                 )
             )
         ]
-        services.import_labels_from_dict(self, project_id, labels, "PREDICTION", model_name)
+        services.import_labels_from_dict(self.auth, project_id, labels, "PREDICTION", model_name)
         return {"id": project_id}
 
     @deprecate(
@@ -166,7 +166,7 @@ class MutationsLabel:
         if label_asset_id is None:
             assert label_asset_external_id and project_id
             label_asset_id = infer_ids_from_external_ids(
-                self, [label_asset_external_id], project_id
+                self.auth, [label_asset_external_id], project_id
             )[label_asset_external_id]
         variables = {
             "data": {
@@ -250,7 +250,7 @@ class MutationsLabel:
             )
         ]
         return services.import_labels_from_dict(
-            self, project_id, labels, label_type, model_name, disable_tqdm
+            self.auth, project_id, labels, label_type, model_name, disable_tqdm
         )
 
     @typechecked
@@ -317,7 +317,7 @@ class MutationsLabel:
         if asset_id is None:
             if asset_external_id is None or project_id is None:
                 raise ValueError("Either provide asset_id or external_id and project_id")
-            asset_id = infer_ids_from_external_ids(self, [asset_external_id], project_id)[
+            asset_id = infer_ids_from_external_ids(self.auth, [asset_external_id], project_id)[
                 asset_external_id
             ]
 

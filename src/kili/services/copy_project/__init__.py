@@ -85,7 +85,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         if copy_quality_settings:
             fields = fields + self.FIELDS_QUALITY_SETTINGS
 
-        src_project = services.get_project(self.kili, from_project_id, fields)
+        src_project = services.get_project(self.kili.auth, from_project_id, fields)
 
         if len(src_project["dataConnections"]) > 0 and copy_assets:
             raise NotImplementedError("Copying projects with remote storage is not supported.")

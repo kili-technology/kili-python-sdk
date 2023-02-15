@@ -107,7 +107,7 @@ def export_labels(
 
     try:
         services.export_labels(
-            kili,
+            kili.auth,
             asset_ids=None,
             project_id=cast(ProjectId, project_id),
             export_type="latest",

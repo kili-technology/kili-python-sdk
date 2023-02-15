@@ -529,7 +529,7 @@ class QueriesLabel:
             pandas DataFrame containing the labels.
         """
 
-        services.get_project(self, project_id, ["id"])
+        services.get_project(self.auth, project_id, ["id"])
         assets_gen = AssetQuery(self.auth.client)(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
@@ -667,13 +667,13 @@ class QueriesLabel:
         """
         if external_ids is not None and asset_ids is None:
             id_map = infer_ids_from_external_ids(
-                kili=self, asset_external_ids=external_ids, project_id=project_id
+                auth=self.auth, asset_external_ids=external_ids, project_id=project_id
             )
             asset_ids = [id_map[id] for id in external_ids]
 
         try:
             services.export_labels(
-                self,
+                self.auth,
                 asset_ids=asset_ids,
                 project_id=cast(ProjectId, project_id),
                 export_type="latest",

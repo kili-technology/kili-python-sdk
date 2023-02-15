@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
+from kili.authentication import KiliAuth
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
@@ -22,7 +23,7 @@ THRESHOLD_WARN_MANY_ASSETS = 1000
 
 
 def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
-    kili,
+    auth: KiliAuth,
     asset_ids: Optional[List[str]],
     project_id: ProjectId,
     export_type: ExportType,
@@ -37,10 +38,10 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     """
     Export the selected assets into the required format, and save it into a file archive.
     """
-    get_project(kili, project_id, ["id"])
+    get_project(auth, project_id, ["id"])
 
     if with_assets:
-        count = AssetQuery(kili.auth.client).count(AssetWhere(project_id=project_id))
+        count = AssetQuery(auth.client).count(AssetWhere(project_id=project_id))
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
                 f"Downloading many assets ({count}). This might take a while. Consider disabling"
@@ -61,9 +62,9 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     logger = get_logger(log_level)
 
     content_repository = SDKContentRepository(
-        kili.auth.api_endpoint,
+        auth.api_endpoint,
         router_headers={
-            "Authorization": f"X-API-Key: {kili.auth.api_key}",
+            "Authorization": f"X-API-Key: {auth.api_key}",
         },
         verify_ssl=True,
     )
@@ -83,7 +84,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         )  # ensures full mapping
         exporter_class = format_exporter_selector_mapping[label_format]
         exporter_class(
-            export_params, kili, logger, disable_tqdm, content_repository
+            export_params, auth, logger, disable_tqdm, content_repository
         ).export_project()
     else:
         raise ValueError(f'Label format "{label_format}" is not implemented or does not exist.')

@@ -4,6 +4,8 @@ Fake Kili object
 
 from unittest.mock import MagicMock
 
+from kili.authentication import KiliAuth
+from kili.graphql.graphql_client import GraphQLClientName
 from kili.orm import Asset
 from tests.services.export.fakes.fake_data import (
     asset_image_1,
@@ -15,10 +17,15 @@ from tests.services.export.fakes.fake_data import (
 )
 
 
-class FakeAuth:
-    api_key = ""
-    api_endpoint = "http://content-repository"
-    client = MagicMock()
+class FakeAuth(KiliAuth):
+    def __init__(self):
+        super().__init__(
+            api_key="",
+            api_endpoint="http://content-repository",
+            client_name=GraphQLClientName.SDK,
+            verify=False,
+        )
+        self.client = MagicMock()
 
 
 def mocked_ProjectQuery(where, _fields, _options):
