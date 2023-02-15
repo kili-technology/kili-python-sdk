@@ -143,7 +143,7 @@ class QueriesLabel:
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have their creation date equal to this date.
             created_at_gte: Returned labels should have their creation date greater or equal to this date.
-            created_at_lte: Returned labels should have their creation date lower or equal ro this date.
+            created_at_lte: Returned labels should have their creation date lower or equal to this date.
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
             first: Maximum number of labels to return.
