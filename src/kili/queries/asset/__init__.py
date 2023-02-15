@@ -74,6 +74,8 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -126,6 +128,8 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -178,6 +182,8 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[Dict], pd.DataFrame]:
@@ -294,6 +300,8 @@ class QueriesAsset:
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
             label_category_search=label_category_search,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
@@ -334,6 +342,8 @@ class QueriesAsset:
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
     ) -> int:
         """Count and return the number of assets with the given constraints.
 
@@ -424,5 +434,7 @@ class QueriesAsset:
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
             label_category_search=label_category_search,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
         )
         return AssetQuery(self.auth.client).count(where)
