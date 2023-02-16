@@ -7,6 +7,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili import services
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
@@ -22,7 +23,7 @@ class QueriesLabel:
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -141,9 +142,9 @@ class QueriesLabel:
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
-            created_at: Returned labels should have a label whose creation date is equal to this date.
-            created_at_gte: Returned labels should have a label whose creation date is greater than this date.
-            created_at_lte: Returned labels should have a label whose creation date is lower than this date.
+            created_at: Returned labels should have their creation date equal to this date.
+            created_at_gte: Returned labels should have their creation date greater or equal to this date.
+            created_at_lte: Returned labels should have their creation date lower or equal to this date.
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
             first: Maximum number of labels to return.
@@ -529,7 +530,7 @@ class QueriesLabel:
             pandas DataFrame containing the labels.
         """
 
-        services.get_project(self, project_id, ["id"])
+        services.get_project(self.auth, project_id, ["id"])
         assets_gen = AssetQuery(self.auth.client)(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
@@ -644,6 +645,9 @@ class QueriesLabel:
             with_assets: Download the assets in the export.
             external_ids: Optional list of the assets external IDs from which to export the labels.
 
+        !!! warning
+            Export is not allowed for projects connected to a cloud storage.
+
         !!! Info
             The supported formats are:
 
@@ -664,13 +668,13 @@ class QueriesLabel:
         """
         if external_ids is not None and asset_ids is None:
             id_map = infer_ids_from_external_ids(
-                kili=self, asset_external_ids=external_ids, project_id=project_id
+                auth=self.auth, asset_external_ids=external_ids, project_id=project_id
             )
             asset_ids = [id_map[id] for id in external_ids]
 
         try:
             services.export_labels(
-                self,
+                self.auth,
                 asset_ids=asset_ids,
                 project_id=cast(ProjectId, project_id),
                 export_type="latest",

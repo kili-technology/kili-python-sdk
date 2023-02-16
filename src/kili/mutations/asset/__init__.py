@@ -215,7 +215,7 @@ class MutationsAsset:
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         saved_args = locals()
         parameters = {
@@ -293,7 +293,7 @@ class MutationsAsset:
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 )
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         parameters = {
             "asset_ids": asset_ids,
@@ -343,7 +343,7 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -406,7 +406,7 @@ class MutationsAsset:
                     ],
                 )
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -481,7 +481,7 @@ class MutationsAsset:
                         ],
                 )
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 

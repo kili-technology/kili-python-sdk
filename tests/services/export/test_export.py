@@ -15,6 +15,7 @@ from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
+    NotExportableAssetError,
 )
 from tests.services.export.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.services.export.fakes.fake_kili import (
@@ -492,7 +493,7 @@ def test_export_service_layout(
             default_kwargs.update(test_case["export_kwargs"])
 
             export_labels(
-                fake_kili,
+                fake_kili.auth,  # type: ignore
                 **default_kwargs,
             )
 
@@ -578,6 +579,18 @@ def test_export_service_layout(
             },
             NoCompatibleJobError,
         ),
+        (
+            "YOLO v5 format on an asset on a cloud storage",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_cloud_storage",
+                    "label_format": "yolo_v5",
+                    "split_option": "merged",
+                    "with_assets": True,
+                },
+            },
+            NotExportableAssetError,
+        ),
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
@@ -605,6 +618,6 @@ def test_export_service_errors(
         default_kwargs.update(test_case["export_kwargs"])
         with pytest.raises(error):
             export_labels(
-                fake_kili,
+                fake_kili.auth,  # type: ignore
                 **default_kwargs,
             )

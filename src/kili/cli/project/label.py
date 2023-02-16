@@ -122,7 +122,7 @@ def import_labels(
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
     services.import_labels_from_files(
-        kili,
+        kili.auth,
         list(files or []),
         metadata_file,
         project_id,

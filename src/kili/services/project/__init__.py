@@ -2,15 +2,16 @@
 
 from typing import List
 
+from kili.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 
 
-def get_project(kili, project_id: str, fields: List[str]):
+def get_project(auth: KiliAuth, project_id: str, fields: List[str]):
     """Get a project from its id or raise a NotFound Error if not found"""
     projects = list(
-        ProjectQuery(kili.auth.client)(
+        ProjectQuery(auth.client)(
             ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
         )
     )
@@ -22,8 +23,8 @@ def get_project(kili, project_id: str, fields: List[str]):
     return projects[0]
 
 
-def get_project_field(kili, project_id: str, field: str):
+def get_project_field(auth: KiliAuth, project_id: str, field: str):
     """Get one project field from a the project id or raise a NotFound Error
     if the project is not found
     """
-    return get_project(kili, project_id, [field])[field]
+    return get_project(auth, project_id, [field])[field]

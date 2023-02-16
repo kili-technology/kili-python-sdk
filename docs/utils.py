@@ -29,6 +29,10 @@ IGNORED_NOTEBOOKS = [
     "recipes/plugins_development.ipynb",
 ]
 
+IGNORED_TUTORIALS = [
+    "plugins_library",
+]
+
 
 class ExtractAttachmentsPreprocessor(Preprocessor):
     """
@@ -297,7 +301,9 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     """
     # get existing tutorials names
     existing_tutorials = list(Path("docs/sdk/tutorials").glob("*.md"))
-    existing_tutorials = [tutorial.stem for tutorial in existing_tutorials]
+    existing_tutorials = [
+        tutorial.stem for tutorial in existing_tutorials if tutorial.stem not in IGNORED_TUTORIALS
+    ]
 
     # group files by tutorial name (filename or notebooks and markdowns without extension)
     modified_files = sorted(modified_files, key=lambda path: path.stem)  # sort before grouping

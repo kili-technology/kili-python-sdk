@@ -74,7 +74,7 @@ class PluginHandler(PluginCore):
                 object_job_key, latest_labels
             )
             json_response_array.update(
-                self.aggregate_classification_label(classif_job_key, labels_array)
+                self.aggregate_classification_label(classif_job_key, latest_labels)
             )
 
             self.kili.append_labels(

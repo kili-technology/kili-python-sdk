@@ -7,6 +7,7 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.helpers import disable_tqdm_if_as_generator
@@ -19,7 +20,7 @@ class QueriesApiKey:
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:

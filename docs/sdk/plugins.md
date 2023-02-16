@@ -2,24 +2,40 @@
 
 ## Plugins structure
 
-A plugin is a set of :
+A plugin is an uploaded Python script triggered by an event. It can be defined as either :
 
-- a `python` file
-- a non mandatory `requirements.txt` file listing all the dependencies you need for you plugin.
+- a single `python` file with everything inside
+- a plugin module (a folder) containing multiple `python` files and a non mandatory `requirements.txt` file listing all the dependencies you need for you plugin.
 
-The plugin you are going to upload has to contain a `class` and two methods for the different types of events:
+In the case of the module type plugin, at the root of the folder a file named `main.py` is strictly necessary, as it serves as the entrypoint of the plugin. In this `main.py` file, you can import what you need from other `python` files in the folder. The structure of the folder can be the following (the only constraint being the presence of the `main.py` file):
+```
+plugin_folder
+|__ main.py
+|__ other_file.py
+|__ requirements.txt
+|
+|___helpers
+    |__ helper.py
+```
+
+The plugin you are going to upload has to contain a `class PluginHandler(PluginCore)` (in the case of the module type plugin it has to be inside `main.py`) that implements two methods for the different types of events:
 
 - `on_submit`
 - `on_review`
 
+These methods have a predefined set of parameters:
+
+- the `label` submitted (a dictionary containing the fields of the GraphQL type [Label](https://docs.kili-technology.com/reference/graphql-api#label))
+- the `asset_id` of the asset labeled
+
 You can add custom methods in your class as well.
 
-Some attributes are available in the class:
+Moreover, some attributes are directly available in the class:
 
 - `self.kili`
 - `self.project_id`
 
-The skeleton of the plugin should look like this:
+Therefore, the skeleton of the plugin (of `main.py` in the case of the module type plugin) should look like this:
 
 ```python
 from kili.plugins import PluginCore

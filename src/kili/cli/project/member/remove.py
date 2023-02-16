@@ -74,7 +74,7 @@ def remove_member(
     if csv_path is not None:
         members_to_rm = collect_members_from_csv(csv_path, None)
     elif all_members:
-        members_to_rm = collect_members_from_project(kili, project_id, None)
+        members_to_rm = collect_members_from_project(kili.auth, project_id, None)
     else:
         assert emails, (
             "When a --csv-path and --all-members are not called, you must add several email"

@@ -163,9 +163,9 @@ plugin_folder = "plugin_folder"
 
 Path(plugin_folder).mkdir(parents=True, exist_ok=True)
 urllib.request.urlretrieve(
-    "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/datasets/plugins/plugin_image.py",
+    "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/plugins_library/plugin_image.py",
     "plugin_folder/main.py",
-);
+)
 ```
 
 ## Step 4: Upload the plugin from a folder

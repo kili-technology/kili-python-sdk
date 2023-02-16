@@ -77,6 +77,10 @@ def export_labels(
     - Pascal VOC for object detection tasks.
     \b
     \b
+    !!! warning "Cloud storage"
+            Export is not allowed for projects connected to a cloud storage.
+    \b
+    \b
     !!! Examples
         ```
         kili project export \\
@@ -103,7 +107,7 @@ def export_labels(
 
     try:
         services.export_labels(
-            kili,
+            kili.auth,
             asset_ids=None,
             project_id=cast(ProjectId, project_id),
             export_type="latest",
