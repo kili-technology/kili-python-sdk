@@ -79,7 +79,7 @@ class GraphQLQuery(ABC):
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:
         """Get a generator of objects of the specified type in accordance with the provided where"""
-        fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
+        fragment = self.fragment_builder(fields)
         query = self.query(fragment)
 
         return self.execute_query_from_paginated_call(query, where, options, post_call_function)
@@ -152,9 +152,6 @@ class GraphQLQuery(ABC):
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
 
-                    if len(rows) < batch_size:
-                        break
-
     @typechecked
     def fragment_builder(self, fields: List[str]):
         """
@@ -185,15 +182,6 @@ class GraphQLQuery(ABC):
             fields = [field for field in fields if "." not in field]
 
         for field in fields:
-            try:
-                type_of_fields[field]
-            except KeyError as exception:
-                raise NonExistingFieldError(
-                    f"Cannot query field {field} on object {typed_dict_class.__name__}. Admissible"
-                    " fields are: \n- " + "\n- ".join(type_of_fields.keys())
-                ) from exception
-            if isinstance(field, str):
-                fragment += f" {field}"
-            else:
-                raise TypeError("Please provide the fields to query as strings")
+            fragment += f" {field}"
+
         return fragment

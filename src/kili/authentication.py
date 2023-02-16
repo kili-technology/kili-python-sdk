@@ -12,9 +12,7 @@ from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
 
-from .exceptions import UserNotFoundError
-
-MAX_RETRIES = 20
+from .exceptions import AuthenticationFailed, UserNotFoundError
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -53,6 +51,8 @@ class KiliAuth:
 
         self.check_api_key_valid()
 
+        self.check_api_key_valid()
+
         self.client = GraphQLClient(
             endpoint=api_endpoint,
             api_key=api_key,
@@ -63,10 +63,6 @@ class KiliAuth:
         self.check_expiry_of_key_is_close()
 
         user = self.get_user()
-
-        if user is None or user["id"] is None or user["email"] is None:
-            raise UserNotFoundError("No user attached to the API key was found")
-
         self.user_id = user["id"]
         self.user_email = user["email"]
 
@@ -84,7 +80,7 @@ class KiliAuth:
                 "Kili Python SDK version should match with Kili API version.\n"
                 + f'Please install version: "pip install kili=={version}"'
             )
-            warnings.warn(message, UserWarning, stacklevel=2)
+            warnings.warn(message, UserWarning)
         return version
 
     def check_api_key_valid(self) -> None:
@@ -121,12 +117,14 @@ class KiliAuth:
             api_key: key used to connect to the Kili API
         """
         warn_days = 30
+
         api_keys = APIKeyQuery(self.client)(
             fields=["createdAt"],
-            where=APIKeyWhere(api_key=api_key),
+            where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),
         )
-        key_creation = datetime.strptime(next(api_keys)["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
+
+        key_creation = datetime.strptime(next(api_keys)["createdAt"], r"%Y-%m-%dT%H:%M:%S.%fZ")
         key_expiry = key_creation + timedelta(days=duration_days)
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
@@ -134,7 +132,7 @@ class KiliAuth:
             message = f"""
                 Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
                 You should generate a new one on My account > API KEY."""
-            warnings.warn(message, UserWarning, stacklevel=2)
+            warnings.warn(message, UserWarning)
 
     def get_user(self) -> Dict:
         """Get the current user from the api_key provided"""

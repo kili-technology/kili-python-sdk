@@ -8,11 +8,9 @@ import pytest
 from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
-from kili.graphql.operations.label.queries import LabelQuery
 from kili.helpers import RetryLongWaitWarner, format_result
 from kili.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.orm import Asset
-from tests.services.export.fakes.fake_kili import FakeAuth
 
 
 def test_format_result_no_type_conversion_1():
