@@ -15,6 +15,8 @@ from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 class SubscriptionsLabel:
     """Set of Label subscriptions."""
 
+    # pylint: disable=too-many-arguments,too-many-locals
+
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 

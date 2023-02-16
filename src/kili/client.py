@@ -132,7 +132,7 @@ class Kili(  # pylint: disable=too-many-ancestors
         raise:
             NotFound if the given `project_id` does not correspond to an existing project
         """
-        project = get_project(self, project_id, ["inputType", "title"])
+        project = get_project(self.auth, project_id, ["inputType", "title"])
         return Project(
             client=self,
             project_id=ProjectId(project_id),
