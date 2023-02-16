@@ -19,7 +19,7 @@
         <link rel="next" href="../project/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.12">
     
     
       
@@ -433,6 +433,20 @@
     <li class="md-nav__item">
       <a href="../tutorials/plugins_example/" class="md-nav__link">
         Developing plugins - example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_library/" class="md-nav__link">
+        Plugins library
       </a>
     </li>
   
@@ -1057,23 +1071,37 @@
 
 <h1 id="plugin-module">Plugin module</h1>
 <h2 id="plugins-structure">Plugins structure</h2>
-<p>A plugin is a set of :</p>
+<p>A plugin is an uploaded Python script triggered by an event. It can be defined as either :</p>
 <ul>
-<li>a <code>python</code> file</li>
-<li>a non mandatory <code>requirements.txt</code> file listing all the dependencies you need for you plugin.</li>
+<li>a single <code>python</code> file with everything inside</li>
+<li>a plugin module (a folder) containing multiple <code>python</code> files and a non mandatory <code>requirements.txt</code> file listing all the dependencies you need for you plugin.</li>
 </ul>
-<p>The plugin you are going to upload has to contain a <code>class</code> and two methods for the different types of events:</p>
+<p>In the case of the module type plugin, at the root of the folder a file named <code>main.py</code> is strictly necessary, as it serves as the entrypoint of the plugin. In this <code>main.py</code> file, you can import what you need from other <code>python</code> files in the folder. The structure of the folder can be the following (the only constraint being the presence of the <code>main.py</code> file):
+<div class="highlight"><pre><span></span><code>plugin_folder
+|__ main.py
+|__ other_file.py
+|__ requirements.txt
+|
+|___helpers
+    |__ helper.py
+</code></pre></div></p>
+<p>The plugin you are going to upload has to contain a <code>class PluginHandler(PluginCore)</code> (in the case of the module type plugin it has to be inside <code>main.py</code>) that implements two methods for the different types of events:</p>
 <ul>
 <li><code>on_submit</code></li>
 <li><code>on_review</code></li>
 </ul>
+<p>These methods have a predefined set of parameters:</p>
+<ul>
+<li>the <code>label</code> submitted (a dictionary containing the fields of the GraphQL type <a href="https://docs.kili-technology.com/reference/graphql-api#label">Label</a>)</li>
+<li>the <code>asset_id</code> of the asset labeled</li>
+</ul>
 <p>You can add custom methods in your class as well.</p>
-<p>Some attributes are available in the class:</p>
+<p>Moreover, some attributes are directly available in the class:</p>
 <ul>
 <li><code>self.kili</code></li>
 <li><code>self.project_id</code></li>
 </ul>
-<p>The skeleton of the plugin should look like this:</p>
+<p>Therefore, the skeleton of the plugin (of <code>main.py</code> in the case of the module type plugin) should look like this:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
 <span class="kn">from</span> <span class="nn">kili.types</span> <span class="kn">import</span> <span class="n">Label</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1424,7 +1452,7 @@ on_review(self, label: Label, asset_id: str)
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesPlugins</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Plugins queries.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
+    <span class="c1"># pylint: disable=too-many-arguments</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
@@ -1888,7 +1916,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 
         <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot; instead&#39;</span>
+                <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot;&#39;</span>
+                <span class="s2">&quot; instead&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
@@ -2791,7 +2820,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 
     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot; instead&#39;</span>
+            <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot;&#39;</span>
+            <span class="s2">&quot; instead&quot;</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
@@ -2855,7 +2885,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6df46069.min.js"></script>
+      <script src="../../assets/javascripts/bundle.4b2c34cd.min.js"></script>
       
     
   </body>

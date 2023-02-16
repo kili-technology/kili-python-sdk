@@ -19,7 +19,7 @@
         <link rel="next" href="../../cli/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.12">
     
     
       
@@ -433,6 +433,20 @@
     <li class="md-nav__item">
       <a href="../tutorials/plugins_example/" class="md-nav__link">
         Developing plugins - example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_library/" class="md-nav__link">
+        Plugins library
       </a>
     </li>
   
@@ -933,7 +947,7 @@
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesUser</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of User queries.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
+    <span class="c1"># pylint: disable=too-many-arguments,dangerous-default-value</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
@@ -943,7 +957,36 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
-    <span class="c1"># pylint: disable=dangerous-default-value</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">users</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">],</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">users</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">],</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="o">...</span>
+
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">users</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -954,6 +997,7 @@
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
@@ -984,8 +1028,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">where</span> <span class="o">=</span> <span class="n">UserWhere</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">)</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">UserQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+        <span class="n">users_gen</span> <span class="o">=</span> <span class="n">UserQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">users_gen</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">users_gen</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_users</span><span class="p">(</span>
@@ -1099,7 +1148,7 @@
 
 
 <h3 class="doc doc-heading" id="kili.queries.user.__init__.QueriesUser.users">
-<code class="highlight language-python"><span class="n">users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;lastname&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;lastname&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1205,6 +1254,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
@@ -1235,8 +1285,13 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">where</span> <span class="o">=</span> <span class="n">UserWhere</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">)</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">UserQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+    <span class="n">users_gen</span> <span class="o">=</span> <span class="n">UserQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">users_gen</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">users_gen</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1268,7 +1323,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsUser</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of User mutations.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
+    <span class="c1"># pylint: disable=too-many-arguments</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
@@ -1342,23 +1397,18 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PASSWORD</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
-    <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset password.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset password.</span>
 
-<span class="sd">        This resolver only works for on-premise installations without Auth0,</span>
-<span class="sd">        if your organization allows Kili to send emails.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            email: Email of the person whose password has to be reset.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message.</span>
+<span class="sd">        !!! warning &quot;Method removed&quot;</span>
+<span class="sd">            This method is not available anymore.</span>
+<span class="sd">            Please use the Kili App instead to reset your password.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">}}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_RESET_PASSWORD</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">RemovedMethodError</span><span class="p">(</span>
+            <span class="s2">&quot;reset_password() is not available anymore. Please use the Kili App instead to reset&quot;</span>
+            <span class="s2">&quot; your password.&quot;</span>
+        <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">update_properties_in_user</span><span class="p">(</span>
@@ -1547,63 +1597,26 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
     <div class="doc doc-contents ">
 
       <p>Reset password.</p>
-<p>This resolver only works for on-premise installations without Auth0,
-if your organization allows Kili to send emails.</p>
+<div class="admonition warning">
+<p class="admonition-title">Method removed</p>
+<p>This method is not available anymore.
+Please use the Kili App instead to reset your password.</p>
+</div>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>email</code></td>
-        <td><code>str</code></td>
-        <td><p>Email of the person whose password has to be reset.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>A result object which indicates if the mutation was successful,
-    or an error message.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>kili/mutations/user/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
-<span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset password.</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reset password.</span>
 
-<span class="sd">    This resolver only works for on-premise installations without Auth0,</span>
-<span class="sd">    if your organization allows Kili to send emails.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        email: Email of the person whose password has to be reset.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message.</span>
+<span class="sd">    !!! warning &quot;Method removed&quot;</span>
+<span class="sd">        This method is not available anymore.</span>
+<span class="sd">        Please use the Kili App instead to reset your password.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">}}</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_RESET_PASSWORD</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">RemovedMethodError</span><span class="p">(</span>
+        <span class="s2">&quot;reset_password() is not available anymore. Please use the Kili App instead to reset&quot;</span>
+        <span class="s2">&quot; your password.&quot;</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1896,7 +1909,7 @@ One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6df46069.min.js"></script>
+      <script src="../../assets/javascripts/bundle.4b2c34cd.min.js"></script>
       
     
   </body>

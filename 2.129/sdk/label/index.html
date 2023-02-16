@@ -19,7 +19,7 @@
         <link rel="next" href="../notification/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.12">
     
     
       
@@ -439,6 +439,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_library/" class="md-nav__link">
+        Plugins library
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -586,8 +600,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kili.queries.label.__init__.QueriesLabel.inferences" class="md-nav__link">
+    inferences()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kili.queries.label.__init__.QueriesLabel.labels" class="md-nav__link">
     labels()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.queries.label.__init__.QueriesLabel.predictions" class="md-nav__link">
+    predictions()
   </a>
   
 </li>
@@ -904,8 +932,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kili.queries.label.__init__.QueriesLabel.inferences" class="md-nav__link">
+    inferences()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kili.queries.label.__init__.QueriesLabel.labels" class="md-nav__link">
     labels()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.queries.label.__init__.QueriesLabel.predictions" class="md-nav__link">
+    predictions()
   </a>
   
 </li>
@@ -1015,7 +1057,7 @@
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesLabel</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Label queries.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
+    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
@@ -1025,7 +1067,74 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
-    <span class="c1"># pylint: disable=dangerous-default-value</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="o">...</span>
+
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1054,8 +1163,9 @@
         <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
@@ -1135,10 +1245,300 @@
             <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
             <span class="n">category_search</span><span class="o">=</span><span class="n">category_search</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+        <span class="n">labels_gen</span> <span class="o">=</span> <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
 
-    <span class="c1"># pylint: disable=dangerous-default-value</span>
+        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">labels_gen</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels_gen</span><span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">predictions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">predictions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span> <span class="nf">predictions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get prediction labels from a project based on a set of criteria.</span>
+
+<span class="sd">        This method is equivalent to the `kili.labels()` method, but it only returns label of type &quot;PREDICTION&quot;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project.</span>
+<span class="sd">            asset_id: Identifier of the asset.</span>
+<span class="sd">            asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
+<span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
+<span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
+<span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">            created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">            created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.</span>
+<span class="sd">            first: Maximum number of labels to return.</span>
+<span class="sd">            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">            id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
+<span class="sd">            label_id: Identifier of the label.</span>
+<span class="sd">            skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">            user_id: Identifier of the user.</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the labels is returned.</span>
+<span class="sd">            category_search: Query to filter labels based on the content of their jsonResponse</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful, else an error message.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.predictions(project_id=project_id) # returns a list of prediction labels of a project</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;modelName&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+            <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
+            <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+            <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
+            <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
+            <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
+            <span class="n">created_at_lte</span><span class="o">=</span><span class="n">created_at_lte</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+            <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span>
+            <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="n">honeypot_mark_gte</span><span class="p">,</span>
+            <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="n">honeypot_mark_lte</span><span class="p">,</span>
+            <span class="n">id_contains</span><span class="o">=</span><span class="n">id_contains</span><span class="p">,</span>
+            <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
+            <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span>
+            <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;PREDICTION&quot;</span><span class="p">],</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
+            <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
+            <span class="n">category_search</span><span class="o">=</span><span class="n">category_search</span><span class="p">,</span>
+            <span class="n">as_generator</span><span class="o">=</span><span class="n">as_generator</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">inferences</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">inferences</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span> <span class="nf">inferences</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get inference labels from a project based on a set of criteria.</span>
+
+<span class="sd">        This method is equivalent to the `kili.labels()` method, but it only returns label of type &quot;INFERENCE&quot;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Identifier of the project.</span>
+<span class="sd">            asset_id: Identifier of the asset.</span>
+<span class="sd">            asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
+<span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
+<span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
+<span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">            created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">            created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">            fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.</span>
+<span class="sd">            first: Maximum number of labels to return.</span>
+<span class="sd">            honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">            honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">            id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
+<span class="sd">            label_id: Identifier of the label.</span>
+<span class="sd">            skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">            user_id: Identifier of the user.</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            as_generator: If `True`, a generator on the labels is returned.</span>
+<span class="sd">            category_search: Query to filter labels based on the content of their jsonResponse</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A result object which contains the query if it was successful, else an error message.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.inferences(project_id=project_id) # returns a list of inference labels of a project</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;modelName&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+            <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
+            <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+            <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
+            <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
+            <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
+            <span class="n">created_at_lte</span><span class="o">=</span><span class="n">created_at_lte</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+            <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span>
+            <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="n">honeypot_mark_gte</span><span class="p">,</span>
+            <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="n">honeypot_mark_lte</span><span class="p">,</span>
+            <span class="n">id_contains</span><span class="o">=</span><span class="n">id_contains</span><span class="p">,</span>
+            <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
+            <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span>
+            <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
+            <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
+            <span class="n">category_search</span><span class="o">=</span><span class="n">category_search</span><span class="p">,</span>
+            <span class="n">as_generator</span><span class="o">=</span><span class="n">as_generator</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span>
+
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">export_labels_as_df</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1167,7 +1567,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-        <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+        <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
             <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">),</span>
             <span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
             <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
@@ -1177,7 +1577,7 @@
                 <span class="n">label</span><span class="p">,</span>
                 <span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;asset_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">asset</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">asset</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;labels&quot;</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span>
+            <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_gen</span>
             <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
         <span class="p">]</span>
         <span class="n">labels_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
@@ -1280,6 +1680,9 @@
 <span class="sd">            disable_tqdm: Disable the progress bar if True.</span>
 <span class="sd">            with_assets: Download the assets in the export.</span>
 <span class="sd">            external_ids: Optional list of the assets external IDs from which to export the labels.</span>
+
+<span class="sd">        !!! warning</span>
+<span class="sd">            Export is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">        !!! Info</span>
 <span class="sd">            The supported formats are:</span>
@@ -1634,7 +2037,11 @@ only available for some specific formats (COCO and Kili).</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
-</table>      <div class="admonition info">
+</table>      <div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Export is not allowed for projects connected to a cloud storage.</p>
+</div>
+<div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>The supported formats are:</p>
 <ul>
@@ -1690,6 +2097,9 @@ kili.export_labels(&quot;your_project_id&quot;, &quot;export.zip&quot;, &quot;yo
 <span class="sd">        disable_tqdm: Disable the progress bar if True.</span>
 <span class="sd">        with_assets: Download the assets in the export.</span>
 <span class="sd">        external_ids: Optional list of the assets external IDs from which to export the labels.</span>
+
+<span class="sd">    !!! warning</span>
+<span class="sd">        Export is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">    !!! Info</span>
 <span class="sd">        The supported formats are:</span>
@@ -1831,7 +2241,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-    <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
+    <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
         <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">),</span>
         <span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
         <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
@@ -1841,7 +2251,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
             <span class="n">label</span><span class="p">,</span>
             <span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;asset_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">asset</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">asset</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;labels&quot;</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span>
+        <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_gen</span>
         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
     <span class="p">]</span>
     <span class="n">labels_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
@@ -1858,8 +2268,272 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
 
 
 
+<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.inferences">
+<code class="highlight language-python"><span class="n">inferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get inference labels from a project based on a set of criteria.</p>
+<p>This method is equivalent to the <code>kili.labels()</code> method, but it only returns label of type "INFERENCE".</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Identifier of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>asset_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the asset.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_status_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have a status that belongs to that list, if given.
+Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>, <code>TO REVIEW</code> or <code>REVIEWED</code></p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_external_id_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have an external id that belongs to that list, if given.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>author_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have been made by authors in that list, if given.
+An author can be designated by the first name, the last name, or the first name + last name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned labels should have a label whose creation date is equal to this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at_gte</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned labels should have a label whose creation date is greater than this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at_lte</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned labels should have a label whose creation date is lower than this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>fields</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>All the fields to request among the possible fields for the labels.
+See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the documentation</a> for all possible fields.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>first</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>Maximum number of labels to return.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>honeypot_mark_gte</code></td>
+        <td><code>Optional[float]</code></td>
+        <td><p>Returned labels should have a label whose honeypot is greater than this number.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>honeypot_mark_lte</code></td>
+        <td><code>Optional[float]</code></td>
+        <td><p>Returned labels should have a label whose honeypot is lower than this number.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>id_contains</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Filters out labels not belonging to that list. If empty, no filtering is applied.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>label_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the label.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>skip</code></td>
+        <td><code>int</code></td>
+        <td><p>Number of labels to skip (they are ordered by their date of creation, first to last).</p></td>
+        <td><code>0</code></td>
+      </tr>
+      <tr>
+        <td><code>user_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the user.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>disable_tqdm</code></td>
+        <td><code>bool</code></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>as_generator</code></td>
+        <td><code>bool</code></td>
+        <td><p>If <code>True</code>, a generator on the labels is returned.</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>category_search</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Query to filter labels based on the content of their jsonResponse</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Iterable[Dict]</code></td>
+      <td><p>A result object which contains the query if it was successful, else an error message.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">inferences</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span> <span class="c1"># returns a list of inference labels of a project</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/queries/label/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
+<span class="k">def</span> <span class="nf">inferences</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get inference labels from a project based on a set of criteria.</span>
+
+<span class="sd">    This method is equivalent to the `kili.labels()` method, but it only returns label of type &quot;INFERENCE&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project.</span>
+<span class="sd">        asset_id: Identifier of the asset.</span>
+<span class="sd">        asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
+<span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
+<span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
+<span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">        created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">        created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.</span>
+<span class="sd">        first: Maximum number of labels to return.</span>
+<span class="sd">        honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">        honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">        id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
+<span class="sd">        label_id: Identifier of the label.</span>
+<span class="sd">        skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">        user_id: Identifier of the user.</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the labels is returned.</span>
+<span class="sd">        category_search: Query to filter labels based on the content of their jsonResponse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful, else an error message.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.inferences(project_id=project_id) # returns a list of inference labels of a project</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;modelName&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="o">=</span><span class="n">created_at_lte</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+        <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="n">honeypot_mark_gte</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="n">honeypot_mark_lte</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="o">=</span><span class="n">id_contains</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
+        <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span>
+        <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
+        <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="o">=</span><span class="n">category_search</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="o">=</span><span class="n">as_generator</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.labels">
-<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2077,8 +2751,9 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
     <span class="n">type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a label list or a label generator from a project based on a set of criteria.</span>
@@ -2158,8 +2833,277 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
         <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
         <span class="n">category_search</span><span class="o">=</span><span class="n">category_search</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+    <span class="n">labels_gen</span> <span class="o">=</span> <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">labels_gen</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels_gen</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.predictions">
+<code class="highlight language-python"><span class="n">predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get prediction labels from a project based on a set of criteria.</p>
+<p>This method is equivalent to the <code>kili.labels()</code> method, but it only returns label of type "PREDICTION".</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Identifier of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>asset_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the asset.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_status_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have a status that belongs to that list, if given.
+Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>, <code>TO REVIEW</code> or <code>REVIEWED</code></p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_external_id_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have an external id that belongs to that list, if given.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>author_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have been made by authors in that list, if given.
+An author can be designated by the first name, the last name, or the first name + last name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned labels should have a label whose creation date is equal to this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at_gte</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned labels should have a label whose creation date is greater than this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at_lte</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned labels should have a label whose creation date is lower than this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>fields</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>All the fields to request among the possible fields for the labels.
+See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the documentation</a> for all possible fields.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>first</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>Maximum number of labels to return.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>honeypot_mark_gte</code></td>
+        <td><code>Optional[float]</code></td>
+        <td><p>Returned labels should have a label whose honeypot is greater than this number.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>honeypot_mark_lte</code></td>
+        <td><code>Optional[float]</code></td>
+        <td><p>Returned labels should have a label whose honeypot is lower than this number.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>id_contains</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Filters out labels not belonging to that list. If empty, no filtering is applied.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>label_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the label.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>skip</code></td>
+        <td><code>int</code></td>
+        <td><p>Number of labels to skip (they are ordered by their date of creation, first to last).</p></td>
+        <td><code>0</code></td>
+      </tr>
+      <tr>
+        <td><code>user_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the user.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>disable_tqdm</code></td>
+        <td><code>bool</code></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>as_generator</code></td>
+        <td><code>bool</code></td>
+        <td><p>If <code>True</code>, a generator on the labels is returned.</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>category_search</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Query to filter labels based on the content of their jsonResponse</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Iterable[Dict]</code></td>
+      <td><p>A result object which contains the query if it was successful, else an error message.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">predictions</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span> <span class="c1"># returns a list of prediction labels of a project</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/queries/label/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
+<span class="k">def</span> <span class="nf">predictions</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get prediction labels from a project based on a set of criteria.</span>
+
+<span class="sd">    This method is equivalent to the `kili.labels()` method, but it only returns label of type &quot;PREDICTION&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project.</span>
+<span class="sd">        asset_id: Identifier of the asset.</span>
+<span class="sd">        asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
+<span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
+<span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
+<span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
+<span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
+<span class="sd">        created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
+<span class="sd">        created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">        fields: All the fields to request among the possible fields for the labels.</span>
+<span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.</span>
+<span class="sd">        first: Maximum number of labels to return.</span>
+<span class="sd">        honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.</span>
+<span class="sd">        honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.</span>
+<span class="sd">        id_contains: Filters out labels not belonging to that list. If empty, no filtering is applied.</span>
+<span class="sd">        label_id: Identifier of the label.</span>
+<span class="sd">        skip: Number of labels to skip (they are ordered by their date of creation, first to last).</span>
+<span class="sd">        user_id: Identifier of the user.</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        as_generator: If `True`, a generator on the labels is returned.</span>
+<span class="sd">        category_search: Query to filter labels based on the content of their jsonResponse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which contains the query if it was successful, else an error message.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.predictions(project_id=project_id) # returns a list of prediction labels of a project</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;modelName&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+        <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
+        <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+        <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
+        <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
+        <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
+        <span class="n">created_at_lte</span><span class="o">=</span><span class="n">created_at_lte</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+        <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="n">honeypot_mark_gte</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="n">honeypot_mark_lte</span><span class="p">,</span>
+        <span class="n">id_contains</span><span class="o">=</span><span class="n">id_contains</span><span class="p">,</span>
+        <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
+        <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span>
+        <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;PREDICTION&quot;</span><span class="p">],</span>
+        <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
+        <span class="n">category_search</span><span class="o">=</span><span class="n">category_search</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="o">=</span><span class="n">as_generator</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2191,7 +3135,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsLabel</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Label mutations.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
+    <span class="c1"># pylint: disable=too-many-arguments</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the subclass.</span>
@@ -2250,9 +3194,11 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
                     <span class="s2">&quot; your calls by models.&quot;</span>
                 <span class="p">)</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;The use of `model_name_array` is deprecated. Creating predictions from different&quot;</span>
-                <span class="s2">&quot; models is not supported anymore. Please use `model_name` argument instead to&quot;</span>
-                <span class="s2">&quot; provide the predictions model name.&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;The use of `model_name_array` is deprecated. Creating predictions from&quot;</span>
+                    <span class="s2">&quot; different models is not supported anymore. Please use `model_name` argument&quot;</span>
+                    <span class="s2">&quot; instead to provide the predictions model name.&quot;</span>
+                <span class="p">),</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -2401,7 +3347,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
                 <span class="s2">&quot;seconds_to_label&quot;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
                 <span class="s2">&quot;author_id&quot;</span><span class="p">:</span> <span class="n">author_id</span><span class="p">,</span>
             <span class="p">}</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">json_response</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">,</span> <span class="n">author_id</span><span class="p">,)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">json_response</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">,</span> <span class="n">author_id</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
                 <span class="nb">zip</span><span class="p">(</span>
                     <span class="n">asset_id_array</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">),</span>
                     <span class="n">asset_external_id_array</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">),</span>
@@ -2478,7 +3424,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">asset_external_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Either provide asset_id or external_id and project_id&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either provide asset_id or external_id and project_id&quot;</span><span class="p">)</span>
             <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span> <span class="n">project_id</span><span class="p">)[</span>
                 <span class="n">asset_external_id</span>
             <span class="p">]</span>
@@ -2664,7 +3610,7 @@ Name of the model when uploading predictions</p></td>
             <span class="s2">&quot;seconds_to_label&quot;</span><span class="p">:</span> <span class="n">seconds_to_label</span><span class="p">,</span>
             <span class="s2">&quot;author_id&quot;</span><span class="p">:</span> <span class="n">author_id</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">json_response</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">,</span> <span class="n">author_id</span><span class="p">,)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">json_response</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="p">,</span> <span class="n">author_id</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="n">asset_id_array</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">),</span>
                 <span class="n">asset_external_id_array</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">),</span>
@@ -2968,7 +3914,7 @@ Either provide asset_id or asset_external_id and project_id</p></td>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">asset_external_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Either provide asset_id or external_id and project_id&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either provide asset_id or external_id and project_id&quot;</span><span class="p">)</span>
         <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span> <span class="n">project_id</span><span class="p">)[</span>
             <span class="n">asset_external_id</span>
         <span class="p">]</span>
@@ -3127,9 +4073,11 @@ provide the predictions model name."</p>
                 <span class="s2">&quot; your calls by models.&quot;</span>
             <span class="p">)</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;The use of `model_name_array` is deprecated. Creating predictions from different&quot;</span>
-            <span class="s2">&quot; models is not supported anymore. Please use `model_name` argument instead to&quot;</span>
-            <span class="s2">&quot; provide the predictions model name.&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;The use of `model_name_array` is deprecated. Creating predictions from&quot;</span>
+                <span class="s2">&quot; different models is not supported anymore. Please use `model_name` argument&quot;</span>
+                <span class="s2">&quot; instead to provide the predictions model name.&quot;</span>
+            <span class="p">),</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -3503,7 +4451,7 @@ See <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6df46069.min.js"></script>
+      <script src="../../assets/javascripts/bundle.4b2c34cd.min.js"></script>
       
     
   </body>

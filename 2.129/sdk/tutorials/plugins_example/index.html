@@ -16,10 +16,10 @@
         <link rel="prev" href="../plugins_development/">
       
       
-        <link rel="next" href="../../api_key/">
+        <link rel="next" href="../plugins_library/">
       
       <link rel="icon" href="../../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.12">
     
     
       
@@ -538,6 +538,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_library/" class="md-nav__link">
+        Plugins library
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -914,7 +928,7 @@
 <p>This notebook is an end-to-end example that you can follow to: create a project, upload a first plugin and activate it on this project, and finally start monitoring it.</p>
 <p><strong>NB: The plugin capabilities of Kili are under active development, and compatible with version 2.125.2 and later of Kili. Don't hesitate to reach out via Github or the Kili support to provide feedback.</strong></p>
 <h2 id="step-1-instantiate-kili">Step 1: Instantiate Kili</h2>
-<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span>  <span class="n">kili</span>
+<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -968,7 +982,7 @@
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>Created project clcysbp9o2d7w0krfghuf7le1
+<pre><code>Created project cldlyo2bq61if0jn9efvn3soo
 </code></pre>
 <p>Upload an asset:</p>
 <div class="highlight"><pre><span></span><code><span class="n">content_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_1.jpg&quot;</span><span class="p">]</span>
@@ -1035,11 +1049,11 @@
 
 <span class="n">plugin_folder</span> <span class="o">=</span> <span class="s2">&quot;plugin_folder&quot;</span>
 
-<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/datasets/plugins/plugin.py&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/plugins_library/plugin_image.py&quot;</span><span class="p">,</span>
     <span class="s2">&quot;plugin_folder/main.py&quot;</span><span class="p">,</span>
-<span class="p">);</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="step-4-upload-the-plugin-from-a-folder">Step 4: Upload the plugin from a folder</h2>
 <p>With the plugin defined in a separate <code>Python</code> file, you can create a folder containing:
@@ -1079,12 +1093,12 @@ git+https://github.com/yzhao062/pyod.git</p>
 <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 </code></pre></div>
-<pre><code>Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin.py", plugin_name="Plugin bbox count")
+<pre><code>Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder", plugin_name="Plugin bbox count")
 error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
 </code></pre>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">);</span>
 </code></pre></div>
-<pre><code>Plugin with name "Plugin bbox count" activated on project "clcysbp9o2d7w0krfghuf7le1"
+<pre><code>Plugin with name "Plugin bbox count" activated on project "cldlyo2bq61if0jn9efvn3soo"
 </code></pre>
 <h2 id="step-4-bis-upload-the-plugin-from-a-py-file">Step 4 bis: Upload the plugin from a .py file</h2>
 <p>Alternatively, you can also create a plugin directly from a <code>.py</code> file.</p>
@@ -1102,8 +1116,13 @@ error: "[pluginsError] An error occured handling your plugin -- This can be due 
 <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 </code></pre></div>
+<pre><code>Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder/main.py", plugin_name="Plugin bbox count")
+error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
+</code></pre>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">);</span>
 </code></pre></div>
+<pre><code>Warning: A plugin with the name "Plugin bbox count" is already activated on the project with id "cldlyo2bq61if0jn9efvn3soo"
+</code></pre>
 <h2 id="step-5-plugin-in-action">Step 5: Plugin in action</h2>
 <p>Wait for the plugin to be successfully deployed.</p>
 <p>After that, you can test it by labelling in the Kili interface or just by uploading the following label.</p>
@@ -1167,7 +1186,7 @@ error: "[pluginsError] An error occured handling your plugin -- This can be due 
     <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'clcysc83n2asf0lq483rlc5wv'}]
+<pre><code>[{'id': 'cldlyovj52lfr0joi831qfbao'}]
 </code></pre>
 <p>If you use the base plugin provided, the plugin should:</p>
 <ul>
@@ -1179,11 +1198,12 @@ error: "[pluginsError] An error occured handling your plugin -- This can be due 
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;Go to my project: </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/api&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s1">/menu/queue&#39;</span>
+    <span class="s2">&quot;Go to my project:&quot;</span>
+    <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/api&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s1">/menu/queue&#39;</span>
 <span class="p">)</span>
 </code></pre></div>
 <pre><code>[{'issues': [], 'status': 'LABELED'}]
-Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w0krfghuf7le1/menu/queue
+Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
 </code></pre>
 <p>Woah! Amazing! Well done :) 🚀</p>
 <p>Let's test now to post a proper label, this one for example:</p>
@@ -1216,11 +1236,12 @@ Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w
 <span class="nb">print</span><span class="p">(</span><span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]))</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;Go to my project: </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/api&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s1">/menu/queue&#39;</span>
+    <span class="s2">&quot;Go to my project:&quot;</span>
+    <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/api&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s1">/menu/queue&#39;</span>
 <span class="p">)</span>
 </code></pre></div>
 <pre><code>[{'status': 'LABELED'}]
-Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w0krfghuf7le1/menu/queue
+Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
 </code></pre>
 <p>The status of your asset should have now changed to <code>LABELED</code>. In this plugin, previous issues remain but you can solve them through the API as well.</p>
 <p>Well done! You can now iterate on the script. To learn how to avoid latency when building and deploying your plugin, refer to the <em>plugins_development.ipynb</em> tutorial.</p>
@@ -1240,56 +1261,7 @@ Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w
 <span class="n">logs_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">logs</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">logs_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 </code></pre></div>
-<pre><code>[
-    {
-        "content": "Issue created!",
-        "createdAt": "2023-01-16T12:31:27.633Z",
-        "logType": "info",
-        "metadata": {
-            "assetId": "clcysbre30000jevzat4b7k4d",
-            "labelId": "clcysc83n2asf0lq483rlc5wv"
-        },
-        "pluginName": "Plugin bbox count",
-        "projectId": "clcysbp9o2d7w0krfghuf7le1",
-        "runId": "clcysc93e07wv014z5nbc0kfc"
-    },
-    {
-        "content": "Creating an issue...",
-        "createdAt": "2023-01-16T12:31:26.620Z",
-        "logType": "info",
-        "metadata": {
-            "assetId": "clcysbre30000jevzat4b7k4d",
-            "labelId": "clcysc83n2asf0lq483rlc5wv"
-        },
-        "pluginName": "Plugin bbox count",
-        "projectId": "clcysbp9o2d7w0krfghuf7le1",
-        "runId": "clcysc93e07wv014z5nbc0kfc"
-    },
-    {
-        "content": "Custom method - checking number of bboxes",
-        "createdAt": "2023-01-16T12:31:26.619Z",
-        "logType": "info",
-        "metadata": {
-            "assetId": "clcysbre30000jevzat4b7k4d",
-            "labelId": "clcysc83n2asf0lq483rlc5wv"
-        },
-        "pluginName": "Plugin bbox count",
-        "projectId": "clcysbp9o2d7w0krfghuf7le1",
-        "runId": "clcysc93e07wv014z5nbc0kfc"
-    },
-    {
-        "content": "On submit called",
-        "createdAt": "2023-01-16T12:31:26.619Z",
-        "logType": "info",
-        "metadata": {
-            "assetId": "clcysbre30000jevzat4b7k4d",
-            "labelId": "clcysc83n2asf0lq483rlc5wv"
-        },
-        "pluginName": "Plugin bbox count",
-        "projectId": "clcysbp9o2d7w0krfghuf7le1",
-        "runId": "clcysc93e07wv014z5nbc0kfc"
-    }
-]
+<pre><code>[]
 </code></pre>
 <h2 id="step-7-manage-the-plugin">Step 7: Manage the plugin</h2>
 <p>You also have several other methods to manage your plugins.</p>
@@ -1297,14 +1269,19 @@ Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w
 <div class="highlight"><pre><span></span><code><span class="n">plugins</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">list_plugins</span><span class="p">()</span>
 </code></pre></div>
 <p>Update a plugin with new source code:</p>
-<div class="highlight"><pre><span></span><code><span class="n">new_path_to_plugin</span> <span class="o">=</span> <span class="s2">&quot;plugin.py&quot;</span>
-<span class="k">if</span> <span class="n">new_path_to_plugin</span> <span class="o">!=</span> <span class="n">path_to_plugin</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">plugin_path</span><span class="o">=</span><span class="n">new_path_to_plugin</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Insert the path to the updated plugin</span>
+<span class="n">new_path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;main.py&quot;</span>
+
+<span class="c1"># Change to True if you want to update the plugin</span>
+<span class="n">should_update</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">if</span> <span class="n">should_update</span><span class="p">:</span>
+    <span class="n">kili</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">plugin_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">new_path_to_plugin</span><span class="p">))</span>
 </code></pre></div>
 <p>Deactivate the plugin on a certain project (the plugin can still be active for other projects):</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">deactivate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">);</span>
 </code></pre></div>
-<pre><code>Plugin Plugin bbox count deactivated on project clcysbp9o2d7w0krfghuf7le1
+<pre><code>Plugin Plugin bbox count deactivated on project cldlyo2bq61if0jn9efvn3soo
 </code></pre>
 <p>Delete the plugin completely (deactivates the plugin from all projects):</p>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">delete_plugin_from_org</span><span class="p">:</span>
@@ -1352,7 +1329,7 @@ Go to my project: https://cloud.kili-technology.com/label/projects/clcysbp9o2d7w
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.6df46069.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.4b2c34cd.min.js"></script>
       
     
   </body>

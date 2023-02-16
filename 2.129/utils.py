@@ -25,6 +25,14 @@ from nbconvert import MarkdownExporter
 from nbconvert.preprocessors.base import Preprocessor
 from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
 
+IGNORED_NOTEBOOKS = [
+    "recipes/plugins_development.ipynb",
+]
+
+IGNORED_TUTORIALS = [
+    "plugins_library",
+]
+
 
 class ExtractAttachmentsPreprocessor(Preprocessor):
     """
@@ -244,6 +252,9 @@ class NotebookTestMissingError(Exception):
 
 def check_notebook_tested(ipynb_filepath: Path):
     """Check if notebook is tested."""
+    if f"recipes/{ipynb_filepath.name}" in IGNORED_NOTEBOOKS:
+        return
+
     with open("tests/test_notebooks.py", encoding="utf-8") as file:
         test_notebooks_module_str = file.read()
 
@@ -290,7 +301,9 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     """
     # get existing tutorials names
     existing_tutorials = list(Path("docs/sdk/tutorials").glob("*.md"))
-    existing_tutorials = [tutorial.stem for tutorial in existing_tutorials]
+    existing_tutorials = [
+        tutorial.stem for tutorial in existing_tutorials if tutorial.stem not in IGNORED_TUTORIALS
+    ]
 
     # group files by tutorial name (filename or notebooks and markdowns without extension)
     modified_files = sorted(modified_files, key=lambda path: path.stem)  # sort before grouping

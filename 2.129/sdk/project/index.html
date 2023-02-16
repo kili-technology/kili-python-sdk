@@ -19,7 +19,7 @@
         <link rel="next" href="../project_user/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.12">
     
     
       
@@ -433,6 +433,20 @@
     <li class="md-nav__item">
       <a href="../tutorials/plugins_example/" class="md-nav__link">
         Developing plugins - example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_library/" class="md-nav__link">
+        Plugins library
       </a>
     </li>
   
@@ -1003,7 +1017,7 @@
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesProject</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Project queries.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
+    <span class="c1"># pylint: disable=too-many-arguments,dangerous-default-value</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
@@ -1013,7 +1027,64 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
-    <span class="c1"># pylint: disable=dangerous-default-value</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">projects</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">should_relaunch_kpi_computation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;consensusTotCoverage&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inputType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;minConsensusSize&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reviewCoverage&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.role&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.user.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.user.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">projects</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">should_relaunch_kpi_computation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;consensusTotCoverage&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inputType&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;minConsensusSize&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reviewCoverage&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.role&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.user.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;roles.user.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="o">...</span>
+
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">projects</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1038,6 +1109,7 @@
         <span class="p">],</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
@@ -1076,8 +1148,13 @@
             <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
             <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ProjectQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+        <span class="n">projects_gen</span> <span class="o">=</span> <span class="n">ProjectQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">projects_gen</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">projects_gen</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_projects</span><span class="p">(</span>
@@ -1265,7 +1342,7 @@ whose update date is lower or equal to this date.</p></td>
 
 
 <h3 class="doc doc-heading" id="kili.queries.project.__init__.QueriesProject.projects">
-<code class="highlight language-python"><span class="n">projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;consensusTotCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;inputType&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonInterface&#39;</span><span class="p">,</span> <span class="s1">&#39;minConsensusSize&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.id&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.role&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;consensusTotCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;inputType&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonInterface&#39;</span><span class="p">,</span> <span class="s1">&#39;minConsensusSize&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.id&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.role&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1400,6 +1477,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
     <span class="p">],</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
@@ -1438,8 +1516,13 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
         <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
         <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ProjectQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
+    <span class="n">projects_gen</span> <span class="o">=</span> <span class="n">ProjectQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">projects_gen</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">projects_gen</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1688,7 +1771,19 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_PROJECT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># We check during 60s for the project to be created</span>
+        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="n">Retrying</span><span class="p">(</span>
+            <span class="n">stop</span><span class="o">=</span><span class="n">stop_after_delay</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
+            <span class="n">wait</span><span class="o">=</span><span class="n">wait_fixed</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">NotFound</span><span class="p">),</span>
+            <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">with</span> <span class="n">attempt</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">update_properties_in_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -2374,7 +2469,19 @@ if <code>None</code> is provided.</p></td>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_PROJECT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="c1"># We check during 60s for the project to be created</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="n">Retrying</span><span class="p">(</span>
+        <span class="n">stop</span><span class="o">=</span><span class="n">stop_after_delay</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
+        <span class="n">wait</span><span class="o">=</span><span class="n">wait_fixed</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">NotFound</span><span class="p">),</span>
+        <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">with</span> <span class="n">attempt</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -3098,7 +3205,7 @@ Possible choices are: <code>ADMIN</code>, <code>TEAM_MANAGER</code>, <code>REVIE
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6df46069.min.js"></script>
+      <script src="../../assets/javascripts/bundle.4b2c34cd.min.js"></script>
       
     
   </body>

@@ -19,7 +19,7 @@
         <link rel="next" href="../issue/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.12">
     
     
       
@@ -433,6 +433,20 @@
     <li class="md-nav__item">
       <a href="../tutorials/plugins_example/" class="md-nav__link">
         Developing plugins - example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_library/" class="md-nav__link">
+        Plugins library
       </a>
     </li>
   
@@ -963,7 +977,7 @@
 <span class="sd">    Set of Asset queries</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
+    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
@@ -973,7 +987,110 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
-    <span class="c1"># pylint: disable=dangerous-default-value</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">assets</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;externalId&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isHoneypot&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonMetadata&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.jsonResponse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">consensus_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">consensus_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">external_id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_created_at_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_created_at_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata_where</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">download_media</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">local_media_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">assets</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;externalId&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isHoneypot&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jsonMetadata&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.author.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.author.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels.jsonResponse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">consensus_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">consensus_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">external_id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">honeypot_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_consensus_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_created_at_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_created_at_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_honeypot_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata_where</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">download_media</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">local_media_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="o">...</span>
+
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">assets</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1001,7 +1118,7 @@
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">external_id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">honeypot_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">honeypot_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">label_author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1018,10 +1135,11 @@
         <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">label_category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">download_media</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">local_media_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
@@ -1137,15 +1255,18 @@
             <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
             <span class="n">label_category_search</span><span class="o">=</span><span class="n">label_category_search</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
         <span class="n">post_call_function</span><span class="p">,</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">get_download_assets_function</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">download_media</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">local_media_dir</span>
         <span class="p">)</span>
-        <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
+        <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">assets</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">assets_gen</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">assets_gen</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">assets_gen</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">count_assets</span><span class="p">(</span>
@@ -1285,7 +1406,7 @@
 
 
 <h3 class="doc doc-heading" id="kili.queries.asset.__init__.QueriesAsset.assets">
-<code class="highlight language-python"><span class="n">assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;externalId&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;isHoneypot&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonMetadata&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.id&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;skipped&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">external_id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">download_media</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">local_media_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;externalId&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;isHoneypot&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonMetadata&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.id&#39;</span><span class="p">,</span> <span class="s1">&#39;labels.jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;skipped&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">external_id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">download_media</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">local_media_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1582,7 +1703,7 @@ label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">external_id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">honeypot_mark_gt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">honeypot_mark_lt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label_author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1599,10 +1720,11 @@ label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_
     <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">label_category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">download_media</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">local_media_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
@@ -1718,15 +1840,18 @@ label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_
         <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
         <span class="n">label_category_search</span><span class="o">=</span><span class="n">label_category_search</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">as_generator</span><span class="p">)</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
     <span class="n">post_call_function</span><span class="p">,</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">get_download_assets_function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">download_media</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">local_media_dir</span>
     <span class="p">)</span>
-    <span class="n">assets</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
+    <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">assets</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">assets_gen</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">assets_gen</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">assets_gen</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2121,6 +2246,7 @@ whose update date is lower or equal to this date.</p></td>
         <span class="n">json_content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">wait_until_availability</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Append assets to a project.</span>
@@ -2156,6 +2282,8 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">                - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
 <span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
 <span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">            wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.</span>
+<span class="sd">                If `False`, the function will return faster but the assets might not be fully processed by the server.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A result object which indicates if the mutation was successful, or an error message.</span>
@@ -2194,7 +2322,11 @@ whose update date is lower or equal to this date.</p></td>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">assets</span> <span class="o">=</span> <span class="p">[{</span><span class="o">**</span><span class="n">assets</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_data</span><span class="p">)]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">import_assets</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">,</span>
+            <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="n">wait_until_availability</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
@@ -2262,9 +2394,12 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;The use of `external_ids` argument has changed. It is now used to identify which&quot;</span>
-                <span class="s2">&quot; properties of which assets to update. Please use&quot;</span>
-                <span class="s2">&quot; `kili.change_asset_external_ids()` method instead to change asset external IDs.&quot;</span><span class="p">,</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;The use of `external_ids` argument has changed. It is now used to identify&quot;</span>
+                    <span class="s2">&quot; which properties of which assets to update. Please use&quot;</span>
+                    <span class="s2">&quot; `kili.change_asset_external_ids()` method instead to change asset external&quot;</span>
+                    <span class="s2">&quot; IDs.&quot;</span>
+                <span class="p">),</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">&quot;Please provide either `asset_ids` or `external_ids`.&quot;</span><span class="p">)</span>
@@ -2404,8 +2539,29 @@ whose update date is lower or equal to this date.</p></td>
         <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]}}</span>
 
+        <span class="nd">@retry</span><span class="p">(</span>
+            <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+            <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
+            <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been deleted.&quot;&quot;&quot;</span>
+            <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
+            <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+                <span class="n">AssetWhere</span><span class="p">(</span>
+                    <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">nb_assets_in_kili</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;Failed to delete some assets.&quot;</span><span class="p">)</span>
+
         <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_DELETE_MANY_FROM_DATASET</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">properties_to_batch</span><span class="p">,</span>
+            <span class="n">generate_variables</span><span class="p">,</span>
+            <span class="n">GQL_DELETE_MANY_FROM_DATASET</span><span class="p">,</span>
+            <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Asset</span><span class="p">)</span>
 
@@ -2436,7 +2592,7 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">                    asset_ids=[</span>
 <span class="sd">                        &quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
 <span class="sd">                        &quot;ckg22d81s0jrh0885pdxfd03n&quot;,</span>
-<span class="sd">                        ],</span>
+<span class="sd">                    ],</span>
 <span class="sd">                )</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">get_asset_ids_or_throw_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
@@ -2446,13 +2602,38 @@ whose update date is lower or equal to this date.</p></td>
         <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]}}</span>
 
+        <span class="nd">@retry</span><span class="p">(</span>
+            <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+            <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
+            <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been sent to review.&quot;&quot;&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">project_id</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">return</span>  <span class="c1"># No assets have changed status</span>
+            <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
+            <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+                <span class="n">AssetWhere</span><span class="p">(</span>
+                    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
+                    <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_review</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;Failed to send some assets to review&quot;</span><span class="p">)</span>
+
         <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">properties_to_batch</span><span class="p">,</span>
             <span class="n">generate_variables</span><span class="p">,</span>
             <span class="n">GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW</span><span class="p">,</span>
+            <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># unlike send_back_to_queue, the add_to_review mutation doesn&#39;t always return the project ID</span>
+        <span class="c1"># it happens when no assets have been sent to review</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
             <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
                 <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">]),</span>
@@ -2496,8 +2677,30 @@ whose update date is lower or equal to this date.</p></td>
         <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]}}</span>
 
+        <span class="nd">@retry</span><span class="p">(</span>
+            <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+            <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
+            <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been sent back to queue.&quot;&quot;&quot;</span>
+            <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
+            <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+                <span class="n">AssetWhere</span><span class="p">(</span>
+                    <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
+                    <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_queue</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;Failed to send some assets back to queue&quot;</span><span class="p">)</span>
+
         <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">properties_to_batch</span><span class="p">,</span>
+            <span class="n">generate_variables</span><span class="p">,</span>
+            <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">,</span>
+            <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
@@ -2593,7 +2796,7 @@ An error message if mutation failed.</p></td>
         <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span>
             <span class="s2">&quot;ckg22d81r0jrg0885unmuswj8&quot;</span><span class="p">,</span>
             <span class="s2">&quot;ckg22d81s0jrh0885pdxfd03n&quot;</span><span class="p">,</span>
-            <span class="p">],</span>
+        <span class="p">],</span>
     <span class="p">)</span>
 </code></pre></div>
 
@@ -2626,7 +2829,7 @@ An error message if mutation failed.</p></td>
 <span class="sd">                asset_ids=[</span>
 <span class="sd">                    &quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
 <span class="sd">                    &quot;ckg22d81s0jrh0885pdxfd03n&quot;,</span>
-<span class="sd">                    ],</span>
+<span class="sd">                ],</span>
 <span class="sd">            )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">get_asset_ids_or_throw_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
@@ -2636,13 +2839,38 @@ An error message if mutation failed.</p></td>
     <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]}}</span>
 
+    <span class="nd">@retry</span><span class="p">(</span>
+        <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+        <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
+        <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been sent to review.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">project_id</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="c1"># No assets have changed status</span>
+        <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
+        <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+            <span class="n">AssetWhere</span><span class="p">(</span>
+                <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
+                <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_review</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;Failed to send some assets to review&quot;</span><span class="p">)</span>
+
     <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">properties_to_batch</span><span class="p">,</span>
         <span class="n">generate_variables</span><span class="p">,</span>
         <span class="n">GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW</span><span class="p">,</span>
+        <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># unlike send_back_to_queue, the add_to_review mutation doesn&#39;t always return the project ID</span>
+    <span class="c1"># it happens when no assets have been sent to review</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
         <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
             <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">]),</span>
@@ -2665,7 +2893,7 @@ An error message if mutation failed.</p></td>
 
 
 <h3 class="doc doc-heading" id="kili.mutations.asset.__init__.MutationsAsset.append_many_to_dataset">
-<code class="highlight language-python"><span class="n">append_many_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_honeypot_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_metadata_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">append_many_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_honeypot_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_content_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_metadata_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">wait_until_availability</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2758,6 +2986,13 @@ rich-text assets</a></li>
         <td><p>If <code>True</code>, the progress bar will be disabled</p></td>
         <td><code>False</code></td>
       </tr>
+      <tr>
+        <td><code>wait_until_availability</code></td>
+        <td><code>bool</code></td>
+        <td><p>If <code>True</code>, the function will return once the assets are fully imported in Kili.
+If <code>False</code>, the function will return faster but the assets might not be fully processed by the server.</p></td>
+        <td><code>True</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2804,6 +3039,7 @@ rich-text assets</a></li>
     <span class="n">json_content_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">json_metadata_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">wait_until_availability</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Append assets to a project.</span>
@@ -2839,6 +3075,8 @@ rich-text assets</a></li>
 <span class="sd">            - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
 <span class="sd">                Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
 <span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
+<span class="sd">        wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.</span>
+<span class="sd">            If `False`, the function will return faster but the assets might not be fully processed by the server.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A result object which indicates if the mutation was successful, or an error message.</span>
@@ -2877,7 +3115,11 @@ rich-text assets</a></li>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">assets</span> <span class="o">=</span> <span class="p">[{</span><span class="o">**</span><span class="n">assets</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_data</span><span class="p">)]</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">import_assets</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">assets</span><span class="o">=</span><span class="n">assets</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
+        <span class="n">verify</span><span class="o">=</span><span class="n">wait_until_availability</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
@@ -3117,8 +3359,29 @@ rich-text assets</a></li>
     <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]}}</span>
 
+    <span class="nd">@retry</span><span class="p">(</span>
+        <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+        <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
+        <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been deleted.&quot;&quot;&quot;</span>
+        <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
+        <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+            <span class="n">AssetWhere</span><span class="p">(</span>
+                <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">nb_assets_in_kili</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;Failed to delete some assets.&quot;</span><span class="p">)</span>
+
     <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_DELETE_MANY_FROM_DATASET</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">properties_to_batch</span><span class="p">,</span>
+        <span class="n">generate_variables</span><span class="p">,</span>
+        <span class="n">GQL_DELETE_MANY_FROM_DATASET</span><span class="p">,</span>
+        <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Asset</span><span class="p">)</span>
 </code></pre></div>
@@ -3234,8 +3497,30 @@ An error message if mutation failed.</p></td>
     <span class="k">def</span> <span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]}}</span>
 
+    <span class="nd">@retry</span><span class="p">(</span>
+        <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+        <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
+        <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been sent back to queue.&quot;&quot;&quot;</span>
+        <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
+        <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+            <span class="n">AssetWhere</span><span class="p">(</span>
+                <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
+                <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_queue</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;Failed to send some assets back to queue&quot;</span><span class="p">)</span>
+
     <span class="n">results</span> <span class="o">=</span> <span class="n">_mutate_from_paginated_call</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">properties_to_batch</span><span class="p">,</span> <span class="n">generate_variables</span><span class="p">,</span> <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">properties_to_batch</span><span class="p">,</span>
+        <span class="n">generate_variables</span><span class="p">,</span>
+        <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">,</span>
+        <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
@@ -3468,9 +3753,12 @@ is a text formatted using RichText.</li>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;The use of `external_ids` argument has changed. It is now used to identify which&quot;</span>
-            <span class="s2">&quot; properties of which assets to update. Please use&quot;</span>
-            <span class="s2">&quot; `kili.change_asset_external_ids()` method instead to change asset external IDs.&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;The use of `external_ids` argument has changed. It is now used to identify&quot;</span>
+                <span class="s2">&quot; which properties of which assets to update. Please use&quot;</span>
+                <span class="s2">&quot; `kili.change_asset_external_ids()` method instead to change asset external&quot;</span>
+                <span class="s2">&quot; IDs.&quot;</span>
+            <span class="p">),</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">&quot;Please provide either `asset_ids` or `external_ids`.&quot;</span><span class="p">)</span>
@@ -3583,7 +3871,7 @@ is a text formatted using RichText.</li>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6df46069.min.js"></script>
+      <script src="../../assets/javascripts/bundle.4b2c34cd.min.js"></script>
       
     
   </body>
