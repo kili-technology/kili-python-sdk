@@ -131,11 +131,11 @@ email = "no.such.email@no.such.domain.com"
 password = "12345"
 organization_role = "USER"
 
-from kili.exceptions import GraphQLError
+from kili.exceptions import TransportQueryError
 
 try:
     kili.create_user(email, password, organization_role, firstname, lastname)
-except GraphQLError as err:
+except TransportQueryError as err:
     print(str(err))
 ```
 

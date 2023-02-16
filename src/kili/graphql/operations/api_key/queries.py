@@ -34,7 +34,7 @@ class APIKeyWhere(BaseQueryWhere):
 
 
 class APIKeyQuery(GraphQLQuery):
-    """APIKey query."""
+    """ProjectUser query."""
 
     @staticmethod
     def query(fragment):

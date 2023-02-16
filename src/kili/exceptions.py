@@ -1,24 +1,11 @@
 """Exceptions of the package."""
-from typing import Dict, List, Optional
+from typing import Optional
 
+import graphql
+from gql.transport import exceptions
 
-class GraphQLError(Exception):
-    """Raised when the GraphQL call returns an error"""
-
-    def __init__(self, error, batch_number=None) -> None:
-        self.error = error
-
-        if isinstance(error, List):
-            error = error[0]
-        if isinstance(error, Dict) and "message" in error:
-            error_msg = error["message"]
-        else:
-            error_msg = str(error)
-
-        if batch_number is None:
-            super().__init__(f'GraphQL error: "{error_msg}"')
-        else:
-            super().__init__(f'GraphQL error at index {100*batch_number}: {error_msg}"')
+TransportQueryError = exceptions.TransportQueryError
+GraphQLError = graphql.GraphQLError
 
 
 class NotFound(Exception):
@@ -77,7 +64,3 @@ class RemovedMethodError(Exception):
 
 class UserNotFoundError(Exception):
     """Raised when the user is not found"""
-
-
-class InvalidApiKeyError(Exception):
-    """Raised when the api key is invalid"""
