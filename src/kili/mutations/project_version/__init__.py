@@ -5,6 +5,8 @@ from typing import Optional
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
+
 from ...helpers import format_result
 from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 
@@ -15,7 +17,7 @@ class MutationsProjectVersion:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:

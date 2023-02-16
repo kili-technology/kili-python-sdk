@@ -11,6 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
+from kili.authentication import KiliAuth
 from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
@@ -43,7 +44,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         export_params: ExportParams,
-        kili,
+        auth: KiliAuth,
         logger: logging.Logger,
         disable_tqdm: bool,
         content_repository: AbstractContentRepository,
@@ -55,7 +56,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.single_file: bool = export_params.single_file
         self.split_option: SplitOption = export_params.split_option
         self.disable_tqdm: bool = disable_tqdm
-        self.kili = kili
+        self.auth = auth
         self.logger: logging.Logger = logger
         self.content_repository: AbstractContentRepository = content_repository
         self.output_file = export_params.output_file
@@ -63,7 +64,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.export_root_folder: Path = Path()
 
         project_info = get_project(
-            self.kili, self.project_id, ["jsonInterface", "inputType", "title"]
+            self.auth, self.project_id, ["jsonInterface", "inputType", "title"]
         )
         self.project_json_interface = project_info["jsonInterface"]
         self.project_input_type = project_info["inputType"]
@@ -119,7 +120,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Create a README.kili.txt file to give information about exported labels
         """
         readme_file_name = root_folder / self.project_id / "README.kili.txt"
-        project_info = get_project(self.kili, self.project_id, ["title", "id", "description"])
+        project_info = get_project(self.auth, self.project_id, ["title", "id", "description"])
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
             fout.write("Exported Labels from KILI\n=========================\n\n".encode())
@@ -168,7 +169,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         with TemporaryDirectory() as export_root_folder:
             self.export_root_folder = export_root_folder
             assets = fetch_assets(
-                self.kili,
+                self.auth,
                 project_id=self.project_id,
                 asset_ids=self.assets_ids,
                 export_type=self.export_type,

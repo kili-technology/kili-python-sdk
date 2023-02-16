@@ -4,6 +4,7 @@ import re
 import warnings
 from typing import Iterable, Optional
 
+from kili.authentication import KiliAuth
 from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
 from kili.graphql import QueryOptions
@@ -52,14 +53,14 @@ def collect_members_from_csv(csv_path: str, role: Optional[str]):
     return members_to_add
 
 
-def collect_members_from_project(kili, project_id_source: str, role: Optional[str]):
+def collect_members_from_project(auth: KiliAuth, project_id_source: str, role: Optional[str]):
     """copy members from project of id project_id_source"""
     activated_members = []
 
     if role is not None:
         raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
 
-    existing_members = ProjectUserQuery(kili.auth.client)(
+    existing_members = ProjectUserQuery(auth.client)(
         where=ProjectUserWhere(project_id=project_id_source),
         fields=["role", "user.email", "activated"],
         options=QueryOptions(disable_tqdm=True),

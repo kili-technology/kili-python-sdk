@@ -6,6 +6,7 @@ import pandas as pd
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query
@@ -19,7 +20,7 @@ class QueriesAsset:
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -308,7 +309,7 @@ class QueriesAsset:
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         post_call_function, fields = get_download_assets_function(
-            self, download_media, fields, project_id, local_media_dir
+            self.auth, download_media, fields, project_id, local_media_dir
         )
         assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
 
