@@ -75,6 +75,7 @@ jobs:
           echo "Link to draft release: $link_to_draft"
 
           echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$release_version" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ github.token }} # needed for gh cli
 
@@ -85,13 +86,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Draft release ${{ inputs.releaseBranchVersion }} is ready: ${{ env.LINK_TO_DRAFT }}",
+              "text": "Draft release ${{ env.RELEASE_VERSION }} is ready: ${{ env.LINK_TO_DRAFT }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Draft release ${{ inputs.releaseBranchVersion }} is ready: ${{ env.LINK_TO_DRAFT }}"
+                    "text": "Draft release ${{ env.RELEASE_VERSION }} is ready: ${{ env.LINK_TO_DRAFT }}"
                   }
                 }
               ]
