@@ -1,6 +1,0 @@
-auto-sklearn==0.5.2
-Click==7.0
-google-cloud-language==1.1.0
-protobuf==3.18.3
-python-dotenv==0.10.3
-websocket-client==0.54.0

@@ -141,9 +141,9 @@ class QueriesLabel:
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
-            created_at: Returned labels should have a label whose creation date is equal to this date.
-            created_at_gte: Returned labels should have a label whose creation date is greater than this date.
-            created_at_lte: Returned labels should have a label whose creation date is lower than this date.
+            created_at: Returned labels should have their creation date equal to this date.
+            created_at_gte: Returned labels should have their creation date greater or equal to this date.
+            created_at_lte: Returned labels should have their creation date lower or equal to this date.
             fields: All the fields to request among the possible fields for the labels.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
             first: Maximum number of labels to return.
