@@ -83,7 +83,7 @@ jobs:
           # create a branch to merge the release branch and master
           git checkout -b merge_release/$sdk_version
           git push --set-upstream origin merge_release/$sdk_version
-          gh pr create --title "chore: merge release/$sdk_version into master" --body "Merge release/$sdk_version into master" --base master
+          gh pr create --title "chore: merge release $sdk_version into master" --body "Merge release $sdk_version into master" --base master
         env:
           GH_TOKEN: ${{ github.token }} # needed for gh cli
 
