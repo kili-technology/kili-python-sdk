@@ -21,6 +21,7 @@ from tests.services.export.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.services.export.fakes.fake_kili import (
     FakeKili,
     mocked_AssetQuery,
+    mocked_AssetQuery_count,
     mocked_ProjectQuery,
 )
 
@@ -465,8 +466,11 @@ def get_file_tree(folder: str):
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
 @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+@patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
 @patch("kili.services.export.media.video.ffmpeg")
-def test_export_service_layout(mocker_ffmpeg, mocker_asset, mocker_project, name, test_case):
+def test_export_service_layout(
+    mocker_ffmpeg, mocker_asset_count, mocker_asset, mocker_project, name, test_case
+):
     with TemporaryDirectory() as export_folder:
         with TemporaryDirectory() as extract_folder:
             path_zipfile = Path(export_folder) / "export.zip"
@@ -591,7 +595,10 @@ def test_export_service_layout(mocker_ffmpeg, mocker_asset, mocker_project, name
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
 @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
-def test_export_service_errors(mocket_asset, mocker_project, name, test_case, error):
+@patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
+def test_export_service_errors(
+    mocker_asset_count, mocker_asset, mocker_project, name, test_case, error
+):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
         path_zipfile.parent.mkdir(parents=True, exist_ok=True)

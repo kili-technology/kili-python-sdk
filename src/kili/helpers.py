@@ -18,7 +18,6 @@ import tenacity
 from typing_extensions import get_args, get_origin
 
 from kili.constants import mime_extensions_for_IV2
-from kili.exceptions import GraphQLError
 
 T = TypeVar("T")
 
@@ -26,15 +25,12 @@ T = TypeVar("T")
 def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) -> T:
     """
     Formats the result of the GraphQL queries.
-
     Args:
         name: name of the field to extract, usually data
         result: query result to parse
         _object: returned type
     """
-    if "errors" in result:
-        raise GraphQLError(result["errors"])
-    formatted_json = format_json(result["data"][name])
+    formatted_json = format_json(result[name])
     if _object is None:
         return formatted_json  # type:ignore X
     if isinstance(formatted_json, list):

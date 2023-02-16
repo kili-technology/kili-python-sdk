@@ -8,7 +8,6 @@ from typing import List, NamedTuple, Optional
 
 from kili.graphql import GraphQLQuery, QueryOptions
 from kili.helpers import format_result
-from kili.types import Plugin
 
 
 class PluginLogsWhere(NamedTuple):
@@ -23,9 +22,6 @@ class PluginLogsWhere(NamedTuple):
 
 class PluginQuery(GraphQLQuery):
     """Plugin query."""
-
-    FORMAT_TYPE = Plugin
-    FRAGMENT_TYPE = Plugin
 
     @staticmethod
     def query(fragment):
@@ -89,10 +85,10 @@ class PluginQuery(GraphQLQuery):
         """
         List plugins
         """
-        fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
+        fragment = self.fragment_builder(fields)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
-        return format_result("data", result, self.FORMAT_TYPE)
+        return format_result("data", result)
 
     def get_logs(self, where: PluginLogsWhere, options: QueryOptions):
         """

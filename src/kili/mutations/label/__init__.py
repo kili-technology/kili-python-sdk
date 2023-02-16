@@ -10,7 +10,6 @@ from typeguard import typechecked
 
 from kili import services
 from kili.authentication import KiliAuth
-from kili.enums import LabelType
 from kili.helpers import deprecate, format_result
 from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (
@@ -23,6 +22,7 @@ from kili.services.helpers import (
     assert_all_arrays_have_same_size,
     infer_ids_from_external_ids,
 )
+from kili.services.types import LabelType
 
 
 class MutationsLabel:
@@ -126,7 +126,7 @@ class MutationsLabel:
         author_id: Optional[str] = None,
         label_asset_external_id: Optional[str] = None,
         label_asset_id: Optional[str] = None,
-        label_type: str = "DEFAULT",
+        label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ):

@@ -107,9 +107,9 @@ To iterate on the plugin code, you can refer to the plugins_development.ipynb no
 
 ```python
 from kili.plugins import PluginCore
-from kili.types import Label
+from typing import Dict
 
-def check_rules_on_label(label: Label):
+def check_rules_on_label(label: Dict):
     #custom methods
     print('Custom method - checking number of bboxes')
 
@@ -127,7 +127,7 @@ class PluginHandler(PluginCore):
     Custom plugin instance
     """
 
-    def on_submit(self, label: Label, asset_id: str) -> None:
+    def on_submit(self, label: Dict, asset_id: str) -> None:
         """
         Dedicated handler for Submit action
         """
@@ -206,12 +206,11 @@ with requirements_path.open("w") as f:
 
 ```python
 plugin_name = "Plugin bbox count"
-
-from kili.exceptions import GraphQLError
+from kili.exceptions import TransportQueryError
 
 try:
     kili.upload_plugin(plugin_folder, plugin_name)
-except GraphQLError as error:
+except TransportQueryError as error:
     print(str(error))
 ```
 
@@ -239,11 +238,9 @@ Alternatively, you can also create a plugin directly from a `.py` file.
 path_to_plugin = Path(plugin_folder) / "main.py"
 plugin_name = "Plugin bbox count"
 
-from kili.exceptions import GraphQLError
-
 try:
     kili.upload_plugin(str(path_to_plugin), plugin_name)
-except GraphQLError as error:
+except TransportQueryError as error:
     print(str(error))
 ```
 

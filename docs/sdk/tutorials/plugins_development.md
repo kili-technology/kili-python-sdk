@@ -30,17 +30,17 @@ Therefore, the skeleton of the plugin should look like this:
 
 ```python
 from kili.plugins import PluginCore
-from kili.types import Label
+from typing import Dict
 import numpy as np
 
 class PluginHandler(PluginCore):
     """Custom plugin"""
 
-    def on_review(self, label: Label, asset_id: str) -> None:
+    def on_review(self, label: Dict, asset_id: str) -> None:
         """Dedicated handler for Review action"""
         # Do something...
 
-    def on_submit(self, label: Label, asset_id: str) -> None:
+    def on_submit(self, label: Dict, asset_id: str) -> None:
         """Dedicated handler for Submit action"""
         # Do something...
 ```
@@ -88,11 +88,11 @@ We recommend using a modern IDE like VScode to get type hints and autocompletion
 
 ```python
 from kili.plugins import PluginCore
-from kili.types import Label
 import numpy as np
+from typing import Dict
 
 
-def custom_function(label: Label):
+def custom_function(label: Dict):
     label_id = label.get("id")
     print(f"My custom function for review of label with id {label_id}")
 
@@ -114,13 +114,13 @@ class PluginHandler(PluginCore):
                 text="Random issue generated for this label",
             )
 
-    def on_review(self, label: Label, asset_id: str) -> None:
+    def on_review(self, label: Dict, asset_id: str) -> None:
         """
         Dedicated handler for Review action
         """
         custom_function(label)
 
-    def on_submit(self, label: Label, asset_id: str) -> None:
+    def on_submit(self, label: Dict, asset_id: str) -> None:
         """
         Dedicated handler for Submit action
         """
@@ -226,11 +226,9 @@ label_id = "<YOUR_LABEL_ID>"
 
 
 ```python
-from kili.types import Label
-
 label = get_label(label_id=label_id, project_id=project_id)
 
-my_plugin_instance.on_submit(label=Label(**label), asset_id=asset_id)
+my_plugin_instance.on_submit(label=label, asset_id=asset_id)
 ```
 
 ### Test the plugin run on Kili
@@ -247,11 +245,11 @@ plugin_name = "My first kili plugin"
 
 
 ```python
-from kili.exceptions import GraphQLError
+from kili.exceptions import TransportQueryError
 
 try:
     kili.upload_plugin(path_to_plugin, plugin_name)
-except GraphQLError as error:
+except TransportQueryError as error:
     print(str(error))
 ```
 

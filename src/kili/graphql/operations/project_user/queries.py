@@ -6,7 +6,6 @@ GraphQL Queries of Project Users
 from typing import Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.types import ProjectUser
 
 
 class ProjectUserWhere(BaseQueryWhere):
@@ -45,9 +44,6 @@ class ProjectUserWhere(BaseQueryWhere):
 
 class ProjectUserQuery(GraphQLQuery):
     """ProjectUser query."""
-
-    FORMAT_TYPE = ProjectUser
-    FRAGMENT_TYPE = ProjectUser
 
     @staticmethod
     def query(fragment):

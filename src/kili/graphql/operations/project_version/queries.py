@@ -3,7 +3,6 @@ GraphQL Queries of ProjectVersions
 """
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.types import ProjectVersion
 
 
 class ProjectVersionWhere(BaseQueryWhere):
@@ -27,9 +26,6 @@ class ProjectVersionWhere(BaseQueryWhere):
 
 class ProjectVersionQuery(GraphQLQuery):
     """ProjectVersion query."""
-
-    FORMAT_TYPE = ProjectVersion
-    FRAGMENT_TYPE = ProjectVersion
 
     @staticmethod
     def query(fragment):

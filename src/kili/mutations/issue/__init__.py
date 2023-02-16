@@ -19,7 +19,7 @@ from .queries import GQL_APPEND_TO_ISSUES
 class MutationsIssue:
     """Set of Issue mutations."""
 
-    # pylint: disable=too-few-public-methods,too-many-arguments,too-many-locals
+    # pylint: disable=too-few-public-methods,too-many-arguments
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.

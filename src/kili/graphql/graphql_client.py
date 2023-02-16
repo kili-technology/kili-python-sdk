@@ -2,23 +2,22 @@
 GraphQL Client
 """
 
-
 import json
-import os
 import random
 import string
 import threading
 import time
-import urllib
 from datetime import datetime
 from enum import Enum
-from typing import Dict
+from typing import Dict, Optional, Union
 
 import websocket
+from gql import Client, gql
+from gql.transport.requests import RequestsHTTPTransport
+from graphql import DocumentNode
+from typeguard import typechecked
 
 from kili import __version__
-
-from ..exceptions import InvalidApiKeyError
 
 
 class GraphQLClientName(Enum):
@@ -28,104 +27,64 @@ class GraphQLClientName(Enum):
     CLI = "python-cli"
 
 
+# pylint: disable=too-few-public-methods
 class GraphQLClient:
     """
-    A simple GraphQL client
+    GraphQL client
     """
 
     def __init__(
         self,
         endpoint: str,
+        api_key: str,
         client_name: GraphQLClientName,
-        session=None,
-        verify=True,
-    ):
+        verify: bool = True,
+    ) -> None:
         self.endpoint = endpoint
-        self.client_name = client_name
-        self.headername = None
-        self.session = session
-        self.token = None
-        self.verify = verify
 
-    def execute(self, query, variables=None) -> Dict:
+        gql_transport = RequestsHTTPTransport(
+            url=endpoint,
+            headers={
+                "Authorization": f"X-API-Key: {api_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "apollographql-client-name": client_name.value,
+                "apollographql-client-version": __version__,
+            },
+            cookies=None,
+            auth=None,
+            use_json=True,
+            timeout=30,
+            verify=verify,
+            retries=20,  # requests.Session retries
+            method="POST",
+            # can add other requests kwargs here
+        )
+        self._gql_client = Client(transport=gql_transport, fetch_schema_from_transport=True)
+
+    @typechecked
+    def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
         """
         Execute a query
 
         Args:
-            query
-            variables
+            query: the GraphQL query
+            variables: the payload of the query
         """
         return self._send(query, variables)
 
-    def inject_token(self, token, headername="Authorization"):
-        """Inject a token.
-
-        Args:
-            token
-            headername:
-        """
-        self.token = token
-        self.headername = headername
-
-    def _send(self, query, variables) -> Dict:
+    @typechecked
+    def _send(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
         """
         Send the query
 
         Args:
-            query
-            variables
+            query: the GraphQL query
+            variables: the payload of the query
         """
-        data = {"query": query, "variables": variables}
-        headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "apollographql-client-name": self.client_name.value,
-            "apollographql-client-version": __version__,
-        }
-
-        if self.token is not None:
-            if self.headername:
-                headers[self.headername] = f"{self.token}"
-            else:
-                raise ValueError("headername must be defined.")
-
-        if self.session is not None:
-            req = None
-            try:
-                try:
-                    number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
-                except ValueError:
-                    number_of_trials = 10
-                for _ in range(number_of_trials):
-                    self.session.verify = self.verify
-                    req = self.session.post(
-                        self.endpoint, json.dumps(data).encode("utf-8"), headers=headers
-                    )
-                    if req.status_code == 401:
-                        raise InvalidApiKeyError("Invalid API KEY")
-                    bad_request_error = req.status_code == 400
-                    sucessful_request = req.status_code == 200
-                    if sucessful_request or bad_request_error:
-                        break
-                    time.sleep(1)
-                return req.json()  # type:ignore X
-            except Exception as exception:
-                if req is not None:
-                    # pylint: disable=broad-exception-raised
-                    raise Exception(req.content) from exception
-                raise exception
-
-        req = urllib.request.Request(  # type: ignore
-            self.endpoint, json.dumps(data).encode("utf-8"), headers
-        )
-        try:
-            with urllib.request.urlopen(req) as response:  # type:ignore
-                str_json = response.read().decode("utf-8")
-                return json.loads(str_json)
-        except urllib.error.HTTPError as error:  # type:ignore
-            print((error.read()))
-            print("")
-            raise error
+        document = query if isinstance(query, DocumentNode) else gql(query)
+        result = self._gql_client.execute(document=document, variable_values=variables)
+        return result
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
@@ -158,7 +117,7 @@ class SubscriptionGraphQLClient:
             self.ws_url, on_message=self._on_message, subprotocols=[GQL_WS_SUBPROTOCOL]
         )
         self._created_at = datetime.now()
-        self._conn.on_message = self._on_message
+        self._conn.on_message = self._on_message  # type: ignore
 
     def _reconnect(self):
         """

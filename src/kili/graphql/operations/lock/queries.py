@@ -5,7 +5,6 @@ GraphQL Queries of Locks
 from typing import Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.types import Lock
 
 
 class LockWhere(BaseQueryWhere):
@@ -27,9 +26,6 @@ class LockWhere(BaseQueryWhere):
 
 class LockQuery(GraphQLQuery):
     """Lock query."""
-
-    FORMAT_TYPE = Lock
-    FRAGMENT_TYPE = Lock
 
     @staticmethod
     def query(fragment):

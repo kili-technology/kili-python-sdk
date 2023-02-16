@@ -16,8 +16,6 @@ from kili.services.plugins import (
 class MutationsPlugins:
     """Set of Plugins mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
-
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
@@ -173,7 +171,6 @@ class MutationsPlugins:
         self,
         plugin_name: str,
     ):
-        # pylint: disable=line-too-long
         """Deletes a plugin.
 
         Args:

@@ -1,4 +1,11 @@
 """Exceptions of the package."""
+from typing import Optional
+
+import graphql
+from gql.transport import exceptions
+
+TransportQueryError = exceptions.TransportQueryError
+GraphQLError = graphql.GraphQLError
 
 
 class NotFound(Exception):
@@ -23,36 +30,20 @@ class AuthenticationFailed(Exception):
             return "*" * (len(input_str) - 4) + input_str[-4:]
         return input_str
 
-    def __init__(self, api_key, api_endpoint):
+    def __init__(self, api_key, api_endpoint, error_msg: Optional[str] = None):
         if api_key is None:
             super().__init__(
                 "You need to provide an API KEY to connect."
                 " Visit https://docs.kili-technology.com/reference/creating-an-api-key"
             )
         else:
-            super().__init__(
+            raise_msg = (
                 f"Connection to Kili endpoint {api_endpoint} failed with API key:"
                 f" {self._obfuscate(api_key)}. Check your connection and API key."
             )
-
-
-class GraphQLError(Exception):
-    """
-    Used when the GraphQL call returns an error
-    """
-
-    def __init__(self, error, batch_number=None):
-        if isinstance(error, list):
-            error = error[0]
-        if isinstance(error, dict) and "message" in error:
-            error_msg = error["message"]
-        else:
-            error_msg = str(error)
-
-        if batch_number is None:
-            super().__init__(f'error: "{error_msg}"')
-        else:
-            super().__init__(f'error at index {100*batch_number}: {error_msg}"')
+            if error_msg is not None:
+                raise_msg += f"\nError message:\n{error_msg}"
+            super().__init__(raise_msg)
 
 
 class NonExistingFieldError(ValueError):
@@ -73,7 +64,3 @@ class RemovedMethodError(Exception):
 
 class UserNotFoundError(Exception):
     """Raised when the user is not found"""
-
-
-class InvalidApiKeyError(Exception):
-    """Raised when the api key is invalid"""

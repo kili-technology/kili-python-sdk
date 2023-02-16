@@ -6,7 +6,6 @@ GraphQL Queries of Notifications
 from typing import Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.types import Notification
 
 
 class NotificationWhere(BaseQueryWhere):
@@ -38,9 +37,6 @@ class NotificationWhere(BaseQueryWhere):
 
 class NotificationQuery(GraphQLQuery):
     """Notification query."""
-
-    FORMAT_TYPE = Notification
-    FRAGMENT_TYPE = Notification
 
     @staticmethod
     def query(fragment):

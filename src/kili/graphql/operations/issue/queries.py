@@ -5,7 +5,6 @@ GraphQL Queries of Issues
 from typing import Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.types import Issue
 
 
 class IssueWhere(BaseQueryWhere):
@@ -27,9 +26,6 @@ class IssueWhere(BaseQueryWhere):
 
 class IssueQuery(GraphQLQuery):
     """Issue query."""
-
-    FORMAT_TYPE = Issue
-    FRAGMENT_TYPE = Issue
 
     @staticmethod
     def query(fragment):

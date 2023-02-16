@@ -360,7 +360,7 @@ class MutationsAsset:
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_kili = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
                 )
             )
@@ -421,7 +421,7 @@ class MutationsAsset:
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
             try:
-                project_id = results[0]["data"]["data"]["id"]
+                project_id = results[0]["data"]["id"]
             except TypeError:
                 return  # No assets have changed status
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
@@ -498,7 +498,7 @@ class MutationsAsset:
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_queue = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
                     status_in=["ONGOING"],
                 )
