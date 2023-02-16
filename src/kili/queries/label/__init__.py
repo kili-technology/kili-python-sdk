@@ -187,7 +187,7 @@ class QueriesLabel:
             pandas DataFrame containing the labels.
         """
 
-        services.get_project(self, project_id, ["id"])
+        services.get_project(self.auth, project_id, ["id"])
         assets_gen = AssetQuery(self.auth.client)(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],

@@ -11,7 +11,7 @@ from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 def get_project(auth: KiliAuth, project_id: str, fields: List[str]):
     """Get a project from its id or raise a NotFound Error if not found"""
     projects = list(
-        ProjectQuery(kili.auth.client)(
+        ProjectQuery(auth.client)(
             ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
         )
     )

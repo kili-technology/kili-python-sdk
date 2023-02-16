@@ -13,6 +13,8 @@ from .queries import GQL_CREATE_NOTIFICATION, GQL_UPDATE_PROPERTIES_IN_NOTIFICAT
 class MutationsNotification:
     """Set of Notification mutations."""
 
+    # pylint: disable=too-many-arguments,too-many-locals
+
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 

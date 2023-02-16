@@ -44,7 +44,6 @@ class GraphQLClient:
     def __init__(
         self,
         endpoint: str,
-        api_key: str,
         client_name: GraphQLClientName,
         verify: bool = True,
     ) -> None:

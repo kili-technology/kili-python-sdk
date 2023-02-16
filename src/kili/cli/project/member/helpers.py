@@ -60,7 +60,7 @@ def collect_members_from_project(auth: KiliAuth, project_id_source: str, role: O
     if role is not None:
         raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
 
-    existing_members = ProjectUserQuery(kili.auth.client)(
+    existing_members = ProjectUserQuery(auth.client)(
         where=ProjectUserWhere(project_id=project_id_source),
         fields=["role", "user.email", "activated"],
         options=QueryOptions(disable_tqdm=True),

@@ -10,6 +10,7 @@ from typeguard import typechecked
 
 from kili import services
 from kili.authentication import KiliAuth
+from kili.enums import LabelType
 from kili.helpers import deprecate, format_result
 from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (
@@ -319,7 +320,7 @@ class MutationsLabel:
         if asset_id is None:
             if asset_external_id is None or project_id is None:
                 raise ValueError("Either provide asset_id or external_id and project_id")
-            asset_id = infer_ids_from_external_ids(self, [asset_external_id], project_id)[
+            asset_id = infer_ids_from_external_ids(self.auth, [asset_external_id], project_id)[
                 asset_external_id
             ]
 
