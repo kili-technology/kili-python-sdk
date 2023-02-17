@@ -62,7 +62,7 @@ class PluginHandler(PluginCore):
 
 !!! note
 
-    The plugins run has some limitations, it can use a maximum of 512mb of ram and will timeout after 60sec of run
+    The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run
 
 ## Model for Plugins
 
