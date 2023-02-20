@@ -117,7 +117,7 @@ class KiliAuth:
         warn_days = 30
 
         api_keys = APIKeyQuery(self.client)(
-            fields=["createdAt", "expiryDate"],
+            fields=["expiryDate"],
             where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),
         )
