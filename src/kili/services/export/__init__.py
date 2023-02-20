@@ -44,8 +44,11 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         count = AssetQuery(auth.client).count(AssetWhere(project_id=project_id))
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
-                f"Downloading many assets ({count}). This might take a while. Consider disabling"
-                " assets download in the options."
+                (
+                    f"Downloading many assets ({count}). This might take a while. Consider"
+                    " disabling assets download in the options."
+                ),
+                stacklevel=2,
             )
 
     export_params = ExportParams(

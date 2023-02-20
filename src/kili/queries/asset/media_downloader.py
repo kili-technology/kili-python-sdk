@@ -101,7 +101,8 @@ class MediaDownloader:
             jsoncontent_not_empty = any(bool(asset["jsonContent"]) for asset in assets)
             if jsoncontent_not_empty:
                 warnings.warn(
-                    "Non empty jsonContent found in assets. Field was automatically added."
+                    "Non empty jsonContent found in assets. Field was automatically added.",
+                    stacklevel=2,
                 )
             else:
                 for asset in assets:

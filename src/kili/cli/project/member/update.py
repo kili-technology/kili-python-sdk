@@ -107,12 +107,16 @@ def update_member(
                 count += 1
             else:
                 warnings.warn(
-                    f"{email} is already an active member of the project with the same role."
+                    f"{email} is already an active member of the project with the same role.",
+                    stacklevel=1,
                 )
         else:
             warnings.warn(
-                f"{email} is not an active member of the project."
-                " Use kili project member add to add member."
+                (
+                    f"{email} is not an active member of the project."
+                    " Use kili project member add to add member."
+                ),
+                stacklevel=1,
             )
 
     print(f"{count} member's role(s) have been successfully updated in project: {project_id}")

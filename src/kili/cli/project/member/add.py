@@ -93,8 +93,11 @@ def add_member(
         if member["email"] in existing_member_emails:
             already_member = member["email"]
             warnings.warn(
-                f"{already_member} is already an active member of the project."
-                " Use kili project member update to update role."
+                (
+                    f"{already_member} is already an active member of the project."
+                    " Use kili project member update to update role."
+                ),
+                stacklevel=1,
             )
         else:
             kili.append_to_roles(

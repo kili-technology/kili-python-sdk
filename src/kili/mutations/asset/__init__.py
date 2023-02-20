@@ -212,6 +212,7 @@ class MutationsAsset:
                     " IDs."
                 ),
                 DeprecationWarning,
+                stacklevel=1,
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
