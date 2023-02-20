@@ -47,7 +47,7 @@ class KiliAuth:
                 "We could not check the version, there might be a version"
                 "mismatch or the app might be in deployment"
             )
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
 
         self.check_api_key_valid()
 
@@ -78,7 +78,7 @@ class KiliAuth:
                 "Kili Python SDK version should match with Kili API version.\n"
                 + f'Please install version: "pip install kili=={version}"'
             )
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
         return version
 
     def check_api_key_valid(self) -> None:
@@ -131,7 +131,7 @@ class KiliAuth:
             message = f"""
                 Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
                 You should generate a new one on My account > API KEY."""
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
 
     def get_user(self) -> Dict:
         """Get the current user from the api_key provided"""

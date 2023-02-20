@@ -1,6 +1,5 @@
 """Issue queries."""
 
-import warnings
 from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
@@ -112,7 +111,7 @@ class QueriesIssue:
         return list(issues_gen)
 
     @typechecked
-    def count_issues(self, project_id: Optional[str] = None) -> int:
+    def count_issues(self, project_id: str) -> int:
         """Count and return the number of api keys with the given constraints.
 
         Args:
@@ -122,13 +121,5 @@ class QueriesIssue:
             The number of issues with the parameters provided
 
         """
-        if not project_id:
-            warnings.warn(
-                (
-                    "It is now required to provide a project_id when calling count_issues. This"
-                    " change will be enforced from 01/02/2023"
-                ),
-                DeprecationWarning,
-            )
         where = IssueWhere(project_id=project_id)
         return IssueQuery(self.auth.client).count(where)

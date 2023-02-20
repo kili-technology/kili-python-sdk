@@ -67,7 +67,8 @@ class CocoExporter(AbstractExporter):
         super().__init__(*args, **kwargs)
         if not self.with_assets:
             warnings.warn(
-                "For an export to the COCO format, the download of assets cannot be disabled."
+                "For an export to the COCO format, the download of assets cannot be disabled.",
+                stacklevel=2,
             )
         self.with_assets = True
 

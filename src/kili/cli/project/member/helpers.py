@@ -89,7 +89,7 @@ def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):
         if re.search(REGEX_EMAIL, email):
             members_to_add.append({"email": email, "role": role})
         else:
-            warnings.warn(f"{email} is not a valid email address,")
+            warnings.warn(f"{email} is not a valid email address,", stacklevel=2)
 
     if len(members_to_add) == 0:
         raise ValueError("No valid email adresses were provided")
