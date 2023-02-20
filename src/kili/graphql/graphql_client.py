@@ -30,7 +30,6 @@ class GraphQLClientName(Enum):
     CLI = "python-cli"
 
 
-# pylint: disable=too-few-public-methods
 class GraphQLClient:
     """
     GraphQL client
