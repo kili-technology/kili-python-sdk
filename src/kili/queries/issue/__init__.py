@@ -1,6 +1,5 @@
 """Issue queries."""
 
-import warnings
 from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
@@ -84,15 +83,8 @@ class QueriesIssue:
         return list(issues_gen)
 
     @typechecked
-    def count_issues(
-        self,
-        project_id: str,
-        asset_id: Optional[str] = None,
-        asset_id_in: Optional[List[str]] = None,
-        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
-        status: Optional[Literal["OPEN", "SOLVED"]] = None,
-    ) -> int:
-        """Count and return the number of issues with the given constraints.
+    def count_issues(self, project_id: str) -> int:
+        """Count and return the number of api keys with the given constraints.
 
         Args:
             project_id: Project ID the issue belongs to.
@@ -104,15 +96,5 @@ class QueriesIssue:
         Returns:
             The number of issues with the parameters provided
         """
-        if asset_id and asset_id_in:
-            raise ValueError(
-                "You cannot provide both `asset_id` and `asset_id_in` at the same time"
-            )
-        where = IssueWhere(
-            project_id=project_id,
-            asset_id=asset_id,
-            asset_id_in=asset_id_in,
-            issue_type=issue_type,
-            status=status,
-        )
+        where = IssueWhere(project_id=project_id)
         return IssueQuery(self.auth.client).count(where)
