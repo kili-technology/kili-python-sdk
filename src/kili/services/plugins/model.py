@@ -97,3 +97,21 @@ class PluginCore:
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_review on your plugin")
         pass  # pylint: disable=unnecessary-pass
+
+    def on_custom_interface_click(
+        self,
+        label: Dict,
+        asset_id: str,
+    ) -> None:
+        """
+        Handler for the custom interface click action.
+
+        **Warning**: This handler is in beta and is still in active development,
+        so it should not be used.
+
+        Args:
+            label: label submitted to Kili
+            asset_id: id of the asset on which the action is called
+        """
+        # pylint: disable=unused-argument
+        self.logger.warning("Handler is in active development.")
