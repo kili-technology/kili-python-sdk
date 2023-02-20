@@ -31,7 +31,11 @@ class VocExporter(AbstractExporter):
         super().__init__(*args, **kwargs)
         if not self.with_assets:
             warnings.warn(
-                "For an export to the Pascal VOC format, the download of assets cannot be disabled."
+                (
+                    "For an export to the Pascal VOC format, the download of assets cannot be"
+                    " disabled."
+                ),
+                stacklevel=2,
             )
         self.with_assets = True
 
@@ -41,7 +45,7 @@ class VocExporter(AbstractExporter):
         """
         if self.single_file:
             raise NotCompatibleOptions(
-                "The Pascal VOC annotation format can not be exported into a single file."
+                "The Pascal VOC annotation format can not be exported into a single file.",
             )
         if self.split_option != "merged":
             raise NotCompatibleOptions(

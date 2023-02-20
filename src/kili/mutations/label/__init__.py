@@ -93,6 +93,7 @@ class MutationsLabel:
                     " instead to provide the predictions model name."
                 ),
                 DeprecationWarning,
+                stacklevel=1,
             )
             model_name = model_name_array[0]
 
