@@ -9,12 +9,15 @@ import threading
 import time
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Dict, Optional, Union
+from urllib.parse import urlparse
 
+import requests
 import websocket
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
-from graphql import DocumentNode
+from graphql import DocumentNode, print_schema
 from typeguard import typechecked
 
 from kili import __version__
@@ -41,8 +44,9 @@ class GraphQLClient:
         verify: bool = True,
     ) -> None:
         self.endpoint = endpoint
+        self.verify = verify
 
-        gql_transport = RequestsHTTPTransport(
+        self.gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers={
                 "Authorization": f"X-API-Key: {api_key}",
@@ -60,7 +64,48 @@ class GraphQLClient:
             method="POST",
             # can add other requests kwargs here
         )
-        self._gql_client = Client(transport=gql_transport, fetch_schema_from_transport=True)
+        self.cache_graphql_schema()
+        self._gql_client = Client(
+            schema=self.graphql_schema_path.read_text(encoding="utf-8"),
+            transport=self.gql_transport,
+        )
+
+    def cache_graphql_schema(self) -> None:
+        """
+        Cache the graphql schema (if not already in cache).
+
+        If the schema is not in cache, it will be fetched from the server.
+        """
+        if self.graphql_schema_path.is_file() and self.graphql_schema_path.stat().st_size > 0:
+            return
+
+        with Client(transport=self.gql_transport, fetch_schema_from_transport=True) as session:
+            schema_str = print_schema(session.client.schema)  # type: ignore
+
+        self.graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with self.graphql_schema_path.open("w", encoding="utf-8") as file:
+            file.write(schema_str)
+
+    @property
+    def graphql_schema_path(self) -> Path:
+        """
+        Get the path of the GraphQL schema
+        """
+        endpoint_netloc = urlparse(self.endpoint).netloc
+        version = self.get_kili_app_version()
+        timestamp = datetime.now().strftime(r"%Y%m%d")  # cache for one day
+        filename = f"{endpoint_netloc}_{version}_{timestamp}.graphql"
+        return Path.home() / ".cache" / "kili" / filename
+
+    def get_kili_app_version(self) -> str:
+        """
+        Get the version of the Kili app server
+        """
+        url = self.endpoint.replace("/graphql", "/version")
+        response = requests.get(url, verify=self.verify, timeout=30).json()
+        version = response["version"]
+        return version
 
     @typechecked
     def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
