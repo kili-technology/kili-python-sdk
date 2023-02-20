@@ -98,7 +98,6 @@ class QueriesDataIntegration:
             name: Name of the data integration.
             platform: Platform of the data integration.
             status: Status of the data integration.
-                Possible choices: `CONNECTED`, `DISCONNECTED` or `CHECKING`.
             organization_id: ID of the organization.
 
         Returns:
