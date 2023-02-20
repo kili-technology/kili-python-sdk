@@ -52,7 +52,6 @@ class QueriesDataIntegration:
             name: Name of the data integration.
             platform: Platform of the data integration.
             status: Status of the data integration.
-                Possible choices: `CONNECTED`, `DISCONNECTED` or `CHECKING`.
             organization_id: ID of the organization.
             fields: All the fields to request among the possible fields for the data integrations.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
