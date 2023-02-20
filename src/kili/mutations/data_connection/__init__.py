@@ -1,5 +1,6 @@
 """Data connection mutations."""
 
+from datetime import datetime
 from typing import Dict
 
 from typeguard import typechecked
@@ -7,13 +8,12 @@ from typeguard import typechecked
 from kili.authentication import KiliAuth
 
 from ...helpers import format_result
-from .queries import GQL_ADD_DATA_CONNECTION
+from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
+# pylint: disable=too-few-public-methods
 class MutationsDataConnection:
     """Set of DataConnection mutations."""
-
-    # pylint: disable=too-many-arguments
 
     def __init__(self, auth: KiliAuth):
         """Initializes the subclass.
@@ -38,9 +38,9 @@ class MutationsDataConnection:
             "data": {
                 "projectId": project_id,
                 "integrationId": data_integration_id,
-                # "isChecking":,  # TODO
-                # lastChecked":,
+                "isChecking": False,
+                "lastChecked": datetime.now().isoformat(sep="T", timespec="milliseconds") + "Z",
             }
         }
-        result = self.auth.client.execute(GQL_ADD_DATA_CONNECTION, variables)
+        result = self.auth.client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)
         return format_result("data", result)
