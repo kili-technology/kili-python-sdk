@@ -32,7 +32,7 @@ nav:
           - Project: sdk/project.md
           - Project User: sdk/project_user.md
           - Project Version: sdk/project_version.md
-          - Remote storage: sdk/remote_storage.md
+          - Cloud storage: sdk/cloud_storage.md
           - User: sdk/user.md
   - Command line interface:
       - Getting Started: cli/index.md

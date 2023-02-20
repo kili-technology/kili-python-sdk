@@ -1,4 +1,4 @@
-# Remote storage module
+# Cloud storage module
 
 ## Queries
 
