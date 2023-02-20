@@ -3,6 +3,7 @@
 from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
@@ -33,8 +34,8 @@ class QueriesDataIntegration:
         self,
         data_integration_id: Optional[str] = None,
         name: Optional[str] = None,
-        platform: Optional[str] = None,
-        status: Optional[str] = None,
+        platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
+        status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
         organization_id: Optional[str] = None,
         fields: List[str] = ["name", "id", "platform", "status"],
         first: Optional[int] = None,
@@ -50,9 +51,9 @@ class QueriesDataIntegration:
             data_integration_id: ID of the data integration.
             name: Name of the data integration.
             platform: Platform of the data integration.
-                Possible choices : `AWS`, `Azure` or `GCP`.
+                Possible choices: `AWS`, `Azure` or `GCP`.
             status: Status of the data integration.
-                Possible choices : `CONNECTED`, `DISCONNECTED` or `CHECKING`.
+                Possible choices: `CONNECTED`, `DISCONNECTED` or `CHECKING`.
             organization_id: ID of the organization.
             fields: All the fields to request among the possible fields for the data integrations.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
@@ -88,8 +89,8 @@ class QueriesDataIntegration:
         self,
         data_integration_id: Optional[str] = None,
         name: Optional[str] = None,
-        platform: Optional[str] = None,
-        status: Optional[str] = None,
+        platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
+        status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
         organization_id: Optional[str] = None,
     ) -> int:
         """Count and return the number of data integrations that match a set of criteria.
@@ -98,9 +99,9 @@ class QueriesDataIntegration:
             data_integration_id: ID of the data integration.
             name: Name of the data integration.
             platform: Platform of the data integration.
-                Possible choices : `AWS`, `Azure` or `GCP`.
+                Possible choices: `AWS`, `Azure` or `GCP`.
             status: Status of the data integration.
-                Possible choices : `CONNECTED`, `DISCONNECTED` or `CHECKING`.
+                Possible choices: `CONNECTED`, `DISCONNECTED` or `CHECKING`.
             organization_id: ID of the organization.
 
         Returns:

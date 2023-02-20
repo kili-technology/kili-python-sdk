@@ -24,6 +24,7 @@ nav:
       - Reference:
           - API Key: sdk/api_key.md
           - Asset: sdk/asset.md
+          - Cloud Storage: sdk/cloud_storage.md
           - Issue: sdk/issue.md
           - Label: sdk/label.md
           - Notification: sdk/notification.md
@@ -32,7 +33,6 @@ nav:
           - Project: sdk/project.md
           - Project User: sdk/project_user.md
           - Project Version: sdk/project_version.md
-          - Cloud storage: sdk/cloud_storage.md
           - User: sdk/user.md
   - Command line interface:
       - Getting Started: cli/index.md
