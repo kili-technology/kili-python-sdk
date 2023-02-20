@@ -6,33 +6,34 @@ site_url: https://python-sdk-docs.kili-technology.com/
 ## Repository
 repo_url: https://github.com/kili-technology/kili-python-sdk
 repo_name: Kili Python SDK
-edit_uri: '' #disables edit button
+edit_uri: "" #disables edit button
 
 ## Site Architecture
 nav:
   - Python SDK:
       - Getting Started: index.md
       - Tutorials:
-        - Basic project setup: sdk/tutorials/basic_project_setup.md
-        - Importing assets and labels: sdk/tutorials/importing_assets_and_labels.md
-        - Importing video assets: sdk/tutorials/importing_video_assets.md
-        - Managing workflows: sdk/tutorials/set_up_workflows.md
-        - Exporting project data: sdk/tutorials/export_a_kili_project.md
-        - Developing plugins - overview: sdk/tutorials/plugins_development.md
-        - Developing plugins - example: sdk/tutorials/plugins_example.md
-        - Plugins library: sdk/tutorials/plugins_library.md
+          - Basic project setup: sdk/tutorials/basic_project_setup.md
+          - Importing assets and labels: sdk/tutorials/importing_assets_and_labels.md
+          - Importing video assets: sdk/tutorials/importing_video_assets.md
+          - Managing workflows: sdk/tutorials/set_up_workflows.md
+          - Exporting project data: sdk/tutorials/export_a_kili_project.md
+          - Developing plugins - overview: sdk/tutorials/plugins_development.md
+          - Developing plugins - example: sdk/tutorials/plugins_example.md
+          - Plugins library: sdk/tutorials/plugins_library.md
       - Reference:
-        - API Key: sdk/api_key.md
-        - Asset: sdk/asset.md
-        - Issue: sdk/issue.md
-        - Label: sdk/label.md
-        - Notification: sdk/notification.md
-        - Organization: sdk/organization.md
-        - Plugins: sdk/plugins.md
-        - Project: sdk/project.md
-        - Project User: sdk/project_user.md
-        - Project Version: sdk/project_version.md
-        - User: sdk/user.md
+          - API Key: sdk/api_key.md
+          - Asset: sdk/asset.md
+          - Issue: sdk/issue.md
+          - Label: sdk/label.md
+          - Notification: sdk/notification.md
+          - Organization: sdk/organization.md
+          - Plugins: sdk/plugins.md
+          - Project: sdk/project.md
+          - Project User: sdk/project_user.md
+          - Project Version: sdk/project_version.md
+          - Remote storage: sdk/remote_storage.md
+          - User: sdk/user.md
   - Command line interface:
       - Getting Started: cli/index.md
       - Reference: cli/reference.md
@@ -53,7 +54,7 @@ plugins:
           selection:
             docstring_style: google
             filters:
-              - '!^__' # exclude all members starting with __
+              - "!^__" # exclude all members starting with __
             docstring_options:
               replace_admonitions: yes
       watch:
@@ -82,7 +83,7 @@ extra:
 
 ## Theme and Design
 theme:
-  name: 'material'
+  name: "material"
   palette:
     scheme: kili
   logo: assets/kili_logo.png

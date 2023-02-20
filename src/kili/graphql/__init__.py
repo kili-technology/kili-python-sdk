@@ -52,7 +52,7 @@ class GraphQLQuery(ABC):
     def __init__(
         self,
         client: GraphQLClient,
-    ):
+    ) -> None:
         self.client = client
 
     @staticmethod
