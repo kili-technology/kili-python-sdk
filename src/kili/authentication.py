@@ -114,17 +114,15 @@ class KiliAuth:
         Args:
             api_key: key used to connect to the Kili API
         """
-        duration_days = 365
         warn_days = 30
 
         api_keys = APIKeyQuery(self.client)(
-            fields=["createdAt"],
+            fields=["createdAt", "expiryDate"],
             where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),
         )
 
-        key_creation = datetime.strptime(next(api_keys)["createdAt"], r"%Y-%m-%dT%H:%M:%S.%fZ")
-        key_expiry = key_creation + timedelta(days=duration_days)
+        key_expiry = datetime.strptime(next(api_keys)["expiryDate"], r"%Y-%m-%dT%H:%M:%S.%fZ")
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
         if key_soon_deprecated:
