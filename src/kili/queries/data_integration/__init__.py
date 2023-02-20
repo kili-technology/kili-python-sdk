@@ -19,7 +19,7 @@ class QueriesDataIntegration:
     Set of data integration queries
     """
 
-    # pylint: disable=too-many-arguments,dangerous-default-value,too-few-public-methods
+    # pylint: disable=too-many-arguments,dangerous-default-value
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
