@@ -32,7 +32,7 @@ class MutationsDataConnection:
             data_integration_id : ID of the data integration
 
         Returns:
-            A result object which indicates if the mutation was successful, or an error message.
+            A dict with the DataConnection ID.
         """
         variables = {
             "data": {
