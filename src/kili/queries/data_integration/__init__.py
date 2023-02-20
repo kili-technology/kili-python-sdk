@@ -51,7 +51,6 @@ class QueriesDataIntegration:
             data_integration_id: ID of the data integration.
             name: Name of the data integration.
             platform: Platform of the data integration.
-                Possible choices: `AWS`, `Azure` or `GCP`.
             status: Status of the data integration.
                 Possible choices: `CONNECTED`, `DISCONNECTED` or `CHECKING`.
             organization_id: ID of the organization.
