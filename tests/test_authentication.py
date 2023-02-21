@@ -12,6 +12,7 @@ from kili.graphql.operations.api_key.queries import APIKeyQuery
 @patch("kili.authentication.requests")
 @patch.object(KiliAuth, "check_versions_match", side_effect=Exception)
 @patch.object(KiliAuth, "check_api_key_valid", return_value=True)
+@patch("kili.authentication.GraphQLClient", return_value=None)
 @patch.object(KiliAuth, "check_expiry_of_key_is_close", return_value=True)
 @patch.object(KiliAuth, "get_user", return_value={"id": "id", "email": "email"})
 def test_warn_cant_check_kili_version(*_):
