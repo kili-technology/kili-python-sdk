@@ -63,7 +63,7 @@ class QueriesDataConnection:
             A list or a generator of the data connections that match the criteria.
 
         Examples:
-            >>> kili.data_connections()
+            >>> kili.data_connections(project_id="789465123")
             [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'isApplyingDataDifferences': False, 'isChecking': False}]
         """
         where = DataConnectionsWhere(project_id=project_id, integration_id=integration_id)
