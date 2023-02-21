@@ -8,9 +8,9 @@ from typing import Optional
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
-class DataConnectionWhere(BaseQueryWhere):
+class DataConnectionsWhere(BaseQueryWhere):
     """
-    Tuple to be passed to the DataConnectionQuery to restrict the query
+    Tuple to be passed to the DataConnectionsQuery to restrict the query
     """
 
     def __init__(
@@ -23,15 +23,15 @@ class DataConnectionWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionsWhere"""
         return {
             "projectId": self.project_id,
             "integrationId": self.integration_id,
         }
 
 
-class DataConnectionQuery(GraphQLQuery):
-    """DataConnection query."""
+class DataConnectionsQuery(GraphQLQuery):
+    """DataConnections query."""
 
     @staticmethod
     def query(fragment):

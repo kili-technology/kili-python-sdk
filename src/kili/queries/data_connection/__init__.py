@@ -7,8 +7,8 @@ from typeguard import typechecked
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.data_connection.queries import (
-    DataConnectionQuery,
-    DataConnectionWhere,
+    DataConnectionsQuery,
+    DataConnectionsWhere,
 )
 from kili.helpers import disable_tqdm_if_as_generator
 
@@ -60,10 +60,10 @@ class QueriesDataConnection:
             >>> kili.data_connections()
             [{'name  # TODO
         """
-        where = DataConnectionWhere(project_id=project_id, integration_id=integration_id)
+        where = DataConnectionsWhere(project_id=project_id, integration_id=integration_id)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_connections_gen = DataConnectionQuery(self.auth.client)(where, fields, options)
+        data_connections_gen = DataConnectionsQuery(self.auth.client)(where, fields, options)
 
         if as_generator:
             return data_connections_gen
