@@ -13,6 +13,7 @@ from kili.graphql.operations.data_connection.queries import (
 from kili.helpers import disable_tqdm_if_as_generator
 
 
+# pylint: disable=too-few-public-methods
 class QueriesDataConnection:
     """
     Set of data connection queries
