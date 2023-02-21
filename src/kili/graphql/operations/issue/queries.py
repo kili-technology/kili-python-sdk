@@ -2,8 +2,6 @@
 GraphQL Queries of Issues
 """
 
-from typing import Optional
-
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
@@ -14,7 +12,7 @@ class IssueWhere(BaseQueryWhere):
 
     def __init__(
         self,
-        project_id: Optional[str] = None,
+        project_id: str,
     ):
         self.project_id = project_id
         super().__init__()

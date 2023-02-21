@@ -47,7 +47,7 @@ class KiliAuth:
                 "We could not check the version, there might be a version"
                 "mismatch or the app might be in deployment"
             )
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
 
         self.check_api_key_valid()
 
@@ -78,7 +78,7 @@ class KiliAuth:
                 "Kili Python SDK version should match with Kili API version.\n"
                 + f'Please install version: "pip install kili=={version}"'
             )
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
         return version
 
     def check_api_key_valid(self) -> None:
@@ -114,24 +114,22 @@ class KiliAuth:
         Args:
             api_key: key used to connect to the Kili API
         """
-        duration_days = 365
         warn_days = 30
 
         api_keys = APIKeyQuery(self.client)(
-            fields=["createdAt"],
+            fields=["expiryDate"],
             where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),
         )
 
-        key_creation = datetime.strptime(next(api_keys)["createdAt"], r"%Y-%m-%dT%H:%M:%S.%fZ")
-        key_expiry = key_creation + timedelta(days=duration_days)
+        key_expiry = datetime.strptime(next(api_keys)["expiryDate"], r"%Y-%m-%dT%H:%M:%S.%fZ")
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
         if key_soon_deprecated:
             message = f"""
                 Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
                 You should generate a new one on My account > API KEY."""
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
 
     def get_user(self) -> Dict:
         """Get the current user from the api_key provided"""

@@ -8,6 +8,7 @@ from kili.exceptions import AuthenticationFailed
 from kili.graphql.graphql_client import GraphQLClientName
 from kili.internal import KiliInternal
 from kili.mutations.asset import MutationsAsset
+from kili.mutations.data_connection import MutationsDataConnection
 from kili.mutations.issue import MutationsIssue
 from kili.mutations.label import MutationsLabel
 from kili.mutations.notification import MutationsNotification
@@ -38,6 +39,7 @@ from .helpers import deprecate
 
 class Kili(  # pylint: disable=too-many-ancestors
     MutationsAsset,
+    MutationsDataConnection,
     MutationsIssue,
     MutationsLabel,
     MutationsNotification,

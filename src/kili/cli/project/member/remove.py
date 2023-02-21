@@ -102,6 +102,6 @@ def remove_member(
             kili.delete_from_roles(role_id=existing_members_email_map[email])
             count += 1
         else:
-            warnings.warn(f"{email} is not an active member of the project.")
+            warnings.warn(f"{email} is not an active member of the project.", stacklevel=1)
 
     print(f"{count} member(s) have been successfully removed from project: {project_id}")
