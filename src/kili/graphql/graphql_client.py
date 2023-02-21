@@ -63,39 +63,50 @@ class GraphQLClient:
             method="POST",
             # can add other requests kwargs here
         )
-        self.cache_graphql_schema()
+
+        graphql_schema_path = self._get_graphql_schema_path()
+        self._cache_graphql_schema(graphql_schema_path)
+
         self._gql_client = Client(
-            schema=self.graphql_schema_path.read_text(encoding="utf-8"),
+            schema=graphql_schema_path.read_text(encoding="utf-8"),
             transport=self.gql_transport,
         )
 
-    def cache_graphql_schema(self) -> None:
+    def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
         Cache the graphql schema (if not already in cache).
 
         If the schema is not in cache, it will be fetched from the server.
+
+        Also deletes old cache files.
         """
-        if self.graphql_schema_path.is_file() and self.graphql_schema_path.stat().st_size > 0:
+        for old_cache_file in graphql_schema_path.parent.glob("*.graphql"):
+            if old_cache_file.name != graphql_schema_path.name:
+                old_cache_file.unlink()
+
+        if graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0:
             return
 
         with Client(transport=self.gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
-        self.graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
+        graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with self.graphql_schema_path.open("w", encoding="utf-8") as file:
+        with graphql_schema_path.open("w", encoding="utf-8") as file:
             file.write(schema_str)
 
-    @property
-    def graphql_schema_path(self) -> Path:
+    def _get_graphql_schema_path(self) -> Path:
         """
         Get the path of the GraphQL schema
         """
         endpoint_netloc = urlparse(self.endpoint).netloc
         version = self.get_kili_app_version()
-        timestamp = datetime.now().strftime(r"%Y%m%d")  # cache for one day
+        timestamp = datetime.now().strftime(r"%Y%m%d")  # cache for one day at most
+
         filename = f"{endpoint_netloc}_{version}_{timestamp}.graphql"
-        return Path.home() / ".cache" / "kili" / filename
+        dir_ = Path.home() / ".cache" / "kili" / "graphql"
+
+        return dir_ / filename
 
     def get_kili_app_version(self) -> str:
         """
