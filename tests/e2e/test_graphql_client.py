@@ -86,3 +86,17 @@ def test_graphql_client_cache(*_):
 
     if SCHEMA_PATH.is_file():
         SCHEMA_PATH.unlink()
+
+
+@mock.patch.object(GraphQLClient, "_get_kili_app_version", side_effect=Exception)
+def test_graphql_client_cache_cant_get_kili_version(*_):
+    """test when we can't get the kili version from the backend"""
+    api_endpoint = os.getenv("KILI_API_ENDPOINT")
+    api_key = os.getenv("KILI_API_KEY")
+
+    _ = GraphQLClient(
+        endpoint=api_endpoint,  # type: ignore
+        api_key=api_key,  # type: ignore
+        client_name=GraphQLClientName.SDK,
+        verify=True,
+    )
