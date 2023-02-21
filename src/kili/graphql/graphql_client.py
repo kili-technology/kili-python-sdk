@@ -101,9 +101,8 @@ class GraphQLClient:
         """
         endpoint_netloc = urlparse(self.endpoint).netloc
         version = self.get_kili_app_version()
-        timestamp = datetime.now().strftime(r"%Y%m%d")  # cache for one day at most
 
-        filename = f"{endpoint_netloc}_{version}_{timestamp}.graphql"
+        filename = f"{endpoint_netloc}_{version}.graphql"
         dir_ = Path.home() / ".cache" / "kili" / "graphql"
 
         return dir_ / filename
