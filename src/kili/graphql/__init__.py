@@ -119,15 +119,21 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
-        total_rows_queried = self.get_number_of_elements_to_query(where, options)
         batch_size = min(100, options.first or 100)
+
+        if isinstance(self.COUNT_QUERY, str):
+            total_rows_queried = self.get_number_of_elements_to_query(where, options)
+            disable_tqdm = options.disable_tqdm
+        else:
+            total_rows_queried = None
+            disable_tqdm = True
 
         if total_rows_queried == 0:
             yield from ()
         else:
-            with tqdm(total=total_rows_queried, disable=options.disable_tqdm) as pbar:
+            with tqdm(total=total_rows_queried, disable=disable_tqdm) as pbar:
                 count_rows_retrieved = 0
-                while count_rows_retrieved < total_rows_queried:
+                while total_rows_queried is None or count_rows_retrieved < total_rows_queried:
                     skip = count_rows_retrieved + options.skip
                     payload = {"where": where.graphql_payload, "skip": skip, "first": batch_size}
                     rows = api_throttle(self.client.execute)(query, payload)
@@ -144,6 +150,9 @@ class GraphQLQuery(ABC):
 
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
+
+                    if len(rows) < batch_size:
+                        break
 
     @typechecked
     def fragment_builder(self, fields: List[str]):

@@ -39,8 +39,8 @@ class DataConnectionsQuery(GraphQLQuery):
         Return the GraphQL dataConnections query
         """
         return f"""
-        query dataConnections(where: DataConnectionsWhere!, first: PageSize!, skip: Int!) {{
-          data: dataConnections(where: $where, skip: $skip, first: $first) {{
+        query dataConnections($where: DataConnectionsWhere!, $first: PageSize!, $skip: Int!) {{
+          data: dataConnections(where: $where, first: $first, skip: $skip) {{
             {fragment}
           }}
         }}

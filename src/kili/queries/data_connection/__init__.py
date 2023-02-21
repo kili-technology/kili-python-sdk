@@ -33,7 +33,13 @@ class QueriesDataConnection:
         self,
         project_id: Optional[str] = None,
         integration_id: Optional[str] = None,
-        fields: List[str] = ["id", "lastChecked", "projectId"],
+        fields: List[str] = [
+            "id",
+            "lastChecked",
+            "numberOfAssets",
+            "isApplyingDataDifferences",
+            "isChecking",
+        ],
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
@@ -47,7 +53,7 @@ class QueriesDataConnection:
             project_id: ID of the project.
             integration_id: ID of the data integration.
             fields: All the fields to request among the possible fields for the data connections.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.  # TODO: add correct link
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
             first: Maximum number of data connections to return.
             skip: Number of skipped data connections.
             disable_tqdm: If `True`, the progress bar will be disabled.
@@ -58,7 +64,7 @@ class QueriesDataConnection:
 
         Examples:
             >>> kili.data_connections()
-            [{'name  # TODO
+            [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'isApplyingDataDifferences': False, 'isChecking': False}]
         """
         where = DataConnectionsWhere(project_id=project_id, integration_id=integration_id)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
