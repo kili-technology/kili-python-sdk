@@ -1,12 +1,15 @@
 """
 Test module for the GraphQL client
 """
+import os
+from pathlib import Path
 from unittest import mock
 
 import pytest
 
 from kili.client import Kili
 from kili.exceptions import GraphQLError, TransportQueryError
+from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 
 
 @pytest.mark.parametrize(
@@ -50,3 +53,36 @@ def test_gql_bad_query_remote_validation():
         kili.auth.client.execute(query)
 
     mocked_validate.assert_not_called()
+
+
+SCHEMA_PATH = Path.home() / ".cache" / "kili" / "graphql" / "schema.graphql"
+
+
+@mock.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=SCHEMA_PATH)
+def test_graphql_client_cache(*_):
+    api_endpoint = os.getenv("KILI_API_ENDPOINT")
+    api_key = os.getenv("KILI_API_KEY")
+
+    if SCHEMA_PATH.is_file():
+        SCHEMA_PATH.unlink()
+
+    _ = GraphQLClient(
+        endpoint=api_endpoint,  # type: ignore
+        api_key=api_key,  # type: ignore
+        client_name=GraphQLClientName.SDK,
+        verify=True,
+    )
+    assert SCHEMA_PATH.is_file()  # schema cached
+    assert SCHEMA_PATH.stat().st_size > 0  # schema not empty
+
+    with mock.patch("kili.graphql.graphql_client.print_schema") as mocked_print_schema:
+        _ = GraphQLClient(
+            endpoint=api_endpoint,  # type: ignore
+            api_key=api_key,  # type: ignore
+            client_name=GraphQLClientName.SDK,
+            verify=True,
+        )
+        mocked_print_schema.assert_not_called()
+
+    if SCHEMA_PATH.is_file():
+        SCHEMA_PATH.unlink()
