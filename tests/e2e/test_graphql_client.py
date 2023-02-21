@@ -73,6 +73,7 @@ def test_graphql_client_cache(*_):
         verify=True,
     )
     assert SCHEMA_PATH.is_file()  # schema cached
+    assert SCHEMA_PATH.stat().st_size > 0  # schema not empty
 
     with mock.patch("kili.graphql.graphql_client.print_schema") as mocked_print_schema:
         _ = GraphQLClient(
