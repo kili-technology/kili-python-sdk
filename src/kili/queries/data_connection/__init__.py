@@ -1,8 +1,9 @@
 """Data connection queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
@@ -28,6 +29,46 @@ class QueriesDataConnection:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def data_connections(
+        self,
+        project_id: Optional[str] = None,
+        integration_id: Optional[str] = None,
+        fields: List[str] = [
+            "id",
+            "lastChecked",
+            "numberOfAssets",
+            "isApplyingDataDifferences",
+            "isChecking",
+        ],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def data_connections(
+        self,
+        project_id: Optional[str] = None,
+        integration_id: Optional[str] = None,
+        fields: List[str] = [
+            "id",
+            "lastChecked",
+            "numberOfAssets",
+            "isApplyingDataDifferences",
+            "isChecking",
+        ],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
+        ...
 
     @typechecked
     def data_connections(
