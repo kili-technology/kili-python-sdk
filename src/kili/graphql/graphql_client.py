@@ -30,6 +30,7 @@ class GraphQLClientName(Enum):
     CLI = "python-cli"
 
 
+# pylint: disable=too-few-public-methods
 class GraphQLClient:
     """
     GraphQL client
@@ -64,13 +65,18 @@ class GraphQLClient:
             # can add other requests kwargs here
         )
 
-        graphql_schema_path = self._get_graphql_schema_path()
-        self._cache_graphql_schema(graphql_schema_path)
-
-        self._gql_client = Client(
-            schema=graphql_schema_path.read_text(encoding="utf-8"),
-            transport=self.gql_transport,
-        )
+        try:
+            graphql_schema_path = self._get_graphql_schema_path()
+            self._cache_graphql_schema(graphql_schema_path)
+        except (requests.exceptions.JSONDecodeError, json.decoder.JSONDecodeError):
+            self._gql_client = Client(
+                transport=self.gql_transport, fetch_schema_from_transport=True
+            )
+        else:
+            self._gql_client = Client(
+                schema=graphql_schema_path.read_text(encoding="utf-8"),
+                transport=self.gql_transport,
+            )
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
@@ -100,14 +106,14 @@ class GraphQLClient:
         Get the path of the GraphQL schema
         """
         endpoint_netloc = urlparse(self.endpoint).netloc
-        version = self.get_kili_app_version()
+        version = self._get_kili_app_version()
 
         filename = f"{endpoint_netloc}_{version}.graphql"
         dir_ = Path.home() / ".cache" / "kili" / "graphql"
 
         return dir_ / filename
 
-    def get_kili_app_version(self) -> str:
+    def _get_kili_app_version(self) -> str:
         """
         Get the version of the Kili app server
         """
