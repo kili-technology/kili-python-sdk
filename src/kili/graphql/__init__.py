@@ -119,7 +119,6 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
-        total_rows_queried = self.get_number_of_elements_to_query(where, options)
         batch_size = min(100, options.first or 100)
 
         if isinstance(self.COUNT_QUERY, str):
@@ -151,6 +150,9 @@ class GraphQLQuery(ABC):
 
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
+
+                    if len(rows) < batch_size:
+                        break
 
     @typechecked
     def fragment_builder(self, fields: List[str]):
