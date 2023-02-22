@@ -10,13 +10,14 @@ import time
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Generator, Optional, Union
 from urllib.parse import urlparse
 
 import requests
 import websocket
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
+from gql.transport.websockets import WebsocketsTransport
 from graphql import DocumentNode, print_schema
 from typeguard import typechecked
 
@@ -46,15 +47,16 @@ class GraphQLClient:
         self.endpoint = endpoint
         self.verify = verify
 
-        self.gql_transport = RequestsHTTPTransport(
+        self.headers = {
+            "Authorization": f"X-API-Key: {api_key}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "apollographql-client-name": client_name.value,
+            "apollographql-client-version": __version__,
+        }
+        self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
-            headers={
-                "Authorization": f"X-API-Key: {api_key}",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "apollographql-client-name": client_name.value,
-                "apollographql-client-version": __version__,
-            },
+            headers=self.headers,
             cookies=None,
             auth=None,
             use_json=True,
@@ -78,6 +80,10 @@ class GraphQLClient:
                 transport=self.gql_transport,
             )
 
+        self.ws_endpoint = self.endpoint.replace("http", "ws")
+        self._gql_ws_transport = None
+        self._gql_ws_client = None
+
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
         Cache the graphql schema (if not already in cache).
@@ -93,7 +99,7 @@ class GraphQLClient:
         if graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0:
             return
 
-        with Client(transport=self.gql_transport, fetch_schema_from_transport=True) as session:
+        with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
         graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
@@ -131,20 +137,33 @@ class GraphQLClient:
             query: the GraphQL query
             variables: the payload of the query
         """
-        return self._send(query, variables)
+        document = query if isinstance(query, DocumentNode) else gql(query)
+        result = self._gql_client.execute(document=document, variable_values=variables)
+        return result
 
     @typechecked
-    def _send(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
+    def subscribe(
+        self, query: Union[str, DocumentNode], variables: Optional[Dict] = None
+    ) -> Generator[Dict[str, Any], None, None]:
         """
-        Send the query
+        Subscribe to a query
 
         Args:
             query: the GraphQL query
             variables: the payload of the query
         """
+        if self._gql_ws_client is None:
+            self._initialize_ws_client()
+
         document = query if isinstance(query, DocumentNode) else gql(query)
-        result = self._gql_client.execute(document=document, variable_values=variables)
+        result = self._gql_ws_client.subscribe(document, variables)  # type: ignore
         return result
+
+    def _initialize_ws_client(self):
+        self._gql_ws_transport = WebsocketsTransport(url=self.ws_endpoint, headers=self.headers)
+        self._gql_ws_client = Client(
+            transport=self._gql_ws_transport, fetch_schema_from_transport=True
+        )
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
