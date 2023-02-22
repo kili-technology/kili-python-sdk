@@ -12,6 +12,7 @@ More information about how to use a data integration in a project can be found [
 ## Queries
 
 ::: kili.queries.data_integration.__init__.QueriesDataIntegration
+::: kili.queries.data_connection.__init__.QueriesDataConnection
 
 ## Mutations
 
