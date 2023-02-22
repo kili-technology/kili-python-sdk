@@ -68,7 +68,7 @@ class GraphQLClient:
         try:
             graphql_schema_path = self._get_graphql_schema_path()
             self._cache_graphql_schema(graphql_schema_path)
-        except Exception:  # pylint: disable=broad-except
+        except (requests.exceptions.JSONDecodeError, json.decoder.JSONDecodeError):
             self._gql_client = Client(
                 transport=self.gql_transport, fetch_schema_from_transport=True
             )
