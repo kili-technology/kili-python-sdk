@@ -9,7 +9,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-import numpy as np
 from typing_extensions import TypedDict
 
 from kili.orm import Asset, JobMLTask, JobTool
@@ -301,6 +300,9 @@ def _get_coco_image_annotations(
         p_x = [float(v["x"]) * asset["width"] for v in bounding_poly[0]["normalizedVertices"]]
         p_y = [float(v["y"]) * asset["height"] for v in bounding_poly[0]["normalizedVertices"]]
         poly_ = [(float(x), float(y)) for x, y in zip(p_x, p_y)]
+        x_min, y_min = min(p_x), min(p_y)
+        x_max, y_max = max(p_x), max(p_y)
+        _w_, _h_ = x_max - x_min, y_max - y_min
         if len(poly_) < 3:
             print("A polygon must contain more than 2 points. Skipping this polygon...")
             continue
@@ -313,7 +315,7 @@ def _get_coco_image_annotations(
                 id=annotation_j,
                 image_id=asset["id"],
                 category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
-                bbox=[int(np.min(p_x)), int(np.min(p_y)), int(np.max(p_x)), int(np.max(p_y))],
+                bbox=[int(x_min), int(y_min), int(_w_), int(_h_)],
                 # Objects have only one connected part.
                 # But a type of object can appear several times on the same image.
                 # The limitation of the single connected part comes from Kili.
