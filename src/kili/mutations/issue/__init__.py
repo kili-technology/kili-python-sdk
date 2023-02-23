@@ -11,7 +11,11 @@ from typing_extensions import Literal
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.services.helpers import assert_all_arrays_have_same_size
+from kili.mutations.helpers import check_asset_identifier_arguments
+from kili.services.helpers import (
+    assert_all_arrays_have_same_size,
+    infer_ids_from_external_ids,
+)
 
 from ...helpers import deprecate, format_result
 from .helpers import get_issue_numbers, get_labels_asset_ids_map
@@ -148,7 +152,8 @@ class MutationsIssue:
         self,
         project_id: str,
         text_array: List[Optional[str]],
-        asset_id_array: List[Optional[str]],
+        asset_id_array: Optional[List[str]] = None,
+        asset_external_id_array: Optional[List[str]] = None,
     ) -> List[Dict]:
         """Create an issue.
 
@@ -160,8 +165,15 @@ class MutationsIssue:
         Returns:
             A list of dictionary with the `id` key of the created questions
         """
+        check_asset_identifier_arguments(project_id, asset_id_array, asset_external_id_array)
         assert_all_arrays_have_same_size([text_array, asset_id_array])
         issue_number_array = get_issue_numbers(self.auth, project_id, "QUESTION", len(text_array))
+        if asset_external_id_array is not None and asset_id_array is None:
+            id_map = infer_ids_from_external_ids(
+                auth=self.auth, asset_external_ids=asset_external_id_array, project_id=project_id
+            )
+            asset_id_array = [id_map[external_id] for external_id in asset_external_id_array]
+        assert asset_id_array
         variables = {
             "issues": [
                 {"issueNumber": issue_number, "type": "QUESTION", "assetId": asset_id, "text": text}
