@@ -20,7 +20,7 @@ from ...mutations.data_connection.queries import (
 
 def get_data_connection(auth: KiliAuth, data_connection_id: str) -> Dict:
     """
-    Get a data connection
+    Get data connection information
     """
     variables = {"where": {"id": data_connection_id}}
     result = auth.client.execute(GQL_DATA_CONNECTION_QUERY, variables)
@@ -45,8 +45,12 @@ def validate_data_differences(
 
 def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
     """
-    Compute differences between the data connection differences
+    Compute differences between the data connection differences (if not already computing)
     """
+    data_connection = get_data_connection(auth, data_connection_id)
+    if data_connection["isChecking"]:
+        return data_connection
+
     variables = {"where": {"id": data_connection_id}}
     result = auth.client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
     data_connection = format_result("data", result)
@@ -62,9 +66,9 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
     subscription = auth.client.subscribe(
         GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION, {"projectID": project_id}
     )
-    # we need to add a delay before compute_differences
-    # because the subscription is not yet launched
 
+    # we need to add a delay before compute_differences
+    # because the subscription takes time to be ready
     def compute_differences_with_delay(auth: KiliAuth, data_connection_id: str) -> Dict:
         time.sleep(1)
         return compute_differences(auth, data_connection_id)
@@ -76,7 +80,7 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
     thread_launch_comp.start()
 
     for result in subscription:
-        print("result: ", result)
+        print("result: ", result)  # TODO: remove
         is_computing_diff = result["data"]["isChecking"]
         if not is_computing_diff:
             subscription.close()
