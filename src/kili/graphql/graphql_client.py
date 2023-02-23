@@ -45,6 +45,7 @@ class GraphQLClient:
         verify: bool = True,
     ) -> None:
         self.endpoint = endpoint
+        self.api_key = api_key
         self.verify = verify
 
         self.headers = {
@@ -72,12 +73,12 @@ class GraphQLClient:
             self._cache_graphql_schema(graphql_schema_path)
         except (requests.exceptions.JSONDecodeError, json.decoder.JSONDecodeError):
             self._gql_client = Client(
-                transport=self.gql_transport, fetch_schema_from_transport=True
+                transport=self._gql_transport, fetch_schema_from_transport=True
             )
         else:
             self._gql_client = Client(
                 schema=graphql_schema_path.read_text(encoding="utf-8"),
-                transport=self.gql_transport,
+                transport=self._gql_transport,
             )
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
@@ -160,7 +161,15 @@ class GraphQLClient:
         return result
 
     def _initialize_ws_client(self):
-        self._gql_ws_transport = WebsocketsTransport(url=self.ws_endpoint, headers=self.headers)
+        self._gql_ws_transport = WebsocketsTransport(
+            url=self.ws_endpoint,
+            headers=self.headers,
+            subprotocols=[WebsocketsTransport.APOLLO_SUBPROTOCOL],
+            init_payload={
+                "headers": {"Accept": "application/json", "Content-Type": "application/json"},
+                "Authorization": f"X-API-Key: {self.api_key}",
+            },
+        )
         self._gql_ws_client = Client(
             transport=self._gql_ws_transport, fetch_schema_from_transport=True
         )
@@ -204,7 +213,7 @@ class SubscriptionGraphQLClient:
         """
         self._connect()
         self._subscription_running = True
-        dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        dt_string = datetime.now().strftime(r"%d/%m/%Y %H:%M:%S")
         print(f"{dt_string} reconnected")
         self.failed_connection_attempts = 0
 
