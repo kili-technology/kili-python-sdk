@@ -18,7 +18,55 @@ from kili.services.export.format.coco import (
 from kili.services.types import Job, JobName
 from kili.utils.tempfile import TemporaryDirectory
 
-from .helpers import coco as helpers
+
+def get_asset(content_path: Path, with_annotation: bool) -> Asset:
+    # without annotation means that: there is a label for the asset
+    # but there is no labeling data for the job.
+    # `annotations=[]` should not exist.
+    json_response = {"author": {"firstname": "Jean-Pierre", "lastname": "Dupont"}}
+    if with_annotation:
+        json_response = {
+            **json_response,
+            "JOB_0": {
+                "annotations": [
+                    {
+                        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                        "jobName": "JOB_0",
+                        "mid": "2022040515434712-7532",
+                        "mlTask": "OBJECT_DETECTION",
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                    },
+                                    {
+                                        "x": 0.5,
+                                        "y": 0.0,
+                                    },
+                                    {
+                                        "x": 0.0,
+                                        "y": 0.5,
+                                    },
+                                ]
+                            }
+                        ],
+                        "type": "semantic",
+                        "children": {},
+                    }
+                ]
+            },
+        }
+
+    return Asset(
+        {
+            "latestLabel": {"jsonResponse": json_response},
+            "externalId": "car_1",
+            "jsonContent": "",
+            "content": str(content_path),
+        }
+    )
 
 
 def test__get_coco_image_annotations():
