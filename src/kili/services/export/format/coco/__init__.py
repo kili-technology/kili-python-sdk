@@ -7,7 +7,9 @@ import time
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
+
+from typing_extensions import TypedDict
 
 from kili.orm import Asset, JobMLTask, JobTool
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
@@ -286,24 +288,26 @@ def _get_coco_image_annotations(
             continue
         bounding_poly = annotation["boundingPoly"]
         bbox, poly = _get_coco_geometry_from_kili_bpoly(
-            bounding_poly, coco_image["width"], coco_image["height"]
+            bounding_poly, asset["width"], asset["height"]
         )
         if len(poly) < 6:  # twice the number of vertices
             print("A polygon must contain more than 2 points. Skipping this polygon...")
             continue
 
         categories = annotation["categories"]
-        coco_annotation = CocoAnnotation(
-            id=annotation_j,
-            image_id=coco_image["id"],
-            category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
-            bbox=bbox,
-            # Objects have only one connected part.
-            # But a type of object can appear several times on the same image.
-            # The limitation of the single connected part comes from Kili.
-            segmentation=[poly],
-            area=coco_image["height"] * coco_image["width"],
-            iscrowd=0,
+        coco_annotations.append(
+            _CocoAnnotation(
+                id=annotation_j,
+                image_id=asset["id"],
+                category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
+                bbox=bbox,
+                # Objects have only one connected part.
+                # But a type of object can appear several times on the same image.
+                # The limitation of the single connected part comes from Kili.
+                segmentation=[poly],
+                area=asset["height"] * asset["width"],
+                iscrowd=0,
+            )
         )
 
         if annotation_modifier:
@@ -330,8 +334,8 @@ def _get_coco_geometry_from_kili_bpoly(
     return bbox, poly
 
 
-def _get_coco_categories(cat_kili_id_to_coco_id) -> List[CocoCategory]:
-    categories_coco: List[CocoCategory] = []
+def _get_coco_categories(cat_kili_id_to_coco_id) -> List[_CocoCategory]:
+    categories_coco: List[_CocoCategory] = []
     for cat_kili_id, cat_coco_id in cat_kili_id_to_coco_id.items():
         categories_coco.append(
             {
