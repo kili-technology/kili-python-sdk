@@ -12,6 +12,7 @@ from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.format.coco import (
     CocoExporter,
     _convert_kili_semantic_to_coco,
+    _get_coco_geometry_from_kili_bpoly,
 )
 from kili.services.types import Job, JobName
 from kili.utils.tempfile import TemporaryDirectory
@@ -40,12 +41,12 @@ def get_asset(content_path: Path, with_annotation: bool) -> Asset:
                                         "y": 0.0,
                                     },
                                     {
-                                        "x": 1.0,
+                                        "x": 0.5,
                                         "y": 0.0,
                                     },
                                     {
                                         "x": 0.0,
-                                        "y": 1.0,
+                                        "y": 0.5,
                                     },
                                 ]
                             }
@@ -100,41 +101,7 @@ def test__get_coco_image_annotations():
         )
         with output_file.open("r", encoding="utf-8") as f:
             coco_annotation = json.loads(f.read())
-            result = {
-                "info": {
-                    "year": "2022",
-                    "version": "1.0",
-                    "description": "Test project - Exported from Kili Python Client",
-                    "contributor": "Kili Technology",
-                    "url": "https://kili-technology.com",
-                },
-                "licenses": [],
-                "categories": [
-                    {"id": 1, "name": "OBJECT_B", "supercategory": ""},
-                    {"id": 0, "name": "OBJECT_A", "supercategory": ""},
-                ],
-                "images": [
-                    {
-                        "id": 0,
-                        "license": 0,
-                        "file_name": "/var/folders/4d/cyyb2jg15k74pw6y661rlnm00000gn/T/tmp7ck1ykp4/data/car_1.jpg",
-                        "height": 1080,
-                        "width": 1920,
-                        "date_captured": None,
-                    }
-                ],
-                "annotations": [
-                    {
-                        "id": 0,
-                        "image_id": 0,
-                        "category_id": 0,
-                        "bbox": [0, 0, 1920, 1080],
-                        "segmentation": [[0.0, 0.0, 1920.0, 0.0, 0.0, 1080.0]],
-                        "area": 2073600,
-                        "iscrowd": 0,
-                    }
-                ],
-            }
+
             assert "Test project" in coco_annotation["info"]["description"]
             categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
             assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
@@ -142,9 +109,9 @@ def test__get_coco_image_annotations():
             assert coco_annotation["images"][0]["height"] == 1080
             assert coco_annotation["annotations"][0]["image_id"] == 0
             assert categories_by_id[coco_annotation["annotations"][0]["category_id"]] == "OBJECT_A"
-            assert coco_annotation["annotations"][0]["bbox"] == [0, 0, 1920, 1080]
+            assert coco_annotation["annotations"][0]["bbox"] == [0, 0, 960, 540]
             assert coco_annotation["annotations"][0]["segmentation"] == [
-                [0.0, 0.0, 1920.0, 0.0, 0.0, 1080.0]
+                [0.0, 0.0, 960.0, 0.0, 0.0, 540.0]
             ]
             assert coco_annotation["annotations"][0]["area"] == 2073600
 
@@ -334,3 +301,24 @@ def test_coco_video_jsoncontent():
 
             assert labels_json["annotations"][0]["image_id"] == 2
             assert labels_json["annotations"][1]["image_id"] == 3
+
+
+def test_get_coco_geometry_from_kili_bpoly():
+    boundingPoly = [
+        {
+            "normalizedVertices": [
+                {"x": 0.1, "y": 0.1},
+                {"x": 0.1, "y": 0.4},
+                {"x": 0.8, "y": 0.4},
+                {"x": 0.8, "y": 0.1},
+            ]
+        }
+    ]
+    image_width, image_height = 1920, 1080
+    bbox, poly = _get_coco_geometry_from_kili_bpoly(boundingPoly, image_width, image_height)
+    assert bbox == [192, 108, 1344, 324]
+    assert bbox[0] == int(0.1 * image_width)
+    assert bbox[1] == int(0.1 * image_height)
+    assert bbox[2] == int((0.8 - 0.1) * image_width)
+    assert bbox[3] == int((0.4 - 0.1) * image_height)
+    assert poly == [192.0, 108.0, 192.0, 432.0, 1536.0, 432.0, 1536.0, 108.0]
