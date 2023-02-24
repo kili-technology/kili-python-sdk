@@ -24,6 +24,20 @@ from ...subscriptions.data_connection.subscriptions import (
     GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION,
 )
 
+LOGGER = None
+
+
+def _get_logger() -> logging.Logger:
+    global LOGGER  # pylint: disable=global-statement
+
+    if LOGGER is not None:
+        return LOGGER
+
+    LOGGER = logging.getLogger(__name__)
+    LOGGER.setLevel(logging.INFO)
+    LOGGER.addHandler(logging.StreamHandler())
+    return LOGGER
+
 
 def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[str]) -> Dict:
     """
@@ -56,11 +70,7 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
     """
     Compute differences between the data connection differences (if not already computing)
     """
-    data_connection = get_data_connection(
-        auth,
-        data_connection_id,
-        fields=["isChecking"],
-    )
+    data_connection = get_data_connection(auth, data_connection_id, fields=["isChecking"])
     if data_connection["isChecking"]:
         return data_connection
 
@@ -76,6 +86,7 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
 
     Launch a subscription to the data connection and wait until isChecking is False
     """
+    logger = _get_logger()
     subscription = auth.client.subscribe(
         GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION, {"projectID": project_id}
     )
@@ -95,13 +106,14 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
 
     for result in subscription:
         result = format_result("data", result)
+        logger.debug("Got subscription event: %s", result)
         is_computing_diff = result["isChecking"]
         if not is_computing_diff:
             break
 
     thread_launch_comp.join()
 
-    time.sleep(1)  # backend needs some time to update the data connection "isChecking"
+    time.sleep(1)  # backend needs some time to update the data connection "isChecking" to False
 
 
 def synchronize_data_connection(
@@ -110,9 +122,7 @@ def synchronize_data_connection(
     """
     Launch a data connection synchronization
     """
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    logger.addHandler(logging.StreamHandler())
+    logger = _get_logger()
     logger.info("Synchronizing data connection: %s", data_connection_id)
 
     verify_diff_computed(auth, project_id, data_connection_id)
