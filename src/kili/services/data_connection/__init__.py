@@ -98,6 +98,8 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
 
     thread_launch_comp.join()
 
+    time.sleep(1)  # backend needs some time to update the data connection "isChecking"
+
 
 def synchronize_data_connection(
     auth: KiliAuth, project_id: str, data_connection_id: str, delete_extraneous_files: bool
@@ -123,25 +125,36 @@ def synchronize_data_connection(
             "numberOfAssets",
         ],
     )
-    assert not data_connection["isChecking"], data_connection
+    if data_connection["isChecking"]:
+        raise ValueError(f"Data connection is still checking: {data_connection}")
+
     added = data_connection["dataDifferencesSummary"]["added"]
     removed = data_connection["dataDifferencesSummary"]["removed"]
     total = data_connection["dataDifferencesSummary"]["total"]
     nb_assets = data_connection["numberOfAssets"]
 
-    logger.info("Found %d assets in the data connection.", nb_assets)
-    logger.info("Found %d differences.", total)
+    logger.info("Found %d asset(s) in the data connection.", nb_assets)
 
     if total == 0:
         logger.info("No differences found. Nothing to synchronize.")
         return data_connection
 
-    if removed > 0 and delete_extraneous_files:
-        data_connection = validate_data_differences(auth, "REMOVE", data_connection_id)
-        logger.info("Removed %d extraneous files.", removed)
+    logger.info(
+        "Found %d difference(s): %d assets to add, %d assets to remove.", total, added, removed
+    )
+
+    if removed > 0:
+        if delete_extraneous_files:
+            data_connection = validate_data_differences(auth, "REMOVE", data_connection_id)
+            logger.info("Removed %d extraneous file(s).", removed)
+        else:
+            logger.info(
+                "Use delete_extraneous_files=True to remove %d extraneous file(s).",
+                removed,
+            )
 
     if added > 0:
         data_connection = validate_data_differences(auth, "ADD", data_connection_id)
-        logger.info("Added %d files.", added)
+        logger.info("Added %d file(s).", added)
 
     return data_connection
