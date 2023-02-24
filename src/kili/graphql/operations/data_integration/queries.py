@@ -40,8 +40,8 @@ class DataIntegrationWhere(BaseQueryWhere):
         }
 
 
-class DataIntegrationQuery(GraphQLQuery):
-    """DataIntegration query."""
+class DataIntegrationsQuery(GraphQLQuery):
+    """DataIntegrations query."""
 
     @staticmethod
     def query(fragment):

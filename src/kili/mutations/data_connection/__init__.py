@@ -51,6 +51,12 @@ class MutationsDataConnection:
     ) -> Dict:
         """Synchronize a data connection.
 
+        This method will compute differences between the data connection and the project
+            and then validate the differences.
+
+        If `delete_extraneous_files` is True, it will also delete files that are not in the
+            data integration anymore but that are still in the project.
+
         Args:
             project_id: ID of the project.
             data_connection_id: ID of the data connection.
