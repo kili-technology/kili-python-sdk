@@ -2,7 +2,8 @@
 Issue mutations
 """
 
-from typing import Dict, Optional
+from itertools import repeat
+from typing import Dict, List, Optional
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -21,7 +22,7 @@ from .queries import GQL_CREATE_ISSUES
 class MutationsIssue:
     """Set of Issue mutations."""
 
-    # pylint: disable=too-few-public-methods,too-many-arguments
+    # pylint: disable=too-many-arguments
 
     def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
