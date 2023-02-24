@@ -21,7 +21,7 @@ class MockerGetDataConnection:
         self.is_checking = is_checking
 
     def __call__(self, auth, data_connection_id: str, fields: List[str]) -> Dict[str, Any]:
-        ret = {"id": data_connection_id}
+        ret: Dict[str, Any] = {"id": data_connection_id}
         ret["dataDifferencesSummary"] = {}
 
         if "dataDifferencesSummary.added" in fields:
