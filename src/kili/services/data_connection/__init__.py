@@ -80,6 +80,7 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
 
     # we need to add a delay before compute_differences
     # because the subscription takes time to be ready
+    # we trigger the computation of the differences in a thread while waiting for the subscription
     def compute_differences_with_delay(auth: KiliAuth, data_connection_id: str) -> Dict:
         time.sleep(1)
         return compute_differences(auth, data_connection_id)
@@ -91,8 +92,8 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
     thread_launch_comp.start()
 
     for result in subscription:
-        print("result: ", result)  # TODO: remove
-        is_computing_diff = result["data"]["isChecking"]
+        result = format_result("data", result)
+        is_computing_diff = result["isChecking"]
         if not is_computing_diff:
             break
 

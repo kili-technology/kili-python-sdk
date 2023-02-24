@@ -8,12 +8,12 @@ from typing_extensions import Literal
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.data_connection.queries import (
-    DataConnectionIdWhere,
-    DataConnectionQuery,
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
 from kili.helpers import disable_tqdm_if_as_generator
+
+from ... import services
 
 
 class QueriesDataConnection:
@@ -145,7 +145,4 @@ class QueriesDataConnection:
         Returns:
             A dict with the information of the data connection.
         """
-        where = DataConnectionIdWhere(data_connection_id=data_connection_id)
-        options = QueryOptions()
-        data_connection = next(DataConnectionQuery(self.auth.client)(where, fields, options))
-        return data_connection
+        return services.get_data_connection(self.auth, data_connection_id, fields)

@@ -7,8 +7,8 @@ from typeguard import typechecked
 
 from kili.authentication import KiliAuth
 
+from ... import services
 from ...helpers import format_result
-from ...services.data_connection import synchronize_data_connection
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
@@ -65,6 +65,6 @@ class MutationsDataConnection:
         Returns:
             A dict with the DataConnection ID.
         """
-        return synchronize_data_connection(
+        return services.synchronize_data_connection(
             self.auth, project_id, data_connection_id, delete_extraneous_files
         )
