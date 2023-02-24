@@ -85,6 +85,11 @@ class QueriesIssue:
         # pylint: disable=line-too-long
         """Get a generator or a list of issues that match a set of criteria.
 
+        !!! Info "Issues or Questions"
+            An `Issue` object both represent an issue and a question in the app.
+            To create them, two different methods are provided: `create_issues` and `create_questions`.
+            However to query issues and questions, we currently provide this unique method that retrieves both of them.
+
         Args:
             project_id: Project ID the issue belongs to.
             fields: All the fields to request among the possible fields for the assets.
