@@ -12,14 +12,6 @@ mutation addDataConnection($data: DataConnectionInput!) {
 }
 """
 
-GQL_DATA_CONNECTION_QUERY = f"""
-query dataConnection($where: DataConnectionIdWhere!) {{
-  data: dataConnection(where: $where) {{
-    {DATA_CONNECTION_FRAGMENT}
-  }}
-}}
-"""
-
 GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES = f"""
 mutation computeDifferences($where: DataConnectionIdWhere!, $data: DataConnectionComputeDifferencesPayload) {{
   data: computeDifferences(where: $where, data: $data) {{

@@ -8,13 +8,14 @@ from typing_extensions import Literal
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.data_connection.queries import (
+    DataConnectionIdWhere,
+    DataConnectionQuery,
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
 from kili.helpers import disable_tqdm_if_as_generator
 
 
-# pylint: disable=too-few-public-methods
 class QueriesDataConnection:
     """
     Set of data connection queries
@@ -116,3 +117,35 @@ class QueriesDataConnection:
         if as_generator:
             return data_connections_gen
         return list(data_connections_gen)
+
+    @typechecked
+    def data_connection(
+        self,
+        data_connection_id: str,
+        fields=[
+            "dataDifferencesSummary.added",
+            "dataDifferencesSummary.removed",
+            "dataDifferencesSummary.total",
+            "lastChecked",
+            "isChecking",
+            "isApplyingDataDifferences",
+            "numberOfAssets",
+            "selectedFolders",
+            "projectId",
+        ],
+    ) -> Dict:
+        # pylint: disable=line-too-long
+        """Get information of a data connection.
+
+        Args:
+            data_connection_id: ID of the data connection.
+            fields: All the fields to request among the possible fields for the data connections.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
+
+        Returns:
+            A dict with the information of the data connection.
+        """
+        where = DataConnectionIdWhere(data_connection_id=data_connection_id)
+        options = QueryOptions()
+        data_connection = next(DataConnectionQuery(self.auth.client)(where, fields, options))
+        return data_connection

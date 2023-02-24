@@ -4,27 +4,32 @@ Services for data connections
 import logging
 import threading
 import time
-from typing import Dict
+from typing import Dict, List
 
 from typing_extensions import Literal
 
+from kili.graphql import QueryOptions
+
 from ...authentication import KiliAuth
+from ...graphql.operations.data_connection.queries import (
+    DataConnectionIdWhere,
+    DataConnectionQuery,
+)
 from ...helpers import format_result
 from ...mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
-    GQL_DATA_CONNECTION_QUERY,
     GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION,
     GQL_VALIDATE_DATA_DIFFERENCES,
 )
 
 
-def get_data_connection(auth: KiliAuth, data_connection_id: str) -> Dict:
+def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[str]) -> Dict:
     """
     Get data connection information
     """
-    variables = {"where": {"id": data_connection_id}}
-    result = auth.client.execute(GQL_DATA_CONNECTION_QUERY, variables)
-    data_connection = format_result("data", result)
+    where = DataConnectionIdWhere(data_connection_id=data_connection_id)
+    options = QueryOptions()
+    data_connection = next(DataConnectionQuery(auth.client)(where, fields, options))
     return data_connection
 
 
@@ -47,7 +52,11 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
     """
     Compute differences between the data connection differences (if not already computing)
     """
-    data_connection = get_data_connection(auth, data_connection_id)
+    data_connection = get_data_connection(
+        auth,
+        data_connection_id,
+        fields=["isChecking"],
+    )
     if data_connection["isChecking"]:
         return data_connection
 
@@ -83,7 +92,7 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
         print("result: ", result)  # TODO: remove
         is_computing_diff = result["data"]["isChecking"]
         if not is_computing_diff:
-            subscription.close()
+            break
 
     thread_launch_comp.join()
 
@@ -101,7 +110,17 @@ def synchronize_data_connection(
 
     verify_diff_computed(auth, project_id, data_connection_id)
 
-    data_connection = get_data_connection(auth, data_connection_id)
+    data_connection = get_data_connection(
+        auth,
+        data_connection_id,
+        fields=[
+            "dataDifferencesSummary.added",
+            "dataDifferencesSummary.removed",
+            "dataDifferencesSummary.total",
+            "isChecking",
+            "numberOfAssets",
+        ],
+    )
     assert not data_connection["isChecking"], data_connection
     added = data_connection["dataDifferencesSummary"]["added"]
     removed = data_connection["dataDifferencesSummary"]["removed"]

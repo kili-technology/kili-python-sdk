@@ -145,6 +145,10 @@ class GraphQLQuery(ABC):
                     if post_call_function is not None:
                         rows = post_call_function(rows)
 
+                    if isinstance(rows, Dict):
+                        yield rows
+                        break
+
                     for row in rows:
                         yield row
 

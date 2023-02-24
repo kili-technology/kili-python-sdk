@@ -45,3 +45,39 @@ class DataConnectionsQuery(GraphQLQuery):
           }}
         }}
         """
+
+
+class DataConnectionIdWhere(BaseQueryWhere):
+    """
+    Tuple to be passed to the DataConnectionQuery to restrict the query
+    """
+
+    def __init__(
+        self,
+        data_connection_id: str,
+    ) -> None:
+        self.data_connection_id = data_connection_id
+        super().__init__()
+
+    def graphql_where_builder(self):
+        """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionWhere"""
+        return {
+            "id": self.data_connection_id,
+        }
+
+
+class DataConnectionQuery(GraphQLQuery):
+    """DataConnection query."""
+
+    @staticmethod
+    def query(fragment):
+        """
+        Return the GraphQL dataConnection query
+        """
+        return f"""
+        query dataConnection($where: DataConnectionIdWhere!) {{
+          data: dataConnection(where: $where) {{
+            {fragment}
+          }}
+        }}
+        """
