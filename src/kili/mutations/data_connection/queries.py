@@ -27,11 +27,3 @@ mutation validateDataDifferences($where: ValidateDataDifferencesWhere!, $process
   }}
 }}
 """
-
-GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION = f"""
-subscription dataConnectionUpdated($projectID: ID!) {{
-  data: dataConnectionUpdated(projectID: $projectID) {{
-    {DATA_CONNECTION_FRAGMENT}
-  }}
-}}
-"""

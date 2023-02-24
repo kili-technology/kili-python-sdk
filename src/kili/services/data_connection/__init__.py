@@ -18,8 +18,10 @@ from ...graphql.operations.data_connection.queries import (
 from ...helpers import format_result
 from ...mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
-    GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION,
     GQL_VALIDATE_DATA_DIFFERENCES,
+)
+from ...subscriptions.data_connection.subscriptions import (
+    GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION,
 )
 
 
