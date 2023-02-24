@@ -30,9 +30,11 @@ def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[st
     Get data connection information
     """
     where = DataConnectionIdWhere(data_connection_id=data_connection_id)
-    options = QueryOptions()
-    data_connection = next(DataConnectionQuery(auth.client)(where, fields, options))
-    return data_connection
+    options = QueryOptions(first=1)
+    data_connection = list(DataConnectionQuery(auth.client)(where, fields, options))
+    if len(data_connection) == 0:
+        raise ValueError(f"No data connection with id {data_connection_id}")
+    return data_connection[0]
 
 
 def validate_data_differences(

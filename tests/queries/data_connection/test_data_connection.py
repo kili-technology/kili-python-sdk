@@ -1,5 +1,7 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from kili.queries.data_connection import QueriesDataConnection
 
 
@@ -35,10 +37,16 @@ def test_data_connection(mocked_graphql_client):
     Test data_connection query
     """
     kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))
-    kili.data_connection(data_connection_id="my_data_connection_id", fields=["my_field"])
+
+    with pytest.raises(ValueError, match="No data connection with id my_data_connection_id"):
+        kili.data_connection(data_connection_id="my_data_connection_id", fields=["my_field"])
 
     mocked_graphql_client.execute.assert_called_once()
     query_sent = mocked_graphql_client.execute.call_args[0][0]
     variables = mocked_graphql_client.execute.call_args[0][1]
 
-    pass
+    assert "query dataConnection($where: DataConnectionIdWhere!)" in query_sent
+    assert "data: dataConnection(where: $where)" in query_sent
+    assert "my_field" in query_sent
+
+    assert variables == {"where": {"id": "my_data_connection_id"}, "first": 1, "skip": 0}
