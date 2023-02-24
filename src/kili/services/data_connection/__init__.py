@@ -4,7 +4,7 @@ Services for data connections
 import logging
 import threading
 import time
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
 from typing_extensions import Literal
 
@@ -66,15 +66,15 @@ def validate_data_differences(
     return data_connection
 
 
-def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
+def compute_differences(
+    auth: KiliAuth, data_connection_id: str, blob_paths: Optional[List[str]] = None
+) -> Dict:
     """
-    Compute differences between the data connection differences (if not already computing)
+    Compute differences between the data connection differences
     """
-    data_connection = get_data_connection(auth, data_connection_id, fields=["isChecking"])
-    if data_connection["isChecking"]:
-        return data_connection
-
-    variables = {"where": {"id": data_connection_id}}
+    variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
+    if blob_paths is not None:
+        variables["data"] = {"blobPaths": blob_paths}
     result = auth.client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
     data_connection = format_result("data", result)
     return data_connection

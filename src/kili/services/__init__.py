@@ -4,6 +4,7 @@ Python SDK service layer
 
 from kili.services.asset_import import import_assets
 from kili.services.data_connection import (
+    compute_differences,
     get_data_connection,
     synchronize_data_connection,
 )
@@ -20,4 +21,5 @@ __all__ = [
     "get_project_field",
     "get_data_connection",
     "synchronize_data_connection",
+    "compute_differences",
 ]

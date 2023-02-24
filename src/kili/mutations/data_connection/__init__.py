@@ -40,10 +40,16 @@ class MutationsDataConnection:
                 "integrationId": data_integration_id,
                 "isChecking": False,
                 "lastChecked": datetime.now().isoformat(sep="T", timespec="milliseconds") + "Z",
+                "selectedFolders": [],
             }
         }
         result = self.auth.client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)
-        return format_result("data", result)
+        result = format_result("data", result)
+
+        # We trigger data difference computation (same as in the UI)
+        services.compute_differences(self.auth, result["id"])
+
+        return result
 
     @typechecked
     def synchronize_data_connection(
