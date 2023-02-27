@@ -34,7 +34,7 @@ class QueriesDataConnection:
     def data_connections(
         self,
         project_id: Optional[str] = None,
-        integration_id: Optional[str] = None,
+        data_integration_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
@@ -54,7 +54,7 @@ class QueriesDataConnection:
     def data_connections(
         self,
         project_id: Optional[str] = None,
-        integration_id: Optional[str] = None,
+        data_integration_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
@@ -74,7 +74,7 @@ class QueriesDataConnection:
     def data_connections(
         self,
         project_id: Optional[str] = None,
-        integration_id: Optional[str] = None,
+        data_integration_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
@@ -93,7 +93,7 @@ class QueriesDataConnection:
 
         Args:
             project_id: ID of the project.
-            integration_id: ID of the data integration.
+            data_integration_id: ID of the data integration.
             fields: All the fields to request among the possible fields for the data connections.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
             first: Maximum number of data connections to return.
@@ -108,7 +108,7 @@ class QueriesDataConnection:
             >>> kili.data_connections(project_id="789465123")
             [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'isApplyingDataDifferences': False, 'isChecking': False}]
         """
-        where = DataConnectionsWhere(project_id=project_id, integration_id=integration_id)
+        where = DataConnectionsWhere(project_id=project_id, data_integration_id=data_integration_id)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         data_connections_gen = DataConnectionsQuery(self.auth.client)(where, fields, options)
