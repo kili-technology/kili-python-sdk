@@ -39,6 +39,10 @@ class QueriesIssue:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -59,6 +63,10 @@ class QueriesIssue:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -75,10 +83,15 @@ class QueriesIssue:
             "issueNumber",
             "status",
             "type",
+            "assetId",
         ],
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
@@ -87,6 +100,10 @@ class QueriesIssue:
 
         Args:
             project_id: Project ID the issue belongs to.
+            asset_id: Id of the asset whose returned issues are associated to.
+            asset_id_in: List of Ids of assets whose returned issues are associated to.
+            issue_type: Type of the issue to return. An issue object both represents issues and questions in the app.
+            status: Status of the issues to return.
             fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#issue) for all possible fields.
             first: Maximum number of issues to return.
@@ -101,7 +118,18 @@ class QueriesIssue:
         Examples:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
-        where = IssueWhere(project_id=project_id)
+
+        if asset_id and asset_id_in:
+            raise ValueError(
+                "You cannot provide both `asset_id` and `asset_id_in` at the same time"
+            )
+        where = IssueWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_id_in=asset_id_in,
+            issue_type=issue_type,
+            status=status,
+        )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         issues_gen = IssueQuery(self.auth.client)(where, fields, options)
@@ -111,11 +139,23 @@ class QueriesIssue:
         return list(issues_gen)
 
     @typechecked
-    def count_issues(self, project_id: Optional[str] = None) -> int:
+    def count_issues(
+        self,
+        project_id: Optional[str] = None,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
+    ) -> int:
         """Count and return the number of api keys with the given constraints.
 
         Args:
             project_id: Project ID the issue belongs to.
+            asset_id: Asset id whose returned issues are associated to.
+            asset_id_in: List of asset ids whose returned issues are associated to.
+            issue_type: Type of the issue to return. An issue object both
+                represents issues and questions in the app
+            status: Status of the issues to return.
 
         Returns:
             The number of issues with the parameters provided
@@ -129,5 +169,15 @@ class QueriesIssue:
                 ),
                 DeprecationWarning,
             )
-        where = IssueWhere(project_id=project_id)
+        if asset_id and asset_id_in:
+            raise ValueError(
+                "You cannot provide both `asset_id` and `asset_id_in` at the same time"
+            )
+        where = IssueWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_id_in=asset_id_in,
+            issue_type=issue_type,
+            status=status,
+        )
         return IssueQuery(self.auth.client).count(where)
