@@ -245,11 +245,11 @@ plugin_name = "My first kili plugin"
 
 
 ```python
-from kili.exceptions import TransportQueryError
+from kili.exceptions import GraphQLError
 
 try:
     kili.upload_plugin(path_to_plugin, plugin_name)
-except TransportQueryError as error:
+except GraphQLError as error:
     print(str(error))
 ```
 

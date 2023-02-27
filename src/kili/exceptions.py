@@ -1,11 +1,9 @@
 """Exceptions of the package."""
 from typing import Optional
 
-import graphql
-from gql.transport import exceptions
 
-TransportQueryError = exceptions.TransportQueryError
-GraphQLError = graphql.GraphQLError
+class GraphQLError(Exception):
+    """Raised when the GraphQL call returns an error"""
 
 
 class NotFound(Exception):
