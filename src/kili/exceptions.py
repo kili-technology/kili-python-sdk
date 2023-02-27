@@ -1,11 +1,24 @@
 """Exceptions of the package."""
-from typing import Optional
+from typing import Dict, List, Optional
 
-import graphql
-from gql.transport import exceptions
 
-TransportQueryError = exceptions.TransportQueryError
-GraphQLError = graphql.GraphQLError
+class GraphQLError(Exception):
+    """Raised when the GraphQL call returns an error"""
+
+    def __init__(self, error, batch_number=None) -> None:
+        self.error = error
+
+        if isinstance(error, List):
+            error = error[0]
+        if isinstance(error, Dict) and "message" in error:
+            error_msg = error["message"]
+        else:
+            error_msg = str(error)
+
+        if batch_number is None:
+            super().__init__(f'GraphQL error: "{error_msg}"')
+        else:
+            super().__init__(f'GraphQL error at index {100*batch_number}: {error_msg}"')
 
 
 class NotFound(Exception):

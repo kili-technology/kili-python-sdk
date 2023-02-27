@@ -2,9 +2,10 @@
 
 
 import pytest
+from gql.transport import exceptions
 
 from kili.client import Kili
-from kili.exceptions import TransportQueryError
+from kili.exceptions import GraphQLError
 
 
 @pytest.fixture
@@ -62,7 +63,7 @@ def image_bbox_project(kili):
 
 
 def test_json_response_with_wrong_bbox_responses(kili, image_bbox_project):
-    with pytest.raises(TransportQueryError, match="jsonResponseMalformed"):
+    with pytest.raises(GraphQLError) as exc_info:
         wrong_category_json_response = {
             "JOB_0": {
                 "annotations": [
@@ -90,7 +91,10 @@ def test_json_response_with_wrong_bbox_responses(kili, image_bbox_project):
             json_response_array=[wrong_category_json_response],
         )
 
-    with pytest.raises(TransportQueryError, match="jsonResponseMalformed"):
+    assert isinstance(exc_info.value.__cause__, exceptions.TransportQueryError)
+    assert "jsonResponseMalformed" in str(exc_info.value.__cause__)
+
+    with pytest.raises(GraphQLError):
         wrong_job_name_json_response = {
             "DOES NOT EXIST": {
                 "annotations": [
@@ -117,3 +121,6 @@ def test_json_response_with_wrong_bbox_responses(kili, image_bbox_project):
             asset_external_id_array=["1"],
             json_response_array=[wrong_job_name_json_response],
         )
+
+    assert isinstance(exc_info.value.__cause__, exceptions.TransportQueryError)
+    assert "jsonResponseMalformed" in str(exc_info.value.__cause__)

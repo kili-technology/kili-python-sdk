@@ -13,14 +13,17 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
+import graphql
 import requests
 import websocket
 from gql import Client, gql
+from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from graphql import DocumentNode, print_schema
 from typeguard import typechecked
 
 from kili import __version__
+from kili.exceptions import GraphQLError
 
 
 class GraphQLClientName(Enum):
@@ -131,20 +134,15 @@ class GraphQLClient:
             query: the GraphQL query
             variables: the payload of the query
         """
-        return self._send(query, variables)
-
-    @typechecked
-    def _send(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
-        """
-        Send the query
-
-        Args:
-            query: the GraphQL query
-            variables: the payload of the query
-        """
         document = query if isinstance(query, DocumentNode) else gql(query)
-        result = self._gql_client.execute(document=document, variable_values=variables)
-        return result
+        try:
+            result = self._gql_client.execute(document=document, variable_values=variables)
+        except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
+            if isinstance(err, exceptions.TransportQueryError):
+                raise GraphQLError(error=err.errors) from err
+            if isinstance(err, graphql.GraphQLError):
+                raise GraphQLError(error=err.message) from err
+        return result  # type: ignore
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
