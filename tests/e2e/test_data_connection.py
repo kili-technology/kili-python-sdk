@@ -83,6 +83,7 @@ def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
     data_connection = data_connections[0]
     assert data_connection["id"] == data_connection_id, data_connection
     assert data_connection["dataIntegrationId"] == data_integration_id, data_connection
+    assert data_connection["dataDifferencesSummary"]["total"] > 0, data_connection
 
     assets = kili.assets(project_id=project_id)
     assert len(assets) == 0, f"Expected no asset before sync. Got {assets}"
