@@ -70,7 +70,7 @@ def compute_differences(
     auth: KiliAuth, data_connection_id: str, blob_paths: Optional[List[str]] = None
 ) -> Dict:
     """
-    Compute differences between the data connection differences
+    Compute the data connection differences
     """
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:

@@ -47,7 +47,7 @@ class MutationsDataConnection:
         result = format_result("data", result)
 
         # We trigger data difference computation (same as in the UI)
-        services.compute_differences(self.auth, result["id"])
+        services.verify_diff_computed(self.auth, project_id, result["id"])
 
         return result
 
