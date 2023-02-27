@@ -138,7 +138,10 @@ class GraphQLClient:
         try:
             result = self._gql_client.execute(document=document, variable_values=variables)
         except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
-            raise GraphQLError() from err
+            if isinstance(err, exceptions.TransportQueryError):
+                raise GraphQLError(error=err.errors) from err
+            if isinstance(err, graphql.GraphQLError):
+                raise GraphQLError(error=err.message) from err
         return result
 
 

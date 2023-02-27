@@ -189,9 +189,7 @@ def _mutate_from_paginated_call(
         try:
             result = api_throttle(self.auth.client.execute)(request, payload)
         except GraphQLError as err:
-            raise ValueError(
-                f"Error while executing GraphQL request for batch N°{batch_number}"
-            ) from err
+            raise GraphQLError(error=err.error, batch_number=batch_number) from err
         results.append(result)
 
     sleep(1)  # wait for the backend to process the mutations
