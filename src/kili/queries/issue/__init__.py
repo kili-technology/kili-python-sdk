@@ -39,6 +39,10 @@ class QueriesIssue:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -59,6 +63,10 @@ class QueriesIssue:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
