@@ -206,11 +206,11 @@ with requirements_path.open("w") as f:
 
 ```python
 plugin_name = "Plugin bbox count"
-from kili.exceptions import TransportQueryError
+from kili.exceptions import GraphQLError
 
 try:
     kili.upload_plugin(plugin_folder, plugin_name)
-except TransportQueryError as error:
+except GraphQLError as error:
     print(str(error))
 ```
 
@@ -236,7 +236,7 @@ plugin_name = "Plugin bbox count"
 
 try:
     kili.upload_plugin(str(path_to_plugin), plugin_name)
-except TransportQueryError as error:
+except GraphQLError as error:
     print(str(error))
 ```
 
