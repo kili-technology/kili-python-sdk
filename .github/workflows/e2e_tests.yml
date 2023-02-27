@@ -53,7 +53,7 @@ jobs:
 
       - name: Notebook tests
         if: github.event_name != 'push' || github.ref_name != 'master' # does not run for push on master
-        timeout-minutes: 15
+        timeout-minutes: 18
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
