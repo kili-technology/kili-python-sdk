@@ -112,7 +112,10 @@ class MutationsAsset:
         """
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on its labels and cannot be overwritten.",
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -211,7 +214,10 @@ class MutationsAsset:
         """
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on its labels and cannot be overwritten.",
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
