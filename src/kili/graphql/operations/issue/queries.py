@@ -15,6 +15,7 @@ class IssueWhere(BaseQueryWhere):
     Tuple to be passed to the IssueQuery to restrict query
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         project_id: Optional[str] = None,
