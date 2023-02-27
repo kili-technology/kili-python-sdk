@@ -7,7 +7,7 @@ import time
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Callable, Dict, List, NewType, Tuple
 
 from typing_extensions import TypedDict
 
@@ -39,14 +39,16 @@ class _CocoCategory(TypedDict):
     supercategory: str
 
 
-class _CocoAnnotation(TypedDict):
-    id: int
-    image_id: int
-    category_id: int
-    bbox: List[int]
-    segmentation: List[List[float]]  # [[x, y, x, y, x ...]]
-    area: int
-    iscrowd: int
+# class _CocoAnnotation(TypedDict):
+#     id: int
+#     image_id: int
+#     category_id: int
+#     bbox: List[int]
+#     segmentation: List[List[float]]  # [[x, y, x, y, x ...]]
+#     area: int
+#     iscrowd: int
+#     attributes: NotRequired[Dict]
+_CocoAnnotation = NewType("_CocoAnnotation", Dict)
 
 
 class _CocoFormat(TypedDict):
@@ -62,7 +64,7 @@ class CocoExporter(AbstractExporter):
     Common code for COCO exporter.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, label_modifier: Callable[[Dict, Dict], Dict], *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.with_assets:
             warnings.warn(
@@ -70,6 +72,7 @@ class CocoExporter(AbstractExporter):
                 stacklevel=2,
             )
         self.with_assets = True
+        self.label_modifier = label_modifier
 
     def _check_arguments_compatibility(self):
         """
@@ -106,15 +109,16 @@ class CocoExporter(AbstractExporter):
         clean_assets = self.process_assets(assets, self.label_format)
 
         self._save_assets_export(
-            clean_assets,
-            self.export_root_folder,
+            clean_assets, self.export_root_folder, label_modifier=self.label_modifier
         )
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
-    def _save_assets_export(self, assets: List[Asset], output_directory: Path):
+    def _save_assets_export(
+        self, assets: List[Asset], output_directory: Path, label_modifier: Callable
+    ):
         """
         Save the assets to a file and return the link to that file
         """
@@ -127,6 +131,7 @@ class CocoExporter(AbstractExporter):
                     job=job,
                     title=self.project_title,
                     project_input_type=self.project_input_type,
+                    annotation_modifier=label_modifier,
                 )
             else:
                 self.logger.warning(f"Job {job_name} is not compatible with the COCO format.")
@@ -147,6 +152,7 @@ def _convert_kili_semantic_to_coco(
     job: Job,
     title: str,
     project_input_type: str,
+    annotation_modifier: Callable[[Dict, Dict], Dict],
 ) -> Tuple[_CocoFormat, List[str]]:
     """
     creates the following structure on the disk:
@@ -180,7 +186,7 @@ def _convert_kili_semantic_to_coco(
     cat_kili_id_to_coco_id = _get_kili_cat_id_to_coco_cat_id_mapping(job)
     labels_json["categories"] = _get_coco_categories(cat_kili_id_to_coco_id)
     labels_json["images"], labels_json["annotations"] = _get_coco_images_and_annotations(
-        job_name, assets, cat_kili_id_to_coco_id, project_input_type
+        job_name, assets, cat_kili_id_to_coco_id, project_input_type, annotation_modifier
     )
 
     label_file_name = output_dir / job_name / "labels.json"
@@ -202,7 +208,11 @@ def _get_kili_cat_id_to_coco_cat_id_mapping(job: Job) -> Dict[str, int]:
 
 # pylint: disable=too-many-locals
 def _get_coco_images_and_annotations(
-    job_name, assets, cat_kili_id_to_coco_id, project_input_type
+    job_name: str,
+    assets: List[Asset],
+    cat_kili_id_to_coco_id: Dict[str, int],
+    project_input_type: str,
+    annotation_modifier: Callable[[Dict, Dict], Dict],
 ) -> Tuple[List[_CocoImage], List[_CocoAnnotation]]:
     coco_images = []
     coco_annotations = []
@@ -229,6 +239,7 @@ def _get_coco_images_and_annotations(
                     cat_kili_id_to_coco_id,
                     annotation_offset,
                     coco_image,
+                    annotation_modifier=annotation_modifier,
                 )
             coco_annotations.extend(coco_img_annotations)
 
@@ -275,6 +286,7 @@ def _get_coco_images_and_annotations(
                         cat_kili_id_to_coco_id,
                         annotation_offset,
                         coco_image,
+                        annotation_modifier,
                     )
                 coco_annotations.extend(coco_img_annotations)
 
@@ -286,6 +298,7 @@ def _get_coco_image_annotations(
     cat_kili_id_to_coco_id: Dict[str, int],
     annotation_offset: int,
     asset: _CocoImage,
+    annotation_modifier: Callable[[Dict, Dict], Dict],
 ) -> Tuple[List[_CocoAnnotation], int]:
     coco_annotations = []
 
@@ -306,20 +319,35 @@ def _get_coco_image_annotations(
             continue
 
         categories = annotation["categories"]
-        coco_annotations.append(
-            _CocoAnnotation(
-                id=annotation_j,
-                image_id=asset["id"],
-                category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
-                bbox=bbox,
-                # Objects have only one connected part.
-                # But a type of object can appear several times on the same image.
-                # The limitation of the single connected part comes from Kili.
-                segmentation=[poly],
-                area=asset["height"] * asset["width"],
-                iscrowd=0,
-            )
+        # coco_annotation = _CocoAnnotation(
+        #         id=annotation_j,
+        #         image_id=asset["id"],
+        #         category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
+        #         bbox=bbox,
+        #         # Objects have only one connected part.
+        #         # But a type of object can appear several times on the same image.
+        #         # The limitation of the single connected part comes from Kili.
+        #         segmentation=[poly],
+        #         area=asset["height"] * asset["width"],
+        #         iscrowd=0,
+        # )
+        coco_annotation = dict(
+            id=annotation_j,
+            image_id=asset["id"],
+            category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
+            bbox=bbox,
+            # Objects have only one connected part.
+            # But a type of object can appear several times on the same image.
+            # The limitation of the single connected part comes from Kili.
+            segmentation=[poly],
+            area=asset["height"] * asset["width"],
+            iscrowd=0,
         )
+
+        if annotation_modifier:
+            coco_annotation = annotation_modifier(coco_annotation, annotation)
+
+        coco_annotations.append(coco_annotation)
     return coco_annotations, annotation_j
 
 
