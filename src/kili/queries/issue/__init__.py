@@ -117,7 +117,7 @@ class QueriesIssue:
 
     @typechecked
     def count_issues(self, project_id: str) -> int:
-        """Count and return the number of api keys with the given constraints.
+        """Count and return the number of issues with the given constraints.
 
         Args:
             project_id: Project ID the issue belongs to.
