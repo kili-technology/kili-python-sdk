@@ -142,7 +142,7 @@ class GraphQLClient:
                 raise GraphQLError(error=err.errors) from err
             if isinstance(err, graphql.GraphQLError):
                 raise GraphQLError(error=err.message) from err
-        return result
+        return result  # type: ignore
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
