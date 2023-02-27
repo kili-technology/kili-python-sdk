@@ -17,3 +17,17 @@ mutation(
   }}
 }}
 """
+
+GQL_CREATE_ISSUES = f"""
+mutation createIssues(
+    $issues: [IssueToCreate!]!
+    $where: AssetWhere!
+) {{
+  data: createIssues(
+    issues: $issues
+    where: $where
+  ) {{
+    {ISSUE_FRAGMENT}
+  }}
+}}
+"""
