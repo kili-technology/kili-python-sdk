@@ -88,7 +88,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         src_project = services.get_project(self.kili.auth, from_project_id, fields)
 
         if len(src_project["dataConnections"]) > 0 and copy_assets:
-            raise NotImplementedError("Copying projects with remote storage is not supported.")
+            raise NotImplementedError("Copying projects with cloud storage is not supported.")
 
         new_project_title = title or self._generate_project_title(src_title=src_project["title"])
 
