@@ -50,12 +50,14 @@ class burstthrottle(object):
 
 
 @burstthrottle(max_hits=250, minutes=1)
-def mocked_query_method(skip, first, *_):
+def mocked_query_method(query, payload):
     """
     Simulates a query result by returning a list of ids
     """
+    skip = payload["skip"]
+    first = payload["first"]
     max_range = min(COUNT_SAMPLE_MAX, skip + first)
-    res = [{"id": i} for i in range(skip, max_range)]
+    res = {"data": [{"id": i} for i in range(skip, max_range)]}
     return res
 
 
