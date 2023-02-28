@@ -28,8 +28,8 @@ class MutationsDataConnection:
         """Connect a remote storage to a project.
 
         Args:
-            project_id : ID of the project
-            data_integration_id : ID of the data integration
+            project_id: ID of the project
+            data_integration_id: ID of the data integration
 
         Returns:
             A dict with the DataConnection ID.
