@@ -6,7 +6,7 @@ from kili.queries.data_connection import QueriesDataConnection
 @patch("kili.graphql.GraphQLClient")
 def test_data_connections(mocked_graphql_client):
     kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))
-    kili.data_connections(project_id="789465123")
+    kili.cloud_storage_connections(project_id="789465123")
     mocked_graphql_client.execute.assert_called_once()
     query_sent = mocked_graphql_client.execute.call_args[0][0]
     variables = mocked_graphql_client.execute.call_args[0][1]

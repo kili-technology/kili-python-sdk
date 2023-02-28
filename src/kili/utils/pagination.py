@@ -8,7 +8,6 @@ from typing import Any, Callable, Dict, Iterator, List, Optional
 
 from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 from kili.exceptions import GraphQLError
-from kili.utils.tqdm import tqdm
 
 # pylint: disable=too-many-arguments
 
