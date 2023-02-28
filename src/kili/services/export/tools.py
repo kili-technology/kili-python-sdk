@@ -3,6 +3,7 @@ Set of common functions used by different export formats
 """
 from typing import Dict, List, Optional
 
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.queries.asset.media_downloader import get_download_assets_function
@@ -61,7 +62,7 @@ def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportT
 
 
 def fetch_assets(  # pylint: disable=too-many-arguments
-    kili,
+    auth: KiliAuth,
     project_id: str,
     asset_ids: Optional[List[str]],
     export_type,
@@ -105,9 +106,9 @@ def fetch_assets(  # pylint: disable=too-many-arguments
         )
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(
-        kili, download_media, fields, project_id, local_media_dir
+        auth, download_media, fields, project_id, local_media_dir
     )
-    assets = list(AssetQuery(kili.auth.client)(where, fields, options, post_call_function))
+    assets = list(AssetQuery(auth.client)(where, fields, options, post_call_function))
     _check_content_presence(assets)
     attach_name_to_assets_labels_author(assets, export_type)
     return assets

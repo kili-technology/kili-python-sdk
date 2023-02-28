@@ -62,7 +62,7 @@ def export_labels(
     api_key: Optional[str],
     endpoint: Optional[str],
     project_id: str,
-    verbose: bool,  # pylint: disable=unused-argument
+    verbose: bool,
     with_assets: bool,
 ):
     """
@@ -107,7 +107,7 @@ def export_labels(
 
     try:
         services.export_labels(
-            kili,
+            kili.auth,
             asset_ids=None,
             project_id=cast(ProjectId, project_id),
             export_type="latest",

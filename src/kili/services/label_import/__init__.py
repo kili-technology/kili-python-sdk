@@ -5,6 +5,7 @@ label import service
 from pathlib import Path
 from typing import Dict, List, Optional, Type, cast
 
+from kili.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.services.helpers import is_target_job_in_json_interface
 from kili.services.label_import.importer import (
@@ -19,7 +20,7 @@ from kili.services.types import LabelType, LogLevel, ProjectId
 
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
-    kili,
+    auth: KiliAuth,
     labels_files: List[str],
     meta_file_path: Optional[str],
     project_id: str,
@@ -33,7 +34,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     """
     Imports labels from a list of files contained in file path.
     """
-    get_project(kili, project_id, ["id"])
+    get_project(auth, project_id, ["id"])
 
     if len(labels_files) == 0:
         raise ValueError("You must specify files to upload")
@@ -41,7 +42,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     if is_prediction and model_name is None:
         raise ValueError("If predictions are uploaded, a model name should be specified")
 
-    if target_job_name and not is_target_job_in_json_interface(kili, project_id, target_job_name):
+    if target_job_name and not is_target_job_in_json_interface(auth, project_id, target_job_name):
         raise NotFound(
             f"Target job {target_job_name} has not been found in the project JSON interface"
         )
@@ -55,7 +56,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
         raise NotImplementedError(f"{input_format} import is not implemented yet.")
 
     logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, log_level))
-    label_importer = label_importer_class(kili, logger_params, cast(LabelFormat, input_format))
+    label_importer = label_importer_class(auth, logger_params, cast(LabelFormat, input_format))
     label_importer.process_from_files(
         [Path(lf) for lf in labels_files],
         Path(meta_file_path) if meta_file_path is not None else None,
@@ -67,7 +68,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
 
 
 def import_labels_from_dict(  # pylint: disable=too-many-arguments
-    kili,
+    auth: KiliAuth,
     project_id: Optional[str],
     labels: List[Dict],
     label_type: LabelType,
@@ -81,7 +82,7 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     if label_type == "PREDICTION" and not model_name:
         raise ValueError("You must provide model_name when uploading predictions")
     logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, "WARNING"))
-    label_importer = KiliRawLabelImporter(kili, logger_params, cast(LabelFormat, "kili"))
+    label_importer = KiliRawLabelImporter(auth, logger_params, cast(LabelFormat, "kili"))
     return label_importer.process_from_dict(
         labels=labels, project_id=project_id, label_type=label_type, model_name=model_name
     )

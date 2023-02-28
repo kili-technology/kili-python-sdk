@@ -60,7 +60,7 @@ def type_check_label(key, value):
     type=str,
     help="Job name in the project where to upload the labels (if relevant to the input format)",
 )
-# pylint: disable=too-many-arguments, too-many-locals
+# pylint: disable=too-many-arguments
 def import_labels(
     api_key: Optional[str],
     endpoint: Optional[str],
@@ -122,7 +122,7 @@ def import_labels(
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
     services.import_labels_from_files(
-        kili,
+        kili.auth,
         list(files or []),
         metadata_file,
         project_id,

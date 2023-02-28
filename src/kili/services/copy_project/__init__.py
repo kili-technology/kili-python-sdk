@@ -85,10 +85,10 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         if copy_quality_settings:
             fields = fields + self.FIELDS_QUALITY_SETTINGS
 
-        src_project = services.get_project(self.kili, from_project_id, fields)
+        src_project = services.get_project(self.kili.auth, from_project_id, fields)
 
         if len(src_project["dataConnections"]) > 0 and copy_assets:
-            raise NotImplementedError("Copying projects with remote storage is not supported.")
+            raise NotImplementedError("Copying projects with cloud storage is not supported.")
 
         new_project_title = title or self._generate_project_title(src_title=src_project["title"])
 
@@ -193,7 +193,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     def _download_assets(self, from_project_id, fields, tmp_dir, assets):
         download_function, _ = get_download_assets_function(
-            self.kili,
+            self.kili.auth,
             download_media=True,
             fields=fields,
             project_id=from_project_id,

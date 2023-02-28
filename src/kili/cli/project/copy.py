@@ -83,5 +83,5 @@ def copy_project(
         copy_assets=with_assets,
         copy_labels=with_labels,
     )
-    title = services.get_project_field(kili, new_proj_id, "title")
+    title = services.get_project_field(kili.auth, new_proj_id, "title")
     print(f'Project copied successfully. New project id: "{new_proj_id}", with title: "{title}"')

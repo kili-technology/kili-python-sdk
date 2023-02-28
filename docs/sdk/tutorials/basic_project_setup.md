@@ -131,9 +131,11 @@ email = "no.such.email@no.such.domain.com"
 password = "12345"
 organization_role = "USER"
 
+from kili.exceptions import GraphQLError
+
 try:
     kili.create_user(email, password, organization_role, firstname, lastname)
-except Exception as err:
+except GraphQLError as err:
     print(str(err))
 ```
 

@@ -68,7 +68,7 @@ def add_member(
     if csv_path is not None:
         members_to_add = collect_members_from_csv(csv_path, role)
     elif project_id_src is not None:
-        members_to_add = collect_members_from_project(kili, project_id_src, role)
+        members_to_add = collect_members_from_project(kili.auth, project_id_src, role)
     else:
         assert emails, (
             "When `--csv-path` and `--from-project` are not specified, you must add several email"
@@ -93,8 +93,11 @@ def add_member(
         if member["email"] in existing_member_emails:
             already_member = member["email"]
             warnings.warn(
-                f"{already_member} is already an active member of the project."
-                " Use kili project member update to update role."
+                (
+                    f"{already_member} is already an active member of the project."
+                    " Use kili project member update to update role."
+                ),
+                stacklevel=1,
             )
         else:
             kili.append_to_roles(

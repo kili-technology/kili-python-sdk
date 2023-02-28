@@ -7,7 +7,6 @@ from typing import List, Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 from kili.orm import Asset as AssetFormatType
-from kili.types import Asset
 
 
 class AssetWhere(BaseQueryWhere):
@@ -42,6 +41,8 @@ class AssetWhere(BaseQueryWhere):
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
     ):
         self.project_id = project_id
         self.asset_id = asset_id
@@ -66,6 +67,8 @@ class AssetWhere(BaseQueryWhere):
         self.updated_at_gte = updated_at_gte
         self.updated_at_lte = updated_at_lte
         self.label_category_search = label_category_search
+        self.created_at_gte = created_at_gte
+        self.created_at_lte = created_at_lte
         super().__init__()
 
     def graphql_where_builder(self):
@@ -98,6 +101,8 @@ class AssetWhere(BaseQueryWhere):
             "skipped": self.skipped,
             "updatedAtGte": self.updated_at_gte,
             "updatedAtLte": self.updated_at_lte,
+            "createdAtGte": self.created_at_gte,
+            "createdAtLte": self.created_at_lte,
         }
 
 
@@ -105,7 +110,6 @@ class AssetQuery(GraphQLQuery):
     """Asset query."""
 
     FORMAT_TYPE = AssetFormatType
-    FRAGMENT_TYPE = Asset
 
     @staticmethod
     def query(fragment):

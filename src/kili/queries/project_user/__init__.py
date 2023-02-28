@@ -5,6 +5,7 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
@@ -18,7 +19,7 @@ class QueriesProjectUser:
 
     # pylint: disable=too-many-arguments,redefined-builtin,dangerous-default-value,invalid-name
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:

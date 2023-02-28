@@ -1,4 +1,4 @@
-name: End-to-end Tests
+name: E2E tests (master/release branch against staging/preprod)
 on:
   workflow_dispatch:
   push:
@@ -69,13 +69,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "End-to-end tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "E2E tests (${{ github.ref_name }} against ${{ env.TEST_AGAINST }}) failed: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "End-to-end tests result: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "E2E tests (${{ github.ref_name }} against ${{ env.TEST_AGAINST }}) failed: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]

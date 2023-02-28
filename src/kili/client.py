@@ -8,6 +8,7 @@ from kili.exceptions import AuthenticationFailed
 from kili.graphql.graphql_client import GraphQLClientName
 from kili.internal import KiliInternal
 from kili.mutations.asset import MutationsAsset
+from kili.mutations.data_connection import MutationsDataConnection
 from kili.mutations.issue import MutationsIssue
 from kili.mutations.label import MutationsLabel
 from kili.mutations.notification import MutationsNotification
@@ -18,6 +19,8 @@ from kili.mutations.user import MutationsUser
 from kili.project import Project
 from kili.queries.api_key import QueriesApiKey
 from kili.queries.asset import QueriesAsset
+from kili.queries.data_connection import QueriesDataConnection
+from kili.queries.data_integration import QueriesDataIntegration
 from kili.queries.issue import QueriesIssue
 from kili.queries.label import QueriesLabel
 from kili.queries.notification import QueriesNotification
@@ -36,6 +39,7 @@ from .helpers import deprecate
 
 class Kili(  # pylint: disable=too-many-ancestors
     MutationsAsset,
+    MutationsDataConnection,
     MutationsIssue,
     MutationsLabel,
     MutationsNotification,
@@ -45,6 +49,8 @@ class Kili(  # pylint: disable=too-many-ancestors
     MutationsUser,
     QueriesApiKey,
     QueriesAsset,
+    QueriesDataConnection,
+    QueriesDataIntegration,
     QueriesIssue,
     QueriesLabel,
     QueriesNotification,
@@ -126,7 +132,7 @@ class Kili(  # pylint: disable=too-many-ancestors
         raise:
             NotFound if the given `project_id` does not correspond to an existing project
         """
-        project = get_project(self, project_id, ["inputType", "title"])
+        project = get_project(self.auth, project_id, ["inputType", "title"])
         return Project(
             client=self,
             project_id=ProjectId(project_id),

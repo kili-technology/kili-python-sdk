@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterable, List, Optional, TypeVar
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
@@ -45,15 +46,15 @@ def get_external_id_from_file_path(path: PathLike) -> str:
     return ".".join(file_path.split(".")[:-1])
 
 
-def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str):
+def is_target_job_in_json_interface(auth: KiliAuth, project_id: str, target_job_name: str):
     """Tell if the target job id is defined in the project's JSON interface"""
-    json_interface = get_project_field(kili, project_id, "jsonInterface")
+    json_interface = get_project_field(auth, project_id, "jsonInterface")
     return target_job_name in json_interface["jobs"]
 
 
 @typechecked
 def infer_ids_from_external_ids(
-    kili, asset_external_ids: List[str], project_id: str
+    auth: KiliAuth, asset_external_ids: List[str], project_id: str
 ) -> Dict[str, str]:
     """
     Infer asset ids from their external ids and project Id.
@@ -65,7 +66,7 @@ def infer_ids_from_external_ids(
         external_id: external id
         project_id: project id
     """
-    assets = AssetQuery(kili.auth.client)(
+    assets = AssetQuery(auth.client)(
         AssetWhere(project_id=project_id, external_id_contains=asset_external_ids),
         ["id", "externalId"],
         QueryOptions(disable_tqdm=True),

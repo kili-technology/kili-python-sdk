@@ -6,6 +6,7 @@ import pandas as pd
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query
@@ -19,7 +20,7 @@ class QueriesAsset:
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin
 
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -74,6 +75,8 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -126,6 +129,8 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -178,6 +183,8 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         download_media: bool = False,
         local_media_dir: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[Dict], pd.DataFrame]:
@@ -210,7 +217,7 @@ class QueriesAsset:
             label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number
             label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number
             skipped: Returned assets should be skipped
-            updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.
+            updated_at_gte: Returned assets should have a label whose update date is greater or equal to this date.
             updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
             format: If equal to 'pandas', returns a pandas DataFrame
             disable_tqdm: If `True`, the progress bar will be disabled
@@ -218,6 +225,8 @@ class QueriesAsset:
             label_category_search: Returned assets should have a label that follows this category search query.
             download_media: Tell is the media have to be downloaded or not.
             local_media_dir: Directory where the media are downloaded if `download_media` is True.
+            created_at_gte: Returned assets should have their import date greater or equal to this date.
+            created_at_lte: Returned assets should have their import date lower or equal to this date.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -294,11 +303,13 @@ class QueriesAsset:
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
             label_category_search=label_category_search,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         post_call_function, fields = get_download_assets_function(
-            self, download_media, fields, project_id, local_media_dir
+            self.auth, download_media, fields, project_id, local_media_dir
         )
         assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
 
@@ -334,6 +345,8 @@ class QueriesAsset:
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
     ) -> int:
         """Count and return the number of assets with the given constraints.
 
@@ -424,5 +437,7 @@ class QueriesAsset:
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
             label_category_search=label_category_search,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
         )
         return AssetQuery(self.auth.client).count(where)

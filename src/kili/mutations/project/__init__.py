@@ -186,7 +186,7 @@ class MutationsProject:
         variables.pop("projectID")
         variables = {k: v for k, v in variables.items() if v is not None}
 
-        new_project_settings = services.get_project(self, project_id, list(variables.keys()))
+        new_project_settings = services.get_project(self.auth, project_id, list(variables.keys()))
 
         result = {**result, **new_project_settings}
         return result
@@ -257,7 +257,7 @@ class MutationsProject:
             reraise=True,
         ):
             with attempt:
-                _ = services.get_project(self, project_id=result["id"], fields=["id"])
+                _ = services.get_project(self.auth, project_id=result["id"], fields=["id"])
 
         return result
 

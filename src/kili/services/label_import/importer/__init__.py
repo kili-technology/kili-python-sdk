@@ -10,6 +10,7 @@ from typing import Dict, List, NamedTuple, Optional, Type
 
 import yaml
 
+from kili.authentication import KiliAuth
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.helpers import format_result, get_file_paths_to_upload
 from kili.orm import Label
@@ -46,8 +47,8 @@ class AbstractLabelImporter(ABC):
     Abstract Label Importer
     """
 
-    def __init__(self, kili, logger_params: LoggerParams, input_format: LabelFormat):
-        self.kili = kili
+    def __init__(self, auth: KiliAuth, logger_params: LoggerParams, input_format: LabelFormat):
+        self.auth = auth
         self.logger_params = logger_params
         self.input_format: LabelFormat = input_format
 
@@ -83,7 +84,7 @@ class AbstractLabelImporter(ABC):
 
         self.logger.warning(print(f"{len(labels)} labels have been successfully imported"))
 
-    def process_from_dict(  # pylint: disable=too-many-arguments,too-many-locals
+    def process_from_dict(
         self,
         project_id: Optional[str],
         labels: List[Dict],
@@ -97,7 +98,7 @@ class AbstractLabelImporter(ABC):
         if should_retrieve_asset_ids:
             assert project_id
             asset_external_ids = [label["asset_external_id"] for label in labels]
-            asset_id_map = infer_ids_from_external_ids(self.kili, asset_external_ids, project_id)
+            asset_id_map = infer_ids_from_external_ids(self.auth, asset_external_ids, project_id)
             labels = [
                 {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels
             ]
@@ -119,7 +120,7 @@ class AbstractLabelImporter(ABC):
                     "data": {"labelType": label_type, "labelsData": batch_labels},
                     "where": {"idIn": [label["assetID"] for label in batch_labels]},
                 }
-                batch_result = self.kili.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
+                batch_result = self.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
                 result.extend(format_result("data", batch_result, Label))
                 pbar.update(len(batch_labels))
         return result

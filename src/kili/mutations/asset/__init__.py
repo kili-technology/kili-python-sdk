@@ -110,6 +110,15 @@ class MutationsAsset:
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
+        if status_array is not None:
+            warnings.warn(
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
+                DeprecationWarning,
+                stacklevel=1,
+            )
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
@@ -203,6 +212,16 @@ class MutationsAsset:
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
                 )
         """
+        if status_array is not None:
+            warnings.warn(
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
                 (
@@ -212,10 +231,11 @@ class MutationsAsset:
                     " IDs."
                 ),
                 DeprecationWarning,
+                stacklevel=1,
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         saved_args = locals()
         parameters = {
@@ -293,7 +313,7 @@ class MutationsAsset:
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 )
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         parameters = {
             "asset_ids": asset_ids,
@@ -343,7 +363,7 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -360,7 +380,7 @@ class MutationsAsset:
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_kili = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
                 )
             )
@@ -406,7 +426,7 @@ class MutationsAsset:
                     ],
                 )
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -421,7 +441,7 @@ class MutationsAsset:
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent to review."""
             try:
-                project_id = results[0]["data"]["data"]["id"]
+                project_id = results[0]["data"]["id"]
             except TypeError:
                 return  # No assets have changed status
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
@@ -481,7 +501,7 @@ class MutationsAsset:
                         ],
                 )
         """
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -498,7 +518,7 @@ class MutationsAsset:
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_queue = AssetQuery(self.auth.client).count(
                 AssetWhere(
-                    project_id=results[0]["data"]["data"]["id"],
+                    project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
                     status_in=["ONGOING"],
                 )

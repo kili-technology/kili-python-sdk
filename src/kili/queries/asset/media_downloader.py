@@ -12,6 +12,7 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
+from kili.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
@@ -20,7 +21,11 @@ from .exceptions import MissingPropertyError
 
 
 def get_download_assets_function(
-    kili, download_media: bool, fields: List[str], project_id: str, local_media_dir: Optional[str]
+    auth: KiliAuth,
+    download_media: bool,
+    fields: List[str],
+    project_id: str,
+    local_media_dir: Optional[str],
 ) -> Tuple[Optional[Callable], List[str]]:
     """Get the function to be called after each batch of asset query.
 
@@ -32,7 +37,7 @@ def get_download_assets_function(
     if not download_media:
         return None, fields
     projects = list(
-        ProjectQuery(kili.auth.client)(
+        ProjectQuery(auth.client)(
             ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
         )
     )
@@ -96,7 +101,8 @@ class MediaDownloader:
             jsoncontent_not_empty = any(bool(asset["jsonContent"]) for asset in assets)
             if jsoncontent_not_empty:
                 warnings.warn(
-                    "Non empty jsonContent found in assets. Field was automatically added."
+                    "Non empty jsonContent found in assets. Field was automatically added.",
+                    stacklevel=2,
                 )
             else:
                 for asset in assets:

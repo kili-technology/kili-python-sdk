@@ -6,9 +6,8 @@ from abc import ABC, abstractmethod
 from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
 
 from tqdm import tqdm
-from typing_extensions import TypedDict, is_typeddict
+from typeguard import typechecked
 
-from kili.exceptions import NonExistingFieldError
 from kili.helpers import format_result
 from kili.utils.pagination import api_throttle
 
@@ -53,7 +52,7 @@ class GraphQLQuery(ABC):
     def __init__(
         self,
         client: GraphQLClient,
-    ):
+    ) -> None:
         self.client = client
 
     @staticmethod
@@ -70,10 +69,7 @@ class GraphQLQuery(ABC):
         raise NotImplementedError
 
     COUNT_QUERY: str = NotImplemented
-
-    FORMAT_TYPE: Type = NotImplemented
-
-    FRAGMENT_TYPE: Type = NotImplemented
+    FORMAT_TYPE: Optional[Type] = None
 
     def __call__(
         self,
@@ -83,12 +79,12 @@ class GraphQLQuery(ABC):
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:
         """Get a generator of objects of the specified type in accordance with the provided where"""
-        fragment = self.fragment_builder(fields, self.FRAGMENT_TYPE)
+        fragment = self.fragment_builder(fields)
         query = self.query(fragment)
 
         return self.execute_query_from_paginated_call(query, where, options, post_call_function)
 
-    def count(self, where: BaseQueryWhere):
+    def count(self, where: BaseQueryWhere) -> int:
         """Count the number of objects matching the given where payload"""
         payload = {"where": where.graphql_payload}
         count_result = self.client.execute(self.COUNT_QUERY, payload)
@@ -123,19 +119,25 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
-        total_rows_queried = self.get_number_of_elements_to_query(where, options)
         batch_size = min(100, options.first or 100)
+
+        if isinstance(self.COUNT_QUERY, str):
+            total_rows_queried = self.get_number_of_elements_to_query(where, options)
+            disable_tqdm = options.disable_tqdm
+        else:
+            total_rows_queried = None
+            disable_tqdm = True
 
         if total_rows_queried == 0:
             yield from ()
         else:
-            with tqdm(total=total_rows_queried, disable=options.disable_tqdm) as pbar:
+            with tqdm(total=total_rows_queried, disable=disable_tqdm) as pbar:
                 count_rows_retrieved = 0
-                while count_rows_retrieved < total_rows_queried:
+                while total_rows_queried is None or count_rows_retrieved < total_rows_queried:
                     skip = count_rows_retrieved + options.skip
                     payload = {"where": where.graphql_payload, "skip": skip, "first": batch_size}
                     rows = api_throttle(self.client.execute)(query, payload)
-                    rows = format_result("data", rows, _object=self.FORMAT_TYPE)
+                    rows = format_result("data", rows, self.FORMAT_TYPE)
 
                     if rows is None or len(rows) == 0:
                         break
@@ -149,43 +151,39 @@ class GraphQLQuery(ABC):
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
 
-    def fragment_builder(self, fields: List[str], typed_dict_class: Type[TypedDict]):
+                    if len(rows) < batch_size:
+                        break
+
+    @typechecked
+    def fragment_builder(self, fields: List[str]):
         """
         Builds a GraphQL fragment for a list of fields to query
 
         Args:
-            fields
-            type_of_fields
+            fields: The list of fields to query
         """
-        type_of_fields = typed_dict_class.__annotations__
         fragment = ""
+
+        # split a field and its subfields (e.g. "roles.user.id" -> ["roles", "user.id"])
         subfields = [field.split(".", 1) for field in fields if "." in field]
+
         if subfields:
-            for subquery in {subfield[0] for subfield in subfields}:
-                type_of_fields_subquery = type_of_fields[subquery]
-                if type_of_fields_subquery == str:
-                    raise NonExistingFieldError(f"{subquery} field does not take subfields")
-                if is_typeddict(type_of_fields_subquery):
-                    fields_subquery = [
-                        subfield[1] for subfield in subfields if subfield[0] == subquery
-                    ]
-                    new_fragment = self.fragment_builder(
-                        fields_subquery,
-                        type_of_fields_subquery,  # type: ignore
-                    )
-                    fragment += f" {subquery}{{{new_fragment}}}"
+            # get the root fields (e.g. "roles" in "roles.user.id")
+            root_fields = {subfield[0] for subfield in subfields}
+            for root_field in root_fields:
+                # get the subfields of the root field (e.g. "user.id" in "roles.user.id")
+                fields_subquery = [
+                    subfield[1] for subfield in subfields if subfield[0] == root_field
+                ]
+                # build the subquery fragment (e.g. "user{id}" in "roles{user{id}}")
+                new_fragment = self.fragment_builder(fields_subquery)
+                # add the subquery to the fragment
+                fragment += f" {root_field}{{{new_fragment}}}"
+
+            # remove the fields that have been queried in subqueries (e.g. "roles.user.id")
             fields = [field for field in fields if "." not in field]
+
         for field in fields:
-            try:
-                type_of_fields[field]
-            except KeyError as exception:
-                raise NonExistingFieldError(
-                    f"Cannot query field {field} on object {typed_dict_class.__name__}. Admissible"
-                    " fields are: \n- "
-                    + "\n- ".join(type_of_fields.keys())
-                ) from exception
-            if isinstance(field, str):
-                fragment += f" {field}"
-            else:
-                raise TypeError("Please provide the fields to query as strings")
+            fragment += f" {field}"
+
         return fragment

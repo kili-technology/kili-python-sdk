@@ -74,7 +74,7 @@ def remove_member(
     if csv_path is not None:
         members_to_rm = collect_members_from_csv(csv_path, None)
     elif all_members:
-        members_to_rm = collect_members_from_project(kili, project_id, None)
+        members_to_rm = collect_members_from_project(kili.auth, project_id, None)
     else:
         assert emails, (
             "When a --csv-path and --all-members are not called, you must add several email"
@@ -102,6 +102,6 @@ def remove_member(
             kili.delete_from_roles(role_id=existing_members_email_map[email])
             count += 1
         else:
-            warnings.warn(f"{email} is not an active member of the project.")
+            warnings.warn(f"{email} is not an active member of the project.", stacklevel=1)
 
     print(f"{count} member(s) have been successfully removed from project: {project_id}")

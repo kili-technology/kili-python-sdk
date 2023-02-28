@@ -5,6 +5,8 @@ from typing import Callable
 
 from typeguard import typechecked
 
+from kili.authentication import KiliAuth
+
 from ...graphql.graphql_client import SubscriptionGraphQLClient
 from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 
@@ -13,9 +15,7 @@ from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 class SubscriptionsLabel:
     """Set of Label subscriptions."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
-
-    def __init__(self, auth):
+    def __init__(self, auth: KiliAuth):
         """Initialize the subclass.
 
         Args:
@@ -45,7 +45,7 @@ class SubscriptionsLabel:
         ws_endpoint = self.auth.client.endpoint.replace("http", "ws")
         websocket = SubscriptionGraphQLClient(ws_endpoint)
         headers = {"Accept": "application/json", "Content-Type": "application/json"}
-        authorization = f"{self.auth.client.token}"
+        authorization = f"X-API-Key: {self.auth.api_key}"
         headers["Authorization"] = authorization
         variables = {"projectID": project_id}
         websocket.subscribe(

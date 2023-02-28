@@ -7,8 +7,6 @@ from typing import Optional
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 
-from ....types import ApiKey
-
 
 class APIKeyWhere(BaseQueryWhere):
     """
@@ -36,10 +34,7 @@ class APIKeyWhere(BaseQueryWhere):
 
 
 class APIKeyQuery(GraphQLQuery):
-    """ProjectUser query."""
-
-    FORMAT_TYPE = ApiKey
-    FRAGMENT_TYPE = ApiKey
+    """APIKey query."""
 
     @staticmethod
     def query(fragment):

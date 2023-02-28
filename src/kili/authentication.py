@@ -1,11 +1,9 @@
 """API authentication module"""
-import os
 import warnings
 from datetime import datetime, timedelta
+from typing import Dict
 
 import requests
-from requests import adapters
-from urllib3 import Retry
 
 from kili import __version__
 from kili.graphql import QueryOptions
@@ -13,11 +11,8 @@ from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
-from kili.types import User
 
-from .exceptions import UserNotFoundError
-
-MAX_RETRIES = 20
+from .exceptions import AuthenticationFailed, UserNotFoundError
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -31,72 +26,51 @@ def get_version_without_patch(version):
     return ".".join(version.split(".")[:-1])
 
 
-class KiliAuth:  # pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
+class KiliAuth:
     """
-    from kili.client import Kili
-    kili = Kili(api_key=api_key)
-    assets = kili.assets(project_id=project_id)
+    Kili authentication class
     """
 
     def __init__(
         self, api_key: str, api_endpoint: str, client_name: GraphQLClientName, verify=True
-    ):
-        self.session = requests.Session()
-        self.client_name = client_name
+    ) -> None:
         self.api_key = api_key
         self.api_endpoint = api_endpoint
-
+        self.client_name = client_name
         self.verify = verify
 
         try:
-            self.check_versions_match(api_endpoint)
+            self.endpoint_kili_version = self.check_versions_match()
         except:  # pylint: disable=bare-except
             message = (
                 "We could not check the version, there might be a version"
                 "mismatch or the app might be in deployment"
             )
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
 
-        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)  # type: ignore
-        self.session.mount("https://", adapter)
-        self.session.mount("http://", adapter)
+        self.check_api_key_valid()
+
         self.client = GraphQLClient(
-            api_endpoint,
-            client_name,
-            self.session,
+            endpoint=api_endpoint,
+            api_key=api_key,
+            client_name=client_name,
             verify=self.verify,
         )
-        self.client.inject_token("X-API-Key: " + api_key)
+
+        self.check_expiry_of_key_is_close()
 
         user = self.get_user()
-
-        if user is None or user["id"] is None or user["email"] is None:
-            raise UserNotFoundError("No user attached to the API key was found")
-
         self.user_id = user["id"]
         self.user_email = user["email"]
-        self.check_expiry_of_key_is_close(api_key)
 
-    @staticmethod
-    def _get_retry_policy() -> adapters.Retry:
-        number_of_trials = None
-        try:
-            number_of_trials = int(os.getenv("KILI_SDK_TRIALS_NUMBER", "10"))
-        except ValueError:
-            number_of_trials = 10
-        retry_policy = Retry(connect=number_of_trials, read=0, redirect=0, status=0, other=0)
-        return retry_policy
-
-    def __del__(self):
-        self.session.close()
-
-    def check_versions_match(self, api_endpoint):
+    def check_versions_match(self) -> str:
         """Check that the versions of Kili Python SDK and Kili API are the same
 
         Args:
             api_endpoint: url of the Kili API
         """
-        url = api_endpoint.replace("/graphql", "/version")
+        url = self.api_endpoint.replace("/graphql", "/version")
         response = requests.get(url, verify=self.verify, timeout=30).json()
         version = response["version"]
         if get_version_without_patch(version) != get_version_without_patch(__version__):
@@ -104,32 +78,63 @@ class KiliAuth:  # pylint: disable=too-many-instance-attributes
                 "Kili Python SDK version should match with Kili API version.\n"
                 + f'Please install version: "pip install kili=={version}"'
             )
-            warnings.warn(message, UserWarning)
+            warnings.warn(message, UserWarning, stacklevel=2)
+        return version
 
-    def check_expiry_of_key_is_close(self, api_key):
+    def check_api_key_valid(self) -> None:
+        """Check that the api_key provided is valid"""
+        response = requests.post(
+            url=self.api_endpoint,
+            data='{"query":"{ me { id email } }"}',
+            verify=self.verify,
+            timeout=30,
+            headers={
+                "Authorization": f"X-API-Key: {self.api_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "apollographql-client-name": self.client_name.value,
+                "apollographql-client-version": __version__,
+            },
+        )
+        if response.status_code == 200 and "email" in response.text and "id" in response.text:
+            return
+
+        raise AuthenticationFailed(
+            api_key=self.api_key,
+            api_endpoint=self.api_endpoint,
+            error_msg=(
+                "Cannot check API key validity: status_code"
+                f" {response.status_code}\n\n{response.text}"
+            ),
+        )
+
+    def check_expiry_of_key_is_close(self) -> None:
         """Check that the expiration date of the api_key is not too close.
 
         Args:
             api_key: key used to connect to the Kili API
         """
-        duration_days = 365
         warn_days = 30
+
         api_keys = APIKeyQuery(self.client)(
-            fields=["createdAt"],
-            where=APIKeyWhere(api_key=api_key),
+            fields=["expiryDate"],
+            where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),
         )
-        key_creation = datetime.strptime(next(api_keys)["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
-        key_expiry = key_creation + timedelta(days=duration_days)
+
+        key_expiry = datetime.strptime(next(api_keys)["expiryDate"], r"%Y-%m-%dT%H:%M:%S.%fZ")
         key_remaining_time = key_expiry - datetime.now()
         key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
         if key_soon_deprecated:
             message = f"""
-Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
-You should generate a new one on My account > API KEY."""
-            warnings.warn(message, UserWarning)
+                Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
+                You should generate a new one on My account > API KEY."""
+            warnings.warn(message, UserWarning, stacklevel=2)
 
-    def get_user(self) -> User:
+    def get_user(self) -> Dict:
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
-        return format_result("data", result)
+        user = format_result("data", result)
+        if user is None or user["id"] is None or user["email"] is None:
+            raise UserNotFoundError("No user attached to the API key was found")
+        return user
