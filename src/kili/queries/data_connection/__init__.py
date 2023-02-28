@@ -17,7 +17,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 # pylint: disable=too-few-public-methods
 class QueriesDataConnection:
     """
-    Set of data connection queries
+    Set of cloud storage connection queries
     """
 
     # pylint: disable=too-many-arguments,dangerous-default-value
@@ -31,10 +31,10 @@ class QueriesDataConnection:
         self.auth = auth
 
     @overload
-    def data_connections(
+    def cloud_storage_connections(
         self,
         project_id: Optional[str] = None,
-        data_integration_id: Optional[str] = None,
+        cloud_storage_integration_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
@@ -51,10 +51,10 @@ class QueriesDataConnection:
         ...
 
     @overload
-    def data_connections(
+    def cloud_storage_connections(
         self,
         project_id: Optional[str] = None,
-        data_integration_id: Optional[str] = None,
+        cloud_storage_integration_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
@@ -71,10 +71,10 @@ class QueriesDataConnection:
         ...
 
     @typechecked
-    def data_connections(
+    def cloud_storage_connections(
         self,
         project_id: Optional[str] = None,
-        data_integration_id: Optional[str] = None,
+        cloud_storage_integration_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
@@ -89,26 +89,28 @@ class QueriesDataConnection:
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
-        """Get a generator or a list of data connections that match a set of criteria.
+        """Get a generator or a list of cloud storage connections that match a set of criteria.
 
         Args:
             project_id: ID of the project.
-            data_integration_id: ID of the data integration.
-            fields: All the fields to request among the possible fields for the data connections.
+            cloud_storage_integration_id: ID of the cloud storage integration.
+            fields: All the fields to request among the possible fields for the cloud storage connections.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
-            first: Maximum number of data connections to return.
-            skip: Number of skipped data connections.
+            first: Maximum number of cloud storage connections to return.
+            skip: Number of skipped cloud storage connections.
             disable_tqdm: If `True`, the progress bar will be disabled.
-            as_generator: If `True`, a generator on the data connections is returned.
+            as_generator: If `True`, a generator on the cloud storage connections is returned.
 
         Returns:
-            A list or a generator of the data connections that match the criteria.
+            A list or a generator of the cloud storage connections that match the criteria.
 
         Examples:
-            >>> kili.data_connections(project_id="789465123")
+            >>> kili.cloud_storage_connections(project_id="789465123")
             [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'isApplyingDataDifferences': False, 'isChecking': False}]
         """
-        where = DataConnectionsWhere(project_id=project_id, data_integration_id=data_integration_id)
+        where = DataConnectionsWhere(
+            project_id=project_id, data_integration_id=cloud_storage_integration_id
+        )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         data_connections_gen = DataConnectionsQuery(self.auth.client)(where, fields, options)
