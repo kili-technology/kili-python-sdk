@@ -8,7 +8,7 @@ from typing_extensions import Literal
 from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.data_integration.queries import (
-    DataIntegrationQuery,
+    DataIntegrationsQuery,
     DataIntegrationWhere,
 )
 from kili.helpers import disable_tqdm_if_as_generator
@@ -76,7 +76,7 @@ class QueriesDataIntegration:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_integrations_gen = DataIntegrationQuery(self.auth.client)(where, fields, options)
+        data_integrations_gen = DataIntegrationsQuery(self.auth.client)(where, fields, options)
 
         if as_generator:
             return data_integrations_gen
@@ -110,4 +110,4 @@ class QueriesDataIntegration:
             status=status,
             organization_id=organization_id,
         )
-        return DataIntegrationQuery(self.auth.client).count(where)
+        return DataIntegrationsQuery(self.auth.client).count(where)
