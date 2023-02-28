@@ -34,7 +34,6 @@ class GraphQLClientName(Enum):
     CLI = "python-cli"
 
 
-# pylint: disable=too-many-instance-attributes
 class GraphQLClient:
     """
     GraphQL client
