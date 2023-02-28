@@ -63,6 +63,7 @@ jobs:
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
           KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
+          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.[format('KILI_TEST_DATA_INTEGRATION_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Notebook tests
         timeout-minutes: 15
@@ -73,6 +74,7 @@ jobs:
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
           KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
+          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.[format('KILI_TEST_DATA_INTEGRATION_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Slack notification if failure
         if: failure() && (github.event_name != 'workflow_dispatch') # doesn't notify for manual runs
