@@ -1,6 +1,6 @@
 """Data integration queries."""
 
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -28,6 +28,40 @@ class QueriesDataIntegration:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @overload
+    def cloud_storage_integrations(
+        self,
+        cloud_storage_integration_id: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
+        status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
+        organization_id: Optional[str] = None,
+        fields: List[str] = ["name", "id", "platform", "status"],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]:
+        ...
+
+    @overload
+    def cloud_storage_integrations(
+        self,
+        cloud_storage_integration_id: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
+        status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
+        organization_id: Optional[str] = None,
+        fields: List[str] = ["name", "id", "platform", "status"],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
+        ...
 
     @typechecked
     def cloud_storage_integrations(
