@@ -16,7 +16,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 
 class QueriesDataIntegration:
     """
-    Set of data integration queries
+    Set of cloud storage integration queries
     """
 
     # pylint: disable=too-many-arguments,dangerous-default-value
@@ -30,9 +30,9 @@ class QueriesDataIntegration:
         self.auth = auth
 
     @overload
-    def data_integrations(
+    def cloud_storage_integrations(
         self,
-        data_integration_id: Optional[str] = None,
+        cloud_storage_integration_id: Optional[str] = None,
         name: Optional[str] = None,
         platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
         status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
@@ -47,9 +47,9 @@ class QueriesDataIntegration:
         ...
 
     @overload
-    def data_integrations(
+    def cloud_storage_integrations(
         self,
-        data_integration_id: Optional[str] = None,
+        cloud_storage_integration_id: Optional[str] = None,
         name: Optional[str] = None,
         platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
         status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
@@ -64,9 +64,9 @@ class QueriesDataIntegration:
         ...
 
     @typechecked
-    def data_integrations(
+    def cloud_storage_integrations(
         self,
-        data_integration_id: Optional[str] = None,
+        cloud_storage_integration_id: Optional[str] = None,
         name: Optional[str] = None,
         platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
         status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
@@ -79,30 +79,30 @@ class QueriesDataIntegration:
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
-        """Get a generator or a list of data integretations that match a set of criteria.
+        """Get a generator or a list of cloud storage integrations that match a set of criteria.
 
         Args:
-            data_integration_id: ID of the data integration.
-            name: Name of the data integration.
-            platform: Platform of the data integration.
-            status: Status of the data integration.
+            cloud_storage_integration_id: ID of the cloud storage integration.
+            name: Name of the cloud storage integration.
+            platform: Platform of the cloud storage integration.
+            status: Status of the cloud storage integration.
             organization_id: ID of the organization.
-            fields: All the fields to request among the possible fields for the data integrations.
+            fields: All the fields to request among the possible fields for the cloud storage integrations.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
-            first: Maximum number of data integrations to return.
-            skip: Number of skipped data integrations.
+            first: Maximum number of cloud storage integrations to return.
+            skip: Number of skipped cloud storage integrations.
             disable_tqdm: If `True`, the progress bar will be disabled.
-            as_generator: If `True`, a generator on the data integrations is returned.
+            as_generator: If `True`, a generator on the cloud storage integrations is returned.
 
         Returns:
-            A list or a generator of the data integrations that match the criteria.
+            A list or a generator of the cloud storage integrations that match the criteria.
 
         Examples:
-            >>> kili.data_integrations()
+            >>> kili.cloud_storage_integrations()
             [{'name': 'My bucket', 'id': '123456789', 'platform': 'AWS', 'status': 'CONNECTED'}]
         """
         where = DataIntegrationWhere(
-            data_integration_id=data_integration_id,
+            data_integration_id=cloud_storage_integration_id,
             name=name,
             platform=platform,
             status=status,
@@ -117,28 +117,28 @@ class QueriesDataIntegration:
         return list(data_integrations_gen)
 
     @typechecked
-    def count_data_integrations(
+    def count_cloud_storage_integrations(
         self,
-        data_integration_id: Optional[str] = None,
+        cloud_storage_integration_id: Optional[str] = None,
         name: Optional[str] = None,
         platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
         status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
         organization_id: Optional[str] = None,
     ) -> int:
-        """Count and return the number of data integrations that match a set of criteria.
+        """Count and return the number of cloud storage integrations that match a set of criteria.
 
         Args:
-            data_integration_id: ID of the data integration.
-            name: Name of the data integration.
-            platform: Platform of the data integration.
-            status: Status of the data integration.
+            cloud_storage_integration_id: ID of the cloud storage integration.
+            name: Name of the cloud storage integration.
+            platform: Platform of the cloud storage integration.
+            status: Status of the cloud storage integration.
             organization_id: ID of the organization.
 
         Returns:
-            The number of data integrations that match the criteria.
+            The number of cloud storage integrations that match the criteria.
         """
         where = DataIntegrationWhere(
-            data_integration_id=data_integration_id,
+            data_integration_id=cloud_storage_integration_id,
             name=name,
             platform=platform,
             status=status,

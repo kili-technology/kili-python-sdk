@@ -29,17 +29,17 @@ class MutationsDataConnection:
         self.auth = auth
 
     @typechecked
-    def add_data_connection(
+    def add_cloud_storage_connection(
         self,
         project_id: str,
         data_integration_id: str,
         selected_folders: Optional[List[str]] = None,
     ) -> Dict:
-        """Connect a remote storage to a project.
+        """Connect a cloud storage to a project.
 
         Args:
             project_id: ID of the project.
-            data_integration_id: ID of the data integration.
+            cloud_storage_integration_id: ID of the cloud storage integration.
             selected_folders: List of folders of the data integration to connect to the project.
                 If not provided, all folders of the data integration will be connected.
 
@@ -63,7 +63,7 @@ class MutationsDataConnection:
         variables = {
             "data": {
                 "projectId": project_id,
-                "integrationId": data_integration_id,
+                "integrationId": cloud_storage_integration_id,
                 "isChecking": False,
                 "lastChecked": datetime.now().isoformat(sep="T", timespec="milliseconds") + "Z",
                 "selectedFolders": selected_folders,
