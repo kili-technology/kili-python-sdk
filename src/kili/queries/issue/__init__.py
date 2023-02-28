@@ -1,5 +1,4 @@
 """Issue queries."""
-import warnings
 from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
@@ -137,13 +136,14 @@ class QueriesIssue:
     @typechecked
     def count_issues(
         self,
-        project_id: Optional[str] = None,
+        project_id: str,
         asset_id: Optional[str] = None,
         asset_id_in: Optional[List[str]] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         status: Optional[Literal["OPEN", "SOLVED"]] = None,
     ) -> int:
         """Count and return the number of issues with the given constraints.
+
         Args:
             project_id: Project ID the issue belongs to.
             asset_id: Asset id whose returned issues are associated to.
@@ -154,14 +154,6 @@ class QueriesIssue:
         Returns:
             The number of issues with the parameters provided
         """
-        if not project_id:
-            warnings.warn(
-                (
-                    "It is now required to provide a project_id when calling count_issues. This"
-                    " change will be enforced from 01/02/2023"
-                ),
-                DeprecationWarning,
-            )
         if asset_id and asset_id_in:
             raise ValueError(
                 "You cannot provide both `asset_id` and `asset_id_in` at the same time"
