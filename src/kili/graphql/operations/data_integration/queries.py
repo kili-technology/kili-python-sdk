@@ -10,7 +10,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 class DataIntegrationWhere(BaseQueryWhere):
     """
-    Tuple to be passed to the DataIntegrationQuery to restrict the query
+    Tuple to be passed to the DataIntegrationsQuery to restrict the query
     """
 
     # pylint: disable=too-many-arguments
@@ -40,8 +40,8 @@ class DataIntegrationWhere(BaseQueryWhere):
         }
 
 
-class DataIntegrationQuery(GraphQLQuery):
-    """DataIntegration query."""
+class DataIntegrationsQuery(GraphQLQuery):
+    """DataIntegrations query."""
 
     @staticmethod
     def query(fragment):
