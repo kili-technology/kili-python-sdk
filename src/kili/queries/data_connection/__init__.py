@@ -121,9 +121,9 @@ class QueriesDataConnection:
         return list(data_connections_gen)
 
     @typechecked
-    def data_connection(
+    def cloud_storage_connection(
         self,
-        data_connection_id: str,
+        cloud_storage_connection_id: str,
         fields=[
             "dataDifferencesSummary.added",
             "dataDifferencesSummary.removed",
@@ -137,14 +137,14 @@ class QueriesDataConnection:
         ],
     ) -> Dict:
         # pylint: disable=line-too-long
-        """Get information of a data connection.
+        """Get information of a cloud storage connection.
 
         Args:
-            data_connection_id: ID of the data connection.
+            cloud_storage_connection_id: ID of the cloud storage connection.
             fields: All the fields to request among the possible fields for the data connections.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
 
         Returns:
             A dict with the information of the data connection.
         """
-        return services.get_data_connection(self.auth, data_connection_id, fields)
+        return services.get_data_connection(self.auth, cloud_storage_connection_id, fields)

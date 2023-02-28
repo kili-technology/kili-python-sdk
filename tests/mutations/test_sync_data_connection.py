@@ -117,9 +117,9 @@ def test_synchronize_data_connection(
     mocked_graphql_client.subscribe = MagicMock(side_effect=BackendSubscriptionEventGenerator)
     mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
 
-    kili.synchronize_data_connection(
+    kili.synchronize_cloud_storage_connection(
         project_id="my_project_id",
-        data_connection_id="my_data_connection_id",
+        cloud_storage_connection_id="my_data_connection_id",
         delete_extraneous_files=delete_extraneous_files,
     )
 

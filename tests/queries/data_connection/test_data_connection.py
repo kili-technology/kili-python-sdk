@@ -38,7 +38,9 @@ def test_data_connection(mocked_graphql_client):
     kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))
 
     with pytest.raises(ValueError, match="No data connection with id my_data_connection_id"):
-        kili.data_connection(data_connection_id="my_data_connection_id", fields=["my_field"])
+        kili.cloud_storage_connection(
+            cloud_storage_connection_id="my_data_connection_id", fields=["my_field"]
+        )
 
     mocked_graphql_client.execute.assert_called_once()
     query_sent = mocked_graphql_client.execute.call_args[0][0]

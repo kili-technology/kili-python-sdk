@@ -78,25 +78,28 @@ class MutationsDataConnection:
         return result
 
     @typechecked
-    def synchronize_data_connection(
-        self, project_id: str, data_connection_id: str, delete_extraneous_files: bool = False
+    def synchronize_cloud_storage_connection(
+        self,
+        project_id: str,
+        cloud_storage_connection_id: str,
+        delete_extraneous_files: bool = False,
     ) -> Dict:
-        """Synchronize a data connection.
+        """Synchronize a cloud storage connection.
 
-        This method will compute differences between the data connection and the project
+        This method will compute differences between the cloud storage connection and the project
             and then validate the differences.
 
         If `delete_extraneous_files` is True, it will also delete files that are not in the
-            data integration anymore but that are still in the project.
+            clous storage integration anymore but that are still in the project.
 
         Args:
             project_id: ID of the project.
-            data_connection_id: ID of the data connection.
+            cloud_storage_connection_id: ID of the cloud storage connection.
             delete_extraneous_files: If True, delete extraneous files.
 
         Returns:
             A dict with the DataConnection ID.
         """
         return services.synchronize_data_connection(
-            self.auth, project_id, data_connection_id, delete_extraneous_files
+            self.auth, project_id, cloud_storage_connection_id, delete_extraneous_files
         )
