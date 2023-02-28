@@ -85,8 +85,6 @@ class GraphQLClient:
             )
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
-        self._gql_ws_transport = None
-        self._gql_ws_client = None
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
@@ -162,15 +160,7 @@ class GraphQLClient:
             query: the GraphQL query
             variables: the payload of the query
         """
-        if self._gql_ws_client is None:
-            self._initialize_ws_client()
-
-        document = query if isinstance(query, DocumentNode) else gql(query)
-        result = self._gql_ws_client.subscribe(document, variables)  # type: ignore
-        return result
-
-    def _initialize_ws_client(self):
-        self._gql_ws_transport = WebsocketsTransport(
+        gql_ws_transport = WebsocketsTransport(
             url=self.ws_endpoint,
             headers=self.headers,
             subprotocols=[WebsocketsTransport.APOLLO_SUBPROTOCOL],
@@ -179,9 +169,11 @@ class GraphQLClient:
                 "Authorization": f"X-API-Key: {self.api_key}",
             },
         )
-        self._gql_ws_client = Client(
-            transport=self._gql_ws_transport, fetch_schema_from_transport=True
-        )
+        gql_ws_client = Client(transport=gql_ws_transport, fetch_schema_from_transport=True)
+
+        document = query if isinstance(query, DocumentNode) else gql(query)
+        result = gql_ws_client.subscribe(document, variables)  # type: ignore
+        return result
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
