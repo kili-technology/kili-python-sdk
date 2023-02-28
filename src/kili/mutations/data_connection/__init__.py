@@ -1,14 +1,19 @@
 """Data connection mutations."""
 
 from datetime import datetime
-from typing import Dict
+from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
 from kili.authentication import KiliAuth
+from kili.exceptions import GraphQLError
 
 from ... import services
 from ...helpers import format_result
+from ...queries.data_integration.queries import (
+    GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS,
+)
+from .exceptions import AddDataConnectionError
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
@@ -24,23 +29,44 @@ class MutationsDataConnection:
         self.auth = auth
 
     @typechecked
-    def add_data_connection(self, project_id: str, data_integration_id: str) -> Dict:
+    def add_data_connection(
+        self,
+        project_id: str,
+        data_integration_id: str,
+        selected_folders: Optional[List[str]] = None,
+    ) -> Dict:
         """Connect a remote storage to a project.
 
         Args:
             project_id: ID of the project.
             data_integration_id: ID of the data integration.
+            selected_folders: List of folders of the data integration to connect to the project.
+                If not provided, all folders of the data integration will be connected.
 
         Returns:
             A dict with the DataConnection ID.
         """
+        if selected_folders is None:
+            variables = {"dataIntegrationId": data_integration_id}
+            try:
+                result = self.auth.client.execute(
+                    GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS, variables=variables
+                )
+            except GraphQLError as err:
+                raise AddDataConnectionError(
+                    f"The data integration with id {data_integration_id} is not supported in the"
+                    " SDK yet. Use the Kili app to create a data connection instead."
+                ) from err
+            result = format_result("data", result)
+            selected_folders = [folder["key"] for folder in result]
+
         variables = {
             "data": {
                 "projectId": project_id,
                 "integrationId": data_integration_id,
                 "isChecking": False,
                 "lastChecked": datetime.now().isoformat(sep="T", timespec="milliseconds") + "Z",
-                "selectedFolders": [],
+                "selectedFolders": selected_folders,
             }
         }
         result = self.auth.client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)

@@ -2,6 +2,7 @@
 Test synchronize_data_connection
 """
 
+import os
 from typing import Dict
 
 import pytest
@@ -51,14 +52,17 @@ def src_project(kili: Kili):
 def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
     project_id = src_project["id"]
 
-    data_integrations = kili.data_integrations(status="CONNECTED")
+    data_integration_id = os.environ.get("KILI_TEST_DATA_INTEGRATION_ID")
+    if data_integration_id is None:
+        raise ValueError("KILI_TEST_DATA_INTEGRATION_ID env var not found. Cannot run test.")
 
-    if len(data_integrations) == 0:
-        raise ValueError("No data integration found. Cannot run test.")
+    print("Data integration used:", data_integration_id)
 
-    # We take the first one...
-    data_integration_id = data_integrations[0]["id"]
-    print(f"Using data integration {data_integrations[0]}")
+    data_integrations = kili.data_integrations(
+        status="CONNECTED", data_integration_id=data_integration_id
+    )
+    if len(data_integrations) != 1:
+        raise ValueError("No data integration found. Cannot run test.", data_integrations)
 
     data_connection_id = kili.add_data_connection(
         project_id=project_id, data_integration_id=data_integration_id
@@ -83,6 +87,7 @@ def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
     data_connection = data_connections[0]
     assert data_connection["id"] == data_connection_id, data_connection
     assert data_connection["dataIntegrationId"] == data_integration_id, data_connection
+    print("Data connection:", data_connection)
 
     assets = kili.assets(project_id=project_id)
     assert len(assets) == 0, f"Expected no asset before sync. Got {assets}"
