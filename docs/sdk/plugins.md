@@ -38,9 +38,10 @@ Moreover, some attributes are directly available in the class:
 Therefore, the skeleton of the plugin (of `main.py` in the case of the module type plugin) should look like this:
 
 ```python
-from kili.plugins import PluginCore
-from kili.types import Label
+from typing import Dict
 import numpy as np
+
+from kili.plugins import PluginCore
 
 def custom_function():
     # Do something...
@@ -51,11 +52,11 @@ class PluginHandler(PluginCore):
     def custom_method(self):
         # Do something...
 
-    def on_review(self, label: Label, asset_id: str) -> None:
+    def on_review(self, label: Dict, asset_id: str) -> None:
         """Dedicated handler for Review action"""
         # Do something...
 
-    def on_submit(self, label: Label, asset_id: str) -> None:
+    def on_submit(self, label: Dict, asset_id: str) -> None:
         """Dedicated handler for Submit action"""
         # Do something...
 ```
