@@ -58,17 +58,17 @@ def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
 
     print("Data integration used:", data_integration_id)
 
-    data_integrations = kili.data_integrations(
-        status="CONNECTED", data_integration_id=data_integration_id
+    data_integrations = kili.cloud_storage_integrations(
+        status="CONNECTED", cloud_storage_integration_id=data_integration_id
     )
     if len(data_integrations) != 1:
         raise ValueError("No data integration found. Cannot run test.", data_integrations)
 
-    data_connection_id = kili.add_data_connection(
-        project_id=project_id, data_integration_id=data_integration_id
+    data_connection_id = kili.add_cloud_storage_connection(
+        project_id=project_id, cloud_storage_integration_id=data_integration_id
     )["id"]
 
-    data_connections = kili.data_connections(
+    data_connections = kili.cloud_storage_connections(
         project_id=project_id,
         fields=[
             "id",

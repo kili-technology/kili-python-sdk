@@ -32,7 +32,7 @@ class MutationsDataConnection:
     def add_cloud_storage_connection(
         self,
         project_id: str,
-        data_integration_id: str,
+        cloud_storage_integration_id: str,
         selected_folders: Optional[List[str]] = None,
     ) -> Dict:
         """Connect a cloud storage to a project.
@@ -47,15 +47,15 @@ class MutationsDataConnection:
             A dict with the DataConnection ID.
         """
         if selected_folders is None:
-            variables = {"dataIntegrationId": data_integration_id}
+            variables = {"dataIntegrationId": cloud_storage_integration_id}
             try:
                 result = self.auth.client.execute(
                     GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS, variables=variables
                 )
             except GraphQLError as err:
                 raise AddDataConnectionError(
-                    f"The data integration with id {data_integration_id} is not supported in the"
-                    " SDK yet. Use the Kili app to create a data connection instead."
+                    f"The data integration with id {cloud_storage_integration_id} is not supported"
+                    " in the SDK yet. Use the Kili app to create a data connection instead."
                 ) from err
             result = format_result("data", result)
             selected_folders = [folder["key"] for folder in result]
