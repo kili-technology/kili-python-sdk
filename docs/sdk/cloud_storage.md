@@ -1,7 +1,7 @@
 # Cloud storage module
 
-!!! warning "Beta feature"
-    The cloud storage feature is currently in beta. If you encounter any issue, do not hesitate to contact [Kili support](mailto:support@kili-technology.com) or create an issue on [GitHub](https://github.com/kili-technology/kili-python-sdk/issues).
+!!! warning "Alpha feature"
+    The cloud storage feature is currently in alpha. It is still under active development: methods and behaviors can still evolve until the feature is complete.
 
 !!! info "Cloud Storage Integration and Connection"
     A cloud storage integration is a connection between a Kili organization and a cloud storage (AWS, GCP or Azure).
