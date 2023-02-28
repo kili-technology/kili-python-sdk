@@ -110,6 +110,15 @@ class MutationsAsset:
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
+        if status_array is not None:
+            warnings.warn(
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
+                DeprecationWarning,
+                stacklevel=1,
+            )
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
@@ -203,6 +212,16 @@ class MutationsAsset:
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
                 )
         """
+        if status_array is not None:
+            warnings.warn(
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
                 (
