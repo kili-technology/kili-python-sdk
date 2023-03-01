@@ -155,7 +155,7 @@ class GraphQLQuery(ABC):
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
 
-                    if len(rows) <= batch_size:
+                    if len(rows) < batch_size:
                         break
 
     @typechecked
