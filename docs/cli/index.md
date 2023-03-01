@@ -15,7 +15,7 @@ For the actions it supports, the CLI offers a more compact way to manage your pr
   ```
 
 !!! info
-While launching commands, you can also provide you API key through the `--api-key` option. If you set your api key in the `KILI_API_KEY` environment variable and provide it once again through the `--api-key` option, Kili CLI will use the api key value provided in command options.
+    While launching commands, you can also provide you API key through the `--api-key` option. If you set your api key in the `KILI_API_KEY` environment variable and provide it once again through the `--api-key` option, Kili CLI will use the api key value provided in command options.
 
 ## Usage
 

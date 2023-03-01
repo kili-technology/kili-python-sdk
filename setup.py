@@ -27,6 +27,8 @@ install_requires = [
 ]
 
 dev_extra = [
+    # release
+    "bump2version",
     # tests
     "pytest",
     "pytest-mock",
@@ -38,15 +40,12 @@ dev_extra = [
     "mkdocstrings-python-legacy",
     "mkdocs-click",
     "mike",
-    # releases/object_detection_project_fixture.jso
-    "bump2version",
+    "pymdown-extensions",
     # linting
     "black",
     "pre-commit",
     "pylint",
     "flake8-unused-arguments",
-    "pyright",
-    "linkcheckmd",
     "pyright",
     # notebooks tests
     "nbformat",
