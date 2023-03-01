@@ -46,22 +46,22 @@ plugins:
       default_handler: python
       handlers:
         python:
-          rendering:
+          options:
             show_root_heading: false
             heading_level: 3
             show_source: true
             show_category_heading: false
             show_root_toc_entry: false
-          selection:
             docstring_style: google
             filters:
               - "!^__" # exclude all members starting with __
             docstring_options:
               replace_admonitions: yes
-      watch:
-        - src/kili
   - mike:
       version_selector: true
+
+watch:
+  - src/kili
 
 markdown_extensions:
   - admonition
@@ -69,6 +69,8 @@ markdown_extensions:
   - mkdocs-click
   - attr_list
   - md_in_html
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -94,5 +96,11 @@ theme:
     text: Archia
   features:
     - navigation.tabs
+
 extra_css:
   - stylesheets/extra.css
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js
+  - extra_javascript/katex.js

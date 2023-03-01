@@ -8,6 +8,7 @@ A plugin is an uploaded Python script triggered by an event. It can be defined a
 - a plugin module (a folder) containing multiple `python` files and a non mandatory `requirements.txt` file listing all the dependencies you need for you plugin.
 
 In the case of the module type plugin, at the root of the folder a file named `main.py` is strictly necessary, as it serves as the entrypoint of the plugin. In this `main.py` file, you can import what you need from other `python` files in the folder. The structure of the folder can be the following (the only constraint being the presence of the `main.py` file):
+
 ```
 plugin_folder
 |__ main.py
@@ -62,8 +63,7 @@ class PluginHandler(PluginCore):
 ```
 
 !!! note
-
-    The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run
+    The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
 
 ## Model for Plugins
 

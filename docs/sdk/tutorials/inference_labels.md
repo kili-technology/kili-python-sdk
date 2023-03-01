@@ -35,7 +35,7 @@ kili = Kili(
 
 ### Agreement
 
-Let's say you have a trained machine learning model **m**, which can, given a data **x**, output a prediction (i.e., an inference label): **ŷ = m(x)**.
+Let's say you have a trained machine learning model $m$, which can, given a data $x$, output a prediction (i.e., an inference label): $\hat{y} = m(x)$.
 
 What you will probably want to do is monitor the quality of such predictions, as the model evolves.
 Kili allows you to better monitor and iterate on your model, thanks to the concept of agreement.
@@ -57,8 +57,8 @@ We identify two main use cases for the use of **inference** labels:
 1. **You have a model in production**. When it receives assets, it automatically feeds a Kili project with both the asset and the predicted label. **You also have human workforce, whose job is to monitor the quality of the model**. They regularly manually label some data seen by the model.
     - When a human submits a label, the inference score for that label is automatically computed using the predicted label.
     - Low inference scores can indicate either a model performing badly on some kind of data, or a disagreement between humans and the model. This can help you to:
-        - `Detect data drift`
-        - `Identify data on which the model needs improvement`
+        - Detect data drift
+        - Identify data on which the model needs improvement
 2. **You used Kili to label data**, and you have **the first iteration of your model**. You can use **a part of the dataset as testing data**, and quickly get **test scores**. Of course, you could use your own metrics (rather than our own definition of agreement), but using Kili allows you to quickly filter and indentify the assets where your model is most different from the ground truth.
     - When you push an inference label on an asset, the inference score is automatically computed for all most recent labels of the different people who labeled this asset.
     - You can filter on low inference score, to understand why your model is failing, and how to fix it (getting more data, splitting or merging categories, etc.)
@@ -69,7 +69,7 @@ Using Kili for monitoring or developing your model allows you to quickly iterate
 
 ### Use case 1
 
-We start by creating a project and defining a model which, given an asset input **x**, returns a category (random in our example):
+We start by creating a project and defining a model which, given an asset input $x$, returns a category (random in our example):
 
 
 ```python
@@ -99,7 +99,6 @@ project_id = kili.create_project(
 ```
 
 Then we can simulate that our model is in production.
-
 Each time it receives an asset, we upload it to Kili along with the predicted label.
 
 
@@ -128,7 +127,7 @@ stream_of_assets = [
 ]
 ```
 
-We import the assets in the Kili project:
+We import the assets into the Kili project:
 
 
 ```python
