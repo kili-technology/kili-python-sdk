@@ -13,7 +13,7 @@ from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import ProjectId
 
@@ -627,6 +627,7 @@ class QueriesLabel:
         disable_tqdm: bool = False,
         with_assets: bool = True,
         external_ids: Optional[List[str]] = None,
+        annotation_modifier: Optional[CocoAnnotationModifier] = None,
     ):
         """
         Export the project labels with the requested format into the requested output path.
@@ -685,6 +686,7 @@ class QueriesLabel:
                 disable_tqdm=disable_tqdm,
                 log_level="WARNING",
                 with_assets=with_assets,
+                annotation_modifier=annotation_modifier,
             )
         except NoCompatibleJobError as excp:
             print(str(excp))

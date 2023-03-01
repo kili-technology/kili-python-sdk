@@ -7,13 +7,18 @@ import time
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Dict, List, NewType, Tuple
-
-from typing_extensions import TypedDict
+from typing import Dict, List, Optional, Tuple
 
 from kili.orm import Asset, JobMLTask, JobTool
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.coco.types import (
+    CocoAnnotation,
+    CocoCategory,
+    CocoFormat,
+    CocoImage,
+)
+from kili.services.export.types import CocoAnnotationModifier
 from kili.services.types import Job, JobName
 from kili.utils.tqdm import tqdm
 
@@ -24,41 +29,6 @@ DATA_SUBDIR = "data"
 
 
 # COCO format
-class _CocoImage(TypedDict):
-    id: int
-    license: int
-    file_name: str
-    height: int
-    width: int
-    date_captured: None
-
-
-class _CocoCategory(TypedDict):
-    id: int
-    name: str
-    supercategory: str
-
-
-# class _CocoAnnotation(TypedDict):
-#     id: int
-#     image_id: int
-#     category_id: int
-#     bbox: List[int]
-#     segmentation: List[List[float]]  # [[x, y, x, y, x ...]]
-#     area: int
-#     iscrowd: int
-#     attributes: NotRequired[Dict]
-_CocoAnnotation = NewType("_CocoAnnotation", Dict)
-
-_AnnotationModifier = Callable[[Dict, Dict, Dict], Dict]
-
-
-class _CocoFormat(TypedDict):
-    info: Dict  # type: ignore
-    licenses: List[Dict]  # type: ignore
-    categories: List[_CocoCategory]
-    images: List[_CocoImage]
-    annotations: List[_CocoAnnotation]
 
 
 class CocoExporter(AbstractExporter):
@@ -66,7 +36,7 @@ class CocoExporter(AbstractExporter):
     Common code for COCO exporter.
     """
 
-    def __init__(self, annotation_modifier: _AnnotationModifier, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.with_assets:
             warnings.warn(
@@ -74,7 +44,6 @@ class CocoExporter(AbstractExporter):
                 stacklevel=2,
             )
         self.with_assets = True
-        self.annotation_modifier = annotation_modifier
 
     def _check_arguments_compatibility(self):
         """
@@ -119,7 +88,10 @@ class CocoExporter(AbstractExporter):
         self.logger.warning(output_filename)
 
     def _save_assets_export(
-        self, assets: List[Asset], output_directory: Path, annotation_modifier: Callable
+        self,
+        assets: List[Asset],
+        output_directory: Path,
+        annotation_modifier: Optional[CocoAnnotationModifier],
     ):
         """
         Save the assets to a file and return the link to that file
@@ -154,8 +126,8 @@ def _convert_kili_semantic_to_coco(
     job: Job,
     title: str,
     project_input_type: str,
-    annotation_modifier: _AnnotationModifier,
-) -> Tuple[_CocoFormat, List[str]]:
+    annotation_modifier: Optional[CocoAnnotationModifier],
+) -> Tuple[CocoFormat, List[str]]:
     """
     creates the following structure on the disk:
     <dataset_dir>/
@@ -176,7 +148,7 @@ def _convert_kili_semantic_to_coco(
         "url": "https://kili-technology.com",
         "date_created": datetime.now().isoformat(),
     }
-    labels_json = _CocoFormat(
+    labels_json = CocoFormat(
         info=infos_coco,
         licenses=[],
         categories=[],
@@ -214,15 +186,15 @@ def _get_coco_images_and_annotations(
     assets: List[Asset],
     cat_kili_id_to_coco_id: Dict[str, int],
     project_input_type: str,
-    annotation_modifier: _AnnotationModifier,
-) -> Tuple[List[_CocoImage], List[_CocoAnnotation]]:
+    annotation_modifier: Optional[CocoAnnotationModifier],
+) -> Tuple[List[CocoImage], List[CocoAnnotation]]:
     coco_images = []
     coco_annotations = []
     annotation_offset = 0
     for asset_i, asset in tqdm(enumerate(assets), desc="Convert to coco format"):
         if project_input_type == "IMAGE":
             width, height = get_image_dimensions(asset["content"])
-            coco_image = _CocoImage(
+            coco_image = CocoImage(
                 id=asset_i,
                 license=0,
                 file_name=str(DATA_SUBDIR + "/" + Path(asset["content"]).name),
@@ -269,7 +241,7 @@ def _get_coco_images_and_annotations(
                 asset["latestLabel"]["jsonResponse"].items()
             ):
                 frame_name = f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}'
-                coco_image = _CocoImage(
+                coco_image = CocoImage(
                     id=frame_i + len(assets),  # add offset to avoid duplicate ids
                     license=0,
                     file_name=str(DATA_SUBDIR + "/" + f"{frame_name}{frame_ext}"),
@@ -299,9 +271,9 @@ def _get_coco_image_annotations(
     annotations_: List[Dict],
     cat_kili_id_to_coco_id: Dict[str, int],
     annotation_offset: int,
-    coco_image: _CocoImage,
-    annotation_modifier: _AnnotationModifier,
-) -> Tuple[List[_CocoAnnotation], int]:
+    coco_image: CocoImage,
+    annotation_modifier: Optional[CocoAnnotationModifier],
+) -> Tuple[List[CocoAnnotation], int]:
     coco_annotations = []
 
     annotation_j = annotation_offset
@@ -321,19 +293,7 @@ def _get_coco_image_annotations(
             continue
 
         categories = annotation["categories"]
-        # coco_annotation = _CocoAnnotation(
-        #         id=annotation_j,
-        #         image_id=asset["id"],
-        #         category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
-        #         bbox=bbox,
-        #         # Objects have only one connected part.
-        #         # But a type of object can appear several times on the same image.
-        #         # The limitation of the single connected part comes from Kili.
-        #         segmentation=[poly],
-        #         area=asset["height"] * asset["width"],
-        #         iscrowd=0,
-        # )
-        coco_annotation = dict(
+        coco_annotation = CocoAnnotation(
             id=annotation_j,
             image_id=coco_image["id"],
             category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
@@ -347,7 +307,9 @@ def _get_coco_image_annotations(
         )
 
         if annotation_modifier:
-            coco_annotation = annotation_modifier(coco_annotation, dict(coco_image), annotation)
+            coco_annotation = annotation_modifier(
+                dict(coco_annotation), dict(coco_image), annotation
+            )
 
         coco_annotations.append(coco_annotation)
     return coco_annotations, annotation_j
@@ -368,8 +330,8 @@ def _get_coco_geometry_from_kili_bpoly(
     return bbox, poly
 
 
-def _get_coco_categories(cat_kili_id_to_coco_id) -> List[_CocoCategory]:
-    categories_coco: List[_CocoCategory] = []
+def _get_coco_categories(cat_kili_id_to_coco_id) -> List[CocoCategory]:
+    categories_coco: List[CocoCategory] = []
     for cat_kili_id, cat_coco_id in cat_kili_id_to_coco_id.items():
         categories_coco.append(
             {
