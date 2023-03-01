@@ -56,33 +56,33 @@ jobs:
           if [[ "${{ github.event_name }}" == "push" ]]; then
 
             if [[ "${{ github.ref_name }}" == release/* ]]; then
-              echo "TEST_MODE_ARRAY='[\"RELEASE_PREPROD\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[RELEASE_PREPROD]" >> "$GITHUB_OUTPUT"
             else
-              echo "TEST_MODE_ARRAY='[\"MASTER_STAGING\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[MASTER_STAGING]" >> "$GITHUB_OUTPUT"
             fi
 
           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
 
             if [[ "${{ github.event.schedule }}" == "0 7,15 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY='[\"MASTER_STAGING\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[MASTER_STAGING]" >> "$GITHUB_OUTPUT"
 
             elif [[ "${{ github.event.schedule }}" == "0 10 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY='[\"MASTER_LTS\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[MASTER_LTS]" >> "$GITHUB_OUTPUT"
 
             elif [[ "${{ github.event.schedule }}" == "0 12 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY='[\"PREV_RELEASE_TESTS_STAGING\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[PREV_RELEASE_TESTS_STAGING]" >> "$GITHUB_OUTPUT"
 
             elif [[ "${{ github.event.schedule }}" == "0 14 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY='[\"LTS_CYCLE_FIRST_SDK\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[LTS_CYCLE_FIRST_SDK]" >> "$GITHUB_OUTPUT"
 
             fi
 
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
 
             if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
-              echo "TEST_MODE_ARRAY='[\"\MASTER_STAGING\", \"RELEASE_PREPROD\", \"MASTER_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[MASTER_STAGING, RELEASE_PREPROD, MASTER_LTS, PREV_RELEASE_TESTS_STAGING, LTS_CYCLE_FIRST_SDK]" >> "$GITHUB_OUTPUT"
             else
-              echo "TEST_MODE_ARRAY='[\"${{ github.event.inputs.testMode }}\"]'" >> "$GITHUB_OUTPUT"
+              echo "TEST_MODE_ARRAY=[${{ github.event.inputs.testMode }}]" >> "$GITHUB_OUTPUT"
             fi
 
           fi
@@ -92,7 +92,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array) }}
+        test_mode: ${{ needs.test_setup.outputs.test_mode_array }}
     runs-on: ${{ matrix.os }}
     needs: [test_setup]
     steps:
