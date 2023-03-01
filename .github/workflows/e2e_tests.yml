@@ -9,13 +9,13 @@ name: E2E tests
 on:
   workflow_dispatch:
     inputs:
-      runNotebookTests:
-        description: "Run notebook tests?"
+      runE2ETests:
+        description: "Run E2E tests?"
         required: true
         type: boolean
         default: true
-      runE2ETests:
-        description: "Run E2E tests?"
+      runNotebookTests:
+        description: "Run notebook tests?"
         required: true
         type: boolean
         default: true
@@ -95,7 +95,7 @@ jobs:
       - name: Set first SDK version of LTS cycle
         if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK'
         shell: bash
-        run: echo "LTS_CYCLE_FIRST_SDK_VERSION=2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
+        run: echo "LTS_CYCLE_FIRST_SDK_VERSION=2.129.3" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
       - name: Get latest release branch
         shell: bash
