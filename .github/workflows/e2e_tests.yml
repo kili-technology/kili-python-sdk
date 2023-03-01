@@ -19,7 +19,7 @@ on:
         type: boolean
         default: true
       testType:
-        description: "Test type: \nMASTER_STAGING (master branch against staging), \nRELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging)"
+        description: "Test mode: MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging)"
         required: true
         type: choice
         default: "MASTER_STAGING"
@@ -185,7 +185,7 @@ jobs:
           KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
 
-      - name: Check that kili has not been updated by notebooks
+      - name: Check that kili SDK version has not changed
         shell: bash
         run: |
           kili_sdk_version=$(python -c "from kili import __version__; print(__version__)")
