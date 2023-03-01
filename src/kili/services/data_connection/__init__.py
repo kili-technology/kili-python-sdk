@@ -113,7 +113,7 @@ def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: st
 
     thread_launch_comp.join()
 
-    time.sleep(1)  # backend needs some time to update the data connection "isChecking" to False
+    time.sleep(2)  # backend needs some time to update the data connection "isChecking" to False
 
 
 def synchronize_data_connection(

@@ -89,8 +89,8 @@ def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
     assert data_connection["dataIntegrationId"] == data_integration_id, data_connection
     print("Data connection:", data_connection)
 
-    assets = kili.assets(project_id=project_id)
-    assert len(assets) == 0, f"Expected no asset before sync. Got {assets}"
+    nb_assets = kili.count_assets(project_id=project_id)
+    assert nb_assets == 0, f"Expected no asset before sync. Got {nb_assets}"
 
     kili.synchronize_cloud_storage_connection(
         project_id=project_id,
@@ -98,5 +98,5 @@ def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
         delete_extraneous_files=True,
     )
 
-    assets = kili.assets(project_id=project_id)
-    assert len(assets) > 0, "Expected at least one asset after sync."
+    nb_assets = kili.count_assets(project_id=project_id)
+    assert nb_assets > 0, "Expected at least one asset after sync."
