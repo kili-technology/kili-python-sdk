@@ -38,11 +38,8 @@ kili = Kili(
 Let's say you have a trained machine learning model **m**, which can, given a data **x**, output a prediction (i.e., an inference label): **ŷ = m(x)**.
 
 What you will probably want to do is monitor the quality of such predictions, as the model evolves.
-
 Kili allows you to better monitor and iterate on your model, thanks to the concept of agreement.
-
 An agreement is a quantitative measure of similarity between two different labels.
-
 In Kili, there are three main features derived from agreement:
 
 - [**Consensus**](https://docs.kili-technology.com/docs/consensus-overview), which is the agreement between two labelers.
