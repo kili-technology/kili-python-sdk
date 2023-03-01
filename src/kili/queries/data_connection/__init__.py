@@ -114,6 +114,16 @@ class QueriesDataConnection:
             >>> kili.cloud_storage_connections(project_id="789465123")
             [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]
         """
+        if (
+            cloud_storage_connection_id is None
+            and cloud_storage_integration_id is None
+            and project_id is None
+        ):
+            raise ValueError(
+                "At least one of cloud_storage_connection_id, cloud_storage_integration_id or"
+                " project_id must be specified"
+            )
+
         # call dataConnection resolver
         if cloud_storage_connection_id is not None:
             data_connection = services.get_data_connection(
