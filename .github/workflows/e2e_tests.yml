@@ -94,7 +94,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array) }}
+        test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array).array }}
     runs-on: ${{ matrix.os }}
     needs: [test_setup]
     steps:
