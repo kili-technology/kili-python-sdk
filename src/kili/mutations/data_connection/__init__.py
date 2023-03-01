@@ -90,7 +90,7 @@ class MutationsDataConnection:
             and then validate the differences.
 
         If `delete_extraneous_files` is True, it will also delete files that are not in the
-            clous storage integration anymore but that are still in the project.
+            cloud storage integration anymore but that are still in the project.
 
         Args:
             project_id: ID of the project.
