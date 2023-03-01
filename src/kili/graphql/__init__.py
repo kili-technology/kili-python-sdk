@@ -8,6 +8,7 @@ from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
 from tqdm import tqdm
 from typeguard import typechecked
 
+from kili.constants import QUERY_BATCH_SIZE
 from kili.helpers import format_result
 from kili.utils.pagination import api_throttle
 
@@ -119,23 +120,32 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
-        batch_size = min(100, options.first or 100)
-
         if isinstance(self.COUNT_QUERY, str):
-            total_rows_queried = self.get_number_of_elements_to_query(where, options)
+            nb_rows_to_query = self.get_number_of_elements_to_query(where, options)
+            disable_tqdm = options.disable_tqdm
+        elif options.first is not None:
+            nb_rows_to_query = options.first
             disable_tqdm = options.disable_tqdm
         else:
-            total_rows_queried = None
+            nb_rows_to_query = None
             disable_tqdm = True
 
-        if total_rows_queried == 0:
+        if nb_rows_to_query == 0:
             yield from ()
         else:
-            with tqdm(total=total_rows_queried, disable=disable_tqdm) as pbar:
+            with tqdm(total=nb_rows_to_query, disable=disable_tqdm) as pbar:
                 count_rows_retrieved = 0
-                while total_rows_queried is None or count_rows_retrieved < total_rows_queried:
+                while True:
+                    if nb_rows_to_query is not None and count_rows_retrieved >= nb_rows_to_query:
+                        break
+
                     skip = count_rows_retrieved + options.skip
-                    payload = {"where": where.graphql_payload, "skip": skip, "first": batch_size}
+                    first = (
+                        min(QUERY_BATCH_SIZE, nb_rows_to_query - count_rows_retrieved)
+                        if nb_rows_to_query is not None
+                        else QUERY_BATCH_SIZE
+                    )
+                    payload = {"where": where.graphql_payload, "skip": skip, "first": first}
                     rows = api_throttle(self.client.execute)(query, payload)
                     rows = format_result("data", rows, self.FORMAT_TYPE)
 
@@ -155,7 +165,7 @@ class GraphQLQuery(ABC):
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))
 
-                    if len(rows) < batch_size:
+                    if len(rows) < first:
                         break
 
     @typechecked

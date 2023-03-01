@@ -34,14 +34,14 @@ from .utils import mocked_count_method, mocked_query_method
         },
         {
             "case": (
-                "AAU, When I query objects with first=50 and skip=20, I skip the 20"
+                "AAU, When I query objects with first=200 and skip=20, I skip the 20"
                 "first objects I get the 200 following objects"
             ),
             "args": {"first": 200, "skip": 20},
             "expected_result": ({"id": i} for i in range(20, 220)),
         },
         {
-            "case": "AAU, When I query objects with first=25100, I get the first 1100 objects",
+            "case": "AAU, When I query objects with first=25100, I get the first 25100 objects",
             "args": {"first": 25100},
             "expected_result": ({"id": i} for i in range(25100)),
         },
@@ -55,7 +55,7 @@ from .utils import mocked_count_method, mocked_query_method
         },
         {
             "case": (
-                "AAU, When I query objects with first=20, skip=20 and disable_tqdm, I  skip the 20"
+                "AAU, When I query objects with first=20, skip=20 and disable_tqdm, I skip the 20"
                 "first objects and I get the 20 following objects"
             ),
             "args": {"first": 20, "skip": 20, "disable_tqdm": True},
@@ -65,6 +65,11 @@ from .utils import mocked_count_method, mocked_query_method
             "case": "AAU, When I query objects with first=0, I get no objects",
             "args": {"first": 0},
             "expected_result": iter(()),
+        },
+        {
+            "case": "AAU, When I query objects with first=1, I get the 1st object",
+            "args": {"first": 1},
+            "expected_result": ({"id": i} for i in range(1)),
         },
     ],
 )
