@@ -523,6 +523,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../cloud_storage/" class="md-nav__link">
+        Cloud Storage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../issue/" class="md-nav__link">
         Issue
       </a>
@@ -1101,9 +1115,10 @@
 <li><code>self.project_id</code></li>
 </ul>
 <p>Therefore, the skeleton of the plugin (of <code>main.py</code> in the case of the module type plugin) should look like this:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
-<span class="kn">from</span> <span class="nn">kili.types</span> <span class="kn">import</span> <span class="n">Label</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
 
 <span class="k">def</span> <span class="nf">custom_function</span><span class="p">():</span>
     <span class="c1"># Do something...</span>
@@ -1114,17 +1129,17 @@
     <span class="k">def</span> <span class="nf">custom_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Do something...</span>
 
-    <span class="k">def</span> <span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Review action&quot;&quot;&quot;</span>
         <span class="c1"># Do something...</span>
 
-    <span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Submit action&quot;&quot;&quot;</span>
         <span class="c1"># Do something...</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The plugins run has some limitations, it can use a maximum of 512mb of ram and will timeout after 60sec of run</p>
+<p>The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run</p>
 </div>
 <h2 id="model-for-plugins">Model for Plugins</h2>
 
@@ -1200,16 +1215,19 @@ on_review(self, label: Label, asset_id: str)
 
     <span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
         <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handler for the submit action, triggered when a default label is submitted into Kili.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            label: label submitted to Kili</span>
-<span class="sd">            asset_id: id of the asset on which the label was submitted</span>
-
+<span class="sd">            label: Label submitted to Kili: a dictionary containing the following fields:</span>
+<span class="sd">                `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,</span>
+<span class="sd">                `secondsToLabel`, `isSentBackToQueue`, `search` and some technical fields:</span>
+<span class="sd">                `createdAt`, `updatedAt`, `version`, `isLatestReviewLabelForUser`,</span>
+<span class="sd">                `isLatestLabelForUser`, `isLatestDefaultLabelForUser`, `readPermissionsFromProject`.</span>
+<span class="sd">            asset_id: Id of the asset on which the label was submitted</span>
 
 <span class="sd">        Example use:</span>
 
@@ -1227,15 +1245,21 @@ on_review(self, label: Label, asset_id: str)
 
     <span class="k">def</span> <span class="nf">on_review</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
         <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handler for the review action, triggered when a default label is reviewed on Kili</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            label: label submitted to Kili</span>
-<span class="sd">            asset_id: id of the asset on which the label was submitted</span>
+<span class="sd">            label: Label submitted to Kili: a dictionary containing the following fields:</span>
+<span class="sd">                `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,</span>
+<span class="sd">                `secondsToLabel`, `isSentBackToQueue`, `search` and `reviewedLabel` (dictionary</span>
+<span class="sd">                that has a field `id` representing the id of the original label that was reviewed).</span>
+<span class="sd">                It also contains some technical fields: `createdAt`, `updatedAt`, `version`,</span>
+<span class="sd">                `isLatestReviewLabelForUser`, `isLatestLabelForUser`, `isLatestDefaultLabelForUser`,</span>
+<span class="sd">                `readPermissionsFromProject`.</span>
+<span class="sd">            asset_id: Id of the asset on which the label was submitted</span>
 
 <span class="sd">        Example use:</span>
 
@@ -1291,14 +1315,20 @@ on_review(self, label: Label, asset_id: str)
   <tbody>
       <tr>
         <td><code>label</code></td>
-        <td><code>Label</code></td>
-        <td><p>label submitted to Kili</p></td>
+        <td><code>Dict</code></td>
+        <td><p>Label submitted to Kili: a dictionary containing the following fields:
+<code>id</code>, <code>labelType</code>, <code>numberOfAnnotations</code>, <code>authorId</code>, <code>modelName</code>, <code>jsonResponse</code>,
+<code>secondsToLabel</code>, <code>isSentBackToQueue</code>, <code>search</code> and <code>reviewedLabel</code> (dictionary
+that has a field <code>id</code> representing the id of the original label that was reviewed).
+It also contains some technical fields: <code>createdAt</code>, <code>updatedAt</code>, <code>version</code>,
+<code>isLatestReviewLabelForUser</code>, <code>isLatestLabelForUser</code>, <code>isLatestDefaultLabelForUser</code>,
+<code>readPermissionsFromProject</code>.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>asset_id</code></td>
         <td><code>str</code></td>
-        <td><p>id of the asset on which the label was submitted</p></td>
+        <td><p>Id of the asset on which the label was submitted</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -1315,15 +1345,21 @@ on_review(self, label: Label, asset_id: str)
           <summary>Source code in <code>kili/services/plugins/model.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">on_review</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
     <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handler for the review action, triggered when a default label is reviewed on Kili</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        label: label submitted to Kili</span>
-<span class="sd">        asset_id: id of the asset on which the label was submitted</span>
+<span class="sd">        label: Label submitted to Kili: a dictionary containing the following fields:</span>
+<span class="sd">            `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,</span>
+<span class="sd">            `secondsToLabel`, `isSentBackToQueue`, `search` and `reviewedLabel` (dictionary</span>
+<span class="sd">            that has a field `id` representing the id of the original label that was reviewed).</span>
+<span class="sd">            It also contains some technical fields: `createdAt`, `updatedAt`, `version`,</span>
+<span class="sd">            `isLatestReviewLabelForUser`, `isLatestLabelForUser`, `isLatestDefaultLabelForUser`,</span>
+<span class="sd">            `readPermissionsFromProject`.</span>
+<span class="sd">        asset_id: Id of the asset on which the label was submitted</span>
 
 <span class="sd">    Example use:</span>
 
@@ -1372,14 +1408,18 @@ on_review(self, label: Label, asset_id: str)
   <tbody>
       <tr>
         <td><code>label</code></td>
-        <td><code>Label</code></td>
-        <td><p>label submitted to Kili</p></td>
+        <td><code>Dict</code></td>
+        <td><p>Label submitted to Kili: a dictionary containing the following fields:
+<code>id</code>, <code>labelType</code>, <code>numberOfAnnotations</code>, <code>authorId</code>, <code>modelName</code>, <code>jsonResponse</code>,
+<code>secondsToLabel</code>, <code>isSentBackToQueue</code>, <code>search</code> and some technical fields:
+<code>createdAt</code>, <code>updatedAt</code>, <code>version</code>, <code>isLatestReviewLabelForUser</code>,
+<code>isLatestLabelForUser</code>, <code>isLatestDefaultLabelForUser</code>, <code>readPermissionsFromProject</code>.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>asset_id</code></td>
         <td><code>str</code></td>
-        <td><p>id of the asset on which the label was submitted</p></td>
+        <td><p>Id of the asset on which the label was submitted</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -1396,16 +1436,19 @@ on_review(self, label: Label, asset_id: str)
           <summary>Source code in <code>kili/services/plugins/model.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">label</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
     <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handler for the submit action, triggered when a default label is submitted into Kili.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        label: label submitted to Kili</span>
-<span class="sd">        asset_id: id of the asset on which the label was submitted</span>
-
+<span class="sd">        label: Label submitted to Kili: a dictionary containing the following fields:</span>
+<span class="sd">            `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,</span>
+<span class="sd">            `secondsToLabel`, `isSentBackToQueue`, `search` and some technical fields:</span>
+<span class="sd">            `createdAt`, `updatedAt`, `version`, `isLatestReviewLabelForUser`,</span>
+<span class="sd">            `isLatestLabelForUser`, `isLatestDefaultLabelForUser`, `readPermissionsFromProject`.</span>
+<span class="sd">        asset_id: Id of the asset on which the label was submitted</span>
 
 <span class="sd">    Example use:</span>
 
@@ -1878,8 +1921,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsPlugins</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Plugins mutations.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
@@ -2035,7 +2076,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes a plugin.</span>
 
 <span class="sd">        Args:</span>
@@ -2476,7 +2516,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Deletes a plugin.</span>
 
 <span class="sd">    Args:</span>

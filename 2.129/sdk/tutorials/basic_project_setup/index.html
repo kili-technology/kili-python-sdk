@@ -599,6 +599,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../cloud_storage/" class="md-nav__link">
+        Cloud Storage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../issue/" class="md-nav__link">
         Issue
       </a>
@@ -966,9 +980,11 @@
 <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
 <span class="n">organization_role</span> <span class="o">=</span> <span class="s2">&quot;USER&quot;</span>
 
+<span class="kn">from</span> <span class="nn">kili.exceptions</span> <span class="kn">import</span> <span class="n">GraphQLError</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="n">kili</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">organization_role</span><span class="p">,</span> <span class="n">firstname</span><span class="p">,</span> <span class="n">lastname</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+<span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
 </code></pre></div>
 <pre><code>error: "[noOrganizationRights] You cannot use this function because it seems that you do not have access to this organization. Please contact you organization admin. -- This can be due to: User isn't admin from the organization | trace : false"

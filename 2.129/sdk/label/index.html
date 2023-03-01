@@ -523,6 +523,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../cloud_storage/" class="md-nav__link">
+        Cloud Storage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../issue/" class="md-nav__link">
         Issue
       </a>
@@ -1058,7 +1072,7 @@
 
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
 <span class="sd">        Args:</span>
@@ -1177,9 +1191,9 @@
 <span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
-<span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
-<span class="sd">            created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
-<span class="sd">            created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">            created_at: Returned labels should have their creation date equal to this date.</span>
+<span class="sd">            created_at_gte: Returned labels should have their creation date greater or equal to this date.</span>
+<span class="sd">            created_at_lte: Returned labels should have their creation date lower or equal to this date.</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the labels.</span>
 <span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.</span>
 <span class="sd">            first: Maximum number of labels to return.</span>
@@ -1565,7 +1579,7 @@
 <span class="sd">            pandas DataFrame containing the labels.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+        <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
         <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
             <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">),</span>
             <span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
@@ -1703,13 +1717,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">id_map</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span>
-                <span class="n">kili</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_external_ids</span><span class="o">=</span><span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span>
+                <span class="n">auth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">asset_external_ids</span><span class="o">=</span><span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span>
             <span class="p">)</span>
             <span class="n">asset_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">id_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">external_ids</span><span class="p">]</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">services</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
-                <span class="bp">self</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span>
                 <span class="n">asset_ids</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">,</span> <span class="n">project_id</span><span class="p">),</span>
                 <span class="n">export_type</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span>
@@ -2120,13 +2134,13 @@ kili.export_labels(&quot;your_project_id&quot;, &quot;export.zip&quot;, &quot;yo
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">id_map</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span>
-            <span class="n">kili</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_external_ids</span><span class="o">=</span><span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span>
+            <span class="n">auth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">asset_external_ids</span><span class="o">=</span><span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span>
         <span class="p">)</span>
         <span class="n">asset_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">id_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">external_ids</span><span class="p">]</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">services</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span>
             <span class="n">asset_ids</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">,</span> <span class="n">project_id</span><span class="p">),</span>
             <span class="n">export_type</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span>
@@ -2239,7 +2253,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
 <span class="sd">        pandas DataFrame containing the labels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+    <span class="n">services</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
     <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span>
         <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">),</span>
         <span class="n">asset_fields</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;labels.&quot;</span> <span class="o">+</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span>
@@ -2587,19 +2601,19 @@ An author can be designated by the first name, the last name, or the first name 
       <tr>
         <td><code>created_at</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is equal to this date.</p></td>
+        <td><p>Returned labels should have their creation date equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>created_at_gte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is greater than this date.</p></td>
+        <td><p>Returned labels should have their creation date greater or equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>created_at_lte</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Returned labels should have a label whose creation date is lower than this date.</p></td>
+        <td><p>Returned labels should have their creation date lower or equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2765,9 +2779,9 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 <span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
-<span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
-<span class="sd">        created_at_gte: Returned labels should have a label whose creation date is greater than this date.</span>
-<span class="sd">        created_at_lte: Returned labels should have a label whose creation date is lower than this date.</span>
+<span class="sd">        created_at: Returned labels should have their creation date equal to this date.</span>
+<span class="sd">        created_at_gte: Returned labels should have their creation date greater or equal to this date.</span>
+<span class="sd">        created_at_lte: Returned labels should have their creation date lower or equal to this date.</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the labels.</span>
 <span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.</span>
 <span class="sd">        first: Maximum number of labels to return.</span>
@@ -3136,7 +3150,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
 
     <span class="c1"># pylint: disable=too-many-arguments</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the subclass.</span>
 
 <span class="sd">        Args:</span>
@@ -3199,6 +3213,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
                     <span class="s2">&quot; instead to provide the predictions model name.&quot;</span>
                 <span class="p">),</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -3216,7 +3231,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
                 <span class="p">)</span>
             <span class="p">)</span>
         <span class="p">]</span>
-        <span class="n">services</span><span class="o">.</span><span class="n">import_labels_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+        <span class="n">services</span><span class="o">.</span><span class="n">import_labels_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
 
     <span class="nd">@deprecate</span><span class="p">(</span>
@@ -3232,7 +3247,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
         <span class="n">author_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+        <span class="n">label_type</span><span class="p">:</span> <span class="n">LabelType</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
@@ -3273,7 +3288,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
         <span class="k">if</span> <span class="n">label_asset_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">label_asset_external_id</span> <span class="ow">and</span> <span class="n">project_id</span>
             <span class="n">label_asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span>
-                <span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">label_asset_external_id</span><span class="p">],</span> <span class="n">project_id</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="p">[</span><span class="n">label_asset_external_id</span><span class="p">],</span> <span class="n">project_id</span>
             <span class="p">)[</span><span class="n">label_asset_external_id</span><span class="p">]</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -3357,7 +3372,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
             <span class="p">)</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">services</span><span class="o">.</span><span class="n">import_labels_from_dict</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">label_type</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">disable_tqdm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">label_type</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">disable_tqdm</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -3424,7 +3439,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
         <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">asset_external_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either provide asset_id or external_id and project_id&quot;</span><span class="p">)</span>
-            <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span> <span class="n">project_id</span><span class="p">)[</span>
+            <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span> <span class="n">project_id</span><span class="p">)[</span>
                 <span class="n">asset_external_id</span>
             <span class="p">]</span>
 
@@ -3507,7 +3522,7 @@ Name of the model when uploading predictions</p></td>
       </tr>
       <tr>
         <td><code>label_type</code></td>
-        <td><code>typing_extensions.Literal[&#39;AUTOSAVE&#39;, &#39;DEFAULT&#39;, &#39;INFERENCE&#39;, &#39;PREDICTION&#39;, &#39;REVIEW&#39;]</code></td>
+        <td><code>typing_extensions.Literal[&#39;AUTOSAVE&#39;, &#39;DEFAULT&#39;, &#39;PREDICTION&#39;, &#39;REVIEW&#39;, &#39;INFERENCE&#39;]</code></td>
         <td><p>Can be one of <code>AUTOSAVE</code>, <code>DEFAULT</code>, <code>PREDICTION</code>, <code>REVIEW</code> or <code>INFERENCE</code></p></td>
         <td><code>&#39;DEFAULT&#39;</code></td>
       </tr>
@@ -3620,7 +3635,7 @@ Name of the model when uploading predictions</p></td>
         <span class="p">)</span>
     <span class="p">]</span>
     <span class="k">return</span> <span class="n">services</span><span class="o">.</span><span class="n">import_labels_from_dict</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">label_type</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">disable_tqdm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">label_type</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">disable_tqdm</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3692,7 +3707,7 @@ This new function allows to import several labels 10 times faster.</p>
       </tr>
       <tr>
         <td><code>label_type</code></td>
-        <td><code>str</code></td>
+        <td><code>typing_extensions.Literal[&#39;AUTOSAVE&#39;, &#39;DEFAULT&#39;, &#39;PREDICTION&#39;, &#39;REVIEW&#39;, &#39;INFERENCE&#39;]</code></td>
         <td><p>Can be one of <code>DEFAULT</code>, <code>PREDICTION</code>, <code>REVIEW</code> or <code>INFERENCE</code></p></td>
         <td><code>&#39;DEFAULT&#39;</code></td>
       </tr>
@@ -3743,7 +3758,7 @@ This new function allows to import several labels 10 times faster.</p>
     <span class="n">author_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label_asset_external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label_asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">label_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="p">:</span> <span class="n">LabelType</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">):</span>
@@ -3784,7 +3799,7 @@ This new function allows to import several labels 10 times faster.</p>
     <span class="k">if</span> <span class="n">label_asset_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">label_asset_external_id</span> <span class="ow">and</span> <span class="n">project_id</span>
         <span class="n">label_asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">label_asset_external_id</span><span class="p">],</span> <span class="n">project_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="p">[</span><span class="n">label_asset_external_id</span><span class="p">],</span> <span class="n">project_id</span>
         <span class="p">)[</span><span class="n">label_asset_external_id</span><span class="p">]</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -3914,7 +3929,7 @@ Either provide asset_id or asset_external_id and project_id</p></td>
     <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">asset_external_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either provide asset_id or external_id and project_id&quot;</span><span class="p">)</span>
-        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span> <span class="n">project_id</span><span class="p">)[</span>
+        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">infer_ids_from_external_ids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span> <span class="n">project_id</span><span class="p">)[</span>
             <span class="n">asset_external_id</span>
         <span class="p">]</span>
 
@@ -4078,6 +4093,7 @@ provide the predictions model name."</p>
                 <span class="s2">&quot; instead to provide the predictions model name.&quot;</span>
             <span class="p">),</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -4095,7 +4111,7 @@ provide the predictions model name."</p>
             <span class="p">)</span>
         <span class="p">)</span>
     <span class="p">]</span>
-    <span class="n">services</span><span class="o">.</span><span class="n">import_labels_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+    <span class="n">services</span><span class="o">.</span><span class="n">import_labels_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
 </code></pre></div>
         </details>
@@ -4241,9 +4257,7 @@ provide the predictions model name."</p>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SubscriptionsLabel</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Label subscriptions.&quot;&quot;&quot;</span>
 
-    <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
 
 <span class="sd">        Args:</span>
@@ -4273,7 +4287,7 @@ provide the predictions model name."</p>
         <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">,</span> <span class="s2">&quot;ws&quot;</span><span class="p">)</span>
         <span class="n">websocket</span> <span class="o">=</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">(</span><span class="n">ws_endpoint</span><span class="p">)</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
-        <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;X-API-Key: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Authorization&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
         <span class="n">websocket</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
@@ -4382,7 +4396,7 @@ See <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
     <span class="n">ws_endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">endpoint</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">,</span> <span class="s2">&quot;ws&quot;</span><span class="p">)</span>
     <span class="n">websocket</span> <span class="o">=</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">(</span><span class="n">ws_endpoint</span><span class="p">)</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
-    <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">authorization</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;X-API-Key: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Authorization&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
     <span class="n">websocket</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
