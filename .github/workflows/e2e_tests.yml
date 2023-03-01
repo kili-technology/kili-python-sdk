@@ -239,7 +239,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "E2E tests '${{ env.TEST_MODE }}' (${{ env.REF }} against ${{ env.TEST_AGAINST }}) failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "E2E tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
