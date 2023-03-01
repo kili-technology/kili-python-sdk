@@ -11,13 +11,15 @@ on:
       runNotebookTests:
         description: "Run notebook tests?"
         required: true
-        default: "true"
+        type: boolean
+        default: true
       runE2ETests:
         description: "Run E2E tests?"
         required: true
-        default: "true"
+        type: boolean
+        default: true
       testType:
-        description: "Test type: MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging)"
+        description: "Test type: \nMASTER_STAGING (master branch against staging), \nRELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging)"
         required: true
         type: choice
         default: "MASTER_STAGING"
@@ -75,11 +77,11 @@ jobs:
       - name: Check that test mode is valid
         shell: bash
         run: |
-          if [[ ${{ env.TEST_MODE }} != "MASTER_STAGING" ]] || \
-             [[ ${{ env.TEST_MODE }} != "RELEASE_PREPROD" ]] || \
-             [[ ${{ env.TEST_MODE }} != "MASTER_LTS" ]] || \
+          if [[ ${{ env.TEST_MODE }} != "MASTER_STAGING" ]] && \
+             [[ ${{ env.TEST_MODE }} != "RELEASE_PREPROD" ]] && \
+             [[ ${{ env.TEST_MODE }} != "MASTER_LTS" ]] && \
              [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_STAGING" ]]; then
-            echo "Invalid test mode: ${{ env.TEST_MODE }}"
+            echo "TEST_MODE is not valid"
             exit 1
           fi
 
@@ -148,6 +150,7 @@ jobs:
           python -m pip install --upgrade pip
 
       - name: Install kili
+        shell: bash
         run: |
           if [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_STAGING" ]]; then
             pip install "kili[dev] @ git+https://github.com/kili-technology/kili-python-sdk.git@master"
@@ -155,7 +158,7 @@ jobs:
             pip install -e ".[dev]"
           fi
 
-      - name: Get kili version
+      - name: Get kili SDK version
         shell: bash
         run: |
           echo "KILI_SDK_VERSION=$(python -c "from kili import __version__; print(__version__)")" >> $GITHUB_ENV
