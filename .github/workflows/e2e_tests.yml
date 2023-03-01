@@ -56,38 +56,38 @@ jobs:
           if [[ "${{ github.event_name }}" == "push" ]]; then
 
             if [[ "${{ github.ref_name }}" == release/* ]]; then
-              echo "TEST_MODE_ARRAY=[RELEASE_PREPROD]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
             else
-              echo "TEST_MODE_ARRAY=[MASTER_STAGING]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"MASTER_STAGING\"]}"
             fi
 
           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
 
             if [[ "${{ github.event.schedule }}" == "0 7,15 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY=[MASTER_STAGING]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"MASTER_STAGING\"]}"
 
             elif [[ "${{ github.event.schedule }}" == "0 10 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY=[MASTER_LTS]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"MASTER_LTS\"]}"
 
             elif [[ "${{ github.event.schedule }}" == "0 12 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY=[PREV_RELEASE_TESTS_STAGING]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"PREV_RELEASE_TESTS_STAGING\"]}"
 
             elif [[ "${{ github.event.schedule }}" == "0 14 * * 1-5" ]]; then
-              echo "TEST_MODE_ARRAY=[LTS_CYCLE_FIRST_SDK]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK\"]}"
 
             fi
 
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
 
             if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
-              echo "TEST_MODE_ARRAY=[MASTER_STAGING, RELEASE_PREPROD, MASTER_LTS, PREV_RELEASE_TESTS_STAGING, LTS_CYCLE_FIRST_SDK]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"MASTER_STAGING\", \"RELEASE_PREPROD\", \"MASTER_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK\"]}"
             else
               json_str="{\"array\": [\"${{ github.event.inputs.testMode }}\"]}"
             fi
 
           fi
 
-          echo "::set-output name=TEST_MODE_ARRAY::$json_str"
+          echo "TEST_MODE_ARRAY=$json_str" >> $GITHUB_OUTPUT
 
   tests:
     name: E2E tests
