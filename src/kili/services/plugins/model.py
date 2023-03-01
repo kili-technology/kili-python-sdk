@@ -78,9 +78,11 @@ class PluginCore:
         Args:
             label: Label submitted to Kili: a dictionary containing the following fields:
                 `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,
-                `secondsToLabel`, `isSentBackToQueue`, `search` and some technical fields:
-                `createdAt`, `updatedAt`, `version`, `isLatestReviewLabelForUser`,
-                `isLatestLabelForUser`, `isLatestDefaultLabelForUser`, `readPermissionsFromProject`.
+                `secondsToLabel`, `isSentBackToQueue`, `search` and `reviewedLabel` (dictionary
+                that has a field `id` representing the id of the original label that was reviewed).
+                It also contains some technical fields: `createdAt`, `updatedAt`, `version`,
+                `isLatestReviewLabelForUser`, `isLatestLabelForUser`, `isLatestDefaultLabelForUser`,
+                `readPermissionsFromProject`.
             asset_id: Id of the asset on which the label was submitted
 
         Example use:
