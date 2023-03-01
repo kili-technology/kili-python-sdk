@@ -50,6 +50,8 @@ class _CocoCategory(TypedDict):
 #     attributes: NotRequired[Dict]
 _CocoAnnotation = NewType("_CocoAnnotation", Dict)
 
+_AnnotationModifier = Callable[[Dict, Dict, Dict], Dict]
+
 
 class _CocoFormat(TypedDict):
     info: Dict  # type: ignore
@@ -64,7 +66,7 @@ class CocoExporter(AbstractExporter):
     Common code for COCO exporter.
     """
 
-    def __init__(self, label_modifier: Callable[[Dict, Dict], Dict], *args, **kwargs):
+    def __init__(self, annotation_modifier: _AnnotationModifier, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.with_assets:
             warnings.warn(
@@ -72,7 +74,7 @@ class CocoExporter(AbstractExporter):
                 stacklevel=2,
             )
         self.with_assets = True
-        self.label_modifier = label_modifier
+        self.annotation_modifier = annotation_modifier
 
     def _check_arguments_compatibility(self):
         """
@@ -109,7 +111,7 @@ class CocoExporter(AbstractExporter):
         clean_assets = self.process_assets(assets, self.label_format)
 
         self._save_assets_export(
-            clean_assets, self.export_root_folder, label_modifier=self.label_modifier
+            clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier
         )
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
@@ -117,7 +119,7 @@ class CocoExporter(AbstractExporter):
         self.logger.warning(output_filename)
 
     def _save_assets_export(
-        self, assets: List[Asset], output_directory: Path, label_modifier: Callable
+        self, assets: List[Asset], output_directory: Path, annotation_modifier: Callable
     ):
         """
         Save the assets to a file and return the link to that file
@@ -131,7 +133,7 @@ class CocoExporter(AbstractExporter):
                     job=job,
                     title=self.project_title,
                     project_input_type=self.project_input_type,
-                    annotation_modifier=label_modifier,
+                    annotation_modifier=annotation_modifier,
                 )
             else:
                 self.logger.warning(f"Job {job_name} is not compatible with the COCO format.")
@@ -152,7 +154,7 @@ def _convert_kili_semantic_to_coco(
     job: Job,
     title: str,
     project_input_type: str,
-    annotation_modifier: Callable[[Dict, Dict], Dict],
+    annotation_modifier: _AnnotationModifier,
 ) -> Tuple[_CocoFormat, List[str]]:
     """
     creates the following structure on the disk:
@@ -212,7 +214,7 @@ def _get_coco_images_and_annotations(
     assets: List[Asset],
     cat_kili_id_to_coco_id: Dict[str, int],
     project_input_type: str,
-    annotation_modifier: Callable[[Dict, Dict], Dict],
+    annotation_modifier: _AnnotationModifier,
 ) -> Tuple[List[_CocoImage], List[_CocoAnnotation]]:
     coco_images = []
     coco_annotations = []
@@ -297,8 +299,8 @@ def _get_coco_image_annotations(
     annotations_: List[Dict],
     cat_kili_id_to_coco_id: Dict[str, int],
     annotation_offset: int,
-    asset: _CocoImage,
-    annotation_modifier: Callable[[Dict, Dict], Dict],
+    coco_image: _CocoImage,
+    annotation_modifier: _AnnotationModifier,
 ) -> Tuple[List[_CocoAnnotation], int]:
     coco_annotations = []
 
@@ -312,7 +314,7 @@ def _get_coco_image_annotations(
             continue
         bounding_poly = annotation["boundingPoly"]
         bbox, poly = _get_coco_geometry_from_kili_bpoly(
-            bounding_poly, asset["width"], asset["height"]
+            bounding_poly, coco_image["width"], coco_image["height"]
         )
         if len(poly) < 6:  # twice the number of vertices
             print("A polygon must contain more than 2 points. Skipping this polygon...")
@@ -333,19 +335,19 @@ def _get_coco_image_annotations(
         # )
         coco_annotation = dict(
             id=annotation_j,
-            image_id=asset["id"],
+            image_id=coco_image["id"],
             category_id=cat_kili_id_to_coco_id[categories[0]["name"]],
             bbox=bbox,
             # Objects have only one connected part.
             # But a type of object can appear several times on the same image.
             # The limitation of the single connected part comes from Kili.
             segmentation=[poly],
-            area=asset["height"] * asset["width"],
+            area=coco_image["height"] * coco_image["width"],
             iscrowd=0,
         )
 
         if annotation_modifier:
-            coco_annotation = annotation_modifier(coco_annotation, annotation)
+            coco_annotation = annotation_modifier(coco_annotation, dict(coco_image), annotation)
 
         coco_annotations.append(coco_annotation)
     return coco_annotations, annotation_j

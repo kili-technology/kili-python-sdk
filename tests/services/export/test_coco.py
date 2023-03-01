@@ -1,9 +1,7 @@
 # pylint: disable=missing-docstring
 import json
-import math
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 from unittest.mock import patch
 
 import pytest
@@ -19,77 +17,7 @@ from kili.services.export.format.coco import (
 from kili.services.types import Job, JobName
 from kili.utils.tempfile import TemporaryDirectory
 
-
-def get_asset(content_path: Path, with_annotation: bool, with_rotation: Optional[float]) -> Asset:
-    # without annotation means that: there is a label for the asset
-    # but there is no labeling data for the job.
-    # `annotations=[]` should not exist.
-    json_response = {"author": {"firstname": "Jean-Pierre", "lastname": "Dupont"}}
-    if with_annotation:
-        json_response = {
-            **json_response,
-            "JOB_0": {
-                "annotations": [
-                    {
-                        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-                        "jobName": "JOB_0",
-                        "mid": "2022040515434712-7532",
-                        "mlTask": "OBJECT_DETECTION",
-                        "boundingPoly": [
-                            {
-                                "normalizedVertices": [
-                                    {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                    },
-                                    {
-                                        "x": 0.5,
-                                        "y": 0.0,
-                                    },
-                                    {
-                                        "x": 0.0,
-                                        "y": 0.5,
-                                    },
-                                ]
-                            }
-                        ],
-                        "type": "semantic",
-                        "children": {},
-                    }
-                ]
-            },
-        }
-
-    if with_rotation:
-        initial_0deg_rectangle = [[0.3, 0.2], [0.3, 0.7], [0.7, 0.7], [0.7, 0.2]]
-        degrees = 20
-        top_left_x = min(p[0] for p in initial_0deg_rectangle)
-        top_left_y = max(p[1] for p in initial_0deg_rectangle)
-        offset_rectangle = [[p[0] - top_left_x, p[1] - top_left_y] for p in initial_0deg_rectangle]
-
-        def rotate(xy, theta):
-            # https://en.wikipedia.org/wiki/Rotation_matrix#In_two_dimensions
-            cos_theta, sin_theta = math.cos(theta), math.sin(theta)
-
-            return (xy[0] * cos_theta - xy[1] * sin_theta, xy[0] * sin_theta + xy[1] * cos_theta)
-
-        rotated_offset_rectangle = [rotate(p, math.radians(degrees)) for p in offset_rectangle]
-        rotated_rectangle = [
-            [p[0] + top_left_x, p[1] + top_left_y] for p in rotated_offset_rectangle
-        ]
-
-        json_response["JOB_0"]["annotations"][0]["boundingPoly"][0]["normalizedVertices"] = [
-            {"x": p[0], "y": p[1]} for p in rotated_rectangle
-        ]
-
-    return Asset(
-        {
-            "latestLabel": {"jsonResponse": json_response},
-            "externalId": "car_1",
-            "jsonContent": "",
-            "content": str(content_path),
-        }
-    )
+from .helpers import coco as helpers
 
 
 def test__get_coco_image_annotations():
@@ -102,7 +30,25 @@ def test__get_coco_image_annotations():
         local_file_path.open("wb").write(r.content)
         _convert_kili_semantic_to_coco(
             job_name=JobName(job_name),
-            assets=[get_asset(local_file_path, with_annotation=True, with_rotation=None)],
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=[
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.5,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 0.5,
+                        },
+                    ],
+                )
+            ],
             output_dir=Path(tmp_dir),
             job={
                 "mlTask": "OBJECT_DETECTION",
@@ -122,7 +68,7 @@ def test__get_coco_image_annotations():
             },
             title="Test project",
             project_input_type="IMAGE",
-            annotation_modifier=lambda x, _: x,
+            annotation_modifier=lambda x, _, _1: x,
         )
         with output_file.open("r", encoding="utf-8") as f:
             coco_annotation = json.loads(f.read())
@@ -150,7 +96,36 @@ def test__get_coco_image_annotations():
             )
 
 
-def test__get_coco_image_annotations_with_label_modifier():
+@pytest.mark.parametrize(
+    "name,normalized_vertices,expected_angle,expected_bounding_box",
+    [
+        (
+            "rotated bbox",
+            [
+                {"x": 0.29542394060228344, "y": 0.5619730837117777},
+                {"x": 0.36370176857458425, "y": 0.4036476855151382},
+                {"x": 0.4595066260060737, "y": 0.5342261578662051},
+                {"x": 0.3912287980337728, "y": 0.6925515560628448},
+            ],
+            37.47617956136133,
+            [698.3073956632018, 435.93950035634924, 231.7840874775929, 215.46126441579023],
+        ),
+        (
+            "horizontal bbox",
+            [
+                {"x": 0.57214895419755, "y": 0.8004988292446383},
+                {"x": 0.57214895419755, "y": 0.5027584456173183},
+                {"x": 0.6435613050929351, "y": 0.5027584456173183},
+                {"x": 0.6435613050929351, "y": 0.8004988292446383},
+            ],
+            0.0,
+            [1098.525992059296, 542.9791212667037, 137.1117137191393, 321.55961431750563],
+        ),
+    ],
+)
+def test__get_coco_image_annotations_with_label_modifier(
+    name, normalized_vertices, expected_angle, expected_bounding_box
+):
     with TemporaryDirectory() as tmp_dir:
         job_name = "JOB_0"
         output_file = Path(tmp_dir) / job_name / "labels.json"
@@ -158,9 +133,23 @@ def test__get_coco_image_annotations_with_label_modifier():
         r = requests.get(image_url, allow_redirects=True, timeout=10)
         local_file_path = tmp_dir / Path("car_1.jpg")
         local_file_path.open("wb").write(r.content)
+
+        image_width = 1920
+        image_height = 1080
+        area = 2073600
+
+        expected_segmentation = [
+            a for p in normalized_vertices for a in [p["x"] * image_width, p["y"] * image_height]
+        ]
+
         _convert_kili_semantic_to_coco(
             job_name=JobName(job_name),
-            assets=[get_asset(local_file_path, with_annotation=True, with_rotation=20)],
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=normalized_vertices,
+                )
+            ],
             output_dir=Path(tmp_dir),
             job={
                 "mlTask": "OBJECT_DETECTION",
@@ -180,24 +169,31 @@ def test__get_coco_image_annotations_with_label_modifier():
             },
             title="Test project",
             project_input_type="IMAGE",
-            annotation_modifier=lambda x, _: x,
+            annotation_modifier=helpers.estimate_rotated_bb_from_kili_poly,
         )
+
         with output_file.open("r", encoding="utf-8") as f:
             coco_annotation = json.loads(f.read())
+
+            #### DON'T DELETE - for debugging #####
+            # helpers.display_kili_and_coco_bbox(
+            # local_file_path, expected_segmentation, coco_annotation
+            # )
+            ##########
 
             assert "Test project" in coco_annotation["info"]["description"]
             categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
             assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
-            assert coco_annotation["images"][0]["width"] == 1920
-            assert coco_annotation["images"][0]["height"] == 1080
+            assert coco_annotation["images"][0]["width"] == image_width
+            assert coco_annotation["images"][0]["height"] == image_height
             assert coco_annotation["annotations"][0]["image_id"] == 0
             assert categories_by_id[coco_annotation["annotations"][0]["category_id"]] == "OBJECT_A"
-            assert coco_annotation["annotations"][0]["bbox"] == [0, 0, 960, 540]
-            assert coco_annotation["annotations"][0]["attributes"]["rotation"] == 20
-            assert coco_annotation["annotations"][0]["segmentation"] == [
-                [0.0, 0.0, 960.0, 0.0, 0.0, 540.0]
-            ]
-            assert coco_annotation["annotations"][0]["area"] == 2073600
+            assert coco_annotation["annotations"][0]["bbox"] == pytest.approx(expected_bounding_box)
+            assert coco_annotation["annotations"][0]["attributes"] == {"rotation": expected_angle}
+            assert coco_annotation["annotations"][0]["segmentation"][0] == pytest.approx(
+                expected_segmentation
+            )
+            assert coco_annotation["annotations"][0]["area"] == area
 
             good_date = True
             try:
@@ -219,7 +215,12 @@ def test__get_coco_image_annotations_without_annotation():
         local_file_path.open("wb").write(r.content)
         _convert_kili_semantic_to_coco(
             job_name=JobName(job_name),
-            assets=[get_asset(local_file_path, with_annotation=False, with_rotation=None)],
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=None,
+                )
+            ],
             output_dir=Path(tmp_dir),
             job={
                 "mlTask": "OBJECT_DETECTION",
@@ -239,7 +240,7 @@ def test__get_coco_image_annotations_without_annotation():
             },
             title="Test project",
             project_input_type="IMAGE",
-            annotation_modifier=lambda x, _: x,
+            annotation_modifier=lambda x, _, _1: x,
         )
 
         with output_file.open("r", encoding="utf-8") as f:
@@ -375,7 +376,7 @@ def test_coco_video_jsoncontent():
                 job=Job(**json_interface["jobs"]["JOB_0"]),
                 title="test",
                 project_input_type="VIDEO",
-                annotation_modifier=lambda x, _: x,
+                annotation_modifier=lambda x, _, _1: x,
             )
 
             assert len(labels_json["images"]) == 5
