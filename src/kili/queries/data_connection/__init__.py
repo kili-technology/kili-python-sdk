@@ -16,6 +16,7 @@ from kili.helpers import disable_tqdm_if_as_generator
 from ... import services
 
 
+# pylint: disable=too-few-public-methods
 class QueriesDataConnection:
     """
     Set of cloud storage connection queries
@@ -34,14 +35,15 @@ class QueriesDataConnection:
     @overload
     def cloud_storage_connections(
         self,
-        project_id: Optional[str] = None,
+        cloud_storage_connection_id: Optional[str] = None,
         cloud_storage_integration_id: Optional[str] = None,
+        project_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
             "numberOfAssets",
-            "isApplyingDataDifferences",
-            "isChecking",
+            "selectedFolders",
+            "projectId",
         ],
         first: Optional[int] = None,
         skip: int = 0,
@@ -54,14 +56,15 @@ class QueriesDataConnection:
     @overload
     def cloud_storage_connections(
         self,
-        project_id: Optional[str] = None,
+        cloud_storage_connection_id: Optional[str] = None,
         cloud_storage_integration_id: Optional[str] = None,
+        project_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
             "numberOfAssets",
-            "isApplyingDataDifferences",
-            "isChecking",
+            "selectedFolders",
+            "projectId",
         ],
         first: Optional[int] = None,
         skip: int = 0,
@@ -74,14 +77,15 @@ class QueriesDataConnection:
     @typechecked
     def cloud_storage_connections(
         self,
-        project_id: Optional[str] = None,
+        cloud_storage_connection_id: Optional[str] = None,
         cloud_storage_integration_id: Optional[str] = None,
+        project_id: Optional[str] = None,
         fields: List[str] = [
             "id",
             "lastChecked",
             "numberOfAssets",
-            "isApplyingDataDifferences",
-            "isChecking",
+            "selectedFolders",
+            "projectId",
         ],
         first: Optional[int] = None,
         skip: int = 0,
@@ -93,8 +97,9 @@ class QueriesDataConnection:
         """Get a generator or a list of cloud storage connections that match a set of criteria.
 
         Args:
-            project_id: ID of the project.
+            cloud_storage_connection_id: ID of the cloud storage connection.
             cloud_storage_integration_id: ID of the cloud storage integration.
+            project_id: ID of the project.
             fields: All the fields to request among the possible fields for the cloud storage connections.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
             first: Maximum number of cloud storage connections to return.
@@ -107,8 +112,19 @@ class QueriesDataConnection:
 
         Examples:
             >>> kili.cloud_storage_connections(project_id="789465123")
-            [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'isApplyingDataDifferences': False, 'isChecking': False}]
+            [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]
         """
+        # call dataConnection resolver
+        if cloud_storage_connection_id is not None:
+            data_connection = services.get_data_connection(
+                self.auth, cloud_storage_connection_id, fields
+            )
+            data_connection_list = [data_connection]
+            if as_generator:
+                return iter(data_connection_list)
+            return data_connection_list
+
+        # call dataConnections resolver
         where = DataConnectionsWhere(
             project_id=project_id, data_integration_id=cloud_storage_integration_id
         )
@@ -119,32 +135,3 @@ class QueriesDataConnection:
         if as_generator:
             return data_connections_gen
         return list(data_connections_gen)
-
-    @typechecked
-    def cloud_storage_connection(
-        self,
-        cloud_storage_connection_id: str,
-        fields=[
-            "dataDifferencesSummary.added",
-            "dataDifferencesSummary.removed",
-            "dataDifferencesSummary.total",
-            "lastChecked",
-            "isChecking",
-            "isApplyingDataDifferences",
-            "numberOfAssets",
-            "selectedFolders",
-            "projectId",
-        ],
-    ) -> Dict:
-        # pylint: disable=line-too-long
-        """Get information of a cloud storage connection.
-
-        Args:
-            cloud_storage_connection_id: ID of the cloud storage connection.
-            fields: All the fields to request among the possible fields for the data connections.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
-
-        Returns:
-            A dict with the information of the data connection.
-        """
-        return services.get_data_connection(self.auth, cloud_storage_connection_id, fields)

@@ -21,7 +21,7 @@ def test_data_connections(mocked_graphql_client):
         in query_sent
     )
     assert "data: dataConnections(where: $where, first: $first, skip: $skip)" in query_sent
-    assert "id lastChecked numberOfAssets isApplyingDataDifferences isChecking" in query_sent
+    assert "id lastChecked numberOfAssets selectedFolders projectId" in query_sent
 
     assert variables == {
         "where": {"integrationId": None, "projectId": "789465123"},
@@ -38,7 +38,7 @@ def test_data_connection(mocked_graphql_client):
     kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))
 
     with pytest.raises(ValueError, match="No data connection with id my_data_connection_id"):
-        kili.cloud_storage_connection(
+        kili.cloud_storage_connections(
             cloud_storage_connection_id="my_data_connection_id", fields=["my_field"]
         )
 
