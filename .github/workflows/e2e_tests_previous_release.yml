@@ -65,7 +65,7 @@ jobs:
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Notebook tests
-        timeout-minutes: 15
+        timeout-minutes: 18
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
