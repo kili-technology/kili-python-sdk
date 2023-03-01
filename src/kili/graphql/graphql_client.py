@@ -21,7 +21,6 @@ from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.websockets import WebsocketsTransport
 from graphql import DocumentNode, print_schema
-from typeguard import typechecked
 
 from kili import __version__
 from kili.exceptions import GraphQLError
@@ -129,7 +128,6 @@ class GraphQLClient:
         version = response["version"]
         return version
 
-    @typechecked
     def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
         """
         Execute a query
@@ -148,7 +146,6 @@ class GraphQLClient:
                 raise GraphQLError(error=err.message) from err
         return result  # type: ignore
 
-    @typechecked
     def subscribe(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None
     ) -> Generator[Dict[str, Any], None, None]:

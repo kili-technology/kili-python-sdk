@@ -49,6 +49,7 @@ def src_project(kili: Kili):
     kili.delete_project(project["id"])
 
 
+@pytest.mark.skip(reason="cannot test this for now. requires data integrations to be set up")
 def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
     project_id = src_project["id"]
 
