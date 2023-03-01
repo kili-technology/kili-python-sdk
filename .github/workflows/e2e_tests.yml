@@ -82,17 +82,19 @@ jobs:
             if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
               echo "TEST_MODE_ARRAY=[MASTER_STAGING, RELEASE_PREPROD, MASTER_LTS, PREV_RELEASE_TESTS_STAGING, LTS_CYCLE_FIRST_SDK]" >> "$GITHUB_OUTPUT"
             else
-              echo "TEST_MODE_ARRAY=[${{ github.event.inputs.testMode }}]" >> "$GITHUB_OUTPUT"
+              json_str="{\"array\": [\"${{ github.event.inputs.testMode }}\"]}"
             fi
 
           fi
+
+          echo "::set-output name=TEST_MODE_ARRAY::$json_str"
 
   tests:
     name: E2E tests
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        test_mode: ${{ needs.test_setup.outputs.test_mode_array }}
+        test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array) }}
     runs-on: ${{ matrix.os }}
     needs: [test_setup]
     steps:
