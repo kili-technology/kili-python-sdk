@@ -1,4 +1,5 @@
 # several test modes:
+# - ALL: run all modes below (only useful for manual trigger)
 # - MASTER_STAGING: master branch against staging
 # - RELEASE_PREPROD: latest release branch against preprod
 # - MASTER_LTS: master branch against LTS
@@ -20,11 +21,12 @@ on:
         type: boolean
         default: true
       testMode:
-        description: "Test mode: MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK (test with first SDK of LTS cycle, against staging)"
+        description: "Test mode: ALL (run all modes), MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK (test with first SDK of LTS cycle, against staging)"
         required: true
         type: choice
         default: "MASTER_STAGING"
         options:
+          - ALL
           - MASTER_STAGING
           - RELEASE_PREPROD
           - MASTER_LTS
@@ -41,44 +43,62 @@ on:
     - cron: "0 14 * * 1-5" # LTS_CYCLE_FIRST_SDK
 
 jobs:
-  tests:
-    name: E2E tests
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+  test_setup:
+    name: E2E tests setup
+    runs-on: ubuntu-latest
+    outputs:
+      test_mode_array: ${{ steps.setup_step.outputs.TEST_MODE_ARRAY }}
     steps:
       - name: Setup test mode
+        id: setup_step
         shell: bash
         run: |
           if [[ "${{ github.event_name }}" == "push" ]]; then
 
             if [[ "${{ github.ref_name }}" == release/* ]]; then
-              echo "TEST_MODE=RELEASE_PREPROD" >> $GITHUB_ENV
+              echo "TEST_MODE_ARRAY='[\"RELEASE_PREPROD\"]'" >> "$GITHUB_OUTPUT"
             else
-              echo "TEST_MODE=MASTER_STAGING" >> $GITHUB_ENV
+              echo "TEST_MODE_ARRAY='[\"MASTER_STAGING\"]'" >> "$GITHUB_OUTPUT"
             fi
 
           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
 
             if [[ "${{ github.event.schedule }}" == "0 7,15 * * 1-5" ]]; then
-              echo "TEST_MODE=MASTER_STAGING" >> $GITHUB_ENV
+              echo "TEST_MODE_ARRAY='[\"MASTER_STAGING\"]'" >> "$GITHUB_OUTPUT"
 
             elif [[ "${{ github.event.schedule }}" == "0 10 * * 1-5" ]]; then
-              echo "TEST_MODE=MASTER_LTS" >> $GITHUB_ENV
+              echo "TEST_MODE_ARRAY='[\"MASTER_LTS\"]'" >> "$GITHUB_OUTPUT"
 
             elif [[ "${{ github.event.schedule }}" == "0 12 * * 1-5" ]]; then
-              echo "TEST_MODE=PREV_RELEASE_TESTS_STAGING" >> $GITHUB_ENV
+              echo "TEST_MODE_ARRAY='[\"PREV_RELEASE_TESTS_STAGING\"]'" >> "$GITHUB_OUTPUT"
 
             elif [[ "${{ github.event.schedule }}" == "0 14 * * 1-5" ]]; then
-              echo "TEST_MODE=LTS_CYCLE_FIRST_SDK" >> $GITHUB_ENV
+              echo "TEST_MODE_ARRAY='[\"LTS_CYCLE_FIRST_SDK\"]'" >> "$GITHUB_OUTPUT"
 
             fi
 
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "TEST_MODE=${{ github.event.inputs.testMode }}" >> $GITHUB_ENV
+
+            if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
+              echo "TEST_MODE_ARRAY='[\"\MASTER_STAGING\", \"RELEASE_PREPROD\", \"MASTER_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK\"]'" >> "$GITHUB_OUTPUT"
+            else
+              echo "TEST_MODE_ARRAY='[\"${{ github.event.inputs.testMode }}\"]'" >> "$GITHUB_OUTPUT"
+            fi
 
           fi
+
+  tests:
+    name: E2E tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array) }}
+    runs-on: ${{ matrix.os }}
+    needs: [test_setup]
+    steps:
+      - name: Get test mode from previous job
+        shell: bash
+        run: echo "TEST_MODE=${{ matrix.test_mode }}" >> $GITHUB_ENV
 
       - name: Check that test mode is valid
         shell: bash
