@@ -61,7 +61,7 @@ def image_bbox_project(kili):
 
     kili.delete_project(project["id"])
 
-
+@pytest.mark.skip(reason="jsonResponse validation disabled on backend for now")
 def test_json_response_with_wrong_bbox_responses(kili, image_bbox_project):
     with pytest.raises(GraphQLError) as exc_info:
         wrong_category_json_response = {
