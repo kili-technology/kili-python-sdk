@@ -3,6 +3,7 @@
 # - RELEASE_PREPROD: latest release branch against preprod
 # - MASTER_LTS: master branch against LTS
 # - PREV_RELEASE_TESTS_STAGING: SDK from master, previous release tests against staging
+# - LTS_CYCLE_FIRST_SDK: test with first SDK of LTS cycle, against staging
 
 name: E2E tests
 on:
@@ -18,8 +19,8 @@ on:
         required: true
         type: boolean
         default: true
-      testType:
-        description: "Test mode: MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging)"
+      testMode:
+        description: "Test mode: MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK (test with first SDK of LTS cycle, against staging)"
         required: true
         type: choice
         default: "MASTER_STAGING"
@@ -28,14 +29,16 @@ on:
           - RELEASE_PREPROD
           - MASTER_LTS
           - PREV_RELEASE_TESTS_STAGING
+          - LTS_CYCLE_FIRST_SDK
   push:
     branches:
       - "release/**"
       - master
   schedule:
     - cron: "0 7,15 * * 1-5" # MASTER_STAGING
-    - cron: "0 13 * * 1-5" # MASTER_LTS
+    - cron: "0 10 * * 1-5" # MASTER_LTS
     - cron: "0 12 * * 1-5" # PREV_RELEASE_TESTS_STAGING
+    - cron: "0 14 * * 1-5" # LTS_CYCLE_FIRST_SDK
 
 jobs:
   tests:
@@ -61,16 +64,19 @@ jobs:
             if [[ "${{ github.event.schedule }}" == "0 7,15 * * 1-5" ]]; then
               echo "TEST_MODE=MASTER_STAGING" >> $GITHUB_ENV
 
-            elif [[ "${{ github.event.schedule }}" == "0 13 * * 1-5" ]]; then
+            elif [[ "${{ github.event.schedule }}" == "0 10 * * 1-5" ]]; then
               echo "TEST_MODE=MASTER_LTS" >> $GITHUB_ENV
 
             elif [[ "${{ github.event.schedule }}" == "0 12 * * 1-5" ]]; then
               echo "TEST_MODE=PREV_RELEASE_TESTS_STAGING" >> $GITHUB_ENV
 
+            elif [[ "${{ github.event.schedule }}" == "0 14 * * 1-5" ]]; then
+              echo "TEST_MODE=LTS_CYCLE_FIRST_SDK" >> $GITHUB_ENV
+
             fi
 
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "TEST_MODE=${{ github.event.inputs.testType }}" >> $GITHUB_ENV
+            echo "TEST_MODE=${{ github.event.inputs.testMode }}" >> $GITHUB_ENV
 
           fi
 
@@ -80,22 +86,27 @@ jobs:
           if [[ ${{ env.TEST_MODE }} != "MASTER_STAGING" ]] && \
              [[ ${{ env.TEST_MODE }} != "RELEASE_PREPROD" ]] && \
              [[ ${{ env.TEST_MODE }} != "MASTER_LTS" ]] && \
-             [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_STAGING" ]]; then
-            echo "TEST_MODE is not valid"
+             [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_STAGING" ]] && \
+             [[ ${{ env.TEST_MODE }} != "LTS_CYCLE_FIRST_SDK" ]]; then
+            echo "TEST_MODE is not valid: ${{ env.TEST_MODE }}"
             exit 1
           fi
+
+      - name: Set first SDK version of LTS cycle
+        if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK'
+        shell: bash
+        run: echo "LTS_CYCLE_FIRST_SDK_VERSION=2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
       - name: Get latest release branch
         shell: bash
         run: |
           last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
           echo "Last version: $last_version"
-
           IFS=. read -r major minor patch <<< "$last_version"
           last_minor_version="$major.$minor.0"
           echo "LASTEST_RELEASE_BRANCH=release/$last_minor_version" >> $GITHUB_ENV
 
-      - name: Set checkout branch
+      - name: Set checkout branch/tag
         shell: bash
         run: |
           if [[ "${{ env.TEST_MODE }}" == "MASTER_STAGING" ]]; then
@@ -118,6 +129,11 @@ jobs:
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
             echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
 
+          elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK" ]]; then
+            echo "REF=${{ env.LTS_CYCLE_FIRST_SDK_VERSION }}" >> $GITHUB_ENV
+            echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
+            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+
           fi
 
       - name: Check REF is set
@@ -136,8 +152,7 @@ jobs:
       - name: Delete src for PREV_RELEASE_TESTS_STAGING mode
         if: env.TEST_MODE == 'PREV_RELEASE_TESTS_STAGING'
         shell: bash
-        run: |
-          rm -rf src
+        run: rm -rf src # we want the previous release tests but the kili from master
 
       - name: Set up Python 3.7
         uses: actions/setup-python@v4
@@ -146,8 +161,7 @@ jobs:
           cache: "pip"
 
       - name: Upgrade pip
-        run: |
-          python -m pip install --upgrade pip
+        run: python -m pip install --upgrade pip
 
       - name: Install kili
         shell: bash
@@ -160,8 +174,7 @@ jobs:
 
       - name: Get kili SDK version
         shell: bash
-        run: |
-          echo "KILI_SDK_VERSION=$(python -c "from kili import __version__; print(__version__)")" >> $GITHUB_ENV
+        run: echo "KILI_SDK_VERSION=$(python -c "from kili import __version__; print(__version__)")" >> $GITHUB_ENV
 
       - name: E2E tests
         if: github.event.inputs.runE2ETests != 'false'
@@ -210,7 +223,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "E2E tests '${{ env.TEST_MODE }}' (${{ env.REF }} against ${{ env.TEST_AGAINST }}) failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "E2E tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]
