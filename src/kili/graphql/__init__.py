@@ -17,7 +17,7 @@ from .graphql_client import GraphQLClient
 class QueryOptions(NamedTuple):
     """Options when calling GraphQLQuery from the SDK"""
 
-    disable_tqdm: Optional[bool] = None
+    disable_tqdm: Optional[bool]
     first: Optional[int] = None
     skip: int = 0
 

@@ -44,7 +44,7 @@ def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[st
     Get data connection information
     """
     where = DataConnectionIdWhere(data_connection_id=data_connection_id)
-    options = QueryOptions(first=1)
+    options = QueryOptions(first=1, disable_tqdm=True)
     data_connection = list(DataConnectionQuery(auth.client)(where, fields, options))
     if len(data_connection) == 0:
         raise ValueError(f"No data connection with id {data_connection_id}")
