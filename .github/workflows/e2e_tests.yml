@@ -1,15 +1,36 @@
-name: E2E tests (master/release branch against staging/preprod)
+name: E2E tests
 on:
   workflow_dispatch:
+    inputs:
+      runNotebookTests:
+        description: "Run notebook tests?"
+        required: true
+        default: "true"
+      runE2ETests:
+        description: "Run E2E tests?"
+        required: true
+        default: "true"
+      testType:
+        description: "Test type"
+        required: true
+        type: choice
+        options:
+          - master against staging
+          - last release branch against preprod
+          - master against LTS
+          - SDK from master, previous release tests against staging
   push:
     branches:
       - "release/**"
       - master
   schedule:
-    - cron: "0 7,15 * * 1-5" # 8am and 4pm UTC+1 every weekday
+    - cron: "0 7,15 * * 1-5" # classic tests (master against staging), twice a day
+    - cron: "0 13 * * 1-5" # LTS tests (master against LTS)
+    - cron: "0 12 * * 1-5" # Kili SDK from master, previous release tests against staging
+
 jobs:
-  recipes:
-    name: Recipes test
+  tests:
+    name: E2E tests
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -41,7 +62,8 @@ jobs:
             echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
           fi
 
-      - name: Integration tests
+      - name: E2E tests
+        if: github.event.inputs.runE2ETests != 'false'
         timeout-minutes: 10
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
         env:
@@ -52,7 +74,9 @@ jobs:
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Notebook tests
-        if: github.event_name != 'push' || github.ref_name != 'master' # does not run for push on master
+        if: >-
+          github.event.inputs.runNotebookTests != 'false' &&
+          (github.event_name != 'push' || github.ref_name != 'master')
         timeout-minutes: 15
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
