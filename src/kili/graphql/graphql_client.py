@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Generator, Optional, Union
+from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -19,7 +19,6 @@ import websocket
 from gql import Client, gql
 from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
-from gql.transport.websockets import WebsocketsTransport
 from graphql import DocumentNode, print_schema
 
 from kili import __version__
@@ -33,6 +32,7 @@ class GraphQLClientName(Enum):
     CLI = "python-cli"
 
 
+# pylint: disable=too-few-public-methods
 class GraphQLClient:
     """
     GraphQL client
@@ -144,31 +144,6 @@ class GraphQLClient:
                 raise GraphQLError(error=err.errors) from err
             if isinstance(err, graphql.GraphQLError):
                 raise GraphQLError(error=err.message) from err
-        return result  # type: ignore
-
-    def subscribe(
-        self, query: Union[str, DocumentNode], variables: Optional[Dict] = None
-    ) -> Generator[Dict[str, Any], None, None]:
-        """
-        Subscribe to a query
-
-        Args:
-            query: the GraphQL query
-            variables: the payload of the query
-        """
-        gql_ws_transport = WebsocketsTransport(
-            url=self.ws_endpoint,
-            headers=self.headers,
-            subprotocols=[WebsocketsTransport.APOLLO_SUBPROTOCOL],
-            init_payload={
-                "headers": {"Accept": "application/json", "Content-Type": "application/json"},
-                "Authorization": f"X-API-Key: {self.api_key}",
-            },
-        )
-        gql_ws_client = Client(transport=gql_ws_transport, fetch_schema_from_transport=True)
-
-        document = query if isinstance(query, DocumentNode) else gql(query)
-        result = gql_ws_client.subscribe(document, variables)  # type: ignore
         return result
 
 

@@ -7,7 +7,6 @@ from kili.services.data_connection import (
     compute_differences,
     get_data_connection,
     synchronize_data_connection,
-    verify_diff_computed,
 )
 from kili.services.export import export_labels
 from kili.services.label_import import import_labels_from_dict, import_labels_from_files
@@ -23,5 +22,4 @@ __all__ = [
     "get_data_connection",
     "synchronize_data_connection",
     "compute_differences",
-    "verify_diff_computed",
 ]

@@ -2,10 +2,13 @@
 Services for data connections
 """
 import logging
-import threading
 import time
 from typing import Any, Dict, List, Optional
 
+from tenacity import Retrying
+from tenacity.retry import retry_if_exception_type
+from tenacity.stop import stop_after_delay
+from tenacity.wait import wait_fixed
 from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
@@ -19,9 +22,6 @@ from ...helpers import format_result
 from ...mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
-)
-from ...subscriptions.data_connection.subscriptions import (
-    GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION,
 )
 
 LOGGER = None
@@ -80,44 +80,37 @@ def compute_differences(
     return data_connection
 
 
-def verify_diff_computed(auth: KiliAuth, project_id: str, data_connection_id: str) -> None:
+def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
     """
-    Verify that the data connection differences have been computed
+    Verify that the data connection differences have been computed.
 
-    Launch a subscription to the data connection and wait until isChecking is False
+    Trigger the computation if not already computing.
     """
     logger = _get_logger()
-    subscription = auth.client.subscribe(
-        GQL_DATA_CONNECTION_UPDATED_SUBSCRIPTION, {"projectID": project_id}
-    )
+    logger.info("Verifying that the data connection differences have been computed")
 
-    # we need to add a delay before compute_differences
-    # because the subscription takes time to be ready
-    # we trigger the computation of the differences in a thread while waiting for the subscription
-    def compute_differences_with_delay(auth: KiliAuth, data_connection_id: str) -> Dict:
-        time.sleep(1)
-        return compute_differences(auth, data_connection_id)
+    data_connection = get_data_connection(auth, data_connection_id, fields=["isChecking"])
 
-    thread_launch_comp = threading.Thread(
-        target=compute_differences_with_delay,
-        args=(auth, data_connection_id),
-    )
-    thread_launch_comp.start()
+    if not data_connection["isChecking"]:
+        compute_differences(auth, data_connection_id)
+        time.sleep(1)  # backend needs some time...
 
-    for result in subscription:
-        result = format_result("data", result)
-        logger.debug("Got subscription event: %s", result)
-        is_computing_diff = result["isChecking"]
-        if not is_computing_diff:
-            break
+    for attempt in Retrying(
+        stop=stop_after_delay(60),
+        wait=wait_fixed(1),
+        retry=retry_if_exception_type(ValueError),
+        reraise=True,
+    ):
+        with attempt:
+            data_connection = get_data_connection(auth, data_connection_id, fields=["isChecking"])
+            if data_connection["isChecking"]:
+                raise ValueError(f"Data connection is still checking: {data_connection}")
 
-    thread_launch_comp.join()
-
-    time.sleep(2)  # backend needs some time to update the data connection "isChecking" to False
+    time.sleep(1)  # backend needs some time...
 
 
 def synchronize_data_connection(
-    auth: KiliAuth, project_id: str, data_connection_id: str, delete_extraneous_files: bool
+    auth: KiliAuth, data_connection_id: str, delete_extraneous_files: bool
 ) -> Dict:
     """
     Launch a data connection synchronization
@@ -125,7 +118,7 @@ def synchronize_data_connection(
     logger = _get_logger()
     logger.info("Synchronizing data connection: %s", data_connection_id)
 
-    verify_diff_computed(auth, project_id, data_connection_id)
+    verify_diff_computed(auth, data_connection_id)
 
     data_connection = get_data_connection(
         auth,

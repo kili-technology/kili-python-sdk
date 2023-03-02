@@ -101,5 +101,5 @@ class MutationsDataConnection:
             A dict with the DataConnection ID.
         """
         return services.synchronize_data_connection(
-            self.auth, project_id, cloud_storage_connection_id, delete_extraneous_files
+            self.auth, cloud_storage_connection_id, delete_extraneous_files
         )
