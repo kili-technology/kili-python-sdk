@@ -645,6 +645,11 @@ class QueriesLabel:
             disable_tqdm: Disable the progress bar if True.
             with_assets: Download the assets in the export.
             external_ids: Optional list of the assets external IDs from which to export the labels.
+            annotation_modifier: For COCO export only: function that takes the COCO annotation, the
+                COCO image, and the Kili annotation, and should return an updated COCO annotation.
+                This can be used if you want to add a new attribute to the COCO annotation. For
+                example, you can add a method that computes if the annotation is a rectangle or not
+                and add it to the COCO annotation (see example)
 
         !!! warning
             Export is not allowed for projects connected to a cloud storage.
@@ -665,6 +670,22 @@ class QueriesLabel:
             from kili.client import Kili
             kili = Kili()
             kili.export_labels("your_project_id", "export.zip", "yolo_v4")
+            ```
+
+        !!! Example
+            ```
+            from kili.client import Kili
+            kili = Kili()
+
+            def is_rectangle(coco_annotation, coco_image, kili_annotation):
+                is_rectangle = ...
+                return {**coco_annotation, "attributes": {"is_rectangle": is_rectangle}}
+            kili.export_labels(
+                "your_project_id",
+                "export.zip",
+                "coco",
+                annotation_modifier = add_is_rectangle
+            )
             ```
         """
         if external_ids is not None and asset_ids is None:
