@@ -35,12 +35,12 @@ on:
           - PREV_RELEASE_TESTS_STAGING
           - LTS_CYCLE_FIRST_SDK_STAGING
       customBranch:
-        description: "Custom branch to test a PR (only used if testMode is CUSTOM)"
+        description: "Custom branch to test a PR (only used if test mode is CUSTOM)"
         required: false
         type: string
         default: ""
       customEndpoint:
-        description: "Custom endpoint to test a PR (only used if testMode is CUSTOM)"
+        description: "Custom endpoint to test a PR (only used if test mode is CUSTOM)"
         required: false
         type: choice
         default: "STAGING"
