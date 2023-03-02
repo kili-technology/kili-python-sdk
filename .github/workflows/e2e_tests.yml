@@ -4,7 +4,7 @@
 # - RELEASE_PREPROD: latest release branch against preprod
 # - MASTER_LTS: master branch against LTS
 # - PREV_RELEASE_TESTS_STAGING: SDK from master, previous release tests against staging
-# - LTS_CYCLE_FIRST_SDK: test with first SDK of LTS cycle, against staging
+# - LTS_CYCLE_FIRST_SDK_STAGING: test with first SDK of LTS cycle, against staging
 
 name: E2E tests
 on:
@@ -21,7 +21,7 @@ on:
         type: boolean
         default: true
       testMode:
-        description: "Test mode: ALL (run all modes), MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK (test with first SDK of LTS cycle, against staging)"
+        description: "Test mode: ALL (run all modes), MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK_STAGING (test with first SDK of LTS cycle, against staging)"
         required: true
         type: choice
         default: "MASTER_STAGING"
@@ -31,7 +31,7 @@ on:
           - RELEASE_PREPROD
           - MASTER_LTS
           - PREV_RELEASE_TESTS_STAGING
-          - LTS_CYCLE_FIRST_SDK
+          - LTS_CYCLE_FIRST_SDK_STAGING
   push:
     branches:
       - "release/**"
@@ -40,7 +40,7 @@ on:
     - cron: "0 7,15 * * 1-5" # MASTER_STAGING
     - cron: "0 10 * * 1-5" # MASTER_LTS
     - cron: "0 12 * * 1-5" # PREV_RELEASE_TESTS_STAGING
-    - cron: "0 14 * * 1-5" # LTS_CYCLE_FIRST_SDK
+    - cron: "0 14 * * 1-5" # LTS_CYCLE_FIRST_SDK_STAGING
 
 jobs:
   test_setup:
@@ -73,14 +73,14 @@ jobs:
               json_str="{\"array\": [\"PREV_RELEASE_TESTS_STAGING\"]}"
 
             elif [[ "${{ github.event.schedule }}" == "0 14 * * 1-5" ]]; then
-              json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK\"]}"
+              json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
 
             fi
 
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
 
             if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
-              json_str="{\"array\": [\"MASTER_STAGING\", \"RELEASE_PREPROD\", \"MASTER_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK\"]}"
+              json_str="{\"array\": [\"MASTER_STAGING\", \"RELEASE_PREPROD\", \"MASTER_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
             else
               json_str="{\"array\": [\"${{ github.event.inputs.testMode }}\"]}"
             fi
@@ -90,7 +90,7 @@ jobs:
           echo "TEST_MODE_ARRAY=$json_str" >> $GITHUB_OUTPUT
 
   tests:
-    name: E2E tests
+    name: ${{ matrix.test_mode }}, ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -98,7 +98,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [test_setup]
     steps:
-      - name: Get test mode from previous job
+      - name: Set test mode
         shell: bash
         run: echo "TEST_MODE=${{ matrix.test_mode }}" >> $GITHUB_ENV
 
@@ -109,13 +109,13 @@ jobs:
              [[ ${{ env.TEST_MODE }} != "RELEASE_PREPROD" ]] && \
              [[ ${{ env.TEST_MODE }} != "MASTER_LTS" ]] && \
              [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_STAGING" ]] && \
-             [[ ${{ env.TEST_MODE }} != "LTS_CYCLE_FIRST_SDK" ]]; then
+             [[ ${{ env.TEST_MODE }} != "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
             echo "TEST_MODE is not valid: ${{ env.TEST_MODE }}"
             exit 1
           fi
 
       - name: Set first SDK version of LTS cycle
-        if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK'
+        if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK_STAGING'
         shell: bash
         run: echo "LTS_CYCLE_FIRST_SDK_VERSION=2.129.3" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
@@ -128,7 +128,7 @@ jobs:
           last_minor_version="$major.$minor.0"
           echo "LASTEST_RELEASE_BRANCH=release/$last_minor_version" >> $GITHUB_ENV
 
-      - name: Set checkout branch/tag
+      - name: Set checkout branch/tag and endpoint
         shell: bash
         run: |
           if [[ "${{ env.TEST_MODE }}" == "MASTER_STAGING" ]]; then
@@ -151,7 +151,7 @@ jobs:
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
             echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
 
-          elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK" ]]; then
+          elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
             echo "REF=${{ env.LTS_CYCLE_FIRST_SDK_VERSION }}" >> $GITHUB_ENV
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
             echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
