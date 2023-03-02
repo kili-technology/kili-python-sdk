@@ -216,7 +216,7 @@ except GraphQLError as error:
 
 
 ```python
-kili.activate_plugin_on_project(plugin_name, project_id=project_id);
+kili.activate_plugin_on_project(plugin_name=plugin_name, project_id=project_id)
 ```
 
     Plugin with name "Plugin bbox count" activated on project "cldlyo2bq61if0jn9efvn3soo"
@@ -232,25 +232,18 @@ Alternatively, you can also create a plugin directly from a `.py` file.
 
 ```python
 path_to_plugin = Path(plugin_folder) / "main.py"
-plugin_name = "Plugin bbox count"
+plugin_name_file = "Plugin bbox count - file"
 
 try:
-    kili.upload_plugin(str(path_to_plugin), plugin_name)
+    kili.upload_plugin(str(path_to_plugin), plugin_name_file)
 except GraphQLError as error:
     print(str(error))
 ```
 
-    Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder/main.py", plugin_name="Plugin bbox count")
-    error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
-
-
 
 ```python
-kili.activate_plugin_on_project(plugin_name, project_id=project_id);
+kili.activate_plugin_on_project(plugin_name=plugin_name_file, project_id=project_id)
 ```
-
-    Warning: A plugin with the name "Plugin bbox count" is already activated on the project with id "cldlyo2bq61if0jn9efvn3soo"
-
 
 ## Step 5: Plugin in action
 
@@ -431,9 +424,6 @@ logs = kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, star
 logs_json = json.loads(logs)
 print(json.dumps(logs_json, indent=4))
 ```
-
-    []
-
 
 ## Step 7: Manage the plugin
 

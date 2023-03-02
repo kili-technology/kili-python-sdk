@@ -41,11 +41,11 @@ pip install kili
   ```
 
 !!! info
-You can also pass the API key as an argument during `Kili` initialization:
+    You can also pass the API key as an argument during `Kili` initialization:
 
-```python
-kili = Kili(api_key='<you api key value here>')
-```
+    ```python
+    kili = Kili(api_key='<you api key value here>')
+    ```
 
 !!! success "Great!"
-You can now begin to use the Kili Python SDK
+    You can now begin to use the Kili Python SDK! 🎉
