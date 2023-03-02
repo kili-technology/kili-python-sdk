@@ -20,7 +20,6 @@ from gql import Client, gql
 from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from graphql import DocumentNode, print_schema
-from typeguard import typechecked
 
 from kili import __version__
 from kili.exceptions import GraphQLError
@@ -47,17 +46,19 @@ class GraphQLClient:
         verify: bool = True,
     ) -> None:
         self.endpoint = endpoint
+        self.api_key = api_key
         self.verify = verify
 
-        self.gql_transport = RequestsHTTPTransport(
+        self.headers = {
+            "Authorization": f"X-API-Key: {api_key}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "apollographql-client-name": client_name.value,
+            "apollographql-client-version": __version__,
+        }
+        self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
-            headers={
-                "Authorization": f"X-API-Key: {api_key}",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "apollographql-client-name": client_name.value,
-                "apollographql-client-version": __version__,
-            },
+            headers=self.headers,
             cookies=None,
             auth=None,
             use_json=True,
@@ -73,13 +74,15 @@ class GraphQLClient:
             self._cache_graphql_schema(graphql_schema_path)
         except (requests.exceptions.JSONDecodeError, json.decoder.JSONDecodeError):
             self._gql_client = Client(
-                transport=self.gql_transport, fetch_schema_from_transport=True
+                transport=self._gql_transport, fetch_schema_from_transport=True
             )
         else:
             self._gql_client = Client(
                 schema=graphql_schema_path.read_text(encoding="utf-8"),
-                transport=self.gql_transport,
+                transport=self._gql_transport,
             )
+
+        self.ws_endpoint = self.endpoint.replace("http", "ws")
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
@@ -96,7 +99,7 @@ class GraphQLClient:
         if graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0:
             return
 
-        with Client(transport=self.gql_transport, fetch_schema_from_transport=True) as session:
+        with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
         graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
@@ -125,7 +128,6 @@ class GraphQLClient:
         version = response["version"]
         return version
 
-    @typechecked
     def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
         """
         Execute a query
@@ -183,7 +185,7 @@ class SubscriptionGraphQLClient:
         """
         self._connect()
         self._subscription_running = True
-        dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        dt_string = datetime.now().strftime(r"%d/%m/%Y %H:%M:%S")
         print(f"{dt_string} reconnected")
         self.failed_connection_attempts = 0
 
