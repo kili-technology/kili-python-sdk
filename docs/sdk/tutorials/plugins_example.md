@@ -240,17 +240,10 @@ except GraphQLError as error:
     print(str(error))
 ```
 
-    Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder/main.py", plugin_name="Plugin bbox count")
-    error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
-
-
 
 ```python
 kili.activate_plugin_on_project(plugin_name=plugin_name_file, project_id=project_id)
 ```
-
-    Warning: A plugin with the name "Plugin bbox count" is already activated on the project with id "cldlyo2bq61if0jn9efvn3soo"
-
 
 ## Step 5: Plugin in action
 
