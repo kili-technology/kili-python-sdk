@@ -46,9 +46,12 @@ class PluginCore:
         Handler for the submit action, triggered when a default label is submitted into Kili.
 
         Args:
-            label: label submitted to Kili
-            asset_id: id of the asset on which the label was submitted
-
+            label: Label submitted to Kili: a dictionary containing the following fields:
+                `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,
+                `secondsToLabel`, `isSentBackToQueue`, `search` and some technical fields:
+                `createdAt`, `updatedAt`, `version`, `isLatestReviewLabelForUser`,
+                `isLatestLabelForUser`, `isLatestDefaultLabelForUser`, `readPermissionsFromProject`.
+            asset_id: Id of the asset on which the label was submitted
 
         Example use:
 
@@ -73,8 +76,14 @@ class PluginCore:
         Handler for the review action, triggered when a default label is reviewed on Kili
 
         Args:
-            label: label submitted to Kili
-            asset_id: id of the asset on which the label was submitted
+            label: Label submitted to Kili: a dictionary containing the following fields:
+                `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,
+                `secondsToLabel`, `isSentBackToQueue`, `search` and `reviewedLabel` (dictionary
+                that has a field `id` representing the id of the original label that was reviewed).
+                It also contains some technical fields: `createdAt`, `updatedAt`, `version`,
+                `isLatestReviewLabelForUser`, `isLatestLabelForUser`, `isLatestDefaultLabelForUser`,
+                `readPermissionsFromProject`.
+            asset_id: Id of the asset on which the label was submitted
 
         Example use:
 

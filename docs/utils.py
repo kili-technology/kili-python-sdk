@@ -83,7 +83,7 @@ class RemoveTqdmOutputPreprocessor(Preprocessor):
         """Check if a line is a tqdm progress bar."""
         return all(pattern in line for pattern in self.TQDM_PATTERNS)
 
-    def preprocess_cell(self, cell, resources, index):  # pylint: disable=arguments-renamed
+    def preprocess_cell(self, cell, resources, index):
         """Remove tqdm progress bar in a cell."""
 
         if "outputs" not in cell or not cell["outputs"]:

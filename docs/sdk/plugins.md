@@ -8,6 +8,7 @@ A plugin is an uploaded Python script triggered by an event. It can be defined a
 - a plugin module (a folder) containing multiple `python` files and a non mandatory `requirements.txt` file listing all the dependencies you need for you plugin.
 
 In the case of the module type plugin, at the root of the folder a file named `main.py` is strictly necessary, as it serves as the entrypoint of the plugin. In this `main.py` file, you can import what you need from other `python` files in the folder. The structure of the folder can be the following (the only constraint being the presence of the `main.py` file):
+
 ```
 plugin_folder
 |__ main.py
@@ -38,9 +39,10 @@ Moreover, some attributes are directly available in the class:
 Therefore, the skeleton of the plugin (of `main.py` in the case of the module type plugin) should look like this:
 
 ```python
-from kili.plugins import PluginCore
-from kili.types import Label
+from typing import Dict
 import numpy as np
+
+from kili.plugins import PluginCore
 
 def custom_function():
     # Do something...
@@ -51,18 +53,17 @@ class PluginHandler(PluginCore):
     def custom_method(self):
         # Do something...
 
-    def on_review(self, label: Label, asset_id: str) -> None:
+    def on_review(self, label: Dict, asset_id: str) -> None:
         """Dedicated handler for Review action"""
         # Do something...
 
-    def on_submit(self, label: Label, asset_id: str) -> None:
+    def on_submit(self, label: Dict, asset_id: str) -> None:
         """Dedicated handler for Submit action"""
         # Do something...
 ```
 
 !!! note
-
-    The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run
+    The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
 
 ## Model for Plugins
 
