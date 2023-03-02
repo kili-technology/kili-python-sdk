@@ -49,5 +49,6 @@ mime_extensions_for_IV2 = {
 mime_extensions_for_py_scripts = ["text/x-python"]
 mime_extensions_for_txt_files = ["text/plain"]
 
+QUERY_BATCH_SIZE = 100
 MUTATION_BATCH_SIZE = 100
 THROTTLING_DELAY = 60 / 250
