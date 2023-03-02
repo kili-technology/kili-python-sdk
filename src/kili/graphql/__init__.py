@@ -120,12 +120,17 @@ class GraphQLQuery(ABC):
                 as a value of the 'where' key in the global payload
             options: The query options
         """
+        # we can get the total number of elements to query
         if isinstance(self.COUNT_QUERY, str):
             nb_rows_to_query = self.get_number_of_elements_to_query(where, options)
             disable_tqdm = options.disable_tqdm
+
+        # we don't have count methods but we know the total number of elements to query
         elif options.first is not None:
             nb_rows_to_query = options.first
             disable_tqdm = options.disable_tqdm
+
+        # we don't have count methods and we don't know the total number of elements to query
         else:
             nb_rows_to_query = None
             disable_tqdm = True
