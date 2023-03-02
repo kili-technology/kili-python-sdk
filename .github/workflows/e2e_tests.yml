@@ -187,7 +187,7 @@ jobs:
           elif [[ "${{ env.TEST_AGAINST }}" == "PROD" ]]; then
             echo "KILI_API_ENDPOINT=https://cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
           else
-            echo "KILI_API_ENDPOINT is not valid: ${{ env.TEST_AGAINST }}"
+            echo "TEST_AGAINST is not valid: ${{ env.TEST_AGAINST }}"
             exit 1
           fi
 
