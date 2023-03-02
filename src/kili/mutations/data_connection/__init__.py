@@ -80,7 +80,6 @@ class MutationsDataConnection:
     @typechecked
     def synchronize_cloud_storage_connection(
         self,
-        project_id: str,
         cloud_storage_connection_id: str,
         delete_extraneous_files: bool = False,
     ) -> Dict:
@@ -93,7 +92,6 @@ class MutationsDataConnection:
             cloud storage integration anymore but that are still in the project.
 
         Args:
-            project_id: ID of the project.
             cloud_storage_connection_id: ID of the cloud storage connection.
             delete_extraneous_files: If True, delete extraneous files.
 
