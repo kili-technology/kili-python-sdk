@@ -1,5 +1,4 @@
 """Issue queries."""
-
 from typing import Dict, Generator, Iterable, List, Optional, overload
 
 from typeguard import typechecked
@@ -26,16 +25,29 @@ class QueriesIssue:
 
     @overload
     def issues(
-        self, project_id: str, *, as_generator: Literal[True]
+        self,
+        project_id: str,
+        fields: List[str] = [
+            "id",
+            "createdAt",
+            "hasBeenSeen",
+            "issueNumber",
+            "status",
+            "type",
+        ],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        *,
+        as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
         ...
 
     @overload
-    def issues(self, project_id: str, *, as_generator: Literal[False] = False) -> List[Dict]:
-        ...
-
-    # pylint: disable=dangerous-default-value
-    @typechecked
     def issues(
         self,
         project_id: str,
@@ -50,6 +62,36 @@ class QueriesIssue:
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]:
+        ...
+
+    # pylint: disable=dangerous-default-value
+    @typechecked
+    def issues(
+        self,
+        project_id: str,
+        fields: List[str] = [
+            "id",
+            "createdAt",
+            "hasBeenSeen",
+            "issueNumber",
+            "status",
+            "type",
+            "assetId",
+        ],
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: bool = False,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
@@ -79,17 +121,34 @@ class QueriesIssue:
         Examples:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
-        where = IssueWhere(project_id=project_id)
+
+        if asset_id and asset_id_in:
+            raise ValueError(
+                "You cannot provide both `asset_id` and `asset_id_in` at the same time"
+            )
+        where = IssueWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_id_in=asset_id_in,
+            issue_type=issue_type,
+            status=status,
+        )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         issues_gen = IssueQuery(self.auth.client)(where, fields, options)
-
         if as_generator:
             return issues_gen
         return list(issues_gen)
 
     @typechecked
-    def count_issues(self, project_id: str) -> int:
+    def count_issues(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
+    ) -> int:
         """Count and return the number of issues with the given constraints.
 
         Args:
@@ -102,5 +161,15 @@ class QueriesIssue:
         Returns:
             The number of issues with the parameters provided
         """
-        where = IssueWhere(project_id=project_id)
+        if asset_id and asset_id_in:
+            raise ValueError(
+                "You cannot provide both `asset_id` and `asset_id_in` at the same time"
+            )
+        where = IssueWhere(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_id_in=asset_id_in,
+            issue_type=issue_type,
+            status=status,
+        )
         return IssueQuery(self.auth.client).count(where)
