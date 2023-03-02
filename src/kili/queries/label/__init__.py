@@ -13,7 +13,7 @@ from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import ProjectId
 
@@ -627,6 +627,7 @@ class QueriesLabel:
         disable_tqdm: bool = False,
         with_assets: bool = True,
         external_ids: Optional[List[str]] = None,
+        annotation_modifier: Optional[CocoAnnotationModifier] = None,
     ):
         """
         Export the project labels with the requested format into the requested output path.
@@ -644,6 +645,11 @@ class QueriesLabel:
             disable_tqdm: Disable the progress bar if True.
             with_assets: Download the assets in the export.
             external_ids: Optional list of the assets external IDs from which to export the labels.
+            annotation_modifier: For COCO export only: function that takes the COCO annotation, the
+                COCO image, and the Kili annotation, and should return an updated COCO annotation.
+                This can be used if you want to add a new attribute to the COCO annotation. For
+                example, you can add a method that computes if the annotation is a rectangle or not
+                and add it to the COCO annotation (see example).
 
         !!! warning
             Export is not allowed for projects connected to a cloud storage.
@@ -665,6 +671,22 @@ class QueriesLabel:
             kili = Kili()
             kili.export_labels("your_project_id", "export.zip", "yolo_v4")
             ```
+
+        !!! Example
+            ```
+            from kili.client import Kili
+            kili = Kili()
+
+            def is_rectangle(coco_annotation, coco_image, kili_annotation):
+                is_rectangle = ...
+                return {**coco_annotation, "attributes": {"is_rectangle": is_rectangle}}
+            kili.export_labels(
+                "your_project_id",
+                "export.zip",
+                "coco",
+                annotation_modifier = add_is_rectangle
+            )
+            ```
         """
         if external_ids is not None and asset_ids is None:
             id_map = infer_ids_from_external_ids(
@@ -685,6 +707,7 @@ class QueriesLabel:
                 disable_tqdm=disable_tqdm,
                 log_level="WARNING",
                 with_assets=with_assets,
+                annotation_modifier=annotation_modifier,
             )
         except NoCompatibleJobError as excp:
             print(str(excp))

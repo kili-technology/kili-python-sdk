@@ -15,7 +15,12 @@ from kili.authentication import KiliAuth
 from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
-from kili.services.export.types import ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+)
 from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
@@ -34,6 +39,7 @@ class ExportParams(NamedTuple):
     single_file: bool
     output_file: Path
     with_assets: bool
+    annotation_modifier: Optional[CocoAnnotationModifier]
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -62,6 +68,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.output_file = export_params.output_file
         self.with_assets: bool = export_params.with_assets
         self.export_root_folder: Path = Path()
+        self.annotation_modifier = export_params.annotation_modifier
 
         project_info = get_project(
             self.auth, self.project_id, ["jsonInterface", "inputType", "title"]

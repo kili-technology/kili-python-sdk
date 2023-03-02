@@ -15,7 +15,12 @@ from kili.services.export.format.voc import VocExporter
 from kili.services.export.format.yolo import YoloExporter
 from kili.services.export.logger import get_logger
 from kili.services.export.repository import SDKContentRepository
-from kili.services.export.types import ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+)
 from kili.services.project import get_project
 from kili.services.types import LogLevel, ProjectId
 
@@ -34,6 +39,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     disable_tqdm: bool,
     log_level: LogLevel,
     with_assets: bool,
+    annotation_modifier: Optional[CocoAnnotationModifier],
 ) -> None:
     """
     Export the selected assets into the required format, and save it into a file archive.
@@ -60,6 +66,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         single_file=single_file,
         output_file=Path(output_file),
         with_assets=with_assets,
+        annotation_modifier=annotation_modifier,
     )
 
     logger = get_logger(log_level)
