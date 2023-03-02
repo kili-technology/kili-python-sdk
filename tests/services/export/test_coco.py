@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pytest
 import requests
+from PIL import Image
 
 from kili.orm import Asset
 from kili.services.export.exceptions import NoCompatibleJobError
@@ -17,68 +18,38 @@ from kili.services.export.format.coco import (
 from kili.services.types import Job, JobName
 from kili.utils.tempfile import TemporaryDirectory
 
-
-def get_asset(content_path: Path, with_annotation: bool) -> Asset:
-    # without annotation means that: there is a label for the asset
-    # but there is no labeling data for the job.
-    # `annotations=[]` should not exist.
-    json_response = {"author": {"firstname": "Jean-Pierre", "lastname": "Dupont"}}
-    if with_annotation:
-        json_response = {
-            **json_response,
-            "JOB_0": {
-                "annotations": [
-                    {
-                        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-                        "jobName": "JOB_0",
-                        "mid": "2022040515434712-7532",
-                        "mlTask": "OBJECT_DETECTION",
-                        "boundingPoly": [
-                            {
-                                "normalizedVertices": [
-                                    {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                    },
-                                    {
-                                        "x": 0.5,
-                                        "y": 0.0,
-                                    },
-                                    {
-                                        "x": 0.0,
-                                        "y": 0.5,
-                                    },
-                                ]
-                            }
-                        ],
-                        "type": "semantic",
-                        "children": {},
-                    }
-                ]
-            },
-        }
-
-    return Asset(
-        {
-            "latestLabel": {"jsonResponse": json_response},
-            "externalId": "car_1",
-            "jsonContent": "",
-            "content": str(content_path),
-        }
-    )
+from .helpers import coco as helpers
 
 
 def test__get_coco_image_annotations():
     with TemporaryDirectory() as tmp_dir:
         job_name = "JOB_0"
         output_file = Path(tmp_dir) / job_name / "labels.json"
-        image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
-        r = requests.get(image_url, allow_redirects=True)
-        local_file_path = tmp_dir / Path("car_1.jpg")
-        local_file_path.open("wb").write(r.content)
+        local_file_path = tmp_dir / Path("image1.jpg")
+        image_width = 1920
+        image_height = 1080
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
         _convert_kili_semantic_to_coco(
             job_name=JobName(job_name),
-            assets=[get_asset(local_file_path, with_annotation=True)],
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=[
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.5,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 0.5,
+                        },
+                    ],
+                )
+            ],
             output_dir=Path(tmp_dir),
             job={
                 "mlTask": "OBJECT_DETECTION",
@@ -98,13 +69,14 @@ def test__get_coco_image_annotations():
             },
             title="Test project",
             project_input_type="IMAGE",
+            annotation_modifier=lambda x, _, _1: x,
         )
         with output_file.open("r", encoding="utf-8") as f:
             coco_annotation = json.loads(f.read())
 
             assert "Test project" in coco_annotation["info"]["description"]
             categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
-            assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
+            assert coco_annotation["images"][0]["file_name"] == "data/image1.jpg"
             assert coco_annotation["images"][0]["width"] == 1920
             assert coco_annotation["images"][0]["height"] == 1080
             assert coco_annotation["annotations"][0]["image_id"] == 0
@@ -125,17 +97,59 @@ def test__get_coco_image_annotations():
             )
 
 
-def test__get_coco_image_annotations_without_annotation():
+@pytest.mark.parametrize(
+    "name,normalized_vertices,expected_angle,expected_bounding_box",
+    [
+        (
+            "rotated bbox",
+            [
+                {"x": 0.29542394060228344, "y": 0.5619730837117777},
+                {"x": 0.36370176857458425, "y": 0.4036476855151382},
+                {"x": 0.4595066260060737, "y": 0.5342261578662051},
+                {"x": 0.3912287980337728, "y": 0.6925515560628448},
+            ],
+            37.47617956136133,
+            [698.3073956632018, 435.93950035634924, 231.7840874775929, 215.46126441579023],
+        ),
+        (
+            "horizontal bbox",
+            [
+                {"x": 0.57214895419755, "y": 0.8004988292446383},
+                {"x": 0.57214895419755, "y": 0.5027584456173183},
+                {"x": 0.6435613050929351, "y": 0.5027584456173183},
+                {"x": 0.6435613050929351, "y": 0.8004988292446383},
+            ],
+            0.0,
+            [1098.525992059296, 542.9791212667037, 137.1117137191393, 321.55961431750563],
+        ),
+    ],
+)
+def test__get_coco_image_annotations_with_label_modifier(
+    name, normalized_vertices, expected_angle, expected_bounding_box
+):
     with TemporaryDirectory() as tmp_dir:
         job_name = "JOB_0"
         output_file = Path(tmp_dir) / job_name / "labels.json"
-        image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
-        r = requests.get(image_url, allow_redirects=True, timeout=10)
-        local_file_path = tmp_dir / Path("car_1.jpg")
-        local_file_path.open("wb").write(r.content)
+
+        image_width = 1920
+        image_height = 1080
+        local_file_path = tmp_dir / Path("image1.jpg")
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
+
+        area = 2073600
+
+        expected_segmentation = [
+            a for p in normalized_vertices for a in [p["x"] * image_width, p["y"] * image_height]
+        ]
+
         _convert_kili_semantic_to_coco(
             job_name=JobName(job_name),
-            assets=[get_asset(local_file_path, with_annotation=False)],
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=normalized_vertices,
+                )
+            ],
             output_dir=Path(tmp_dir),
             job={
                 "mlTask": "OBJECT_DETECTION",
@@ -155,13 +169,85 @@ def test__get_coco_image_annotations_without_annotation():
             },
             title="Test project",
             project_input_type="IMAGE",
+            annotation_modifier=helpers.estimate_rotated_bb_from_kili_poly,
+        )
+
+        with output_file.open("r", encoding="utf-8") as f:
+            coco_annotation = json.loads(f.read())
+
+            #### DON'T DELETE - for debugging #####
+            # helpers.display_kili_and_coco_bbox(
+            # local_file_path, expected_segmentation, coco_annotation
+            # )
+            ##########
+
+            assert "Test project" in coco_annotation["info"]["description"]
+            categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
+            assert coco_annotation["images"][0]["file_name"] == "data/image1.jpg"
+            assert coco_annotation["images"][0]["width"] == image_width
+            assert coco_annotation["images"][0]["height"] == image_height
+            assert coco_annotation["annotations"][0]["image_id"] == 0
+            assert categories_by_id[coco_annotation["annotations"][0]["category_id"]] == "OBJECT_A"
+            assert coco_annotation["annotations"][0]["bbox"] == pytest.approx(expected_bounding_box)
+            assert coco_annotation["annotations"][0]["attributes"] == {"rotation": expected_angle}
+            assert coco_annotation["annotations"][0]["segmentation"][0] == pytest.approx(
+                expected_segmentation
+            )
+            assert coco_annotation["annotations"][0]["area"] == area
+
+            good_date = True
+            try:
+                datetime.strptime(coco_annotation["info"]["date_created"], "%Y-%m-%dT%H:%M:%S.%f")
+            except ValueError:
+                good_date = False
+            assert good_date, (
+                "The date is not in the right format: " + coco_annotation["info"]["date_created"]
+            )
+
+
+def test__get_coco_image_annotations_without_annotation():
+    with TemporaryDirectory() as tmp_dir:
+        job_name = "JOB_0"
+        output_file = Path(tmp_dir) / job_name / "labels.json"
+        local_file_path = tmp_dir / Path("image1.jpg")
+        image_width = 1920
+        image_height = 1080
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
+        _convert_kili_semantic_to_coco(
+            job_name=JobName(job_name),
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=None,
+                )
+            ],
+            output_dir=Path(tmp_dir),
+            job={
+                "mlTask": "OBJECT_DETECTION",
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"name": "Object A"},
+                        "OBJECT_B": {"name": "Object B"},
+                    }
+                },
+                "instruction": "",
+                "isChild": False,
+                "isNew": False,
+                "isVisible": True,
+                "models": {},
+                "required": True,
+                "tools": ["semantic"],
+            },
+            title="Test project",
+            project_input_type="IMAGE",
+            annotation_modifier=lambda x, _, _1: x,
         )
 
         with output_file.open("r", encoding="utf-8") as f:
             coco_annotation = json.loads(f.read())
 
             assert "Test project" in coco_annotation["info"]["description"]
-            assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
+            assert coco_annotation["images"][0]["file_name"] == "data/image1.jpg"
             assert coco_annotation["images"][0]["width"] == 1920
             assert coco_annotation["images"][0]["height"] == 1080
             assert len(coco_annotation["annotations"]) == 0
@@ -283,13 +369,14 @@ def test_coco_video_jsoncontent():
             asset_video_no_content_and_json_content["jsonContent"].append(filepath)
 
         with TemporaryDirectory() as tmp_dir:
-            labels_json, classes = _convert_kili_semantic_to_coco(
+            labels_json, _ = _convert_kili_semantic_to_coco(
                 job_name=JobName("JOB_0"),
                 assets=[Asset(asset_video_no_content_and_json_content)],
                 output_dir=Path(tmp_dir),
                 job=Job(**json_interface["jobs"]["JOB_0"]),
                 title="test",
                 project_input_type="VIDEO",
+                annotation_modifier=lambda x, _, _1: x,
             )
 
             assert len(labels_json["images"]) == 5

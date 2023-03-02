@@ -488,6 +488,7 @@ def test_export_service_layout(
                 "disable_tqdm": True,
                 "log_level": "INFO",
                 "with_assets": True,
+                "annotation_modifier": None,
             }
 
             default_kwargs.update(test_case["export_kwargs"])
@@ -613,6 +614,7 @@ def test_export_service_errors(
             "disable_tqdm": True,
             "log_level": "INFO",
             "with_assets": True,
+            "annotation_modifier": None,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
