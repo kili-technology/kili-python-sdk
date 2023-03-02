@@ -432,9 +432,6 @@ logs_json = json.loads(logs)
 print(json.dumps(logs_json, indent=4))
 ```
 
-    []
-
-
 ## Step 7: Manage the plugin
 
 You also have several other methods to manage your plugins.
