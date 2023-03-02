@@ -2,6 +2,10 @@
 GraphQL Queries of Issues
 """
 
+from typing import List, Optional
+
+from typing_extensions import Literal
+
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
@@ -13,7 +17,11 @@ class IssueWhere(BaseQueryWhere):
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        project_id: str,
+        project_id: Optional[str] = None,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[List[str]] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        status: Optional[Literal["OPEN", "SOLVED"]] = None,
     ):
         self.project_id = project_id
         self.asset_id = asset_id
