@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pytest
 import requests
+from PIL import Image
 
 from kili.orm import Asset
 from kili.services.export.exceptions import NoCompatibleJobError
@@ -24,10 +25,10 @@ def test__get_coco_image_annotations():
     with TemporaryDirectory() as tmp_dir:
         job_name = "JOB_0"
         output_file = Path(tmp_dir) / job_name / "labels.json"
-        image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
-        r = requests.get(image_url, allow_redirects=True, timeout=10)
-        local_file_path = tmp_dir / Path("car_1.jpg")
-        local_file_path.open("wb").write(r.content)
+        local_file_path = tmp_dir / Path("image1.jpg")
+        image_width = 1920
+        image_height = 1080
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
         _convert_kili_semantic_to_coco(
             job_name=JobName(job_name),
             assets=[
@@ -75,7 +76,7 @@ def test__get_coco_image_annotations():
 
             assert "Test project" in coco_annotation["info"]["description"]
             categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
-            assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
+            assert coco_annotation["images"][0]["file_name"] == "data/image1.jpg"
             assert coco_annotation["images"][0]["width"] == 1920
             assert coco_annotation["images"][0]["height"] == 1080
             assert coco_annotation["annotations"][0]["image_id"] == 0
@@ -129,13 +130,12 @@ def test__get_coco_image_annotations_with_label_modifier(
     with TemporaryDirectory() as tmp_dir:
         job_name = "JOB_0"
         output_file = Path(tmp_dir) / job_name / "labels.json"
-        image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
-        r = requests.get(image_url, allow_redirects=True, timeout=10)
-        local_file_path = tmp_dir / Path("car_1.jpg")
-        local_file_path.open("wb").write(r.content)
 
         image_width = 1920
         image_height = 1080
+        local_file_path = tmp_dir / Path("image1.jpg")
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
+
         area = 2073600
 
         expected_segmentation = [
@@ -183,7 +183,7 @@ def test__get_coco_image_annotations_with_label_modifier(
 
             assert "Test project" in coco_annotation["info"]["description"]
             categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
-            assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
+            assert coco_annotation["images"][0]["file_name"] == "data/image1.jpg"
             assert coco_annotation["images"][0]["width"] == image_width
             assert coco_annotation["images"][0]["height"] == image_height
             assert coco_annotation["annotations"][0]["image_id"] == 0
@@ -209,10 +209,10 @@ def test__get_coco_image_annotations_without_annotation():
     with TemporaryDirectory() as tmp_dir:
         job_name = "JOB_0"
         output_file = Path(tmp_dir) / job_name / "labels.json"
-        image_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
-        r = requests.get(image_url, allow_redirects=True, timeout=10)
-        local_file_path = tmp_dir / Path("car_1.jpg")
-        local_file_path.open("wb").write(r.content)
+        local_file_path = tmp_dir / Path("image1.jpg")
+        image_width = 1920
+        image_height = 1080
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
         _convert_kili_semantic_to_coco(
             job_name=JobName(job_name),
             assets=[
@@ -247,7 +247,7 @@ def test__get_coco_image_annotations_without_annotation():
             coco_annotation = json.loads(f.read())
 
             assert "Test project" in coco_annotation["info"]["description"]
-            assert coco_annotation["images"][0]["file_name"] == "data/car_1.jpg"
+            assert coco_annotation["images"][0]["file_name"] == "data/image1.jpg"
             assert coco_annotation["images"][0]["width"] == 1920
             assert coco_annotation["images"][0]["height"] == 1080
             assert len(coco_annotation["annotations"]) == 0
