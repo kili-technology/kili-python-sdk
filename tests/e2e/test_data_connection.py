@@ -94,7 +94,6 @@ def test_e2e_synchronize_data_connection(kili: Kili, src_project: Dict):
     assert nb_assets == 0, f"Expected no asset before sync. Got {nb_assets}"
 
     kili.synchronize_cloud_storage_connection(
-        project_id=project_id,
         cloud_storage_connection_id=data_connection_id,
         delete_extraneous_files=True,
     )
