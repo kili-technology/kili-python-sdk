@@ -1,7 +1,7 @@
 """
 Types used by the conversion service
 """
-from typing import NamedTuple, Tuple
+from typing import Callable, Dict, NamedTuple, Tuple
 
 from typing_extensions import Literal
 
@@ -21,3 +21,5 @@ class JobCategory(NamedTuple):
 
 
 YoloAnnotation = Tuple[int, float, float, float, float]
+
+CocoAnnotationModifier = Callable[[Dict, Dict, Dict], Dict]
