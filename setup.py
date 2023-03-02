@@ -23,7 +23,7 @@ install_requires = [
     "pydantic",
     "urllib3>=1.26",
     "ffmpeg-python",
-    "gql[requests]",
+    "gql[requests,websockets]",
 ]
 
 dev_extra = [
