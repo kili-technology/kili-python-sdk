@@ -1,5 +1,6 @@
 # several test modes:
 # - ALL: run all modes below (only useful for manual trigger)
+# - CUSTOM: choose git branch and endpoint (only useful for manual trigger)
 # - MASTER_STAGING: master branch against staging
 # - RELEASE_PREPROD: latest release branch against preprod
 # - MASTER_LTS: master branch against LTS
@@ -21,17 +22,33 @@ on:
         type: boolean
         default: true
       testMode:
-        description: "Test mode: ALL (run all modes), MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK_STAGING (test with first SDK of LTS cycle, against staging)"
+        description: "Test mode: ALL (run all modes), CUSTOM (specify branch and endpoint), MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK_STAGING (test with first SDK of LTS cycle, against staging)"
         required: true
         type: choice
         default: "MASTER_STAGING"
         options:
           - ALL
+          - CUSTOM
           - MASTER_STAGING
           - RELEASE_PREPROD
           - MASTER_LTS
           - PREV_RELEASE_TESTS_STAGING
           - LTS_CYCLE_FIRST_SDK_STAGING
+      customBranch:
+        description: "Custom branch to test a PR (only used if testMode is CUSTOM)"
+        required: false
+        type: string
+        default: ""
+      customEndpoint:
+        description: "Custom endpoint to test a PR (only used if testMode is CUSTOM)"
+        required: false
+        type: choice
+        default: "STAGING"
+        options:
+          - "STAGING"
+          - "PROD"
+          - "PREPROD"
+          - "LTS"
   push:
     branches:
       - "release/**"
@@ -106,6 +123,7 @@ jobs:
         shell: bash
         run: |
           if [[ ${{ env.TEST_MODE }} != "MASTER_STAGING" ]] && \
+             [[ ${{ env.TEST_MODE }} != "CUSTOM" ]] && \
              [[ ${{ env.TEST_MODE }} != "RELEASE_PREPROD" ]] && \
              [[ ${{ env.TEST_MODE }} != "MASTER_LTS" ]] && \
              [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_STAGING" ]] && \
@@ -134,28 +152,43 @@ jobs:
           if [[ "${{ env.TEST_MODE }}" == "MASTER_STAGING" ]]; then
             echo "REF=master" >> $GITHUB_ENV
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
-            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "RELEASE_PREPROD" ]]; then
             echo "REF=${{ env.LASTEST_RELEASE_BRANCH }}" >> $GITHUB_ENV
             echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
-            echo "KILI_API_ENDPOINT=https://preproduction.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "MASTER_LTS" ]]; then
             echo "REF=master" >> $GITHUB_ENV
             echo "TEST_AGAINST=LTS" >> $GITHUB_ENV
-            echo "KILI_API_ENDPOINT=https://lts.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_STAGING" ]]; then
             echo "REF=${{ env.LASTEST_RELEASE_BRANCH }}" >> $GITHUB_ENV
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
-            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
             echo "REF=${{ env.LTS_CYCLE_FIRST_SDK_VERSION }}" >> $GITHUB_ENV
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
-            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
 
+          elif [[ "${{ env.TEST_MODE }}" == "CUSTOM" ]]; then
+            echo "REF=${{ github.event.inputs.customBranch }}" >> $GITHUB_ENV
+            echo "TEST_AGAINST=${{ github.event.inputs.customEndpoint }}" >> $GITHUB_ENV
+
+          fi
+
+      - name: Set KILI_API_ENDPOINT
+        shell: bash
+        run: |
+          if [[ "${{ env.TEST_AGAINST }}" == "STAGING" ]]; then
+            echo "KILI_API_ENDPOINT=https://staging.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          elif [[ "${{ env.TEST_AGAINST }}" == "PREPROD" ]]; then
+            echo "KILI_API_ENDPOINT=https://preproduction.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          elif [[ "${{ env.TEST_AGAINST }}" == "LTS" ]]; then
+            echo "KILI_API_ENDPOINT=https://lts.cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          elif [[ "${{ env.TEST_AGAINST }}" == "PROD" ]]; then
+            echo "KILI_API_ENDPOINT=https://cloud.kili-technology.com/api/label/v2/graphql" >> $GITHUB_ENV
+          else
+            echo "KILI_API_ENDPOINT is not valid: ${{ env.TEST_AGAINST }}"
+            exit 1
           fi
 
       - name: Check REF is set
