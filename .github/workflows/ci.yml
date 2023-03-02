@@ -1,6 +1,17 @@
 name: CI
 on: [push]
+
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+          cache: "pip"
+      - uses: pre-commit/action@v3.0.0
+
   pylint:
     runs-on: ubuntu-latest
     name: Pylint test
@@ -21,6 +32,24 @@ jobs:
       - name: Analysing the code with pylint
         run: |
           pylint --rcfile=.pylintrc src/kili
+
+  pyright:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ["3.7", "3.11"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.version }}
+          cache: "pip"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Run pyright
+        run: pyright .
 
   unittest:
     timeout-minutes: 10
