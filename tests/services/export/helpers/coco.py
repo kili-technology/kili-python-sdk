@@ -23,23 +23,7 @@ def get_asset(
                         "jobName": "JOB_0",
                         "mid": "2022040515434712-7532",
                         "mlTask": "OBJECT_DETECTION",
-                        "boundingPoly": [
-                            {
-                                "normalizedVertices": with_annotation
-                                # {
-                                #     "x": 0.0,
-                                #     "y": 0.0,
-                                # },
-                                # {
-                                #     "x": 0.5,
-                                #     "y": 0.0,
-                                # },
-                                # {
-                                #     "x": 0.0,
-                                #     "y": 0.5,
-                                # },
-                            }
-                        ],
+                        "boundingPoly": [{"normalizedVertices": with_annotation}],
                         "type": "semantic",
                         "children": {},
                     }

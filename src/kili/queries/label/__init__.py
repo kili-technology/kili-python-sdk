@@ -649,7 +649,7 @@ class QueriesLabel:
                 COCO image, and the Kili annotation, and should return an updated COCO annotation.
                 This can be used if you want to add a new attribute to the COCO annotation. For
                 example, you can add a method that computes if the annotation is a rectangle or not
-                and add it to the COCO annotation (see example)
+                and add it to the COCO annotation (see example).
 
         !!! warning
             Export is not allowed for projects connected to a cloud storage.
