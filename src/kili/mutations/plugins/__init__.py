@@ -32,11 +32,13 @@ class MutationsPlugins:
         verbose: bool = True,
         **kwargs
     ):
-        # pylint: disable=line-too-long
         """Uploads a plugin.
 
         Args:
-            plugin_path : Path to your plugin. Either a folder containing a main.py (mandatory) and a requirements.txt (optional) or a .py file
+            plugin_path : Path to your plugin. Either:
+
+                - a folder containing a main.py (mandatory) and a requirements.txt (optional)
+                - a .py file
             plugin_name: name of your plugin, if not provided, it will be the name from your file
             verbose: If false, minimal logs are displayed
 
@@ -198,9 +200,10 @@ class MutationsPlugins:
         """Update a plugin with new code.
 
         Args:
-            plugin_path : Path to your plugin. Either:
-             - a folder containing a main.py (mandatory) and a requirements.txt (optional)
-             - a .py file
+            plugin_path: Path to your plugin. Either:
+
+                - a folder containing a main.py (mandatory) and a requirements.txt (optional)
+                - a .py file
             plugin_name: Name of the plugin
             verbose: If false, minimal logs are displayed
 
