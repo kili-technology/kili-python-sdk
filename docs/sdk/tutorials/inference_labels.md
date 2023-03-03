@@ -462,3 +462,10 @@ for label in labels:
 ## Conclusion
 
 Congratulations! You can now upload your own inference labels to your Kili project 🚀.
+
+## Cleanup
+
+
+```python
+kili.delete_project(project_id)
+```
