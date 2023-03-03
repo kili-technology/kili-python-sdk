@@ -311,6 +311,7 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
     modified_files = sorted(modified_files, key=lambda path: path.stem)  # sort before grouping
     groupby_iter = groupby(modified_files, key=lambda path: path.stem)  # group by filename
 
+    updated_markdown_tutorials = []
     for tutorial_name, group in groupby_iter:
         group = list(group)
 
@@ -349,7 +350,16 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         check_mkdocs_yml_up_to_date(md_filepath)
         check_notebook_tested(ipynb_filepath)
         check_colab_link_in_notebook(ipynb_filepath)
-        check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
+        try:
+            check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
+        except OutdatedMarkdownError:
+            updated_markdown_tutorials.append(tutorial_name)
+
+    if updated_markdown_tutorials:
+        raise OutdatedMarkdownError(
+            f"Markdown files for tutorials {updated_markdown_tutorials} have been updated. Please"
+            " run 'mkdocs serve' to check the result before committing."
+        )
 
 
 @click.group()

@@ -237,7 +237,7 @@ assets = kili.append_many_to_dataset(
 
 ## Cleanup
 
-To clean up, we need to simply remove the project that we created.
+We can remove the project that we created:
 
 
 ```python

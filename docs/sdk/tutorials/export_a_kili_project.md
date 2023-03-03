@@ -364,6 +364,10 @@ This will create an archive containing both:
  * The `data/` folder with all the assets
 
 
+## Cleanup
+
+We can remove the project that we created:
+
 ## Summary
 
 In this tutorial, we have seen several ways to export labels from a Kili project:

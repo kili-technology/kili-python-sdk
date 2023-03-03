@@ -247,8 +247,10 @@ plt.show()
 
 
 
+## Cleanup
+
+We can remove the project that we created:
+
 ## Conclusion
 
 You can now try uploading your own predictions using `kili.create_predictions()`!
-
-## Cleanup
