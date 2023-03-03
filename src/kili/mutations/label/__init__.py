@@ -69,7 +69,7 @@ class MutationsLabel:
         !!! warning "model name"
             The use of `model_name_array` is deprecated. Creating predictions from different
             models is not supported anymore. Please use `model_name` argument instead to
-            provide the predictions model name."
+            provide the predictions model name.
         """
         if json_response_array is None or len(json_response_array) == 0:
             raise ValueError(
