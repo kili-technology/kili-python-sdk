@@ -368,6 +368,11 @@ This will create an archive containing both:
 
 We can remove the project that we created:
 
+
+```python
+kili.delete_project(your_project_id);
+```
+
 ## Summary
 
 In this tutorial, we have seen several ways to export labels from a Kili project:
