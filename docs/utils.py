@@ -274,9 +274,9 @@ def check_colab_link_in_notebook(ipynb_filepath: Path):
     """Check if notebook has a colab link."""
     with open(ipynb_filepath, encoding="utf-8") as file:
         notebook_str = file.read()
-
+    # pylint: disable=line-too-long
     if (
-        "colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/"
+        f"https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/{ipynb_filepath.name}"
         not in notebook_str
     ):
         raise ColabLinkMissingError(f"Colab link not found in {ipynb_filepath.name}.")
