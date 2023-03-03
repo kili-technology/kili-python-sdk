@@ -11,8 +11,10 @@ from kili.services.plugins import (
     deactivate_plugin,
     delete_plugin,
 )
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsPlugins:
     """Set of Plugins mutations."""
 

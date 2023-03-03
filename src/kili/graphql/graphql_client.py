@@ -23,6 +23,7 @@ from graphql import DocumentNode, print_schema
 
 from kili import __version__
 from kili.exceptions import GraphQLError
+from kili.utils.logcontext import LogContext
 
 
 class GraphQLClientName(Enum):
@@ -137,8 +138,19 @@ class GraphQLClient:
             variables: the payload of the query
         """
         document = query if isinstance(query, DocumentNode) else gql(query)
+
         try:
-            result = self._gql_client.execute(document=document, variable_values=variables)
+            assert self._gql_transport.headers, "Transport headers must be defined"
+            result = self._gql_client.execute(
+                document=document,
+                variable_values=variables,
+                extra_args={
+                    "headers": {
+                        **self._gql_transport.headers,
+                        **LogContext(),
+                    }
+                },
+            )
         except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
             if isinstance(err, exceptions.TransportQueryError):
                 raise GraphQLError(error=err.errors) from err

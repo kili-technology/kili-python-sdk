@@ -11,6 +11,7 @@ from typeguard import typechecked
 
 from kili import services
 from kili.exceptions import NotFound
+from kili.utils.logcontext import for_all_methods, log_call
 
 from ...authentication import KiliAuth
 from ...helpers import format_result
@@ -27,6 +28,7 @@ from .queries import (
 )
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsProject:
     """Set of Project mutations."""
 
