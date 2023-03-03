@@ -19,7 +19,7 @@
         <link rel="next" href="../plugins_library/">
       
       <link rel="icon" href="../../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.113286f1.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.402914a4.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
@@ -49,6 +49,8 @@
       <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
       <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
     
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -379,6 +381,20 @@
     <li class="md-nav__item">
       <a href="../importing_video_assets/" class="md-nav__link">
         Importing video assets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_labels/" class="md-nav__link">
+        Importing inference labels
       </a>
     </li>
   
@@ -1105,7 +1121,7 @@ git+https://github.com/yzhao062/pyod.git</p>
 <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
 <pre><code>Plugin with name "Plugin bbox count" activated on project "cldlyo2bq61if0jn9efvn3soo"
 </code></pre>
@@ -1116,20 +1132,15 @@ git+https://github.com/yzhao062/pyod.git</p>
 <li>After the activation, you can start using your plugin right away.</li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="n">path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;main.py&quot;</span>
-<span class="n">plugin_name</span> <span class="o">=</span> <span class="s2">&quot;Plugin bbox count&quot;</span>
+<span class="n">plugin_name_file</span> <span class="o">=</span> <span class="s2">&quot;Plugin bbox count - file&quot;</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path_to_plugin</span><span class="p">),</span> <span class="n">plugin_name</span><span class="p">)</span>
+    <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path_to_plugin</span><span class="p">),</span> <span class="n">plugin_name_file</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 </code></pre></div>
-<pre><code>Hint: A plugin with this name already exist, if you want to override it you can use the command kili.update_plugin(plugin_path="plugin_folder/main.py", plugin_name="Plugin bbox count")
-error: "[pluginsError] An error occured handling your plugin -- This can be due to: 400: Bad Request: createPlugin: an entity Plugin already exists with value "Plugin bbox count" for field 'name' | trace : false"
-</code></pre>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name_file</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>Warning: A plugin with the name "Plugin bbox count" is already activated on the project with id "cldlyo2bq61if0jn9efvn3soo"
-</code></pre>
 <h2 id="step-5-plugin-in-action">Step 5: Plugin in action</h2>
 <p>Wait for the plugin to be successfully deployed.</p>
 <p>After that, you can test it by labelling in the Kili interface or just by uploading the following label.</p>
@@ -1268,8 +1279,6 @@ Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if
 <span class="n">logs_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">logs</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">logs_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 </code></pre></div>
-<pre><code>[]
-</code></pre>
 <h2 id="step-7-manage-the-plugin">Step 7: Manage the plugin</h2>
 <p>You also have several other methods to manage your plugins.</p>
 <p>Get the list of all uploaded plugins in your organization:</p>
@@ -1336,7 +1345,11 @@ Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.ce72ebac.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../../extra_javascript/katex.js"></script>
       
     
   </body>

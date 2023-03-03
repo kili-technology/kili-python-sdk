@@ -19,7 +19,7 @@
         <link rel="next" href="../project/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.113286f1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.402914a4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
@@ -49,6 +49,8 @@
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
       <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -377,6 +379,20 @@
     <li class="md-nav__item">
       <a href="../tutorials/importing_video_assets/" class="md-nav__link">
         Importing video assets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/inference_labels/" class="md-nav__link">
+        Importing inference labels
       </a>
     </li>
   
@@ -1089,7 +1105,7 @@
 <li>a single <code>python</code> file with everything inside</li>
 <li>a plugin module (a folder) containing multiple <code>python</code> files and a non mandatory <code>requirements.txt</code> file listing all the dependencies you need for you plugin.</li>
 </ul>
-<p>In the case of the module type plugin, at the root of the folder a file named <code>main.py</code> is strictly necessary, as it serves as the entrypoint of the plugin. In this <code>main.py</code> file, you can import what you need from other <code>python</code> files in the folder. The structure of the folder can be the following (the only constraint being the presence of the <code>main.py</code> file):
+<p>In the case of the module type plugin, at the root of the folder a file named <code>main.py</code> is strictly necessary, as it serves as the entrypoint of the plugin. In this <code>main.py</code> file, you can import what you need from other <code>python</code> files in the folder. The structure of the folder can be the following (the only constraint being the presence of the <code>main.py</code> file):</p>
 <div class="highlight"><pre><span></span><code>plugin_folder
 |__ main.py
 |__ other_file.py
@@ -1097,7 +1113,7 @@
 |
 |___helpers
     |__ helper.py
-</code></pre></div></p>
+</code></pre></div>
 <p>The plugin you are going to upload has to contain a <code>class PluginHandler(PluginCore)</code> (in the case of the module type plugin it has to be inside <code>main.py</code>) that implements two methods for the different types of events:</p>
 <ul>
 <li><code>on_submit</code></li>
@@ -1139,7 +1155,7 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run</p>
+<p>The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.</p>
 </div>
 <h2 id="model-for-plugins">Model for Plugins</h2>
 
@@ -2923,7 +2939,11 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+      <script src="../../assets/javascripts/bundle.ce72ebac.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../extra_javascript/katex.js"></script>
       
     
   </body>

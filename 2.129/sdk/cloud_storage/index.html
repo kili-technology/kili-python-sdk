@@ -19,7 +19,7 @@
         <link rel="next" href="../issue/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.113286f1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.402914a4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
@@ -49,6 +49,8 @@
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
       <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -389,6 +391,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../tutorials/inference_labels/" class="md-nav__link">
+        Importing inference labels
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../tutorials/set_up_workflows/" class="md-nav__link">
         Managing workflows
       </a>
@@ -601,6 +617,13 @@
           <li class="md-nav__item">
   <a href="#kili.mutations.data_connection.__init__.MutationsDataConnection.add_cloud_storage_connection" class="md-nav__link">
     add_cloud_storage_connection()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.mutations.data_connection.__init__.MutationsDataConnection.synchronize_cloud_storage_connection" class="md-nav__link">
+    synchronize_cloud_storage_connection()
   </a>
   
 </li>
@@ -892,6 +915,13 @@
           <li class="md-nav__item">
   <a href="#kili.mutations.data_connection.__init__.MutationsDataConnection.add_cloud_storage_connection" class="md-nav__link">
     add_cloud_storage_connection()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.mutations.data_connection.__init__.MutationsDataConnection.synchronize_cloud_storage_connection" class="md-nav__link">
+    synchronize_cloud_storage_connection()
   </a>
   
 </li>
@@ -1407,14 +1437,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">cloud_storage_connections</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;lastChecked&quot;</span><span class="p">,</span>
             <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isApplyingDataDifferences&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isChecking&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
         <span class="p">],</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -1427,14 +1458,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">cloud_storage_connections</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;lastChecked&quot;</span><span class="p">,</span>
             <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isApplyingDataDifferences&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isChecking&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
         <span class="p">],</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -1447,14 +1479,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">cloud_storage_connections</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;lastChecked&quot;</span><span class="p">,</span>
             <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isApplyingDataDifferences&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isChecking&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
         <span class="p">],</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -1466,8 +1499,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of cloud storage connections that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            project_id: ID of the project.</span>
+<span class="sd">            cloud_storage_connection_id: ID of the cloud storage connection.</span>
 <span class="sd">            cloud_storage_integration_id: ID of the cloud storage integration.</span>
+<span class="sd">            project_id: ID of the project.</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the cloud storage connections.</span>
 <span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.</span>
 <span class="sd">            first: Maximum number of cloud storage connections to return.</span>
@@ -1480,8 +1514,29 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.cloud_storage_connections(project_id=&quot;789465123&quot;)</span>
-<span class="sd">            [{&#39;id&#39;: &#39;123456789&#39;, &#39;lastChecked&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;isApplyingDataDifferences&#39;: False, &#39;isChecking&#39;: False}]</span>
+<span class="sd">            [{&#39;id&#39;: &#39;123456789&#39;, &#39;lastChecked&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">cloud_storage_integration_id</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;At least one of cloud_storage_connection_id, cloud_storage_integration_id or&quot;</span>
+                <span class="s2">&quot; project_id must be specified&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># call dataConnection resolver</span>
+        <span class="k">if</span> <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_connection</span> <span class="o">=</span> <span class="n">services</span><span class="o">.</span><span class="n">get_data_connection</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">fields</span>
+            <span class="p">)</span>
+            <span class="n">data_connection_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_connection</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">data_connection_list</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data_connection_list</span>
+
+        <span class="c1"># call dataConnections resolver</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">DataConnectionsWhere</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">data_integration_id</span><span class="o">=</span><span class="n">cloud_storage_integration_id</span>
         <span class="p">)</span>
@@ -1512,7 +1567,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
 
 
 <h3 class="doc doc-heading" id="kili.queries.data_connection.__init__.QueriesDataConnection.cloud_storage_connections">
-<code class="highlight language-python"><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;lastChecked&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">,</span> <span class="s1">&#39;isApplyingDataDifferences&#39;</span><span class="p">,</span> <span class="s1">&#39;isChecking&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;lastChecked&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">,</span> <span class="s1">&#39;projectId&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1533,9 +1588,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
   </thead>
   <tbody>
       <tr>
-        <td><code>project_id</code></td>
+        <td><code>cloud_storage_connection_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>ID of the project.</p></td>
+        <td><p>ID of the cloud storage connection.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1545,11 +1600,17 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
         <td><code>None</code></td>
       </tr>
       <tr>
+        <td><code>project_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>ID of the project.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
         <td><code>fields</code></td>
         <td><code>List[str]</code></td>
         <td><p>All the fields to request among the possible fields for the cloud storage connections.
 See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnection">the documentation</a> for all possible fields.</p></td>
-        <td><code>[&#39;id&#39;, &#39;lastChecked&#39;, &#39;numberOfAssets&#39;, &#39;isApplyingDataDifferences&#39;, &#39;isChecking&#39;]</code></td>
+        <td><code>[&#39;id&#39;, &#39;lastChecked&#39;, &#39;numberOfAssets&#39;, &#39;selectedFolders&#39;, &#39;projectId&#39;]</code></td>
       </tr>
       <tr>
         <td><code>first</code></td>
@@ -1594,7 +1655,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 </table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;789465123&quot;</span><span class="p">)</span>
-<span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;123456789&#39;</span><span class="p">,</span> <span class="s1">&#39;lastChecked&#39;</span><span class="p">:</span> <span class="s1">&#39;2023-02-21T14:49:35.606Z&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;isApplyingDataDifferences&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;isChecking&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}]</span>
+<span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;123456789&#39;</span><span class="p">,</span> <span class="s1">&#39;lastChecked&#39;</span><span class="p">:</span> <span class="s1">&#39;2023-02-21T14:49:35.606Z&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;folder1&#39;</span><span class="p">,</span> <span class="s1">&#39;folder2&#39;</span><span class="p">],</span> <span class="s1">&#39;projectId&#39;</span><span class="p">:</span> <span class="s1">&#39;789465123&#39;</span><span class="p">}]</span>
 </code></pre></div>
 
         <details class="quote">
@@ -1602,14 +1663,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">cloud_storage_connections</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;id&quot;</span><span class="p">,</span>
         <span class="s2">&quot;lastChecked&quot;</span><span class="p">,</span>
         <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;isApplyingDataDifferences&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;isChecking&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
     <span class="p">],</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -1621,8 +1683,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of cloud storage connections that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        project_id: ID of the project.</span>
+<span class="sd">        cloud_storage_connection_id: ID of the cloud storage connection.</span>
 <span class="sd">        cloud_storage_integration_id: ID of the cloud storage integration.</span>
+<span class="sd">        project_id: ID of the project.</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the cloud storage connections.</span>
 <span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.</span>
 <span class="sd">        first: Maximum number of cloud storage connections to return.</span>
@@ -1635,8 +1698,29 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.cloud_storage_connections(project_id=&quot;789465123&quot;)</span>
-<span class="sd">        [{&#39;id&#39;: &#39;123456789&#39;, &#39;lastChecked&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;isApplyingDataDifferences&#39;: False, &#39;isChecking&#39;: False}]</span>
+<span class="sd">        [{&#39;id&#39;: &#39;123456789&#39;, &#39;lastChecked&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="ow">and</span> <span class="n">cloud_storage_integration_id</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="ow">and</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;At least one of cloud_storage_connection_id, cloud_storage_integration_id or&quot;</span>
+            <span class="s2">&quot; project_id must be specified&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># call dataConnection resolver</span>
+    <span class="k">if</span> <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data_connection</span> <span class="o">=</span> <span class="n">services</span><span class="o">.</span><span class="n">get_data_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">fields</span>
+        <span class="p">)</span>
+        <span class="n">data_connection_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_connection</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">data_connection_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data_connection_list</span>
+
+    <span class="c1"># call dataConnections resolver</span>
     <span class="n">where</span> <span class="o">=</span> <span class="n">DataConnectionsWhere</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">data_integration_id</span><span class="o">=</span><span class="n">cloud_storage_integration_id</span>
     <span class="p">)</span>
@@ -1688,27 +1772,77 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">add_cloud_storage_connection</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">selected_folders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect a cloud storage to a project.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            project_id: ID of the project</span>
-<span class="sd">            cloud_storage_integration_id: ID of the cloud storage integration</span>
+<span class="sd">            project_id: ID of the project.</span>
+<span class="sd">            cloud_storage_integration_id: ID of the cloud storage integration.</span>
+<span class="sd">            selected_folders: List of folders of the data integration to connect to the project.</span>
+<span class="sd">                If not provided, all folders of the data integration will be connected.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the DataConnection ID.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">selected_folders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dataIntegrationId&quot;</span><span class="p">:</span> <span class="n">cloud_storage_integration_id</span><span class="p">}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="n">GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AddDataConnectionError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The data integration with id </span><span class="si">{</span><span class="n">cloud_storage_integration_id</span><span class="si">}</span><span class="s2"> is not supported&quot;</span>
+                    <span class="s2">&quot; in the SDK yet. Use the Kili app to create a data connection instead.&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+            <span class="n">selected_folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">folder</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
                 <span class="s2">&quot;integrationId&quot;</span><span class="p">:</span> <span class="n">cloud_storage_integration_id</span><span class="p">,</span>
                 <span class="s2">&quot;isChecking&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
                 <span class="s2">&quot;lastChecked&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;selectedFolders&quot;</span><span class="p">:</span> <span class="n">selected_folders</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ADD_PROJECT_DATA_CONNECTION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># We trigger data difference computation (same behavior as in the frontend)</span>
+        <span class="n">services</span><span class="o">.</span><span class="n">compute_differences</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span> <span class="nf">synchronize_cloud_storage_connection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">delete_extraneous_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize a cloud storage connection.</span>
+
+<span class="sd">        This method will compute differences between the cloud storage connection and the project</span>
+<span class="sd">            and then validate the differences.</span>
+
+<span class="sd">        If `delete_extraneous_files` is True, it will also delete files that are not in the</span>
+<span class="sd">            cloud storage integration anymore but that are still in the project.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cloud_storage_connection_id: ID of the cloud storage connection.</span>
+<span class="sd">            delete_extraneous_files: If True, delete extraneous files.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the DataConnection ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">services</span><span class="o">.</span><span class="n">synchronize_data_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span>
+        <span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -1729,7 +1863,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 
 
 <h3 class="doc doc-heading" id="kili.mutations.data_connection.__init__.MutationsDataConnection.add_cloud_storage_connection">
-<code class="highlight language-python"><span class="n">add_cloud_storage_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">add_cloud_storage_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">,</span> <span class="n">selected_folders</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1752,14 +1886,21 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
       <tr>
         <td><code>project_id</code></td>
         <td><code>str</code></td>
-        <td><p>ID of the project</p></td>
+        <td><p>ID of the project.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>cloud_storage_integration_id</code></td>
         <td><code>str</code></td>
-        <td><p>ID of the cloud storage integration</p></td>
+        <td><p>ID of the cloud storage integration.</p></td>
         <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>selected_folders</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>List of folders of the data integration to connect to the project.
+If not provided, all folders of the data integration will be connected.</p></td>
+        <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
@@ -1782,27 +1923,144 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
           <summary>Source code in <code>kili/mutations/data_connection/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">add_cloud_storage_connection</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">selected_folders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect a cloud storage to a project.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        project_id: ID of the project</span>
-<span class="sd">        cloud_storage_integration_id: ID of the cloud storage integration</span>
+<span class="sd">        project_id: ID of the project.</span>
+<span class="sd">        cloud_storage_integration_id: ID of the cloud storage integration.</span>
+<span class="sd">        selected_folders: List of folders of the data integration to connect to the project.</span>
+<span class="sd">            If not provided, all folders of the data integration will be connected.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the DataConnection ID.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">selected_folders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dataIntegrationId&quot;</span><span class="p">:</span> <span class="n">cloud_storage_integration_id</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="n">GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AddDataConnectionError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The data integration with id </span><span class="si">{</span><span class="n">cloud_storage_integration_id</span><span class="si">}</span><span class="s2"> is not supported&quot;</span>
+                <span class="s2">&quot; in the SDK yet. Use the Kili app to create a data connection instead.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">selected_folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">folder</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
             <span class="s2">&quot;integrationId&quot;</span><span class="p">:</span> <span class="n">cloud_storage_integration_id</span><span class="p">,</span>
             <span class="s2">&quot;isChecking&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s2">&quot;lastChecked&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;selectedFolders&quot;</span><span class="p">:</span> <span class="n">selected_folders</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ADD_PROJECT_DATA_CONNECTION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="c1"># We trigger data difference computation (same behavior as in the frontend)</span>
+    <span class="n">services</span><span class="o">.</span><span class="n">compute_differences</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="kili.mutations.data_connection.__init__.MutationsDataConnection.synchronize_cloud_storage_connection">
+<code class="highlight language-python"><span class="n">synchronize_cloud_storage_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Synchronize a cloud storage connection.</p>
+<p>This method will compute differences between the cloud storage connection and the project
+    and then validate the differences.</p>
+<p>If <code>delete_extraneous_files</code> is True, it will also delete files that are not in the
+    cloud storage integration anymore but that are still in the project.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>cloud_storage_connection_id</code></td>
+        <td><code>str</code></td>
+        <td><p>ID of the cloud storage connection.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>delete_extraneous_files</code></td>
+        <td><code>bool</code></td>
+        <td><p>If True, delete extraneous files.</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Dict</code></td>
+      <td><p>A dict with the DataConnection ID.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/mutations/data_connection/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
+<span class="k">def</span> <span class="nf">synchronize_cloud_storage_connection</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">delete_extraneous_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize a cloud storage connection.</span>
+
+<span class="sd">    This method will compute differences between the cloud storage connection and the project</span>
+<span class="sd">        and then validate the differences.</span>
+
+<span class="sd">    If `delete_extraneous_files` is True, it will also delete files that are not in the</span>
+<span class="sd">        cloud storage integration anymore but that are still in the project.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cloud_storage_connection_id: ID of the cloud storage connection.</span>
+<span class="sd">        delete_extraneous_files: If True, delete extraneous files.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the DataConnection ID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">services</span><span class="o">.</span><span class="n">synchronize_data_connection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1860,7 +2118,11 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+      <script src="../../assets/javascripts/bundle.ce72ebac.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../extra_javascript/katex.js"></script>
       
     
   </body>
