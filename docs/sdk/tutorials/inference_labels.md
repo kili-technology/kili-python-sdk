@@ -5,8 +5,7 @@
 
 In this tutorial, we will walk through the process of using Kili to evaluate the performance of a machine learning model in production.
 
-We will learn how to push such labels, and how to visualize the quality of those predicted labels.
-
+We will learn how to push model-generated labels to Kili and how to visualize their quality.
 
 
 ```python
@@ -35,7 +34,7 @@ kili = Kili(
 
 ### Agreement
 
-Let's say you have a trained machine learning model $m$, which can, given a data $x$, output a prediction (i.e., an inference label): $\hat{y} = m(x)$.
+Let's say you have a trained machine learning model $m$, which can, given data $x$, output a prediction (i.e., an inference label): $\hat{y} = m(x)$.
 
 What you will probably want to do is monitor the quality of such predictions, as the model evolves.
 Kili allows you to better monitor and iterate on your model, thanks to the concept of agreement.
@@ -43,8 +42,8 @@ An agreement is a quantitative measure of similarity between two different label
 In Kili, there are three main features derived from agreement:
 
 - [**Consensus**](https://docs.kili-technology.com/docs/consensus-overview), which is the agreement between two labelers.
-- [**Honeypot**](https://docs.kili-technology.com/docs/honeypot-overview) which is the agreement between a "super human annotator" and a labeler.
-- **Inference**, which is the agreement between a machine learning inference label and a human.
+- [**Honeypot**](https://docs.kili-technology.com/docs/honeypot-overview), which is the agreement between a "super human annotator" and a labeler.
+- **Inference**, which is the agreement between a model-generated label and a human.
 
 Those number can be monitored from the [queue page](https://docs.kili-technology.com/docs/queue-page) or the [analytics page](https://docs.kili-technology.com/docs/analytics-page). You can find how the agreement is computed [here](https://docs.kili-technology.com/docs/calculation-rules-for-quality-metrics).
 
@@ -52,16 +51,25 @@ In this tutorial, we will put an emphasis on **Inference**.
 
 ### Use cases
 
-We identify two main use cases for the use of **inference** labels:
+We identify two main use cases for the use of **inference** labels.
 
-1. **You have a model in production**. When it receives assets, it automatically feeds a Kili project with both the asset and the predicted label. **You also have human workforce, whose job is to monitor the quality of the model**. They regularly manually label some data seen by the model.
-    - When a human submits a label, the inference score for that label is automatically computed using the predicted label.
-    - Low inference scores can indicate either a model performing badly on some kind of data, or a disagreement between humans and the model. This can help you to:
-        - Detect data drift
-        - Identify data on which the model needs improvement
-2. **You used Kili to label data**, and you have **the first iteration of your model**. You can use **a part of the dataset as testing data**, and quickly get **test scores**. Of course, you could use your own metrics (rather than our own definition of agreement), but using Kili allows you to quickly filter and indentify the assets where your model is most different from the ground truth.
-    - When you push an inference label on an asset, the inference score is automatically computed for all most recent labels of the different people who labeled this asset.
-    - You can filter on low inference score, to understand why your model is failing, and how to fix it (getting more data, splitting or merging categories, etc.)
+The first use case is when you have a model in production.
+When it receives assets, it automatically feeds a Kili project with both the asset and the predicted label.
+You also have human workforce whose job is to monitor the quality of the model.
+They manually label a portion of the data after it had been pre-labeled by the model.
+When a human submits a label, the inference score (model vs. human) for that label is automatically computed.
+Low inference scores can indicate either a model performing badly on some kind of data, or a disagreement between humans and the model.
+This can help you to:
+
+- Detect data drift.
+- Identify data on which the model needs improvement.
+
+The second use case is when you used Kili to label data and you have the first iteration of your model.
+You can now use a part of the labeled dataset as testing data, and quickly get test scores.
+Of course, you could use your own metrics (rather than our own definition of agreement), but using Kili lets you quickly filter and indentify the assets where your model differs the most from the ground truth.
+
+- When you push an inference-type label to an asset, the inference score is automatically computed for the most recent label added to this asset.
+- You can filter on low inference score, to understand why your model is failing, and how to fix it (getting more data, splitting or merging categories, etc.).
 
 Using Kili for monitoring or developing your model allows you to quickly iterate on the data used to train your model, allowing to get a better model faster.
 
