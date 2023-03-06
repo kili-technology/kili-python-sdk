@@ -38,7 +38,7 @@ def process_notebook(notebook_filename):
         "recipes/pixel_level_masks.ipynb",
         "recipes/plugins_example.ipynb",
         "recipes/set_up_workflows.ipynb",
-        "recipes/webhooks.ipynb",
+        "recipes/webhooks_example.ipynb",
     ],
 )
 def test_all_recipes(notebook_file):
