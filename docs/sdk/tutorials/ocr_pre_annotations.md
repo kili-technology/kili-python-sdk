@@ -5,7 +5,7 @@
 
 In this tutorial we will see how to import OCR pre-annotations in Kili using [Google vision API](https://cloud.google.com/vision/docs/ocr).
 
-Pre-annotating your data will allow you to gain a significant time when performing OCR using Kili.
+Pre-annotating your data with OCR will allow you to gain significant time when annotating transcriptions in Kili.
 
 The data we use comes from [The Street View Text Dataset](http://www.iapr-tc11.org/mediawiki/index.php?title=The_Street_View_Text_Dataset).
 
@@ -15,8 +15,7 @@ You can obtain the image for this tutorial on this [link](https://drive.google.c
 
 <img src="https://drive.google.com/uc?export=view&id=1ceNwCgLwIyyjPwU42xIoz6mMT3enLewW" width="800">
 
-We will use the Google to perform an optical caracter recognition of the different texts in the image.
-
+We will use the Google Vision API to perform Optical Character Recognition on the different texts in the image.
 
 To use the google API, we need to install some packages:
 
@@ -39,9 +38,9 @@ import wget
 import getpass
 ```
 
-We can now create the interface we will be using in our project.
+We can now create the project ontology (json interface).
 
-For OCR, the interface to use is a classification job with nested transcriptions for each category:
+For a transcription task on images, the ontology is a classification job with nested transcriptions for each category:
 
 
 ```python
@@ -77,7 +76,7 @@ json_interface = {
 }
 ```
 
-Let's authenticate to Kili and create our project:
+Let's authenticate in Kili and create our project:
 
 
 ```python
@@ -100,9 +99,9 @@ project_id = project["id"]
 
 ## Creating OCR annotations using Google Vision API
 
-We will now see how to perform OCR on our image using Google Vision API.
+We will now see how to perform OCR preannotation on our image using Google Vision API.
 
-First you will need to create an account on https://cloud.google.com:
+First you will need to create an account on [Google Cloud](https://cloud.google.com):
 
   - [create a project](https://console.cloud.google.com/projectcreate) (or use an existing one)
   - then go to the [Cloud Vision API page](https://console.cloud.google.com/apis/library/vision.googleapis.com)
@@ -133,7 +132,7 @@ GOOGLE_KEY = json.loads(google_key_str)
 assert GOOGLE_KEY
 ```
 
-We can now start to add OCR annotations to the asset metadata:
+We can now start to add OCR pre-annotations to the asset metadata:
 
 
 ```python
