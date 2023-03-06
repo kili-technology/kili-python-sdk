@@ -45,7 +45,7 @@ In Kili, there are three main features derived from agreement:
 - [**Honeypot**](https://docs.kili-technology.com/docs/honeypot-overview), which is the agreement between a "super human annotator" and a labeler.
 - **Inference**, which is the agreement between a model-generated label and a human.
 
-Those number can be monitored from the [queue page](https://docs.kili-technology.com/docs/queue-page) or the [analytics page](https://docs.kili-technology.com/docs/analytics-page). You can find how the agreement is computed [here](https://docs.kili-technology.com/docs/calculation-rules-for-quality-metrics).
+Those numbers can be monitored from the [queue page](https://docs.kili-technology.com/docs/queue-page) or the [analytics page](https://docs.kili-technology.com/docs/analytics-page). You can find how the agreement is computed [here](https://docs.kili-technology.com/docs/calculation-rules-for-quality-metrics).
 
 In this tutorial, we will put an emphasis on **Inference**.
 
