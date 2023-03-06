@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Callable, Dict, List
 
 from kili import __version__
-from kili.graphql.graphql_client import GraphQLClientName
+from kili.graphql.clientnames import GraphQLClientName
 
 
 class Singleton(type):

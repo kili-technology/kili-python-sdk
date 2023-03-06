@@ -8,7 +8,6 @@ import string
 import threading
 import time
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
@@ -23,14 +22,8 @@ from graphql import DocumentNode, print_schema
 
 from kili import __version__
 from kili.exceptions import GraphQLError
+from kili.graphql.clientnames import GraphQLClientName
 from kili.utils.logcontext import LogContext
-
-
-class GraphQLClientName(Enum):
-    """GraphQL client name."""
-
-    SDK = "python-sdk"
-    CLI = "python-cli"
 
 
 # pylint: disable=too-few-public-methods
