@@ -71,7 +71,7 @@ Of course, you could use your own metrics (rather than our own definition of agr
 - When you push an inference-type label to an asset, the inference score is automatically computed for the most recent label added to this asset.
 - You can filter on low inference score, to understand why your model is failing, and how to fix it (getting more data, splitting or merging categories, etc.).
 
-Using Kili for monitoring or developing your model allows you to quickly iterate on the data used to train your model, allowing to get a better model faster.
+With Kili, you can quickly iterate on the data used to train your model, to get a better model faster.
 
 ## In practice
 
@@ -284,7 +284,7 @@ for label in labels:
     The model predicted BLACK but the human predicted RED for asset with id cleoicx8s0003h8vzbiaawl1j.
 
 
-You can also find the assets with most disagreement directly from the interface with the filter "Human/Model IoU".
+You can also find the assets with most disagreement directly from the interface with the "Human/Model IoU" filter.
 
 Low IoU indicates low agreement:
 
