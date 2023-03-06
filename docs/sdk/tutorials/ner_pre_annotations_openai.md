@@ -14,7 +14,7 @@ Open AI Davinci....  zero-shot ...
 
 
 ```python
-!pip install kili datasets evaluate ipywidgets
+!pip install kili datasets evaluate ipywidgets openai
 ```
 
 
@@ -25,8 +25,10 @@ import json
 import requests
 import uuid
 import numpy as np
+import openai
 from pprint import pprint
 from tqdm import tqdm
+from typing import List
 ```
 
 ## Data preparation
@@ -41,13 +43,15 @@ from datasets import load_dataset
 
 
 ```python
-N = 10
+MAX_DATAPOINTS = 5
+MIN_NB_TOKENS_PER_SENTENCE = 9
 ```
 
 
 ```python
 dataset = load_dataset("conll2003", split="train").filter(
-    lambda datapoint: int(datapoint["id"]) < N
+    lambda datapoint: int(datapoint["id"]) < MAX_DATAPOINTS
+    and len(datapoint["tokens"]) >= MIN_NB_TOKENS_PER_SENTENCE
 )
 ```
 
@@ -65,7 +69,7 @@ print(dataset)
 
     Dataset({
         features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
-        num_rows: 10
+        num_rows: 3
     })
 
 
@@ -118,60 +122,151 @@ During the training of a Named Entity Recognition model, the entity tags are typ
 
 
 ```python
-class ChatGptClient:
-    def __init__(self, authorization, cookie):
-        self._headers = {
-            "Authorization": authorization,
-            "Content-Type": "application/json",
-            "Cookie": cookie,
-            "User-Agent": (
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like"
-                " Gecko) Chrome/110.0.0.0 Safari/537.36"
-            ),
-        }
-        self._conversation_id = None
-        self._parent_message_id = None
+if "OPENAI_API_KEY" in os.environ:
+    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+else:
+    OPENAI_API_KEY = getpass.getpass("Please enter your OpenAI API key: ")
+```
 
-    def ask(self, text):
-        """
-        Send the prompt to ChatGPT.
-        """
-        question_data = {
-            "action": "next",
-            "messages": [
-                {
-                    "id": str(uuid.uuid4()),
-                    "author": {"role": "user"},
-                    "role": "user",
-                    "content": {
-                        "content_type": "text",
-                        "parts": [text],
-                    },
-                }
-            ],
-            "parent_message_id": str(uuid.uuid4())
-            if self._parent_message_id is None
-            else self._parent_message_id,
-            "model": "text-davinci-003",
-        }
-        self._parent_message_id = question_data["messages"][0]["id"]
-        if self._conversation_id is not None:
-            question_data["conversation_id"] = self._conversation_id
-        url = "https://chat.openai.com/backend-api/conversation"
-        response = requests.post(url=url, headers=self._headers, json=question_data)
-        response_parts = [
-            d
-            for d in response.content.decode("utf-8").split("\n")
-            if '"content": {"content_type": "text", "parts": [' in d
-        ]
-        response_last_part = response_parts[-1][6:]
-        response_data = json.loads(response_last_part)
-        self._conversation_id = response_data["conversation_id"]
-        return response_data["message"]["content"]["parts"][0]
 
-    def reset_conversation(self):
-        self._conversation_id = None
-        self._parent_message_id = None
+```python
+openai.api_key = OPENAI_API_KEY
+```
+
+What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+
+The maximum number of tokens to generate in the completion. The token count of your prompt plus max_tokens cannot exceed the model's context length. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
+
+promt: string or array!
+
+
+```python
+def ask_openai(prompt: str) -> str:
+    openai_query_params = {"model": "text-davinci-003", "temperature": 0, "max_tokens": 1024}
+    response = openai.Completion.create(
+        prompt=prompt,
+        **openai_query_params,
+    )
+    return response["choices"][0]["text"]
+```
+
+
+```python
+print(ask_openai("Hello, are you here?"))
+```
+
+
+
+    Yes, I am here. How can I help you?
+
+
+## Prompt creation
+
+
+```python
+base_prompt = """In the sentence below, give me the list of:
+- organisation names
+- for location names
+- people names
+- miscellaneous entity names.
+Format the output in json with the following keys:
+- ORG for organisation names
+- LOC for location names
+- PER for people names
+- MISC for miscellaneous.
+Sentence below:
+"""
+```
+
+
+```python
+test_sentence = (
+    "Elon Musk is the CEO of Tesla and SpaceX. He was born in South Africa and now lives in the"
+    " USA. He is one of the founders of OpenAI."
+)
+```
+
+
+```python
+print(ask_openai(base_prompt + test_sentence))
+```
+
+
+
+    {
+      "ORG": ["Tesla", "SpaceX", "OpenAI"],
+      "LOC": ["South Africa", "USA"],
+      "PER": ["Elon Musk"],
+      "MISC": []
+    }
+
+
+## Create the pre-annotations
+
+
+```python
+openai_answers = []
+for datapoint in dataset:
+    sentence = " ".join(datapoint["tokens"])
+    answer = ask_openai(base_prompt + sentence)
+    answer_json = json.loads(answer)
+    openai_answers.append(answer_json)
+```
+
+
+```python
+openai_answers
+```
+
+
+
+
+    [{'ORG': ['EU', 'German'], 'LOC': ['British'], 'PER': [], 'MISC': ['lamb']},
+     {'ORG': ['European Commission'],
+      'LOC': ['Germany', 'Britain'],
+      'PER': [],
+      'MISC': ['mad cow disease']},
+     {'ORG': ['European Union', 'Britain'],
+      'LOC': ['Germany'],
+      'PER': ['Werner Zwingmann'],
+      'MISC': []}]
+
+
+
+
+## Import to Kili
+Import both assets and predictions and show a few screenshots: a good example and a bad example.
+
+
+```python
+if "KILI_API_KEY" in os.environ:
+    KILI_API_KEY = os.environ["KILI_API_KEY"]
+else:
+    KILI_API_KEY = getpass.getpass("Please enter your Kili API key: ")
+```
+
+
+```python
+from kili.client import Kili
+```
+
+
+```python
+kili = Kili(
+    api_key=KILI_API_KEY,  # no need to pass the API_KEY if it is already in your environment variables
+    # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
+    # the line above can be uncommented and changed if you are working with an on-premise version of Kili
+)
+```
+
+    /Users/jonasm/kili-python-sdk/src/kili/authentication.py:44: UserWarning: Kili Python SDK version should match with Kili API version.
+    Please install version: "pip install kili==2.130.0"
+      self.endpoint_kili_version = self.check_versions_match()
+
+
+
+```python
+
 ```
 
 
@@ -215,55 +310,6 @@ accuracy_metric = evaluate.load("accuracy")
 
 model: choose your model: https://platform.openai.com/docs/models/overview
 
-What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-
-The maximum number of tokens to generate in the completion. The token count of your prompt plus max_tokens cannot exceed the model's context length. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-
-promt: string or array!
-
-
-```python
-response = openai.Completion.create(
-    model="text-davinci-003", prompt="Say 'this is a test'", temperature=0, max_tokens=100
-)
-```
-
-
-```python
-print(response)
-```
-
-
-## Import to Kili
-Import both assets and predictions and show a few screenshots: a good example and a bad example.
-
-
-```python
-if "KILI_API_KEY" in os.environ:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
-else:
-    KILI_API_KEY = getpass.getpass("Please enter your Kili API key: ")
-```
-
-
-```python
-from kili.client import Kili
-```
-
-
-```python
-kili = Kili(
-    api_key=KILI_API_KEY,  # no need to pass the API_KEY if it is already in your environment variables
-    # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
-    # the line above can be uncommented and changed if you are working with an on-premise version of Kili
-)
-```
-
-    /Users/jonasm/kili-python-sdk/src/kili/authentication.py:44: UserWarning: Kili Python SDK version should match with Kili API version.
-    Please install version: "pip install kili==2.130.0"
-      self.endpoint_kili_version = self.check_versions_match()
-
-
 
 ```python
 
@@ -273,78 +319,3 @@ kili = Kili(
 ```python
 
 ```
-
-
-
-
-class LabelGPT:
-    def __init__(self, chatgpt, instructions):
-        self._chatgpt = chatgpt
-        self._instructions = instructions
-
-    def __get_tokens_index(self, text_tokens, entity_tokens):
-        index = list(range(len(text_tokens)))
-        for i, token in enumerate(entity_tokens):
-            token_index = list(np.where(np.array(text_tokens) == token)[0] - i)
-            index = list(set(index) & set(token_index))
-        return index
-
-    def ask_iob(self, tokens):
-        text = " ".join(tokens)
-        question = f"{self._instructions}\n\n{text}"
-        response = self._chatgpt.ask(question)
-        self._chatgpt.reset_conversation()
-        ner_tags = ["O"] * len(tokens)
-        try:
-            response_json = json.loads(response)
-        except:
-            return ner_tags
-        for key, values in response_json.items():
-            for value in values:
-                entity_tokens = value.split(" ")
-                entity_index = self.__get_tokens_index(
-                    text_tokens=tokens,
-                    entity_tokens=entity_tokens,
-                )
-                for i_1 in entity_index:
-                    for i_2, token in enumerate(entity_tokens):
-                        prefix = "B" if i_2 == 0 else "I"
-                        ner_tags[i_1 + i_2] = prefix + "-" + key
-        return ner_tags
-
-
-def main():
-    authorization = "Bearer eyJhbGciOiJSUzI1NiIsIn..."
-    cookie = "__Host-next-auth.csrf-token=45d80225..."
-    chatgpt = ChatGPT(authorization, cookie)
-    instructions = """Give, for the following text, the list of:
-- organisation names
-- for location names
-- people names
-- miscellaneous entity names.
-The output should be formated as a json with the following keys:
-- ORG for organisation names
-- LOC for location names
-- PER for people names
-- MISC for miscellaneous.
-"""
-    dataset = load_dataset("conll2003", split="train").filter(
-        lambda x: int(x["id"]) < 10
-    )
-    labelgpt = LabelGPT(chatgpt, instructions)
-    accuracy_metric = evaluate.load("accuracy")
-    references = []
-    predictions = []
-    for d in tqdm(dataset):
-        tokens = d["tokens"]
-        iob = labelgpt.ask_iob(tokens)
-        pprint(list(zip(tokens, iob)))
-        predictions += [NER_TAGS_ONTOLOGY.get(e, 0) for e in iob]
-        references += d["ner_tags"]
-    assert len(predictions) == len(references)
-    results = accuracy_metric.compute(references=references, predictions=predictions)
-    print(results)
-
-
-if __name__ == "__main__":
-    main()
