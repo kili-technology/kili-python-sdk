@@ -13,14 +13,14 @@ from kili.graphql.clientnames import GraphQLClientName
 
 class Singleton(type):
     """
-    Utitility meta-class to guarantee single instance
+    Utility meta-class to guarantee single instance
     """
 
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
 
@@ -63,7 +63,6 @@ def log_call(func: Callable):
         context["kili-client-method-name"] = func.__name__
         context["kili-client-call-time"] = datetime.utcnow().isoformat()
         context["kili-client-call-uuid"] = str(uuid.uuid4())
-        print(f"Logging called {context}")
         return func(*args, **kwargs)
 
     return wrapper
