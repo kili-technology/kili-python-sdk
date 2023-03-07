@@ -30,7 +30,6 @@ class QueriesIssue:
         fields: List[str] = [
             "id",
             "createdAt",
-            "hasBeenSeen",
             "issueNumber",
             "status",
             "type",
@@ -54,7 +53,6 @@ class QueriesIssue:
         fields: List[str] = [
             "id",
             "createdAt",
-            "hasBeenSeen",
             "issueNumber",
             "status",
             "type",
@@ -78,7 +76,6 @@ class QueriesIssue:
         fields: List[str] = [
             "id",
             "createdAt",
-            "hasBeenSeen",
             "issueNumber",
             "status",
             "type",
