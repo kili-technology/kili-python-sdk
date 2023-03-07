@@ -107,6 +107,14 @@ dataset = dataset.add_column("sentence", sentence_column)
 
 
 ```python
+print(dataset[0])
+```
+
+    {'id': '0', 'tokens': ['EU', 'rejects', 'German', 'call', 'to', 'boycott', 'British', 'lamb', '.'], 'pos_tags': [22, 42, 16, 21, 35, 37, 16, 21, 7], 'chunk_tags': [11, 21, 11, 12, 21, 22, 11, 12, 0], 'ner_tags': [3, 0, 7, 0, 0, 0, 7, 0, 0], 'sentence': 'EU rejects German call to boycott British lamb.'}
+
+
+
+```python
 NER_TAGS_ONTOLOGY = {
     "O": 0,
     "B-PERSON": 1,
@@ -249,11 +257,27 @@ for datapoint in dataset:
 
 
 ```python
-print(openai_answers)
+print(openai_answers[:3])
 ```
 
-    [{'ORGANIZATION': ['EU', 'German'], 'LOCATION': ['British'], 'PERSON': [], 'MISCELLANEOUS': ['lamb']}, {'ORGANIZATION': ['European Commission'], 'LOCATION': ['German', 'British'], 'PERSON': [], 'MISCELLANEOUS': ['mad cow disease']}, {'ORGANIZATION': ["European Union's veterinary committee"], 'LOCATION': ['Germany', 'Britain'], 'PERSON': ['Werner Zwingmann'], 'MISCELLANEOUS': []}, {'ORGANIZATION': ['Commission'], 'LOCATION': [], 'PERSON': ['Nikolaus van der Pas'], 'MISCELLANEOUS': []}, {'ORGANIZATION': ['European Union'], 'LOCATION': [], 'PERSON': [], 'MISCELLANEOUS': []}, {'ORGANIZATION': ['EU', 'Commissioner'], 'LOCATION': ['EU'], 'PERSON': ['Franz Fischler'], 'MISCELLANEOUS': ['sheep brains', 'spleens', 'spinal cords']}, {'ORGANIZATION': ['EU'], 'LOCATION': ['Britain', 'France'], 'PERSON': ['Fischler'], 'MISCELLANEOUS': ['Bovine Spongiform Encephalopathy (BSE)', 'mad cow disease']}, {'ORGANIZATION': ['EU', 'veterinary committee'], 'LOCATION': [], 'PERSON': [], 'MISCELLANEOUS': ['mational animal health officials']}, {'ORGANIZATION': ['EU'], 'LOCATION': ['Spanish'], 'PERSON': ['Loyola de Palacio', 'Fischler'], 'MISCELLANEOUS': []}, {'ORGANIZATION': ["Fischler's proposal"], 'LOCATION': ['France', 'Britain'], 'PERSON': [], 'MISCELLANEOUS': []}, {'ORGANIZATION': ['EU'], 'LOCATION': [], 'PERSON': [], 'MISCELLANEOUS': ['veterinary', 'multidisciplinary committees', 'issue', 'senior veterinary officials']}, {'ORGANIZATION': ['BSE'], 'LOCATION': [], 'PERSON': [], 'MISCELLANEOUS': ['scrapie', 'animal waste']}, {'ORGANIZATION': ['British', 'German'], 'LOCATION': ['Europe'], 'PERSON': [], 'MISCELLANEOUS': ['sheep', 'lamb']}, {'ORGANIZATION': "Welsh National Farmers' Union (NFU)", 'LOCATION': 'Germany', 'PERSON': 'John Lloyd Jones', 'MISCELLANEOUS': 'BBC radio'}, {'ORGANIZATION': ['Bonn'], 'LOCATION': ['British'], 'PERSON': [], 'MISCELLANEOUS': ['mad cow disease']}, {'ORGANIZATION': ['Germany', 'Britain'], 'LOCATION': ['Germany', 'Britain'], 'PERSON': [], 'MISCELLANEOUS': ['47,600 sheep', 'half of total imports']}, {'ORGANIZATION': ['British'], 'LOCATION': [], 'PERSON': [], 'MISCELLANEOUS': ['mutton']}, {'ORGANIZATION': [], 'LOCATION': [], 'PERSON': ['Hendrix'], 'MISCELLANEOUS': ['$ 17,000']}, {'ORGANIZATION': ['U.S.'], 'LOCATION': ['Thursday'], 'PERSON': ['Jimi Hendrix'], 'MISCELLANEOUS': ['almost $ 17,000', "late musician's favourite possessions"]}, {'ORGANIZATION': ['Florida restaurant'], 'LOCATION': ['Florida', 'London'], 'PERSON': ['Hendrix'], 'MISCELLANEOUS': ["Ai n't no telling", 'late 1966']}]
+    [{'ORGANIZATION': ['EU', 'German'], 'LOCATION': ['British'], 'PERSON': [], 'MISCELLANEOUS': ['lamb']}, {'ORGANIZATION': ['European Commission'], 'LOCATION': ['German', 'British'], 'PERSON': [], 'MISCELLANEOUS': ['mad cow disease']}, {'ORGANIZATION': ["European Union's veterinary committee"], 'LOCATION': ['Germany', 'Britain'], 'PERSON': ['Werner Zwingmann'], 'MISCELLANEOUS': []}]
 
+
+We sanitize the json by making sure that the values are of type list:
+
+
+```python
+for i, _ in enumerate(openai_answers):
+    json_dict = openai_answers[i]
+    for category in json_dict:
+        if isinstance(json_dict[category], str):
+            json_dict[category] = [json_dict[category]]
+        elif isinstance(json_dict[category], list):
+            continue
+        else:
+            print(f"Unknown value type '{json_dict[category]}' for value '{json_dict[category]}'")
+            json_dict[category] = []
+```
 
 
 ## Import dataset and pre-annotations to Kili
@@ -348,12 +372,12 @@ for datapoint in dataset:
     content_array.append(sentence)
     external_id_array.append(datapoint["id"])
 
-print(content_array)
-print(external_id_array)
+print(content_array[:3])
+print(external_id_array[:3])
 ```
 
-    ['EU rejects German call to boycott British lamb.', 'The European Commission said on Thursday it disagreed with German advice to consumers to shun British lamb until scientists determine whether mad cow disease can be transmitted to sheep.', "Germany's representative to the European Union's veterinary committee Werner Zwingmann said on Wednesday consumers should buy sheepmeat from countries other than Britain until the scientific advice was clearer.", '" We do n\'t support any such recommendation because we do n\'t see any grounds for it , " the Commission\'s chief spokesman Nikolaus van der Pas told a news briefing.', 'He said further scientific study was required and if it was found that action was needed it should be taken by the European Union.', 'He said a proposal last month by EU Farm Commissioner Franz Fischler to ban sheep brains , spleens and spinal cords from the human and animal food chains was a highly specific and precautionary move to protect human health.', 'Fischler proposed EU-wide measures after reports from Britain and France that under laboratory conditions sheep could contract Bovine Spongiform Encephalopathy (BSE) -- mad cow disease.', "But Fischler agreed to review his proposal after the EU's standing veterinary committee , mational animal health officials , questioned if such action was justified as there was only a slight risk to human health.", 'Spanish Farm Minister Loyola de Palacio had earlier accused Fischler at an EU farm ministers\' meeting of causing unjustified alarm through " dangerous generalisation. "', "Only France and Britain backed Fischler's proposal.", "The EU's scientific veterinary and multidisciplinary committees are due to re-examine the issue early next month and make recommendations to the senior veterinary officials.", 'Sheep have long been known to contract scrapie , a brain-wasting disease similar to BSE which is believed to have been transferred to cattle through feed containing animal waste.', 'British farmers denied on Thursday there was any danger to human health from their sheep , but expressed concern that German government advice to consumers to avoid British lamb might influence consumers across Europe.', '" What we have to be extremely careful of is how other countries are going to take Germany\'s lead , " Welsh National Farmers\' Union (NFU) chairman John Lloyd Jones said on BBC radio.', 'Bonn has led efforts to protect public health after consumer confidence collapsed in March after a British report suggested humans could contract an illness similar to mad cow disease by eating contaminated beef.', 'Germany imported 47,600 sheep from Britain last year , nearly half of total imports.', 'It brought in 4,275 tonnes of British mutton , some 10 percent of overall imports.', 'Rare Hendrix song draft sells for almost $ 17,000.', "A rare early handwritten draft of a song by U.S. guitar legend Jimi Hendrix was sold for almost $ 17,000 on Thursday at an auction of some of the late musician's favourite possessions.", 'A Florida restaurant paid 10,925 pounds ($ 16,935) for the draft of " Ai n\'t no telling " , which Hendrix penned on a piece of London hotel stationery in late 1966.']
-    ['0', '3', '4', '5', '6', '7', '8', '9', '10', '12', '13', '14', '15', '16', '17', '18', '19', '20', '22', '23']
+    ['EU rejects German call to boycott British lamb.', 'The European Commission said on Thursday it disagreed with German advice to consumers to shun British lamb until scientists determine whether mad cow disease can be transmitted to sheep.', "Germany's representative to the European Union's veterinary committee Werner Zwingmann said on Wednesday consumers should buy sheepmeat from countries other than Britain until the scientific advice was clearer."]
+    ['0', '3', '4']
 
 
 
@@ -368,7 +392,7 @@ kili.append_many_to_dataset(
 
 
 
-    {'id': 'cleyccfmh04oh0jvsdpdia5ws'}
+    {'id': 'cleyg8zi401ma0jmhedrc4en6'}
 
 
 
@@ -407,6 +431,14 @@ for datapoint, sentence_annotations in zip(dataset, openai_answers):
     json_response_array.append(json_resp)
 ```
 
+
+```python
+print(json_response_array[0])
+```
+
+    {'NAMED_ENTITIES_RECOGNITION_JOB': {'annotations': [{'categories': [{'name': 'ORGANIZATION'}], 'beginOffset': 0, 'content': 'EU'}, {'categories': [{'name': 'ORGANIZATION'}], 'beginOffset': 11, 'content': 'German'}, {'categories': [{'name': 'LOCATION'}], 'beginOffset': 34, 'content': 'British'}, {'categories': [{'name': 'MISCELLANEOUS'}], 'beginOffset': 42, 'content': 'lamb'}]}}
+
+
 We then import the annotations using the `kili.create_predictions()` method:
 
 
@@ -424,7 +456,7 @@ kili.create_predictions(
 
 
 
-    {'id': 'cleyccfmh04oh0jvsdpdia5ws'}
+    {'id': 'cleyg8zi401ma0jmhedrc4en6'}
 
 
 
@@ -521,7 +553,7 @@ balanced_accuracy_score(references, predictions, adjusted=True)
 
 
 
-    0.590118611547183
+    0.6884179312750742
 
 
 
