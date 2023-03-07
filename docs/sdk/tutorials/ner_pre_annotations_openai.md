@@ -7,7 +7,7 @@ In this tutorial, we will see how to import pre-annotations for a NER (Named Ent
 
 Although the OpenAI language model we will use in this tutorial is not explicitly trained on our annotation task, we will see that it is still able to produce good results.
 
-Nowadays, language models are powerful enough to perform many tasks without being explicitly trained on them. This is called zero-shot learning.
+Indeed, current language models are powerful enough to perform many tasks without being explicitly trained on them. This is called zero-shot learning.
 
 Throughout this tutorial, we will:
 
@@ -83,24 +83,23 @@ for i in range(3):
 
 Here is the meaning of each feature in the dataset:
 
-    id: A unique identifier for each token in a sentence.
-    tokens: The tokens (words or punctuation marks) in a sentence.
-    pos_tags: Part-of-speech tags for each token in the sentence. Part-of-speech tagging is the process of assigning a tag to each word in a sentence that indicates its part of speech (e.g., noun, verb, adjective, etc.).
-    chunk_tags: Chunking tags for each token in the sentence. Chunking is the process of grouping words into meaningful phrases based on their syntactic structure.
-    ner_tags: Named Entity Recognition (NER) tags for each token in the sentence. NER is the task of identifying named entities in text and classifying them into pre-defined categories such as person, organization, location, etc.
+- id: A unique identifier for each token in a sentence.
+- tokens: The tokens (words or punctuation marks) in a sentence.
+- pos_tags: Part-of-speech tags for each token in the sentence. Part-of-speech tagging is the process of assigning a tag to each word in a sentence that indicates its part of speech (e.g., noun, verb, adjective, etc.).
+- chunk_tags: Chunking tags for each token in the sentence. Chunking is the process of grouping words into meaningful phrases based on their syntactic structure.
+- ner_tags: Named Entity Recognition (NER) tags for each token in the sentence. NER is the task of identifying named entities in text and classifying them into pre-defined categories such as person, organization, location, etc.
 
-The sentences are split into tokens. So we can regroup the tokens for later use:
+The sentences are split into tokens. We can regroup the tokens for later use:
 
 
 ```python
+fix_joined_tokens_map = {" .": ".", "( ": "(", " )": ")", " 's ": "'s ", "s ' ": "s' "}
+
 sentence_column = []
 for datapoint in dataset:
     sentence = " ".join(datapoint["tokens"])
-    sentence = sentence.replace(" .", ".")
-    sentence = sentence.replace("( ", "(")
-    sentence = sentence.replace(" )", ")")
-    sentence = sentence.replace(" 's ", "'s ")
-    sentence = sentence.replace("s ' ", "s' ")
+    for before, after in fix_joined_tokens_map.items():
+        sentence = sentence.replace(before, after)
     sentence_column.append(sentence)
 
 dataset = dataset.add_column("sentence", sentence_column)
@@ -123,15 +122,15 @@ NER_TAGS_ONTOLOGY = {
 
 `NER_TAGS_ONTOLOGY` is a dictionary that maps the named entity tags in the CoNLL2003 dataset to integer labels. Here is the meaning of each key-value pair in the dictionary:
 
-    "O": 0: Represents the tag "O" which means that the token is not part of a named entity.
-    "B-PERSON": 1: Represents the beginning of a person named entity.
-    "I-PERSON": 2: Represents a token inside a person named entity.
-    "B-ORGANIZATION": 3: Represents the beginning of an organization named entity.
-    "I-ORGANIZATION": 4: Represents a token inside an organization named entity.
-    "B-LOCATION": 5: Represents the beginning of a location named entity.
-    "I-LOCATION": 6: Represents a token inside a location named entity.
-    "B-MISCELLANEOUS": 7: Represents the beginning of a miscellaneous named entity.
-    "I-MISCELLANEOUS": 8: Represents a token inside a miscellaneous named entity.
+- "O": 0: Represents the tag "O" which means that the token is not part of a named entity.
+- "B-PERSON": 1: Represents the beginning of a person named entity.
+- "I-PERSON": 2: Represents a token inside a person named entity.
+- "B-ORGANIZATION": 3: Represents the beginning of an organization named entity.
+- "I-ORGANIZATION": 4: Represents a token inside an organization named entity.
+- "B-LOCATION": 5: Represents the beginning of a location named entity.
+- "I-LOCATION": 6: Represents a token inside a location named entity.
+- "B-MISCELLANEOUS": 7: Represents the beginning of a miscellaneous named entity.
+- "I-MISCELLANEOUS": 8: Represents a token inside a miscellaneous named entity.
 
 During the training of a Named Entity Recognition model, the entity tags are typically converted to integer labels using a dictionary like `NER_TAGS_ONTOLOGY`. This allows the model to predict the integer labels during training and inference, instead of predicting the string tags directly.
 
@@ -449,7 +448,7 @@ Since our dataset `conll2003` has been annotated, we can easily evaluate the qua
 ```python
 def format_sentence_annotations(sentence_annotations):
     """
-    Maps a token to its NER tag (B-ORGANIZATION, I-ORGANIZATION, etc.)
+    Maps a token to its NER tag (B-ORGANIZATION, I-ORGANIZATION, etc.) class value.
     """
     ret = defaultdict(list)
     for category, _ in ENTITY_TYPES:
