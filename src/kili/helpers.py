@@ -10,7 +10,18 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import pyparsing as pp
 import requests
@@ -374,3 +385,96 @@ class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
         if not self.warned and float(retry_state.outcome_timestamp or 0) > self.warn_after:
             self.logger_func(self.warn_message)
             self.warned = True
+
+
+D = TypeVar("D")
+
+
+def skip_if_empty_arguments(
+    all_non_empty: Optional[Sequence[str]] = None, any_non_empty: Optional[Sequence[str]] = None
+) -> Callable[[Callable[..., D]], Callable[..., Optional[D]]]:
+    """
+    Decorator that warns if an argument is an empty sequence.
+
+    If a warning is raised, the decorated method is skipped and returns None.
+
+    Args:
+        all_non_empty: sequence of argument names that must be all non-empty.
+        any_non_empty: sequence of argument names that must be at least one non-empty.
+    """
+
+    def is_empty_sequence(arg_value) -> bool:
+        return isinstance(arg_value, Sequence) and len(arg_value) == 0
+
+    def get_arg_value(arg_name: str, args: Tuple[Any, ...], kwargs: Dict[str, Any], func: Callable):
+        """
+        Get the value of an argument `arg_name` from args and kwargs.
+        """
+        if arg_name in kwargs:
+            return kwargs[arg_name]
+
+        index_ = func.__code__.co_varnames.index(arg_name)
+        try:
+            return args[index_]
+        except IndexError:
+            return None
+
+    def get_args_dict(
+        arg_names: Sequence[str], args: Tuple[Any, ...], kwargs: Dict[str, Any], func: Callable
+    ) -> Dict[str, Any]:
+        args_dict = {}
+        for arg_name in arg_names:
+            args_value = get_arg_value(arg_name, args, kwargs, func)
+            if args_value is not None:
+                args_dict[arg_name] = args_value
+        return args_dict
+
+    def decorator(func: Callable[..., D]) -> Callable[..., Optional[D]]:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> Optional[D]:
+            has_warned = False
+
+            # we want all arguments to be non-empty
+            if all_non_empty:
+                args_dict = get_args_dict(all_non_empty, args, kwargs, func)
+
+                empty_args = [
+                    arg_name
+                    for arg_name, arg_value in args_dict.items()
+                    if is_empty_sequence(arg_value)
+                ]
+
+                if empty_args:
+                    warnings.warn(
+                        (
+                            f"Skipping '{func.__name__}' because the following inputs are"
+                            f" empty: {', '.join(empty_args)}."
+                        ),
+                        stacklevel=4,
+                    )
+                    has_warned = True
+
+            # we need at least one argument to be non-empty
+            if any_non_empty:
+                args_dict = get_args_dict(any_non_empty, args, kwargs, func)
+
+                if args_dict and all(
+                    is_empty_sequence(arg_value) for arg_value in args_dict.values()
+                ):
+                    warnings.warn(
+                        (
+                            f"Skipping '{func.__name__}' because the following inputs are"
+                            f" empty: {', '.join(args_dict.keys())}."
+                        ),
+                        stacklevel=4,
+                    )
+                    has_warned = True
+
+            if has_warned:
+                return None
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator

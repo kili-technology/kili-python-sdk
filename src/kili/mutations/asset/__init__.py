@@ -27,6 +27,7 @@ from kili.services.asset_import import import_assets
 from kili.utils.logcontext import for_all_methods, log_call
 from kili.utils.pagination import _mutate_from_paginated_call
 
+from ...helpers import skip_if_empty_arguments
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error
 
@@ -60,7 +61,7 @@ class MutationsAsset:
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         wait_until_availability: bool = True,
-    ) -> Dict[str, str]:
+    ) -> Optional[Dict[str, str]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -399,6 +400,7 @@ class MutationsAsset:
         return format_result("data", results[0], Asset)
 
     @typechecked
+    @skip_if_empty_arguments(any_non_empty=["asset_ids", "external_ids"])
     def add_to_review(
         self,
         asset_ids: Optional[List[str]] = None,
