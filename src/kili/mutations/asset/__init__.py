@@ -49,6 +49,7 @@ class MutationsAsset:
         self.auth = auth
 
     @typechecked
+    @skip_if_empty_arguments(any_non_empty=["content_array", "json_content_array"])
     def append_many_to_dataset(
         self,
         project_id: str,
@@ -125,6 +126,7 @@ class MutationsAsset:
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
+
         nb_data = (
             len(content_array)
             if content_array is not None
