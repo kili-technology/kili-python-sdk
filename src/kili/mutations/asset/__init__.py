@@ -154,6 +154,7 @@ class MutationsAsset:
         return result
 
     @typechecked
+    @skip_if_empty_arguments(any_non_empty=["asset_ids", "external_ids"])
     # pylint: disable=unused-argument
     def update_properties_in_assets(
         self,
@@ -170,7 +171,7 @@ class MutationsAsset:
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict]:
+    ) -> Optional[List[Dict]]:
         """Update the properties of one or more assets.
 
         Args:
@@ -291,13 +292,14 @@ class MutationsAsset:
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
+    @skip_if_empty_arguments(all_non_empty=["new_external_ids"])
     def change_asset_external_ids(
         self,
         new_external_ids: List[str],
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict]:
+    ) -> Optional[List[Dict]]:
         """Update the external IDs of one or more assets.
 
         Args:
@@ -349,12 +351,13 @@ class MutationsAsset:
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
+    @skip_if_empty_arguments(any_non_empty=["asset_ids", "external_ids"])
     def delete_many_from_dataset(
         self,
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Asset:
+    ) -> Optional[Asset]:
         """Delete assets from a project.
 
         Args:
@@ -480,12 +483,13 @@ class MutationsAsset:
         return result
 
     @typechecked
+    @skip_if_empty_arguments(any_non_empty=["asset_ids", "external_ids"])
     def send_back_to_queue(
         self,
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Send assets back to queue.
 
         Args:

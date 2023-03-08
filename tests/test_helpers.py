@@ -155,7 +155,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         mocked__mutate_from_paginated_call.assert_not_called()
 
     def test_none(self, mocked__mutate_from_paginated_call):
-        """test that the decorator does not raise a warning if the input is None"""
+        """test that the decorator does not raise a warning if args are None"""
         kili = MutationsAsset(auth=MagicMock())
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():
@@ -183,14 +183,14 @@ class TestSkipIfEmptyDecorator(TestCase):
         assert ret is None
         mocked__mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_no_skip(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_no_warning(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset(auth=MagicMock())
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
         mocked__mutate_from_paginated_call.assert_called_once()
 
-    def test_args_skip(self, mocked__mutate_from_paginated_call):
+    def test_args_no_warning(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset(auth=MagicMock())
         with warnings.catch_warnings():
             warnings.simplefilter("error")

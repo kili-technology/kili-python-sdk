@@ -400,7 +400,7 @@ def skip_if_empty_arguments(
 
     Args:
         all_non_empty: sequence of argument names that must be all non-empty.
-        any_non_empty: sequence of argument names that must be at least one non-empty.
+        any_non_empty: sequence of argument names that must have at least one non-empty value.
     """
 
     def is_empty_sequence(arg_value) -> bool:
@@ -408,7 +408,7 @@ def skip_if_empty_arguments(
 
     def get_arg_value(arg_name: str, args: Tuple[Any, ...], kwargs: Dict[str, Any], func: Callable):
         """
-        Get the value of an argument `arg_name` from args and kwargs.
+        Get the value of an argument `arg_name` from the args and kwargs of the decorated function.
         """
         if arg_name in kwargs:
             return kwargs[arg_name]
@@ -419,7 +419,7 @@ def skip_if_empty_arguments(
         except IndexError:
             return None
 
-    def get_args_dict(
+    def get_args_as_dict(
         arg_names: Sequence[str], args: Tuple[Any, ...], kwargs: Dict[str, Any], func: Callable
     ) -> Dict[str, Any]:
         args_dict = {}
@@ -436,7 +436,7 @@ def skip_if_empty_arguments(
 
             # we want all arguments to be non-empty
             if all_non_empty:
-                args_dict = get_args_dict(all_non_empty, args, kwargs, func)
+                args_dict = get_args_as_dict(all_non_empty, args, kwargs, func)
 
                 empty_args = [
                     arg_name
@@ -456,7 +456,7 @@ def skip_if_empty_arguments(
 
             # we need at least one argument to be non-empty
             if any_non_empty:
-                args_dict = get_args_dict(any_non_empty, args, kwargs, func)
+                args_dict = get_args_as_dict(any_non_empty, args, kwargs, func)
 
                 if args_dict and all(
                     is_empty_sequence(arg_value) for arg_value in args_dict.values()
