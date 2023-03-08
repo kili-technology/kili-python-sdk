@@ -12,8 +12,10 @@ from kili.graphql.operations.data_integration.queries import (
     DataIntegrationWhere,
 )
 from kili.helpers import disable_tqdm_if_as_generator
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class QueriesDataIntegration:
     """
     Set of cloud storage integration queries

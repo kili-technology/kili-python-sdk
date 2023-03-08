@@ -23,8 +23,10 @@ from kili.services.helpers import (
     infer_ids_from_external_ids,
 )
 from kili.services.types import LabelType
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsLabel:
     """Set of Label mutations."""
 
