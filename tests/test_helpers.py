@@ -133,7 +133,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Skipping 'add_to_review' because the following inputs are empty: asset_ids,"
+                "Skipping 'add_to_review' because the following arguments are empty: asset_ids,"
                 " external_ids."
             ),
         ):
@@ -146,7 +146,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Skipping 'add_to_review' because the following inputs are empty: asset_ids,"
+                "Skipping 'add_to_review' because the following arguments are empty: asset_ids,"
                 " external_ids."
             ),
         ):
@@ -167,7 +167,9 @@ class TestSkipIfEmptyDecorator(TestCase):
         kili = MutationsAsset(auth=MagicMock())
         with pytest.warns(
             UserWarning,
-            match="Skipping 'add_to_review' because the following inputs are empty: external_ids.",
+            match=(
+                "Skipping 'add_to_review' because the following arguments are empty: external_ids."
+            ),
         ):
             ret = kili.add_to_review(asset_ids=None, external_ids=[], project_id="project_id")
         assert ret is None
@@ -177,7 +179,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         kili = MutationsAsset(auth=MagicMock())
         with pytest.warns(
             UserWarning,
-            match="Skipping 'add_to_review' because the following inputs are empty: asset_ids",
+            match="Skipping 'add_to_review' because the following arguments are empty: asset_ids",
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=None)
         assert ret is None

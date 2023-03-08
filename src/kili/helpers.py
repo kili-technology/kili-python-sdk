@@ -447,7 +447,7 @@ def skip_if_empty_arguments(
                 if empty_args:
                     warnings.warn(
                         (
-                            f"Skipping '{func.__name__}' because the following inputs are"
+                            f"Skipping '{func.__name__}' because the following arguments are"
                             f" empty: {', '.join(empty_args)}."
                         ),
                         stacklevel=4,
@@ -463,7 +463,7 @@ def skip_if_empty_arguments(
                 ):
                     warnings.warn(
                         (
-                            f"Skipping '{func.__name__}' because the following inputs are"
+                            f"Skipping '{func.__name__}' because the following arguments are"
                             f" empty: {', '.join(args_dict.keys())}."
                         ),
                         stacklevel=4,
