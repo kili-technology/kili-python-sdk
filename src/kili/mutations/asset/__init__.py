@@ -61,7 +61,7 @@ class MutationsAsset:
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         wait_until_availability: bool = True,
-    ) -> Optional[Dict[str, str]]:
+    ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
