@@ -198,3 +198,17 @@ class TestSkipIfEmptyDecorator(TestCase):
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)
         mocked__mutate_from_paginated_call.assert_called_once()
+
+    def test_all_non_empty(self, mocked__mutate_from_paginated_call):
+        """test the all_non_empty argument of the skip_if_empty_arguments decorator"""
+        kili = MutationsAsset(auth=MagicMock())
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "Skipping 'change_asset_external_ids' because the following arguments are empty:"
+                " new_external_ids"
+            ),
+        ):
+            ret = kili.change_asset_external_ids(new_external_ids=[], asset_ids=[])
+        assert ret is None
+        mocked__mutate_from_paginated_call.assert_not_called()
