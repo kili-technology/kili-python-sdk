@@ -397,7 +397,7 @@ kili.append_many_to_dataset(
 
 
 
-    {'id': 'clf0z3hbt002f0jundaps63p9'}
+    {'id': 'clf11vw96007i0jun2ukweyko'}
 
 
 
@@ -461,7 +461,7 @@ kili.create_predictions(
 
 
 
-    {'id': 'clf0z3hbt002f0jundaps63p9'}
+    {'id': 'clf11vw96007i0jun2ukweyko'}
 
 
 
@@ -550,7 +550,7 @@ predictions = np.array(predictions)
 from sklearn.metrics import balanced_accuracy_score, f1_score
 ```
 
-We will use the F1 score and the accuracy score weighted by class.
+We will use the F1 score and the adjusted accuracy score weighted by class.
 
 
 ```python
@@ -571,6 +571,26 @@ for class_name, class_value in NER_TAGS_ONTOLOGY.items():
         f"{y_true.sum():3d}",
         end_section=True,
     )
+
+# Group tokens regardless of their positions in the entities
+NER_TAGS_ONTOLOGY_GROUPED = {
+    "PERSON": (1, 2),
+    "ORGANIZATION": (3, 4),
+    "LOCATION": (5, 6),
+    "MISCELLANEOUS": (7, 8),
+}
+for class_name, class_values in NER_TAGS_ONTOLOGY_GROUPED.items():
+    y_true = np.where((references == class_values[0]) | (references == class_values[1]), 1, 0)
+    y_pred = np.where((predictions == class_values[0]) | (predictions == class_values[1]), 1, 0)
+    table.add_row(
+        class_name,
+        f"{f1_score(y_true, y_pred) * 100:6.1f}%",
+        f"{balanced_accuracy_score(y_true, y_pred, adjusted=True) * 100:6.1f}%",
+        f"{y_true.sum():3d}",
+        style="bold green",
+        end_section=True,
+    )
+
 
 table.add_row(
     "All",
@@ -609,6 +629,14 @@ console.print(table)
 │ B-MISCELLANEOUS │   10.5% │    9.4%  │     15     │
 ├─────────────────┼─────────┼──────────┼────────────┤
 │ I-MISCELLANEOUS │   31.2% │   95.9%  │      5     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> PERSON          </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   95.2% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   90.9%  </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     22     </span>│
+├─────────────────┼─────────┼──────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> ORGANIZATION    </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   53.8% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   66.6%  </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     20     </span>│
+├─────────────────┼─────────┼──────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> LOCATION        </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   71.4% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   70.7%  </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     14     </span>│
+├─────────────────┼─────────┼──────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> MISCELLANEOUS   </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   20.0% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   26.8%  </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     20     </span>│
 ├─────────────────┼─────────┼──────────┼────────────┤
 │<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold"> All             </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">   88.7% </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">   70.1%  </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">    544     </span>│
 └─────────────────┴─────────┴──────────┴────────────┘
