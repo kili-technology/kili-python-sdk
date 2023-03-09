@@ -467,6 +467,15 @@ for label in labels:
     The human predicted RED but the model predicted BLACK for asset with id cleoicx8s0003h8vzbiaawl1j.
 
 
+## Cleanup
+
+We can remove the project that we created:
+
+
+```python
+kili.delete_project(project_id)
+```
+
 ## Conclusion
 
 Congratulations! You can now upload your own inference labels to your Kili project 🚀.
