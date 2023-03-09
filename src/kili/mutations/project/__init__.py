@@ -21,7 +21,6 @@ from .queries import (
     GQL_APPEND_TO_ROLES,
     GQL_CREATE_PROJECT,
     GQL_DELETE_FROM_ROLES,
-    GQL_DELETE_PROJECT,
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
     GQL_UPDATE_PROPERTIES_IN_PROJECT,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
@@ -307,22 +306,6 @@ class MutationsProject:
         """
         variables = {"where": {"id": role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
-        return format_result("data", result)
-
-    @typechecked
-    def internal_delete_project(self, project_id: str):
-        """Delete project permanently.
-        WARNING: This resolver is for internal use by Kili Technology only.
-
-        Args:
-            project_id: Identifier of the project
-
-        Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
-        """
-        variables = {"projectID": project_id}
-        result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
         return format_result("data", result)
 
     @typechecked
