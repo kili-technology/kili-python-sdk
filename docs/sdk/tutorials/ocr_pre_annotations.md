@@ -15,7 +15,7 @@ Follow this [link](https://drive.google.com/uc?export=view&id=1ceNwCgLwIyyjPwU42
 
 <img src="https://drive.google.com/uc?export=view&id=1ceNwCgLwIyyjPwU42xIoz6mMT3enLewW" width="800">
 
-We will use the Google Vision API to perform Optical Character Recognition on the different texts in the image.
+We will use the Google Vision API to perform Optical Character Recognition on the different inscriptions in this image.
 
 To use the google API, we need to install some packages:
 
@@ -105,7 +105,7 @@ First you will need to create an account on [Google Cloud](https://cloud.google.
 
   1. [create a project](https://console.cloud.google.com/projectcreate) (or use an existing one)
   2. then go to the [Cloud Vision API page](https://console.cloud.google.com/apis/library/vision.googleapis.com)
-  3. activate the API for your project (you might need to associate facturation information if you haven't already)
+  3. activate the API for your project
 
 Now that the API is activated we will need to get a secret key in order to call the API later in our project:
 
@@ -229,7 +229,7 @@ We follow the Google Vision API [`AnnotateImageResponse`](https://cloud.google.c
 - [Full text annotation](https://cloud.google.com/vision/docs/reference/rest/v1/AnnotateImageResponse#TextAnnotation). A list of pages in the document with their respective heights and widths.
 - [A list of text annotations](https://cloud.google.com/vision/docs/reference/rest/v1/AnnotateImageResponse#EntityAnnotation) with:
     - text content
-    - coordinates of bounding box.
+    - bounding box coordinates.
 
 ```json
 {
