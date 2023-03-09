@@ -1,5 +1,5 @@
 """Project mutations."""
-from typing import Optional
+from typing import List, Optional
 
 from typeguard import typechecked
 
@@ -11,8 +11,10 @@ from kili.services.plugins import (
     deactivate_plugin,
     delete_plugin,
 )
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsPlugins:
     """Set of Plugins mutations."""
 
@@ -32,11 +34,13 @@ class MutationsPlugins:
         verbose: bool = True,
         **kwargs
     ):
-        # pylint: disable=line-too-long
         """Uploads a plugin.
 
         Args:
-            plugin_path : Path to your plugin. Either a folder containing a main.py (mandatory) and a requirements.txt (optional) or a .py file
+            plugin_path : Path to your plugin. Either:
+
+                - a folder containing a main.py (mandatory) and a requirements.txt (optional)
+                - a .py file
             plugin_name: name of your plugin, if not provided, it will be the name from your file
             verbose: If false, minimal logs are displayed
 
@@ -67,8 +71,9 @@ class MutationsPlugins:
         plugin_name: str,
         header: Optional[str] = None,
         verbose: bool = True,
+        handler_types: Optional[List[str]] = None,
     ):
-        # pylint: disable=line-too-long
+        # pylint: disable=line-too-long,too-many-arguments
         """
         Create a webhook linked to Kili's events.
         For a complete example, refer to the notebook `webhooks_example` on kili repo
@@ -85,6 +90,9 @@ class MutationsPlugins:
             plugin_name: name of your plugin
             header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
+            handler_types: List of actions for which the webhook should be called.
+                Possible variants: `onSubmit`, `onReview`.
+                By default, is [`onSubmit`, `onReview`]
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -95,7 +103,7 @@ class MutationsPlugins:
         """
 
         return WebhookUploader(
-            self.auth, webhook_url, plugin_name, header, verbose
+            self.auth, webhook_url, plugin_name, header, verbose, handler_types
         ).create_webhook()
 
     @typechecked
@@ -105,8 +113,9 @@ class MutationsPlugins:
         plugin_name: str,
         new_header: Optional[str] = None,
         verbose: bool = True,
+        handler_types: Optional[List[str]] = None,
     ):
-        # pylint: disable=line-too-long
+        # pylint: disable=line-too-long,too-many-arguments
         """
         Update a webhook linked to Kili's events.
         For a complete example, refer to the notebook `webhooks_example` on kili repo
@@ -116,6 +125,9 @@ class MutationsPlugins:
             plugin_name: name of your plugin
             new_header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
+            handler_types: List of actions for which the webhook should be called.
+                Possible variants: `onSubmit`, `onReview`.
+                By default, is [`onSubmit`, `onReview`]
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -126,7 +138,7 @@ class MutationsPlugins:
         """
 
         return WebhookUploader(
-            self.auth, new_webhook_url, plugin_name, new_header, verbose
+            self.auth, new_webhook_url, plugin_name, new_header, verbose, handler_types
         ).update_webhook()
 
     @typechecked
@@ -209,9 +221,10 @@ class MutationsPlugins:
         """Update a plugin with new code.
 
         Args:
-            plugin_path : Path to your plugin. Either:
-             - a folder containing a main.py (mandatory) and a requirements.txt (optional)
-             - a .py file
+            plugin_path: Path to your plugin. Either:
+
+                - a folder containing a main.py (mandatory) and a requirements.txt (optional)
+                - a .py file
             plugin_name: Name of the plugin
             verbose: If false, minimal logs are displayed
 

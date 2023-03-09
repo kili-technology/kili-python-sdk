@@ -16,8 +16,10 @@ from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import ProjectId
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class QueriesLabel:
     """Set of Label queries."""
 

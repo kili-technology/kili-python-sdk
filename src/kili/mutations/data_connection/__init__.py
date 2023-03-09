@@ -7,6 +7,7 @@ from typeguard import typechecked
 
 from kili.authentication import KiliAuth
 from kili.exceptions import GraphQLError
+from kili.utils.logcontext import for_all_methods, log_call
 
 from ... import services
 from ...helpers import format_result
@@ -17,6 +18,7 @@ from .exceptions import AddDataConnectionError
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsDataConnection:
     """Set of DataConnection mutations."""
 

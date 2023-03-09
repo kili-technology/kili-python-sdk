@@ -12,10 +12,12 @@ from kili.graphql.operations.data_connection.queries import (
     DataConnectionsWhere,
 )
 from kili.helpers import disable_tqdm_if_as_generator
+from kili.utils.logcontext import for_all_methods, log_call
 
 from ... import services
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 # pylint: disable=too-few-public-methods
 class QueriesDataConnection:
     """

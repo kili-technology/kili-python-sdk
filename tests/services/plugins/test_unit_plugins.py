@@ -6,7 +6,7 @@ from zipfile import ZipFile
 
 import pytest
 
-from kili.services.plugins.upload import PluginUploader
+from kili.services.plugins.upload import PluginUploader, check_file_contains_handler
 from kili.utils.tempfile import TemporaryDirectory
 
 PLUGIN_NAME = "test_plugin"
@@ -24,6 +24,48 @@ def test_wrong_plugin_path(kili):
         FileNotFoundError, match=r"The provided path .* is neither a directory nor a file"
     ):
         PluginUploader(kili, plugin_path, PLUGIN_NAME, False)
+
+
+def test_no_plugin_handler():
+    plugin_path = Path(
+        os.path.join("tests", "services", "plugins", "test_plugins", "no_plugin_handler.py")
+    )
+
+    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    assert contains_handler is False
+    assert handlers is None
+
+
+def test_no_handlers_implemented():
+    plugin_path = Path(
+        os.path.join("tests", "services", "plugins", "test_plugins", "no_handlers_implemented.py")
+    )
+
+    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    assert contains_handler is True
+    assert handlers == []
+
+
+def test_handlers_correctly_implemented():
+    plugin_path = Path(
+        os.path.join(
+            "tests", "services", "plugins", "test_plugins", "handlers_correctly_implemented.py"
+        )
+    )
+
+    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    assert contains_handler is True
+    assert handlers == ["onSubmit", "onReview"]
+
+
+def test_commented_handler():
+    plugin_path = Path(
+        os.path.join("tests", "services", "plugins", "test_plugins", "commented_handler.py")
+    )
+
+    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    assert contains_handler is True
+    assert handlers == ["onSubmit"]
 
 
 def test_no_pluginhandler_when_creating_zip_from_file(kili):

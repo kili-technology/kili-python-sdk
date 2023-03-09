@@ -1,6 +1,8 @@
 """
 Test notebooks with pytest
 """
+import os
+
 import nbformat
 import pytest
 from nbconvert.preprocessors.execute import ExecutePreprocessor
@@ -25,7 +27,13 @@ def process_notebook(notebook_filename):
         "tests/e2e/import_assets.ipynb",
         "tests/e2e/import_predictions.ipynb",
         "tests/e2e/paginated_calls_project_lifecycle.ipynb",
-        "tests/e2e/plugin_workflow.ipynb",
+        pytest.param(
+            "tests/e2e/plugin_workflow.ipynb",
+            marks=pytest.mark.skipif(
+                "lts.cloud" in os.environ["KILI_API_ENDPOINT"],
+                reason="Feature not available on premise",
+            ),
+        ),
         "recipes/basic_project_setup.ipynb",
         "recipes/export_a_kili_project.ipynb",
         "recipes/frame_dicom_data.ipynb",
@@ -37,9 +45,15 @@ def process_notebook(notebook_filename):
         # "recipes/ner_pre_annotations_openai.ipynb",
         "recipes/ocr_pre_annotations.ipynb",
         "recipes/pixel_level_masks.ipynb",
-        "recipes/plugins_example.ipynb",
+        pytest.param(
+            "recipes/plugins_example.ipynb",
+            marks=pytest.mark.skipif(
+                "lts.cloud" in os.environ["KILI_API_ENDPOINT"],
+                reason="Feature not available on premise",
+            ),
+        ),
         "recipes/set_up_workflows.ipynb",
-        "recipes/webhooks.ipynb",
+        "recipes/webhooks_example.ipynb",
     ],
 )
 def test_all_recipes(notebook_file):
