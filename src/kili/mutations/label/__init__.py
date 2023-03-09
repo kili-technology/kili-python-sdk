@@ -23,8 +23,10 @@ from kili.services.helpers import (
     infer_ids_from_external_ids,
 )
 from kili.services.types import LabelType
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsLabel:
     """Set of Label mutations."""
 
@@ -69,7 +71,7 @@ class MutationsLabel:
         !!! warning "model name"
             The use of `model_name_array` is deprecated. Creating predictions from different
             models is not supported anymore. Please use `model_name` argument instead to
-            provide the predictions model name."
+            provide the predictions model name.
         """
         if json_response_array is None or len(json_response_array) == 0:
             raise ValueError(

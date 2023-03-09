@@ -241,6 +241,7 @@ jobs:
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
           KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
+          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets[format('KILI_TEST_DATA_INTEGRATION_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Notebook tests
         if: github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'master') # Do not run notebook tests after merging to master
@@ -252,6 +253,7 @@ jobs:
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
           KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
+          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets[format('KILI_TEST_DATA_INTEGRATION_ID_{0}', env.TEST_AGAINST)] }}
 
       - name: Check that kili SDK version has not changed
         shell: bash

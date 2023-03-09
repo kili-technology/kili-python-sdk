@@ -5,7 +5,7 @@ Class to upload a plugin
 import ast
 import time
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 from zipfile import ZipFile
 
 from kili.authentication import KiliAuth
@@ -28,6 +28,12 @@ from .exceptions import PluginCreationError
 from .helpers import get_logger
 
 NUMBER_TRIES_RUNNER_STATUS = 20
+
+POSSIBLE_HANDLERS = {
+    "on_submit": "onSubmit",
+    "on_review": "onReview",
+    "on_custom_interface_click": "onCustomInterfaceClick",
+}
 
 
 def check_file_mime_type(
@@ -66,7 +72,7 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
 
 
-def check_file_contains_handler(path: Path):
+def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
     """
     Return true if the file contain PluginHandler Class
     """
@@ -74,8 +80,12 @@ def check_file_contains_handler(path: Path):
         module = ast.parse(file.read())
     for node in module.body:
         if isinstance(node, ast.ClassDef) and node.name == "PluginHandler":
-            return True
-    return False
+            handlers = []
+            for child in node.body:
+                if isinstance(child, ast.FunctionDef) and child.name in POSSIBLE_HANDLERS:
+                    handlers.append(POSSIBLE_HANDLERS[child.name])
+            return True, handlers
+    return False, None
 
 
 class WebhookUploader:
@@ -91,12 +101,14 @@ class WebhookUploader:
         plugin_name: str,
         header: Optional[str],
         verbose: bool,
+        handler_types: Optional[List[str]],
     ) -> None:
         self.auth = auth
         self.webhook_url = webhook_url
         self.plugin_name = plugin_name or self.webhook_url
         self.header = header
         self.verbose = verbose
+        self.handler_types = handler_types
 
     def create_webhook(self):
         """
@@ -104,6 +116,7 @@ class WebhookUploader:
         """
 
         variables = {
+            "handlerTypes": self.handler_types,
             "pluginName": self.plugin_name,
             "webhookUrl": self.webhook_url,
             "header": self.header,
@@ -119,6 +132,7 @@ class WebhookUploader:
         """
 
         variables = {
+            "handlerTypes": self.handler_types,
             "pluginName": self.plugin_name,
             "webhookUrl": self.webhook_url,
             "header": self.header,
@@ -151,6 +165,7 @@ class PluginUploader:
         else:
             self.plugin_name = self.plugin_path.name
         self.verbose = verbose
+        self.handler_types = None
 
     def _retrieve_plugin_src(self) -> List[Path]:
         """
@@ -163,8 +178,11 @@ class PluginUploader:
                 raise FileNotFoundError(
                     f"No main.py file in the provided folder: {self.plugin_path.absolute()}"
                 )
-            if not check_file_contains_handler(file_path):
+            contains_handler, handler_types = check_file_contains_handler(file_path)
+            if not contains_handler:
                 raise ValueError("PluginHandler class is not present in your main.py file.")
+
+            self.handler_types = handler_types
 
             file_paths = list(self.plugin_path.glob("**/*.py"))
 
@@ -175,8 +193,11 @@ class PluginUploader:
         if not check_file_is_py(file_path, self.verbose):
             raise ValueError("Wrong file format.")
 
-        if not check_file_contains_handler(file_path):
+        contains_handler, handler_types = check_file_contains_handler(file_path)
+        if not contains_handler:
             raise ValueError("PluginHandler class is not present in your plugin file.")
+
+        self.handler_types = handler_types
 
         return [file_path]
 
@@ -281,7 +302,7 @@ class PluginUploader:
         Create plugin's runner
         """
 
-        variables = {"pluginName": self.plugin_name}
+        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.auth.client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
@@ -359,7 +380,7 @@ code (you can use kili.update_plugin() for that)."""
         """
         Update plugin's runner
         """
-        variables = {"pluginName": self.plugin_name}
+        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.auth.client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)

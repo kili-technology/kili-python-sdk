@@ -1,5 +1,5 @@
 """Project mutations."""
-from typing import Optional
+from typing import List, Optional
 
 from typeguard import typechecked
 
@@ -11,8 +11,10 @@ from kili.services.plugins import (
     deactivate_plugin,
     delete_plugin,
 )
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsPlugins:
     """Set of Plugins mutations."""
 
@@ -69,15 +71,28 @@ class MutationsPlugins:
         plugin_name: str,
         header: Optional[str] = None,
         verbose: bool = True,
+        handler_types: Optional[List[str]] = None,
     ):
-        # pylint: disable=line-too-long
-        """Create a webhook linked to Kili's events.
+        # pylint: disable=line-too-long,too-many-arguments
+        """
+        Create a webhook linked to Kili's events.
+        For a complete example, refer to the notebook `webhooks_example` on kili repo
 
         Args:
-            webhook_url: URL receiving post requests on events on Kili
+            webhook_url: URL receiving post requests on events on Kili. The payload will be the following:
+             - eventType: the type of event called
+             - logPayload:
+               - runId: a unique identifier of the run for observability
+               - projectId: the Kili project the webhook is called on
+             - payload: the event produced, for example for `onSubmit` event:
+              - label: the label produced
+              - asset_id: the asset on which the label is produced
             plugin_name: name of your plugin
             header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
+            handler_types: List of actions for which the webhook should be called.
+                Possible variants: `onSubmit`, `onReview`.
+                By default, is [`onSubmit`, `onReview`]
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -88,7 +103,7 @@ class MutationsPlugins:
         """
 
         return WebhookUploader(
-            self.auth, webhook_url, plugin_name, header, verbose
+            self.auth, webhook_url, plugin_name, header, verbose, handler_types
         ).create_webhook()
 
     @typechecked
@@ -98,15 +113,21 @@ class MutationsPlugins:
         plugin_name: str,
         new_header: Optional[str] = None,
         verbose: bool = True,
+        handler_types: Optional[List[str]] = None,
     ):
-        # pylint: disable=line-too-long
-        """Update a webhook linked to Kili's events.
+        # pylint: disable=line-too-long,too-many-arguments
+        """
+        Update a webhook linked to Kili's events.
+        For a complete example, refer to the notebook `webhooks_example` on kili repo
 
         Args:
-            new_webhook_url: New URL receiving post requests on events on Kili
+            new_webhook_url: New URL receiving post requests on events on Kili. See `create_webhook` for the payload description
             plugin_name: name of your plugin
             new_header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
+            handler_types: List of actions for which the webhook should be called.
+                Possible variants: `onSubmit`, `onReview`.
+                By default, is [`onSubmit`, `onReview`]
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -117,7 +138,7 @@ class MutationsPlugins:
         """
 
         return WebhookUploader(
-            self.auth, new_webhook_url, plugin_name, new_header, verbose
+            self.auth, new_webhook_url, plugin_name, new_header, verbose, handler_types
         ).update_webhook()
 
     @typechecked

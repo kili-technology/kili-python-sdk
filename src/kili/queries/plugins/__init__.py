@@ -9,10 +9,12 @@ from typeguard import typechecked
 from kili.graphql import QueryOptions
 from kili.graphql.operations.plugin.queries import PluginLogsWhere, PluginQuery
 from kili.services.plugins import PluginUploader
+from kili.utils.logcontext import for_all_methods, log_call
 
 from ...authentication import KiliAuth
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class QueriesPlugins:
     """Set of Plugins queries."""
 

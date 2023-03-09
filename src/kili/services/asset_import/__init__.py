@@ -32,7 +32,7 @@ def import_assets(  # pylint: disable=too-many-arguments
     """
     import the selected assets into the specified project
     """
-    kili = QueriesProject(auth)
+    kili = QueriesProject(auth=auth)
     input_type = get_project_field(kili.auth, project_id, "inputType")
 
     project_params = ProjectParams(project_id=project_id, input_type=input_type)

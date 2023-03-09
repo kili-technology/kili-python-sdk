@@ -8,7 +8,6 @@ import string
 import threading
 import time
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
@@ -20,17 +19,11 @@ from gql import Client, gql
 from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from graphql import DocumentNode, print_schema
-from typeguard import typechecked
 
 from kili import __version__
 from kili.exceptions import GraphQLError
-
-
-class GraphQLClientName(Enum):
-    """GraphQL client name."""
-
-    SDK = "python-sdk"
-    CLI = "python-cli"
+from kili.graphql.clientnames import GraphQLClientName
+from kili.utils.logcontext import LogContext
 
 
 # pylint: disable=too-few-public-methods
@@ -47,17 +40,19 @@ class GraphQLClient:
         verify: bool = True,
     ) -> None:
         self.endpoint = endpoint
+        self.api_key = api_key
         self.verify = verify
 
-        self.gql_transport = RequestsHTTPTransport(
+        self.headers = {
+            "Authorization": f"X-API-Key: {api_key}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "apollographql-client-name": client_name.value,
+            "apollographql-client-version": __version__,
+        }
+        self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
-            headers={
-                "Authorization": f"X-API-Key: {api_key}",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "apollographql-client-name": client_name.value,
-                "apollographql-client-version": __version__,
-            },
+            headers=self.headers,
             cookies=None,
             auth=None,
             use_json=True,
@@ -73,13 +68,15 @@ class GraphQLClient:
             self._cache_graphql_schema(graphql_schema_path)
         except (requests.exceptions.JSONDecodeError, json.decoder.JSONDecodeError):
             self._gql_client = Client(
-                transport=self.gql_transport, fetch_schema_from_transport=True
+                transport=self._gql_transport, fetch_schema_from_transport=True
             )
         else:
             self._gql_client = Client(
                 schema=graphql_schema_path.read_text(encoding="utf-8"),
-                transport=self.gql_transport,
+                transport=self._gql_transport,
             )
+
+        self.ws_endpoint = self.endpoint.replace("http", "ws")
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
@@ -96,7 +93,7 @@ class GraphQLClient:
         if graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0:
             return
 
-        with Client(transport=self.gql_transport, fetch_schema_from_transport=True) as session:
+        with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
         graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
@@ -125,7 +122,6 @@ class GraphQLClient:
         version = response["version"]
         return version
 
-    @typechecked
     def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
         """
         Execute a query
@@ -135,8 +131,19 @@ class GraphQLClient:
             variables: the payload of the query
         """
         document = query if isinstance(query, DocumentNode) else gql(query)
+
         try:
-            result = self._gql_client.execute(document=document, variable_values=variables)
+            assert self._gql_transport.headers, "Transport headers must be defined"
+            result = self._gql_client.execute(
+                document=document,
+                variable_values=variables,
+                extra_args={
+                    "headers": {
+                        **self._gql_transport.headers,
+                        **LogContext(),
+                    }
+                },
+            )
         except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
             if isinstance(err, exceptions.TransportQueryError):
                 raise GraphQLError(error=err.errors) from err
@@ -183,7 +190,7 @@ class SubscriptionGraphQLClient:
         """
         self._connect()
         self._subscription_running = True
-        dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        dt_string = datetime.now().strftime(r"%d/%m/%Y %H:%M:%S")
         print(f"{dt_string} reconnected")
         self.failed_connection_attempts = 0
 
