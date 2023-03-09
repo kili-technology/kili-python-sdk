@@ -24,7 +24,7 @@ Let's start this tutorial by installing the packages we will need later on.
 
 
 ```python
-!pip install kili datasets evaluate ipywidgets openai scikit-learn
+!pip install kili datasets evaluate ipywidgets openai scikit-learn numpy rich
 ```
 
 
@@ -34,6 +34,9 @@ import getpass
 import json
 import openai
 from collections import defaultdict
+import numpy as np
+from rich.console import Console
+from rich.table import Table
 ```
 
 ## Data preparation
@@ -394,7 +397,7 @@ kili.append_many_to_dataset(
 
 
 
-    {'id': 'cleyg8zi401ma0jmhedrc4en6'}
+    {'id': 'clf0z3hbt002f0jundaps63p9'}
 
 
 
@@ -458,7 +461,7 @@ kili.create_predictions(
 
 
 
-    {'id': 'cleyg8zi401ma0jmhedrc4en6'}
+    {'id': 'clf0z3hbt002f0jundaps63p9'}
 
 
 
@@ -538,24 +541,78 @@ def flatten_list(list_):
 
 references = flatten_list(references)
 predictions = flatten_list(predictions)
+references = np.array(references)
+predictions = np.array(predictions)
 ```
 
 
 ```python
-from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import balanced_accuracy_score, f1_score
 ```
 
-Since classes are imbalanced, we will use a balanced accuracy score. The score is adjusted for chance, so that random performance would score 0, while keeping perfect performance at a score of 1.
+We will use the F1 score and the accuracy score weighted by class.
 
 
 ```python
-balanced_accuracy_score(references, predictions, adjusted=True)
+table = Table(title=f"Results")
+
+table.add_column("Class")
+table.add_column("F1")
+table.add_column("Accuracy")
+table.add_column("Nb samples", justify="center")
+
+for class_name, class_value in NER_TAGS_ONTOLOGY.items():
+    y_true = np.where(references == class_value, 1, 0)
+    y_pred = np.where(predictions == class_value, 1, 0)
+    table.add_row(
+        class_name,
+        f"{f1_score(y_true, y_pred) * 100:6.1f}%",
+        f"{balanced_accuracy_score(y_true, y_pred, adjusted=True) * 100:6.1f}%",
+        f"{y_true.sum():3d}",
+        end_section=True,
+    )
+
+table.add_row(
+    "All",
+    f"{f1_score(references, predictions, average='weighted') * 100:6.1f}%",
+    f"{balanced_accuracy_score(references, predictions, adjusted=True) * 100:6.1f}%",
+    f"{len(references):3d}",
+    style=f"bold bright_red",
+)
 ```
 
 
+```python
+console = Console()
+console.print(table)
+```
 
 
-    0.6884179312750742
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-style: italic">                       Results                       </span>
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Class           </span>┃<span style="font-weight: bold"> F1      </span>┃<span style="font-weight: bold"> Accuracy </span>┃<span style="font-weight: bold"> Nb samples </span>┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━┩
+│ O               │   93.5% │   77.7%  │    468     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ B-PERSON        │   90.9% │   83.3%  │     12     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ I-PERSON        │  100.0% │  100.0%  │     10     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ B-ORGANIZATION  │   58.8% │   81.1%  │     12     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ I-ORGANIZATION  │   44.4% │   48.9%  │      8     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ B-LOCATION      │   71.4% │   70.7%  │     14     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ I-LOCATION      │    0.0% │    nan%  │      0     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ B-MISCELLANEOUS │   10.5% │    9.4%  │     15     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│ I-MISCELLANEOUS │   31.2% │   95.9%  │      5     │
+├─────────────────┼─────────┼──────────┼────────────┤
+│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold"> All             </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">   88.7% </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">   70.1%  </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">    544     </span>│
+└─────────────────┴─────────┴──────────┴────────────┘
+</pre>
 
 
 
