@@ -133,8 +133,8 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Skipping 'add_to_review' because the following arguments are empty: asset_ids,"
-                " external_ids."
+                "Method 'add_to_review' did nothing because the following arguments are empty:"
+                " asset_ids, external_ids."
             ),
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=[])
@@ -146,8 +146,8 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Skipping 'add_to_review' because the following arguments are empty: asset_ids,"
-                " external_ids."
+                "Method 'add_to_review' did nothing because the following arguments are empty:"
+                " asset_ids, external_ids."
             ),
         ):
             ret = kili.add_to_review([], [])
@@ -168,7 +168,8 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Skipping 'add_to_review' because the following arguments are empty: external_ids."
+                "Method 'add_to_review' did nothing because the following arguments are empty:"
+                " external_ids."
             ),
         ):
             ret = kili.add_to_review(asset_ids=None, external_ids=[], project_id="project_id")
@@ -179,7 +180,10 @@ class TestSkipIfEmptyDecorator(TestCase):
         kili = MutationsAsset(auth=MagicMock())
         with pytest.warns(
             UserWarning,
-            match="Skipping 'add_to_review' because the following arguments are empty: asset_ids",
+            match=(
+                "Method 'add_to_review' did nothing because the following arguments are empty:"
+                " asset_ids"
+            ),
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=None)
         assert ret is None
@@ -205,8 +209,8 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Skipping 'change_asset_external_ids' because the following arguments are empty:"
-                " new_external_ids"
+                "Method 'change_asset_external_ids' did nothing because the following arguments are"
+                " empty: new_external_ids"
             ),
         ):
             ret = kili.change_asset_external_ids(new_external_ids=[], asset_ids=[])
