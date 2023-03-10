@@ -19,7 +19,7 @@
         <link rel="next" href="../project/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.2">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.402914a4.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7bf56d0a.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
@@ -379,6 +379,34 @@
     <li class="md-nav__item">
       <a href="../tutorials/importing_video_assets/" class="md-nav__link">
         Importing video assets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/ocr_pre_annotations/" class="md-nav__link">
+        Importing OCR pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/pixel_level_masks/" class="md-nav__link">
+        Importing segmentation pre-annotations
       </a>
     </li>
   
@@ -1289,12 +1317,31 @@ on_review(self, label: Label, asset_id: str)
         <span class="c1"># pylint: disable=unused-argument</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_review on your plugin&quot;</span><span class="p">)</span>
         <span class="k">pass</span>  <span class="c1"># pylint: disable=unnecessary-pass</span>
+
+    <span class="k">def</span> <span class="nf">on_custom_interface_click</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handler for the custom interface click action.</span>
+
+<span class="sd">        **Warning**: This handler is in beta and is still in active development,</span>
+<span class="sd">        so it should not be used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            label: label submitted to Kili</span>
+<span class="sd">            asset_id: id of the asset on which the action is called</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Handler is in active development.&quot;</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
 
 
   <div class="doc doc-children">
+
 
 
 
@@ -1953,11 +2000,13 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-        <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Uploads a plugin.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            plugin_path : Path to your plugin. Either a folder containing a main.py (mandatory) and a requirements.txt (optional) or a .py file</span>
+<span class="sd">            plugin_path : Path to your plugin. Either:</span>
+
+<span class="sd">                - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
+<span class="sd">                - a .py file</span>
 <span class="sd">            plugin_name: name of your plugin, if not provided, it will be the name from your file</span>
 <span class="sd">            verbose: If false, minimal logs are displayed</span>
 
@@ -1988,15 +2037,28 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handler_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a webhook linked to Kili&#39;s events.</span>
+        <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a webhook linked to Kili&#39;s events.</span>
+<span class="sd">        For a complete example, refer to the notebook `webhooks_example` on kili repo</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            webhook_url: URL receiving post requests on events on Kili</span>
+<span class="sd">            webhook_url: URL receiving post requests on events on Kili. The payload will be the following:</span>
+<span class="sd">             - eventType: the type of event called</span>
+<span class="sd">             - logPayload:</span>
+<span class="sd">               - runId: a unique identifier of the run for observability</span>
+<span class="sd">               - projectId: the Kili project the webhook is called on</span>
+<span class="sd">             - payload: the event produced, for example for `onSubmit` event:</span>
+<span class="sd">              - label: the label produced</span>
+<span class="sd">              - asset_id: the asset on which the label is produced</span>
 <span class="sd">            plugin_name: name of your plugin</span>
 <span class="sd">            header: Authorization header to access the routes</span>
 <span class="sd">            verbose: If false, minimal logs are displayed</span>
+<span class="sd">            handler_types: List of actions for which the webhook should be called.</span>
+<span class="sd">                Possible variants: `onSubmit`, `onReview`.</span>
+<span class="sd">                By default, is [`onSubmit`, `onReview`]</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
@@ -2007,7 +2069,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">verbose</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">handler_types</span>
         <span class="p">)</span><span class="o">.</span><span class="n">create_webhook</span><span class="p">()</span>
 
     <span class="nd">@typechecked</span>
@@ -2017,15 +2079,21 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">new_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handler_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a webhook linked to Kili&#39;s events.</span>
+        <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update a webhook linked to Kili&#39;s events.</span>
+<span class="sd">        For a complete example, refer to the notebook `webhooks_example` on kili repo</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            new_webhook_url: New URL receiving post requests on events on Kili</span>
+<span class="sd">            new_webhook_url: New URL receiving post requests on events on Kili. See `create_webhook` for the payload description</span>
 <span class="sd">            plugin_name: name of your plugin</span>
 <span class="sd">            new_header: Authorization header to access the routes</span>
 <span class="sd">            verbose: If false, minimal logs are displayed</span>
+<span class="sd">            handler_types: List of actions for which the webhook should be called.</span>
+<span class="sd">                Possible variants: `onSubmit`, `onReview`.</span>
+<span class="sd">                By default, is [`onSubmit`, `onReview`]</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
@@ -2036,7 +2104,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">new_webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">new_header</span><span class="p">,</span> <span class="n">verbose</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">new_webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">new_header</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">handler_types</span>
         <span class="p">)</span><span class="o">.</span><span class="n">update_webhook</span><span class="p">()</span>
 
     <span class="nd">@typechecked</span>
@@ -2119,9 +2187,10 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a plugin with new code.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            plugin_path : Path to your plugin. Either:</span>
-<span class="sd">             - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
-<span class="sd">             - a .py file</span>
+<span class="sd">            plugin_path: Path to your plugin. Either:</span>
+
+<span class="sd">                - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
+<span class="sd">                - a .py file</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
 <span class="sd">            verbose: If false, minimal logs are displayed</span>
 
@@ -2264,14 +2333,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 
 
 <h3 class="doc doc-heading" id="kili.mutations.plugins.__init__.MutationsPlugins.create_webhook">
-<code class="highlight language-python"><span class="n">create_webhook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_webhook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">handler_types</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
 
     <div class="doc doc-contents ">
 
-      <p>Create a webhook linked to Kili's events.</p>
+      <p>Create a webhook linked to Kili's events.
+For a complete example, refer to the notebook <code>webhooks_example</code> on kili repo</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2287,7 +2357,14 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
       <tr>
         <td><code>webhook_url</code></td>
         <td><code>str</code></td>
-        <td><p>URL receiving post requests on events on Kili</p></td>
+        <td><p>URL receiving post requests on events on Kili. The payload will be the following:
+- eventType: the type of event called
+- logPayload:
+- runId: a unique identifier of the run for observability
+- projectId: the Kili project the webhook is called on
+- payload: the event produced, for example for <code>onSubmit</code> event:
+- label: the label produced
+- asset_id: the asset on which the label is produced</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -2307,6 +2384,14 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <td><code>bool</code></td>
         <td><p>If false, minimal logs are displayed</p></td>
         <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>handler_types</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>List of actions for which the webhook should be called.
+Possible variants: <code>onSubmit</code>, <code>onReview</code>.
+By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
+        <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
@@ -2339,15 +2424,28 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
     <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">handler_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a webhook linked to Kili&#39;s events.</span>
+    <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a webhook linked to Kili&#39;s events.</span>
+<span class="sd">    For a complete example, refer to the notebook `webhooks_example` on kili repo</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        webhook_url: URL receiving post requests on events on Kili</span>
+<span class="sd">        webhook_url: URL receiving post requests on events on Kili. The payload will be the following:</span>
+<span class="sd">         - eventType: the type of event called</span>
+<span class="sd">         - logPayload:</span>
+<span class="sd">           - runId: a unique identifier of the run for observability</span>
+<span class="sd">           - projectId: the Kili project the webhook is called on</span>
+<span class="sd">         - payload: the event produced, for example for `onSubmit` event:</span>
+<span class="sd">          - label: the label produced</span>
+<span class="sd">          - asset_id: the asset on which the label is produced</span>
 <span class="sd">        plugin_name: name of your plugin</span>
 <span class="sd">        header: Authorization header to access the routes</span>
 <span class="sd">        verbose: If false, minimal logs are displayed</span>
+<span class="sd">        handler_types: List of actions for which the webhook should be called.</span>
+<span class="sd">            Possible variants: `onSubmit`, `onReview`.</span>
+<span class="sd">            By default, is [`onSubmit`, `onReview`]</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
@@ -2358,7 +2456,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">handler_types</span>
     <span class="p">)</span><span class="o">.</span><span class="n">create_webhook</span><span class="p">()</span>
 </code></pre></div>
         </details>
@@ -2582,10 +2680,12 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
   <tbody>
       <tr>
         <td><code>plugin_path</code></td>
-        <td></td>
-        <td><p>Path to your plugin. Either:
-- a folder containing a main.py (mandatory) and a requirements.txt (optional)
-- a .py file</p></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Path to your plugin. Either:</p>
+<ul>
+<li>a folder containing a main.py (mandatory) and a requirements.txt (optional)</li>
+<li>a .py file</li>
+</ul></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2635,9 +2735,10 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a plugin with new code.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        plugin_path : Path to your plugin. Either:</span>
-<span class="sd">         - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
-<span class="sd">         - a .py file</span>
+<span class="sd">        plugin_path: Path to your plugin. Either:</span>
+
+<span class="sd">            - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
+<span class="sd">            - a .py file</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
 <span class="sd">        verbose: If false, minimal logs are displayed</span>
 
@@ -2675,14 +2776,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 
 
 <h3 class="doc doc-heading" id="kili.mutations.plugins.__init__.MutationsPlugins.update_webhook">
-<code class="highlight language-python"><span class="n">update_webhook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">new_header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">update_webhook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">new_header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">handler_types</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
 
     <div class="doc doc-contents ">
 
-      <p>Update a webhook linked to Kili's events.</p>
+      <p>Update a webhook linked to Kili's events.
+For a complete example, refer to the notebook <code>webhooks_example</code> on kili repo</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2698,7 +2800,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
       <tr>
         <td><code>new_webhook_url</code></td>
         <td><code>str</code></td>
-        <td><p>New URL receiving post requests on events on Kili</p></td>
+        <td><p>New URL receiving post requests on events on Kili. See <code>create_webhook</code> for the payload description</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -2718,6 +2820,14 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <td><code>bool</code></td>
         <td><p>If false, minimal logs are displayed</p></td>
         <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>handler_types</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>List of actions for which the webhook should be called.
+Possible variants: <code>onSubmit</code>, <code>onReview</code>.
+By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
+        <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
@@ -2750,15 +2860,21 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
     <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">new_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">handler_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a webhook linked to Kili&#39;s events.</span>
+    <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update a webhook linked to Kili&#39;s events.</span>
+<span class="sd">    For a complete example, refer to the notebook `webhooks_example` on kili repo</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        new_webhook_url: New URL receiving post requests on events on Kili</span>
+<span class="sd">        new_webhook_url: New URL receiving post requests on events on Kili. See `create_webhook` for the payload description</span>
 <span class="sd">        plugin_name: name of your plugin</span>
 <span class="sd">        new_header: Authorization header to access the routes</span>
 <span class="sd">        verbose: If false, minimal logs are displayed</span>
+<span class="sd">        handler_types: List of actions for which the webhook should be called.</span>
+<span class="sd">            Possible variants: `onSubmit`, `onReview`.</span>
+<span class="sd">            By default, is [`onSubmit`, `onReview`]</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
@@ -2769,7 +2885,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">new_webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">new_header</span><span class="p">,</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">new_webhook_url</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">new_header</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">handler_types</span>
     <span class="p">)</span><span class="o">.</span><span class="n">update_webhook</span><span class="p">()</span>
 </code></pre></div>
         </details>
@@ -2807,7 +2923,11 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
       <tr>
         <td><code>plugin_path</code></td>
         <td></td>
-        <td><p>Path to your plugin. Either a folder containing a main.py (mandatory) and a requirements.txt (optional) or a .py file</p></td>
+        <td><p>Path to your plugin. Either:</p>
+<ul>
+<li>a folder containing a main.py (mandatory) and a requirements.txt (optional)</li>
+<li>a .py file</li>
+</ul></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2855,11 +2975,13 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-    <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Uploads a plugin.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        plugin_path : Path to your plugin. Either a folder containing a main.py (mandatory) and a requirements.txt (optional) or a .py file</span>
+<span class="sd">        plugin_path : Path to your plugin. Either:</span>
+
+<span class="sd">            - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
+<span class="sd">            - a .py file</span>
 <span class="sd">        plugin_name: name of your plugin, if not provided, it will be the name from your file</span>
 <span class="sd">        verbose: If false, minimal logs are displayed</span>
 
@@ -2939,7 +3061,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ce72ebac.min.js"></script>
+      <script src="../../assets/javascripts/bundle.fc8c2696.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       

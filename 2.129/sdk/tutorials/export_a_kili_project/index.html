@@ -19,7 +19,7 @@
         <link rel="next" href="../plugins_development/">
       
       <link rel="icon" href="../../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.2">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.402914a4.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7bf56d0a.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
@@ -393,6 +393,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ocr_pre_annotations/" class="md-nav__link">
+        Importing OCR pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pixel_level_masks/" class="md-nav__link">
+        Importing segmentation pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../inference_labels/" class="md-nav__link">
         Importing inference labels
       </a>
@@ -568,6 +596,13 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    Cleanup
+  </a>
   
 </li>
       
@@ -1051,6 +1086,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    Cleanup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     Summary
   </a>
@@ -1390,6 +1432,10 @@ Convert to coco format: 1it [00:00, 54.94it/s]
 <li>The COCO annotation file</li>
 <li>The <code>data/</code> folder with all the assets</li>
 </ul>
+<h2 id="cleanup">Cleanup</h2>
+<p>We can remove the project that we created:</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">your_project_id</span><span class="p">);</span>
+</code></pre></div>
 <h2 id="summary">Summary</h2>
 <p>In this tutorial, we have seen several ways to export labels from a Kili project:</p>
 <ul>
@@ -1438,7 +1484,7 @@ Convert to coco format: 1it [00:00, 54.94it/s]
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.ce72ebac.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.fc8c2696.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
