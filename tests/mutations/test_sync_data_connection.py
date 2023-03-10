@@ -82,7 +82,7 @@ class MockerGetDataConnection:
         ),
     ],
 )
-def test_synchronize_data_connection(
+def test_synchronize_cloud_storage_connection(
     mocked_get_data_connection,
     mocked_validate_data_differences,
     mocked_graphql_client,
@@ -92,7 +92,7 @@ def test_synchronize_data_connection(
     caplog,
 ) -> None:
     """
-    Test synchronize_data_connection mutation
+    Test synchronize_cloud_storage_connection mutation
     """
 
     class BackendSubscriptionEventGenerator:
