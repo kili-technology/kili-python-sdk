@@ -278,6 +278,15 @@ kili.send_back_to_queue(project_id=project_id, external_ids=external_ids)
 
 For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/asset-lifecycle).
 
+## Cleanup
+
+We can remove the project that we created:
+
+
+```python
+kili.delete_project(project_id)
+```
+
 ## Summary
 
 Done!
