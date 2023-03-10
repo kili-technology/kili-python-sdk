@@ -61,7 +61,7 @@ class MutationsAsset:
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         wait_until_availability: bool = True,
-    ) -> Optional[Dict[str, str]]:
+    ) -> Dict[str, str]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -118,7 +118,7 @@ class MutationsAsset:
         ) or is_empty_list_with_warning(
             "append_many_to_dataset", "json_content_array", json_content_array
         ):
-            return None
+            return {}
 
         if status_array is not None:
             warnings.warn(
@@ -178,7 +178,7 @@ class MutationsAsset:
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[List[Dict]]:
+    ) -> List[Dict]:
         """Update the properties of one or more assets.
 
         Args:
@@ -228,7 +228,7 @@ class MutationsAsset:
         ) or is_empty_list_with_warning(
             "update_properties_in_assets", "external_ids", external_ids
         ):
-            return None
+            return []
 
         if status_array is not None:
             warnings.warn(
@@ -312,7 +312,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[List[Dict]]:
+    ) -> List[Dict]:
         """Update the external IDs of one or more assets.
 
         Args:
@@ -334,7 +334,7 @@ class MutationsAsset:
         if is_empty_list_with_warning(
             "change_asset_external_ids", "new_external_ids", new_external_ids
         ):
-            return None
+            return []
 
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
@@ -374,7 +374,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Asset]:
+    ) -> Asset:
         """Delete assets from a project.
 
         Args:
@@ -389,7 +389,7 @@ class MutationsAsset:
         if is_empty_list_with_warning(
             "delete_many_from_dataset", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
-            return None
+            return Asset()
 
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
@@ -514,7 +514,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """Send assets back to queue.
 
         Args:
@@ -537,7 +537,7 @@ class MutationsAsset:
         if is_empty_list_with_warning(
             "send_back_to_queue", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
-            return None
+            return {}
 
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
