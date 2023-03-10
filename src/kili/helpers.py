@@ -376,7 +376,7 @@ class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
             self.warned = True
 
 
-def check_warn_empty_list(method_name: str, argument_name: str, argument_value: Any) -> bool:
+def is_empty_list_with_warning(method_name: str, argument_name: str, argument_value: Any) -> bool:
     """
     Check if an input list argument is empty and warn the user if it is
 
