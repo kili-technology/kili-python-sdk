@@ -213,5 +213,5 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.change_asset_external_ids(new_external_ids=[], asset_ids=[])
-        assert ret is None
+        assert ret == []
         mocked__mutate_from_paginated_call.assert_not_called()
