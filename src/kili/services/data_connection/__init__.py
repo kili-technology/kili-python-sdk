@@ -152,6 +152,7 @@ def synchronize_data_connection(
         auth,
         data_connection_id,
         fields=[
+            "id",
             "dataDifferencesSummary.added",
             "dataDifferencesSummary.removed",
             "dataDifferencesSummary.total",
