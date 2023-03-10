@@ -346,6 +346,8 @@ def test_copy_project_e2e(kili, src_project):
         assert new_proj[field_name] == src_proj[field_name]
 
     # assert members
+    members_src = sorted(members_src, key=lambda member: member["user"]["email"])
+    members_new = sorted(members_new, key=lambda member: member["user"]["email"])
     assert members_src == members_new
 
     # assert labels
