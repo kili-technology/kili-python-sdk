@@ -2,8 +2,9 @@
 Test cloud storage methods
 """
 
+import json
 import os
-from typing import Dict
+from typing import Dict, List, Tuple
 
 import pytest
 
@@ -49,13 +50,63 @@ def src_project(kili: Kili):
     kili.delete_project(project["id"])
 
 
-@pytest.mark.skip(reason="cannot test this for now. requires data integrations to be set up")
-def test_e2e_synchronize_cloud_storage_connection(kili: Kili, src_project: Dict):
-    project_id = src_project["id"]
+def get_test_cases() -> List[Tuple[str]]:
+    """
+    KILI_TEST_DATA_INTEGRATION_ID is a json string of the form:
+    {
+        "LTS": {
+            "AWS": ["data_integration_id_1", "data_integration_id_2"],
+            "GCP": ["data_integration_id_1", "data_integration_id_2"],
+            "Azure": ["data_integration_id_1", "data_integration_id_2"],
+        },
+        "STAGING": {
+            "AWS": ["data_integration_id_1", "data_integration_id_2"],
+            ...
+        },
+        ...
+    }
+    """
+    test_cases = []
 
-    data_integration_id = os.environ.get("KILI_TEST_DATA_INTEGRATION_ID")
-    if data_integration_id is None:
-        raise ValueError("KILI_TEST_DATA_INTEGRATION_ID env var not found. Cannot run test.")
+    integrations_ids = os.environ.get("KILI_TEST_DATA_INTEGRATION_ID")
+    if integrations_ids is None:
+        return test_cases
+
+    integrations_ids = json.loads(integrations_ids)
+
+    for endpoint_short_name, platform_to_data_integration_ids in integrations_ids.items():
+        for platform_name, data_integration_ids in platform_to_data_integration_ids.items():
+            for data_integration_id in data_integration_ids:
+                test_cases.append((endpoint_short_name, platform_name, data_integration_id))
+
+    return test_cases
+
+
+def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
+    if endpoint_short_name == "LTS":
+        return "lts" in endpoint_url
+    elif endpoint_short_name == "STAGING":
+        return "staging" in endpoint_url
+    elif endpoint_short_name == "PREPROD":
+        return "preprod" in endpoint_url
+    elif endpoint_short_name == "PROD":
+        return "https://cloud" in endpoint_url
+    else:
+        raise ValueError(f"Unknown endpoint short name: {endpoint_short_name}")
+
+
+@pytest.mark.parametrize("endpoint_short_name,platform_name,data_integration_id", get_test_cases())
+def test_e2e_synchronize_cloud_storage_connection(
+    kili: Kili,
+    src_project: Dict,
+    endpoint_short_name: str,
+    platform_name: str,
+    data_integration_id: str,
+):
+    if not is_same_endpoint(endpoint_short_name, kili.auth.api_endpoint):
+        pytest.skip("Skipping test because it is not the right endpoint.")
+
+    project_id = src_project["id"]
 
     print("Data integration used:", data_integration_id)
 
