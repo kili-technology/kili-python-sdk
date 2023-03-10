@@ -256,6 +256,11 @@ plt.show()
 
 We can remove the project that we created:
 
+
+```python
+kili.delete_project(project_id)
+```
+
 ## Conclusion
 
 You can now try uploading your own predictions using `kili.create_predictions()`!
