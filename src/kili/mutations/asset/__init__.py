@@ -61,7 +61,7 @@ class MutationsAsset:
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         wait_until_availability: bool = True,
-    ) -> Dict[str, str]:
+    ) -> Optional[Dict[str, str]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -118,7 +118,7 @@ class MutationsAsset:
         ) or is_empty_list_with_warning(
             "append_many_to_dataset", "json_content_array", json_content_array
         ):
-            return {}
+            return None
 
         if status_array is not None:
             warnings.warn(
@@ -514,7 +514,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Send assets back to queue.
 
         Args:
@@ -537,7 +537,7 @@ class MutationsAsset:
         if is_empty_list_with_warning(
             "send_back_to_queue", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
-            return {}
+            return None
 
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
