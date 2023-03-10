@@ -74,9 +74,9 @@ def get_test_cases() -> List[Tuple[str]]:
 
     integrations_ids = json.loads(integrations_ids)
 
-    for endpoint_short_name, platform_to_data_integration_ids in integrations_ids.items():
-        for platform_name, data_integration_ids in platform_to_data_integration_ids.items():
-            for data_integration_id in data_integration_ids:
+    for endpoint_short_name in integrations_ids:
+        for platform_name in integrations_ids[endpoint_short_name]:
+            for data_integration_id in integrations_ids[endpoint_short_name][platform_name]:
                 test_cases.append((endpoint_short_name, platform_name, data_integration_id))
 
     return test_cases
