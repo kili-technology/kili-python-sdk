@@ -123,9 +123,9 @@ def test_get_labels_asset_ids_map():
 
 
 @patch("kili.mutations.asset._mutate_from_paginated_call", return_value=[{"data": None}])
-class TestSkipIfEmptyDecorator(TestCase):
+class TestCheckWarnEmptyList(TestCase):
     """
-    tests for the skip_if_empty_input decorator
+    tests for the check_warn_empty_list helper
     """
 
     def test_kwargs_empty(self, mocked__mutate_from_paginated_call):
@@ -155,7 +155,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         mocked__mutate_from_paginated_call.assert_not_called()
 
     def test_none(self, mocked__mutate_from_paginated_call):
-        """test that the decorator does not raise a warning if args are None"""
+        """test that the helper does not raise a warning if args are None"""
         kili = MutationsAsset(auth=MagicMock())
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():
@@ -189,22 +189,21 @@ class TestSkipIfEmptyDecorator(TestCase):
         assert ret is None
         mocked__mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_no_warning(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset(auth=MagicMock())
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
         mocked__mutate_from_paginated_call.assert_called_once()
 
-    def test_args_no_warning(self, mocked__mutate_from_paginated_call):
+    def test_args_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset(auth=MagicMock())
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)
         mocked__mutate_from_paginated_call.assert_called_once()
 
-    def test_all_non_empty(self, mocked__mutate_from_paginated_call):
-        """test the all_non_empty argument of the skip_if_empty_arguments decorator"""
+    def test_warn_change_asset_external_ids(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset(auth=MagicMock())
         with pytest.warns(
             UserWarning,
