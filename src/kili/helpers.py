@@ -10,18 +10,7 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
 import requests
@@ -387,94 +376,19 @@ class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
             self.warned = True
 
 
-D = TypeVar("D")
-
-
-def skip_if_empty_arguments(
-    all_non_empty: Optional[Sequence[str]] = None, any_non_empty: Optional[Sequence[str]] = None
-) -> Callable[[Callable[..., D]], Callable[..., Optional[D]]]:
+def check_warn_empty_list(method_name: str, argument_name: str, argument_value: Any) -> bool:
     """
-    Decorator that warns if an argument is an empty sequence.
+    Check if an input list argument is empty and warn the user if it is
 
-    If a warning is raised, the decorated method is skipped and returns None.
-
-    Args:
-        all_non_empty: sequence of argument names that must be all non-empty.
-        any_non_empty: sequence of argument names that must have at least one non-empty value.
+    Returns True if the list is empty, False otherwise
     """
-
-    def is_empty_sequence(arg_value) -> bool:
-        return isinstance(arg_value, Sequence) and len(arg_value) == 0
-
-    def get_arg_value(arg_name: str, args: Tuple[Any, ...], kwargs: Dict[str, Any], func: Callable):
-        """
-        Get the value of an argument `arg_name` from the args and kwargs of the decorated function.
-        """
-        if arg_name in kwargs:
-            return kwargs[arg_name]
-
-        index_ = func.__code__.co_varnames.index(arg_name)
-        try:
-            return args[index_]
-        except IndexError:
-            return None
-
-    def get_args_as_dict(
-        arg_names: Sequence[str], args: Tuple[Any, ...], kwargs: Dict[str, Any], func: Callable
-    ) -> Dict[str, Any]:
-        args_dict = {}
-        for arg_name in arg_names:
-            args_value = get_arg_value(arg_name, args, kwargs, func)
-            if args_value is not None:
-                args_dict[arg_name] = args_value
-        return args_dict
-
-    def decorator(func: Callable[..., D]) -> Callable[..., Optional[D]]:
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs) -> Optional[D]:
-            has_warned = False
-
-            # we want all arguments to be non-empty
-            if all_non_empty:
-                args_dict = get_args_as_dict(all_non_empty, args, kwargs, func)
-
-                empty_args = [
-                    arg_name
-                    for arg_name, arg_value in args_dict.items()
-                    if is_empty_sequence(arg_value)
-                ]
-
-                if empty_args:
-                    warnings.warn(
-                        (
-                            f"Method '{func.__name__}' did nothing because the following arguments"
-                            f" are empty: {', '.join(empty_args)}."
-                        ),
-                        stacklevel=4,
-                    )
-                    has_warned = True
-
-            # we need at least one argument to be non-empty
-            if any_non_empty:
-                args_dict = get_args_as_dict(any_non_empty, args, kwargs, func)
-
-                if args_dict and all(
-                    is_empty_sequence(arg_value) for arg_value in args_dict.values()
-                ):
-                    warnings.warn(
-                        (
-                            f"Method '{func.__name__}' did nothing because the following arguments"
-                            f" are empty: {', '.join(args_dict.keys())}."
-                        ),
-                        stacklevel=4,
-                    )
-                    has_warned = True
-
-            if has_warned:
-                return None
-
-            return func(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
+    if isinstance(argument_value, List) and len(argument_value) == 0:
+        warnings.warn(
+            (
+                f"Method '{method_name}' did nothing because the following argument"
+                f" is empty: {argument_name}."
+            ),
+            stacklevel=3,
+        )
+        return True
+    return False

@@ -133,8 +133,8 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Method 'add_to_review' did nothing because the following arguments are empty:"
-                " asset_ids, external_ids."
+                "Method 'add_to_review' did nothing because the following argument is empty:"
+                " asset_ids."
             ),
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=[])
@@ -146,8 +146,8 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Method 'add_to_review' did nothing because the following arguments are empty:"
-                " asset_ids, external_ids."
+                "Method 'add_to_review' did nothing because the following argument is empty:"
+                " asset_ids."
             ),
         ):
             ret = kili.add_to_review([], [])
@@ -168,7 +168,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Method 'add_to_review' did nothing because the following arguments are empty:"
+                "Method 'add_to_review' did nothing because the following argument is empty:"
                 " external_ids."
             ),
         ):
@@ -181,7 +181,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Method 'add_to_review' did nothing because the following arguments are empty:"
+                "Method 'add_to_review' did nothing because the following argument is empty:"
                 " asset_ids"
             ),
         ):
@@ -209,7 +209,7 @@ class TestSkipIfEmptyDecorator(TestCase):
         with pytest.warns(
             UserWarning,
             match=(
-                "Method 'change_asset_external_ids' did nothing because the following arguments are"
+                "Method 'change_asset_external_ids' did nothing because the following argument is"
                 " empty: new_external_ids"
             ),
         ):
