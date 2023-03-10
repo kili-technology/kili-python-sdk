@@ -388,7 +388,7 @@ def is_empty_list_with_warning(method_name: str, argument_name: str, argument_va
                 f"Method '{method_name}' did nothing because the following argument"
                 f" is empty: {argument_name}."
             ),
-            stacklevel=3,
+            stacklevel=5,
         )
         return True
     return False
