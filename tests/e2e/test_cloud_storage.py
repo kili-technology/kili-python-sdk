@@ -103,23 +103,28 @@ def test_e2e_synchronize_cloud_storage_connection(
     platform_name: str,
     data_integration_id: str,
 ):
+    """
+    e2e test for cloud storage methods
+    """
     if not is_same_endpoint(endpoint_short_name, kili.auth.api_endpoint):
         pytest.skip("Skipping test because it is not the right endpoint.")
 
     project_id = src_project["id"]
 
+    # Check that the data integration exists
     print("Data integration used:", data_integration_id)
-
     data_integrations = kili.cloud_storage_integrations(
         status="CONNECTED", cloud_storage_integration_id=data_integration_id
     )
     if len(data_integrations) != 1:
         raise ValueError("No data integration found. Cannot run test.", data_integrations)
 
+    # Create a data connection
     data_connection_id = kili.add_cloud_storage_connection(
         project_id=project_id, cloud_storage_integration_id=data_integration_id
     )["id"]
 
+    # Check that the data connection has been created
     data_connections = kili.cloud_storage_connections(
         project_id=project_id,
         fields=[

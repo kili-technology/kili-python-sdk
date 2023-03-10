@@ -12,6 +12,7 @@ from tenacity.wait import wait_fixed
 from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
+from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 
 from ...authentication import KiliAuth
 from ...graphql.operations.data_connection.queries import (
@@ -51,11 +52,11 @@ def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[st
     return data_connection[0]
 
 
-def validate_data_differences(
+def trigger_validate_data_differences(
     auth: KiliAuth, diff_type: Literal["ADD", "REMOVE"], data_connection_id: str
 ) -> Dict:
     """
-    Validate data differences
+    Call the validateDataDifferences resolver
     """
     variables = {
         "where": {"connectionId": data_connection_id, "type": diff_type},
@@ -64,6 +65,34 @@ def validate_data_differences(
     result = auth.client.execute(GQL_VALIDATE_DATA_DIFFERENCES, variables)
     data_connection = format_result("data", result)
     return data_connection
+
+
+def validate_data_differences(
+    auth: KiliAuth, diff_type: Literal["ADD", "REMOVE"], data_connection: Dict
+) -> None:
+    """
+    Call the validateDataDifferences resolver and wait until the validation is done
+    """
+    diff = data_connection["dataDifferencesSummary"]["added" if diff_type == "ADD" else "removed"]
+
+    where = AssetWhere(project_id=data_connection["projectId"])
+    nb_assets_before = AssetQuery(auth.client).count(where)
+
+    trigger_validate_data_differences(auth, diff_type, data_connection["id"])
+
+    for attempt in Retrying(
+        wait=wait_fixed(1),
+        stop=stop_after_delay(60),
+        retry=retry_if_exception_type(ValueError),
+        reraise=True,
+    ):
+        with attempt:
+            nb_assets_after = AssetQuery(auth.client).count(where)
+            if abs(nb_assets_after - nb_assets_before) != diff:
+                raise ValueError(
+                    f"Number of assets after validation is not correct: before {nb_assets_before},"
+                    f" after {nb_assets_after}, diff {diff}"
+                )
 
 
 def compute_differences(
@@ -96,7 +125,6 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
         time.sleep(1)  # backend needs some time...
 
     for attempt in Retrying(
-        stop=stop_after_delay(60),
         wait=wait_fixed(1),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
@@ -129,6 +157,7 @@ def synchronize_data_connection(
             "dataDifferencesSummary.total",
             "isChecking",
             "numberOfAssets",
+            "projectId",
         ],
     )
     if data_connection["isChecking"]:
@@ -139,7 +168,7 @@ def synchronize_data_connection(
     total = data_connection["dataDifferencesSummary"]["total"]
     nb_assets = data_connection["numberOfAssets"]
 
-    logger.info("Found %d asset(s) in the data connection.", nb_assets)
+    logger.info("Currently %d asset(s) in the data connection.", nb_assets)
 
     if total == 0:
         logger.info("No differences found. Nothing to synchronize.")
@@ -151,7 +180,7 @@ def synchronize_data_connection(
 
     if removed > 0:
         if delete_extraneous_files:
-            data_connection = validate_data_differences(auth, "REMOVE", data_connection_id)
+            validate_data_differences(auth, "REMOVE", data_connection)
             logger.info("Removed %d extraneous file(s).", removed)
         else:
             logger.info(
@@ -160,7 +189,7 @@ def synchronize_data_connection(
             )
 
     if added > 0:
-        data_connection = validate_data_differences(auth, "ADD", data_connection_id)
+        validate_data_differences(auth, "ADD", data_connection)
         logger.info("Added %d file(s).", added)
 
-    return data_connection
+    return get_data_connection(auth, data_connection_id, fields=["numberOfAssets", "projectId"])
