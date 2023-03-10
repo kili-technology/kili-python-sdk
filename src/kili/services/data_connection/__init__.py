@@ -168,7 +168,7 @@ def synchronize_data_connection(
     total = data_connection["dataDifferencesSummary"]["total"]
     nb_assets = data_connection["numberOfAssets"]
 
-    logger.info("Currently %d asset(s) in the data connection.", nb_assets)
+    logger.info("Currently %d asset(s) imported from the data connection.", nb_assets)
 
     if total == 0:
         logger.info("No differences found. Nothing to synchronize.")
