@@ -28,7 +28,8 @@ class MockerGetDataConnection:
         self.project_id = project_id
 
     def __call__(self, auth, data_connection_id: str, fields: List[str]) -> Dict[str, Any]:
-        ret: Dict[str, Any] = {"id": data_connection_id, "projectId": self.project_id}
+        ret: Dict[str, Any] = {"id": data_connection_id}
+
         ret["dataDifferencesSummary"] = {}
 
         if "dataDifferencesSummary.added" in fields:
@@ -41,6 +42,8 @@ class MockerGetDataConnection:
             ret["isChecking"] = self.is_checking
         if "numberOfAssets" in fields:
             ret["numberOfAssets"] = self.nb_of_assets
+        if "projectId" in fields:
+            ret["projectId"] = self.project_id
 
         return ret
 
