@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_fixed
+from tenacity.wait import wait_exponential
 from typing_extensions import Literal
 
 from kili.graphql import QueryOptions
@@ -81,7 +81,7 @@ def validate_data_differences(
     trigger_validate_data_differences(auth, diff_type, data_connection["id"])
 
     for attempt in Retrying(
-        wait=wait_fixed(1),
+        wait=wait_exponential(multiplier=1, min=1, max=4),
         stop=stop_after_delay(60),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
@@ -125,7 +125,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
         time.sleep(1)  # backend needs some time...
 
     for attempt in Retrying(
-        wait=wait_fixed(1),
+        wait=wait_exponential(multiplier=1, min=1, max=4),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
     ):
