@@ -80,19 +80,20 @@ class MutationsPlugins:
 
         Args:
             webhook_url: URL receiving post requests on events on Kili. The payload will be the following:
-             - eventType: the type of event called
-             - logPayload:
-               - runId: a unique identifier of the run for observability
-               - projectId: the Kili project the webhook is called on
-             - payload: the event produced, for example for `onSubmit` event:
-              - label: the label produced
-              - asset_id: the asset on which the label is produced
+
+                - eventType: the type of event called
+                - logPayload:
+                    - runId: a unique identifier of the run for observability
+                    - projectId: the Kili project the webhook is called on
+                - payload: the event produced, for example for `onSubmit` event:
+                    - label: the label produced
+                    - asset_id: the asset on which the label is produced
             plugin_name: name of your plugin
             header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
             handler_types: List of actions for which the webhook should be called.
                 Possible variants: `onSubmit`, `onReview`.
-                By default, is [`onSubmit`, `onReview`]
+                By default, is [`onSubmit`, `onReview`].
 
         Returns:
             A result object which indicates if the mutation was successful,
