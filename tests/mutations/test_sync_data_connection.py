@@ -1,5 +1,4 @@
 from typing import Any, Dict, List
-from unittest.mock import patch
 
 import pytest
 
@@ -48,10 +47,6 @@ class MockerGetDataConnection:
         return ret
 
 
-@patch("kili.graphql.GraphQLClient")
-@patch("kili.services.data_connection.trigger_validate_data_differences")
-@patch("kili.services.data_connection.get_data_connection")
-@patch("kili.services.data_connection.Retrying", return_value=[])
 @pytest.mark.parametrize(
     "delete_extraneous_files,data_connection_ret_values,log_messages",
     [
@@ -122,10 +117,6 @@ class MockerGetDataConnection:
     ],
 )
 def test_synchronize_cloud_storage_connection(
-    mocked_assets_retrying,
-    mocked_get_data_connection,
-    mocked_trigger_validate_data_differences,
-    mocked_graphql_client,
     delete_extraneous_files,
     data_connection_ret_values,
     log_messages,
@@ -135,6 +126,13 @@ def test_synchronize_cloud_storage_connection(
     """
     Test synchronize_cloud_storage_connection mutation
     """
+    mocked_graphql_client = mocker.MagicMock()
+    mocked_trigger_validate_data_differences = mocker.patch(
+        "kili.services.data_connection.trigger_validate_data_differences"
+    )
+    mocked_get_data_connection = mocker.patch("kili.services.data_connection.get_data_connection")
+    mocked_retrying = mocker.patch("kili.services.data_connection.Retrying", return_value=[])
+
     kili = MutationsDataConnection(auth=mocker.MagicMock(client=mocked_graphql_client))
     mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
 
