@@ -22,8 +22,8 @@ nav:
           - Importing inference labels: sdk/tutorials/inference_labels.md
           - Managing workflows: sdk/tutorials/set_up_workflows.md
           - Exporting project data: sdk/tutorials/export_a_kili_project.md
-          - Developing plugins - overview: sdk/tutorials/plugins_development.md
-          - Developing plugins - example: sdk/tutorials/plugins_example.md
+          - Developing plugins: sdk/tutorials/plugins_development.md
+          - Plugin example - Programmatic QA: sdk/tutorials/plugins_example.md
           - Plugins library: sdk/tutorials/plugins_library.md
       - Reference:
           - API Key: sdk/api_key.md
