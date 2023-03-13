@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -130,11 +130,12 @@ def test_synchronize_cloud_storage_connection(
     data_connection_ret_values,
     log_messages,
     caplog,
+    mocker,
 ) -> None:
     """
     Test synchronize_cloud_storage_connection mutation
     """
-    kili = MutationsDataConnection(auth=MagicMock(client=mocked_graphql_client))
+    kili = MutationsDataConnection(auth=mocker.MagicMock(client=mocked_graphql_client))
     mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
 
     kili.synchronize_cloud_storage_connection(
