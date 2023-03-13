@@ -49,7 +49,7 @@ class MutationsLabel:
         json_response_array: Optional[List[dict]] = None,
         model_name: Optional[str] = None,
         asset_id_array: Optional[List[str]] = None,
-    ) -> dict:
+    ) -> Dict:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
