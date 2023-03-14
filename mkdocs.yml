@@ -16,6 +16,9 @@ nav:
           - Basic project setup: sdk/tutorials/basic_project_setup.md
           - Importing assets and labels: sdk/tutorials/importing_assets_and_labels.md
           - Importing video assets: sdk/tutorials/importing_video_assets.md
+          - Importing NER pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
+          - Importing OCR pre-annotations: sdk/tutorials/ocr_pre_annotations.md
+          - Importing segmentation pre-annotations: sdk/tutorials/pixel_level_masks.md
           - Importing inference labels: sdk/tutorials/inference_labels.md
           - Managing workflows: sdk/tutorials/set_up_workflows.md
           - Exporting project data: sdk/tutorials/export_a_kili_project.md
