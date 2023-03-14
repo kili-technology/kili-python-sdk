@@ -106,6 +106,21 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://python-sdk-docs.kili-technology.com/2.129/sdk/tutorials/ner_pre_annotations_openai/</loc>
+         <lastmod>2023-03-14</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://python-sdk-docs.kili-technology.com/2.129/sdk/tutorials/ocr_pre_annotations/</loc>
+         <lastmod>2023-03-14</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://python-sdk-docs.kili-technology.com/2.129/sdk/tutorials/pixel_level_masks/</loc>
+         <lastmod>2023-03-14</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.129/sdk/tutorials/plugins_development/</loc>
          <lastmod>2023-03-14</lastmod>
          <changefreq>daily</changefreq>

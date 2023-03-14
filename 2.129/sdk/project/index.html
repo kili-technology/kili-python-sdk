@@ -391,6 +391,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../tutorials/ner_pre_annotations_openai/" class="md-nav__link">
+        Importing NER pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/ocr_pre_annotations/" class="md-nav__link">
+        Importing OCR pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/pixel_level_masks/" class="md-nav__link">
+        Importing segmentation pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../tutorials/inference_labels/" class="md-nav__link">
         Importing inference labels
       </a>
@@ -734,6 +776,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kili.mutations.project.__init__.MutationsProject.internal_delete_project" class="md-nav__link">
+    internal_delete_project()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kili.mutations.project.__init__.MutationsProject.unarchive_project" class="md-nav__link">
     unarchive_project()
   </a>
@@ -985,6 +1034,13 @@
           <li class="md-nav__item">
   <a href="#kili.mutations.project.__init__.MutationsProject.delete_project" class="md-nav__link">
     delete_project()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.mutations.project.__init__.MutationsProject.internal_delete_project" class="md-nav__link">
+    internal_delete_project()
   </a>
   
 </li>
@@ -2657,6 +2713,81 @@ if <code>None</code> is provided.</p></td>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_PROJECT_DELETE_ASYNCHRONOUSLY</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.internal_delete_project">
+<code class="highlight language-python"><span class="n">internal_delete_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Delete project permanently.
+WARNING: This resolver is for internal use by Kili Technology only.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Identifier of the project</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+      <td><p>A result object which indicates if the mutation was successful,
+    or an error message.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/mutations/project/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
+<span class="k">def</span> <span class="nf">internal_delete_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete project permanently.</span>
+<span class="sd">    WARNING: This resolver is for internal use by Kili Technology only.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Identifier of the project</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A result object which indicates if the mutation was successful,</span>
+<span class="sd">            or an error message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_DELETE_PROJECT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
