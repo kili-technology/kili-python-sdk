@@ -391,48 +391,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorials/ner_pre_annotations_openai/" class="md-nav__link">
-        Importing NER pre-annotations
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tutorials/ocr_pre_annotations/" class="md-nav__link">
-        Importing OCR pre-annotations
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tutorials/pixel_level_masks/" class="md-nav__link">
-        Importing segmentation pre-annotations
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../tutorials/inference_labels/" class="md-nav__link">
         Importing inference labels
       </a>
@@ -1021,6 +979,7 @@
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hasBeenSeen&quot;</span><span class="p">,</span>
             <span class="s2">&quot;issueNumber&quot;</span><span class="p">,</span>
             <span class="s2">&quot;status&quot;</span><span class="p">,</span>
             <span class="s2">&quot;type&quot;</span><span class="p">,</span>
@@ -1044,6 +1003,7 @@
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hasBeenSeen&quot;</span><span class="p">,</span>
             <span class="s2">&quot;issueNumber&quot;</span><span class="p">,</span>
             <span class="s2">&quot;status&quot;</span><span class="p">,</span>
             <span class="s2">&quot;type&quot;</span><span class="p">,</span>
@@ -1067,6 +1027,7 @@
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
             <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hasBeenSeen&quot;</span><span class="p">,</span>
             <span class="s2">&quot;issueNumber&quot;</span><span class="p">,</span>
             <span class="s2">&quot;status&quot;</span><span class="p">,</span>
             <span class="s2">&quot;type&quot;</span><span class="p">,</span>
@@ -1296,7 +1257,7 @@ represents issues and questions in the app</p></td>
 
 
 <h3 class="doc doc-heading" id="kili.queries.issue.__init__.QueriesIssue.issues">
-<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;issueNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;assetId&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;hasBeenSeen&#39;</span><span class="p">,</span> <span class="s1">&#39;issueNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;assetId&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1357,7 +1318,7 @@ However to query issues and questions, we currently provide this unique method t
         <td><code>List[str]</code></td>
         <td><p>All the fields to request among the possible fields for the assets.
 See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the documentation</a> for all possible fields.</p></td>
-        <td><code>[&#39;id&#39;, &#39;createdAt&#39;, &#39;issueNumber&#39;, &#39;status&#39;, &#39;type&#39;, &#39;assetId&#39;]</code></td>
+        <td><code>[&#39;id&#39;, &#39;createdAt&#39;, &#39;hasBeenSeen&#39;, &#39;issueNumber&#39;, &#39;status&#39;, &#39;type&#39;, &#39;assetId&#39;]</code></td>
       </tr>
       <tr>
         <td><code>first</code></td>
@@ -1414,6 +1375,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
     <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;id&quot;</span><span class="p">,</span>
         <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hasBeenSeen&quot;</span><span class="p">,</span>
         <span class="s2">&quot;issueNumber&quot;</span><span class="p">,</span>
         <span class="s2">&quot;status&quot;</span><span class="p">,</span>
         <span class="s2">&quot;type&quot;</span><span class="p">,</span>
