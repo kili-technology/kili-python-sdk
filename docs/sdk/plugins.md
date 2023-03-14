@@ -68,6 +68,9 @@ class PluginHandler(PluginCore):
 ## Model for Plugins
 
 ::: kili.services.plugins.model.PluginCore
+    selection:
+        filters:
+            - '!on_custom_interface_click'
 
 ## Queries
 
