@@ -83,7 +83,8 @@ Check out our tutorials:
 - 🎥 [Video import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/): See how to import video assets into your Kili project.
 - 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
 - 📦 [Project export](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/): See how to export your project's assets and labels to different formats.
-- 🛠️ Plugins [development](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) and [example](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/): Learn how to create and use custom plugins in Kili.
+- 🛠️ Plugins [overview](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/), [example](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/) and [library](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_library/): Learn how to create and use custom plugins in Kili [SaaS only feature, contact us to get access]
+- 🛠️ Webhooks [overview](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/webhooks_example/) (Self hosted alternative to plugins, available also in on-premise Kili versions)
 
 You can find several other recipes in this [folder](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
 
