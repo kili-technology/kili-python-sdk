@@ -25,6 +25,7 @@ nav:
           - Developing plugins - overview: sdk/tutorials/plugins_development.md
           - Developing plugins - example: sdk/tutorials/plugins_example.md
           - Plugins library: sdk/tutorials/plugins_library.md
+          - Webhooks: sdk/tutorials/webhooks_example.md
       - Reference:
           - API Key: sdk/api_key.md
           - Asset: sdk/asset.md
