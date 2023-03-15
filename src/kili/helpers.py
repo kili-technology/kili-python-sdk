@@ -10,7 +10,7 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
 import requests
@@ -374,3 +374,21 @@ class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
         if not self.warned and float(retry_state.outcome_timestamp or 0) > self.warn_after:
             self.logger_func(self.warn_message)
             self.warned = True
+
+
+def is_empty_list_with_warning(method_name: str, argument_name: str, argument_value: Any) -> bool:
+    """
+    Check if an input list argument is empty and warn the user if it is
+
+    Returns True if the list is empty, False otherwise
+    """
+    if isinstance(argument_value, List) and len(argument_value) == 0:
+        warnings.warn(
+            (
+                f"Method '{method_name}' did nothing because the following argument"
+                f" is empty: {argument_name}."
+            ),
+            stacklevel=5,
+        )
+        return True
+    return False
