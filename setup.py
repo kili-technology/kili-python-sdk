@@ -13,7 +13,7 @@ install_requires = [
     "tabulate",
     "tenacity",
     "tqdm",
-    "typeguard",
+    "typeguard<3.0.0",
     "typing_extensions>=4.1.0",
     "pyparsing",
     "websocket-client",

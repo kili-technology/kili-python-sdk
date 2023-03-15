@@ -26,26 +26,26 @@ nav:
           - Project User: sdk/project_user.md
           - Project Version: sdk/project_version.md
           - User: sdk/user.md
-  - Command line interface:
+  - Command Line Interface:
       - Getting Started: cli/index.md
       - Reference: cli/reference.md
   - Tutorials:
       - Getting Started: tutorials.md
-      - Basic project setup: sdk/tutorials/basic_project_setup.md
-      - Asset import:
-          - Assets and labels: sdk/tutorials/importing_assets_and_labels.md
-          - Video assets: sdk/tutorials/importing_video_assets.md
-      - Label import:
-          - NER pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
-          - OCR pre-annotations: sdk/tutorials/ocr_pre_annotations.md
-          - Segmentation pre-annotations: sdk/tutorials/pixel_level_masks.md
-          - Inference labels: sdk/tutorials/inference_labels.md
-      - Managing workflows: sdk/tutorials/set_up_workflows.md
-      - Exporting project data: sdk/tutorials/export_a_kili_project.md
+      - Basic Project Setup: sdk/tutorials/basic_project_setup.md
+      - Importing Assets:
+          - Assets and Labels: sdk/tutorials/importing_assets_and_labels.md
+          - Video Assets: sdk/tutorials/importing_video_assets.md
+      - Importing Labels:
+          - NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
+          - OCR Pre-annotations: sdk/tutorials/ocr_pre_annotations.md
+          - Segmentation Pre-annotations: sdk/tutorials/pixel_level_masks.md
+          - Inference Labels: sdk/tutorials/inference_labels.md
+      - Managing Workflows: sdk/tutorials/set_up_workflows.md
+      - Exporting Project Data: sdk/tutorials/export_a_kili_project.md
       - Plugins:
-          - Developing plugins: sdk/tutorials/plugins_development.md
-          - Plugin example - Programmatic QA: sdk/tutorials/plugins_example.md
-          - Plugins library: sdk/tutorials/plugins_library.md
+          - Developing Plugins: sdk/tutorials/plugins_development.md
+          - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md
+          - Plugins Library: sdk/tutorials/plugins_library.md
 
 ## Configuration
 plugins:
