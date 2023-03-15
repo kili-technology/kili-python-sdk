@@ -27,6 +27,7 @@ from kili.services.asset_import import import_assets
 from kili.utils.logcontext import for_all_methods, log_call
 from kili.utils.pagination import _mutate_from_paginated_call
 
+from ...helpers import is_empty_list_with_warning
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error
 
@@ -60,7 +61,7 @@ class MutationsAsset:
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         wait_until_availability: bool = True,
-    ) -> Dict[str, str]:
+    ) -> Optional[Dict[str, str]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -112,6 +113,13 @@ class MutationsAsset:
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
         """
+        if is_empty_list_with_warning(
+            "append_many_to_dataset", "content_array", content_array
+        ) or is_empty_list_with_warning(
+            "append_many_to_dataset", "json_content_array", json_content_array
+        ):
+            return None
+
         if status_array is not None:
             warnings.warn(
                 (
@@ -215,6 +223,13 @@ class MutationsAsset:
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
                 )
         """
+        if is_empty_list_with_warning(
+            "update_properties_in_assets", "asset_ids", asset_ids
+        ) or is_empty_list_with_warning(
+            "update_properties_in_assets", "external_ids", external_ids
+        ):
+            return []
+
         if status_array is not None:
             warnings.warn(
                 (
@@ -316,6 +331,11 @@ class MutationsAsset:
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 )
         """
+        if is_empty_list_with_warning(
+            "change_asset_external_ids", "new_external_ids", new_external_ids
+        ):
+            return []
+
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         parameters = {
@@ -366,6 +386,11 @@ class MutationsAsset:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
+        if is_empty_list_with_warning(
+            "delete_many_from_dataset", "asset_ids", asset_ids
+        ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
+            return Asset()
+
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
@@ -429,6 +454,11 @@ class MutationsAsset:
                     ],
                 )
         """
+        if is_empty_list_with_warning(
+            "add_to_review", "asset_ids", asset_ids
+        ) or is_empty_list_with_warning("add_to_review", "external_ids", external_ids):
+            return None
+
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
@@ -484,7 +514,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Send assets back to queue.
 
         Args:
@@ -504,6 +534,11 @@ class MutationsAsset:
                         ],
                 )
         """
+        if is_empty_list_with_warning(
+            "send_back_to_queue", "asset_ids", asset_ids
+        ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
+            return None
+
         asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
