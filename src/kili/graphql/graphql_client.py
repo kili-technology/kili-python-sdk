@@ -9,7 +9,7 @@ import threading
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -26,7 +26,6 @@ from kili.graphql.clientnames import GraphQLClientName
 from kili.utils.logcontext import LogContext
 
 
-# pylint: disable=too-few-public-methods
 class GraphQLClient:
     """
     GraphQL client
@@ -41,58 +40,62 @@ class GraphQLClient:
     ) -> None:
         self.endpoint = endpoint
         self.api_key = api_key
+        self.client_name = client_name
         self.verify = verify
 
-        self.headers = {
-            "Authorization": f"X-API-Key: {api_key}",
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "apollographql-client-name": client_name.value,
-            "apollographql-client-version": __version__,
-        }
+        self.ws_endpoint = self.endpoint.replace("http", "ws")
+
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
-            headers=self.headers,
+            headers=self._get_headers(),
             cookies=None,
             auth=None,
             use_json=True,
             timeout=30,
             verify=verify,
-            retries=20,  # requests.Session retries
+            retries=20,
             method="POST",
-            # can add other requests kwargs here
         )
 
-        try:
-            graphql_schema_path = self._get_graphql_schema_path()
-            self._cache_graphql_schema(graphql_schema_path)
-        except (requests.exceptions.JSONDecodeError, json.decoder.JSONDecodeError):
-            self._gql_client = Client(
-                transport=self._gql_transport, fetch_schema_from_transport=True
-            )
-        else:
-            self._gql_client = Client(
-                schema=graphql_schema_path.read_text(encoding="utf-8"),
-                transport=self._gql_transport,
-            )
+        self._gql_client = self._initizalize_graphql_client()
 
-        self.ws_endpoint = self.endpoint.replace("http", "ws")
+    def _get_headers(self) -> Dict[str, str]:
+        """
+        Get the headers
+        """
+        return {
+            "Authorization": f"X-API-Key: {self.api_key}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "apollographql-client-name": self.client_name.value,
+            "apollographql-client-version": __version__,
+        }
+
+    def _initizalize_graphql_client(self) -> Client:
+        """
+        Initialize the GraphQL client
+        """
+        graphql_schema_path = self._get_graphql_schema_path()
+
+        # In some cases (local development), we cannot get the kili version from the backend
+        # and therefore we cannot determine the schema version, so we don't cache the schema
+        if graphql_schema_path is None:
+            return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
+
+        # If the schema is not in the cache, we fetch it from the backend and cache it
+        if not (graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0):
+            self._purge_graphql_schema_cache_dir()
+            self._cache_graphql_schema(graphql_schema_path)
+
+        return Client(
+            schema=graphql_schema_path.read_text(encoding="utf-8"),
+            transport=self._gql_transport,
+        )
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
-        Cache the graphql schema (if not already in cache).
-
-        If the schema is not in cache, it will be fetched from the server.
-
-        Also deletes old cache files.
+        Cache the graphql schema on disk.
         """
-        for old_cache_file in graphql_schema_path.parent.glob("*.graphql"):
-            if old_cache_file.name != graphql_schema_path.name:
-                old_cache_file.unlink()
-
-        if graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0:
-            return
-
         with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
@@ -101,28 +104,50 @@ class GraphQLClient:
         with graphql_schema_path.open("w", encoding="utf-8") as file:
             file.write(schema_str)
 
-    def _get_graphql_schema_path(self) -> Path:
+    @property
+    def graphql_schema_cache_dir(self) -> Path:
+        """
+        Get the path of the GraphQL schema cache directory
+        """
+        return Path.home() / ".cache" / "kili" / "graphql"
+
+    def _purge_graphql_schema_cache_dir(self) -> None:
+        """
+        Purge the schema cache directory
+        """
+        for file in self.graphql_schema_cache_dir.glob("*.graphql"):
+            file.unlink()
+
+    def _get_graphql_schema_path(self) -> Optional[Path]:
         """
         Get the path of the GraphQL schema
+
+        Will return None if we cannot get the schema version.
         """
         endpoint_netloc = urlparse(self.endpoint).netloc
         version = self._get_kili_app_version()
-
+        if version is None:
+            return None
         filename = f"{endpoint_netloc}_{version}.graphql"
-        dir_ = Path.home() / ".cache" / "kili" / "graphql"
+        return self.graphql_schema_cache_dir / filename
 
-        return dir_ / filename
-
-    def _get_kili_app_version(self) -> str:
+    def _get_kili_app_version(self) -> Optional[str]:
         """
         Get the version of the Kili app server
+
+        Returns None if the version cannot be retrieved.
         """
         url = self.endpoint.replace("/graphql", "/version")
-        response = requests.get(url, verify=self.verify, timeout=30).json()
-        version = response["version"]
-        return version
+        response = requests.get(url, verify=self.verify, timeout=30)
+        if response.status_code == 200 and '"version":' in response.text:
+            response_json = response.json()
+            version = response_json["version"]
+            return version
+        return None
 
-    def execute(self, query: Union[str, DocumentNode], variables: Optional[Dict] = None) -> Dict:
+    def execute(
+        self, query: Union[str, DocumentNode], variables: Optional[Dict] = None
+    ) -> Dict[str, Any]:
         """
         Execute a query
 
@@ -130,26 +155,40 @@ class GraphQLClient:
             query: the GraphQL query
             variables: the payload of the query
         """
+
+        def _execute(document: DocumentNode, variables: Optional[Dict] = None) -> Dict[str, Any]:
+            try:
+                result = self._gql_client.execute(
+                    document=document,
+                    variable_values=variables,
+                    extra_args={
+                        "headers": {
+                            **self._gql_transport.headers,  # type: ignore
+                            **LogContext(),
+                        }
+                    },
+                )
+            except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
+                if isinstance(err, exceptions.TransportQueryError):
+                    raise GraphQLError(error=err.errors) from err
+                if isinstance(err, graphql.GraphQLError):
+                    raise GraphQLError(error=err.message) from err
+            return result  # type: ignore
+
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         try:
-            assert self._gql_transport.headers, "Transport headers must be defined"
-            result = self._gql_client.execute(
-                document=document,
-                variable_values=variables,
-                extra_args={
-                    "headers": {
-                        **self._gql_transport.headers,
-                        **LogContext(),
-                    }
-                },
-            )
-        except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
-            if isinstance(err, exceptions.TransportQueryError):
-                raise GraphQLError(error=err.errors) from err
-            if isinstance(err, graphql.GraphQLError):
-                raise GraphQLError(error=err.message) from err
-        return result  # type: ignore
+            ret = _execute(document, variables)
+        except GraphQLError as err:
+            # if error is due do parsing or local validation of the query (graphql.GraphQLError)
+            # we refresh the schema and retry once
+            if isinstance(err.__cause__, graphql.GraphQLError):
+                self._purge_graphql_schema_cache_dir()
+                self._gql_client = self._initizalize_graphql_client()
+                ret = _execute(document, variables)  # if it fails again, we crash here
+            else:
+                raise err
+        return ret
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
