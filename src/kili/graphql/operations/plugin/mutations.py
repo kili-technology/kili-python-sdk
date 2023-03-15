@@ -16,10 +16,12 @@ mutation(
 
 GQL_CREATE_PLUGIN_RUNNER = """
 mutation(
+  $handlerTypes: [PluginHandlerType!]
   $pluginName: String!
   ) {
   data: createPluginRunner(
     data: {
+      handlerTypes: $handlerTypes
       pluginName: $pluginName
     }
   )
@@ -28,12 +30,14 @@ mutation(
 
 GQL_CREATE_WEBHOOK = """
 mutation(
+  $handlerTypes: [PluginHandlerType!]
   $pluginName: String!
   $webhookUrl: String!
   $header: String
   ) {
   data: createWebhook(
     data: {
+      handlerTypes: $handlerTypes
       header: $header
       pluginName: $pluginName
       webhookUrl: $webhookUrl
@@ -56,10 +60,12 @@ mutation(
 
 GQL_UPDATE_PLUGIN_RUNNER = """
 mutation(
+  $handlerTypes: [PluginHandlerType!]
   $pluginName: String!
   ) {
   data: updatePluginRunner(
     data: {
+      handlerTypes: $handlerTypes
       pluginName: $pluginName
     }
   )
@@ -68,12 +74,14 @@ mutation(
 
 GQL_UPDATE_WEBHOOK = """
 mutation(
+  $handlerTypes: [PluginHandlerType!]
   $pluginName: String!
   $webhookUrl: String!
   $header: String
   ) {
   data: updateWebhook(
     data: {
+      handlerTypes: $handlerTypes
       header: $header
       pluginName: $pluginName
       webhookUrl: $webhookUrl
