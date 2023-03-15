@@ -239,11 +239,12 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "COCO format",
+            "COCO format - one file per job",
             {
                 "export_kwargs": {
                     "project_id": "semantic_segmentation",
                     "label_format": "coco",
+                    "split_option": "split",
                 },
                 "file_tree_expected": {
                     "data": {
@@ -253,6 +254,24 @@ def get_file_tree(folder: str):
                     "JOB_0": {
                         "labels.json": {},
                     },
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "COCO format - single file",
+            {
+                "export_kwargs": {
+                    "project_id": "semantic_segmentation",
+                    "label_format": "coco",
+                    "split_option": "merged",
+                },
+                "file_tree_expected": {
+                    "data": {
+                        "car_1.jpg": {},
+                        "car_2.jpg": {},
+                    },
+                    "labels.json": {},
                     "README.kili.txt": {},
                 },
             },
@@ -310,11 +329,12 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "COCO format video project",
+            "COCO format video project - one file per job",
             {
                 "export_kwargs": {
                     "project_id": "object_detection_video_project",
                     "label_format": "coco",
+                    "split_option": "split",
                 },
                 "file_tree_expected": {
                     "data": {

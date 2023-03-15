@@ -231,7 +231,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return label
 
     @staticmethod
-    def process_assets(assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
+    def pre_process_assets(assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
         """
         Format labels in the requested format, and filter out autosave labels
         """

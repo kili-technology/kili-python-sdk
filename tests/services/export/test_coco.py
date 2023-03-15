@@ -13,6 +13,7 @@ from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.format.coco import (
     CocoExporter,
     _convert_kili_semantic_to_coco,
+    _get_coco_categories_with_mapping,
     _get_coco_geometry_from_kili_bpoly,
 )
 from kili.services.types import Job, JobName
@@ -29,8 +30,25 @@ def test__get_coco_image_annotations():
         image_width = 1920
         image_height = 1080
         Image.new("RGB", (image_width, image_height)).save(local_file_path)
-        _convert_kili_semantic_to_coco(
-            job_name=JobName(job_name),
+        _, paths = _convert_kili_semantic_to_coco(
+            jobs={
+                JobName(job_name): {
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {
+                        "categories": {
+                            "OBJECT_A": {"name": "Object A"},
+                            "OBJECT_B": {"name": "Object B"},
+                        }
+                    },
+                    "instruction": "",
+                    "isChild": False,
+                    "isNew": False,
+                    "isVisible": True,
+                    "models": {},
+                    "required": True,
+                    "tools": ["semantic"],
+                }
+            },
             assets=[
                 helpers.get_asset(
                     local_file_path,
@@ -51,26 +69,13 @@ def test__get_coco_image_annotations():
                 )
             ],
             output_dir=Path(tmp_dir),
-            job={
-                "mlTask": "OBJECT_DETECTION",
-                "content": {
-                    "categories": {
-                        "OBJECT_A": {"name": "Object A"},
-                        "OBJECT_B": {"name": "Object B"},
-                    }
-                },
-                "instruction": "",
-                "isChild": False,
-                "isNew": False,
-                "isVisible": True,
-                "models": {},
-                "required": True,
-                "tools": ["semantic"],
-            },
             title="Test project",
             project_input_type="IMAGE",
             annotation_modifier=lambda x, _, _1: x,
+            merged=False,
         )
+
+        assert paths[0] == output_file
         with output_file.open("r", encoding="utf-8") as f:
             coco_annotation = json.loads(f.read())
 
@@ -129,7 +134,6 @@ def test__get_coco_image_annotations_with_label_modifier(
 ):
     with TemporaryDirectory() as tmp_dir:
         job_name = "JOB_0"
-        output_file = Path(tmp_dir) / job_name / "labels.json"
 
         image_width = 1920
         image_height = 1080
@@ -142,8 +146,25 @@ def test__get_coco_image_annotations_with_label_modifier(
             a for p in normalized_vertices for a in [p["x"] * image_width, p["y"] * image_height]
         ]
 
-        _convert_kili_semantic_to_coco(
-            job_name=JobName(job_name),
+        _, output_filenames = _convert_kili_semantic_to_coco(
+            jobs={
+                JobName(job_name): {
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {
+                        "categories": {
+                            "OBJECT_A": {"name": "Object A"},
+                            "OBJECT_B": {"name": "Object B"},
+                        }
+                    },
+                    "instruction": "",
+                    "isChild": False,
+                    "isNew": False,
+                    "isVisible": True,
+                    "models": {},
+                    "required": True,
+                    "tools": ["semantic"],
+                }
+            },
             assets=[
                 helpers.get_asset(
                     local_file_path,
@@ -151,28 +172,14 @@ def test__get_coco_image_annotations_with_label_modifier(
                 )
             ],
             output_dir=Path(tmp_dir),
-            job={
-                "mlTask": "OBJECT_DETECTION",
-                "content": {
-                    "categories": {
-                        "OBJECT_A": {"name": "Object A"},
-                        "OBJECT_B": {"name": "Object B"},
-                    }
-                },
-                "instruction": "",
-                "isChild": False,
-                "isNew": False,
-                "isVisible": True,
-                "models": {},
-                "required": True,
-                "tools": ["semantic"],
-            },
             title="Test project",
             project_input_type="IMAGE",
             annotation_modifier=helpers.estimate_rotated_bb_from_kili_poly,
+            merged=False,
         )
+        assert output_filenames[0] == Path(tmp_dir) / job_name / "labels.json"
 
-        with output_file.open("r", encoding="utf-8") as f:
+        with output_filenames[0].open("r", encoding="utf-8") as f:
             coco_annotation = json.loads(f.read())
 
             #### DON'T DELETE - for debugging #####
@@ -214,7 +221,24 @@ def test__get_coco_image_annotations_without_annotation():
         image_height = 1080
         Image.new("RGB", (image_width, image_height)).save(local_file_path)
         _convert_kili_semantic_to_coco(
-            job_name=JobName(job_name),
+            jobs={
+                JobName(job_name): {
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {
+                        "categories": {
+                            "OBJECT_A": {"name": "Object A"},
+                            "OBJECT_B": {"name": "Object B"},
+                        }
+                    },
+                    "instruction": "",
+                    "isChild": False,
+                    "isNew": False,
+                    "isVisible": True,
+                    "models": {},
+                    "required": True,
+                    "tools": ["semantic"],
+                }
+            },
             assets=[
                 helpers.get_asset(
                     local_file_path,
@@ -222,25 +246,10 @@ def test__get_coco_image_annotations_without_annotation():
                 )
             ],
             output_dir=Path(tmp_dir),
-            job={
-                "mlTask": "OBJECT_DETECTION",
-                "content": {
-                    "categories": {
-                        "OBJECT_A": {"name": "Object A"},
-                        "OBJECT_B": {"name": "Object B"},
-                    }
-                },
-                "instruction": "",
-                "isChild": False,
-                "isNew": False,
-                "isVisible": True,
-                "models": {},
-                "required": True,
-                "tools": ["semantic"],
-            },
             title="Test project",
             project_input_type="IMAGE",
             annotation_modifier=lambda x, _, _1: x,
+            merged=False,
         )
 
         with output_file.open("r", encoding="utf-8") as f:
@@ -370,13 +379,13 @@ def test_coco_video_jsoncontent():
 
         with TemporaryDirectory() as tmp_dir:
             labels_json, _ = _convert_kili_semantic_to_coco(
-                job_name=JobName("JOB_0"),
+                jobs={JobName("JOB_0"): Job(**json_interface["jobs"]["JOB_0"])},
                 assets=[Asset(asset_video_no_content_and_json_content)],
                 output_dir=Path(tmp_dir),
-                job=Job(**json_interface["jobs"]["JOB_0"]),
                 title="test",
                 project_input_type="VIDEO",
                 annotation_modifier=lambda x, _, _1: x,
+                merged=False,
             )
 
             assert len(labels_json["images"]) == 5
@@ -409,3 +418,145 @@ def test_get_coco_geometry_from_kili_bpoly():
     assert bbox[2] == int((0.8 - 0.1) * image_width)
     assert bbox[3] == int((0.4 - 0.1) * image_height)
     assert poly == [192.0, 108.0, 192.0, 432.0, 1536.0, 432.0, 1536.0, 108.0]
+
+
+def test__get_kili_cat_id_to_coco_cat_id_mapping_with_split_jobs():
+    jobs = {JobName("DESSERT_JOB"): helpers.DESSERT_JOB}
+
+    kili_cat_id_to_coco_cat_id, coco_categories = _get_coco_categories_with_mapping(
+        jobs, merged=False
+    )
+    assert kili_cat_id_to_coco_cat_id == {"DESSERT_JOB": {"APPLE_PIE": 0, "TIRAMISU": 1}}
+
+    assert coco_categories == [
+        {"id": 0, "name": "APPLE_PIE", "supercategory": "DESSERT_JOB"},
+        {"id": 1, "name": "TIRAMISU", "supercategory": "DESSERT_JOB"},
+    ]
+
+
+def test__get_kili_cat_id_to_coco_cat_id_mapping_with_merged_jobs():
+    jobs = {JobName("MAIN_JOB"): helpers.MAIN_JOB, JobName("DESSERT_JOB"): helpers.DESSERT_JOB}
+
+    kili_cat_id_to_coco_cat_id, coco_categories = _get_coco_categories_with_mapping(
+        jobs, merged=True
+    )
+
+    assert kili_cat_id_to_coco_cat_id == {
+        "DESSERT_JOB": {"APPLE_PIE": 0, "TIRAMISU": 1},
+        "MAIN_JOB": {"SPAGHETTIS": 3, "PIZZA": 2},
+    }
+
+    assert coco_categories == [
+        {"id": 0, "name": "DESSERT_JOB/APPLE_PIE", "supercategory": "DESSERT_JOB"},
+        {"id": 1, "name": "DESSERT_JOB/TIRAMISU", "supercategory": "DESSERT_JOB"},
+        {"id": 2, "name": "MAIN_JOB/PIZZA", "supercategory": "MAIN_JOB"},
+        {"id": 3, "name": "MAIN_JOB/SPAGHETTIS", "supercategory": "MAIN_JOB"},
+    ]
+
+
+def test_coco_export_with_multi_jobs():
+    json_response_dessert = {
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "DESSERT_JOB": {
+            "annotations": [
+                {
+                    "categories": [
+                        {
+                            "name": "APPLE_PIE",
+                            "confidence": 100,
+                        }
+                    ],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.1, "y": 0.1},
+                                {"x": 0.1, "y": 0.4},
+                                {"x": 0.8, "y": 0.4},
+                                {"x": 0.8, "y": 0.1},
+                            ]
+                        }
+                    ],
+                }
+            ]
+        },
+    }
+
+    json_response_main = {
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "MAIN_JOB": {
+            "annotations": [
+                {
+                    "categories": [
+                        {
+                            "name": "SPAGHETTIS",
+                            "confidence": 100,
+                        }
+                    ],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.1, "y": 0.1},
+                                {"x": 0.1, "y": 0.4},
+                                {"x": 0.8, "y": 0.4},
+                                {"x": 0.8, "y": 0.1},
+                            ]
+                        }
+                    ],
+                }
+            ]
+        },
+    }
+
+    with TemporaryDirectory() as output_dir:
+        local_file_path = output_dir / Path("image1.jpg")
+        image_width = 1920
+        image_height = 1080
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
+        assets = [
+            Asset(
+                **{
+                    "latestLabel": {"jsonResponse": json_response_dessert},
+                    "externalId": "car_1",
+                    "jsonContent": "",
+                    "content": str(output_dir / Path("image1.jpg")),
+                }
+            ),
+            Asset(
+                **{
+                    "latestLabel": {"jsonResponse": json_response_main},
+                    "externalId": "car_2",
+                    "jsonContent": "",
+                    "content": str(output_dir / Path("image1.jpg")),
+                }
+            ),
+        ]
+
+        labels_json, output_filenames = _convert_kili_semantic_to_coco(
+            {JobName("MAIN_JOB"): helpers.MAIN_JOB, JobName("DESSERT_JOB"): helpers.DESSERT_JOB},
+            assets,
+            output_dir,
+            "Multi job project",
+            "IMAGE",
+            annotation_modifier=None,
+            merged=True,
+        )
+        assert len(output_filenames) == 1
+        assert output_filenames[0] == output_dir / "labels.json"
+
+        with output_filenames[0].open("r", encoding="utf-8") as f:
+            coco_annotation = json.loads(f.read())
+        assert len(labels_json["images"]) == 2
+        assert len(labels_json["annotations"]) == 2  # 2 frames with annotations
+        categories_by_id = {cat["id"]: cat["name"] for cat in coco_annotation["categories"]}
+
+        assert labels_json["annotations"][0]["image_id"] == 0
+        assert labels_json["annotations"][1]["image_id"] == 1
+
+        assert (
+            categories_by_id[coco_annotation["annotations"][0]["category_id"]]
+            == "DESSERT_JOB/APPLE_PIE"
+        )
+        assert (
+            categories_by_id[coco_annotation["annotations"][1]["category_id"]]
+            == "MAIN_JOB/SPAGHETTIS"
+        )

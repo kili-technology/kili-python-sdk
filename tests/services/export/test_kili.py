@@ -10,7 +10,9 @@ from tests.services.export.fakes.fake_data import (
 
 
 class KiliTestCase(TestCase):
-    def test_process_assets(self):
-        clean_assets = AbstractExporter.process_assets([Asset(**kili_format_frame_asset)], "raw")
+    def test_pre_process_assets(self):
+        clean_assets = AbstractExporter.pre_process_assets(
+            [Asset(**kili_format_frame_asset)], "raw"
+        )
         assert len(clean_assets) == 1
         assert clean_assets[0] == kili_format_expected_frame_asset_output
