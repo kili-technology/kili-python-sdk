@@ -25,7 +25,7 @@ setup(
         "six",
         "tabulate",
         "tqdm",
-        "typeguard",
+        "typeguard<3.0.0",
         "typing_extensions",
         "pyparsing",
         "websocket-client",
