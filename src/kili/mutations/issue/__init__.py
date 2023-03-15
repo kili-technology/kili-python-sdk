@@ -13,12 +13,14 @@ from kili.graphql import QueryOptions
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.services.helpers import assert_all_arrays_have_same_size
+from kili.utils.logcontext import for_all_methods, log_call
 
 from ...helpers import deprecate, format_result
 from .helpers import get_issue_numbers, get_labels_asset_ids_map
 from .queries import GQL_CREATE_ISSUES
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsIssue:
     """Set of Issue mutations."""
 

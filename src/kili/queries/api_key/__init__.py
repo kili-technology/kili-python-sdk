@@ -11,8 +11,10 @@ from kili.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.helpers import disable_tqdm_if_as_generator
+from kili.utils.logcontext import for_all_methods, log_call
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class QueriesApiKey:
     """
     Set of ApiKey queries

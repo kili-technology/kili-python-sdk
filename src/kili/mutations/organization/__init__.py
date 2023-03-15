@@ -6,11 +6,13 @@ from typing import Optional
 from typeguard import typechecked
 
 from kili.authentication import KiliAuth
+from kili.utils.logcontext import for_all_methods, log_call
 
 from ...helpers import format_result
 from .queries import GQL_CREATE_ORGANIZATION, GQL_UPDATE_PROPERTIES_IN_ORGANIZATION
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsOrganization:
     """Set of Organization mutations."""
 
