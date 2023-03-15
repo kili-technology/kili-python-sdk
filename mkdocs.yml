@@ -42,7 +42,7 @@ nav:
           - Inference Labels: sdk/tutorials/inference_labels.md
       - Managing Workflows: sdk/tutorials/set_up_workflows.md
       - Exporting Project Data: sdk/tutorials/export_a_kili_project.md
-      - Plugins:
+      - Setting Up Plugings:
           - Developing Plugins: sdk/tutorials/plugins_development.md
           - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md
           - Plugins Library: sdk/tutorials/plugins_library.md
