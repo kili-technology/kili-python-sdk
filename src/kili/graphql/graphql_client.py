@@ -77,9 +77,12 @@ class GraphQLClient:
         """
         graphql_schema_path = self._get_graphql_schema_path()
 
+        # In some cases (local development), we cannot get the kili version from the backend
+        # and therefore we cannot determine the schema version, so we don't cache the schema
         if graphql_schema_path is None:
             return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
 
+        # If the schema is not in the cache, we fetch it from the backend and cache it
         if not (graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0):
             self._purge_graphql_schema_cache_dir()
             self._cache_graphql_schema(graphql_schema_path)
@@ -119,7 +122,7 @@ class GraphQLClient:
         """
         Get the path of the GraphQL schema
 
-        Will return None if we cannot get the version of the Kili app server.
+        Will return None if we cannot get the schema version.
         """
         endpoint_netloc = urlparse(self.endpoint).netloc
         version = self._get_kili_app_version()
@@ -177,12 +180,12 @@ class GraphQLClient:
         try:
             ret = _execute(document, variables)
         except GraphQLError as err:
-            # if error is due do parsing, local validation of the query (graphql.GraphQLError)
-            # we refresh the schema and retry
+            # if error is due do parsing or local validation of the query (graphql.GraphQLError)
+            # we refresh the schema and retry once
             if isinstance(err.__cause__, graphql.GraphQLError):
                 self._purge_graphql_schema_cache_dir()
                 self._gql_client = self._initizalize_graphql_client()
-                ret = _execute(document, variables)
+                ret = _execute(document, variables)  # if it fails again, we crash here
             else:
                 raise err
         return ret
