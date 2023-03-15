@@ -30,16 +30,19 @@ def test_graphql_client_cache_cant_get_kili_version(mocker):
         "query { projects { this_field_does_not_exist } }",
     ],
 )
-def test_gql_bad_query_local_validation(query):
+def test_gql_bad_query_local_validation(query, mocker):
     """test gql validation against local schema"""
     api_endpoint = os.getenv(
         "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
     )
-    api_key = os.getenv("KILI_API_KEY")
+
+    # we need to remove "Authorization" api key from the header
+    # if not, the backend will refuse the introspection query
+    mocker.patch.object(GraphQLClient, "headers", return_value={})
 
     client = GraphQLClient(
-        endpoint=api_endpoint,  # type: ignore
-        api_key=api_key,  # type: ignore
+        endpoint=api_endpoint,
+        api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
     )
@@ -57,14 +60,17 @@ def test_graphql_client_cache(mocker):
     api_endpoint = os.getenv(
         "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
     )
-    api_key = os.getenv("KILI_API_KEY")
+
+    # we need to remove "Authorization" api key from the header
+    # if not, the backend will refuse the introspection query
+    mocker.patch.object(GraphQLClient, "headers", return_value={})
 
     if SCHEMA_PATH.is_file():
         SCHEMA_PATH.unlink()
 
     _ = GraphQLClient(
-        endpoint=api_endpoint,  # type: ignore
-        api_key=api_key,  # type: ignore
+        endpoint=api_endpoint,
+        api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
     )
@@ -73,8 +79,8 @@ def test_graphql_client_cache(mocker):
 
     with mock.patch("kili.graphql.graphql_client.print_schema") as mocked_print_schema:
         _ = GraphQLClient(
-            endpoint=api_endpoint,  # type: ignore
-            api_key=api_key,  # type: ignore
+            endpoint=api_endpoint,
+            api_key="",
             client_name=GraphQLClientName.SDK,
             verify=True,
         )

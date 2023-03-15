@@ -40,17 +40,11 @@ class GraphQLClient:
     ) -> None:
         self.endpoint = endpoint
         self.api_key = api_key
+        self.client_name = client_name
         self.verify = verify
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
-        self.headers = {
-            "Authorization": f"X-API-Key: {api_key}",
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "apollographql-client-name": client_name.value,
-            "apollographql-client-version": __version__,
-        }
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers=self.headers,
@@ -64,6 +58,19 @@ class GraphQLClient:
         )
 
         self._gql_client = self._initizalize_graphql_client()
+
+    @property
+    def headers(self) -> Dict[str, str]:
+        """
+        Get the headers
+        """
+        return {
+            "Authorization": f"X-API-Key: {self.api_key}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "apollographql-client-name": self.client_name.value,
+            "apollographql-client-version": __version__,
+        }
 
     def _initizalize_graphql_client(self) -> Client:
         """
