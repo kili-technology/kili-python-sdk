@@ -2,14 +2,17 @@ import json
 import time
 import warnings
 from typing import List
-from unittest.mock import patch
+from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
 import pytest
 from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
+from kili.exceptions import MissingArgumentError
 from kili.graphql.operations.label.queries import LabelQuery
 from kili.helpers import RetryLongWaitWarner, format_result
+from kili.mutations.asset import MutationsAsset
 from kili.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.orm import Asset
 from tests.services.export.fakes.fake_kili import FakeAuth
@@ -117,3 +120,98 @@ def test_get_labels_asset_ids_map():
             "label_id_1": "asset_id_1",
             "label_id_2": "asset_id_1",
         }
+
+
+@patch("kili.mutations.asset._mutate_from_paginated_call", return_value=[{"data": None}])
+class TestCheckWarnEmptyList(TestCase):
+    """
+    tests for the check_warn_empty_list helper
+    """
+
+    def test_kwargs_empty(self, mocked__mutate_from_paginated_call):
+        kili = MutationsAsset(auth=MagicMock())
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "Method 'add_to_review' did nothing because the following argument is empty:"
+                " asset_ids."
+            ),
+        ):
+            ret = kili.add_to_review(asset_ids=[], external_ids=[])
+        assert ret is None
+        mocked__mutate_from_paginated_call.assert_not_called()
+
+    def test_args_empty(self, mocked__mutate_from_paginated_call):
+        kili = MutationsAsset(auth=MagicMock())
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "Method 'add_to_review' did nothing because the following argument is empty:"
+                " asset_ids."
+            ),
+        ):
+            ret = kili.add_to_review([], [])
+        assert ret is None
+        mocked__mutate_from_paginated_call.assert_not_called()
+
+    def test_none(self, mocked__mutate_from_paginated_call):
+        """test that the helper does not raise a warning if args are None"""
+        kili = MutationsAsset(auth=MagicMock())
+        with pytest.raises(MissingArgumentError):
+            with warnings.catch_warnings():
+                warnings.simplefilter("error")
+                kili.add_to_review()
+        mocked__mutate_from_paginated_call.assert_not_called()
+
+    def test_kwargs_one_empty(self, mocked__mutate_from_paginated_call):
+        kili = MutationsAsset(auth=MagicMock())
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "Method 'add_to_review' did nothing because the following argument is empty:"
+                " external_ids."
+            ),
+        ):
+            ret = kili.add_to_review(asset_ids=None, external_ids=[], project_id="project_id")
+        assert ret is None
+        mocked__mutate_from_paginated_call.assert_not_called()
+
+    def test_kwargs_one_empty_2(self, mocked__mutate_from_paginated_call):
+        kili = MutationsAsset(auth=MagicMock())
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "Method 'add_to_review' did nothing because the following argument is empty:"
+                " asset_ids"
+            ),
+        ):
+            ret = kili.add_to_review(asset_ids=[], external_ids=None)
+        assert ret is None
+        mocked__mutate_from_paginated_call.assert_not_called()
+
+    def test_kwargs_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
+        kili = MutationsAsset(auth=MagicMock())
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
+        mocked__mutate_from_paginated_call.assert_called_once()
+
+    def test_args_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
+        kili = MutationsAsset(auth=MagicMock())
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            kili.add_to_review(["asset_id"], None)
+        mocked__mutate_from_paginated_call.assert_called_once()
+
+    def test_warn_change_asset_external_ids(self, mocked__mutate_from_paginated_call):
+        kili = MutationsAsset(auth=MagicMock())
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "Method 'change_asset_external_ids' did nothing because the following argument is"
+                " empty: new_external_ids"
+            ),
+        ):
+            ret = kili.change_asset_external_ids(new_external_ids=[], asset_ids=[])
+        assert ret == []
+        mocked__mutate_from_paginated_call.assert_not_called()
