@@ -76,7 +76,7 @@ For more details, read the [SDK reference](https://python-sdk-docs.kili-technolo
 
 ## Tutorials
 
-Check out our tutorials:
+Check out our [tutorials](https://python-sdk-docs.kili-technology.com/tutorials):
 
 - 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
 - 📂 [Assets and labels import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/): Learn how to import assets and labels into your Kili project.
