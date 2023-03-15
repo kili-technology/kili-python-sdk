@@ -5,6 +5,6 @@ requests
 six
 tabulate
 tqdm
-typeguard
+typeguard<3.0.0
 websocket-client
 typing_extensions
