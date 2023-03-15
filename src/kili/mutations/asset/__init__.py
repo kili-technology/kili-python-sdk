@@ -24,12 +24,14 @@ from kili.mutations.asset.queries import (
 )
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
+from kili.utils.logcontext import for_all_methods, log_call
 from kili.utils.pagination import _mutate_from_paginated_call
 
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class MutationsAsset:
     """
     Set of Asset mutations
@@ -122,6 +124,7 @@ class MutationsAsset:
 
         if content_array is None and json_content_array is None:
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
+
         nb_data = (
             len(content_array)
             if content_array is not None
