@@ -404,7 +404,7 @@ print(
 The status of your asset should have now changed to `LABELED`. In this plugin, previous issues remain but you can solve them through the API as well.
 
 
-Well done! You can now iterate on the script. To learn how to avoid latency when building and deploying your plugin, refer to the *plugins_development.ipynb* tutorial.
+Well done! You can now iterate on the script. To learn how to avoid latency when building and deploying your plugin, refer to the [plugins development](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) tutorial.
 
 ## Step 6: Monitor the plugin
 To monitor a certain plugin, you can get its logs by using the following command:

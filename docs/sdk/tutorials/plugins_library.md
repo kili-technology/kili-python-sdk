@@ -18,7 +18,7 @@ One application of plugins is to automate your quality checks: you can directly 
 ### 1.1 Image Object Detection example
 
 Let's imagine a project where we want to process images and detect some objects. One of the jobs is to detect an object and we are sure that in any image of the dataset we can have at most a single object of that type. In order to be sure that we will have only one object in all submitted labels, we can create a plugin that, in case a label has 2 BBoxes for that type of objects, will automatically create an issue with a clear instruction and will send the label back to the queue.
-z
+
 - Plugin file: [`plugin_image.py`](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/plugins_library/plugin_image.py){target=_blank}
 - End-to-end notebook showcasing this example: [`plugins_example.ipynb`](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/plugins_example.ipynb){target=_blank}
 
