@@ -8,6 +8,7 @@ from unittest import mock
 import graphql
 import pytest
 from gql.transport import exceptions
+from graphql import build_ast_schema, parse
 
 from kili.client import Kili
 from kili.exceptions import GraphQLError
@@ -25,15 +26,10 @@ def test_gql_bad_query_local_validation(query):
     """test gql validation against local schema"""
     kili = Kili()  # fetch schema from kili server
 
-    mocked_transport_execute = mock.MagicMock()
-    kili.auth.client._gql_client.transport.execute = mocked_transport_execute  # type: ignore
-
     with pytest.raises(GraphQLError) as exc_info:
         kili.auth.client.execute(query)
 
     assert isinstance(exc_info.value.__cause__, graphql.GraphQLError)
-
-    mocked_transport_execute.assert_not_called()
 
 
 def test_gql_bad_query_remote_validation():
@@ -62,11 +58,10 @@ def test_gql_bad_query_remote_validation():
     mocked_validate.assert_not_called()
 
 
-SCHEMA_PATH = Path.home() / ".cache" / "kili" / "graphql" / "schema.graphql"
+def test_graphql_client_cache(mocker):
+    SCHEMA_PATH = Path.home() / ".cache" / "kili" / "graphql" / "schema.graphql"
+    mocker.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=SCHEMA_PATH)
 
-
-@mock.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=SCHEMA_PATH)
-def test_graphql_client_cache(*_):
     api_endpoint = os.getenv("KILI_API_ENDPOINT")
     api_key = os.getenv("KILI_API_KEY")
 
@@ -90,6 +85,57 @@ def test_graphql_client_cache(*_):
             verify=True,
         )
         mocked_print_schema.assert_not_called()
+
+    if SCHEMA_PATH.is_file():
+        SCHEMA_PATH.unlink()
+
+
+def test_outdated_cached_schema(mocker):
+    """
+    test when the schema in memory is outdated
+
+    the client should refecth an up-to-date schema and retry the query automatically
+    """
+    SCHEMA_PATH = Path.home() / ".cache" / "kili" / "graphql" / "schema.graphql"
+    mocker.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=SCHEMA_PATH)
+
+    api_endpoint = os.getenv("KILI_API_ENDPOINT")
+    api_key = os.getenv("KILI_API_KEY")
+
+    # write a fake schema
+    if SCHEMA_PATH.is_file():
+        SCHEMA_PATH.unlink()
+
+    fake_schema = """
+    type Query {
+        me: User
+    }
+    type User {
+        id: ID
+    }
+    """
+    SCHEMA_PATH.parent.mkdir(parents=True, exist_ok=True)
+    SCHEMA_PATH.write_text(fake_schema)
+
+    client = GraphQLClient(
+        endpoint=api_endpoint,  # type: ignore
+        api_key=api_key,  # type: ignore
+        client_name=GraphQLClientName.SDK,
+        verify=True,
+    )
+
+    client._gql_client.schema = build_ast_schema(parse(fake_schema))
+
+    assert "email" not in client._gql_client.schema.type_map["User"].fields
+
+    # the query below will fail since the schema is outdated
+    # but the client should fetch an up-to-date schema and retry
+    result = client.execute("query MyQuery { me { email id } }")
+
+    assert "email" in client._gql_client.schema.type_map["User"].fields
+
+    assert result["me"]["id"]  # pylint: disable=unsubscriptable-object
+    assert result["me"]["email"]  # pylint: disable=unsubscriptable-object
 
     if SCHEMA_PATH.is_file():
         SCHEMA_PATH.unlink()
