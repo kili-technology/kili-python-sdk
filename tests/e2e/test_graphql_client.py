@@ -126,13 +126,13 @@ def test_outdated_cached_schema(mocker):
 
     client._gql_client.schema = build_ast_schema(parse(fake_schema))
 
-    assert "email" not in client._gql_client.schema.type_map["User"].fields
+    assert "email" not in client._gql_client.schema.type_map["User"].fields  # type: ignore
 
     # the query below will fail since the schema is outdated
     # but the client should fetch an up-to-date schema and retry
     result = client.execute("query MyQuery { me { email id } }")
 
-    assert "email" in client._gql_client.schema.type_map["User"].fields
+    assert "email" in client._gql_client.schema.type_map["User"].fields  # type: ignore
 
     assert result["me"]["id"]  # pylint: disable=unsubscriptable-object
     assert result["me"]["email"]  # pylint: disable=unsubscriptable-object
