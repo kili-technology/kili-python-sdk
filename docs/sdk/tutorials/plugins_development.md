@@ -77,7 +77,7 @@ The first step is to define the functions that will be called when the event is 
 
 The plugin can be defined in two ways: a single `.py` file with everything inside or a module (folder containing multiple `.py` files). In the case of the module type, a file named `main.py` needs to be at the root of the folder and will serve as the entrypoint.
 
- ### 1. First option - Plugin defined in a single file
+### 1. First option - Plugin defined in a single file
 
 This cell should be the contents of the `.py` file that you will upload as a plugin at the end.
 
@@ -150,6 +150,7 @@ You can notice that you can also include a `requirements.txt` file in the folder
 **Important: The main.py file need to have the same skeleton as the plugin defined in a single file (presence of the class `PluginHandler`), the difference being that it can import and call functions defined in other files**
 
 Depending on where the folder is stored, there are two ways to import the plugin in order to test it:
+
 - The first way is to use a relative import (having the plugin folder and the notebook in the same folder). It is simpler and we recommend it as it will also allow the IDE to detect the correct methods and propose hints and autocompletion.
 - The second was is to use an absolute path to the plugin folder
 
