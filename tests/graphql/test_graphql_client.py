@@ -38,7 +38,7 @@ def test_gql_bad_query_local_validation(query, mocker):
 
     # we need to remove "Authorization" api key from the header
     # if not, the backend will refuse the introspection query
-    mocker.patch.object(GraphQLClient, "headers", return_value={})
+    mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
 
     client = GraphQLClient(
         endpoint=api_endpoint,
@@ -63,7 +63,7 @@ def test_graphql_client_cache(mocker):
 
     # we need to remove "Authorization" api key from the header
     # if not, the backend will refuse the introspection query
-    mocker.patch.object(GraphQLClient, "headers", return_value={})
+    mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
 
     if SCHEMA_PATH.is_file():
         SCHEMA_PATH.unlink()

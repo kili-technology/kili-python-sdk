@@ -47,7 +47,7 @@ class GraphQLClient:
 
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
-            headers=self.headers,
+            headers=self._get_headers(),
             cookies=None,
             auth=None,
             use_json=True,
@@ -59,8 +59,7 @@ class GraphQLClient:
 
         self._gql_client = self._initizalize_graphql_client()
 
-    @property
-    def headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> Dict[str, str]:
         """
         Get the headers
         """
@@ -156,13 +155,12 @@ class GraphQLClient:
 
         def _execute(document: DocumentNode, variables: Optional[Dict] = None) -> Dict[str, Any]:
             try:
-                assert self._gql_transport.headers, "Transport headers must be defined"
                 result = self._gql_client.execute(
                     document=document,
                     variable_values=variables,
                     extra_args={
                         "headers": {
-                            **self._gql_transport.headers,
+                            **self._gql_transport.headers,  # type: ignore
                             **LogContext(),
                         }
                     },
