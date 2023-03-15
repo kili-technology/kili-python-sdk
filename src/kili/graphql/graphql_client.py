@@ -63,15 +63,12 @@ class GraphQLClient:
             method="POST",
         )
 
-        self._gql_client = self._initizalize_graphql_client(use_cached_schema=True)
+        self._gql_client = self._initizalize_graphql_client()
 
-    def _initizalize_graphql_client(self, use_cached_schema: bool) -> Client:
+    def _initizalize_graphql_client(self) -> Client:
         """
         Initialize the GraphQL client
         """
-        if not use_cached_schema:
-            return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
-
         graphql_schema_path = self._get_graphql_schema_path()
 
         if graphql_schema_path is None:
@@ -178,7 +175,8 @@ class GraphQLClient:
             # if error is due do parsing, local validation of the query (graphql.GraphQLError)
             # we refresh the schema and retry
             if isinstance(err.__cause__, graphql.GraphQLError):
-                self._gql_client = self._initizalize_graphql_client(use_cached_schema=False)
+                self._purge_graphql_schema_cache_dir()
+                self._gql_client = self._initizalize_graphql_client()
                 ret = _execute(document, variables)
             else:
                 raise err
