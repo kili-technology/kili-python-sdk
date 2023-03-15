@@ -171,6 +171,7 @@ urllib.request.urlretrieve(
 ## Step 4: Upload the plugin from a folder
 
 With the plugin defined in a separate `Python` file, you can create a folder containing:
+
 - A `main.py` file which is the entrypoint of the plugin and must have a `PluginHandler` class which implements a `PluginCore` class
 - (optionally) a `requirements.txt` (if you need specific PyPi packages in your plugin)
 
