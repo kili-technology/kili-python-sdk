@@ -135,7 +135,7 @@ jobs:
       - name: Set first SDK version of LTS cycle
         if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK_STAGING'
         shell: bash
-        run: echo "LTS_CYCLE_FIRST_SDK_VERSION=2.129.3" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
+        run: echo "LTS_CYCLE_FIRST_SDK_VERSION=2.129.7" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
       - name: Get latest release branch
         shell: bash
