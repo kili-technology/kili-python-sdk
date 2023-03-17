@@ -287,4 +287,4 @@ kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=
 
 ## Managing your plugin
 
-There are several other methods to manage your plugins and their lifecycle. To find out more, check the plugins [tutorials](https://python-sdk-docs.kili-technology.com/tutorials).
+There are several other methods to manage your plugins and their lifecycle. To find out more, check the plugins [tutorials](https://python-sdk-docs.kili-technology.com/latest/tutorials).
