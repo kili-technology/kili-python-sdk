@@ -10,20 +10,18 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.129/sdk/tutorials/plugins_example/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.129/sdk/tutorials/webhooks_example/">
       
       
-        <link rel="prev" href="../plugins_development/">
+        <link rel="prev" href="../plugins_library/">
       
-      
-        <link rel="next" href="../plugins_library/">
       
       <link rel="icon" href="../../../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
     
     
       
-        <title>Plugin Example - Programmatic QA - Python SDK</title>
+        <title>Webhooks - Python SDK</title>
       
     
     
@@ -89,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#kili-plugin-example-programmatic-qa" class="md-skip">
+        <a href="#how-to-develop-a-kili-webhook-example" class="md-skip">
           Skip to content
         </a>
       
@@ -125,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Plugin Example - Programmatic QA
+              Webhooks
             
           </span>
         </div>
@@ -901,6 +899,34 @@
               
   
   
+  
+    <li class="md-nav__item">
+      <a href="../plugins_example/" class="md-nav__link">
+        Plugin Example - Programmatic QA
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_library/" class="md-nav__link">
+        Plugins Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -913,12 +939,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Plugin Example - Programmatic QA
+          Webhooks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Plugin Example - Programmatic QA
+        Webhooks
       </a>
       
         
@@ -958,43 +984,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-3-write-the-plugin" class="md-nav__link">
-    Step 3: Write the plugin
+  <a href="#step-3-write-host-the-webhook" class="md-nav__link">
+    Step 3: Write &amp; host the webhook
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-4-upload-the-plugin-from-a-folder" class="md-nav__link">
-    Step 4: Upload the plugin from a folder
+  <a href="#step-4-register-activate-the-webhook" class="md-nav__link">
+    Step 4: Register &amp; activate the webhook
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-4-bis-upload-the-plugin-from-a-py-file" class="md-nav__link">
-    Step 4 bis: Upload the plugin from a .py file
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-5-plugin-in-action" class="md-nav__link">
-    Step 5: Plugin in action
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-6-monitor-the-plugin" class="md-nav__link">
-    Step 6: Monitor the plugin
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-7-manage-the-plugin" class="md-nav__link">
-    Step 7: Manage the plugin
+  <a href="#step-5-webhook-in-action" class="md-nav__link">
+    Step 5: Webhook in action
   </a>
   
 </li>
@@ -1003,34 +1008,6 @@
   
 </nav>
       
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../plugins_library/" class="md-nav__link">
-        Plugins Library
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../webhooks_example/" class="md-nav__link">
-        Webhooks
-      </a>
     </li>
   
 
@@ -1097,43 +1074,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-3-write-the-plugin" class="md-nav__link">
-    Step 3: Write the plugin
+  <a href="#step-3-write-host-the-webhook" class="md-nav__link">
+    Step 3: Write &amp; host the webhook
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-4-upload-the-plugin-from-a-folder" class="md-nav__link">
-    Step 4: Upload the plugin from a folder
+  <a href="#step-4-register-activate-the-webhook" class="md-nav__link">
+    Step 4: Register &amp; activate the webhook
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-4-bis-upload-the-plugin-from-a-py-file" class="md-nav__link">
-    Step 4 bis: Upload the plugin from a .py file
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-5-plugin-in-action" class="md-nav__link">
-    Step 5: Plugin in action
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-6-monitor-the-plugin" class="md-nav__link">
-    Step 6: Monitor the plugin
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-7-manage-the-plugin" class="md-nav__link">
-    Step 7: Manage the plugin
+  <a href="#step-5-webhook-in-action" class="md-nav__link">
+    Step 5: Webhook in action
   </a>
   
 </li>
@@ -1154,18 +1110,21 @@
 
 
 <!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
-<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/plugins_example.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<h1 id="kili-plugin-example-programmatic-qa">Kili plugin example: Programmatic QA</h1>
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/webhooks_example.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="how-to-develop-a-kili-webhook-example">How to develop a Kili Webhook - example</h1>
 <h2 id="context">Context</h2>
-<p>This notebook is an end-to-end example that you can follow to: create a project, upload a first plugin and activate it on this project, and finally start monitoring it.</p>
-<p><strong>NB: The plugin capabilities of Kili are under active development, and compatible with version 2.125.2 and later of Kili. Don't hesitate to reach out via Github or the Kili support to provide feedback.</strong></p>
+<p>This notebook is an end-to-end example that you can follow to create a project, register a first webhook and activate it on this project for the corresponding events in Kili.</p>
+<p>For more information on the available events, please refer to <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/plugins/">the documentation</a>.</p>
+<p>Webhooks are really similar to the plugins, except they are self hosted, and will require a webservice deployed on your premise, callable by Kili (You can implement a header-based security).</p>
+<p>If you are a Europe SaaS user, plugins &amp; webhooks are available for paying-customers in beta for now.
+If you are a US/ On Premise customer, only webhooks are available as of version 1.128.0.</p>
+<p>Webhook allow you to easily access your custom code, manage the CI/CD of the version of the plugin deployed, and easily integrate it with your own stack.</p>
+<p>If you are looking for a more of-the-shelf capability, you can have a look at the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/">plugins development</a> tutorial.</p>
+<p><strong>NB: The webhook capabilities of Kili are under active development, and compatible with version 2.128.0 and later of Kili. Don't hesitate to reach out via Github or the Kili support to provide feedback.</strong></p>
 <h2 id="step-1-instantiate-kili">Step 1: Instantiate Kili</h2>
 <div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">()</span>
 </code></pre></div>
@@ -1203,8 +1162,8 @@
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Plugins test project&quot;</span>
-<span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;My first project with a plugin&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Webhooks test project&quot;</span>
+<span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;My first project with a webhook&quot;</span>
 <span class="n">input_type</span> <span class="o">=</span> <span class="s2">&quot;IMAGE&quot;</span>
 
 <span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
@@ -1214,42 +1173,98 @@
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>Created project cldlyo2bq61if0jn9efvn3soo
+<pre><code>Created project clfcblkni05pq0jrq8wgib142
 </code></pre>
 <p>Upload an asset:</p>
 <div class="highlight"><pre><span></span><code><span class="n">content_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_1.jpg&quot;</span><span class="p">]</span>
-<span class="n">names_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;landscape&quot;</span><span class="p">]</span>
+<span class="n">names_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;landscape2&quot;</span><span class="p">]</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="n">content_array</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="n">names_array</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="n">content_array</span><span class="p">,</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="n">names_array</span><span class="p">,</span>
+    <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">asset_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 </code></pre></div>
 <p>This project has one job of bounding box creation with two categories.</p>
 <p>With our plugin, we want to make sure that the labelers don't create more than one bounding box of category A.</p>
-<p>To iterate on the plugin code, you can refer to the plugins_development.ipynb notebook.</p>
-<h2 id="step-3-write-the-plugin">Step 3: Write the plugin</h2>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
+<p>To iterate on the plugin code, you can refer to the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/">plugins development</a> tutorial.</p>
+<h2 id="step-3-write-host-the-webhook">Step 3: Write &amp; host the webhook</h2>
+<p>The webhook rely on the same handlers provided by the plugins. For maximum compatibility, we encourage you to define it with the same base class. Below is an example with FastAPI webservice.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># file plugin.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Custom module with basic plugin example</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
+<span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
+
+
 <span class="k">def</span> <span class="nf">check_rules_on_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
-    <span class="c1">#custom methods</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Custom method - checking number of bboxes&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom function to check rules on label.</span>
+<span class="sd">    For basic rules, a handy object is `search` that \</span>
+<span class="sd">        provides various analytics on objects</span>
+<span class="sd">    For more advanced use-cases, you might need to \</span>
+<span class="sd">        fetch the complete `jsonResponse`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">label</span><span class="p">[</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">][</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span>
-            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">issues_array</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">job_dot_category</span><span class="p">,</span> <span class="n">nb_of_objects</span> <span class="ow">in</span> <span class="n">label</span><span class="p">[</span><span class="s1">&#39;search&#39;</span><span class="p">][</span><span class="s1">&#39;numberOfAnnotationsByObject&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">job_dot_category</span> <span class="o">==</span> <span class="s2">&quot;JOB_0.OBJECT_A&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nb_of_objects</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">issues_array</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;There are too many BBox (</span><span class="si">{</span><span class="n">nb_of_objects</span><span class="si">}</span><span class="s1">) - Only 1 BBox of Object A accepted&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;mid&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">issues_array</span>
 
-    <span class="k">if</span> <span class="n">counter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;There are too many BBox (</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s1">) - Only 1 BBox of Object A accepted&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">_get_area</span><span class="p">(</span><span class="n">bounding_box</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom helper to compute size of Kili Bounding boxes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">point</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">bounding_box</span><span class="p">]</span>
+    <span class="n">y_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">point</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">bounding_box</span><span class="p">]</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x_array</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x_array</span><span class="p">)</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">y_array</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">y_array</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span>
+
 
 <span class="k">class</span> <span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom plugin instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">check_complex_rules_on_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Custom method to check if a box is larger than 33% of the image</span>
+<span class="sd">        For basic rules, a handy object is `search` that \</span>
+<span class="sd">            provides various analytics on objects</span>
+<span class="sd">        In this more complex use-case, we will \</span>
+<span class="sd">            fetch the complete `jsonResponse`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">json_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">],</span>
+            <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">]</span>
+
+        <span class="n">issues_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">json_response</span><span class="p">[</span><span class="s1">&#39;JOB_0&#39;</span><span class="p">][</span><span class="s1">&#39;annotations&#39;</span><span class="p">]:</span>
+            <span class="n">bounding_box</span> <span class="o">=</span> <span class="n">annotation</span><span class="p">[</span><span class="s1">&#39;boundingPoly&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;normalizedVertices&#39;</span><span class="p">]</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">_get_area</span><span class="p">(</span><span class="n">bounding_box</span><span class="p">)</span>
+            <span class="c1"># Refuse bounding boxes larger than 0.33</span>
+            <span class="k">if</span> <span class="n">area</span> <span class="o">&gt;</span> <span class="mf">0.33</span><span class="p">:</span>
+                <span class="n">issues_array</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;BBox too large&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;mid&#39;</span><span class="p">:</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;mid&quot;</span><span class="p">]</span>
+                <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">issues_array</span>
 
     <span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1259,97 +1274,117 @@
 
         <span class="n">issues_array</span> <span class="o">=</span> <span class="n">check_rules_on_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
+        <span class="n">issues_array</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_complex_rules_on_label</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span>
+
         <span class="n">project_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues_array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating an issue...&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Creating </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">issues_array</span><span class="p">)</span><span class="si">}</span><span class="s1"> issues...&#39;</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">issues_array</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">issues_array</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">issue</span><span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">append_to_issues</span><span class="p">(</span>
-                    <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">create_issues</span><span class="p">(</span>
+                    <span class="n">label_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]],</span>
                     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-                    <span class="n">text</span><span class="o">=</span><span class="n">issues_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">text_array</span><span class="o">=</span><span class="p">[</span><span class="n">issue</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]],</span>
+                    <span class="n">object_mid_array</span><span class="o">=</span><span class="p">[</span><span class="n">issue</span><span class="p">[</span><span class="s1">&#39;mid&#39;</span><span class="p">]]</span>
                 <span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Issue created!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Issue created!&quot;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">send_back_to_queue</span><span class="p">(</span><span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;No issues encountered&#39;</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">urllib.request</span>
+<p>You will need to deploy this on your premise for this to work. Easy solutions are <a href="https://fastapi.tiangolo.com/">FastAPI</a>, with a few lines of codes.
+For this demo, we will use <a href="https://webhook.site">https://webhook.site</a> that will allow us to explore the payload of the calls.</p>
+<div class="highlight"><pre><span></span><code><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Basic app for kili webhook</span>
+<span class="sd">Note: Don&#39;t host it locally, it won&#39;t work as Kili can&#39;t call your localhost</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># file main.py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="c1"># Assuming your plugin is in a file  `plugin.py` in the same folder</span>
+<span class="kn">from</span> <span class="nn">plugin</span> <span class="kn">import</span> <span class="n">PluginHandler</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">()</span>
 
 
-<span class="n">plugin_folder</span> <span class="o">=</span> <span class="s2">&quot;plugin_folder&quot;</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">raw_payload</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Basic endpoint to receive kili events</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">event_type</span> <span class="o">=</span> <span class="n">raw_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;eventType&#39;</span><span class="p">)</span>
+    <span class="n">project_id</span> <span class="o">=</span> <span class="n">raw_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logPayload&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;projectId&#39;</span><span class="p">)</span>
 
-<span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/plugins_library/plugin_image.py&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;plugin_folder/main.py&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">project_id</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Invalid projectId&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">plugin</span> <span class="o">=</span> <span class="n">PluginHandler</span><span class="p">(</span><span class="n">kili</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">event_type</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Invalid event&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">raw_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;payload&#39;</span><span class="p">)</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
+    <span class="n">asset_id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;asset_id&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s1">&#39;onSubmit&#39;</span><span class="p">:</span>
+        <span class="n">plugin</span><span class="o">.</span><span class="n">on_submit</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s1">&#39;onReview&#39;</span><span class="p">:</span>
+        <span class="n">plugin</span><span class="o">.</span><span class="n">on_review</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="step-4-upload-the-plugin-from-a-folder">Step 4: Upload the plugin from a folder</h2>
-<p>With the plugin defined in a separate <code>Python</code> file, you can create a folder containing:</p>
-<ul>
-<li>A <code>main.py</code> file which is the entrypoint of the plugin and must have a <code>PluginHandler</code> class which implements a <code>PluginCore</code> class</li>
-<li>(optionally) a <code>requirements.txt</code> (if you need specific PyPi packages in your plugin)</li>
-</ul>
-<div class="highlight"><pre><span></span><code>folder/
-     main.py
-     requirements.txt
-</code></pre></div>
-<ul>
-<li>The upload will create the necessary builds to execute the plugin (it will take a few minutes)</li>
-<li>After the activation, you can start using your plugin right away.</li>
-</ul>
-<p>Here is an example of a <code>requirements.txt</code> file:
-numpy
-scikit-learn
-pandas==1.5.1
-git+https://github.com/yzhao062/pyod.git</p>
-<div class="highlight"><pre><span></span><code><span class="n">requirements_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;requirements.txt&quot;</span>
+<h2 id="step-4-register-activate-the-webhook">Step 4: Register &amp; activate the webhook</h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.exceptions</span> <span class="kn">import</span> <span class="n">GraphQLError</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 
-<span class="n">packages_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;numpy</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;scikit-learn</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;pandas==1.5.1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;git+https://github.com/yzhao062/pyod.git</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-<span class="p">]</span>
 
-<span class="k">with</span> <span class="n">requirements_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">packages_list</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">plugin_name</span> <span class="o">=</span> <span class="s2">&quot;Plugin bbox count&quot;</span>
-<span class="kn">from</span> <span class="nn">kili.exceptions</span> <span class="kn">import</span> <span class="n">GraphQLError</span>
+<span class="c1"># we get a new webhook listener</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;https://webhook.site/token&quot;</span><span class="p">)</span>
+<span class="n">uuid</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;uuid&quot;</span><span class="p">]</span>
+<span class="n">webhook_url_from_browser</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://webhook.site/#!/</span><span class="si">{</span><span class="n">uuid</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">webhook_name</span> <span class="o">=</span> <span class="s2">&quot;Webhook bbox count&quot;</span>
+<span class="n">webhook_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://webhook.site/</span><span class="si">{</span><span class="n">uuid</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">webhook_url_from_browser</span><span class="p">)</span>
+<span class="n">webhook_security_header</span> <span class="o">=</span> <span class="s2">&quot;custom header&quot;</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">)</span>
+    <span class="n">kili</span><span class="o">.</span><span class="n">create_webhook</span><span class="p">(</span>
+        <span class="n">plugin_name</span><span class="o">=</span><span class="n">webhook_name</span><span class="p">,</span> <span class="n">webhook_url</span><span class="o">=</span><span class="n">webhook_url</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">webhook_security_header</span>
+    <span class="p">)</span>
 <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
-</code></pre></div>
-<pre><code>Plugin with name "Plugin bbox count" activated on project "cldlyo2bq61if0jn9efvn3soo"
+<pre><code>https://webhook.site/#!/f81dfe6a-****-****-****-4b6dfe4b0721
 </code></pre>
-<h2 id="step-4-bis-upload-the-plugin-from-a-py-file">Step 4 bis: Upload the plugin from a .py file</h2>
-<p>Alternatively, you can also create a plugin directly from a <code>.py</code> file.</p>
-<ul>
-<li>The upload will create the necessary builds to execute the plugin (it will take a few minutes)</li>
-<li>After the activation, you can start using your plugin right away.</li>
-</ul>
-<div class="highlight"><pre><span></span><code><span class="n">path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;main.py&quot;</span>
-<span class="n">plugin_name_file</span> <span class="o">=</span> <span class="s2">&quot;Plugin bbox count - file&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">webhook_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
+</code></pre></div>
+<pre><code>Plugin with name "Webhook bbox count" activated on project "clfcblkni05pq0jrq8wgib142"
+INFO:kili.services.plugins:Plugin with name "Webhook bbox count" activated on project "clfcblkni05pq0jrq8wgib142"
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path_to_plugin</span><span class="p">),</span> <span class="n">plugin_name_file</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name_file</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
-</code></pre></div>
-<h2 id="step-5-plugin-in-action">Step 5: Plugin in action</h2>
-<p>Wait for the plugin to be successfully deployed.</p>
+
+
+
+
+'Plugin with name Webhook bbox count successfully activated'
+</code></pre>
+<p><strong>Note</strong>: Similar to plugins, you have access to the methods <code>kili.update_webhook</code> &amp; <code>kili.deactivate_plugin_on_project</code> for iterations on your code.</p>
+<h2 id="step-5-webhook-in-action">Step 5: Webhook in action</h2>
 <p>After that, you can test it by labelling in the Kili interface or just by uploading the following label.</p>
-<p>When you add the label that contains errors, you will see a new issue automatically created in the Kili app.</p>
+<p>When you add the label that contains errors, you will see a new issue automatically created in the Kili app, if you have deployed the webhook.
+Else, you can visit the webhook site to check incoming events.</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_response</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -1409,24 +1444,23 @@ git+https://github.com/yzhao062/pyod.git</p>
     <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'cldlyovj52lfr0joi831qfbao'}]
+<pre><code>[{'id': 'clfcblncs0h550js5golxg96s'}]
 </code></pre>
-<p>If you use the base plugin provided, the plugin should:</p>
+<p>If you used &amp; hosted the base webhook provided, the webhook should:</p>
 <ul>
 <li>Create an issue with information that three bboxes were found, instead of one</li>
+<li>Create an issue with info that the first bbox is too large</li>
 <li>Send the asset back to the labeling queue (status <code>ONGOING</code>)</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;issues.comments.text&quot;</span><span class="p">])</span>
-<span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span>
-    <span class="s2">&quot;Go to my project:&quot;</span>
-    <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/api&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s1">/menu/queue&#39;</span>
-<span class="p">)</span>
+<p>If you haven't deployed your webhook just yet, you can still visit the address here :</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Go to my webhook: </span><span class="si">{</span><span class="n">webhook_url_from_browser</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># If your webhook is live !</span>
+    <span class="n">kili</span><span class="o">.</span><span class="n">issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;comments.text&quot;</span><span class="p">,</span> <span class="s2">&quot;objectMid&quot;</span><span class="p">])</span>
+<span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 </code></pre></div>
-<pre><code>[{'issues': [], 'status': 'LABELED'}]
-Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
+<pre><code>Go to my webhook: https://webhook.site/#!/f81dfe6a-****-****-****-4b6dfe4b0721
 </code></pre>
 <p>Woah! Amazing! Well done :) 🚀</p>
 <p>Let's test now to post a proper label, this one for example:</p>
@@ -1456,58 +1490,12 @@ Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if
     <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span>
 <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]))</span>
-
-<span class="nb">print</span><span class="p">(</span>
-    <span class="s2">&quot;Go to my project:&quot;</span>
-    <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/api&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s1">/menu/queue&#39;</span>
-<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Go to my webhook: </span><span class="si">{</span><span class="n">webhook_url_from_browser</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'status': 'LABELED'}]
-Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
+<pre><code>Go to my webhook: https://webhook.site/#!/f81dfe6a-****-****-****-4b6dfe4b0721
 </code></pre>
-<p>The status of your asset should have now changed to <code>LABELED</code>. In this plugin, previous issues remain but you can solve them through the API as well.</p>
+<p>The status of your asset should have now changed to <code>LABELED</code>. In this webhook, previous issues remain but you can solve them through the API as well.</p>
 <p>Well done! You can now iterate on the script. To learn how to avoid latency when building and deploying your plugin, refer to the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/">plugins development</a> tutorial.</p>
-<h2 id="step-6-monitor-the-plugin">Step 6: Monitor the plugin</h2>
-<p>To monitor a certain plugin, you can get its logs by using the following command:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-
-<span class="n">dt</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
-<span class="p">)</span>  <span class="c1"># You can change this date if needed, or omit it to set it at the plugin creation date</span>
-<span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
-
-<span class="n">logs</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_logs</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
-
-<span class="n">logs_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">logs</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">logs_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
-</code></pre></div>
-<h2 id="step-7-manage-the-plugin">Step 7: Manage the plugin</h2>
-<p>You also have several other methods to manage your plugins.</p>
-<p>Get the list of all uploaded plugins in your organization:</p>
-<div class="highlight"><pre><span></span><code><span class="n">plugins</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">list_plugins</span><span class="p">()</span>
-</code></pre></div>
-<p>Update a plugin with new source code:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Insert the path to the updated plugin</span>
-<span class="n">new_path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;main.py&quot;</span>
-
-<span class="c1"># Change to True if you want to update the plugin</span>
-<span class="n">should_update</span> <span class="o">=</span> <span class="kc">False</span>
-
-<span class="k">if</span> <span class="n">should_update</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">plugin_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">new_path_to_plugin</span><span class="p">))</span>
-</code></pre></div>
-<p>Deactivate the plugin on a certain project (the plugin can still be active for other projects):</p>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">deactivate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">);</span>
-</code></pre></div>
-<pre><code>Plugin Plugin bbox count deactivated on project cldlyo2bq61if0jn9efvn3soo
-</code></pre>
-<p>Delete the plugin completely (deactivates the plugin from all projects):</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">delete_plugin_from_org</span><span class="p">:</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">delete_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">)</span>
-</code></pre></div>
 
 
   
