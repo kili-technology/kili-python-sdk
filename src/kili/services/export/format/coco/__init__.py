@@ -98,7 +98,7 @@ class CocoExporter(AbstractExporter):
         """
         if self.split_option == "split":
             for job_name, job in self.project_json_interface["jobs"].items():
-                if self._is_job_compatibile(job):
+                if self._is_job_compatible(job):
                     _convert_kili_semantic_to_coco(
                         jobs={job_name: job},
                         assets=assets,
@@ -112,7 +112,11 @@ class CocoExporter(AbstractExporter):
                     self.logger.warning(f"Job {job_name} is not compatible with the COCO format.")
         else:  # merged
             _convert_kili_semantic_to_coco(
-                jobs=self.project_json_interface["jobs"],
+                jobs={
+                    k: job
+                    for k, job in self.project_json_interface["jobs"].items()
+                    if self._is_job_compatible(job)
+                },
                 assets=assets,
                 output_dir=Path(output_directory) / self.project_id,
                 title=self.project_title,
@@ -121,7 +125,7 @@ class CocoExporter(AbstractExporter):
                 merged=True,
             )
 
-    def _is_job_compatibile(self, job: Job) -> bool:
+    def _is_job_compatible(self, job: Job) -> bool:
         if "tools" not in job:
             return False
         return (JobTool.Semantic in job["tools"] or JobTool.Rectangle in job["tools"]) and job[
@@ -150,7 +154,10 @@ def _convert_kili_semantic_to_coco(
 
 
     We iterate on the assets and create a coco format for each asset.
+
+    Note: the jobs should only contains elligible jobs.
     """
+
     infos_coco = {
         "year": time.strftime("%Y"),
         "version": "1.0",
@@ -387,7 +394,19 @@ def _get_images_and_annotation_for_videos(
                     )
                 coco_annotations.extend(coco_img_annotations)
             else:
-                raise NotImplementedError
+                for job_name in jobs.keys():
+                    if job_name not in asset["latestLabel"]["jsonResponse"]:
+                        continue
+                    coco_img_annotations, annotation_offset = _get_coco_image_annotations(
+                        json_response[job_name]["annotations"],
+                        cat_kili_id_to_coco_id[job_name],
+                        annotation_offset,
+                        coco_image,
+                        annotation_modifier,
+                    )
+
+                    coco_annotations.extend(coco_img_annotations)
+
     return coco_images, coco_annotations
 
 

@@ -147,6 +147,20 @@ MAIN_JOB = Job(
     isNew=False,
 )
 
+TASTY_JOB = Job(
+    content={
+        "categories": {"TASTY": {"name": "tasty"}, "NOT_TASTY": {"name": "not tasty"}},
+    },
+    instruction="is it tasty",
+    isChild=False,
+    tools=[],
+    mlTask="CLASSIFICATION",
+    models=None,
+    isVisible=True,
+    required=0,
+    isNew=False,
+)
+
 
 # DO NOT DELETE: to use for debugging
 # def display_kili_and_coco_bbox(

@@ -89,7 +89,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         Checks if the export label format is compatible with the project.
         """
 
-    def _is_job_compatibile(self, job: Job) -> bool:
+    def _is_job_compatible(self, job: Job) -> bool:
         """
         Check if the export label format is compatible with the job.
         """
@@ -103,7 +103,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return tuple(
             job_name
             for job_name, job in self.project_json_interface["jobs"].items()
-            if self._is_job_compatibile(job)
+            if self._is_job_compatible(job)
         )
 
     @abstractmethod

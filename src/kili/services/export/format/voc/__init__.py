@@ -67,7 +67,7 @@ class VocExporter(AbstractExporter):
                 f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
             )
 
-    def _is_job_compatibile(self, job: Job) -> bool:
+    def _is_job_compatible(self, job: Job) -> bool:
         """
         Check job compatibility with the Pascal VOC format.
         """

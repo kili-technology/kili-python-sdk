@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 from kili.orm import Asset
 from tests.services.export.fakes.fake_data import (
     asset_image_1,
+    asset_image_1_with_classification,
     asset_image_1_without_annotation,
     asset_image_2,
     asset_image_no_content,
@@ -30,6 +31,7 @@ def mocked_ProjectQuery(where, _fields, _options):
         "object_detection",
         "object_detection_with_empty_annotation",
         "object_detection_cloud_storage",
+        "object_detection_with_classification",
     ]:
         job_payload = {
             "mlTask": "OBJECT_DETECTION",
@@ -49,12 +51,51 @@ def mocked_ProjectQuery(where, _fields, _options):
                 "input": "radio",
             },
         }
+        job_payload = {
+            "mlTask": "OBJECT_DETECTION",
+            "tools": ["rectangle"],
+            "instruction": "Categories",
+            "required": 1 if project_id == "object_detection" else 0,
+            "isChild": False,
+            "content": {
+                "categories": {
+                    "OBJECT_A": {
+                        "name": "OBJECT A",
+                    },
+                    "OBJECT_B": {
+                        "name": "OBJECT B",
+                    },
+                },
+                "input": "radio",
+            },
+        }
+
+        irrelevant_job_payload = {
+            "mlTask": "CLASSIFICATION",
+            "tools": [],
+            "instruction": "classif",
+            "required": 0,
+            "isChild": False,
+            "content": {
+                "categories": {
+                    "OBJECT_C": {
+                        "name": "OBJECT C",
+                    },
+                    "OBJECT_D": {
+                        "name": "OBJECT D",
+                    },
+                },
+                "input": "radio",
+            },
+        }
+
         json_interface = {
             "jobs": {
                 "JOB_0": job_payload,
                 "JOB_1": job_payload,
                 "JOB_2": job_payload,
                 "JOB_3": job_payload,
+                "JOB_4": irrelevant_job_payload,
             }
         }
         return [
@@ -186,6 +227,8 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function):
             return [Asset(asset_image_1)]
         elif project_id == "object_detection_with_empty_annotation":
             return [Asset(asset_image_1_without_annotation)]
+        elif project_id == "object_detection_with_classification":
+            return [Asset(asset_image_1_with_classification)]
         elif project_id == "text_classification":
             return []
         elif project_id == "semantic_segmentation":

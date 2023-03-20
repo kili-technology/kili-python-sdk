@@ -552,6 +552,13 @@ def test_coco_export_with_multi_jobs():
         assert labels_json["annotations"][0]["image_id"] == 0
         assert labels_json["annotations"][1]["image_id"] == 1
 
+        assert labels_json["categories"] == [
+            {"id": 0, "name": "DESSERT_JOB/APPLE_PIE", "supercategory": "DESSERT_JOB"},
+            {"id": 1, "name": "DESSERT_JOB/TIRAMISU", "supercategory": "DESSERT_JOB"},
+            {"id": 2, "name": "MAIN_JOB/PIZZA", "supercategory": "MAIN_JOB"},
+            {"id": 3, "name": "MAIN_JOB/SPAGHETTIS", "supercategory": "MAIN_JOB"},
+        ]
+
         assert (
             categories_by_id[coco_annotation["annotations"][0]["category_id"]]
             == "DESSERT_JOB/APPLE_PIE"
