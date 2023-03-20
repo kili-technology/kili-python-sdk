@@ -75,7 +75,7 @@ class YoloExporter(AbstractExporter):
                     f"that can be converted to the {self.label_format} format."
                 )
 
-    def _is_job_compatibile(self, job: Job) -> bool:
+    def _is_job_compatible(self, job: Job) -> bool:
         """
         Check job compatibility with the YOLO format.
         """
