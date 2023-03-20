@@ -61,7 +61,7 @@ def get_file_tree(folder: str):
     "name,test_case",
     [
         (
-            "YOLO v5 format with splitted files",
+            "YOLO v5 format with split files",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -85,7 +85,7 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "YOLO v5 format with splitted files and download assets",
+            "YOLO v5 format with split files and download assets",
             {
                 "export_kwargs": {
                     "project_id": "object_detection",
@@ -239,11 +239,12 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "COCO format",
+            "COCO format with split files",
             {
                 "export_kwargs": {
                     "project_id": "semantic_segmentation",
                     "label_format": "coco",
+                    "split_option": "split",
                 },
                 "file_tree_expected": {
                     "data": {
@@ -251,6 +252,52 @@ def get_file_tree(folder: str):
                         "car_2.jpg": {},
                     },
                     "JOB_0": {
+                        "labels.json": {},
+                    },
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "COCO format with merged file",
+            {
+                "export_kwargs": {
+                    "project_id": "semantic_segmentation",
+                    "label_format": "coco",
+                    "split_option": "merged",
+                },
+                "file_tree_expected": {
+                    "data": {
+                        "car_1.jpg": {},
+                        "car_2.jpg": {},
+                    },
+                    "labels.json": {},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "COCO format with split files given 4 ODs with classification",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_with_classification",
+                    "label_format": "coco",
+                    "split_option": "split",
+                },
+                "file_tree_expected": {  # only the OD jobs have a folder.
+                    "data": {
+                        "car_1.jpg": {},
+                    },
+                    "JOB_0": {
+                        "labels.json": {},
+                    },
+                    "JOB_1": {
+                        "labels.json": {},
+                    },
+                    "JOB_2": {
+                        "labels.json": {},
+                    },
+                    "JOB_3": {
                         "labels.json": {},
                     },
                     "README.kili.txt": {},
@@ -310,11 +357,12 @@ def get_file_tree(folder: str):
             },
         ),
         (
-            "COCO format video project",
+            "COCO format video project with split job",
             {
                 "export_kwargs": {
                     "project_id": "object_detection_video_project",
                     "label_format": "coco",
+                    "split_option": "split",
                 },
                 "file_tree_expected": {
                     "data": {
@@ -325,6 +373,25 @@ def get_file_tree(folder: str):
                     "JOB_0": {
                         "labels.json": {},
                     },
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "COCO format video project with merged file",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_video_project",
+                    "label_format": "coco",
+                    "split_option": "merged",
+                },
+                "file_tree_expected": {
+                    "data": {
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
+                        "short_video.mp4": {},
+                    },
+                    "labels.json": {},
                     "README.kili.txt": {},
                 },
             },

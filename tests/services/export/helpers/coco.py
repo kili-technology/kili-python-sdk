@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from kili.orm import Asset
+from kili.services.types import Job
 
 
 def get_asset(
@@ -116,6 +117,49 @@ def estimate_rotated_bb_from_kili_poly(
     ]
 
     return {**coco_annotation, "attributes": attributes, "bbox": bbox}
+
+
+DESSERT_JOB = Job(
+    content={
+        "categories": {"APPLE_PIE": {"name": "apple_pie"}, "TIRAMISU": {"name": "tiramisu"}},
+    },
+    instruction="dessert",
+    isChild=False,
+    tools=["rectangle"],
+    mlTask="OBJECT_DETECTION",
+    models=None,
+    isVisible=True,
+    required=0,
+    isNew=False,
+)
+
+MAIN_JOB = Job(
+    content={
+        "categories": {"PIZZA": {"name": "pizza"}, "SPAGHETTIS": {"name": "spaghettis"}},
+    },
+    instruction="main course",
+    isChild=False,
+    tools=["rectangle"],
+    mlTask="OBJECT_DETECTION",
+    models=None,
+    isVisible=True,
+    required=0,
+    isNew=False,
+)
+
+TASTY_JOB = Job(
+    content={
+        "categories": {"TASTY": {"name": "tasty"}, "NOT_TASTY": {"name": "not tasty"}},
+    },
+    instruction="is it tasty",
+    isChild=False,
+    tools=[],
+    mlTask="CLASSIFICATION",
+    models=None,
+    isVisible=True,
+    required=0,
+    isNew=False,
+)
 
 
 # DO NOT DELETE: to use for debugging

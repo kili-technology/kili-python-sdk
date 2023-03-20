@@ -7,7 +7,7 @@ import time
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from kili.orm import Asset, JobMLTask, JobTool
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
@@ -77,7 +77,7 @@ class CocoExporter(AbstractExporter):
         """
         Extract formatted annotations from labels.
         """
-        clean_assets = self.process_assets(assets, self.label_format)
+        clean_assets = self.pre_process_assets(assets, self.label_format)
 
         self._save_assets_export(
             clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier
@@ -96,21 +96,36 @@ class CocoExporter(AbstractExporter):
         """
         Save the assets to a file and return the link to that file
         """
-        for job_name, job in self.project_json_interface["jobs"].items():
-            if self._is_job_compatibile(job):
-                _convert_kili_semantic_to_coco(
-                    job_name=job_name,
-                    assets=assets,
-                    output_dir=Path(output_directory) / self.project_id,
-                    job=job,
-                    title=self.project_title,
-                    project_input_type=self.project_input_type,
-                    annotation_modifier=annotation_modifier,
-                )
-            else:
-                self.logger.warning(f"Job {job_name} is not compatible with the COCO format.")
+        if self.split_option == "split":
+            for job_name, job in self.project_json_interface["jobs"].items():
+                if self._is_job_compatible(job):
+                    _convert_kili_semantic_to_coco(
+                        jobs={job_name: job},
+                        assets=assets,
+                        output_dir=Path(output_directory) / self.project_id,
+                        title=self.project_title,
+                        project_input_type=self.project_input_type,
+                        annotation_modifier=annotation_modifier,
+                        merged=False,
+                    )
+                else:
+                    self.logger.warning(f"Job {job_name} is not compatible with the COCO format.")
+        else:  # merged
+            _convert_kili_semantic_to_coco(
+                jobs={
+                    k: job
+                    for k, job in self.project_json_interface["jobs"].items()
+                    if self._is_job_compatible(job)
+                },
+                assets=assets,
+                output_dir=Path(output_directory) / self.project_id,
+                title=self.project_title,
+                project_input_type=self.project_input_type,
+                annotation_modifier=annotation_modifier,
+                merged=True,
+            )
 
-    def _is_job_compatibile(self, job: Job) -> bool:
+    def _is_job_compatible(self, job: Job) -> bool:
         if "tools" not in job:
             return False
         return (JobTool.Semantic in job["tools"] or JobTool.Rectangle in job["tools"]) and job[
@@ -120,14 +135,14 @@ class CocoExporter(AbstractExporter):
 
 # pylint: disable=too-many-arguments
 def _convert_kili_semantic_to_coco(
-    job_name: JobName,
+    jobs: Dict[JobName, Job],
     assets: List[Asset],
     output_dir: Path,
-    job: Job,
     title: str,
     project_input_type: str,
     annotation_modifier: Optional[CocoAnnotationModifier],
-) -> Tuple[CocoFormat, List[str]]:
+    merged: bool,
+) -> Tuple[CocoFormat, List[Path]]:
     """
     creates the following structure on the disk:
     <dataset_dir>/
@@ -139,7 +154,10 @@ def _convert_kili_semantic_to_coco(
 
 
     We iterate on the assets and create a coco format for each asset.
+
+    Note: the jobs should only contains elligible jobs.
     """
+
     infos_coco = {
         "year": time.strftime("%Y"),
         "version": "1.0",
@@ -157,112 +175,237 @@ def _convert_kili_semantic_to_coco(
     )
 
     # Mapping category - category id
-    cat_kili_id_to_coco_id = _get_kili_cat_id_to_coco_cat_id_mapping(job)
-    labels_json["categories"] = _get_coco_categories(cat_kili_id_to_coco_id)
-    labels_json["images"], labels_json["annotations"] = _get_coco_images_and_annotations(
-        job_name, assets, cat_kili_id_to_coco_id, project_input_type, annotation_modifier
+    cat_kili_id_to_coco_id, labels_json["categories"] = _get_coco_categories_with_mapping(
+        jobs, merged
     )
 
-    label_file_name = output_dir / job_name / "labels.json"
-    label_file_name.parent.mkdir(parents=True, exist_ok=True)
-    with (output_dir / job_name / "labels.json").open("w") as outfile:
-        json.dump(labels_json, outfile)
+    if merged:
+        labels_json["images"], labels_json["annotations"] = _get_coco_images_and_annotations(
+            jobs,
+            assets,
+            cat_kili_id_to_coco_id,
+            project_input_type,
+            annotation_modifier,
+            is_single_job=False,
+        )
 
-    classes = list(cat_kili_id_to_coco_id.keys())
-    return labels_json, classes
+        label_file_name = output_dir / "labels.json"
+        label_file_name.parent.mkdir(parents=True, exist_ok=True)
+        with label_file_name.open("w") as outfile:
+            json.dump(labels_json, outfile)
+        label_filenames = [label_file_name]
+    else:  # split case
+        label_filenames = []
+        for job_name, job in jobs.items():
+            labels_json["images"], labels_json["annotations"] = _get_coco_images_and_annotations(
+                {job_name: job},
+                assets,
+                cat_kili_id_to_coco_id,
+                project_input_type,
+                annotation_modifier,
+                is_single_job=True,
+            )
+            label_file_name = output_dir / job_name / "labels.json"
+
+            label_file_name.parent.mkdir(parents=True, exist_ok=True)
+            with label_file_name.open("w") as outfile:
+                json.dump(labels_json, outfile)
+            label_filenames.append(label_file_name)
+
+    return labels_json, label_filenames
 
 
-def _get_kili_cat_id_to_coco_cat_id_mapping(job: Job) -> Dict[str, int]:
-    cats = job["content"]["categories"]
-    mapping_cat_name_cat_kili_id = {cat["name"]: catId for catId, cat in cats.items()}
-    cat_kili_ids = list(mapping_cat_name_cat_kili_id.values())
-    cat_kili_id_to_coco_id = {str(categoryId): i for i, categoryId in enumerate(cat_kili_ids)}
-    return cat_kili_id_to_coco_id
+def _get_coco_categories_with_mapping(
+    jobs: Dict[JobName, Job], merged: bool
+) -> Tuple[Dict[JobName, Dict[str, int]], List[CocoCategory]]:
+    """
+    Get the mapping between a category name in Kili of a given job and the COCO category id, and
+    also return the list of COCO categories.
+    """
+    if merged:
+        # id_offset: int = 0
+        mapping_cat_name_cat_kili_id: Dict[str, str] = {}
+        cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]] = {}
+        id_offset = 0
+        for job_name, job in sorted(jobs.items(), key=lambda x: x[0]):
+            content = dict(job["content"])
+            job_cats: Dict[str, Any] = content["categories"]
+            mapping_cat_name_cat_kili_id = {
+                "/".join([job_name, cat["name"]]): cat_id for cat_id, cat in job_cats.items()
+            }
+
+            cat_kili_ids = list(sorted(mapping_cat_name_cat_kili_id.values()))
+            cat_kili_id_to_coco_id[job_name] = {
+                str(category_id): i + id_offset for i, category_id in enumerate(cat_kili_ids)
+            }
+            id_offset += len(cat_kili_ids)
+
+    else:
+        assert (
+            len(list(jobs.values())) == 1
+        ), "When this method is called with merged = False, the jobs should only contain 1 job"
+        job_name = list(jobs.keys())[0]
+        cats = list(jobs.values())[0]["content"]["categories"]
+        mapping_cat_name_cat_kili_id = {cat["name"]: cat_id for cat_id, cat in cats.items()}
+        cat_kili_ids = list(mapping_cat_name_cat_kili_id.values())
+        cat_kili_id_to_coco_id = {
+            job_name: {str(category_id): i for i, category_id in enumerate(cat_kili_ids)}
+        }
+
+    return cat_kili_id_to_coco_id, _get_coco_categories(cat_kili_id_to_coco_id, merged)
 
 
 # pylint: disable=too-many-locals
 def _get_coco_images_and_annotations(
-    job_name: str,
+    jobs: Dict[JobName, Job],
     assets: List[Asset],
-    cat_kili_id_to_coco_id: Dict[str, int],
+    cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]],
     project_input_type: str,
     annotation_modifier: Optional[CocoAnnotationModifier],
+    is_single_job: bool,
+) -> Tuple[List[CocoImage], List[CocoAnnotation]]:
+    if project_input_type == "IMAGE":
+        return _get_images_and_annotation_for_images(
+            jobs, assets, cat_kili_id_to_coco_id, annotation_modifier, is_single_job
+        )
+
+    if project_input_type == "VIDEO":
+        return _get_images_and_annotation_for_videos(
+            jobs, assets, cat_kili_id_to_coco_id, annotation_modifier, is_single_job
+        )
+
+    raise NotImplementedError(f"No conversion to COCO possible for input type {project_input_type}")
+
+
+def _get_images_and_annotation_for_images(
+    jobs: Dict[JobName, Job],
+    assets: List[Asset],
+    cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]],
+    annotation_modifier: Optional[CocoAnnotationModifier],
+    is_single_job: bool,
 ) -> Tuple[List[CocoImage], List[CocoAnnotation]]:
     coco_images = []
     coco_annotations = []
     annotation_offset = 0
-    for asset_i, asset in tqdm(enumerate(assets), desc="Convert to coco format"):
-        if project_input_type == "IMAGE":
-            width, height = get_image_dimensions(asset["content"])
-            coco_image = CocoImage(
-                id=asset_i,
-                license=0,
-                file_name=str(DATA_SUBDIR + "/" + Path(asset["content"]).name),
-                height=height,
-                width=width,
-                date_captured=None,
-            )
 
-            coco_images.append(coco_image)
+    for asset_i, asset in tqdm(enumerate(assets), desc="Convert to coco format"):
+        width, height = get_image_dimensions(asset["content"])
+        coco_image = CocoImage(
+            id=asset_i,
+            license=0,
+            file_name=str(DATA_SUBDIR + "/" + Path(asset["content"]).name),
+            height=height,
+            width=width,
+            date_captured=None,
+        )
+
+        coco_images.append(coco_image)
+        if is_single_job:
+            assert len(list(jobs.keys())) == 1
+            job_name = list(jobs.keys())[0]
+
             if job_name not in asset["latestLabel"]["jsonResponse"]:
                 coco_img_annotations = []
                 # annotation offset is unchanged
             else:
                 coco_img_annotations, annotation_offset = _get_coco_image_annotations(
                     asset["latestLabel"]["jsonResponse"][job_name]["annotations"],
-                    cat_kili_id_to_coco_id,
+                    cat_kili_id_to_coco_id[job_name],
                     annotation_offset,
                     coco_image,
                     annotation_modifier=annotation_modifier,
                 )
             coco_annotations.extend(coco_img_annotations)
+        else:
+            # coco_img_annotations = []
+            for job_name in jobs.keys():
+                if job_name not in asset["latestLabel"]["jsonResponse"]:
+                    continue
+                    # annotation offset is unchanged
 
-        elif project_input_type == "VIDEO":
-            nbr_frames = len(asset.get("latestLabel", {}).get("jsonResponse", {}))
-            leading_zeros = len(str(nbr_frames))
-
-            width = height = 0
-            frame_ext = ""
-            # jsonContent with frames
-            if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
-                width, height = get_image_dimensions(asset["jsonContent"][0])
-                frame_ext = Path(asset["jsonContent"][0]).suffix
-
-            # video with shouldUseNativeVideo set to True (no frames available)
-            elif Path(asset["content"]).is_file():
-                width, height = get_video_dimensions(asset["content"])
-                cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
-                frame_ext = ".jpg"
-
-            else:
-                raise FileNotFoundError(f"Could not find frames or video for asset {asset}")
-
-            for frame_i, (frame_id, json_response) in enumerate(
-                asset["latestLabel"]["jsonResponse"].items()
-            ):
-                frame_name = f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}'
-                coco_image = CocoImage(
-                    id=frame_i + len(assets),  # add offset to avoid duplicate ids
-                    license=0,
-                    file_name=str(DATA_SUBDIR + "/" + f"{frame_name}{frame_ext}"),
-                    height=height,
-                    width=width,
-                    date_captured=None,
+                coco_img_annotations, annotation_offset = _get_coco_image_annotations(
+                    asset["latestLabel"]["jsonResponse"][job_name]["annotations"],
+                    cat_kili_id_to_coco_id[job_name],
+                    annotation_offset,
+                    coco_image,
+                    annotation_modifier=annotation_modifier,
                 )
-                coco_images.append(coco_image)
+                coco_annotations.extend(coco_img_annotations)
+    return coco_images, coco_annotations
 
+
+def _get_images_and_annotation_for_videos(
+    jobs: Dict[JobName, Job],
+    assets: List[Asset],
+    cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]],
+    annotation_modifier: Optional[CocoAnnotationModifier],
+    is_single_job: bool,
+) -> Tuple[List[CocoImage], List[CocoAnnotation]]:
+    coco_images = []
+    coco_annotations = []
+    annotation_offset = 0
+
+    for asset in tqdm(assets, desc="Convert to coco format"):
+        nbr_frames = len(asset.get("latestLabel", {}).get("jsonResponse", {}))
+        leading_zeros = len(str(nbr_frames))
+
+        width = height = 0
+        frame_ext = ""
+        # jsonContent with frames
+        if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
+            width, height = get_image_dimensions(asset["jsonContent"][0])
+            frame_ext = Path(asset["jsonContent"][0]).suffix
+
+        # video with shouldUseNativeVideo set to True (no frames available)
+        elif Path(asset["content"]).is_file():
+            width, height = get_video_dimensions(asset["content"])
+            cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
+            frame_ext = ".jpg"
+
+        else:
+            raise FileNotFoundError(f"Could not find frames or video for asset {asset}")
+
+        for frame_i, (frame_id, json_response) in enumerate(
+            asset["latestLabel"]["jsonResponse"].items()
+        ):
+            frame_name = f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}'
+            coco_image = CocoImage(
+                id=frame_i + len(assets),  # add offset to avoid duplicate ids
+                license=0,
+                file_name=str(DATA_SUBDIR + "/" + f"{frame_name}{frame_ext}"),
+                height=height,
+                width=width,
+                date_captured=None,
+            )
+            coco_images.append(coco_image)
+
+            if is_single_job:
+                job_name = list(jobs.keys())[0]
                 if job_name not in json_response:
                     coco_img_annotations = []
                     # annotation offset is unchanged
                 else:
                     coco_img_annotations, annotation_offset = _get_coco_image_annotations(
                         json_response[job_name]["annotations"],
-                        cat_kili_id_to_coco_id,
+                        cat_kili_id_to_coco_id[job_name],
                         annotation_offset,
                         coco_image,
                         annotation_modifier,
                     )
                 coco_annotations.extend(coco_img_annotations)
+            else:
+                for job_name in jobs.keys():
+                    if job_name not in asset["latestLabel"]["jsonResponse"]:
+                        continue
+                    coco_img_annotations, annotation_offset = _get_coco_image_annotations(
+                        json_response[job_name]["annotations"],
+                        cat_kili_id_to_coco_id[job_name],
+                        annotation_offset,
+                        coco_image,
+                        annotation_modifier,
+                    )
+
+                    coco_annotations.extend(coco_img_annotations)
 
     return coco_images, coco_annotations
 
@@ -330,15 +473,16 @@ def _get_coco_geometry_from_kili_bpoly(
     return bbox, poly
 
 
-def _get_coco_categories(cat_kili_id_to_coco_id) -> List[CocoCategory]:
+def _get_coco_categories(cat_kili_id_to_coco_id, merged) -> List[CocoCategory]:
     categories_coco: List[CocoCategory] = []
-    for cat_kili_id, cat_coco_id in cat_kili_id_to_coco_id.items():
-        categories_coco.append(
-            {
-                "id": cat_coco_id,
-                "name": cat_kili_id,
-                "supercategory": "",
-            }
-        )
+    for job_name, mapping in sorted(cat_kili_id_to_coco_id.items(), key=lambda x: x[0]):
+        for cat_kili_id, cat_coco_id in sorted(mapping.items(), key=lambda x: x[1]):
+            categories_coco.append(
+                {
+                    "id": cat_coco_id,
+                    "name": cat_kili_id if not merged else "/".join([job_name, cat_kili_id]),
+                    "supercategory": job_name,
+                }
+            )
 
     return categories_coco
