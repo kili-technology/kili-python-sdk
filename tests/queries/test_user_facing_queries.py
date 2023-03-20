@@ -28,7 +28,7 @@ def test_users_query_return_type(mock, args, kwargs, expected_return_type):
     kili = QueriesUser(auth)
 
     result = kili.users(*args, **kwargs)
-    assert check_type("result", result, expected_return_type) is None
+    check_type(result, expected_return_type)
 
 
 @pytest.mark.parametrize(
@@ -48,4 +48,4 @@ def test_assets_query_return_type(mock, args, kwargs, expected_return_type):
     kili = QueriesAsset(auth)
 
     result = kili.assets(*args, **kwargs)
-    assert check_type("result", result, expected_return_type) is None
+    check_type(result, expected_return_type)
