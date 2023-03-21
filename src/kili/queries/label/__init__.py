@@ -541,7 +541,7 @@ class QueriesLabel:
         labels = [
             dict(
                 label,
-                **dict((f"asset_{key}", asset[key]) for key in asset if key != "labels"),
+                **{f"asset_{key}": asset[key] for key in asset if key != "labels"},
             )
             for asset in assets_gen
             for label in asset["labels"]

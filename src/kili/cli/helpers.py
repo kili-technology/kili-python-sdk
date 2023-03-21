@@ -33,7 +33,7 @@ def collect_from_csv(
 ):
     """read a csv to collect required_columns and optional_columns"""
     out = []
-    with open(csv_path, "r", encoding="utf-8") as csv_file:
+    with open(csv_path, encoding="utf-8") as csv_file:
         csvreader = csv.DictReader(csv_file)
         headers = csvreader.fieldnames
         if not headers:

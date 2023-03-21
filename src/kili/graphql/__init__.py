@@ -164,8 +164,7 @@ class GraphQLQuery(ABC):
                         yield rows
                         break
 
-                    for row in rows:
-                        yield row
+                    yield from rows
 
                     count_rows_retrieved += len(rows)
                     pbar.update(len(rows))

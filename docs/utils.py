@@ -221,10 +221,10 @@ def check_markdown_up_to_date(ipynb_filepath: Path, md_filepath: Path, remove_ce
             md_output_filepath=Path(temp_file.name),
             remove_cell_tags=remove_cell_tags,
         )
-        with open(temp_file.name, "r", encoding="utf-8") as file:
+        with open(temp_file.name, encoding="utf-8") as file:
             temp_markdown = file.read()
 
-        with open(md_filepath, "r", encoding="utf-8") as file:
+        with open(md_filepath, encoding="utf-8") as file:
             markdown = file.read()
 
         if temp_markdown != markdown:

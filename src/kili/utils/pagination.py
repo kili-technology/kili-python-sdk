@@ -63,8 +63,7 @@ def batch_object_builder(
     batch_object_iterator = (
         dict(zip(batched_properties, t)) for t in zip(*batched_properties.values())
     )
-    for batch in batch_object_iterator:
-        yield batch  # type: ignore
+    yield from batch_object_iterator
 
 
 def api_throttle(func):

@@ -85,9 +85,9 @@ def add_member(
         ],
         options=QueryOptions(disable_tqdm=True),
     )
-    existing_member_emails = set(
+    existing_member_emails = {
         member["user"]["email"] for member in existing_members if member["activated"]
-    )
+    }
 
     for member in members_to_add:
         if member["email"] in existing_member_emails:

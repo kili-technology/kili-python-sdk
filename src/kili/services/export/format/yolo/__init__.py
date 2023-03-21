@@ -408,7 +408,7 @@ def _write_class_file(
                 fout.write(f"{job_category.id} {job_category.category_name}\n".encode())
     if label_format == "yolo_v5":
         with (folder / "data.yaml").open("wb") as fout:
-            fout.write("names:\n".encode())
+            fout.write(b"names:\n")
             categories = ""
             for ind, job_category in enumerate(category_ids.values()):
                 fout.write(f"  {ind}: {job_category.category_name}\n".encode())

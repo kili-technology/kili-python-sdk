@@ -39,8 +39,8 @@ class _ClientInputLabelsValidator(BaseModel, extra=Extra.forbid):
     @validator("labels")
     def all_labels_use_the_same_asset_identifier(cls, labels):  # pylint: disable=no-self-argument
         """Validate the data of one label"""
-        if not all((label.get("asset_id") for label in labels)) and not all(
-            (label.get("asset_external_id") for label in labels)
+        if not all(label.get("asset_id") for label in labels) and not all(
+            label.get("asset_external_id") for label in labels
         ):
             raise ValueError(
                 "Please use the same asset identifier for all labels: either only asset_id or only"
