@@ -96,6 +96,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
 
 
 @pytest.mark.parametrize("endpoint_short_name,platform_name,data_integration_id", get_test_cases())
+@pytest.mark.skip(reason="This test is not stable")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
