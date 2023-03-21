@@ -3,6 +3,7 @@ GraphQL Client
 """
 
 import json
+import logging
 import random
 import string
 import threading
@@ -18,6 +19,7 @@ import websocket
 from gql import Client, gql
 from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
+from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
 
 from kili import __version__
@@ -45,6 +47,7 @@ class GraphQLClient:
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
+        gql_requests_logger.setLevel(logging.WARNING)
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
