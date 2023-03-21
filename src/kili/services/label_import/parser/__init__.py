@@ -38,7 +38,7 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
         annotations = []
         assert self.classes_by_id
         assert self.target_job
-        with open(label_file, "r", encoding="ascii") as l_f:
+        with open(label_file, encoding="ascii") as l_f:
             csv_reader = csv.reader(l_f, delimiter=" ")
             for row in csv_reader:
                 if len(row) == 0:

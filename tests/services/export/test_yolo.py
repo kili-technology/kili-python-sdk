@@ -106,7 +106,7 @@ class YoloTestCase(TestCase):
             _write_class_file(directory, category_ids, "yolo_v4")
             assert (directory / "classes.txt").is_file()
             with (directory / "classes.txt").open("r") as created_file:
-                with open("./tests/services/export/expected/classes.txt", "r") as expected_file:
+                with open("./tests/services/export/expected/classes.txt") as expected_file:
                     assert expected_file.read() == created_file.read()
 
     def test_write_class_file_yolo_v5(self):
@@ -114,7 +114,7 @@ class YoloTestCase(TestCase):
             _write_class_file(directory, category_ids, "yolo_v5")
             assert (directory / "data.yaml").is_file()
             with (directory / "data.yaml").open("r") as created_file:
-                with open("./tests/services/export/expected/data_v5.yaml", "r") as expected_file:
+                with open("./tests/services/export/expected/data_v5.yaml") as expected_file:
                     assert expected_file.read() == created_file.read()
 
     def test_write_class_file_yolo_v7(self):
@@ -122,5 +122,5 @@ class YoloTestCase(TestCase):
             _write_class_file(directory, category_ids, "yolo_v7")
             assert (directory / "data.yaml").is_file()
             with (directory / "data.yaml").open("r") as created_file:
-                with open("./tests/services/export/expected/data_v7.yaml", "r") as expected_file:
+                with open("./tests/services/export/expected/data_v7.yaml") as expected_file:
                     assert expected_file.read() == created_file.read()

@@ -130,7 +130,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         project_info = get_project(self.auth, self.project_id, ["title", "id", "description"])
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
-            fout.write("Exported Labels from KILI\n=========================\n\n".encode())
+            fout.write(b"Exported Labels from KILI\n=========================\n\n")
             fout.write(f"- Project name: {project_info['title']}\n".encode())
             fout.write(f"- Project identifier: {self.project_id}\n".encode())
             fout.write(f"- Project description: {project_info['description']}\n".encode())

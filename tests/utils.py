@@ -12,7 +12,7 @@ import requests
 COUNT_SAMPLE_MAX = 26000
 
 
-class burstthrottle(object):
+class burstthrottle:
     """
     Decorator that prevents a function from being called more that a certain amount of time
     To create a function that cannot be called more than 250 times in a minute:
