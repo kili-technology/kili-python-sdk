@@ -2,4 +2,4 @@
 
 from typing import Union
 
-PixelUnit = Union[int, float]
+PixelCoordType = Union[int, float]

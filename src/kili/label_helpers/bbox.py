@@ -3,18 +3,18 @@
 from typing import Dict, List, Optional
 
 from .point import point_to_normalized_point
-from .types import PixelUnit
+from .types import PixelCoordType
 
 
 def bbox_points_to_normalized_vertices(
     *,
-    bottom_left: Dict[str, PixelUnit],
-    bottom_right: Dict[str, PixelUnit],
-    top_right: Dict[str, PixelUnit],
-    top_left: Dict[str, PixelUnit],
-    img_width: Optional[PixelUnit] = None,
-    img_height: Optional[PixelUnit] = None,
-) -> List[Dict[str, PixelUnit]]:
+    bottom_left: Dict[str, PixelCoordType],
+    bottom_right: Dict[str, PixelCoordType],
+    top_right: Dict[str, PixelCoordType],
+    top_left: Dict[str, PixelCoordType],
+    img_width: Optional[PixelCoordType] = None,
+    img_height: Optional[PixelCoordType] = None,
+) -> List[Dict[str, PixelCoordType]]:
     # pylint: disable=line-too-long
     """Converts a bounding box defined by its 4 points to normalized vertices.
 

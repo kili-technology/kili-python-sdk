@@ -2,14 +2,14 @@
 
 from typing import Dict, Optional
 
-from .types import PixelUnit
+from .types import PixelCoordType
 
 
 def point_to_normalized_point(
-    point: Dict[str, PixelUnit],
-    img_width: Optional[PixelUnit] = None,
-    img_height: Optional[PixelUnit] = None,
-) -> Dict[str, PixelUnit]:
+    point: Dict[str, PixelCoordType],
+    img_width: Optional[PixelCoordType] = None,
+    img_height: Optional[PixelCoordType] = None,
+) -> Dict[str, PixelCoordType]:
     # pylint: disable=line-too-long
     """Converts a 2D point to a Kili label format normalized point.
 
