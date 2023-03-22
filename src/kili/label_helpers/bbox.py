@@ -1,4 +1,4 @@
-"""Helpers to create boundingPoly annotations."""
+"""Helpers to create rectangle boundingPoly annotations."""
 
 from typing import Dict, List, Optional, Union
 
@@ -17,11 +17,15 @@ def bbox_points_to_normalized_vertices(
     # pylint: disable=line-too-long
     """Converts a bounding box defined by its 4 points to normalized vertices.
 
-    A point is a dict with keys 'x' and 'y', and values in pixels (int or float).
+    The output can be used to create a boundingPoly annotation. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection) for more details.
 
-    The origin is the bottom left corner of the image.
-    x-axis is horizontal and goes from left to right.
-    y-axis is vertical and goes from bottom to top.
+    A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).
+
+    Conventions:
+
+    - The origin is the bottom left corner of the image.
+    - x-axis is horizontal and goes from left to right.
+    - y-axis is vertical and goes from bottom to top.
 
     If the image width and height are provided, the point coordinates will be normalized to [0, 1].
     If not, the method expects the coordinates to be already normalized.
@@ -36,7 +40,32 @@ def bbox_points_to_normalized_vertices(
 
     Returns:
         A list of normalized vertices.
-            See https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection for more details.
+
+    !!! Example
+        ```python
+        from kili.label_helpers import bbox_points_to_normalized_vertices
+
+        inputs = {
+            bottom_left = {"x": 0, "y": 0},
+            bottom_right = {"x": 10, "y": 0},
+            top_right = {"x": 10, "y": 10},
+            top_left = {"x": 0, "y": 10},
+            img_width = 100,
+            img_height = 100,
+        }
+        normalized_vertices = bbox_points_to_normalized_vertices(**inputs)
+        json_response = {
+            "OBJECT_DETECTION_JOB": {
+                "annotations": [
+                    {
+                        "boundingPoly": [{"normalizedVertices": normalized_vertices}],
+                        "categories": [{"name": "CLASS_A"}],
+                        "type": "rectangle",
+                    }
+                ]
+            }
+        }
+        ```
     """
     assert bottom_left["x"] <= bottom_right["x"], "bottom_left.x must be <= bottom_right.x"
     assert top_left["x"] <= top_right["x"], "top_left.x must be <= top_right.x"

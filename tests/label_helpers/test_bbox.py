@@ -1,6 +1,6 @@
 import pytest
 
-from kili.services.label_helpers.bbox import bbox_points_to_normalized_vertices
+from kili.label_helpers import bbox_points_to_normalized_vertices
 
 
 @pytest.mark.parametrize(

@@ -19,6 +19,7 @@ nav:
           - Cloud Storage: sdk/cloud_storage.md
           - Issue: sdk/issue.md
           - Label: sdk/label.md
+          - Label Creation Helpers: sdk/label_helpers.md
           - Notification: sdk/notification.md
           - Organization: sdk/organization.md
           - Plugins: sdk/plugins.md
