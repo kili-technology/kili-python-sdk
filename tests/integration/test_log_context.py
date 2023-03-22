@@ -5,7 +5,7 @@ from kili.client import Kili
 
 class _FakeDatetime:
     @staticmethod
-    def utcnow():
+    def now(_):
         """
         Fake utcnow
         """
@@ -82,6 +82,6 @@ def test_log_context(mocker, monkeypatch):
             "kili-client-platform-version": "v0.0.0",
             "kili-client-platform-name": "DummySystem",
             "kili-client-method-name": "assets",
-            "kili-client-call-time": "2000-01-01T00:00:00",
+            "kili-client-call-time": "2000-01-01T00:00:00Z",
             "kili-client-call-uuid": "abcd",
         }
