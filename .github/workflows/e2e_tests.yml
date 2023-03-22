@@ -234,7 +234,7 @@ jobs:
       - name: E2E tests
         if: github.event.inputs.runE2ETests != 'false'
         timeout-minutes: 10
-        run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
+        run: pytest -n auto -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
@@ -246,7 +246,7 @@ jobs:
       - name: Notebook tests
         if: github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'master') # Do not run notebook tests after merging to master
         timeout-minutes: 18
-        run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
+        run: pytest -n auto -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
