@@ -100,15 +100,15 @@ YOLO_V4_TEST_CASE = {
 
 YOLO_V5_TEST_CASE = YOLO_V4_TEST_CASE.copy()
 YOLO_V5_TEST_CASE["inputs"]["label_format"] = "yolo_v5"
-YOLO_V5_TEST_CASE[
-    "description"
-] = "AAU, I import assets with all the asset attributes in the CSV, yolo_v5"
+YOLO_V5_TEST_CASE["description"] = (
+    "AAU, I import assets with all the asset attributes in the CSV, yolo_v5"
+)
 
 YOLO_V7_TEST_CASE = YOLO_V4_TEST_CASE.copy()
 YOLO_V7_TEST_CASE["inputs"]["label_format"] = "yolo_v7"
-YOLO_V7_TEST_CASE[
-    "description"
-] = "AAU, I import assets with all the asset attributes in the CSV, yolo_v7"
+YOLO_V7_TEST_CASE["description"] = (
+    "AAU, I import assets with all the asset attributes in the CSV, yolo_v7"
+)
 
 
 TEST_CASES = [
