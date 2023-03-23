@@ -71,7 +71,7 @@ class EntityAnnotation(_BaseAnnotation):
     """Class for parsing the "annotations" key of a job response for named entities recognition."""
 
     @staticmethod
-    def _get_ml_task() -> str:
+    def _get_compatible_ml_task() -> str:
         return "NAMED_ENTITIES_RECOGNITION"
 
     @property
@@ -93,10 +93,6 @@ class EntityAnnotation(_BaseAnnotation):
 class _BaseAnnotationWithTool(_BaseAnnotation):
     """Base class for annotations with a "type" key (tool used to create the annotation)."""
 
-    @staticmethod
-    def _get_ml_task() -> str:
-        return "OBJECT_DETECTION"
-
     @property
     def type(self) -> str:
         """Returns the tool of the annotation.
@@ -110,6 +106,10 @@ class PointAnnotation(_BaseAnnotationWithTool):
     """Class for parsing the "annotations" key of a job response for 1D object detection jobs."""
 
     @staticmethod
+    def _get_compatible_ml_task() -> str:
+        return "OBJECT_DETECTION"
+
+    @staticmethod
     def _get_compatible_type_of_tools() -> Sequence[str]:
         return ("marker",)
 
@@ -121,6 +121,10 @@ class PointAnnotation(_BaseAnnotationWithTool):
 
 class _Base2DAnnotation(_BaseAnnotationWithTool):
     """Base class for 2D annotations."""
+
+    @staticmethod
+    def _get_compatible_ml_task() -> str:
+        return "OBJECT_DETECTION"
 
     @staticmethod
     def _get_compatible_type_of_tools() -> Sequence[str]:
@@ -161,6 +165,10 @@ class VideoAnnotation(_Base2DAnnotation):
 
 class PoseEstimationAnnotation(_BaseAnnotationWithTool):
     """Class for parsing the "annotations" key of a job response for pose estimation jobs."""
+
+    @staticmethod
+    def _get_compatible_ml_task() -> str:
+        return "OBJECT_DETECTION"
 
     @staticmethod
     def _get_compatible_type_of_tools() -> Sequence[str]:
@@ -224,7 +232,7 @@ class Annotation(
         """
         super().__init__(json_data, job_interface=job_interface)
 
-        # dictionaries to store the valid attributes for each mlTask and type of tool
+        # dictionaries to store the valid attributes/properties for each mlTask and type of tool
         self._valid_attributes_for_ml_task = defaultdict(set)
         self._valid_attributes_for_tool = defaultdict(set)
 
@@ -236,7 +244,7 @@ class Annotation(
                 if isinstance(getattr(parent_class, method), property)
             ]
 
-            ml_task = parent_class._get_ml_task()  # type: ignore
+            ml_task = parent_class._get_compatible_ml_task()  # type: ignore
             self._valid_attributes_for_ml_task[ml_task].update(parent_class_properties)
 
             try:
