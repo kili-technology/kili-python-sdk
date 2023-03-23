@@ -3,6 +3,8 @@
 
 from typing import Dict, List
 
+from typeguard import typechecked
+
 from .annotation import Annotation, EntityAnnotation
 from .category import Category, CategoryList
 from .exceptions import AttributeNotCompatibleWithJobError
@@ -73,12 +75,30 @@ class JobPayload:
         self._cast_categories()
         return self.json_data["categories"][0]
 
+    def add_category(self, name: str, confidence: int) -> None:
+        """Adds a category to a radio button classification job."""
+        if "categories" in self.json_data:
+            self._cast_categories()
+            self.json_data["categories"].add_category(name=name, confidence=confidence)
+        else:
+            categories = CategoryList(self.job_interface, [])
+            categories.add_category(name=name, confidence=confidence)
+            self.json_data["categories"] = categories
+
     @property
     def text(self) -> str:
         """Returns the text for a transcription job."""
         if self.job_interface["mlTask"] != "TRANSCRIPTION":
             raise AttributeNotCompatibleWithJobError("text")
         return self.json_data["text"]
+
+    @text.setter
+    @typechecked
+    def text(self, text: str) -> None:
+        """Sets the text for a transcription job."""
+        if self.job_interface["mlTask"] != "TRANSCRIPTION":
+            raise AttributeNotCompatibleWithJobError("text")
+        self.json_data["text"] = text
 
     @property
     def entity_annotations(self) -> List[EntityAnnotation]:
@@ -90,3 +110,7 @@ class JobPayload:
             EntityAnnotation(annotation, self.job_interface)
             for annotation in self.json_data["annotations"]
         ]
+
+    @property
+    def children(self):
+        """Not implemented yet."""

@@ -4,6 +4,8 @@
 import functools
 from typing import Dict
 
+from typeguard import typechecked
+
 from .category import Category, CategoryList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError
@@ -64,6 +66,18 @@ class _BaseAnnotation:
         """Returns the mid of the annotation."""
         return self.json_data["mid"]
 
+    @mid.setter
+    @typechecked
+    def mid(self, mid: str) -> None:
+        """Sets the mid of the annotation."""
+        if len(mid) == 0:
+            raise ValueError("mid must be non-empty.")
+        self.json_data["mid"] = mid
+
+    @property
+    def children(self):
+        """Not implemented yet."""
+
 
 class EntityAnnotation(_BaseAnnotation):
     """Class for parsing the "annotations" key of a job response for named entities recognition."""
@@ -73,15 +87,37 @@ class EntityAnnotation(_BaseAnnotation):
         """Returns the begin offset of the annotation."""
         return self.json_data["beginOffset"]
 
+    @begin_offset.setter
+    @typechecked
+    def begin_offset(self, begin_offset: int) -> None:
+        """Sets the begin offset of the annotation."""
+        if begin_offset < 0:
+            raise ValueError(f"begin_offset must be positive, got {begin_offset}")
+        self.json_data["beginOffset"] = begin_offset
+
     @property
     def end_offset(self) -> int:
         """Returns the end offset of the annotation."""
         return self.json_data["endOffset"]
 
+    @end_offset.setter
+    @typechecked
+    def end_offset(self, end_offset: int) -> None:
+        """Sets the end offset of the annotation."""
+        if end_offset < 0:
+            raise ValueError(f"end_offset must be positive, got {end_offset}")
+        self.json_data["endOffset"] = end_offset
+
     @property
     def content(self) -> str:
         """Returns the content of the annotation."""
         return self.json_data["content"]
+
+    @content.setter
+    @typechecked
+    def content(self, content: str) -> None:
+        """Sets the content of the annotation."""
+        self.json_data["content"] = content
 
 
 class _BaseAnnotationWithTool(_BaseAnnotation):

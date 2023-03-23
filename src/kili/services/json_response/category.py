@@ -29,10 +29,33 @@ class Category(Dict):
         """Returns the name of the category label."""
         return self["name"]
 
+    @name.setter
+    @typechecked
+    def name(self, name: str) -> None:
+        """Sets the name of the category label."""
+        if name not in self.job_interface["content"]["categories"]:
+            raise InvalidMutationError(
+                f"Category {name} is not in the job interface categories"
+                f" {self.job_interface['content']['categories'].keys()}"
+            )
+        self["name"] = name
+
     @property
     def confidence(self) -> int:
         """Returns the confidence of the category label."""
         return self["confidence"]
+
+    @confidence.setter
+    @typechecked
+    def confidence(self, confidence: int) -> None:
+        """Sets the confidence of the category label."""
+        if not 0 <= confidence <= 100:
+            raise ValueError(f"Confidence must be between 0 and 100, got {confidence}")
+        self["confidence"] = confidence
+
+    @property
+    def children(self):
+        """Not implemented yet."""
 
 
 class CategoryList(List):
@@ -84,6 +107,12 @@ class CategoryList(List):
 
         else:
             raise ValueError(f"Invalid input type: {input_type}")
+
+    @typechecked
+    def add_category(self, name: str, confidence: int) -> None:
+        """Adds a category object to the CategoryList object."""
+        category = Category(name=name, confidence=confidence, job_interface=self.job_interface)
+        self.append(category)
 
     @typechecked
     def append(self, category: Category) -> None:
