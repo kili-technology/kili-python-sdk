@@ -3,7 +3,7 @@
 
 import functools
 from collections import defaultdict
-from typing import Dict, Sequence
+from typing import Dict, List, Sequence
 
 from .bounding_poly import BoundingPoly
 from .category import Category, CategoryList
@@ -167,12 +167,14 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
         return ("pose",)
 
     @property
-    def kind(self):
-        """Not implemented yet."""
+    def kind(self) -> str:
+        """Returns the job kind. In pose estimation jobs, this is always "POSE_ESTIMATION"."""
+        return self.json_data["kind"]
 
     @property
-    def points(self):
-        """Not implemented yet."""
+    def points(self) -> List[Dict]:
+        """Returns the list of the points composing the object."""
+        return self.json_data["points"]
 
 
 def check_attribute_compatible_with_job(func):
