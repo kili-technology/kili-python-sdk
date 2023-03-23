@@ -188,8 +188,8 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
 def check_attribute_compatible_with_job(func):
     """Raises an error if the decorated method is not compatible with the job interface mlTask."""
 
-    # pylint: disable=protected-access
     @functools.wraps(func)
+    # pylint: disable=protected-access
     def wrapper(self, *args, **kwargs):
         attribute_name = func.__name__
         attr_comp_with_mltask = (
