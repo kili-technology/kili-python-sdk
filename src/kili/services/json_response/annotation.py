@@ -192,15 +192,19 @@ def check_attribute_compatible_with_job(func):
     # pylint: disable=protected-access
     def wrapper(self, *args, **kwargs):
         attribute_name = func.__name__
+
         attr_comp_with_mltask = (
             attribute_name in self._valid_attributes_for_ml_task[self.job_interface["mlTask"]]
         )
-        attr_comp_with_tool = (
-            attribute_name in self._valid_attributes_for_tool[self.json_data["type"]]
-        )
-
-        if not (attr_comp_with_mltask and attr_comp_with_tool):
+        if not attr_comp_with_mltask:
             raise AttributeNotCompatibleWithJobError(attribute_name)
+
+        if "type" in self.json_data:
+            attr_comp_with_tool = (
+                attribute_name in self._valid_attributes_for_tool[self.json_data["type"]]
+            )
+            if not attr_comp_with_tool:
+                raise AttributeNotCompatibleWithJobError(attribute_name)
 
         return func(self, *args, **kwargs)
 

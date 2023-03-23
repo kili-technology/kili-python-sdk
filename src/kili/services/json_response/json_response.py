@@ -23,10 +23,15 @@ class ParsedJobs(Dict):
         self.json_interface = json_interface
 
         for job_name, job_interface in json_interface["jobs"].items():
+            job_response = json_response.get(job_name, {})
+
+            if job_interface["required"] and not job_response:
+                raise JobNotExistingError(job_name)
+
             self[job_name] = JobPayload(
                 job_name=job_name,
                 job_interface=job_interface,
-                job_payload=json_response.get(job_name, {}),
+                job_payload=job_response,
             )
 
         # check that the job names in the json response are in the json interface
