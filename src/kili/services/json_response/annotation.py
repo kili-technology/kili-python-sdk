@@ -2,8 +2,10 @@
 """Module for the "annotations" key parsing of a job response."""
 
 import functools
-from typing import Dict
+from collections import defaultdict
+from typing import Dict, Sequence
 
+from .bounding_poly import BoundingPoly
 from .category import Category, CategoryList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError
@@ -68,6 +70,10 @@ class _BaseAnnotation:
 class EntityAnnotation(_BaseAnnotation):
     """Class for parsing the "annotations" key of a job response for named entities recognition."""
 
+    @staticmethod
+    def _get_ml_task() -> str:
+        return "NAMED_ENTITIES_RECOGNITION"
+
     @property
     def begin_offset(self) -> int:
         """Returns the begin offset of the annotation."""
@@ -87,6 +93,10 @@ class EntityAnnotation(_BaseAnnotation):
 class _BaseAnnotationWithTool(_BaseAnnotation):
     """Base class for annotations with a "type" key (tool used to create the annotation)."""
 
+    @staticmethod
+    def _get_ml_task() -> str:
+        return "OBJECT_DETECTION"
+
     @property
     def type(self) -> str:
         """Returns the tool of the annotation.
@@ -99,21 +109,33 @@ class _BaseAnnotationWithTool(_BaseAnnotation):
 class PointAnnotation(_BaseAnnotationWithTool):
     """Class for parsing the "annotations" key of a job response for 1D object detection jobs."""
 
+    @staticmethod
+    def _get_compatible_type_of_tools() -> Sequence[str]:
+        return ("marker",)
+
     @property
-    def point(self):
-        """Not implemented yet."""
+    def point(self) -> Dict:
+        """Returns the point of a point detection job."""
+        return self.json_data["point"]
 
 
 class _Base2DAnnotation(_BaseAnnotationWithTool):
     """Base class for 2D annotations."""
 
-    @property
-    def bounding_polygon(self):
-        """Returns the polygon of the object contour."""
-        return self.json_data["boundingPoly"]
+    @staticmethod
+    def _get_compatible_type_of_tools() -> Sequence[str]:
+        return ("rectangle", "polygon", "semantic", "polyline", "vector")
 
     @property
-    def score(self):
+    def bounding_poly(self) -> BoundingPoly:
+        """Returns the polygon of the object contour."""
+        self.json_data["boundingPoly"][0] = BoundingPoly(
+            self.json_data["boundingPoly"][0], job_interface=self.job_interface
+        )
+        return self.json_data["boundingPoly"][0]
+
+    @property
+    def score(self) -> int:
         """Returns the score which is the confidence of the object detection.
 
         Useful when a pre-annotation model is used.
@@ -121,7 +143,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
         return self.json_data["score"]
 
 
-class BoundingPolygonAnnotation(_Base2DAnnotation):
+class BoundingPolyAnnotation(_Base2DAnnotation):
     """Class for parsing the "annotations" key of a job response for 2D object detection jobs."""
 
 
@@ -131,11 +153,18 @@ class VideoAnnotation(_Base2DAnnotation):
     @property
     def is_key_frame(self) -> bool:
         """Returns a boolean indicating if the timestamp or frame is used for interpolation."""
-        return self.json_data["isKeyFrame"]
+        try:
+            return self.json_data["isKeyFrame"]
+        except KeyError as err:
+            raise AttributeNotCompatibleWithJobError("is_key_frame") from err
 
 
 class PoseEstimationAnnotation(_BaseAnnotationWithTool):
     """Class for parsing the "annotations" key of a job response for pose estimation jobs."""
+
+    @staticmethod
+    def _get_compatible_type_of_tools() -> Sequence[str]:
+        return ("pose",)
 
     @property
     def kind(self):
@@ -146,39 +175,34 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
         """Not implemented yet."""
 
 
-ANNOTATIONS_VALID_ATTRIBUTES_FOR_ML_TASK = {
-    "NAMED_ENTITIES_RECOGNITION": ("begin_offset", "mid", "categories", "category", "content"),
-    "OBJECT_DETECTION": ("mid", "categories", "category", "type"),
-    "POSE_ESTIMATION": ("mid", "categories", "category", "type"),
-}
-
-
-def is_attribute_compatible_with_mltask(attribute_name: str, job_interface: Dict) -> bool:
-    """Returns True if the attribute is compatible with the job interface mlTask."""
-    return attribute_name in ANNOTATIONS_VALID_ATTRIBUTES_FOR_ML_TASK.get(
-        job_interface["mlTask"], tuple()
-    )
-
-
-def check_attribute_compatible_with_mltask(func):
+def check_attribute_compatible_with_job(func):
     """Raises an error if the decorated method is not compatible with the job interface mlTask."""
 
+    # pylint: disable=protected-access
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         attribute_name = func.__name__
-        if not is_attribute_compatible_with_mltask(attribute_name, self.job_interface):
+        attr_comp_with_mltask = (
+            attribute_name in self._valid_attributes_for_ml_task[self.job_interface["mlTask"]]
+        )
+        attr_comp_with_tool = (
+            attribute_name in self._valid_attributes_for_tool[self.json_data["type"]]
+        )
+
+        if not (attr_comp_with_mltask and attr_comp_with_tool):
             raise AttributeNotCompatibleWithJobError(attribute_name)
+
         return func(self, *args, **kwargs)
 
     return wrapper
 
 
-@for_all_properties(check_attribute_compatible_with_mltask)
+@for_all_properties(check_attribute_compatible_with_job)
 # pylint: disable=too-many-ancestors
 class Annotation(
     EntityAnnotation,
     PointAnnotation,
-    BoundingPolygonAnnotation,
+    BoundingPolyAnnotation,
     VideoAnnotation,
     PoseEstimationAnnotation,
 ):
@@ -187,4 +211,38 @@ class Annotation(
     Contains all attributes that can be found in a job response.
     """
 
-    # empty class: all properties should be inherited from the base classes
+    def __init__(self, json_data: Dict, job_interface: Dict) -> None:
+        """Initializes an Annotation object.
+
+        This class is used to parse the "annotations" key of a job response.
+
+        Args:
+            json_data (Dict): The json data of the annotation.
+            job_interface (Dict): The job interface of the job.
+        """
+        super().__init__(json_data, job_interface=job_interface)
+
+        # dictionaries to store the valid attributes for each mlTask and type of tool
+        self._valid_attributes_for_ml_task = defaultdict(set)
+        self._valid_attributes_for_tool = defaultdict(set)
+
+        for parent_class in self.__class__.__bases__:
+            parent_class_methods = dir(parent_class)
+            parent_class_properties = [
+                method
+                for method in parent_class_methods
+                if isinstance(getattr(parent_class, method), property)
+            ]
+
+            ml_task = parent_class._get_ml_task()  # type: ignore
+            self._valid_attributes_for_ml_task[ml_task].update(parent_class_properties)
+
+            try:
+                type_of_tools = parent_class._get_compatible_type_of_tools()  # type: ignore
+            except AttributeError:
+                continue
+
+            for tool in type_of_tools:
+                self._valid_attributes_for_tool[tool].update(parent_class_properties)
+
+    # all properties should be inherited from the base classes

@@ -128,9 +128,6 @@ def test_query_invalid_attributes_on_bbox_annotations():
         _ = bb_annotations[0].begin_offset
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
-        _ = bb_annotations[0].bounding_polygon
-
-    with pytest.raises(AttributeNotCompatibleWithJobError):
         _ = bb_annotations[0].is_key_frame
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
@@ -144,3 +141,53 @@ def test_query_invalid_attributes_on_bbox_annotations():
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
         _ = bb_annotations[0].kind
+
+
+def test_access_bounding_poly_on_point_job():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Class",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["marker"],
+                "isChild": False,
+            }
+        }
+    }
+
+    point = {"x": 0.5578332680516701, "y": 0.2630529867187432}
+
+    json_resp = {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "point": point,
+                    "categories": [{"name": "A"}],
+                    "mid": "20230323113855529-11197",
+                    "type": "marker",
+                },
+                {
+                    "children": {},
+                    "point": point,
+                    "categories": [{"name": "B"}],
+                    "mid": "20230323113857016-51829",
+                    "type": "marker",
+                },
+            ]
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+    job = parsed_jobs["OBJECT_DETECTION_JOB"]
+
+    with pytest.raises(AttributeNotCompatibleWithJobError):
+        _ = job.annotations[0].bounding_poly

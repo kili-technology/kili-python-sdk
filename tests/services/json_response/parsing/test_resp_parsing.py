@@ -1,3 +1,4 @@
+from kili.services.json_response.bounding_poly import BoundingPoly
 from kili.services.json_response.json_response import ParsedJobs
 
 
@@ -352,3 +353,134 @@ def test_multiple_dropdown():
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].confidence == 100
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[1].name == "F"
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[1].confidence == 99
+
+
+def test_bounding_poly_annotations():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                        "C": {"children": [], "name": "C", "color": "#D33BCE"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Class",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["rectangle"],
+                "isChild": False,
+            }
+        }
+    }
+
+    vertices = [
+        {"x": 0.1, "y": 0.2},
+        {"x": 0.3, "y": 0.4},
+        {"x": 0.5, "y": 0.6},
+        {"x": 0.7, "y": 0.8},
+    ]
+
+    json_resp = {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": vertices}],
+                    "categories": [{"name": "A"}],
+                    "mid": "20230323105350648-87611",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": vertices}],
+                    "categories": [{"name": "B"}],
+                    "mid": "20230323105354831-76494",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": vertices}],
+                    "categories": [{"name": "C"}],
+                    "mid": "20230323105356247-63177",
+                    "type": "rectangle",
+                },
+            ]
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations
+
+    assert bb_annotations[0].category.name == bb_annotations[0].categories[0].name == "A"
+    assert bb_annotations[1].category.name == bb_annotations[1].categories[0].name == "B"
+    assert bb_annotations[2].category.name == bb_annotations[2].categories[0].name == "C"
+
+    assert bb_annotations[0].type == "rectangle"
+    assert bb_annotations[1].type == "rectangle"
+    assert bb_annotations[2].type == "rectangle"
+
+    assert bb_annotations[0].mid == "20230323105350648-87611"
+
+    my_parsed_job = parsed_jobs["OBJECT_DETECTION_JOB"]
+    assert isinstance(my_parsed_job.bounding_poly_annotations[0].bounding_poly, BoundingPoly)
+    assert isinstance(my_parsed_job.annotations[0].bounding_poly, BoundingPoly)
+
+    assert my_parsed_job.bounding_poly_annotations[0].bounding_poly.normalized_vertices == vertices
+
+
+def test_point_job():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Class",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["marker"],
+                "isChild": False,
+            }
+        }
+    }
+
+    point = {"x": 0.5578332680516701, "y": 0.2630529867187432}
+
+    json_resp = {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "point": point,
+                    "categories": [{"name": "A"}],
+                    "mid": "20230323113855529-11197",
+                    "type": "marker",
+                },
+                {
+                    "children": {},
+                    "point": point,
+                    "categories": [{"name": "B"}],
+                    "mid": "20230323113857016-51829",
+                    "type": "marker",
+                },
+            ]
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    job = parsed_jobs["OBJECT_DETECTION_JOB"]
+
+    assert job.annotations[0].categories[0].name == "A"
+
+    assert job.annotations[1].type == "marker"
+
+    assert job.annotations[1].point == point

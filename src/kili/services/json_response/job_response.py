@@ -3,7 +3,7 @@
 
 from typing import Dict, List
 
-from .annotation import Annotation, EntityAnnotation
+from .annotation import Annotation, BoundingPolyAnnotation, EntityAnnotation
 from .category import Category, CategoryList
 from .exceptions import AttributeNotCompatibleWithJobError
 
@@ -24,14 +24,6 @@ class JobPayload:
         self.json_data = job_payload
 
         self.is_required_job = job_interface["required"]
-
-    @property
-    def annotations(self) -> List[Annotation]:
-        """Returns a list of Annotation objects for a job."""
-        return [
-            Annotation(annotation, self.job_interface)
-            for annotation in self.json_data["annotations"]
-        ]
 
     def _cast_categories(self):
         """Casts the categories list of the job payload to CategoryList object."""
@@ -81,12 +73,31 @@ class JobPayload:
         return self.json_data["text"]
 
     @property
+    def annotations(self) -> List[Annotation]:
+        """Returns a list of Annotation objects for a job."""
+        return [
+            Annotation(annotation, self.job_interface)
+            for annotation in self.json_data["annotations"]
+        ]
+
+    @property
     def entity_annotations(self) -> List[EntityAnnotation]:
-        """Returns a list of EntityAnnotation objects for a job."""
+        """Returns a list of EntityAnnotation objects for a named entities recognition job."""
         if self.job_interface["mlTask"] != "NAMED_ENTITIES_RECOGNITION":
             raise AttributeNotCompatibleWithJobError("entity_annotations")
 
         return [
             EntityAnnotation(annotation, self.job_interface)
+            for annotation in self.json_data["annotations"]
+        ]
+
+    @property
+    def bounding_poly_annotations(self) -> List[BoundingPolyAnnotation]:
+        """Returns a list of BoundingPolyAnnotation objects for an object detection job."""
+        if self.job_interface["mlTask"] != "OBJECT_DETECTION":
+            raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
+
+        return [
+            BoundingPolyAnnotation(annotation, self.job_interface)
             for annotation in self.json_data["annotations"]
         ]

@@ -21,6 +21,7 @@ class Category(Dict):
         super().__init__()
         self.job_interface = job_interface
 
+        # call the setters
         self.name = name
         self.confidence = confidence
 
