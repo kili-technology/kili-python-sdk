@@ -197,18 +197,14 @@ def check_attribute_compatible_with_job(func):
     def wrapper(self, *args, **kwargs):
         attribute_name = func.__name__
 
-        attr_comp_with_mltask = (
-            attribute_name in self._valid_attributes_for_ml_task[self.job_interface["mlTask"]]
-        )
-        if not attr_comp_with_mltask:
+        if attribute_name not in self._valid_attributes_for_ml_task[self.job_interface["mlTask"]]:
             raise AttributeNotCompatibleWithJobError(attribute_name)
 
-        if "type" in self.json_data:
-            attr_comp_with_tool = (
-                attribute_name in self._valid_attributes_for_tool[self.json_data["type"]]
-            )
-            if not attr_comp_with_tool:
-                raise AttributeNotCompatibleWithJobError(attribute_name)
+        if (
+            "type" in self.json_data
+            and attribute_name not in self._valid_attributes_for_tool[self.json_data["type"]]
+        ):
+            raise AttributeNotCompatibleWithJobError(attribute_name)
 
         return func(self, *args, **kwargs)
 
