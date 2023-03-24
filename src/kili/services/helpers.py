@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 
 from kili.authentication import KiliAuth
-from kili.constants import QUERY_BATCH_SIZE
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
@@ -90,27 +89,17 @@ def infer_ids_from_external_ids(
 
 
 def _build_id_map(auth, asset_external_ids, project_id):
-    if len(asset_external_ids) > 1000:
-        assets_generators: List[Generator[Dict, None, None]] = []
-        # query all assets by external ids batches when there are too many
-        for external_ids_batch in pagination.BatchIteratorBuilder(
-            asset_external_ids, QUERY_BATCH_SIZE
-        ):
-            assets_generators.append(
-                AssetQuery(auth.client)(
-                    AssetWhere(project_id, external_id_contains=external_ids_batch),
-                    ["id", "externalId"],
-                    QueryOptions(disable_tqdm=True),
-                )
+    assets_generators: List[Generator[Dict, None, None]] = []
+    # query all assets by external ids batches when there are too many
+    for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
+        assets_generators.append(
+            AssetQuery(auth.client)(
+                AssetWhere(project_id, external_id_contains=external_ids_batch),
+                ["id", "externalId"],
+                QueryOptions(disable_tqdm=True),
             )
-        assets = chain(*assets_generators)
-    else:
-        # query all assets
-        assets = AssetQuery(auth.client)(
-            AssetWhere(project_id),
-            ["id", "externalId"],
-            QueryOptions(disable_tqdm=True),
         )
+    assets = chain(*assets_generators)
     id_map: Dict[str, str] = {}
     asset_external_ids_set = set(asset_external_ids)
     for asset in (asset for asset in assets if asset["externalId"] in asset_external_ids_set):
