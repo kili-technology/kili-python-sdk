@@ -5,7 +5,7 @@ Fake Kili object
 from unittest.mock import MagicMock
 
 from kili.orm import Asset
-from tests.services.export.fakes.fake_data import (
+from tests.fakes.fake_data import (
     asset_image_1,
     asset_image_1_with_classification,
     asset_image_1_without_annotation,
@@ -31,6 +31,8 @@ def mocked_ProjectQuery(where, _fields, _options):
         "object_detection",
         "object_detection_with_empty_annotation",
         "object_detection_cloud_storage",
+        "object_detection_with_classification",
+        "object_detection_with_2500_assets",
         "object_detection_with_classification",
     ]:
         job_payload = {
@@ -216,7 +218,7 @@ def mocked_ProjectQuery(where, _fields, _options):
         return []
 
 
-def mocked_AssetQuery(where, _fields, _options, post_call_function):
+def mocked_AssetQuery(where, _fields, _options, post_call_function=None):
     """
     Fake assets
     """
@@ -245,6 +247,11 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function):
             return [
                 Asset(asset_video_content_no_json_content),
                 Asset(asset_video_no_content_and_json_content),
+            ]
+        elif project_id == "object_detection_2500_assets":
+            return [
+                Asset({**asset_image_1, "id": f"{i}", "externalId": f"ext-{i}"})
+                for i in range(2500)
             ]
         else:
             return []
