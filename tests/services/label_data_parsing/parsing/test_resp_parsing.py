@@ -37,32 +37,6 @@ def test_attribute_category():
     assert parsed_jobs["JOB_0"].categories[0].confidence == category.confidence == 100
 
 
-def test_attribute_categories():
-    json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
-    json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "mlTask": "CLASSIFICATION",
-                "required": 1,
-                "content": {
-                    "categories": {
-                        "A": {"children": [], "name": "A", "id": "category25"},
-                        "B": {"children": [], "name": "B", "id": "category26"},
-                        "C": {"children": [], "name": "C", "id": "category27"},
-                    },
-                    "input": "radio",
-                },
-            }
-        }
-    }
-
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
-    categories = parsed_jobs["JOB_0"].categories
-
-    assert parsed_jobs["JOB_0"].category.name == categories[0].name == "A"
-    assert parsed_jobs["JOB_0"].category.confidence == categories[0].confidence == 100
-
-
 def test_attribute_categories_multiclass():
     json_response_dict = {
         "JOB_0": {
