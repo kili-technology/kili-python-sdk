@@ -5,7 +5,7 @@ Fake Kili object
 from unittest.mock import MagicMock
 
 from kili.orm import Asset
-from tests.services.export.fakes.fake_data import (
+from tests.fakes.fake_data import (
     asset_image_1,
     asset_image_1_with_classification,
     asset_image_1_without_annotation,

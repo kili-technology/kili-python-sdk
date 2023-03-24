@@ -1,10 +1,7 @@
 from pathlib import Path
 
 from kili.services.export.format.voc import _convert_from_kili_to_voc_format
-from tests.services.export.fakes.fake_data import (
-    asset_image_1,
-    asset_image_1_without_annotation,
-)
+from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotation
 
 
 def test__convert_from_kili_to_voc_format():

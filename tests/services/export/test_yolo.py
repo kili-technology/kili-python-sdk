@@ -9,8 +9,8 @@ from kili.services.export.format.yolo import (
     _write_class_file,
 )
 from kili.utils.tempfile import TemporaryDirectory
-from tests.services.export.fakes.fake_content_repository import FakeContentRepository
-from tests.services.export.fakes.fake_data import (
+from tests.fakes.fake_content_repository import FakeContentRepository
+from tests.fakes.fake_data import (
     asset_image_1,
     asset_image_1_without_annotation,
     asset_video,
