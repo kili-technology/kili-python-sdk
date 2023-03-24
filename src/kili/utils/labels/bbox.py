@@ -44,7 +44,7 @@ def bbox_points_to_normalized_vertices(
 
     !!! Example
         ```python
-        from kili.label_helpers import bbox_points_to_normalized_vertices
+        from kili.utils.labels import bbox_points_to_normalized_vertices
 
         inputs = {
             bottom_left = {"x": 0, "y": 0},

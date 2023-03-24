@@ -1,4 +1,4 @@
-"""Helpers to create boundingPoly points annotations."""
+"""Helpers to create point annotations."""
 
 from typing import Dict, Optional
 
@@ -36,24 +36,17 @@ def point_to_normalized_point(
 
     !!! Example
         ```python
-        from kili.label_helpers import point_to_normalized_point
+        from kili.utils.labels import point_to_normalized_point
 
-        inputs = {
-            bottom_left = {"x": 0, "y": 0},
-            bottom_right = {"x": 10, "y": 0},
-            top_right = {"x": 10, "y": 10},
-            top_left = {"x": 0, "y": 10},
-            img_width = 100,
-            img_height = 100,
-        }
-        normalized_vertices = bbox_points_to_normalized_vertices(**inputs)
+        normalized_point = point_to_normalized_point({"x": 5, "y": 40}, img_width=100, img_height=100)
+
         json_response = {
             "OBJECT_DETECTION_JOB": {
                 "annotations": [
                     {
-                        "boundingPoly": [{"normalizedVertices": normalized_vertices}],
+                        "point": normalized_point,
                         "categories": [{"name": "CLASS_A"}],
-                        "type": "rectangle",
+                        "type": "marker",
                     }
                 ]
             }
@@ -65,5 +58,8 @@ def point_to_normalized_point(
             "x": point["x"] / img_width,
             "y": point["y"] / img_height,
         }
+
+    assert 0 <= point["x"] <= 1, f"Point x coordinate {point['x']} should be in [0, 1]."
+    assert 0 <= point["y"] <= 1, f"Point y coordinate {point['y']} should be in [0, 1]."
 
     return {"x": point["x"], "y": 1 - point["y"]}
