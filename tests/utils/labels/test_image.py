@@ -1,6 +1,6 @@
 import urllib.request
 
-import cv2
+import cv2  # type: ignore
 
 from kili.utils.labels import mask_to_vertices
 

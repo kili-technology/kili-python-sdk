@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 from .types import PixelCoordType
 
 try:
-    import cv2
+    import cv2  # type: ignore
     import numpy as np
 except ModuleNotFoundError as err:
     raise ModuleNotFoundError(
