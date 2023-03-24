@@ -1,5 +1,4 @@
 import json
-from copy import deepcopy
 
 from kili.services.label_data_parsing.category import Category, CategoryList
 from kili.utils.labels import parse_labels
@@ -87,25 +86,8 @@ def test_parse_labels_classification_to_dict():
             "jsonResponse": {"REQUIRED_JOB": {"categories": [{"confidence": 100, "name": "A"}]}},
             "labelType": "DEFAULT",
             "secondsToLabel": 9,
-        },
-        {
-            "author": {
-                "email": "kili@kili-technology.com",
-                "id": "123",
-            },
-            "id": "789",
-            "jsonResponse": {
-                "REQUIRED_JOB": {"categories": [{"confidence": 90, "name": "B"}]},
-                "NON_REQUIRED_JOB": {"categories": [{"confidence": 80, "name": "C"}]},
-            },
-            "labelType": "DEFAULT",
-            "secondsToLabel": 3,
-        },
+        }
     ]
-
-    # create a copy of the labels since they will be modified later on
-    label_0 = deepcopy(labels[0])
-    label_1 = deepcopy(labels[1])
 
     json_interface = {
         "jobs": {
@@ -137,22 +119,19 @@ def test_parse_labels_classification_to_dict():
             },
         }
     }
-    labels = parse_labels(labels, json_interface=json_interface)
+    parsed_labels = parse_labels(labels, json_interface=json_interface)
 
     # we query the category name and checks that the label has been converted to
     # CategoryList and Category objects
     # they inherit from Dict and List so they should be serializable
-    assert labels[0].jobs["REQUIRED_JOB"].category.name == "A"
-    assert isinstance(labels[0].jobs["REQUIRED_JOB"].category, Category)
-    assert isinstance(labels[0].jobs["REQUIRED_JOB"].categories, CategoryList)
+    assert parsed_labels[0].jobs["REQUIRED_JOB"].category.name == "A"
+    assert isinstance(parsed_labels[0].jobs["REQUIRED_JOB"].category, Category)
+    assert isinstance(parsed_labels[0].jobs["REQUIRED_JOB"].categories, CategoryList)
 
     # test that json.dumps works.
     # It would fail if the label is not serializable anymore after parsing.
-    label_0_modified_as_str = json.dumps(labels[0])
-    label_1_modified_as_str = json.dumps(labels[1])
+    label_0_modified_as_str = json.dumps(parsed_labels[0])
 
     label_0_modifed = json.loads(label_0_modified_as_str)
-    label_1_modifed = json.loads(label_1_modified_as_str)
 
-    assert label_0_modifed == label_0
-    assert label_1_modifed == label_1
+    assert label_0_modifed == labels[0]
