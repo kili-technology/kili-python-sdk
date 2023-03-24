@@ -1,12 +1,12 @@
 """Set of utils to work with labels."""
 
-from typing import Dict, Generator, Iterable, List, Sequence, overload
+from typing import Dict, Generator, Iterable, List, overload
 
 from ...services.label_data_parsing.label import ParsedLabel
 
 
 @overload
-def parse_labels(labels: Sequence[Dict], json_interface: Dict) -> List[ParsedLabel]:
+def parse_labels(labels: List[Dict], json_interface: Dict) -> List[ParsedLabel]:
     ...
 
 
