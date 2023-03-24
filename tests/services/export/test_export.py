@@ -17,8 +17,8 @@ from kili.services.export.exceptions import (
     NotCompatibleOptions,
     NotExportableAssetError,
 )
-from tests.services.export.fakes.fake_ffmpeg import mock_ffmpeg
-from tests.services.export.fakes.fake_kili import (
+from tests.fakes.fake_ffmpeg import mock_ffmpeg
+from tests.fakes.fake_kili import (
     FakeKili,
     mocked_AssetQuery,
     mocked_AssetQuery_count,

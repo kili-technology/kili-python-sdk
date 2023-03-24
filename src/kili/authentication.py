@@ -17,16 +17,6 @@ from .exceptions import AuthenticationFailed, UserNotFoundError
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
 
-def get_version_without_patch(version):
-    """Return the version of Kili API removing the patch version.
-
-    Args:
-        version
-    """
-    return ".".join(version.split(".")[:-1])
-
-
-# pylint: disable=too-many-instance-attributes
 class KiliAuth:
     """
     Kili authentication class
@@ -39,15 +29,6 @@ class KiliAuth:
         self.api_endpoint = api_endpoint
         self.client_name = client_name
         self.verify = verify
-
-        try:
-            self.endpoint_kili_version = self.check_versions_match()
-        except:  # pylint: disable=bare-except
-            message = (
-                "We could not check the version, there might be a version"
-                "mismatch or the app might be in deployment"
-            )
-            warnings.warn(message, UserWarning, stacklevel=2)
 
         self.check_api_key_valid()
 
@@ -63,23 +44,6 @@ class KiliAuth:
         user = self.get_user()
         self.user_id = user["id"]
         self.user_email = user["email"]
-
-    def check_versions_match(self) -> str:
-        """Check that the versions of Kili Python SDK and Kili API are the same
-
-        Args:
-            api_endpoint: url of the Kili API
-        """
-        url = self.api_endpoint.replace("/graphql", "/version")
-        response = requests.get(url, verify=self.verify, timeout=30).json()
-        version = response["version"]
-        if get_version_without_patch(version) != get_version_without_patch(__version__):
-            message = (
-                "Kili Python SDK version should match with Kili API version.\n"
-                + f'Please install version: "pip install kili=={version}"'
-            )
-            warnings.warn(message, UserWarning, stacklevel=2)
-        return version
 
     def check_api_key_valid(self) -> None:
         """Check that the api_key provided is valid"""

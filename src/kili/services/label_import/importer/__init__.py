@@ -82,7 +82,7 @@ class AbstractLabelImporter(ABC):
             model_name=model_name,
         )
 
-        self.logger.warning(print(f"{len(labels)} labels have been successfully imported"))
+        self.logger.warning("%d labels have been successfully imported", len(labels))
 
     def process_from_dict(
         self,

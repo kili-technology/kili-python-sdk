@@ -341,7 +341,7 @@ print(
 
 print(
     "Go to my project:"
-    f' {kili.auth.api_endpoint.split("/api")[0]}/label/projects/{project_id}/menu/queue'
+    f" {kili.auth.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
 
@@ -389,7 +389,7 @@ print(kili.assets(project_id=project_id, asset_id=asset_id, fields=["status"]))
 
 print(
     "Go to my project:"
-    f' {kili.auth.api_endpoint.split("/api")[0]}/label/projects/{project_id}/menu/queue'
+    f" {kili.auth.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
 

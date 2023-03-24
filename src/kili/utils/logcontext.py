@@ -4,7 +4,7 @@ Utils to log calls
 import functools
 import platform
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Callable, Dict, List
 
 from kili import __version__
@@ -61,7 +61,9 @@ def log_call(func: Callable):
     def wrapper(*args, **kwargs):
         context = LogContext()
         context["kili-client-method-name"] = func.__name__
-        context["kili-client-call-time"] = datetime.utcnow().isoformat()
+        context["kili-client-call-time"] = (
+            datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        )
         context["kili-client-call-uuid"] = str(uuid.uuid4())
         return func(*args, **kwargs)
 

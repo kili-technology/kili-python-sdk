@@ -33,6 +33,7 @@ dev_extra = [
     "pytest",
     "pytest-mock",
     "pytest-cov",
+    "pytest-xdist[psutil]",
     # documentation
     "mkdocs",
     "mkdocs-material",
