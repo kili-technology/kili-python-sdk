@@ -1,3 +1,4 @@
+import os
 import urllib.request
 
 import cv2  # type: ignore
@@ -17,3 +18,5 @@ def test_mask_to_vertices():
     assert len(contours) == 2
     assert hierarchy[0].tolist() == [-1, -1, 1, -1]  # first contour is the outer contour
     assert hierarchy[1].tolist() == [-1, -1, -1, 0]  # second contour is the inner contour
+
+    os.remove("mask.png")

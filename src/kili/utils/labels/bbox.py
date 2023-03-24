@@ -81,3 +81,63 @@ def bbox_points_to_normalized_vertices(
     ]
 
     return vertices
+
+
+def normalized_vertices_to_bbox_points(
+    normalized_vertices: List[Dict[str, PixelCoordType]],
+    img_width: Optional[PixelCoordType] = None,
+    img_height: Optional[PixelCoordType] = None,
+) -> Dict[str, Dict[str, PixelCoordType]]:
+    # pylint: disable=line-too-long
+    """Converts a rectangle normalizedVertices annotation to its 4 points.
+
+    It is the inverse of the method `bbox_points_to_normalized_vertices`.
+
+    A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).
+
+    Conventions for the output points (top_left, bottom_left, bottom_right, top_right):
+
+    - The origin is the bottom left corner of the image.
+    - x-axis is horizontal and goes from left to right.
+    - y-axis is vertical and goes from bottom to top.
+
+    If the image width and height are provided, the point coordinates will be scaled to the image size.
+    If not, the method will keep the normalized coordinates.
+
+    Args:
+        normalized_vertices: A list of normalized vertices.
+        img_width: Width of the image the bounding box is defined in.
+        img_height: Height of the image the bounding box is defined in.
+
+    Returns:
+        A dict with keys 'top_left', 'bottom_left', 'bottom_right', 'top_right', and corresponding points.
+
+    !!! Example
+        ```python
+        from kili.utils.labels import normalized_vertices_to_bbox_points
+
+        normalized_vertices = label["jsonResponse"]["OBJECT_DETECTION_JOB"]["annotations"][0]["boundingPoly"][0]["normalizedVertices"]
+        img_height, img_width = 1080, 1920
+        bbox_points = normalized_vertices_to_bbox_points(normalized_vertices, img_width, img_height)
+        ```
+    """
+    assert len(normalized_vertices) == 4, "normalized_vertices must have 4 elements"
+
+    img_height = img_height or 1
+    img_width = img_width or 1
+
+    top_left = {}
+    bottom_left = {}
+    bottom_right = {}
+    top_right = {}
+
+    for vertex, point in zip(normalized_vertices, (top_left, bottom_left, bottom_right, top_right)):
+        point["x"] = vertex["x"] * img_width
+        point["y"] = (1 - vertex["y"]) * img_height
+
+    return {
+        "top_left": top_left,
+        "bottom_left": bottom_left,
+        "bottom_right": bottom_right,
+        "top_right": top_right,
+    }

@@ -1,6 +1,9 @@
 import pytest
 
-from kili.utils.labels import bbox_points_to_normalized_vertices
+from kili.utils.labels import (
+    bbox_points_to_normalized_vertices,
+    normalized_vertices_to_bbox_points,
+)
 
 
 @pytest.mark.parametrize(
@@ -160,6 +163,14 @@ from kili.utils.labels import bbox_points_to_normalized_vertices
 def test_bbox_points_to_normalized_vertices(test_name, inputs, output):
     vertices = bbox_points_to_normalized_vertices(**inputs)
     assert vertices == output
+
+    bbox_points = normalized_vertices_to_bbox_points(
+        vertices, img_width=inputs.get("img_width"), img_height=inputs.get("img_height")
+    )
+    assert bbox_points["bottom_left"] == pytest.approx(inputs["bottom_left"])
+    assert bbox_points["bottom_right"] == pytest.approx(inputs["bottom_right"])
+    assert bbox_points["top_right"] == pytest.approx(inputs["top_right"])
+    assert bbox_points["top_left"] == pytest.approx(inputs["top_left"])
 
 
 # DO NOT DELETE. USED FOR DEBUGGING
