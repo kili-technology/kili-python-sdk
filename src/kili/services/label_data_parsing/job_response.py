@@ -25,7 +25,9 @@ class JobPayload:
 
         self.is_required_job = job_interface["required"]
 
-    def _cast_categories(self):
+        self._cast_categories()
+
+    def _cast_categories(self) -> None:
         """Casts the categories list of the job payload to CategoryList object."""
         if "categories" not in self.json_data:
             return
@@ -44,7 +46,6 @@ class JobPayload:
         if "categories" not in self.json_data and not self.is_required_job:
             self.json_data["categories"] = CategoryList(self.job_interface, [])
 
-        self._cast_categories()
         return self.json_data["categories"]
 
     @property
@@ -62,7 +63,6 @@ class JobPayload:
         if "categories" not in self.json_data and not self.is_required_job:
             return None  # type: ignore
 
-        self._cast_categories()
         return self.json_data["categories"][0]
 
     @property

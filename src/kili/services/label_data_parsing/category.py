@@ -71,42 +71,36 @@ class CategoryList(List):
         for category_dict in categories_list:
             self.append(Category(**category_dict, job_interface=job_interface))
 
-    def _check_can_append_category(self) -> None:
+    def _check_can_append_category(self, category: Category) -> None:
         input_type = self.job_interface["content"]["input"]
         nb_classes = len(self.job_interface["content"]["categories"])
         len_categories = len(self)
 
-        if input_type == "radio":
+        if input_type in ("radio", "singleDropdown"):
             if len_categories >= 1:
                 raise InvalidMutationError(
-                    "Cannot add more than one category to a radio button classification job."
+                    f"Cannot add more than one category to a {input_type} classification job."
                 )
 
-        elif input_type == "checkbox":
+        elif input_type in ("checkbox", "multipleDropdown"):
             if len_categories >= nb_classes:
                 raise InvalidMutationError(
-                    "Cannot add more categories than the number of classes to a checkbox"
-                    " classification job."
-                )
-
-        elif input_type == "singleDropdown":
-            if len_categories >= 1:
-                raise InvalidMutationError(
-                    "Cannot add more than one category to a single dropdown classification job."
-                )
-
-        elif input_type == "multipleDropdown":
-            if len_categories >= nb_classes:
-                raise InvalidMutationError(
-                    "Cannot add more categories than the number of classes to a multiple dropdown"
+                    f"Cannot add more categories than the number of classes to a {input_type}"
                     " classification job."
                 )
 
         else:
             raise ValueError(f"Invalid input type: {input_type}")
 
+        # Check that the name of the category we want to add is not already in the list
+        if any(category.name == category_.name for category_ in self):
+            raise InvalidMutationError(
+                f"Cannot add a category with name '{category.name}' because a category with the"
+                f" same name already exists: {self}"
+            )
+
     @typechecked
     def append(self, category: Category) -> None:
         """Appends a category object to the CategoryList object."""
-        self._check_can_append_category()
+        self._check_can_append_category(category)
         return super().append(category)

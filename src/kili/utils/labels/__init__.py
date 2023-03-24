@@ -4,7 +4,7 @@ from typing import Dict, Generator, Iterable, List, overload
 
 from typing_extensions import Literal
 
-from ...services.json_response.label import ParsedLabel
+from ...services.label_data_parsing.label import ParsedLabel
 
 
 @overload

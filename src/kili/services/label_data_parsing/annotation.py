@@ -5,6 +5,8 @@ import functools
 from collections import defaultdict
 from typing import Dict, List, Sequence
 
+from typing_extensions import Literal
+
 from .bounding_poly import BoundingPoly
 from .category import Category, CategoryList
 from .decorators import for_all_properties
@@ -30,7 +32,9 @@ class _BaseAnnotation:
 
         self.is_required_job = job_interface["required"]
 
-    def _cast_categories(self):
+        self._cast_categories()
+
+    def _cast_categories(self) -> None:
         """Casts the categories list of the job payload to CategoryList object."""
         if "categories" not in self.json_data:
             return
@@ -43,7 +47,6 @@ class _BaseAnnotation:
     @property
     def categories(self) -> CategoryList:
         """Returns the list of categories of the annotation."""
-        self._cast_categories()
         return self.json_data["categories"]
 
     @property
@@ -58,7 +61,6 @@ class _BaseAnnotation:
         if "categories" not in self.json_data and not self.is_required_job:
             return None  # type: ignore
 
-        self._cast_categories()
         return self.json_data["categories"][0]
 
     @property
@@ -71,7 +73,7 @@ class EntityAnnotation(_BaseAnnotation):
     """Class for parsing the "annotations" key of a job response for named entities recognition."""
 
     @staticmethod
-    def _get_compatible_ml_task() -> str:
+    def _get_compatible_ml_task() -> Literal["NAMED_ENTITIES_RECOGNITION"]:
         return "NAMED_ENTITIES_RECOGNITION"
 
     @property
@@ -106,11 +108,11 @@ class PointAnnotation(_BaseAnnotationWithTool):
     """Class for parsing the "annotations" key of a job response for 1D object detection jobs."""
 
     @staticmethod
-    def _get_compatible_ml_task() -> str:
+    def _get_compatible_ml_task() -> Literal["OBJECT_DETECTION"]:
         return "OBJECT_DETECTION"
 
     @staticmethod
-    def _get_compatible_type_of_tools() -> Sequence[str]:
+    def _get_compatible_type_of_tools() -> Sequence[Literal["marker"]]:
         return ("marker",)
 
     @property
@@ -123,11 +125,13 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
     """Base class for 2D annotations."""
 
     @staticmethod
-    def _get_compatible_ml_task() -> str:
+    def _get_compatible_ml_task() -> Literal["OBJECT_DETECTION"]:
         return "OBJECT_DETECTION"
 
     @staticmethod
-    def _get_compatible_type_of_tools() -> Sequence[str]:
+    def _get_compatible_type_of_tools() -> (
+        Sequence[Literal["rectangle", "polygon", "semantic", "polyline", "vector"]]
+    ):
         return ("rectangle", "polygon", "semantic", "polyline", "vector")
 
     @property
@@ -167,11 +171,11 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
     """Class for parsing the "annotations" key of a job response for pose estimation jobs."""
 
     @staticmethod
-    def _get_compatible_ml_task() -> str:
+    def _get_compatible_ml_task() -> Literal["OBJECT_DETECTION"]:
         return "OBJECT_DETECTION"
 
     @staticmethod
-    def _get_compatible_type_of_tools() -> Sequence[str]:
+    def _get_compatible_type_of_tools() -> Sequence[Literal["pose"]]:
         return ("pose",)
 
     @property
@@ -231,8 +235,8 @@ class Annotation(
         This class is used to parse the "annotations" key of a job response.
 
         Args:
-            json_data (Dict): The json data of the annotation.
-            job_interface (Dict): The job interface of the job.
+            json_data: The json data of the annotation.
+            job_interface: The job interface of the job.
         """
         super().__init__(json_data, job_interface=job_interface)
 

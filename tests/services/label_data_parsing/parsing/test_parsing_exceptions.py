@@ -1,10 +1,11 @@
 import pytest
 
-from kili.services.json_response.exceptions import (
+from kili.services.label_data_parsing.exceptions import (
     AttributeNotCompatibleWithJobError,
+    InvalidMutationError,
     JobNotExistingError,
 )
-from kili.services.json_response.json_response import ParsedJobs
+from kili.services.label_data_parsing.json_response import ParsedJobs
 
 
 def test_attribute_category_checkbox_job():
@@ -191,3 +192,42 @@ def test_access_bounding_poly_on_point_job():
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
         _ = job.annotations[0].bounding_poly
+
+
+def test_cannot_add_same_category_twice_to_categorylist():
+    json_interface = {
+        "jobs": {
+            "CLASSIFICATION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "name": "A"},
+                        "B": {"children": [], "name": "B"},
+                        "C": {"children": [], "name": "C"},
+                    },
+                    "input": "checkbox",
+                },
+                "instruction": "Category",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": False,
+            }
+        }
+    }
+
+    json_resp = {
+        "CLASSIFICATION_JOB": {
+            "categories": [
+                {"confidence": 100, "name": "A"},
+                {"confidence": 100, "name": "A"},  # duplicate category
+            ]
+        }
+    }
+
+    with pytest.raises(
+        InvalidMutationError,
+        match=(
+            "Cannot add a category with name 'A' because a category with the same name already"
+            " exists"
+        ),
+    ):
+        _ = ParsedJobs(json_resp, json_interface)
