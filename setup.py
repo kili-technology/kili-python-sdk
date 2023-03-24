@@ -51,6 +51,8 @@ dev_extra = [
     "nbformat",
     "nbconvert",
     "ipykernel",
+    # image utils
+    "opencv-python",
 ]
 
 setup(
