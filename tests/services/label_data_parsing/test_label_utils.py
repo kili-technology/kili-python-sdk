@@ -72,8 +72,8 @@ def test_parse_labels_classification():
 
 def test_parse_labels_classification_to_dict():
     """
-    Test that checks that parsing the categories to CategoryList and Category
-    objects still allows to convert to dict and json
+    Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
+    still allows to convert to dict and json
     """
 
     labels = [
@@ -104,29 +104,22 @@ def test_parse_labels_classification_to_dict():
                 "required": 1,
                 "isChild": False,
             },
-            "NON_REQUIRED_JOB": {
-                "content": {
-                    "categories": {
-                        "C": {"children": [], "name": "C"},
-                        "D": {"children": [], "name": "D"},
-                    },
-                    "input": "radio",
-                },
-                "instruction": "Non required",
-                "mlTask": "CLASSIFICATION",
-                "required": 0,
-                "isChild": False,
-            },
         }
     }
     parsed_labels = parse_labels(labels, json_interface=json_interface)
 
-    # we query the category name and checks that the label has been converted to
-    # CategoryList and Category objects
+    # we check that the label has been converted to CategoryList and Category objects
     # they inherit from Dict and List so they should be serializable
-    assert parsed_labels[0].jobs["REQUIRED_JOB"].category.name == "A"
     assert isinstance(parsed_labels[0].jobs["REQUIRED_JOB"].category, Category)
     assert isinstance(parsed_labels[0].jobs["REQUIRED_JOB"].categories, CategoryList)
+
+    # make some modifications to the label...
+    parsed_labels[0].jobs["REQUIRED_JOB"].category.name = "B"
+    parsed_labels[0].jobs["REQUIRED_JOB"].category.confidence = 90
+
+    # revert
+    parsed_labels[0].jobs["REQUIRED_JOB"].category.name = "A"
+    parsed_labels[0].jobs["REQUIRED_JOB"].category.confidence = 100
 
     # test that json.dumps works.
     # It would fail if the label is not serializable anymore after parsing.

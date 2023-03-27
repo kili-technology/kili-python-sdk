@@ -356,3 +356,44 @@ def test_mutation_multiple_dropdown():
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].confidence == 98
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[1].name == "E"
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[1].confidence == 97
+
+
+def test_add_annotations_to_empty_json_resp_of_non_required_job():
+    json_interface = {
+        "jobs": {
+            "REQUIRED_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "name": "A"},
+                        "B": {"children": [], "name": "B"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Class required",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": False,
+            },
+            "NON_REQUIRED_JOB": {
+                "content": {
+                    "categories": {
+                        "C": {"children": [], "name": "C"},
+                        "D": {"children": [], "name": "D"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Class non required",
+                "mlTask": "CLASSIFICATION",
+                "required": 0,
+                "isChild": False,
+            },
+        }
+    }
+
+    json_resp = {"REQUIRED_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    parsed_jobs["NON_REQUIRED_JOB"].add_category("C", 100)
+
+    assert parsed_jobs["NON_REQUIRED_JOB"].categories[0].name == "C"

@@ -82,14 +82,6 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("text")
         return self.json_data["text"]
 
-    @property
-    def annotations(self) -> List[Annotation]:
-        """Returns a list of Annotation objects for a job."""
-        return [
-            Annotation(annotation, self.job_interface)
-            for annotation in self.json_data["annotations"]
-        ]
-
     @text.setter
     @typechecked
     def text(self, text: str) -> None:
@@ -97,6 +89,14 @@ class JobPayload:
         if self.job_interface["mlTask"] != "TRANSCRIPTION":
             raise AttributeNotCompatibleWithJobError("text")
         self.json_data["text"] = text
+
+    @property
+    def annotations(self) -> List[Annotation]:
+        """Returns a list of Annotation objects for a job."""
+        return [
+            Annotation(annotation, self.job_interface)
+            for annotation in self.json_data["annotations"]
+        ]
 
     @property
     def entity_annotations(self) -> List[EntityAnnotation]:
