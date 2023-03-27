@@ -26,6 +26,10 @@ install_requires = [
     "gql[requests,websockets]",
 ]
 
+image_requires = [
+    "opencv-python",
+]
+
 dev_extra = [
     # release
     "bump2version",
@@ -67,7 +71,10 @@ setup(
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     install_requires=install_requires,
-    extras_require={"dev": dev_extra},
+    extras_require={
+        "dev": dev_extra,
+        "image-utils": image_requires,
+    },
     include_package_data=True,
     entry_points={
         "console_scripts": ["kili=kili.cli:main"],
