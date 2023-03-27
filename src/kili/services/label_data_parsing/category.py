@@ -54,6 +54,10 @@ class Category(Dict):
             raise ValueError(f"Confidence must be between 0 and 100, got {confidence}")
         self["confidence"] = confidence
 
+    @property
+    def children(self):
+        """Not implemented yet."""
+
 
 class CategoryList(List):
     """Class for the categories list parsing."""
@@ -98,6 +102,12 @@ class CategoryList(List):
                 f"Cannot add a category with name '{category.name}' because a category with the"
                 f" same name already exists: {self}"
             )
+
+    @typechecked
+    def add_category(self, name: str, confidence: int) -> None:
+        """Adds a category object to the CategoryList object."""
+        category = Category(name=name, confidence=confidence, job_interface=self.job_interface)
+        self.append(category)
 
     @typechecked
     def append(self, category: Category) -> None:

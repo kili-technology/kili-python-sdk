@@ -3,6 +3,8 @@
 
 from typing import Dict, List
 
+from typeguard import typechecked
+
 from .annotation import Annotation, BoundingPolyAnnotation, EntityAnnotation
 from .category import Category, CategoryList
 from .exceptions import AttributeNotCompatibleWithJobError
@@ -65,6 +67,14 @@ class JobPayload:
 
         return self.json_data["categories"][0]
 
+    @typechecked
+    def add_category(self, name: str, confidence: int) -> None:
+        """Adds a category to a job with categories."""
+        if "categories" not in self.json_data:
+            self.json_data["categories"] = CategoryList(self.job_interface, [])
+
+        self.json_data["categories"].add_category(name=name, confidence=confidence)
+
     @property
     def text(self) -> str:
         """Returns the text for a transcription job."""
@@ -79,6 +89,14 @@ class JobPayload:
             Annotation(annotation, self.job_interface)
             for annotation in self.json_data["annotations"]
         ]
+
+    @text.setter
+    @typechecked
+    def text(self, text: str) -> None:
+        """Sets the text for a transcription job."""
+        if self.job_interface["mlTask"] != "TRANSCRIPTION":
+            raise AttributeNotCompatibleWithJobError("text")
+        self.json_data["text"] = text
 
     @property
     def entity_annotations(self) -> List[EntityAnnotation]:

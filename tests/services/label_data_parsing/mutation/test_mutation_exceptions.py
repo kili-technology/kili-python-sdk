@@ -1,10 +1,10 @@
 import pytest
 
-from kili.services.json_response.exceptions import (
+from kili.services.label_data_parsing.exceptions import (
     AttributeNotCompatibleWithJobError,
     InvalidMutationError,
 )
-from kili.services.json_response.json_response import ParsedJobs
+from kili.services.label_data_parsing.json_response import ParsedJobs
 
 
 def test_mutate_transcription_label_on_classif_project():
@@ -115,7 +115,7 @@ def test_mutate_multi_class_classif_add_too_many_categories(input_):
                 },
                 "instruction": "Class",
                 "mlTask": "CLASSIFICATION",
-                "required": 1,
+                "required": 0,
                 "isChild": False,
             }
         }
