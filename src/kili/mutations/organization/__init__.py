@@ -61,10 +61,6 @@ class MutationsOrganization:
         self,
         organization_id: str,
         name: Optional[str] = None,
-        address: Optional[str] = None,
-        zip_code: Optional[str] = None,
-        city: Optional[str] = None,
-        country: Optional[str] = None,
         license: Optional[dict] = None,
     ):  # pylint: disable=redefined-builtin
         """Modify an organization.
@@ -73,11 +69,7 @@ class MutationsOrganization:
         Args:
             organization_id :
             name :
-            address :
             license :
-            zip_code :
-            city :
-            country :
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -87,15 +79,7 @@ class MutationsOrganization:
         variables = {"id": organization_id}
         if name is not None:
             variables["name"] = name
-        if address is not None:
-            variables["address"] = address
         if license_str is not None:
             variables["license"] = license_str
-        if zip_code is not None:
-            variables["zipCode"] = zip_code
-        if city is not None:
-            variables["city"] = city
-        if country is not None:
-            variables["country"] = country
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
         return format_result("data", result)
