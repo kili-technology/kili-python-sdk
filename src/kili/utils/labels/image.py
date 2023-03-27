@@ -130,5 +130,5 @@ def normalized_vertices_to_mask(
         for vertice in normalized_vertices
     ]
     polygon = np.array([polygon])
-    cv2.fillPoly(img=mask, pts=polygon, color=255)
+    cv2.fillPoly(img=mask, pts=polygon, color=255)  # pylint:disable=no-member
     return mask
