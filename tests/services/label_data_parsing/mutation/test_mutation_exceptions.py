@@ -220,3 +220,37 @@ def test_invalid_mutation_on_bbox_annotations():
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
         bb_annotations[0].end_offset = 42
+
+
+def test_cannot_add_same_category_twice_to_categorylist_with_add_category():
+    json_interface = {
+        "jobs": {
+            "CLASSIFICATION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "name": "A"},
+                        "B": {"children": [], "name": "B"},
+                        "C": {"children": [], "name": "C"},
+                    },
+                    "input": "checkbox",
+                },
+                "instruction": "Category",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": False,
+            }
+        }
+    }
+
+    json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    with pytest.raises(
+        InvalidMutationError,
+        match=(
+            "Cannot add a category with name 'A' because a category with the same name already"
+            " exists"
+        ),
+    ):
+        parsed_jobs["CLASSIFICATION_JOB"].add_category(name="A", confidence=100)
