@@ -16,7 +16,7 @@ def bbox_points_to_normalized_vertices(
     img_height: Optional[PixelCoordType] = None,
 ) -> List[Dict[str, PixelCoordType]]:
     # pylint: disable=line-too-long
-    """Converts a bounding box defined by its 4 points to normalized vertices.
+    """Converts a bounding box defined by its 4 points in pixels coordinates to normalized vertices.
 
     The output can be used to create a boundingPoly rectangle annotation. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection) for more details.
 
@@ -89,7 +89,7 @@ def normalized_vertices_to_bbox_points(
     img_height: Optional[PixelCoordType] = None,
 ) -> Dict[str, Dict[str, PixelCoordType]]:
     # pylint: disable=line-too-long
-    """Converts a rectangle normalizedVertices annotation to its 4 points.
+    """Converts a rectangle normalizedVertices annotation to its 4 points in pixels or in normalized coordinates depending on the image width and height arguments.
 
     It is the inverse of the method `bbox_points_to_normalized_vertices`.
 
@@ -121,7 +121,11 @@ def normalized_vertices_to_bbox_points(
         bbox_points = normalized_vertices_to_bbox_points(normalized_vertices, img_width, img_height)
         ```
     """
-    assert len(normalized_vertices) == 4, "normalized_vertices must have 4 elements"
+    if len(normalized_vertices) != 4:
+        raise ValueError("normalized_vertices must have length 4")
+
+    if (img_width is None) != (img_height is None):
+        raise ValueError("img_width and img_height must be both None or both not None")
 
     img_height = img_height or 1
     img_width = img_width or 1

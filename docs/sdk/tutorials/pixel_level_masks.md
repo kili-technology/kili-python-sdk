@@ -206,14 +206,14 @@ labels = kili.labels(
 )
 label = labels[0]
 json_response = label["jsonResponse"]
-mask = normalized_vertices_to_mask(
+reconstructed_mask = normalized_vertices_to_mask(
     json_response["JOB_0"]["annotations"][0]["boundingPoly"][0]["normalizedVertices"],
     mask.shape[1],
     mask.shape[0],
 )
 
 plt.title(f"Mask for HUMAN class")
-plt.imshow(mask, cmap="gray")
+plt.imshow(reconstructed_mask, cmap="gray")
 plt.show()
 ```
 

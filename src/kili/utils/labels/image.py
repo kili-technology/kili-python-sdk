@@ -9,7 +9,8 @@ try:
     import numpy as np
 except ModuleNotFoundError as err:
     raise ModuleNotFoundError(
-        "OpenCV and Numpy are required to use the image label creation helpers."
+        "OpenCV and Numpy are required to use the image label creation helpers. To install them,"
+        " run: pip install kili[image-utils]."
     ) from err
 
 
