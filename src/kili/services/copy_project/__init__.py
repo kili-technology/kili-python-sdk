@@ -1,6 +1,4 @@
-"""
-Copy project implementation.
-"""
+"""Copy project implementation."""
 import itertools
 import logging
 from typing import Dict, Optional
@@ -15,9 +13,7 @@ from kili.utils.tqdm import tqdm
 
 
 class ProjectCopier:  # pylint: disable=too-few-public-methods
-    """
-    Class for copying an existing project.
-    """
+    """Class for copying an existing project."""
 
     FIELDS_PROJECT = [
         "title",
@@ -50,9 +46,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         copy_labels: bool,
         disable_tqdm: bool,
     ) -> str:
-        """
-        Copy an existing project.
-        """
+        """Copy an existing project."""
         self.disable_tqdm = disable_tqdm
 
         logging.basicConfig()
@@ -164,8 +158,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         )
 
     def _copy_assets(self, from_project_id: str, new_project_id: str):
-        """
-        Copy assets from a project to another.
+        """Copy assets from a project to another.
 
         Fetches assets by batch since `content` urls expire.
         """
@@ -173,6 +166,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         options = QueryOptions(disable_tqdm=False)
         fields = [
             "content",
+            "ocrMetadata",
             "externalId",
             "isHoneypot",
             "jsonContent",
@@ -203,6 +197,14 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         return download_function(assets)
 
     def _upload_assets(self, new_project_id, assets):
+        # ocrMetadata field of assets need to be merged with jsonMetadata field
+        for asset in assets:
+            if asset["ocrMetadata"]:
+                asset["jsonMetadata"] = {**asset["jsonMetadata"], **asset["ocrMetadata"]}
+
+        # we cannot send None values in the content_array or json_content_array fields of
+        # kili.append_many_to_assets. So we need to sort and group the assets by the presence of
+        # content and jsonContent.
         assets = sorted(
             assets,
             key=lambda asset: (bool(asset["content"]), bool(asset["jsonContent"])),

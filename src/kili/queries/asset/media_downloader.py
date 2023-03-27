@@ -63,7 +63,7 @@ def get_download_assets_function(
 
 
 class MediaDownloader:
-    """Media downloader for kili.assets()"""
+    """Media downloader for kili.assets()."""
 
     def __init__(
         self,
@@ -111,7 +111,11 @@ class MediaDownloader:
         return assets
 
     def download_single_asset(self, asset: Dict) -> Dict[str, Any]:
-        """Download single asset on disk and modify asset attributes"""
+        """Download single asset on disk and modify asset attributes."""
+        if "ocrMetadata" in asset and str(asset["ocrMetadata"]).startswith("http"):
+            response = requests.get(asset["ocrMetadata"], timeout=20)
+            response = response.json()
+            asset["ocrMetadata"] = response
 
         if "jsonContent" in asset and str(asset["jsonContent"]).startswith("http"):
             # richtext
@@ -122,7 +126,9 @@ class MediaDownloader:
 
             # video frames
             elif self.project_input_type == "VIDEO":
-                urls = get_json_content_urls_video(asset["jsonContent"])
+                response = requests.get(asset["jsonContent"], timeout=20)
+                response = response.json()
+                urls = tuple(response.values())
                 nbr_char_zfill = len(str(len(urls)))
                 img_names = (
                     f'{asset["externalId"]}_{f"{i+1}".zfill(nbr_char_zfill)}'
@@ -160,7 +166,7 @@ class MediaDownloader:
 
 
 def get_file_extension_from_headers(url) -> Optional[str]:
-    """guess the extension of a file with the url response headers"""
+    """guess the extension of a file with the url response headers."""
     with requests.head(url, timeout=20) as header_response:
         if header_response.status_code == 200:
             headers = header_response.headers
@@ -186,9 +192,9 @@ def get_download_path(url: str, external_id: str, local_dir_path: Path) -> Path:
 
 @retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2), reraise=True)
 def download_file(url: str, external_id: str, local_dir_path: Path) -> str:
-    """
-    Download a file by streming chunks of 1Mb
-    If the file already exists in local, it does not download it
+    """Download a file by streming chunks of 1Mb.
+
+    If the file already exists in local, it does not download it.
     """
     local_path = get_download_path(url, external_id, local_dir_path)
     local_path.parent.mkdir(parents=True, exist_ok=True)
@@ -202,7 +208,7 @@ def download_file(url: str, external_id: str, local_dir_path: Path) -> str:
 
 
 def assert_required_fields_existence(assets: List[Dict]) -> None:
-    """check if all fields are available to download assets"""
+    """check if all fields are available to download assets."""
     required_fields = ["content", "externalId"]
     for field in required_fields:
         if field not in assets[0].keys():
@@ -210,11 +216,3 @@ def assert_required_fields_existence(assets: List[Dict]) -> None:
                 f"The asset does not have the {field} field. Please add it to the fields when"
                 " querying assets."
             )
-
-
-def get_json_content_urls_video(json_url: str) -> Tuple[str]:
-    """Get frame urls from a jsonContent url."""
-    response = requests.get(json_url, timeout=20)
-    response = response.json()
-    urls = tuple(response.values())
-    return urls
