@@ -25,7 +25,9 @@ def _opencv_contour_to_normalized_vertices(
     return contour_points
 
 
-def mask_to_vertices(image: np.ndarray) -> Tuple[List[List[Dict[str, PixelCoordType]]], np.ndarray]:
+def mask_to_normalized_vertices(
+    image: np.ndarray,
+) -> Tuple[List[List[Dict[str, PixelCoordType]]], np.ndarray]:
     # pylint: disable=line-too-long
     """Converts a binary mask to a list of normalized vertices using OpenCV [cv2.findContours](https://docs.opencv.org/4.7.0/d3/dc0/group__imgproc__shape.html#gadf1ad6a0b82947fa1fe3c3d497f260e0).
 
@@ -42,18 +44,15 @@ def mask_to_vertices(image: np.ndarray) -> Tuple[List[List[Dict[str, PixelCoordT
         ```python
         import urllib.request
         import cv2
-        from kili.utils.labels import mask_to_vertices
+        from kili.utils.labels import mask_to_normalized_vertices
 
-        img_url = "https://farm7.staticflickr.com/6153/6181981748_6a225c275d_z.jpg"
         mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png"
-
-        urllib.request.urlretrieve(img_url, "img.jpg")
         urllib.request.urlretrieve(mask_url, "mask.png")
 
         img = cv2.imread("mask.png")[:, :, 0]  # keep only height and width
         img[200:220, 200:220] = 0  # add a hole in the mask to test the hierarchy
 
-        contours, hierarchy = mask_to_vertices(img)
+        contours, hierarchy = mask_to_normalized_vertices(img)
         # hierarchy tells us that the first contour is the outer contour
         # and the second one is the inner contour
 
@@ -91,3 +90,45 @@ def mask_to_vertices(image: np.ndarray) -> Tuple[List[List[Dict[str, PixelCoordT
     hierarchy = hierarchy[0]
 
     return contours, hierarchy
+
+
+def normalized_vertices_to_mask(
+    normalized_vertices: List[Dict[str, PixelCoordType]],
+    img_width: PixelCoordType,
+    img_height: PixelCoordType,
+) -> np.ndarray:
+    # pylint: disable=line-too-long
+    """Converts a Kili label with normalized vertices to a binary mask.
+
+    It is the inverse of the method `mask_to_normalized_vertices`.
+
+    Args:
+        normalized_vertices: A list of normalized vertices.
+        img_width: Width of the image the segmentation is defined in.
+        img_height: Height of the image the segmentation is defined in.
+
+    Returns:
+        A numpy array of shape (height, width) with values 0 and 255.
+
+    !!! Example
+        ```python
+        from kili.utils.labels import normalized_vertices_to_mask
+
+        normalized_vertices = label["jsonResponse"]["OBJECT_DETECTION_JOB"]["annotations"][0]["boundingPoly"][0]["normalizedVertices"]
+        img_height, img_width = 1080, 1920
+        mask = normalized_vertices_to_mask(normalized_vertices, img_width, img_height)
+        plt.imshow(mask)
+        plt.show()
+        ```
+    """
+    mask = np.zeros((img_height, img_width), dtype=np.uint8)
+    polygon = [
+        [
+            int(round(vertice["x"] * img_width)),
+            int(round(vertice["y"] * img_height)),
+        ]
+        for vertice in normalized_vertices
+    ]
+    polygon = np.array([polygon])
+    cv2.fillPoly(img=mask, pts=polygon, color=255)
+    return mask

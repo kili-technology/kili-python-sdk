@@ -63,3 +63,41 @@ def point_to_normalized_point(
     assert 0 <= point["y"] <= 1, f"Point y coordinate {point['y']} should be in [0, 1]."
 
     return {"x": point["x"], "y": 1 - point["y"]}
+
+
+def normalized_point_to_point(
+    point: Dict[str, PixelCoordType],
+    img_width: Optional[PixelCoordType] = None,
+    img_height: Optional[PixelCoordType] = None,
+) -> Dict[str, PixelCoordType]:
+    # pylint: disable=line-too-long
+    """Converts a Kili label format normalized point to a 2D point.
+
+    It is the inverse of the method `point_to_normalized_point`.
+
+    A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).
+
+    Conventions for the output point:
+
+    - The origin is the bottom left corner of the image.
+    - x-axis is horizontal and goes from left to right.
+    - y-axis is vertical and goes from bottom to top.
+
+    If the image width and height are provided, the point coordinates will be scaled to the image size.
+    If not, the method will keep the normalized coordinates.
+
+    Args:
+        point: Point to convert.
+        img_width: Width of the image the point is defined in.
+        img_height: Height of the image the point is defined in.
+
+    Returns:
+        A dict with keys 'x' and 'y', and corresponding values in pixels.
+    """
+    img_height = img_height or 1
+    img_width = img_width or 1
+
+    return {
+        "x": point["x"] * img_width,
+        "y": (1 - point["y"]) * img_height,
+    }
