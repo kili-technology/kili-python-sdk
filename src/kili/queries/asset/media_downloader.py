@@ -113,8 +113,7 @@ class MediaDownloader:
     def download_single_asset(self, asset: Dict) -> Dict[str, Any]:
         """Download single asset on disk and modify asset attributes."""
         if "ocrMetadata" in asset and str(asset["ocrMetadata"]).startswith("http"):
-            response = requests.get(asset["ocrMetadata"], timeout=20)
-            response = response.json()
+            response = requests.get(asset["ocrMetadata"], timeout=20).json()
             asset["ocrMetadata"] = response
 
         if "jsonContent" in asset and str(asset["jsonContent"]).startswith("http"):
@@ -126,8 +125,7 @@ class MediaDownloader:
 
             # video frames
             elif self.project_input_type == "VIDEO":
-                response = requests.get(asset["jsonContent"], timeout=20)
-                response = response.json()
+                response = requests.get(asset["jsonContent"], timeout=20).json()
                 urls = tuple(response.values())
                 nbr_char_zfill = len(str(len(urls)))
                 img_names = (
@@ -147,8 +145,7 @@ class MediaDownloader:
             # big images
             elif self.project_input_type == "IMAGE":
                 # the "jsonContent" contains some information but not the image
-                response = requests.get(asset["jsonContent"], timeout=20)
-                response = response.json()
+                response = requests.get(asset["jsonContent"], timeout=20).json()
                 asset["jsonContent"] = response
 
             else:

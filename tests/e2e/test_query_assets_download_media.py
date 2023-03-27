@@ -157,8 +157,7 @@ def src_project_video_frames(kili):
         response = requests.get(
             "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json",
             timeout=20,
-        )
-        response = response.json()
+        ).json()
         urls = tuple(response.values())
         for i, url in enumerate(urls):
             if i >= 5:  # keep only a few images for testing
