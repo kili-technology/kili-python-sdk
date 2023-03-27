@@ -14,10 +14,7 @@ import requests
 from PIL import Image
 
 from kili.client import Kili
-from kili.queries.asset.media_downloader import (
-    MediaDownloader,
-    get_json_content_urls_video,
-)
+from kili.queries.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
 
@@ -157,9 +154,12 @@ def src_project_video_frames(kili):
     )
 
     with TemporaryDirectory() as tmp_dir:
-        urls = get_json_content_urls_video(
-            "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json"
+        response = requests.get(
+            "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json",
+            timeout=20,
         )
+        response = response.json()
+        urls = tuple(response.values())
         for i, url in enumerate(urls):
             if i >= 5:  # keep only a few images for testing
                 break
