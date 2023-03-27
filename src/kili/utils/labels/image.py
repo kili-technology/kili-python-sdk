@@ -76,8 +76,8 @@ def mask_to_normalized_vertices(
         raise ValueError(f"Image should be a 2D array, got {image.ndim}D array")
 
     unique_values = np.unique(image).tolist()
-    if unique_values != [0, 255]:
-        raise ValueError(f"Image should be binary, got {unique_values}")
+    if not all(value in [0, 255] for value in unique_values):
+        raise ValueError(f"Image should be binary with values 0 and 255, got {unique_values}")
 
     img_height, img_width = image.shape
     # pylint:disable=no-member
