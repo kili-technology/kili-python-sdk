@@ -458,3 +458,88 @@ def test_point_job():
     assert job.annotations[1].type == "marker"
 
     assert job.annotations[1].point == point
+
+
+def test_multiple_bounding_poly():
+    """most of the time bounddingPoly will be a list of one element,
+    but it can be more for segmentation jobs
+    """
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["semantic"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {"interactive-segmentation": {}},
+                "isVisible": True,
+                "required": 1,
+            }
+        }
+    }
+
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    # two boundingPoly objects, one for the overall object
+                    # and another for a smaller sub-object within it.
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.329233, "y": 0.40562844444444446},
+                                {"x": 0.330521, "y": 0.4147928888888889},
+                                {"x": 0.33181, "y": 0.4239591111111112},
+                            ]
+                        },
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.407836, "y": 0.3552195555555556},
+                                {"x": 0.40848, "y": 0.32428622222222225},
+                                {"x": 0.40848, "y": 0.358656},
+                            ]
+                        },
+                    ],
+                    "categories": [{"name": "OBJECT_A"}],
+                    "mid": "20230328091918410-41552",
+                    "type": "semantic",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.693257, "y": 0.2417991111111112},
+                                {"x": 0.693901, "y": 0.2417991111111112},
+                                {"x": 0.718384, "y": 0.24409066666666668},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "OBJECT_B"}],
+                    "mid": "20230328091944201-27950",
+                    "type": "semantic",
+                },
+            ]
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    job = parsed_jobs["JOB_0"]
+
+    assert job.annotations[0].categories[0].name == "OBJECT_A"
+    assert job.annotations[1].category.name == "OBJECT_B"
+
+    assert job.annotations[0].type == job.annotations[1].type == "semantic"
+
+    assert job.annotations[0].bounding_poly[0].normalized_vertices[0]
+    assert job.annotations[0].bounding_poly[1].normalized_vertices[0]
+    assert job.annotations[1].bounding_poly[0].normalized_vertices[0]
