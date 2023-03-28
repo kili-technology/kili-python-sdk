@@ -130,7 +130,7 @@ mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/ma
 urllib.request.urlretrieve(mask_url, "mask.png");
 ```
 
-Kili SDK provides a set of utils to easily create labels. See the [documentation](https://python-sdk-docs.kili-technology.com/sdk/label_utils/) for more information.
+Kili SDK provides a set of utils to easily create labels. See the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/label_utils/) for more information.
 
 Now, we will use the `mask_to_normalized_vertices` helper method to create a segmentation label from the mask image.
 
