@@ -5,12 +5,12 @@ GraphQL module
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
 
-from tqdm import tqdm
 from typeguard import typechecked
 
 from kili.constants import QUERY_BATCH_SIZE
 from kili.helpers import format_result
 from kili.utils.pagination import api_throttle
+from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
 
