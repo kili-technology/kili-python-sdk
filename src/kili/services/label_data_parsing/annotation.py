@@ -227,6 +227,42 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
         return self.json_data["points"]
 
 
+class EntityRelationAnnotation(_BaseAnnotation):
+    """Class for parsing the "annotations" key of a job response for named entity relation jobs."""
+
+    @staticmethod
+    def _get_compatible_ml_task() -> Literal["NAMED_ENTITIES_RELATION"]:
+        return "NAMED_ENTITIES_RELATION"
+
+    @property
+    def start_entities(self) -> List[Dict]:
+        """Returns the list of the start entities composing the relation."""
+        return self.json_data["startEntities"]
+
+    @property
+    def end_entities(self) -> List[Dict]:
+        """Returns the list of the end entities composing the relation."""
+        return self.json_data["endEntities"]
+
+
+class ObjectRelationAnnotation(_BaseAnnotation):
+    """Class for parsing the "annotations" key of a job response for object relation jobs."""
+
+    @staticmethod
+    def _get_compatible_ml_task() -> Literal["OBJECT_RELATION"]:
+        return "OBJECT_RELATION"
+
+    @property
+    def start_objects(self) -> List[Dict]:
+        """Returns the list of the start objects composing the relation."""
+        return self.json_data["startObjects"]
+
+    @property
+    def end_objects(self) -> List[Dict]:
+        """Returns the list of the end objects composing the relation."""
+        return self.json_data["endObjects"]
+
+
 def check_attribute_compatible_with_job(func):
     """Raises an error if the decorated method is not compatible with the job."""
 
@@ -257,6 +293,8 @@ class Annotation(
     BoundingPolyAnnotation,
     VideoAnnotation,
     PoseEstimationAnnotation,
+    EntityRelationAnnotation,
+    ObjectRelationAnnotation,
 ):
     """Class for parsing the "annotations" key of a job response.
 

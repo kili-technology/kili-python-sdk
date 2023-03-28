@@ -6,7 +6,7 @@ from typeguard import typechecked
 
 
 class BoundingPoly(Dict):
-    """Class for parsing the "boundingPoly" key of an object detection job response."""
+    """Class for parsing an element of a boundingPoly list."""
 
     def __init__(self, bounding_poly_json: Dict, job_interface: Dict) -> None:
         """Class for BoundingPoly parsing."""
@@ -21,10 +21,10 @@ class BoundingPoly(Dict):
 
 
 class BoundingPolyList(List):
-    """Class for the boundingPoly list parsing."""
+    """Class for parsing the "boundingPoly" key of an object detection job response."""
 
     def __init__(self, job_interface: Dict, bounding_poly_list: List[Dict]) -> None:
-        """Class for the boundingPoly list parsing.
+        """Class for parsing the "boundingPoly" key of an object detection job response.
 
         Args:
             bounding_poly_list: List of dicts representing bounding polygons.

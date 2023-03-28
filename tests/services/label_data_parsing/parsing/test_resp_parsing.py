@@ -546,3 +546,200 @@ def test_multiple_bounding_poly():
     assert job.annotations[0].bounding_poly[0].normalized_vertices[0]
     assert job.annotations[0].bounding_poly[1].normalized_vertices[0]
     assert job.annotations[1].bounding_poly[0].normalized_vertices[0]
+
+
+def test_text_ner_job_with_relation_job():
+    json_interface = {
+        "jobs": {
+            "RECOGNITION_JOB": {
+                "content": {
+                    "categories": {
+                        "INTERJECTION": {
+                            "children": [],
+                            "name": "Interjection",
+                            "color": "#733AFB",
+                        },
+                        "NOUN": {"children": [], "name": "Noun", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "models": {},
+                "isVisible": False,
+                "required": 1,
+            },
+            "RELATION_JOB": {
+                "content": {
+                    "categories": {
+                        "CATEGORY_RELATION_JOB": {
+                            "children": [],
+                            "color": "#472CED",
+                            "name": "Category relation job",
+                            "startEntities": ["INTERJECTION"],
+                            "endEntities": ["NOUN"],
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "relation job",
+                "mlTask": "NAMED_ENTITIES_RELATION",
+                "required": 1,
+                "isChild": False,
+            },
+        }
+    }
+
+    json_resp = {
+        "RECOGNITION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "beginId": "main/[0]",
+                    "beginOffset": 157,
+                    "categories": [{"name": "INTERJECTION"}],
+                    "content": "Cras",
+                    "endId": "main/[0]",
+                    "endOffset": 161,
+                    "mid": "20230328130206104-77794",
+                },
+                {
+                    "children": {},
+                    "beginId": "main/[0]",
+                    "beginOffset": 172,
+                    "categories": [{"name": "NOUN"}],
+                    "content": "ultrices",
+                    "endId": "main/[0]",
+                    "endOffset": 180,
+                    "mid": "20230328130207923-16649",
+                },
+            ]
+        },
+        "RELATION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "categories": [{"name": "CATEGORY_RELATION_JOB"}],
+                    "endEntities": [{"mid": "20230328130207923-16649"}],
+                    "mid": "20230328130209721-25195",
+                    "startEntities": [{"mid": "20230328130206104-77794"}],
+                }
+            ]
+        },
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+    relation_job = parsed_jobs["RELATION_JOB"]
+
+    assert relation_job.annotations[0].categories[0].name == "CATEGORY_RELATION_JOB"
+    assert relation_job.annotations[0].start_entities[0]
+    assert relation_job.annotations[0].end_entities[0]
+
+
+def test_object_detection_with_relations():
+    json_interface = {
+        "jobs": {
+            "BBOX_JOB": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "OBJECT_RELATION_JOB": {
+                "content": {
+                    "categories": {
+                        "CATEGORY_A": {
+                            "children": [],
+                            "color": "#472CED",
+                            "name": "Category A",
+                            "startObjects": ["OBJECT_B"],
+                            "endObjects": ["OBJECT_A"],
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Relation job",
+                "mlTask": "OBJECT_RELATION",
+                "required": 1,
+                "isChild": False,
+            },
+        }
+    }
+    bbox_vertices = [
+        {"x": 0.7222501796759829, "y": 0.3872972752383619},
+        {"x": 0.7222501796759829, "y": 0.20628300577506686},
+        {"x": 0.8433768824227134, "y": 0.20628300577506686},
+        {"x": 0.8433768824227134, "y": 0.3872972752383619},
+    ]
+    json_resp = {
+        "BBOX_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": bbox_vertices}],
+                    "categories": [{"name": "OBJECT_A"}],
+                    "mid": "20230328131236919-30609",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": bbox_vertices}],
+                    "categories": [{"name": "OBJECT_B"}],
+                    "mid": "20230328131238225-99999",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": bbox_vertices}],
+                    "categories": [{"name": "OBJECT_B"}],
+                    "mid": "20230328131309516-20566",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": bbox_vertices}],
+                    "categories": [{"name": "OBJECT_A"}],
+                    "mid": "20230328131311855-1920",
+                    "type": "rectangle",
+                },
+            ]
+        },
+        "OBJECT_RELATION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "categories": [{"name": "CATEGORY_A"}],
+                    "endObjects": [{"mid": "20230328131236919-30609"}],
+                    "mid": "20230328131252526-80405",
+                    "startObjects": [{"mid": "20230328131238225-99999"}],
+                },
+                {
+                    "children": {},
+                    "categories": [{"name": "CATEGORY_A"}],
+                    "endObjects": [{"mid": "20230328131236919-30609"}],
+                    "mid": "20230328131316328-68930",
+                    "startObjects": [{"mid": "20230328131309516-20566"}],
+                },
+            ]
+        },
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    relation_job = parsed_jobs["OBJECT_RELATION_JOB"]
+
+    assert relation_job.annotations[0].categories[0].name == "CATEGORY_A"
+    assert relation_job.annotations[0].start_objects[0]
+    assert relation_job.annotations[0].end_objects[0]
+    assert relation_job.annotations[0].mid == "20230328131252526-80405"
