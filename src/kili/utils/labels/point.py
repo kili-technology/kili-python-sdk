@@ -23,6 +23,12 @@ def point_to_normalized_point(
     - x-axis is horizontal and goes from left to right.
     - y-axis is vertical and goes from bottom to top.
 
+    Conventions for the output point:
+
+    - The origin is the top left corner of the image.
+    - x-axis is horizontal and goes from left to right.
+    - y-axis is vertical and goes from top to bottom.
+
     If the image width and height are provided, the point coordinates will be normalized to [0, 1].
     If not, the method expects the point coordinates to be already normalized.
 
@@ -76,6 +82,12 @@ def normalized_point_to_point(
     It is the inverse of the method `point_to_normalized_point`.
 
     A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).
+
+    Conventions for the input point:
+
+    - The origin is the top left corner of the image.
+    - x-axis is horizontal and goes from left to right.
+    - y-axis is vertical and goes from top to bottom.
 
     Conventions for the output point:
 

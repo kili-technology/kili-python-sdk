@@ -28,6 +28,12 @@ def bbox_points_to_normalized_vertices(
     - x-axis is horizontal and goes from left to right.
     - y-axis is vertical and goes from bottom to top.
 
+    Conventions for the output vertices:
+
+    - The origin is the top left corner of the image.
+    - x-axis is horizontal and goes from left to right.
+    - y-axis is vertical and goes from top to bottom.
+
     If the image width and height are provided, the point coordinates will be normalized to [0, 1].
     If not, the method expects the points' coordinates to be already normalized.
 
@@ -94,6 +100,12 @@ def normalized_vertices_to_bbox_points(
     It is the inverse of the method `bbox_points_to_normalized_vertices`.
 
     A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).
+
+    Conventions for the input vertices:
+
+    - The origin is the top left corner of the image.
+    - x-axis is horizontal and goes from left to right.
+    - y-axis is vertical and goes from top to bottom.
 
     Conventions for the output points (top_left, bottom_left, bottom_right, top_right):
 

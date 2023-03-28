@@ -153,7 +153,7 @@ print(f"Found {len(contours)} contour(s) in the mask.")
 ```python
 annotations = [
     {
-        "boundingPoly": [{"normalizedVertices": contours[0]}],
+        "boundingPoly": [{"normalizedVertices": contour} for contour in contours],
         "categories": [{"name": "HUMAN", "confidence": 100}],
         "mid": randint(100, 1000),
         "score": None,
