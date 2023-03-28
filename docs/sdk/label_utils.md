@@ -10,6 +10,6 @@ This module provides a set of helper functions to read, modify and create labels
 
 ::: kili.utils.labels.bbox
 
-## Polygons and segmentation masks
+## Polygon and segmentation masks
 
 ::: kili.utils.labels.image
