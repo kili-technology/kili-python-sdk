@@ -78,6 +78,9 @@ def bbox_points_to_normalized_vertices(
     assert bottom_left["y"] <= top_left["y"], "bottom_left.y must be <= top_left.y"
     assert bottom_right["y"] <= top_right["y"], "bottom_right.y must be <= top_right.y"
 
+    if (img_width is None) != (img_height is None):
+        raise ValueError("img_width and img_height must be both None or both not None.")
+
     vertices = [
         point_to_normalized_point(top_left, img_width=img_width, img_height=img_height),
         point_to_normalized_point(bottom_left, img_width=img_width, img_height=img_height),
@@ -133,10 +136,10 @@ def normalized_vertices_to_bbox_points(
         ```
     """
     if len(normalized_vertices) != 4:
-        raise ValueError("normalized_vertices must have length 4")
+        raise ValueError("normalized_vertices must have length 4.")
 
     if (img_width is None) != (img_height is None):
-        raise ValueError("img_width and img_height must be both None or both not None")
+        raise ValueError("img_width and img_height must be both None or both not None.")
 
     img_height = img_height or 1
     img_width = img_width or 1

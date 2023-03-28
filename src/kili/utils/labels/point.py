@@ -57,6 +57,9 @@ def point_to_normalized_point(
         }
         ```
     """
+    if (img_width is None) != (img_height is None):
+        raise ValueError("img_width and img_height must be both None or both not None.")
+
     if img_width is not None and img_height is not None:
         point = {
             "x": point["x"] / img_width,
@@ -104,6 +107,9 @@ def normalized_point_to_point(
     Returns:
         A dict with keys 'x' and 'y', and corresponding values in pixels.
     """
+    if (img_width is None) != (img_height is None):
+        raise ValueError("img_width and img_height must be both None or both not None.")
+
     img_height = img_height or 1
     img_width = img_width or 1
 
