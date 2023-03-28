@@ -1,20 +1,19 @@
 """Helpers to create boundingPoly rectangle annotations."""
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from .point import point_to_normalized_point
-from .types import PixelCoordType
 
 
 def bbox_points_to_normalized_vertices(
     *,
-    bottom_left: Dict[str, PixelCoordType],
-    bottom_right: Dict[str, PixelCoordType],
-    top_right: Dict[str, PixelCoordType],
-    top_left: Dict[str, PixelCoordType],
-    img_width: Optional[PixelCoordType] = None,
-    img_height: Optional[PixelCoordType] = None,
-) -> List[Dict[str, PixelCoordType]]:
+    bottom_left: Dict[str, Union[int, float]],
+    bottom_right: Dict[str, Union[int, float]],
+    top_right: Dict[str, Union[int, float]],
+    top_left: Dict[str, Union[int, float]],
+    img_width: Optional[Union[int, float]] = None,
+    img_height: Optional[Union[int, float]] = None,
+) -> List[Dict[str, float]]:
     # pylint: disable=line-too-long
     """Converts a bounding box defined by its 4 points in pixels coordinates to normalized vertices.
 
@@ -90,10 +89,10 @@ def bbox_points_to_normalized_vertices(
 
 
 def normalized_vertices_to_bbox_points(
-    normalized_vertices: List[Dict[str, PixelCoordType]],
-    img_width: Optional[PixelCoordType] = None,
-    img_height: Optional[PixelCoordType] = None,
-) -> Dict[str, Dict[str, PixelCoordType]]:
+    normalized_vertices: List[Dict[str, float]],
+    img_width: Optional[Union[int, float]] = None,
+    img_height: Optional[Union[int, float]] = None,
+) -> Dict[str, Dict[str, float]]:
     # pylint: disable=line-too-long
     """Converts a rectangle normalizedVertices annotation to its 4 points in pixels or in normalized coordinates depending on the image width and height arguments.
 

@@ -1,15 +1,13 @@
 """Helpers to create point annotations."""
 
-from typing import Dict, Optional
-
-from .types import PixelCoordType
+from typing import Dict, Optional, Union
 
 
 def point_to_normalized_point(
-    point: Dict[str, PixelCoordType],
-    img_width: Optional[PixelCoordType] = None,
-    img_height: Optional[PixelCoordType] = None,
-) -> Dict[str, PixelCoordType]:
+    point: Dict[str, Union[int, float]],
+    img_width: Optional[Union[int, float]] = None,
+    img_height: Optional[Union[int, float]] = None,
+) -> Dict[str, float]:
     # pylint: disable=line-too-long
     """Converts a 2D point to a Kili label format normalized point.
 
@@ -72,10 +70,10 @@ def point_to_normalized_point(
 
 
 def normalized_point_to_point(
-    point: Dict[str, PixelCoordType],
-    img_width: Optional[PixelCoordType] = None,
-    img_height: Optional[PixelCoordType] = None,
-) -> Dict[str, PixelCoordType]:
+    point: Dict[str, float],
+    img_width: Optional[Union[int, float]] = None,
+    img_height: Optional[Union[int, float]] = None,
+) -> Dict[str, float]:
     # pylint: disable=line-too-long
     """Converts a Kili label format normalized point to a 2D point.
 
