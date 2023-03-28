@@ -1,3 +1,5 @@
+import pytest
+
 from kili.services.label_data_parsing.bounding_poly import BoundingPoly
 from kili.services.label_data_parsing.json_response import ParsedJobs
 
@@ -745,6 +747,7 @@ def test_object_detection_with_relations():
     assert relation_job.annotations[0].mid == "20230328131252526-80405"
 
 
+@pytest.mark.skip("Not implemented yet")
 def test_video_project_classification():
     json_interface = {
         "jobs": {
