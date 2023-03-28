@@ -40,3 +40,10 @@ class BoundingPolyList(List):
     def append(self, bounding_poly: BoundingPoly) -> None:
         """Appends a boundingPoly object to the BoundingPolyList object."""
         return super().append(bounding_poly)
+
+    def __getitem__(self, index: int) -> BoundingPoly:
+        """Returns the boundingPoly object at the given index.
+
+        Used for type checking.
+        """
+        return super().__getitem__(index)

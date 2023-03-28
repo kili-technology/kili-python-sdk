@@ -65,6 +65,9 @@ class JobPayload:
         if "categories" not in self.json_data and not self.is_required_job:
             return None  # type: ignore
 
+        assert (
+            len(self.json_data["categories"]) == 1
+        ), f"Expected 1 category, got {self.json_data['categories']}"
         return self.json_data["categories"][0]
 
     @typechecked

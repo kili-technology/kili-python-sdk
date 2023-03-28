@@ -114,3 +114,10 @@ class CategoryList(List):
         """Appends a category object to the CategoryList object."""
         self._check_can_append_category(category)
         return super().append(category)
+
+    def __getitem__(self, index: int) -> Category:
+        """Returns the category object corresponding to the key.
+
+        Used for type checking.
+        """
+        return super().__getitem__(index)
