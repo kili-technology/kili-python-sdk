@@ -15,7 +15,7 @@ class BoundingPoly(Dict):
         self.job_interface = job_interface
 
     @property
-    def normalized_vertices(self) -> List:
+    def normalized_vertices(self) -> List[Dict[str, float]]:
         """Returns the normalized vertices of the bounding polygon."""
         return self["normalizedVertices"]
 

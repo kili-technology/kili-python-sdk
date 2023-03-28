@@ -743,3 +743,58 @@ def test_object_detection_with_relations():
     assert relation_job.annotations[0].start_objects[0]
     assert relation_job.annotations[0].end_objects[0]
     assert relation_job.annotations[0].mid == "20230328131252526-80405"
+
+
+def test_video_project_classification():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A"},
+                        "OBJECT_B": {"children": [], "name": "Object B"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "mlTask": "CLASSIFICATION",
+                "models": {},
+                "isVisible": False,
+                "required": 1,
+            }
+        }
+    }
+
+    json_resp = {
+        "0": {},
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {
+            "JOB_0": {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "isKeyFrame": True,
+                "annotations": [],
+            }
+        },
+        "6": {
+            "JOB_0": {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "isKeyFrame": False,
+                "annotations": [],
+            }
+        },
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    assert parsed_jobs["5"]["JOB_0"].annotations[0].categories[0].name == "OBJECT_A"
+    assert parsed_jobs["5"]["JOB_0"].annotations[0].category.confidence == 100
+    assert parsed_jobs["5"]["JOB_0"].annotations[0].is_key_frame is True
+    assert parsed_jobs["5"]["JOB_0"].annotations[0].categories[0].name == "OBJECT_A"
+
+
+def test_video_project_object_detection():
+    pass
