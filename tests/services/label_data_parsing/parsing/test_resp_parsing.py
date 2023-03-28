@@ -400,10 +400,13 @@ def test_bounding_poly_annotations():
     assert bb_annotations[0].mid == "20230323105350648-87611"
 
     my_parsed_job = parsed_jobs["OBJECT_DETECTION_JOB"]
-    assert isinstance(my_parsed_job.bounding_poly_annotations[0].bounding_poly, BoundingPoly)
-    assert isinstance(my_parsed_job.annotations[0].bounding_poly, BoundingPoly)
 
-    assert my_parsed_job.bounding_poly_annotations[0].bounding_poly.normalized_vertices == vertices
+    assert isinstance(my_parsed_job.bounding_poly_annotations[0].bounding_poly[0], BoundingPoly)
+    assert isinstance(my_parsed_job.annotations[0].bounding_poly[0], BoundingPoly)
+
+    assert (
+        my_parsed_job.bounding_poly_annotations[0].bounding_poly[0].normalized_vertices == vertices
+    )
 
 
 def test_point_job():
@@ -491,7 +494,7 @@ def test_multiple_bounding_poly():
                 {
                     "children": {},
                     # two boundingPoly objects, one for the overall object
-                    # and another for a smaller sub-object within it.
+                    # and another for a sub-object within it.
                     "boundingPoly": [
                         {
                             "normalizedVertices": [

@@ -8,7 +8,7 @@ from typing import Dict, List, Sequence
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from .bounding_poly import BoundingPoly
+from .bounding_poly import BoundingPolyList
 from .category import Category, CategoryList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError
@@ -62,6 +62,9 @@ class _BaseAnnotation:
         if "categories" not in self.json_data and not self.is_required_job:
             return None  # type: ignore
 
+        assert (
+            len(self.json_data["categories"]) == 1
+        ), f"Expected 1 category, got {self.json_data['categories']}"
         return self.json_data["categories"][0]
 
     @property
@@ -170,12 +173,12 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
         return ("rectangle", "polygon", "semantic", "polyline", "vector")
 
     @property
-    def bounding_poly(self) -> BoundingPoly:
+    def bounding_poly(self) -> BoundingPolyList:
         """Returns the polygon of the object contour."""
-        self.json_data["boundingPoly"][0] = BoundingPoly(
-            self.json_data["boundingPoly"][0], job_interface=self.job_interface
+        self.json_data["boundingPoly"] = BoundingPolyList(
+            bounding_poly_list=self.json_data["boundingPoly"], job_interface=self.job_interface
         )
-        return self.json_data["boundingPoly"][0]
+        return self.json_data["boundingPoly"]
 
     @property
     def score(self) -> int:
