@@ -19,7 +19,7 @@ class Category(Dict):
             job_interface: Job interface of the job.
         """
         super().__init__()
-        self.job_interface = job_interface
+        self._job_interface = job_interface
 
         # call the setters
         self.name = name
@@ -34,10 +34,10 @@ class Category(Dict):
     @typechecked
     def name(self, name: str) -> None:
         """Sets the name of the category label."""
-        if name not in self.job_interface["content"]["categories"]:
+        if name not in self._job_interface["content"]["categories"]:
             raise InvalidMutationError(
                 f"Category {name} is not in the job interface categories"
-                f" {self.job_interface['content']['categories'].keys()}"
+                f" {self._job_interface['content']['categories'].keys()}"
             )
         self["name"] = name
 
@@ -70,14 +70,14 @@ class CategoryList(List):
             job_interface: Job interface of the job.
         """
         super().__init__()
-        self.job_interface = job_interface
+        self._job_interface = job_interface
 
         for category_dict in categories_list:
             self.append(Category(**category_dict, job_interface=job_interface))
 
     def _check_can_append_category(self, category: Category) -> None:
-        input_type = self.job_interface["content"]["input"]
-        nb_classes = len(self.job_interface["content"]["categories"])
+        input_type = self._job_interface["content"]["input"]
+        nb_classes = len(self._job_interface["content"]["categories"])
         len_categories = len(self)
 
         if input_type in ("radio", "singleDropdown"):
@@ -106,7 +106,7 @@ class CategoryList(List):
     @typechecked
     def add_category(self, name: str, confidence: int) -> None:
         """Adds a category object to the CategoryList object."""
-        category = Category(name=name, confidence=confidence, job_interface=self.job_interface)
+        category = Category(name=name, confidence=confidence, job_interface=self._job_interface)
         self.append(category)
 
     @typechecked

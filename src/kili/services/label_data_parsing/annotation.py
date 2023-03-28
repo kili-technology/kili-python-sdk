@@ -28,27 +28,27 @@ class _BaseAnnotation:
                 the "annotations" key of a job response.
             job_interface: Job interface of the job.
         """
-        self.json_data: Dict = annotation_json
-        self.job_interface: Dict = job_interface
+        self._json_data: Dict = annotation_json
+        self._job_interface: Dict = job_interface
 
-        self.is_required_job = job_interface["required"]
+        self._is_required_job = job_interface["required"]
 
         self._cast_categories()
 
     def _cast_categories(self) -> None:
         """Casts the categories list of the job payload to CategoryList object."""
-        if "categories" not in self.json_data:
+        if "categories" not in self._json_data:
             return
 
-        if not isinstance(self.json_data["categories"], CategoryList):
-            self.json_data["categories"] = CategoryList(
-                self.job_interface, self.json_data["categories"]
+        if not isinstance(self._json_data["categories"], CategoryList):
+            self._json_data["categories"] = CategoryList(
+                self._job_interface, self._json_data["categories"]
             )
 
     @property
     def categories(self) -> CategoryList:
         """Returns the list of categories of the annotation."""
-        return self.json_data["categories"]
+        return self._json_data["categories"]
 
     @property
     def category(self) -> Category:
@@ -56,21 +56,21 @@ class _BaseAnnotation:
 
         Else raises an error.
         """
-        if self.job_interface["content"]["input"] not in ("radio", "singleDropdown"):
+        if self._job_interface["content"]["input"] not in ("radio", "singleDropdown"):
             raise AttributeNotCompatibleWithJobError("category")
 
-        if "categories" not in self.json_data and not self.is_required_job:
+        if "categories" not in self._json_data and not self._is_required_job:
             return None  # type: ignore
 
         assert (
-            len(self.json_data["categories"]) == 1
-        ), f"Expected 1 category, got {self.json_data['categories']}"
-        return self.json_data["categories"][0]
+            len(self._json_data["categories"]) == 1
+        ), f"Expected 1 category, got {self._json_data['categories']}"
+        return self._json_data["categories"][0]
 
     @property
     def mid(self) -> str:
         """Returns the mid of the annotation."""
-        return self.json_data["mid"]
+        return self._json_data["mid"]
 
     @mid.setter
     @typechecked
@@ -78,7 +78,7 @@ class _BaseAnnotation:
         """Sets the mid of the annotation."""
         if len(mid) == 0:
             raise ValueError("mid must be non-empty.")
-        self.json_data["mid"] = mid
+        self._json_data["mid"] = mid
 
     @property
     def children(self):
@@ -95,7 +95,7 @@ class EntityAnnotation(_BaseAnnotation):
     @property
     def begin_offset(self) -> int:
         """Returns the begin offset of the annotation."""
-        return self.json_data["beginOffset"]
+        return self._json_data["beginOffset"]
 
     @begin_offset.setter
     @typechecked
@@ -103,12 +103,12 @@ class EntityAnnotation(_BaseAnnotation):
         """Sets the begin offset of the annotation."""
         if begin_offset < 0:
             raise ValueError(f"begin_offset must be positive, got {begin_offset}")
-        self.json_data["beginOffset"] = begin_offset
+        self._json_data["beginOffset"] = begin_offset
 
     @property
     def end_offset(self) -> int:
         """Returns the end offset of the annotation."""
-        return self.json_data["endOffset"]
+        return self._json_data["endOffset"]
 
     @end_offset.setter
     @typechecked
@@ -116,18 +116,18 @@ class EntityAnnotation(_BaseAnnotation):
         """Sets the end offset of the annotation."""
         if end_offset < 0:
             raise ValueError(f"end_offset must be positive, got {end_offset}")
-        self.json_data["endOffset"] = end_offset
+        self._json_data["endOffset"] = end_offset
 
     @property
     def content(self) -> str:
         """Returns the content of the annotation."""
-        return self.json_data["content"]
+        return self._json_data["content"]
 
     @content.setter
     @typechecked
     def content(self, content: str) -> None:
         """Sets the content of the annotation."""
-        self.json_data["content"] = content
+        self._json_data["content"] = content
 
 
 class _BaseAnnotationWithTool(_BaseAnnotation):
@@ -139,7 +139,7 @@ class _BaseAnnotationWithTool(_BaseAnnotation):
 
         One of: "rectangle", "polygon", or "semantic".
         """
-        return self.json_data["type"]
+        return self._json_data["type"]
 
 
 class PointAnnotation(_BaseAnnotationWithTool):
@@ -156,7 +156,7 @@ class PointAnnotation(_BaseAnnotationWithTool):
     @property
     def point(self) -> Dict:
         """Returns the point of a point detection job."""
-        return self.json_data["point"]
+        return self._json_data["point"]
 
 
 class _Base2DAnnotation(_BaseAnnotationWithTool):
@@ -175,10 +175,10 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
     @property
     def bounding_poly(self) -> BoundingPolyList:
         """Returns the polygon of the object contour."""
-        self.json_data["boundingPoly"] = BoundingPolyList(
-            bounding_poly_list=self.json_data["boundingPoly"], job_interface=self.job_interface
+        self._json_data["boundingPoly"] = BoundingPolyList(
+            bounding_poly_list=self._json_data["boundingPoly"], job_interface=self._job_interface
         )
-        return self.json_data["boundingPoly"]
+        return self._json_data["boundingPoly"]
 
     @property
     def score(self) -> int:
@@ -186,7 +186,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
 
         Useful when a pre-annotation model is used.
         """
-        return self.json_data["score"]
+        return self._json_data["score"]
 
 
 class BoundingPolyAnnotation(_Base2DAnnotation):
@@ -200,7 +200,7 @@ class VideoAnnotation(_Base2DAnnotation):
     def is_key_frame(self) -> bool:
         """Returns a boolean indicating if the timestamp or frame is used for interpolation."""
         try:
-            return self.json_data["isKeyFrame"]
+            return self._json_data["isKeyFrame"]
         except KeyError as err:
             raise AttributeNotCompatibleWithJobError("is_key_frame") from err
 
@@ -219,12 +219,12 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
     @property
     def kind(self) -> str:
         """Returns the job kind. In pose estimation jobs, this is always "POSE_ESTIMATION"."""
-        return self.json_data["kind"]
+        return self._json_data["kind"]
 
     @property
     def points(self) -> List[Dict]:
         """Returns the list of the points composing the object."""
-        return self.json_data["points"]
+        return self._json_data["points"]
 
 
 class EntityRelationAnnotation(_BaseAnnotation):
@@ -237,12 +237,12 @@ class EntityRelationAnnotation(_BaseAnnotation):
     @property
     def start_entities(self) -> List[Dict]:
         """Returns the list of the start entities composing the relation."""
-        return self.json_data["startEntities"]
+        return self._json_data["startEntities"]
 
     @property
     def end_entities(self) -> List[Dict]:
         """Returns the list of the end entities composing the relation."""
-        return self.json_data["endEntities"]
+        return self._json_data["endEntities"]
 
 
 class ObjectRelationAnnotation(_BaseAnnotation):
@@ -255,12 +255,12 @@ class ObjectRelationAnnotation(_BaseAnnotation):
     @property
     def start_objects(self) -> List[Dict]:
         """Returns the list of the start objects composing the relation."""
-        return self.json_data["startObjects"]
+        return self._json_data["startObjects"]
 
     @property
     def end_objects(self) -> List[Dict]:
         """Returns the list of the end objects composing the relation."""
-        return self.json_data["endObjects"]
+        return self._json_data["endObjects"]
 
 
 def check_attribute_compatible_with_job(func):
@@ -271,12 +271,12 @@ def check_attribute_compatible_with_job(func):
     def wrapper(self, *args, **kwargs):
         attribute_name = func.__name__
 
-        if attribute_name not in self._valid_attributes_for_ml_task[self.job_interface["mlTask"]]:
+        if attribute_name not in self._valid_attributes_for_ml_task[self._job_interface["mlTask"]]:
             raise AttributeNotCompatibleWithJobError(attribute_name)
 
         if (
-            "type" in self.json_data
-            and attribute_name not in self._valid_attributes_for_tool[self.json_data["type"]]
+            "type" in self._json_data
+            and attribute_name not in self._valid_attributes_for_tool[self._json_data["type"]]
         ):
             raise AttributeNotCompatibleWithJobError(attribute_name)
 
@@ -310,7 +310,7 @@ class Annotation(
             json_data: The json data of the annotation.
             job_interface: The job interface of the job.
         """
-        super().__init__(json_data, job_interface=job_interface)
+        super().__init__(annotation_json=json_data, job_interface=job_interface)
 
         # dictionaries to store the valid attributes/properties for each mlTask and type of tool
         self._valid_attributes_for_ml_task = defaultdict(set)

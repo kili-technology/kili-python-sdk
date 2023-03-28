@@ -21,34 +21,34 @@ class JobPayload:
             job_interface: Job interface of the job.
             job_payload: Value of the key "job_name" of the job response.
         """
-        self.job_name = job_name
-        self.job_interface = job_interface
-        self.json_data = job_payload
+        self._job_name = job_name
+        self._job_interface = job_interface
+        self._json_data = job_payload
 
-        self.is_required_job = job_interface["required"]
+        self._is_required_job = job_interface["required"]
 
         self._cast_categories()
 
     def _cast_categories(self) -> None:
         """Casts the categories list of the job payload to CategoryList object."""
-        if "categories" not in self.json_data:
+        if "categories" not in self._json_data:
             return
 
-        if not isinstance(self.json_data["categories"], CategoryList):
-            self.json_data["categories"] = CategoryList(
-                self.job_interface, self.json_data["categories"]
+        if not isinstance(self._json_data["categories"], CategoryList):
+            self._json_data["categories"] = CategoryList(
+                self._job_interface, self._json_data["categories"]
             )
 
     @property
     def categories(self) -> CategoryList:
         """Returns a list of Category objects for a classification job."""
-        if self.job_interface["mlTask"] != "CLASSIFICATION":
+        if self._job_interface["mlTask"] != "CLASSIFICATION":
             raise AttributeNotCompatibleWithJobError("categories")
 
-        if "categories" not in self.json_data and not self.is_required_job:
-            self.json_data["categories"] = CategoryList(self.job_interface, [])
+        if "categories" not in self._json_data and not self._is_required_job:
+            self._json_data["categories"] = CategoryList(self._job_interface, [])
 
-        return self.json_data["categories"]
+        return self._json_data["categories"]
 
     @property
     def category(self) -> Category:
@@ -56,69 +56,69 @@ class JobPayload:
 
         Else raises an error.
         """
-        if self.job_interface["mlTask"] != "CLASSIFICATION":
+        if self._job_interface["mlTask"] != "CLASSIFICATION":
             raise AttributeNotCompatibleWithJobError("category")
 
-        if self.job_interface["content"]["input"] not in ("radio", "singleDropdown"):
+        if self._job_interface["content"]["input"] not in ("radio", "singleDropdown"):
             raise AttributeNotCompatibleWithJobError("category")
 
-        if "categories" not in self.json_data and not self.is_required_job:
+        if "categories" not in self._json_data and not self._is_required_job:
             return None  # type: ignore
 
         assert (
-            len(self.json_data["categories"]) == 1
-        ), f"Expected 1 category, got {self.json_data['categories']}"
-        return self.json_data["categories"][0]
+            len(self._json_data["categories"]) == 1
+        ), f"Expected 1 category, got {self._json_data['categories']}"
+        return self._json_data["categories"][0]
 
     @typechecked
     def add_category(self, name: str, confidence: int) -> None:
         """Adds a category to a job with categories."""
-        if "categories" not in self.json_data:
-            self.json_data["categories"] = CategoryList(self.job_interface, [])
+        if "categories" not in self._json_data:
+            self._json_data["categories"] = CategoryList(self._job_interface, [])
 
-        self.json_data["categories"].add_category(name=name, confidence=confidence)
+        self._json_data["categories"].add_category(name=name, confidence=confidence)
 
     @property
     def text(self) -> str:
         """Returns the text for a transcription job."""
-        if self.job_interface["mlTask"] != "TRANSCRIPTION":
+        if self._job_interface["mlTask"] != "TRANSCRIPTION":
             raise AttributeNotCompatibleWithJobError("text")
-        return self.json_data["text"]
+        return self._json_data["text"]
 
     @text.setter
     @typechecked
     def text(self, text: str) -> None:
         """Sets the text for a transcription job."""
-        if self.job_interface["mlTask"] != "TRANSCRIPTION":
+        if self._job_interface["mlTask"] != "TRANSCRIPTION":
             raise AttributeNotCompatibleWithJobError("text")
-        self.json_data["text"] = text
+        self._json_data["text"] = text
 
     @property
     def annotations(self) -> List[Annotation]:
         """Returns a list of Annotation objects for a job."""
         return [
-            Annotation(annotation, self.job_interface)
-            for annotation in self.json_data["annotations"]
+            Annotation(annotation, self._job_interface)
+            for annotation in self._json_data["annotations"]
         ]
 
     @property
     def entity_annotations(self) -> List[EntityAnnotation]:
         """Returns a list of EntityAnnotation objects for a named entities recognition job."""
-        if self.job_interface["mlTask"] != "NAMED_ENTITIES_RECOGNITION":
+        if self._job_interface["mlTask"] != "NAMED_ENTITIES_RECOGNITION":
             raise AttributeNotCompatibleWithJobError("entity_annotations")
 
         return [
-            EntityAnnotation(annotation, self.job_interface)
-            for annotation in self.json_data["annotations"]
+            EntityAnnotation(annotation, self._job_interface)
+            for annotation in self._json_data["annotations"]
         ]
 
     @property
     def bounding_poly_annotations(self) -> List[BoundingPolyAnnotation]:
         """Returns a list of BoundingPolyAnnotation objects for an object detection job."""
-        if self.job_interface["mlTask"] != "OBJECT_DETECTION":
+        if self._job_interface["mlTask"] != "OBJECT_DETECTION":
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
 
         return [
-            BoundingPolyAnnotation(annotation, self.job_interface)
-            for annotation in self.json_data["annotations"]
+            BoundingPolyAnnotation(annotation, self._job_interface)
+            for annotation in self._json_data["annotations"]
         ]

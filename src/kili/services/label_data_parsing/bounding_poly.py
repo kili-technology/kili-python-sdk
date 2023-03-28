@@ -12,7 +12,7 @@ class BoundingPoly(Dict):
         """Class for BoundingPoly parsing."""
         super().__init__(bounding_poly_json)
 
-        self.job_interface = job_interface
+        self._job_interface = job_interface
 
     @property
     def normalized_vertices(self) -> List[Dict[str, float]]:
@@ -31,7 +31,7 @@ class BoundingPolyList(List):
             job_interface: Job interface of the job.
         """
         super().__init__()
-        self.job_interface = job_interface
+        self._job_interface = job_interface
 
         for bounding_poly_dict in bounding_poly_list:
             self.append(BoundingPoly(bounding_poly_dict, job_interface=job_interface))
