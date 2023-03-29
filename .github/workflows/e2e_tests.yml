@@ -138,9 +138,8 @@ jobs:
         run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
       - name: Get latest release branch
-        shell: shell
+        shell: bash
         run: |
-          # wget https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/.github/scripts/add_latest_release_branch_to_github_env.py
           curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/ci/fix-ci-bug/.github/scripts/add_latest_release_branch_to_github_env.py --output add_latest_release_branch_to_github_env.py
           python add_latest_release_branch_to_github_env.py
 
