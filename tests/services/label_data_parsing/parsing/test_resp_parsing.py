@@ -868,7 +868,6 @@ def test_parsing_category_only_name():
     assert parsed_jobs["JOB_0"].annotations[0].category.confidence == 42
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_video_project_classification():
     json_interface = {
         "jobs": {
@@ -905,19 +904,24 @@ def test_video_project_classification():
         },
         "6": {
             "JOB_0": {
-                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "categories": [{"confidence": 42, "name": "OBJECT_B"}],
                 "isKeyFrame": False,
                 "annotations": [],
             }
         },
+        "7": {},
+        "8": {},
     }
 
     parsed_jobs = ParsedJobs(json_resp, json_interface)
 
-    # assert parsed_jobs["5"]["JOB_0"].annotations[0].categories[0].name == "OBJECT_A"
-    # assert parsed_jobs["5"]["JOB_0"].annotations[0].category.confidence == 100
-    # assert parsed_jobs["5"]["JOB_0"].annotations[0].is_key_frame is True
-    # assert parsed_jobs["5"]["JOB_0"].annotations[0].categories[0].name == "OBJECT_A"
+    assert parsed_jobs.frames[5]["JOB_0"].categories[0].name == "OBJECT_A"
+    assert parsed_jobs.frames[5]["JOB_0"].category.confidence == 100
+    assert parsed_jobs.frames[5]["JOB_0"].is_key_frame is True
+
+    assert parsed_jobs[6]["JOB_0"].categories[0].name == "OBJECT_A"
+    assert parsed_jobs[6]["JOB_0"].category.confidence == 42
+    assert parsed_jobs[6]["JOB_0"].is_key_frame is False
 
 
 @pytest.mark.skip("Not implemented yet")
