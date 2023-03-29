@@ -263,7 +263,7 @@ def test_checkbox_job_categories_not_required():
 
     json_resp = {}  # asset annotated but no classes chosen
     parsed_jobs = ParsedJobs(json_resp, json_interface)
-    assert parsed_jobs["CLASSIFICATION_JOB"].categories == []
+    assert len(parsed_jobs["CLASSIFICATION_JOB"].categories) == 0
 
 
 def test_single_dropdown():
@@ -406,6 +406,7 @@ def test_bounding_poly_annotations():
     assert isinstance(my_parsed_job.bounding_poly_annotations[0].bounding_poly[0], BoundingPoly)
     assert isinstance(my_parsed_job.annotations[0].bounding_poly[0], BoundingPoly)
 
+    a = my_parsed_job.bounding_poly_annotations[0].bounding_poly
     assert (
         my_parsed_job.bounding_poly_annotations[0].bounding_poly[0].normalized_vertices == vertices
     )
@@ -747,6 +748,70 @@ def test_object_detection_with_relations():
     assert relation_job.annotations[0].mid == "20230328131252526-80405"
 
 
+def test_repr_str_custom_classes():
+    json_response_dict = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"name": "ORG", "confidence": 42}],
+                    "beginOffset": 21,
+                    "content": "this is the text for Kili",
+                    "mid": "a",
+                }
+            ]
+        }
+    }
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "content": {"categories": {"ORG": {}, "PERSON": {}}, "input": "radio"},
+            }
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+
+    assert "object at 0x" not in str(parsed_jobs["JOB_0"].annotations)
+    assert "object at 0x" not in repr(parsed_jobs["JOB_0"].annotations)
+
+    assert "object at 0x" not in str(parsed_jobs["JOB_0"].annotations[0].categories)
+    assert "object at 0x" not in repr(parsed_jobs["JOB_0"].annotations[0].categories)
+
+    assert "object at 0x" not in str(parsed_jobs["JOB_0"].annotations[0].categories[0])
+    assert "object at 0x" not in repr(parsed_jobs["JOB_0"].annotations[0].categories[0])
+
+
+def test_annotations_empty_json_resp_non_required_job():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            }
+        }
+    }
+
+    json_resp = {}
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface)
+
+    assert len(parsed_jobs["JOB_0"].annotations) == 0
+
+
 @pytest.mark.skip("Not implemented yet")
 def test_video_project_classification():
     json_interface = {
@@ -799,5 +864,6 @@ def test_video_project_classification():
     # assert parsed_jobs["5"]["JOB_0"].annotations[0].categories[0].name == "OBJECT_A"
 
 
+@pytest.mark.skip("Not implemented yet")
 def test_video_project_object_detection():
     pass

@@ -8,7 +8,7 @@ from typing import Dict, List, Sequence
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from .bounding_poly import BoundingPolyList
+from .bounding_poly import BoundingPoly
 from .category import Category, CategoryList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError
@@ -28,8 +28,8 @@ class _BaseAnnotation:
                 the "annotations" key of a job response.
             job_interface: Job interface of the job.
         """
-        self._json_data: Dict = annotation_json
-        self._job_interface: Dict = job_interface
+        self._json_data = annotation_json
+        self._job_interface = job_interface
 
         self._is_required_job = job_interface["required"]
 
@@ -42,8 +42,18 @@ class _BaseAnnotation:
 
         if not isinstance(self._json_data["categories"], CategoryList):
             self._json_data["categories"] = CategoryList(
-                self._job_interface, self._json_data["categories"]
+                job_interface=self._job_interface, categories_list=self._json_data["categories"]
             )
+
+    def __str__(self) -> str:
+        return str(self._json_data)
+
+    def __repr__(self) -> str:
+        return repr(self._json_data)
+
+    def as_dict(self) -> Dict:
+        """Returns the parsed annotation as a dict."""
+        return self._json_data
 
     @property
     def categories(self) -> CategoryList:
@@ -62,9 +72,9 @@ class _BaseAnnotation:
         if "categories" not in self._json_data and not self._is_required_job:
             return None  # type: ignore
 
-        assert (
-            len(self._json_data["categories"]) == 1
-        ), f"Expected 1 category, got {self._json_data['categories']}"
+        if len(self._json_data["categories"]) != 1:
+            raise ValueError(f"Expected 1 category, got {self._json_data['categories']}")
+
         return self._json_data["categories"][0]
 
     @property
@@ -173,11 +183,12 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
         return ("rectangle", "polygon", "semantic", "polyline", "vector")
 
     @property
-    def bounding_poly(self) -> BoundingPolyList:
+    def bounding_poly(self) -> List[BoundingPoly]:
         """Returns the polygon of the object contour."""
-        self._json_data["boundingPoly"] = BoundingPolyList(
-            bounding_poly_list=self._json_data["boundingPoly"], job_interface=self._job_interface
-        )
+        self._json_data["boundingPoly"] = [
+            (BoundingPoly(p) if isinstance(p, dict) else p)  # TODO: cast before
+            for p in self._json_data["boundingPoly"]
+        ]
         return self._json_data["boundingPoly"]
 
     @property
@@ -336,3 +347,51 @@ class Annotation(
                 self._valid_attributes_for_tool[tool].update(parent_class_properties)
 
     # all properties should be inherited from the base classes
+
+
+class AnnotationList:
+    """Class for the annotations list parsing."""
+
+    def __init__(self, annotations_list: List[Dict], job_interface: Dict) -> None:
+        """Class for the annotations list parsing.
+
+        Args:
+            annotations_list: List of dicts representing annotations.
+            job_interface: Job interface of the job.
+        """
+        self._annotations_list: List[Annotation] = []
+        self._job_interface = job_interface
+
+        for annotation_dict in annotations_list:
+            self.add_annotation(annotation_dict)
+
+    def _check_can_append_annotation(self, annotation: Annotation) -> None:
+        pass
+
+    @typechecked
+    def add_annotation(self, annotation_dict: Dict) -> None:
+        """Adds an annotation object to the AnnotationList object."""
+        annotation = Annotation(json_data=annotation_dict, job_interface=self._job_interface)
+        self._check_can_append_annotation(annotation)
+        self._annotations_list.append(annotation)
+
+    @typechecked
+    def __getitem__(self, index: int) -> Annotation:
+        """Returns the annotation object at the given index."""
+        return self._annotations_list[index]
+
+    def __len__(self) -> int:
+        """Returns the number of annotations."""
+        return len(self._annotations_list)
+
+    def __str__(self) -> str:
+        """Returns the string representation of the annotations list."""
+        return "[" + ", ".join(str(annotation) for annotation in self) + "]"
+
+    def __repr__(self) -> str:
+        """Returns the string representation of the annotations list."""
+        return "[" + ", ".join(repr(annotation) for annotation in self) + "]"
+
+    def as_list(self) -> List[Dict]:
+        """Returns the list of categories as a list of dicts."""
+        return [annotation.as_dict() for annotation in self._annotations_list]

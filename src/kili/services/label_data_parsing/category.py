@@ -7,28 +7,35 @@ from typeguard import typechecked
 from .exceptions import InvalidMutationError
 
 
-class Category(Dict):
+class Category:
     """Class for Category parsing."""
 
-    def __init__(self, job_interface: Dict, name: str, confidence: int = 100) -> None:
+    def __init__(self, category_json: Dict, job_interface: Dict) -> None:
         """Class for Category parsing.
 
         Args:
-            name: Name of the category label.
-            confidence: Confidence of the category label.
+            category_json: Value of the key "categories".
             job_interface: Job interface of the job.
         """
-        super().__init__()
+        self._json_data = category_json
         self._job_interface = job_interface
 
-        # call the setters
-        self.name = name
-        self.confidence = confidence
+    def __str__(self) -> str:
+        """Returns the string representation of the category."""
+        return str(self._json_data)
+
+    def __repr__(self) -> str:
+        """Returns the string representation of the category."""
+        return repr(self._json_data)
+
+    def as_dict(self) -> Dict:
+        """Returns the parsed category as a dict."""
+        return self._json_data
 
     @property
     def name(self) -> str:
         """Returns the name of the category label."""
-        return self["name"]
+        return self._json_data["name"]
 
     @name.setter
     @typechecked
@@ -39,12 +46,12 @@ class Category(Dict):
                 f"Category {name} is not in the job interface categories"
                 f" {self._job_interface['content']['categories'].keys()}"
             )
-        self["name"] = name
+        self._json_data["name"] = name
 
     @property
     def confidence(self) -> int:
         """Returns the confidence of the category label."""
-        return self["confidence"]
+        return self._json_data["confidence"]
 
     @confidence.setter
     @typechecked
@@ -52,33 +59,33 @@ class Category(Dict):
         """Sets the confidence of the category label."""
         if not 0 <= confidence <= 100:
             raise ValueError(f"Confidence must be between 0 and 100, got {confidence}")
-        self["confidence"] = confidence
+        self._json_data["confidence"] = confidence
 
     @property
     def children(self):
         """Not implemented yet."""
 
 
-class CategoryList(List):
+class CategoryList:
     """Class for the categories list parsing."""
 
-    def __init__(self, job_interface: Dict, categories_list: List[Dict]) -> None:
+    def __init__(self, categories_list: List[Dict], job_interface: Dict) -> None:
         """Class for the categories list parsing.
 
         Args:
             categories_list: List of dicts representing categories.
             job_interface: Job interface of the job.
         """
-        super().__init__()
+        self._categories_list: List[Category] = []
         self._job_interface = job_interface
 
         for category_dict in categories_list:
-            self.append(Category(**category_dict, job_interface=job_interface))
+            self.add_category(**category_dict)
 
     def _check_can_append_category(self, category: Category) -> None:
         input_type = self._job_interface["content"]["input"]
         nb_classes = len(self._job_interface["content"]["categories"])
-        len_categories = len(self)
+        len_categories = len(self._categories_list)
 
         if input_type in ("radio", "singleDropdown"):
             if len_categories >= 1:
@@ -97,27 +104,39 @@ class CategoryList(List):
             raise ValueError(f"Invalid input type: {input_type}")
 
         # Check that the name of the category we want to add is not already in the list
-        if any(category.name == category_.name for category_ in self):
+        if any(category.name == category_.name for category_ in self._categories_list):
             raise InvalidMutationError(
                 f"Cannot add a category with name '{category.name}' because a category with the"
-                f" same name already exists: {self}"
+                f" same name already exists: {self._categories_list}"
             )
 
     @typechecked
-    def add_category(self, name: str, confidence: int) -> None:
+    def add_category(self, name: str, confidence: int = 100) -> None:
         """Adds a category object to the CategoryList object."""
-        category = Category(name=name, confidence=confidence, job_interface=self._job_interface)
-        self.append(category)
+        category = Category(
+            category_json={"name": name, "confidence": confidence},
+            job_interface=self._job_interface,
+        )
+        self._check_can_append_category(category)
+        self._categories_list.append(category)
 
     @typechecked
-    def append(self, category: Category) -> None:
-        """Appends a category object to the CategoryList object."""
-        self._check_can_append_category(category)
-        return super().append(category)
-
     def __getitem__(self, index: int) -> Category:
-        """Returns the category object corresponding to the key.
+        """Returns the category object at the given index."""
+        return self._categories_list[index]
 
-        Used for type checking.
-        """
-        return super().__getitem__(index)
+    def __len__(self) -> int:
+        """Returns the number of categories."""
+        return len(self._categories_list)
+
+    def __str__(self) -> str:
+        """Returns the string representation of the categories list."""
+        return "[" + ", ".join(str(category) for category in self) + "]"
+
+    def __repr__(self) -> str:
+        """Returns the string representation of the categories list."""
+        return "[" + ", ".join(repr(category) for category in self) + "]"
+
+    def as_list(self) -> List[Dict]:
+        """Returns the list of categories as a list of dicts."""
+        return [category.as_dict() for category in self._categories_list]

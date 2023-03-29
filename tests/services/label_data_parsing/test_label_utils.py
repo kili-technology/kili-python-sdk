@@ -117,14 +117,23 @@ def test_parse_labels_classification_to_dict():
     parsed_labels[0].jobs["REQUIRED_JOB"].category.name = "B"
     parsed_labels[0].jobs["REQUIRED_JOB"].category.confidence = 90
 
-    # revert
-    parsed_labels[0].jobs["REQUIRED_JOB"].category.name = "A"
-    parsed_labels[0].jobs["REQUIRED_JOB"].category.confidence = 100
-
     # test that json.dumps works.
     # It would fail if the label is not serializable anymore after parsing.
-    label_0_modified_as_str = json.dumps(parsed_labels[0])
+    label_0_modified_as_str = json.dumps(parsed_labels[0].to_dict())
 
     label_0_modifed = json.loads(label_0_modified_as_str)
 
-    assert label_0_modifed == labels[0]
+    assert label_0_modifed == {
+        "author": {
+            "email": "kili@kili-technology.com",
+            "id": "123",
+        },
+        "id": "456",
+        "jsonResponse": {"REQUIRED_JOB": {"categories": [{"confidence": 90, "name": "B"}]}},
+        "labelType": "DEFAULT",
+        "secondsToLabel": 9,
+    }
+
+
+def test_parse_labels_video_frame_to_dict():
+    pass  # TODO
