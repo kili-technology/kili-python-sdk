@@ -10,6 +10,8 @@ from functools import wraps
 import requests
 
 COUNT_SAMPLE_MAX = 26000
+MAX_HITS = 250
+MINUTES = 1
 
 
 class burstthrottle:
@@ -21,7 +23,7 @@ class burstthrottle:
             pass
     """
 
-    def __init__(self, max_hits, seconds=0, minutes=1, hours=0, error_message="TooManyCalls"):
+    def __init__(self, max_hits, seconds=0, minutes=1.0, hours=0, error_message="TooManyCalls"):
         self.burst_window = timedelta(seconds=seconds, minutes=minutes, hours=hours)
         self.error_message = error_message
         self.hits = 0
@@ -49,7 +51,7 @@ class burstthrottle:
         return wrapper
 
 
-@burstthrottle(max_hits=250, minutes=1)
+@burstthrottle(max_hits=MAX_HITS, minutes=MINUTES)
 def mocked_query_method(query, payload):
     """
     Simulates a query result by returning a list of ids
