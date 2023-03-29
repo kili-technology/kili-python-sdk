@@ -186,8 +186,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
     def bounding_poly(self) -> List[BoundingPoly]:
         """Returns the polygon of the object contour."""
         self._json_data["boundingPoly"] = [
-            (BoundingPoly(p) if isinstance(p, dict) else p)  # TODO: cast before
-            for p in self._json_data["boundingPoly"]
+            (BoundingPoly(p) if isinstance(p, dict) else p) for p in self._json_data["boundingPoly"]
         ]
         return self._json_data["boundingPoly"]
 
