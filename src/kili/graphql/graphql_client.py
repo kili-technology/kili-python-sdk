@@ -83,7 +83,11 @@ class GraphQLClient:
         # In some cases (local development), we cannot get the kili version from the backend
         # and therefore we cannot determine the schema version, so we don't cache the schema
         if graphql_schema_path is None:
-            return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
+            return Client(
+                transport=self._gql_transport,
+                fetch_schema_from_transport=True,
+                introspection_args={"input_value_deprecation": True},
+            )
 
         # If the schema is not in the cache, we fetch it from the backend and cache it
         if not (graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0):
@@ -93,13 +97,18 @@ class GraphQLClient:
         return Client(
             schema=graphql_schema_path.read_text(encoding="utf-8"),
             transport=self._gql_transport,
+            introspection_args={"input_value_deprecation": True},
         )
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """
         Cache the graphql schema on disk.
         """
-        with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
+        with Client(
+            transport=self._gql_transport,
+            fetch_schema_from_transport=True,
+            introspection_args={"input_value_deprecation": True},
+        ) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
         graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
