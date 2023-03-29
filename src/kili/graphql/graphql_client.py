@@ -29,9 +29,7 @@ from kili.utils.logcontext import LogContext
 
 
 class GraphQLClient:
-    """
-    GraphQL client
-    """
+    """GraphQL client."""
 
     def __init__(
         self,
