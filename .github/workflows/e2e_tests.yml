@@ -138,45 +138,11 @@ jobs:
         run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
       - name: Get latest release branch
-        shell: python
+        shell: shell
         run: |
-          import json
-          import os
-          import urllib.request
-          from packaging.version import InvalidVersion, parse
-
-          def parse_version(version: str):
-              try:
-                  return parse(version)
-              except InvalidVersion:
-                  return parse("0.0.0")
-
-          BRANCH_PREFIX = "release/"
-          per_page = 100
-          page = 1
-          branch_versions = []
-          while True:
-              url = f"https://api.github.com/repos/kili-technology/kili-python-sdk/branches?page={page}&per_page={per_page}&protected=true"
-              response = urllib.request.urlopen(url).read()
-              response = json.loads(response)
-              batch_branch_versions = [
-                  branch["name"].replace(BRANCH_PREFIX, "")
-                  for branch in response
-                  if branch["name"].startswith(BRANCH_PREFIX)
-              ]
-              branch_versions.extend(batch_branch_versions)
-              if len(response) < per_page:
-                  break
-              page += 1
-
-          release_versions = sorted(branch_versions, key=parse_version)
-          print(f"Release branches sorted: {release_versions}")
-
-          last_version = release_versions[-1]
-          print(f"Latest release branch is {BRANCH_PREFIX}{last_version}")
-
-          with open(os.environ["GITHUB_ENV"], "a") as f:
-              f.write(f"LASTEST_RELEASE_BRANCH={BRANCH_PREFIX}{last_version}")
+          # wget https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/.github/scripts/add_latest_release_branch_to_github_env.py
+          wget https://raw.githubusercontent.com/kili-technology/kili-python-sdk/ci/fix-ci-bug/.github/scripts/add_latest_release_branch_to_github_env.py
+          python add_latest_release_branch_to_github_env.py
 
       - name: Set checkout branch/tag and endpoint
         shell: bash
