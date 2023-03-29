@@ -1,6 +1,6 @@
 # Feature is still under development and is not yet suitable for use by general users.
 """Module for the "categories" key parsing of a job response."""
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
@@ -20,9 +20,10 @@ class Category:
         self._json_data = category_json
         self._job_interface = job_interface
 
-        # call the setters to check the values
+        # call the setters to check the values are valid
         self.name = self.name
-        self.confidence = self.confidence
+        if "confidence" in self._json_data:
+            self.confidence = self.confidence
 
     def __str__(self) -> str:
         """Returns the string representation of the category."""
@@ -108,17 +109,21 @@ class CategoryList:
             raise ValueError(f"Invalid input type: {input_type}")
 
         # Check that the name of the category we want to add is not already in the list
-        if any(category.name == category_.name for category_ in self._categories_list):
+        if any(category.name == cat.name for cat in self._categories_list):
             raise InvalidMutationError(
                 f"Cannot add a category with name '{category.name}' because a category with the"
                 f" same name already exists: {self._categories_list}"
             )
 
     @typechecked
-    def add_category(self, name: str, confidence: int = 100) -> None:
+    def add_category(self, name: str, confidence: Optional[int] = None) -> None:
         """Adds a category object to the CategoryList object."""
+        category_dict: Dict[str, object] = {"name": name}
+        if confidence is not None:
+            category_dict["confidence"] = confidence
+
         category = Category(
-            category_json={"name": name, "confidence": confidence},
+            category_json=category_dict,
             job_interface=self._job_interface,
         )
         self._check_can_append_category(category)

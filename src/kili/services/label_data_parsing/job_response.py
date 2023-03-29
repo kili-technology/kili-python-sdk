@@ -1,7 +1,7 @@
 # Feature is still under development and is not yet suitable for use by general users.
 """Classes for job response parsing."""
 
-from typing import Dict, List, cast
+from typing import Dict, List, Optional, cast
 
 from typeguard import typechecked
 
@@ -104,7 +104,7 @@ class JobPayload:
         return self._json_data["categories"][0]
 
     @typechecked
-    def add_category(self, name: str, confidence: int) -> None:
+    def add_category(self, name: str, confidence: Optional[int] = None) -> None:
         """Adds a category to a job with categories."""
         if self._job_interface["mlTask"] != "CLASSIFICATION":
             raise AttributeNotCompatibleWithJobError("add_category")
