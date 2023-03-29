@@ -397,3 +397,57 @@ def test_add_annotations_to_empty_json_resp_of_non_required_job():
     parsed_jobs["NON_REQUIRED_JOB"].add_category("C", 100)
 
     assert parsed_jobs["NON_REQUIRED_JOB"].categories[0].name == "C"
+
+
+def test_add_annotation_ner():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "content": {
+                    "categories": {"ORG": {}, "PERSON": {}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
+
+    json_response_dict = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"name": "ORG", "confidence": 42}],
+                    "beginOffset": 21,
+                    "content": "this is the text for Kili",
+                    "mid": "a",
+                },
+                {
+                    "categories": [{"name": "PERSON", "confidence": 100}],
+                    "beginOffset": 8,
+                    "content": "this is Toto's text",
+                    "mid": "b",
+                },
+            ]
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+
+    parsed_jobs["JOB_0"].add_annotation(
+        {
+            "categories": [{"name": "ORG", "confidence": 59}],
+            "beginOffset": 42,
+            "content": "this is the text for Kili",
+            "mid": "c",
+        }
+    )
+
+    assert parsed_jobs["JOB_0"].annotations[2].categories[0].name == "ORG"
+    assert parsed_jobs["JOB_0"].annotations[2].categories[0].confidence == 59
+    assert parsed_jobs["JOB_0"].annotations[2].begin_offset == 42
+    assert parsed_jobs["JOB_0"].annotations[2].content == "this is the text for Kili"
+    assert parsed_jobs["JOB_0"].annotations[2].mid == "c"
+
+    assert parsed_jobs["JOB_0"].annotations[0].begin_offset == 21
+    assert parsed_jobs["JOB_0"].annotations[1].begin_offset == 8

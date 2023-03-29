@@ -20,6 +20,10 @@ class Category:
         self._json_data = category_json
         self._job_interface = job_interface
 
+        # call the setters to check the values
+        self.name = self.name
+        self.confidence = self.confidence
+
     def __str__(self) -> str:
         """Returns the string representation of the category."""
         return str(self._json_data)
@@ -43,7 +47,7 @@ class Category:
         """Sets the name of the category label."""
         if name not in self._job_interface["content"]["categories"]:
             raise InvalidMutationError(
-                f"Category {name} is not in the job interface categories"
+                f"Category '{name}' is not in the job interface with categories:"
                 f" {self._job_interface['content']['categories'].keys()}"
             )
         self._json_data["name"] = name

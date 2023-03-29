@@ -254,3 +254,57 @@ def test_cannot_add_same_category_twice_to_categorylist_with_add_category():
         ),
     ):
         parsed_jobs["CLASSIFICATION_JOB"].add_category(name="A", confidence=100)
+
+
+def test_add_annotation_ner_wrong_category_name():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "content": {
+                    "categories": {"ORG": {}, "PERSON": {}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
+
+    json_response_dict = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"name": "ORG", "confidence": 42}],
+                    "beginOffset": 21,
+                    "content": "this is the text for Kili",
+                    "mid": "a",
+                },
+                {
+                    "categories": [{"name": "PERSON", "confidence": 100}],
+                    "beginOffset": 8,
+                    "content": "this is Toto's text",
+                    "mid": "b",
+                },
+            ]
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+
+    with pytest.raises(
+        InvalidMutationError,
+        match=(
+            "Category 'THIS_NAME_IS_NOT_IN_THE_JSON_INTERFACE' is not in the job interface with"
+            " categories"
+        ),
+    ):
+        parsed_jobs["JOB_0"].add_annotation(
+            {
+                "categories": [
+                    {"name": "THIS_NAME_IS_NOT_IN_THE_JSON_INTERFACE", "confidence": 59}
+                ],
+                "beginOffset": 42,
+                "content": "this is the text for Kili",
+                "mid": "c",
+            }
+        )
