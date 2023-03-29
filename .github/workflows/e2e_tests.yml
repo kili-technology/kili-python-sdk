@@ -137,14 +137,42 @@ jobs:
         shell: bash
         run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+          cache: "pip"
+
       - name: Get latest release branch
-        shell: bash
+        shell: python
         run: |
-          last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
-          echo "Last version: $last_version"
-          IFS=. read -r major minor patch <<< "$last_version"
-          last_minor_version="$major.$minor.0"
-          echo "LASTEST_RELEASE_BRANCH=release/$last_minor_version" >> $GITHUB_ENV
+          import requests
+          import os
+          from packaging.version import parse, InvalidVersion
+
+          def parse_version(version: str):
+              try:
+                  return parse(version)
+              except InvalidVersion:
+                  return parse("0.0.0")
+
+          BRANCH_PREFIX = "release/"
+          per_page = 100
+          page = 1
+          branch_versions = []
+          while True:
+              url = f"https://api.github.com/repos/kili-technology/kili-python-sdk/branches?page={page}&per_page={per_page}&protected=true"
+              response = requests.get(url).json()
+              batch_branch_versions = [branch["name"].replace(BRANCH_PREFIX, "") for branch in response if branch["name"].startswith(BRANCH_PREFIX)]
+              branch_versions.extend(batch_branch_versions)
+              if len(response) < per_page:
+                  break
+              page += 1
+
+          last_version = sorted(branch_versions, key=parse_version)[-1]
+
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write(f"LASTEST_RELEASE_BRANCH={BRANCH_PREFIX}{last_version}")
 
       - name: Set checkout branch/tag and endpoint
         shell: bash
@@ -208,12 +236,6 @@ jobs:
         if: env.TEST_MODE == 'PREV_RELEASE_TESTS_STAGING'
         shell: bash
         run: rm -rf src # we want the previous release tests but the kili from master
-
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.7
-          cache: "pip"
 
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
