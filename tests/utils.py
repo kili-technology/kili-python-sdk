@@ -6,12 +6,32 @@ import traceback
 import uuid
 from datetime import datetime, timedelta
 from functools import wraps
+from typing import Dict
 
 import requests
 
+from kili.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
+
 COUNT_SAMPLE_MAX = 26000
-MAX_HITS = 250
-MINUTES = 1
+BURST_THROTTLE_MAX_HITS = 250
+BURST_THROTTLE_MINUTES = 1
+
+
+class MyGraphQLQuery(GraphQLQuery):
+    @staticmethod
+    def query(fragment: str) -> str:
+        return f"not_implemented_query with fragment {fragment}"
+
+
+class MyGraphQLWhere(BaseQueryWhere):
+    def graphql_where_builder(self) -> Dict:
+        return {"where": "not_implemented_where"}
+
+
+class ThrottlingError(Exception):
+    """
+    Raised when the function is called too much. Used for testing purposes.
+    """
 
 
 class burstthrottle:
@@ -41,7 +61,7 @@ class burstthrottle:
                 else:
                     self.timestamp = datetime.min
                     self.hits = 0
-                    raise ValueError(self.error_message)
+                    raise ThrottlingError()
 
             else:
                 self.timestamp = datetime.now()
@@ -51,7 +71,7 @@ class burstthrottle:
         return wrapper
 
 
-@burstthrottle(max_hits=MAX_HITS, minutes=MINUTES)
+@burstthrottle(max_hits=BURST_THROTTLE_MAX_HITS, minutes=BURST_THROTTLE_MINUTES)
 def mocked_query_method(query, payload):
     """
     Simulates a query result by returning a list of ids
@@ -63,7 +83,20 @@ def mocked_query_method(query, payload):
     return res
 
 
-@burstthrottle(max_hits=250, minutes=1)
+@burstthrottle(max_hits=10, minutes=1.0 / 10)
+def throttling_mocked_query_method(query, payload):
+    """
+    Simulates a query result by returning a list of ids. The decorator makes it crash if there
+    is more than 10 calls within 6 seconds.
+    """
+    skip = payload["skip"]
+    first = payload["first"]
+    max_range = min(1000, skip + first)
+    res = {"data": [{"id": i} for i in range(skip, max_range)]}
+    return res
+
+
+@burstthrottle(max_hits=BURST_THROTTLE_MAX_HITS, minutes=BURST_THROTTLE_MINUTES)
 def mocked_count_method(*_):
     """
     Simulates a count query

@@ -5,10 +5,17 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from kili.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
+from kili.graphql import QueryOptions
 from kili.utils.pagination import BatchIteratorBuilder, batch_object_builder
+from tests import utils
 
-from .utils import mocked_count_method, mocked_query_method
+from .utils import (
+    MyGraphQLQuery,
+    MyGraphQLWhere,
+    ThrottlingError,
+    mocked_query_method,
+    throttling_mocked_query_method,
+)
 
 
 @pytest.mark.parametrize(
@@ -50,13 +57,6 @@ from .utils import mocked_count_method, mocked_query_method
             },
         ),
         (
-            "When I query objects with first=251, I get the first 251 objects",
-            {
-                "args": {"first": 251},
-                "expected_result": ({"id": i} for i in range(251)),
-            },
-        ),
-        (
             "When I query objects with first=20 and disable_tqdm, I get the first 2O objects",
             {
                 "args": {"first": 20, "disable_tqdm": True},
@@ -95,15 +95,6 @@ def test_row_generator_from_paginated_calls(mocker, name, test_case):
     """
     _ = name
 
-    class MyGraphQLQuery(GraphQLQuery):
-        @staticmethod
-        def query(fragment: str) -> str:
-            return f"not_implemented_query with fragment {fragment}"
-
-    class MyGraphQLWhere(BaseQueryWhere):
-        def graphql_where_builder(self) -> Dict:
-            return {"where": "not_implemented_where"}
-
     # original
     expected = test_case["expected_result"]
     skip = test_case["args"].get("skip", 0)
@@ -115,6 +106,46 @@ def test_row_generator_from_paginated_calls(mocker, name, test_case):
     actual = MyGraphQLQuery(
         client=MagicMock(execute=mocked_query_method)
     ).execute_query_from_paginated_call(
+        query="", where=where, options=options, post_call_function=None
+    )
+
+    assert all(a == b for a, b in zip(actual, expected))
+    assert type(actual).__name__ == "generator"
+
+
+@pytest.mark.parametrize(
+    "name,test_case",
+    [
+        (
+            (
+                "When I do more queries per minutes than the throttling allows it, the paginator"
+                " handles it and makes sure that throttling threshold is not reached."
+            ),
+            {
+                "args": {"first": 1000},
+                "expected_result": ({"id": i} for i in range(1000)),
+            },
+        ),
+    ],
+)
+def test_row_generator_from_paginated_calls_handles_throttled_queries(name, test_case, mocker):
+    """ """
+    _ = name
+    expected = test_case["expected_result"]
+    skip = test_case["args"].get("skip", 0)
+    first = test_case["args"].get("first")
+    disable_tqdm = test_case["args"].get("disable_tqdm", False)
+
+    # the following checks that the mocked query error throws a Throttling error when requested
+    # too frequently
+    with pytest.raises(ThrottlingError):
+        for _ in range(20):
+            throttling_mocked_query_method("", {"skip": 0, "first": 10})
+
+    options = QueryOptions(first=first, skip=skip, disable_tqdm=disable_tqdm)
+    where = MyGraphQLWhere()
+    client_mock = MagicMock(execute=throttling_mocked_query_method)
+    actual = MyGraphQLQuery(client=client_mock).execute_query_from_paginated_call(
         query="", where=where, options=options, post_call_function=None
     )
 
