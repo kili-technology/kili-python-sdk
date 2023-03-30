@@ -4,4 +4,4 @@
 Kili Python SDK
 """
 
-__version__ = "2.129.8"
+__version__ = "2.130.0"

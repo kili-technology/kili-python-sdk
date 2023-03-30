@@ -1,9 +1,7 @@
-"""Set of utils to work with labels."""
+"""Module for parsing labels returned by kili.labels()."""
 
 from typing import Dict, Generator, Iterable, List, overload
-
 from kili.enums import InputType
-
 from ...services.label_data_parsing.label import ParsedLabel
 
 

@@ -157,7 +157,7 @@ json_response_b = {
 
 
 @pytest.fixture()
-def src_project(kili):
+def src_project_video(kili):
     interface = {
         "jobs": {
             "JOB_0": {
@@ -181,8 +181,7 @@ def src_project(kili):
     project = kili.create_project(
         input_type="VIDEO",
         json_interface=interface,
-        title="test_e2e_copy_project.py",
-        description="test_e2e_copy_project.py",
+        title="test_e2e_copy_project_video.py",
     )
 
     kili.update_properties_in_project(
@@ -237,11 +236,6 @@ def src_project(kili):
         ],
     )
 
-    count_assets = 0
-    while count_assets != 3:
-        count_assets = kili.count_assets(project["id"])
-        sleep(2)  # backend needs some time to cut the video in frames
-
     assets = kili.assets(project_id=project["id"], fields=["externalId", "id"])
     asset_id_array = [x["id"] for x in assets]
     members = kili.project_users(
@@ -295,9 +289,9 @@ def md5_hash(filepath: Union[str, Path]):
     return hashlib.md5(open(filepath, "rb").read()).hexdigest()
 
 
-def test_copy_project_e2e(kili, src_project):
+def test_copy_project_e2e_video(kili, src_project_video):
     new_proj_id = kili.copy_project(
-        from_project_id=src_project["id"],
+        from_project_id=src_project_video["id"],
         description="new description",
         copy_assets=True,
         copy_labels=True,
@@ -309,7 +303,7 @@ def test_copy_project_e2e(kili, src_project):
         + ProjectCopier.FIELDS_JSON_INTERFACE
     )
 
-    src_proj = kili.projects(project_id=src_project["id"], fields=proj_fields)[0]  # type: ignore
+    src_proj = kili.projects(project_id=src_project_video["id"], fields=proj_fields)[0]  # type: ignore
     new_proj = kili.projects(project_id=new_proj_id, fields=proj_fields)[0]  # type: ignore
 
     members_src = kili.project_users(
@@ -388,5 +382,97 @@ def test_copy_project_e2e(kili, src_project):
                 assert len(asset_src["jsonContent"]) == len(asset_new["jsonContent"])
             else:
                 assert asset_src["jsonContent"] == asset_new["jsonContent"]
+
+    kili.delete_project(new_proj_id)
+
+
+@pytest.fixture()
+def src_project_image_ocr(kili):
+    interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": ["JOB_1"], "name": "Object A", "color": "#733AFB"}
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "JOB_1": {
+                "content": {"input": "radio"},
+                "instruction": "Transcription of A",
+                "isChild": True,
+                "mlTask": "TRANSCRIPTION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+        }
+    }
+
+    project = kili.create_project(
+        input_type="IMAGE",
+        json_interface=interface,
+        title="test_e2e_copy_project_image.py",
+    )
+
+    full_text_annotations = {
+        "fullTextAnnotation": {"pages": [{"height": 1029, "width": 1572}]},
+        "textAnnotations": [
+            {
+                "description": "NEDERLANDSE",
+                "boundingPoly": {
+                    "vertices": [
+                        {"x": 74, "y": 72},
+                        {"x": 462, "y": 72},
+                        {"x": 462, "y": 122},
+                        {"x": 74, "y": 122},
+                    ]
+                },
+            }
+        ],
+    }
+
+    kili.append_many_to_dataset(
+        project_id=project["id"],
+        content_array=[
+            "https://storage.googleapis.com/label-public-staging/OCR/Dutch_identity_card_front_specimen_issued_9_March_2014.jpg",
+        ],
+        external_id_array=["id_card"],
+        json_metadata_array=[full_text_annotations],
+    )
+
+    yield project
+
+    kili.delete_project(project["id"])
+
+
+def test_copy_project_e2e_with_ocr_metadata(kili: Kili, src_project_image_ocr):
+    new_proj_id = kili.copy_project(
+        from_project_id=src_project_image_ocr["id"],
+        description="new description",
+        copy_assets=True,
+        copy_labels=True,
+    )
+
+    assets_src = kili.assets(
+        src_project_image_ocr["id"],
+        fields=["ocrMetadata", "content", "externalId"],
+        download_media=True,
+    )
+    assets_new = kili.assets(
+        new_proj_id, fields=["ocrMetadata", "content", "externalId"], download_media=True
+    )
+
+    assert assets_src[0]["ocrMetadata"] == assets_new[0]["ocrMetadata"]
+
+    assert assets_new[0]["ocrMetadata"]["textAnnotations"][0]["description"] == "NEDERLANDSE"
 
     kili.delete_project(new_proj_id)
