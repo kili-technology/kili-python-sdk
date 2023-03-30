@@ -1,6 +1,4 @@
-"""
-Asset mutations
-"""
+"""Asset mutations."""
 
 import warnings
 from typing import Any, Dict, List, Optional, Union
@@ -34,9 +32,7 @@ from .helpers import get_asset_ids_or_throw_error
 
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsAsset:
-    """
-    Set of Asset mutations
-    """
+    """Set of Asset mutations."""
 
     # pylint: disable=too-many-arguments,too-many-locals
 
@@ -79,6 +75,7 @@ class MutationsAsset:
                 - For an `VIDEO_LEGACY` project, the content can be only be URLs
             external_id_array: List of external ids given to identify the assets.
                 If None, random identifiers are created.
+            id_array: Disabled parameter. Do not use.
             is_honeypot_array:  Whether to use the asset for honeypot
             status_array: By default, all imported assets are set to `TODO`. Other options:
                 `ONGOING`, `LABELED`, `REVIEWED`.

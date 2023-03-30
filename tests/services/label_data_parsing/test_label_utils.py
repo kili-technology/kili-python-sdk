@@ -73,12 +73,9 @@ def test_parse_labels_classification():
     assert labels[1].jobs["NON_REQUIRED_JOB"].categories[0].name == "C"
 
 
-def test_parse_labels_classification_to_dict_classif():
-    """
-    Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
-    still allows to convert to dict and json
-    """
-
+def test_parse_labels_classification_to_dict():
+    """Test that checks that parsing the categories to CategoryList and Category
+    objects still allows to convert to dict and json."""
     labels = [
         {
             "author": {

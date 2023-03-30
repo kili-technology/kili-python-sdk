@@ -137,7 +137,8 @@ class QueriesNotification:
 
         Args:
             has_been_seen: Filter on notifications that have been seen.
-            user_id: Filter on the notifications of a specific user
+            user_id: Filter on the notifications of a specific user.
+            notification_id: Filter on a specific notification.
 
         Returns:
             The number of notifications with the parameters provided

@@ -1,6 +1,4 @@
-"""
-Constants for the asset_import services
-"""
+"""Constants for the asset_import services."""
 
 mime_extensions = {
     "Audio": "audio/x-flac,audio/mpeg,video/mp4",

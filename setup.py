@@ -1,6 +1,4 @@
-"""
-This script permits to setup the python package.
-"""
+"""This script permits to setup the python package."""
 
 from setuptools import find_packages, setup
 

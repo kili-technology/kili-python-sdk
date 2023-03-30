@@ -1,6 +1,4 @@
-"""
-Queries of issue mutations
-"""
+"""Queries of issue mutations."""
 
 from .fragments import ISSUE_FRAGMENT
 

@@ -1,4 +1,4 @@
-"""Tests the Kili CLI"""
+"""Tests the Kili CLI."""
 
 import csv
 import os
@@ -29,9 +29,7 @@ kili_client.create_project = create_project_mock = MagicMock()
 @patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
 @patch.object(AssetQuery, "__call__", side_effect=mocked__project_assets)
 class TestCLIProject:
-    """
-    test the CLI functions of the project command
-    """
+    """Test the CLI functions of the project command."""
 
     def test_list(self, *_):
         runner = CliRunner()

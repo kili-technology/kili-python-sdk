@@ -1,4 +1,4 @@
-"""Kili CLI"""
+"""Kili CLI."""
 import click
 
 from kili import __version__
@@ -9,7 +9,7 @@ from kili.cli.project import project
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(__version__)
 def cli():
-    """Kili Command line Interface
+    """Kili Command line Interface.
 
     To get all the available commands, please type: `kili project --help`.
     """

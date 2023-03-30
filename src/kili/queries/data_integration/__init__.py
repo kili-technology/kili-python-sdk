@@ -17,9 +17,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesDataIntegration:
-    """
-    Set of cloud storage integration queries
-    """
+    """Set of cloud storage integration queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 

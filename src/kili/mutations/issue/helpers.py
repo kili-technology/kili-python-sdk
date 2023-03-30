@@ -1,6 +1,4 @@
-"""
-Helpers for the issue mutations
-"""
+"""Helpers for the issue mutations."""
 
 
 from typing import List
@@ -17,7 +15,7 @@ from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 def get_issue_numbers(
     auth: KiliAuth, project_id: str, type_: Literal["QUESTION", "ISSUE"], size: int
 ):
-    """Get the next available issue number
+    """Get the next available issue number.
 
     Args:
         auth: Kili Auth
@@ -45,6 +43,7 @@ def get_issue_numbers(
 
 def get_labels_asset_ids_map(auth: KiliAuth, project_id: str, label_id_array: List[str]):
     """Return a dictionary that gives for every label id, its associated asset id.
+
     Returns:
         a dict of key->value: a label id->its associated asset id for the given label ids
     Raises:

@@ -1,6 +1,4 @@
-"""
-Unit tests for media_downloader.py of kili.queries.assets
-"""
+"""Unit tests for media_downloader.py of kili.queries.assets."""
 
 import os
 from pathlib import Path
@@ -106,7 +104,7 @@ def test_download_single_asset_mixed(input_asset, expected_filename):
     ],
 )
 def test_download_single_asset_jsoncontent(input_asset):
-    """Tests with asset["jsonContent"] and extension in externalid"""
+    """Tests with asset["jsonContent"] and extension in externalid."""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
             tmp_dir, "", False, input_asset["project"]["inputType"]
@@ -126,7 +124,7 @@ def test_download_single_asset_jsoncontent(input_asset):
 
 
 def test_download_media_jsoncontent_field_added_but_useless():
-    """should remove jsonContent field"""
+    """Should remove jsonContent field."""
     with TemporaryDirectory() as tmp_dir:
         media_downloader = MediaDownloader(
             tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="IMAGE"
@@ -137,7 +135,7 @@ def test_download_media_jsoncontent_field_added_but_useless():
 
 
 def test_download_media_jsoncontent_field_added_but_useful():
-    """should warn jsoncontent field added and downloaded"""
+    """Should warn jsoncontent field added and downloaded."""
     with TemporaryDirectory() as tmp_dir:
         media_downloader = MediaDownloader(
             tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="VIDEO"
@@ -169,7 +167,7 @@ def test_download_media_jsoncontent_field_added_but_useful():
 def test_download_media_jsoncontent_none(
     mock_requests, content, jsoncontent, should_call_requests_get
 ):
-    """requests.get should only be called when valid url"""
+    """Requests.get should only be called when valid url."""
     with TemporaryDirectory() as tmp_dir:
         _ = MediaDownloader(tmp_dir, "", False, "VIDEO").download_single_asset(
             {"content": content, "jsonContent": jsoncontent, "externalId": "externalId"}

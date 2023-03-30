@@ -11,8 +11,8 @@ from ..helpers import deprecate
 
 
 class Project:
-    """
-    Object that represents a project in Kili.
+    """Object that represents a project in Kili.
+
     It allows management operations such as uploading assets, uploading predictions,
     modifying the project's queue etc.
     It also allows queries from this project such as its assets, labels etc.
@@ -110,6 +110,7 @@ class Project:
         Args:
             labels: list of dictionnaries with informations about the labels to create.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
+            model_name: Name of the model that generated the labels
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -122,7 +123,6 @@ class Project:
                         {'json_response': {...}, asset_id: 'cl9wmlkuw00080qsz2kqh8aiy'}
                     ]
                 )
-
         """
         return services.import_labels_from_dict(
             self.client, self.project_id, labels, label_type, model_name

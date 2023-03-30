@@ -1,6 +1,4 @@
-"""
-Label Importers
-"""
+"""Label Importers."""
 import csv
 import logging
 from abc import ABC, abstractmethod
@@ -34,18 +32,14 @@ from kili.utils import pagination, tqdm
 
 
 class LoggerParams(NamedTuple):
-    """
-    Contains all parameters related to logging.
-    """
+    """Contains all parameters related to logging."""
 
     disable_tqdm: bool
     level: LogLevel
 
 
 class AbstractLabelImporter(ABC):
-    """
-    Abstract Label Importer
-    """
+    """Abstract Label Importer."""
 
     def __init__(self, auth: KiliAuth, logger_params: LoggerParams, input_format: LabelFormat):
         self.auth = auth
@@ -64,9 +58,7 @@ class AbstractLabelImporter(ABC):
         model_name: Optional[str],
         is_prediction: bool,
     ):
-        """
-        Performs the import from the label files
-        """
+        """Performs the import from the label files."""
         self._check_arguments_compatibility(meta_file_path, target_job_name)
         class_by_id = self._read_classes_from_meta_file(meta_file_path, self.input_format)
         label_parser_class = self._select_label_parser()
@@ -91,9 +83,7 @@ class AbstractLabelImporter(ABC):
         label_type: LabelType,
         model_name: Optional[str] = None,
     ) -> List:
-        """
-        Imports labels from a list of dictionaries representing labels.
-        """
+        """Imports labels from a list of dictionaries representing labels."""
         should_retrieve_asset_ids = labels[0].get("asset_id") is None
         if should_retrieve_asset_ids:
             assert project_id
@@ -150,9 +140,7 @@ class AbstractLabelImporter(ABC):
     def extract_from_files(
         self, labels_files: List[Path], label_parser: AbstractLabelParser
     ) -> List[Dict]:
-        """
-        Extracts the labels files and their metadata from the label files
-        """
+        """Extracts the labels files and their metadata from the label files."""
 
         label_paths = get_file_paths_to_upload(
             [str(f) for f in labels_files],
@@ -178,9 +166,7 @@ class AbstractLabelImporter(ABC):
 
 
 class YoloLabelImporter(AbstractLabelImporter):
-    """
-    Label importer in the yolo format.
-    """
+    """Label importer in the yolo format."""
 
     def _get_label_file_extension(self) -> str:
         return ".txt"
@@ -228,9 +214,7 @@ class YoloLabelImporter(AbstractLabelImporter):
 
 
 class KiliRawLabelImporter(AbstractLabelImporter):
-    """
-    # Label importer in the Kili format.
-    """
+    """# Label importer in the Kili format."""
 
     def _get_label_file_extension(self) -> str:
         return ".json"

@@ -1,6 +1,4 @@
-"""
-Queries of user mutations
-"""
+"""Queries of user mutations."""
 
 from .fragments import USER_FRAGMENT
 

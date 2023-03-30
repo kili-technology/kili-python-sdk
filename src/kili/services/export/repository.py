@@ -1,6 +1,4 @@
-"""
-Gets the
-"""
+"""Gets the."""
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Iterator, List
 
@@ -10,9 +8,7 @@ from .exceptions import DownloadError
 
 
 class AbstractContentRepository(ABC):
-    """
-    Interface to the content repository
-    """
+    """Interface to the content repository."""
 
     def __init__(
         self, router_endpoint: str, router_headers: Dict[str, str], verify_ssl: bool
@@ -24,19 +20,15 @@ class AbstractContentRepository(ABC):
 
     @abstractmethod
     def get_frames(self, content_url: str) -> List[str]:
-        """
-        Get asset content frames.
-        """
+        """Get asset content frames."""
 
     @abstractmethod
     def get_content_stream(self, content_url: str, block_size: int) -> Iterator[Any]:
-        """
-        Get asset content stream.
-        """
+        """Get asset content stream."""
 
     def get_content_frames_paths(self, asset: Dict) -> List[str]:
-        """
-        Get list of links to frames from the file located at asset[jsonContent].
+        """Get list of links to frames from the file located at asset[jsonContent].
+
         Returns an empty list if `content` in the asset exists.
         """
         content_frames = []
@@ -47,16 +39,12 @@ class AbstractContentRepository(ABC):
         return content_frames
 
     def is_serving(self, url: str) -> bool:
-        """
-        Return a boolean defining if the asset is served by Kili or not
-        """
+        """Return a boolean defining if the asset is served by Kili or not."""
         return url.startswith(self.router_endpoint)
 
 
 class SDKContentRepository(AbstractContentRepository):
-    """
-    Handle content fetching from the server from the SDK
-    """
+    """Handle content fetching from the server from the SDK."""
 
     def get_frames(self, content_url: str) -> List[str]:
         frames: List[str] = []

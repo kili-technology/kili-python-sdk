@@ -1,6 +1,4 @@
-"""
-Functions to import assets into a VIDEO_LEGACY project
-"""
+"""Functions to import assets into a VIDEO_LEGACY project."""
 import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -25,9 +23,7 @@ from kili.utils import bucket
 
 
 class VideoDataType(Enum):
-    """
-    Video data type
-    """
+    """Video data type."""
 
     LOCAL_FRAMES = "LOCAL_FRAMES"
     HOSTED_FRAMES = "HOSTED_FRAMES"
@@ -36,15 +32,11 @@ class VideoDataType(Enum):
 
 
 class VideoMixin:
-    """
-    Helping functions for importing Video assets
-    """
+    """Helping functions for importing Video assets."""
 
     @staticmethod
     def get_video_processing_parameters(asset: AssetLike, from_frames: bool):
-        """
-        Base method for adding video processing parameters
-        """
+        """Base method for adding video processing parameters."""
         json_metadata = asset.get("json_metadata", {})
         processing_parameters = json_metadata.get("processingParameters", {})  # type: ignore X
         video_parameters = [
@@ -58,9 +50,7 @@ class VideoMixin:
 
     @staticmethod
     def map_frame_urls_to_index(asset: AssetLike):
-        """
-        Map a list of frame url to their index in the video
-        """
+        """Map a list of frame url to their index in the video."""
         json_content = asset.get("json_content")
         assert json_content
         json_content_index = range(len(json_content))
@@ -69,45 +59,33 @@ class VideoMixin:
 
 
 class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
-    """
-    Class for importing a batch of video assets from content into a VIDEO project
-    """
+    """Class for importing a batch of video assets from content into a VIDEO project."""
 
     def add_video_processing_parameters(self, asset):
-        """
-        Add video processing parameters for a content upload
-        """
+        """Add video processing parameters for a content upload."""
         json_metadata = asset.get("json_metadata", {})
         processing_parameters = self.get_video_processing_parameters(asset, from_frames=False)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})
 
     def import_batch(self, assets: List[AssetLike], verify: bool):
-        """
-        Import a batch of video assets from content into Kili.
-        """
+        """Import a batch of video assets from content into Kili."""
         assets = self.loop_on_batch(self.add_video_processing_parameters)(assets)
         return super().import_batch(assets, verify)
 
 
 class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
-    """
-    Class for importing a batch of video assets from frames into a VIDEO project
-    """
+    """Class for importing a batch of video assets from frames into a VIDEO project."""
 
     def add_video_processing_parameters(self, asset):
-        """
-        Add video processing parameters for a frames upload
-        """
+        """Add video processing parameters for a frames upload."""
         json_metadata = asset.get("json_metadata", {})
         processing_parameters = self.get_video_processing_parameters(asset, from_frames=True)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})
 
     def import_batch(self, assets: List[AssetLike], verify: bool):
-        """
-        Import a batch of video assets from frames
-        """
+        """Import a batch of video assets from frames."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
             assets = self.loop_on_batch(self.upload_frames_to_bucket)(assets)
@@ -116,9 +94,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         return super().import_batch(assets, verify)
 
     def upload_frames_to_bucket(self, asset: AssetLike):
-        """
-        Import the local frames to the bucket
-        """
+        """Import the local frames to the bucket."""
         frames = asset.get("json_content")
         assert frames
         asset_id: str = asset.get("id") or f"unknown-{bucket.generate_unique_id()}"
@@ -146,30 +122,22 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
 
 
 class VideoDataImporter(BaseAssetImporter):
-    """
-    Class for importing data into a VIDEO project
-    """
+    """Class for importing data into a VIDEO project."""
 
     @staticmethod
     def is_hosted_frames(asset) -> bool:
-        """
-        Determine if the frames to import are hosted
-        """
+        """Determine if the frames to import are hosted."""
         frames = asset.get("json_content", [])
         return all(is_url(frame) for frame in frames)
 
     @staticmethod
     def has_any_local_frame(asset) -> bool:
-        """
-        Determine if at least one frame to import is a local file
-        """
+        """Determine if at least one frame to import is a local file."""
         frames = asset.get("json_content", [])
         return any(os.path.exists(frame) for frame in frames)
 
     def get_data_type(self, assets):
-        """
-        Determine the type of data to upload from the service payload
-        """
+        """Determine the type of data to upload from the service payload."""
         content_array = [asset.get("content", "") for asset in assets]
         has_json_content = any(asset.get("json_content") for asset in assets)
         if has_json_content:
@@ -187,9 +155,7 @@ class VideoDataImporter(BaseAssetImporter):
 
     @staticmethod
     def should_cut_into_frames(assets) -> bool:
-        """
-        Determine if assets should be imported asynchronously and cut into frames
-        """
+        """Determine if assets should be imported asynchronously and cut into frames."""
         should_use_native_video_array = []
         for asset in assets:
             json_metadata = asset.get("json_metadata", {})
@@ -201,18 +167,14 @@ class VideoDataImporter(BaseAssetImporter):
             return False
         if all(not b for b in should_use_native_video_array):
             return True
-        raise ImportValidationError(
-            """
+        raise ImportValidationError("""
             Cannot upload videos to split into frames
             and video to keep as native in the same time.
             Please separate the assets into 2 calls
-            """
-        )
+            """)
 
     def import_assets(self, assets: List[AssetLike]):
-        """
-        Import video assets into Kili.
-        """
+        """Import video assets into Kili."""
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)
         assets = self.filter_duplicate_external_ids(assets)

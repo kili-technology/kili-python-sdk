@@ -1,6 +1,4 @@
-"""
-Test module for the GraphQL client
-"""
+"""Test module for the GraphQL client."""
 import os
 from pathlib import Path
 from unittest import mock
@@ -14,7 +12,7 @@ from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 
 
 def test_gql_bad_query_remote_validation():
-    """test validation by the server no local schema"""
+    """Test validation by the server no local schema."""
     api_endpoint = os.getenv("KILI_API_ENDPOINT")
     api_key = os.getenv("KILI_API_KEY")
 
@@ -48,8 +46,7 @@ def test_gql_bad_query_remote_validation():
 
 
 def test_outdated_cached_schema(mocker):
-    """
-    test when the schema in memory is outdated
+    """Test when the schema in memory is outdated.
 
     the client should refecth an up-to-date schema and retry the query automatically
     """

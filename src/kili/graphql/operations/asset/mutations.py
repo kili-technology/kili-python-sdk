@@ -1,6 +1,4 @@
-"""
-Assets related mutations
-"""
+"""Assets related mutations."""
 
 GQL_APPEND_MANY_TO_DATASET = """
 mutation appendManyToDataset(

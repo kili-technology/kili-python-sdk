@@ -1,6 +1,4 @@
-"""
-Helpers for GraphQL Queries and Mutations
-"""
+"""Helpers for GraphQL Queries and Mutations."""
 
 import base64
 import functools
@@ -22,30 +20,29 @@ from kili.constants import mime_extensions_for_IV2
 T = TypeVar("T")
 
 
-def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) -> T:
-    """
-    Formats the result of the GraphQL queries.
+def format_result(name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
+    """Formats the result of the GraphQL queries.
+
     Args:
         name: name of the field to extract, usually data
         result: query result to parse
-        _object: returned type
+        object_: returned type
     """
     formatted_json = format_json(result[name])
-    if _object is None:
+    if object_ is None:
         return formatted_json  # type:ignore X
     if isinstance(formatted_json, list):
-        if get_origin(_object) is list:
-            obj = get_args(_object)[0]
+        if get_origin(object_) is list:
+            obj = get_args(object_)[0]
             return [obj(element) for element in formatted_json]  # type:ignore
         # the legacy "orm" objects fall into this category.
-        return [_object(element) for element in formatted_json]  # type:ignore
+        return [object_(element) for element in formatted_json]  # type:ignore
 
-    return _object(formatted_json)  # type:ignore
+    return object_(formatted_json)  # type:ignore
 
 
 def content_escape(content: str) -> str:
-    """
-    Escapes the content
+    """Escapes the content.
 
     Args:
         content (str): string to escape
@@ -57,8 +54,7 @@ def content_escape(content: str) -> str:
 
 
 def get_data_type(path: str):
-    """
-    Get the data type, either image/png or application/pdf
+    """Get the data type, either image/png or application/pdf.
 
     Args:
         path: path of the file
@@ -67,9 +63,8 @@ def get_data_type(path: str):
     return mime_type if mime_type else ""
 
 
-def encode_base64(path):
-    """
-    Encode a file in base 64
+def encode_base64(path: str):
+    """Encode a file in base 64.
 
     Args:
         path: path of the file
@@ -79,9 +74,8 @@ def encode_base64(path):
         return f"data:{data_type};base64," + base64.b64encode(image_file.read()).decode("ascii")
 
 
-def is_url(path):
-    """
-    Check if the path is a url or something else
+def is_url(path: object):
+    """Check if the path is a url or something else.
 
     Args:
         path: path of the file
@@ -89,9 +83,8 @@ def is_url(path):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result: dict) -> Dict:
-    """
-    Formats the dict part of a json return by a GraphQL query into a python object
+def format_json_dict(result: Dict) -> Dict:
+    """Formats the dict part of a json return by a GraphQL query into a python object.
 
     Args:
         result: result of a GraphQL query
@@ -119,8 +112,7 @@ D = TypeVar("D")
 
 
 def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D]:
-    """
-    Formats the json return by a GraphQL query into a python object
+    """Formats the json return by a GraphQL query into a python object.
 
     Args:
         result: result of a GraphQL query
@@ -137,10 +129,10 @@ def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D
 def deprecate(
     msg: Optional[str] = None,
     removed_in: Optional[str] = None,
-    _type=DeprecationWarning,
+    type_: Type[Warning] = DeprecationWarning,
 ):
-    """
-    Decorator factory that tag a deprecated function.
+    """Decorator factory that tag a deprecated function.
+
     - To deprecated the whole function, you can give a message at the decorator level.
     - For more sharp condition on the warning message, integrate this warning inside the function
     but still tag the function with this decorator, without giving a message argument
@@ -149,7 +141,7 @@ def deprecate(
         msg: string message that will be displayed whenever the function is called
         removed_in: string version in the format "Major.Minor"
             in which the deprecation element has to be removed
-        type: DeprecationWarning by default
+        type_: DeprecationWarning by default
     """
 
     def decorator(func):
@@ -164,7 +156,7 @@ def deprecate(
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             if msg:
-                warnings.warn(msg, _type, stacklevel=2)
+                warnings.warn(msg, type_, stacklevel=2)
             return func(*args, **kwargs)
 
         return wrapper
@@ -172,9 +164,8 @@ def deprecate(
     return decorator
 
 
-def format_metadata(metadata):
-    """
-    Formats metadata
+def format_metadata(metadata: object):
+    """Formats metadata.
 
     Args:
         metadata: a python object
@@ -191,13 +182,12 @@ def format_metadata(metadata):
     )
 
 
-def convert_to_list_of_none(array, length):
-    """
-    Turns a value in a list of length length
+def convert_to_list_of_none(array: List, length: int) -> List:
+    """Turns a value in a list of length length.
 
     Args:
-        array
-        length
+        array: the array to convert
+        length: the length of the array
     """
     if isinstance(array, list):
         if len(array) != length:
@@ -206,29 +196,28 @@ def convert_to_list_of_none(array, length):
     return [None] * length
 
 
-def is_none_or_empty(_object):
-    """
-    Tests if an object is none or empty
+def is_none_or_empty(object_: object) -> bool:
+    """Tests if an object is none or empty.
 
     Args:
-        object: a python object
+        object_: a python object
     """
-    object_is_empty = isinstance(_object, list) and len(_object) == 0
-    return _object is None or object_is_empty
+    object_is_empty = isinstance(object_, list) and len(object_) == 0
+    return object_ is None or object_is_empty
 
 
-def list_is_not_none_else_none(_object):
-    """
-    Formats an object as a singleton if not none
+def list_is_not_none_else_none(object_: object):
+    """Formats an object as a singleton if not none.
 
     Args:
-        object: a python object
+        object_: a python object
     """
-    return [_object] if _object is not None else None
+    return [object_] if object_ is not None else None
 
 
-def validate_category_search_query(query):
-    """Validate the category search query
+def validate_category_search_query(query: str):
+    """Validate the category search query.
+
     Args:
         query: the query to parse
 
@@ -271,6 +260,8 @@ def get_file_paths_to_upload(
     Args:
         files: a list path that can either be file paths, folder paths or unexisting paths
         file_check_function: function to check files. Must use argument path and return a bool
+        verbose: if True, print the files that will be uploaded
+
     Returns:
         a list of the paths of the files to upload, compatible with the project type.
     """
@@ -304,9 +295,7 @@ def get_file_paths_to_upload(
 
 
 def file_check_function_from_input_type(input_type: str):
-    """
-    Returns check_file_mime_type function with input_type and verbose as preset argument
-    """
+    """Returns check_file_mime_type function with input_type and verbose as preset argument."""
 
     def output_function(path: str):
         return check_file_mime_type(path, input_type, raise_error=False)
@@ -315,10 +304,8 @@ def file_check_function_from_input_type(input_type: str):
 
 
 def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
-    """
-    Returns true if the mime type of the file corresponds to the allowed mime types of the project
-    """
-
+    # pylint: disable=line-too-long
+    """Returns true if the mime type of the file corresponds to the allowed mime types of the project."""
     mime_type = get_data_type(path.lower())
 
     if not (mime_extensions_for_IV2[input_type] and mime_type):
@@ -377,8 +364,7 @@ class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
 
 
 def is_empty_list_with_warning(method_name: str, argument_name: str, argument_value: Any) -> bool:
-    """
-    Check if an input list argument is empty and warn the user if it is
+    """Check if an input list argument is empty and warn the user if it is.
 
     Returns True if the list is empty, False otherwise
     """
