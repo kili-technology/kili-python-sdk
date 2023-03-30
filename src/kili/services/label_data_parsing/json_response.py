@@ -12,7 +12,7 @@ from .job_response import JobPayload
 class ParsedJobs:
     """Class for label json response parsing."""
 
-    def __init__(self, json_response: Dict, json_interface: Dict, input_type: InputType):
+    def __init__(self, json_response: Dict, json_interface: Dict, input_type: InputType) -> None:
         """Class for label json response parsing.
 
         Args:
@@ -20,6 +20,7 @@ class ParsedJobs:
             json_interface: Json interface of the project.
             input_type: Type of assets of the project.
         """
+        _ = input_type  # will be used in the future for video parsing
         self._json_data: Dict[str, JobPayload] = {}
 
         for job_name, job_interface in json_interface["jobs"].items():
@@ -49,3 +50,11 @@ class ParsedJobs:
         return {
             job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()
         }
+
+    def __repr__(self) -> str:
+        """Returns the representation of the object."""
+        return repr(self.to_dict())
+
+    def __str__(self) -> str:
+        """Returns the string representation of the object."""
+        return str(self.to_dict())

@@ -33,14 +33,8 @@ class _BaseAnnotation:
 
         self._is_required_job = job_interface["required"]
 
-        self._cast_categories()
-
-    def _cast_categories(self) -> None:
-        """Casts the categories list of the job payload to CategoryList object."""
-        if "categories" not in self._json_data:
-            return
-
-        if not isinstance(self._json_data["categories"], CategoryList):
+        # cast lists to objects
+        if "categories" in self._json_data:
             self._json_data["categories"] = CategoryList(
                 job_interface=self._job_interface, categories_list=self._json_data["categories"]
             )
@@ -365,7 +359,7 @@ class AnnotationList:
             self.add_annotation(annotation_dict)
 
     def _check_can_append_annotation(self, annotation: Annotation) -> None:
-        pass
+        _ = annotation  # unused for now
 
     @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
@@ -385,11 +379,11 @@ class AnnotationList:
 
     def __str__(self) -> str:
         """Returns the string representation of the annotations list."""
-        return "[" + ", ".join(str(annotation) for annotation in self) + "]"
+        return str(self.as_list())
 
     def __repr__(self) -> str:
         """Returns the string representation of the annotations list."""
-        return "[" + ", ".join(repr(annotation) for annotation in self) + "]"
+        return repr(self.as_list())
 
     def as_list(self) -> List[Dict]:
         """Returns the list of categories as a list of dicts."""

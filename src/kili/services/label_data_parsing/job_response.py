@@ -28,27 +28,13 @@ class JobPayload:
         self._job_interface = job_interface
         self._json_data = job_payload
 
-        self._is_required_job = job_interface["required"]
-
-        self._cast_categories()
-        self._cast_annotations()
-
-    def _cast_categories(self) -> None:
-        """Casts the categories list of the job payload to CategoryList object."""
-        if "categories" not in self._json_data:
-            return
-
-        if not isinstance(self._json_data["categories"], CategoryList):
+        # cast lists to objects
+        if "categories" in self._json_data:
             self._json_data["categories"] = CategoryList(
                 job_interface=self._job_interface, categories_list=self._json_data["categories"]
             )
 
-    def _cast_annotations(self) -> None:
-        """Casts the annotations list of the job payload to Annotation objects."""
-        if "annotations" not in self._json_data:
-            return
-
-        if not isinstance(self._json_data["annotations"], AnnotationList):
+        if "annotations" in self._json_data:
             self._json_data["annotations"] = AnnotationList(
                 job_interface=self._job_interface, annotations_list=self._json_data["annotations"]
             )
@@ -56,6 +42,8 @@ class JobPayload:
     def to_dict(self) -> Dict:
         """Returns the parsed job payload as a dict."""
         ret = {k: v for k, v in self._json_data.items() if k not in ("categories", "annotations")}
+
+        # cast back to python native types
         if "categories" in self._json_data:
             ret["categories"] = (
                 self._json_data["categories"]
@@ -70,13 +58,21 @@ class JobPayload:
             )
         return ret
 
+    def __repr__(self) -> str:
+        """Returns the parsed job payload representation as a string."""
+        return repr(self.to_dict())
+
+    def __str__(self) -> str:
+        """Returns the parsed job payload as a string."""
+        return str(self.to_dict())
+
     @property
     def categories(self) -> CategoryList:
         """Returns a list of Category objects for a classification job."""
         if self._job_interface["mlTask"] != "CLASSIFICATION":
             raise AttributeNotCompatibleWithJobError("categories")
 
-        if "categories" not in self._json_data and not self._is_required_job:
+        if "categories" not in self._json_data and not self._job_interface["required"]:
             self._json_data["categories"] = CategoryList(
                 job_interface=self._job_interface, categories_list=[]
             )
@@ -95,7 +91,7 @@ class JobPayload:
         if self._job_interface["content"]["input"] not in ("radio", "singleDropdown"):
             raise AttributeNotCompatibleWithJobError("category")
 
-        if "categories" not in self._json_data and not self._is_required_job:
+        if "categories" not in self._json_data and not self._job_interface["required"]:
             return None  # type: ignore
 
         if len(self._json_data["categories"]) != 1:
@@ -131,19 +127,6 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("text")
         self._json_data["text"] = text
 
-    def _can_query_annotations(self) -> bool:
-        """Checks if the "annotations" key can be queried for the job."""
-        if "annotations" in self._json_data:
-            return True
-
-        if self._job_interface["mlTask"] in ("CLASSIFICATION",):
-            return False
-
-        if not self._is_required_job:
-            return True
-
-        return True
-
     @property
     def is_key_frame(self) -> bool:
         """Returns the value of the key frame for a video classification job."""
@@ -154,7 +137,7 @@ class JobPayload:
     @property
     def annotations(self) -> List[Annotation]:
         """Returns a list of Annotation objects for a job."""
-        if not self._can_query_annotations():
+        if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("annotations")
 
         return self._json_data.get("annotations", [])
@@ -165,7 +148,7 @@ class JobPayload:
         if self._job_interface["mlTask"] != "NAMED_ENTITIES_RECOGNITION":
             raise AttributeNotCompatibleWithJobError("entity_annotations")
 
-        if not self._can_query_annotations():
+        if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("entity_annotations")
 
         return cast(List[EntityAnnotation], self._json_data["annotations"])
@@ -176,14 +159,15 @@ class JobPayload:
         if self._job_interface["mlTask"] != "OBJECT_DETECTION":
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
 
-        if not self._can_query_annotations():
+        if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
 
         return cast(List[BoundingPolyAnnotation], self._json_data["annotations"])
 
+    @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
         """Adds an annotation to a job with annotations."""
-        if not self._can_query_annotations():
+        if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("add_annotation")
 
         annotation_list = self._json_data["annotations"] or AnnotationList(
@@ -191,3 +175,17 @@ class JobPayload:
         )
         annotation_list.add_annotation(annotation_dict)
         self._json_data["annotations"] = annotation_list
+
+
+def _can_query_annotations(json_data: Dict, job_interface: Dict) -> bool:
+    """Checks if the "annotations" key can be queried for the job."""
+    if "annotations" in json_data:
+        return True
+
+    if job_interface["mlTask"] in ("CLASSIFICATION",):
+        return False
+
+    if not job_interface["required"]:
+        return True
+
+    return True

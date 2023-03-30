@@ -140,11 +140,11 @@ class CategoryList:
 
     def __str__(self) -> str:
         """Returns the string representation of the categories list."""
-        return "[" + ", ".join(str(category) for category in self) + "]"
+        return str(self.as_list())
 
     def __repr__(self) -> str:
         """Returns the string representation of the categories list."""
-        return "[" + ", ".join(repr(category) for category in self) + "]"
+        return repr(self.as_list())
 
     def as_list(self) -> List[Dict]:
         """Returns the list of categories as a list of dicts."""
