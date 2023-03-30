@@ -72,6 +72,18 @@ class GraphQLClient:
             "apollographql-client-version": __version__,
         }
 
+    def _get_introspection_args(self) -> Dict[str, bool]:
+        """
+        Get the introspection arguments
+        """
+        return {
+            "input_value_deprecation": True,  # request deprecated input fields
+            "descriptions": True,  # descriptions for the schema, types, fields, and arguments
+            "specified_by_url": True,  # https://spec.graphql.org/draft/#sec--specifiedBy
+            "directive_is_repeatable": True,  # include repeatability of directives
+            "schema_description": True,  # include schema description
+        }
+
     def _initizalize_graphql_client(self) -> Client:
         """
         Initialize the GraphQL client
@@ -84,7 +96,7 @@ class GraphQLClient:
             return Client(
                 transport=self._gql_transport,
                 fetch_schema_from_transport=True,
-                introspection_args={"input_value_deprecation": True},
+                introspection_args=self._get_introspection_args(),
             )
 
         # If the schema is not in the cache, we fetch it from the backend and cache it
@@ -93,9 +105,9 @@ class GraphQLClient:
             self._cache_graphql_schema(graphql_schema_path)
 
         return Client(
-            schema=graphql_schema_path.read_text(encoding="utf-8"),
             transport=self._gql_transport,
-            introspection_args={"input_value_deprecation": True},
+            schema=graphql_schema_path.read_text(encoding="utf-8"),
+            introspection_args=self._get_introspection_args(),
         )
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
@@ -105,7 +117,7 @@ class GraphQLClient:
         with Client(
             transport=self._gql_transport,
             fetch_schema_from_transport=True,
-            introspection_args={"input_value_deprecation": True},
+            introspection_args=self._get_introspection_args(),
         ) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
