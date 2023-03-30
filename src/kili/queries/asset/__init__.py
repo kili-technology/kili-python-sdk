@@ -348,6 +348,7 @@ class QueriesAsset:
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
     ) -> int:
+        # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
 
         Parameters beginning with 'label_' apply to labels, others apply to assets.
@@ -388,6 +389,9 @@ class QueriesAsset:
                 whose update date is greated or equal to this date.
             updated_at_lte: Returned assets should have a label
                 whose update date is lower or equal to this date.
+            label_category_search: Returned assets should have a label that follows this category search query.
+            created_at_gte: Returned assets should have their import date greater or equal to this date.
+            created_at_lte: Returned assets should have their import date lower or equal to this date.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"

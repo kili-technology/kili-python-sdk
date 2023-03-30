@@ -37,7 +37,7 @@ class MutationsPlugins:
         """Uploads a plugin.
 
         Args:
-            plugin_path : Path to your plugin. Either:
+            plugin_path: Path to your plugin. Either:
 
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
@@ -45,14 +45,12 @@ class MutationsPlugins:
             verbose: If false, minimal logs are displayed
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A result object which indicates if the mutation was successful, or an error message.
 
         Examples:
             >>> kili.upload_plugin(plugin_path="./path/to/my/folder")
             >>> kili.upload_plugin(plugin_path="./path/to/my/file.py")
         """
-
         if kwargs.get("file_path"):
             raise TypeError(
                 '"file_path" has been deprecated for "plugin_path", please use "plugin_path"'
@@ -141,42 +139,30 @@ class MutationsPlugins:
         ).update_webhook()
 
     @typechecked
-    def activate_plugin_on_project(
-        self,
-        plugin_name: str,
-        project_id: str,
-    ):
+    def activate_plugin_on_project(self, plugin_name: str, project_id: str):
         # pylint: disable=line-too-long
         """Activates a plugin on a project.
 
         Args:
             plugin_name: Name of the plugin
             project_id: Identifier of the project
-            verbose: If false, minimal logs are displayed
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A result object which indicates if the mutation was successful, or an error message.
 
         Examples:
             >>> kili.activate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
-
         return activate_plugin(self.auth, plugin_name, project_id)
 
     @typechecked
-    def deactivate_plugin_on_project(
-        self,
-        plugin_name: str,
-        project_id: str,
-    ):
+    def deactivate_plugin_on_project(self, plugin_name: str, project_id: str):
         # pylint: disable=line-too-long
         """Activates a plugin on a project.
 
         Args:
             plugin_name: Name of the plugin
             project_id: Identifier of the project
-            verbose: If false, minimal logs are displayed
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -185,19 +171,14 @@ class MutationsPlugins:
         Examples:
             >>> kili.deactivate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
-
         return deactivate_plugin(self.auth, plugin_name, project_id)
 
     @typechecked
-    def delete_plugin(
-        self,
-        plugin_name: str,
-    ):
+    def delete_plugin(self, plugin_name: str):
         """Deletes a plugin.
 
         Args:
             plugin_name: Name of the plugin
-            verbose: If false, minimal logs are displayed
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -206,7 +187,6 @@ class MutationsPlugins:
         Examples:
             >>> kili.delete_plugin(plugin_name="my_plugin_name")
         """
-
         return delete_plugin(self.auth, plugin_name)
 
     @typechecked
@@ -234,10 +214,11 @@ class MutationsPlugins:
         Examples:
             >>> kili.update_plugin(plugin_name="my_plugin_name")
         """
-
         if kwargs.get("file_path"):
-            raise TypeError(""" "file_path" has been deprecated for "plugin_path",
-                please use "plugin_path" instead""")
+            raise TypeError(
+                '"file_path" has been deprecated for "plugin_path", please use "plugin_path"'
+                " instead"
+            )
 
         if not plugin_path:
             raise TypeError('"plugin_path is nullish, please provide a value')

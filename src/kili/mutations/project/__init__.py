@@ -107,9 +107,9 @@ class MutationsProject:
             consensus_mark: Should be between 0 and 1.
             consensus_tot_coverage: Should be between 0 and 100.
                 It is the percentage of the dataset that will be annotated several times.
-            description : Description of the project.
-            honeypot_mark : Should be between 0 and 1
-            instructions : Instructions of the project.
+            description: Description of the project.
+            honeypot_mark: Should be between 0 and 1
+            instructions: Instructions of the project.
             input_type: Currently, one of `AUDIO`, `IMAGE`, `PDF`, `TEXT`,
                 `VIDEO`, `VIDEO_LEGACY`.
             json_interface: The json parameters of the project, see Edit your interface.
@@ -331,8 +331,7 @@ class MutationsProject:
             project_id: Identifier of the project
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A result object which indicates if the mutation was successful, or an error message.
         """
         variables = {
             "projectID": project_id,

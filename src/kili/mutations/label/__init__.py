@@ -196,15 +196,16 @@ class MutationsLabel:
         """Append labels to assets.
 
         Args:
-            asset_id_array: list of asset internal ids to append labels on
-            json_response_array: list of labels to append
-            author_id_array: list of the author id of the labels
-            seconds_to_label_array: list of times taken to produce the label, in seconds
+            asset_id_array: list of asset internal ids to append labels on.
+            json_response_array: list of labels to append.
+            author_id_array: list of the author id of the labels.
+            seconds_to_label_array: list of times taken to produce the label, in seconds.
             model_name: Only useful when uploading predictions.
-                Name of the model when uploading predictions
-            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
-            project_id: Identifier of the project
-            asset_external_id_array: list of asset external ids to append labels on
+                Name of the model when uploading predictions.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            project_id: Identifier of the project.
+            asset_external_id_array: list of asset external ids to append labels on.
+            disable_tqdm: Disable tqdm progress bar.
 
         Returns:
             A result object which indicates if the mutation was successful,

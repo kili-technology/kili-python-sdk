@@ -72,8 +72,8 @@ class MutationsUser:
         This resolver only works for on-premise installations without Auth0.
 
         Args:
-            email : Email of the person whose password has to be updated.
-            old_password : The old password
+            email: Email of the person whose password has to be updated.
+            old_password: The old password
             new_password_1: The new password
             new_password_2: A confirmation field for the new password
 
