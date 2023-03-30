@@ -1,6 +1,4 @@
-"""
-Common code for the PASCAL VOC exporter.
-"""
+"""Common code for the PASCAL VOC exporter."""
 
 import warnings
 import xml.etree.ElementTree as ET
@@ -23,9 +21,7 @@ from ...media.video import cut_video, get_video_dimensions
 
 
 class VocExporter(AbstractExporter):
-    """
-    Common code for VOC exporter.
-    """
+    """Common code for VOC exporter."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,9 +36,7 @@ class VocExporter(AbstractExporter):
         self.with_assets = True
 
     def _check_arguments_compatibility(self):
-        """
-        Check if the export label format is compatible with the export options.
-        """
+        """Check if the export label format is compatible with the export options."""
         if self.single_file:
             raise NotCompatibleOptions(
                 "The Pascal VOC annotation format can not be exported into a single file.",
@@ -53,9 +47,7 @@ class VocExporter(AbstractExporter):
             )
 
     def _check_project_compatibility(self) -> None:
-        """
-        Check if the export label format is compatible with the project.
-        """
+        """Check if the export label format is compatible with the project."""
         if self.project_input_type not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
                 f"Project with input type '{self.project_input_type}' not compatible with"
@@ -68,17 +60,13 @@ class VocExporter(AbstractExporter):
             )
 
     def _is_job_compatible(self, job: Job) -> bool:
-        """
-        Check job compatibility with the Pascal VOC format.
-        """
+        """Check job compatibility with the Pascal VOC format."""
         if "tools" not in job:
             return False
         return JobTool.Rectangle in job["tools"] and job["mlTask"] == JobMLTask.ObjectDetection
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
-        """
-        Save the assets and annotations to a zip file in the Pascal VOC format.
-        """
+        """Save the assets and annotations to a zip file in the Pascal VOC format."""
         self.logger.info("Exporting VOC format")
 
         labels_folder = self.base_folder / "labels"
@@ -97,9 +85,7 @@ class VocExporter(AbstractExporter):
 def _process_asset(
     asset: Dict, labels_folder: Path, project_input_type: str, valid_jobs: Sequence[str]
 ) -> None:
-    """
-    Process an asset
-    """
+    """Process an asset."""
     if project_input_type == "VIDEO":
         nbr_frames = len(asset.get("latestLabel", {}).get("jsonResponse", {}))
         if nbr_frames < 1:

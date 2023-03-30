@@ -1,6 +1,4 @@
-"""
-Module for methods and classes that are for internal use by Kili Technology only.
-"""
+"""Module for methods and classes that are for internal use by Kili Technology only."""
 
 from typeguard import typechecked
 

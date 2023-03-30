@@ -1,6 +1,4 @@
-"""
-Label mutations
-"""
+"""Label mutations."""
 
 import warnings
 from json import dumps
@@ -133,21 +131,20 @@ class MutationsLabel:
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ):
-        """
-        !!! danger "[DEPRECATED]"
+        """!!! danger "[DEPRECATED]"
             append_to_labels method is deprecated. Please use append_labels instead.
             This new function allows to import several labels 10 times faster.
 
         Append a label to an asset.
 
         Args:
-            json_response: Label is given here
-            author_id: ID of the author of the label
-            label_asset_external_id: External identifier of the asset
-            label_asset_id: Identifier of the asset
-            project_id: Identifier of the project
-            label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
-            seconds_to_label: Time to create the label
+            json_response: Label is given here.
+            author_id: ID of the author of the label.
+            label_asset_external_id: External identifier of the asset.
+            label_asset_id: Identifier of the asset.
+            project_id: Identifier of the project.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            seconds_to_label: Time to create the label.
 
         !!! warning
             Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
@@ -158,7 +155,6 @@ class MutationsLabel:
 
         Examples:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
-
         """
         if author_id is None:
             author_id = self.auth.user_id

@@ -1,6 +1,4 @@
-"""
-Utils
-"""
+"""Utils."""
 import functools
 import time
 from time import sleep
@@ -67,9 +65,7 @@ def batch_object_builder(
 
 
 def api_throttle(func):
-    """
-    Define a decorator that throttle a function call to meet the API limitation
-    """
+    """Define a decorator that throttle a function call to meet the API limitation."""
 
     @functools.wraps(func)
     def throttled_wrapper(*args, **kwargs):

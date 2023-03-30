@@ -1,6 +1,4 @@
-"""
-Functions to import assets into a PDF project
-"""
+"""Functions to import assets into a PDF project."""
 from typing import List
 
 from .base import BaseAssetImporter, BatchParams, ContentBatchImporter
@@ -8,14 +6,10 @@ from .types import AssetLike
 
 
 class PdfDataImporter(BaseAssetImporter):
-    """
-    class for importing data into a PDF project
-    """
+    """Class for importing data into a PDF project."""
 
     def import_assets(self, assets: List[AssetLike]):
-        """
-        Import PDF assets into Kili.
-        """
+        """Import PDF assets into Kili."""
         self._check_upload_is_allowed(assets)
         is_hosted = self.is_hosted_content(assets)
         assets = self.filter_duplicate_external_ids(assets)

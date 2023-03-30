@@ -1,6 +1,4 @@
-"""
-Tests for copy project service.
-"""
+"""Tests for copy project service."""
 
 import hashlib
 from pathlib import Path

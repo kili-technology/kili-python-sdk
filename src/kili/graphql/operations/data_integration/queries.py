@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of data integrations
-"""
+"""GraphQL Queries of data integrations."""
 
 
 from typing import Optional
@@ -9,9 +7,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class DataIntegrationWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the DataIntegrationsQuery to restrict the query
-    """
+    """Tuple to be passed to the DataIntegrationsQuery to restrict the query."""
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -30,7 +26,7 @@ class DataIntegrationWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK DataIntegrationWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK DataIntegrationWhere."""
         return {
             "id": self.data_integration_id,
             "name": self.name,
@@ -45,9 +41,7 @@ class DataIntegrationsQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL dataIntegrations query
-        """
+        """Return the GraphQL dataIntegrations query."""
         return f"""
         query dataIntegrations($where: DataIntegrationWhere!, $first: PageSize!, $skip: Int!) {{
           data: dataIntegrations(where: $where, skip: $skip, first: $first) {{

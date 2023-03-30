@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of data connections
-"""
+"""GraphQL Queries of data connections."""
 
 
 from typing import Optional
@@ -9,9 +7,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class DataConnectionsWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the DataConnectionsQuery to restrict the query
-    """
+    """Tuple to be passed to the DataConnectionsQuery to restrict the query."""
 
     def __init__(
         self,
@@ -23,7 +19,7 @@ class DataConnectionsWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionsWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionsWhere."""
         return {
             "projectId": self.project_id,
             "integrationId": self.data_integration_id,
@@ -35,9 +31,7 @@ class DataConnectionsQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL dataConnections query
-        """
+        """Return the GraphQL dataConnections query."""
         return f"""
         query dataConnections($where: DataConnectionsWhere!, $first: PageSize!, $skip: Int!) {{
           data: dataConnections(where: $where, first: $first, skip: $skip) {{
@@ -48,9 +42,7 @@ class DataConnectionsQuery(GraphQLQuery):
 
 
 class DataConnectionIdWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the DataConnectionQuery to restrict the query
-    """
+    """Tuple to be passed to the DataConnectionQuery to restrict the query."""
 
     def __init__(
         self,
@@ -60,7 +52,7 @@ class DataConnectionIdWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionWhere."""
         return {
             "id": self.data_connection_id,
         }
@@ -71,9 +63,7 @@ class DataConnectionQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL dataConnection query
-        """
+        """Return the GraphQL dataConnection query."""
         return f"""
         query dataConnection($where: DataConnectionIdWhere!) {{
           data: dataConnection(where: $where) {{

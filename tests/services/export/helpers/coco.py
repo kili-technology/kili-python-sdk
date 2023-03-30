@@ -45,16 +45,12 @@ def get_asset(
 def estimate_rotated_bb_from_kili_poly(
     coco_annotation: Dict, coco_image: Dict, kili_annotation: Dict
 ):
-    """
-    Convert a rotated bounding box encoded into normalized vertices in Kili, into a rotated bounding
+    """Convert a rotated bounding box encoded into normalized vertices in Kili, into a rotated bounding
     box, which is encoded by an unnormalized horizontal bounding box
-    (top_left_x, top_left_y, width, height).
-    """
+    (top_left_x, top_left_y, width, height)."""
 
     def _is_rectangle(vertices: List[Dict]) -> bool:
-        """
-        Check that the polygon has 4 vertices and at least 3 right angles.
-        """
+        """Check that the polygon has 4 vertices and at least 3 right angles."""
         if len(vertices) != 4:
             return False
         vector_1 = (vertices[1]["x"] - vertices[0]["x"], vertices[1]["y"] - vertices[0]["y"])

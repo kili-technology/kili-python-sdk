@@ -74,9 +74,8 @@ class MutationsPlugins:
         handler_types: Optional[List[str]] = None,
     ):
         # pylint: disable=line-too-long,too-many-arguments
-        """
-        Create a webhook linked to Kili's events.
-        For a complete example, refer to the notebook `webhooks_example` on kili repo
+        """Create a webhook linked to Kili's events.
+        For a complete example, refer to the notebook `webhooks_example` on kili repo.
 
         Args:
             webhook_url: URL receiving post requests on events on Kili. The payload will be the following:
@@ -117,9 +116,8 @@ class MutationsPlugins:
         handler_types: Optional[List[str]] = None,
     ):
         # pylint: disable=line-too-long,too-many-arguments
-        """
-        Update a webhook linked to Kili's events.
-        For a complete example, refer to the notebook `webhooks_example` on kili repo
+        """Update a webhook linked to Kili's events.
+        For a complete example, refer to the notebook `webhooks_example` on kili repo.
 
         Args:
             new_webhook_url: New URL receiving post requests on events on Kili. See `create_webhook` for the payload description
@@ -238,10 +236,8 @@ class MutationsPlugins:
         """
 
         if kwargs.get("file_path"):
-            raise TypeError(
-                """ "file_path" has been deprecated for "plugin_path",
-                please use "plugin_path" instead"""
-            )
+            raise TypeError(""" "file_path" has been deprecated for "plugin_path",
+                please use "plugin_path" instead""")
 
         if not plugin_path:
             raise TypeError('"plugin_path is nullish, please provide a value')

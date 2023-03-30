@@ -1,6 +1,4 @@
-"""
-Set of common functions used by different export formats
-"""
+"""Set of common functions used by different export formats."""
 from typing import Dict, List, Optional
 
 from kili.authentication import KiliAuth
@@ -44,9 +42,7 @@ LATEST_LABEL_FIELDS = [
 
 
 def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportType):
-    """
-    Adds `name` field for author, by concatenating his/her first and last name
-    """
+    """Adds `name` field for author, by concatenating his/her first and last name."""
     for asset in assets:
         if export_type == "latest":
             latest_label = asset["latestLabel"]
@@ -122,9 +118,7 @@ def _check_content_presence(assets: List[Dict]):
 
 
 def get_fields_to_fetch(export_type: ExportType):
-    """
-    Returns the fields to fetch depending on the export type
-    """
+    """Returns the fields to fetch depending on the export type."""
     if export_type == "latest":
         return LATEST_LABEL_FIELDS
     return DEFAULT_FIELDS

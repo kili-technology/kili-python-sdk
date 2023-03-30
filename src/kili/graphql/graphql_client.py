@@ -1,6 +1,4 @@
-"""
-GraphQL Client
-"""
+"""GraphQL Client."""
 
 import json
 import logging
@@ -29,9 +27,7 @@ from kili.utils.logcontext import LogContext
 
 
 class GraphQLClient:
-    """
-    GraphQL client
-    """
+    """GraphQL client."""
 
     def __init__(
         self,
@@ -63,9 +59,7 @@ class GraphQLClient:
         self._gql_client = self._initizalize_graphql_client()
 
     def _get_headers(self) -> Dict[str, str]:
-        """
-        Get the headers
-        """
+        """Get the headers."""
         return {
             "Authorization": f"X-API-Key: {self.api_key}",
             "Accept": "application/json",
@@ -75,9 +69,7 @@ class GraphQLClient:
         }
 
     def _initizalize_graphql_client(self) -> Client:
-        """
-        Initialize the GraphQL client
-        """
+        """Initialize the GraphQL client."""
         graphql_schema_path = self._get_graphql_schema_path()
 
         # In some cases (local development), we cannot get the kili version from the backend
@@ -96,9 +88,7 @@ class GraphQLClient:
         )
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
-        """
-        Cache the graphql schema on disk.
-        """
+        """Cache the graphql schema on disk."""
         with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
@@ -109,21 +99,16 @@ class GraphQLClient:
 
     @property
     def graphql_schema_cache_dir(self) -> Path:
-        """
-        Get the path of the GraphQL schema cache directory
-        """
+        """Get the path of the GraphQL schema cache directory."""
         return Path.home() / ".cache" / "kili" / "graphql"
 
     def _purge_graphql_schema_cache_dir(self) -> None:
-        """
-        Purge the schema cache directory
-        """
+        """Purge the schema cache directory."""
         for file in self.graphql_schema_cache_dir.glob("*.graphql"):
             file.unlink()
 
     def _get_graphql_schema_path(self) -> Optional[Path]:
-        """
-        Get the path of the GraphQL schema
+        """Get the path of the GraphQL schema.
 
         Will return None if we cannot get the schema version.
         """
@@ -135,8 +120,7 @@ class GraphQLClient:
         return self.graphql_schema_cache_dir / filename
 
     def _get_kili_app_version(self) -> Optional[str]:
-        """
-        Get the version of the Kili app server
+        """Get the version of the Kili app server.
 
         Returns None if the version cannot be retrieved.
         """
@@ -151,8 +135,7 @@ class GraphQLClient:
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None
     ) -> Dict[str, Any]:
-        """
-        Execute a query
+        """Execute a query.
 
         Args:
             query: the GraphQL query
@@ -198,9 +181,9 @@ GQL_WS_SUBPROTOCOL = "graphql-ws"
 
 
 class SubscriptionGraphQLClient:
-    """
-    A simple GraphQL client that works over Websocket as the transport
+    """A simple GraphQL client that works over Websocket as the transport
     protocol, instead of HTTP.
+
     This follows the Apollo protocol.
     https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md
     """
@@ -217,9 +200,7 @@ class SubscriptionGraphQLClient:
         self.failed_connection_attempts = 0
 
     def _connect(self):
-        """
-        Handles the connection
-        """
+        """Handles the connection."""
         self._conn = websocket.create_connection(
             self.ws_url, on_message=self._on_message, subprotocols=[GQL_WS_SUBPROTOCOL]
         )
@@ -227,9 +208,7 @@ class SubscriptionGraphQLClient:
         self._conn.on_message = self._on_message  # type: ignore
 
     def _reconnect(self):
-        """
-        Handles the reconnection
-        """
+        """Handles the reconnection."""
         self._connect()
         self._subscription_running = True
         dt_string = datetime.now().strftime(r"%d/%m/%Y %H:%M:%S")
@@ -237,8 +216,7 @@ class SubscriptionGraphQLClient:
         self.failed_connection_attempts = 0
 
     def _on_message(self, message):
-        """
-        Handles messages
+        """Handles messages.
 
         Args:
             message : the message
@@ -249,8 +227,7 @@ class SubscriptionGraphQLClient:
             print(message)
 
     def _conn_init(self, headers=None, authorization=None):
-        """
-        Initializes the websocket connection
+        """Initializes the websocket connection.
 
         Args:
             headers : Headers are necessary for Kili API v1
@@ -264,8 +241,7 @@ class SubscriptionGraphQLClient:
         self._conn.recv()
 
     def _start(self, payload):
-        """
-        Handles start
+        """Handles start.
 
         Args:
             payload
@@ -276,8 +252,7 @@ class SubscriptionGraphQLClient:
         return _id
 
     def _stop(self, _id):
-        """
-        Handles stop
+        """Handles stop.
 
         Args:
         - _id: connection id
@@ -287,8 +262,7 @@ class SubscriptionGraphQLClient:
         return self._conn.recv()
 
     def query(self, query, variables=None, headers=None):
-        """
-        Sends a query
+        """Sends a query.
 
         Args:
             query
@@ -303,8 +277,7 @@ class SubscriptionGraphQLClient:
         return res
 
     def prepare_subscribe(self, query, variables, headers, callback, authorization):
-        """
-        Prepares a subscription
+        """Prepares a subscription.
 
         Args:
             query
@@ -321,8 +294,7 @@ class SubscriptionGraphQLClient:
         return _cc, _id
 
     def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
-        """
-        Subscribes
+        """Subscribes.
 
         Args:
             query
@@ -375,39 +347,28 @@ class SubscriptionGraphQLClient:
         self._stop(_id)
 
     def close(self):
-        """
-        Handles close
-        """
+        """Handles close."""
         self._conn.close()
 
     def pause(self):
-        """
-        Handles pause
-        """
+        """Handles pause."""
         self._paused = True
 
     def unpause(self):
-        """
-        Handles unpause
-        """
+        """Handles unpause."""
         self._paused = False
 
     def get_lifetime(self):
-        """
-        Return the lifetime
-        """
+        """Return the lifetime."""
         return (datetime.now() - self._created_at).seconds
 
     def reset_timeout(self):
-        """
-        Resets the timeout
-        """
+        """Resets the timeout."""
         self._reconnect()
 
 
 def gen_id(size=6, chars=string.ascii_letters + string.digits):
-    """
-    Generate random alphanumeric id
+    """Generate random alphanumeric id.
 
     Args:
         size: length of the id

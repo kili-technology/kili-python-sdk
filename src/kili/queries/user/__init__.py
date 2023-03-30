@@ -70,7 +70,7 @@ class QueriesUser:
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
-        """Get a generator or a list of users given a set of criteria
+        """Get a generator or a list of users given a set of criteria.
 
         Args:
             api_key: Query an user by its API Key

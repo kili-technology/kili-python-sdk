@@ -1,4 +1,4 @@
-"""Tests for category search validation"""
+"""Tests for category search validation."""
 
 import pytest
 

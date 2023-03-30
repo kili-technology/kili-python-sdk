@@ -1,6 +1,4 @@
-"""
-Helpers for GraphQL Queries and Mutations
-"""
+"""Helpers for GraphQL Queries and Mutations."""
 
 import base64
 import functools
@@ -23,8 +21,8 @@ T = TypeVar("T")
 
 
 def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) -> T:
-    """
-    Formats the result of the GraphQL queries.
+    """Formats the result of the GraphQL queries.
+
     Args:
         name: name of the field to extract, usually data
         result: query result to parse
@@ -44,8 +42,7 @@ def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) ->
 
 
 def content_escape(content: str) -> str:
-    """
-    Escapes the content
+    """Escapes the content.
 
     Args:
         content (str): string to escape
@@ -57,8 +54,7 @@ def content_escape(content: str) -> str:
 
 
 def get_data_type(path: str):
-    """
-    Get the data type, either image/png or application/pdf
+    """Get the data type, either image/png or application/pdf.
 
     Args:
         path: path of the file
@@ -68,8 +64,7 @@ def get_data_type(path: str):
 
 
 def encode_base64(path):
-    """
-    Encode a file in base 64
+    """Encode a file in base 64.
 
     Args:
         path: path of the file
@@ -80,8 +75,7 @@ def encode_base64(path):
 
 
 def is_url(path):
-    """
-    Check if the path is a url or something else
+    """Check if the path is a url or something else.
 
     Args:
         path: path of the file
@@ -90,8 +84,7 @@ def is_url(path):
 
 
 def format_json_dict(result: dict) -> Dict:
-    """
-    Formats the dict part of a json return by a GraphQL query into a python object
+    """Formats the dict part of a json return by a GraphQL query into a python object.
 
     Args:
         result: result of a GraphQL query
@@ -119,8 +112,7 @@ D = TypeVar("D")
 
 
 def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D]:
-    """
-    Formats the json return by a GraphQL query into a python object
+    """Formats the json return by a GraphQL query into a python object.
 
     Args:
         result: result of a GraphQL query
@@ -139,8 +131,8 @@ def deprecate(
     removed_in: Optional[str] = None,
     _type=DeprecationWarning,
 ):
-    """
-    Decorator factory that tag a deprecated function.
+    """Decorator factory that tag a deprecated function.
+
     - To deprecated the whole function, you can give a message at the decorator level.
     - For more sharp condition on the warning message, integrate this warning inside the function
     but still tag the function with this decorator, without giving a message argument
@@ -173,8 +165,7 @@ def deprecate(
 
 
 def format_metadata(metadata):
-    """
-    Formats metadata
+    """Formats metadata.
 
     Args:
         metadata: a python object
@@ -192,8 +183,7 @@ def format_metadata(metadata):
 
 
 def convert_to_list_of_none(array, length):
-    """
-    Turns a value in a list of length length
+    """Turns a value in a list of length length.
 
     Args:
         array
@@ -207,8 +197,7 @@ def convert_to_list_of_none(array, length):
 
 
 def is_none_or_empty(_object):
-    """
-    Tests if an object is none or empty
+    """Tests if an object is none or empty.
 
     Args:
         object: a python object
@@ -218,8 +207,7 @@ def is_none_or_empty(_object):
 
 
 def list_is_not_none_else_none(_object):
-    """
-    Formats an object as a singleton if not none
+    """Formats an object as a singleton if not none.
 
     Args:
         object: a python object
@@ -304,9 +292,7 @@ def get_file_paths_to_upload(
 
 
 def file_check_function_from_input_type(input_type: str):
-    """
-    Returns check_file_mime_type function with input_type and verbose as preset argument
-    """
+    """Returns check_file_mime_type function with input_type and verbose as preset argument."""
 
     def output_function(path: str):
         return check_file_mime_type(path, input_type, raise_error=False)
@@ -315,10 +301,7 @@ def file_check_function_from_input_type(input_type: str):
 
 
 def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
-    """
-    Returns true if the mime type of the file corresponds to the allowed mime types of the project
-    """
-
+    """Returns true if the mime type of the file corresponds to the allowed mime types of the project."""
     mime_type = get_data_type(path.lower())
 
     if not (mime_extensions_for_IV2[input_type] and mime_type):
@@ -377,8 +360,7 @@ class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
 
 
 def is_empty_list_with_warning(method_name: str, argument_name: str, argument_value: Any) -> bool:
-    """
-    Check if an input list argument is empty and warn the user if it is
+    """Check if an input list argument is empty and warn the user if it is.
 
     Returns True if the list is empty, False otherwise
     """

@@ -1,13 +1,11 @@
-"""
-Types for the Coco export
-"""
+"""Types for the Coco export."""
 from typing import Dict, List
 
 from typing_extensions import TypedDict
 
 
 class CocoImage(TypedDict):
-    """Handle the coco image data"""
+    """Handle the coco image data."""
 
     id: int
     license: int
@@ -18,7 +16,7 @@ class CocoImage(TypedDict):
 
 
 class CocoCategory(TypedDict):
-    """Handle the coco category data"""
+    """Handle the coco category data."""
 
     id: int
     name: str
@@ -26,7 +24,7 @@ class CocoCategory(TypedDict):
 
 
 class CocoAnnotation(TypedDict):
-    """Handle the coco annotation data"""
+    """Handle the coco annotation data."""
 
     id: int
     image_id: int
@@ -38,7 +36,7 @@ class CocoAnnotation(TypedDict):
 
 
 class CocoFormat(TypedDict):
-    """Handle the coco format data"""
+    """Handle the coco format data."""
 
     info: Dict  # type: ignore
     licenses: List[Dict]  # type: ignore

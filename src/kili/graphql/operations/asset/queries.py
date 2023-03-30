@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Assets
-"""
+"""GraphQL Queries of Assets."""
 
 
 from typing import List, Optional
@@ -10,9 +8,7 @@ from kili.orm import Asset as AssetFormatType
 
 
 class AssetWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the AssetQuery to restrict query
-    """
+    """Tuple to be passed to the AssetQuery to restrict query."""
 
     # pylint: disable=too-many-arguments,too-many-locals,too-many-instance-attributes
 
@@ -72,7 +68,7 @@ class AssetWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK AssetWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK AssetWhere."""
         return {
             "id": self.asset_id,
             "project": {
@@ -113,9 +109,7 @@ class AssetQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL assets query
-        """
+        """Return the GraphQL assets query."""
         return f"""
         query assets($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{
             data: assets(where: $where, skip: $skip, first: $first) {{

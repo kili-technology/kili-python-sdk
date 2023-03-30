@@ -93,8 +93,7 @@ class MutationsUser:
         return format_result("data", result)
 
     def reset_password(self, email: str):
-        """
-        Reset password.
+        """Reset password.
 
         !!! warning "Method removed"
             This method is not available anymore.

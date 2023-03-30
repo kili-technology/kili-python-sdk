@@ -1,13 +1,10 @@
-"""
-Helpers for the project queries.
-"""
+"""Helpers for the project queries."""
 
 from typing import List, Tuple
 
 
 def get_project_url(project_id: str, api_endpoint: str):
-    """
-    Get the project url from the project id and the api_endpoint
+    """Get the project url from the project id and the api_endpoint.
 
     Args:
         project_id: the project id
@@ -43,7 +40,6 @@ def get_project_metrics(project: dict) -> Tuple[List[Tuple], List[Tuple]]:
         dataset_metrics, quality_metrics: arrays that contain
         the project infos and progress metrics
     """
-
     if project["numberOfAssets"]:
         progress = round(
             (1 - project["numberOfRemainingAssets"] / project["numberOfAssets"]) * 100,

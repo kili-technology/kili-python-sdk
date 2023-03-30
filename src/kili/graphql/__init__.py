@@ -1,6 +1,4 @@
-"""
-GraphQL module
-"""
+"""GraphQL module."""
 
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
@@ -16,7 +14,7 @@ from .graphql_client import GraphQLClient
 
 
 class QueryOptions(NamedTuple):
-    """Options when calling GraphQLQuery from the SDK"""
+    """Options when calling GraphQLQuery from the SDK."""
 
     disable_tqdm: Optional[bool]
     first: Optional[int] = None
@@ -24,9 +22,7 @@ class QueryOptions(NamedTuple):
 
 
 class BaseQueryWhere(ABC):
-    """
-    Abtsract class for defining the where payload to send in a graphQL query
-    """
+    """Abtsract class for defining the where payload to send in a graphQL query."""
 
     def __init__(self):
         self._graphql_payload = self.graphql_where_builder()
@@ -34,19 +30,18 @@ class BaseQueryWhere(ABC):
     @abstractmethod
     def graphql_where_builder(self) -> Dict:
         """Build the GraphQL where payload sent in the resolver from the
-        arguments given to the where class
-        """
+        arguments given to the where class."""
         raise NotImplementedError
 
     @property
     def graphql_payload(self):
-        """where payload to send in the graphQL query"""
+        """Where payload to send in the graphQL query."""
         return self._graphql_payload
 
 
 class GraphQLQuery(ABC):
-    """
-    Query class for querying Kili objects.
+    """Query class for querying Kili objects.
+
     It factorizes code for executing paginated queries
     """
 
@@ -79,20 +74,21 @@ class GraphQLQuery(ABC):
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:
-        """Get a generator of objects of the specified type in accordance with the provided where"""
+        """Get a generator of objects of the specified type in accordance with the provided where."""
         fragment = self.fragment_builder(fields)
         query = self.query(fragment)
 
         return self.execute_query_from_paginated_call(query, where, options, post_call_function)
 
     def count(self, where: BaseQueryWhere) -> int:
-        """Count the number of objects matching the given where payload"""
+        """Count the number of objects matching the given where payload."""
         payload = {"where": where.graphql_payload}
         count_result = self.client.execute(self.COUNT_QUERY, payload)
         return format_result("data", count_result, int)
 
     def get_number_of_elements_to_query(self, where: BaseQueryWhere, options: QueryOptions):
         """Return the total number of element to query for one query.
+
         It uses both the argument first given by the user
         and the total number of available objects obtained with a graphQL count query
         """
@@ -111,8 +107,7 @@ class GraphQLQuery(ABC):
         options: QueryOptions,
         post_call_function: Optional[Callable],
     ) -> Generator[Dict, None, None]:
-        """
-        Builds a row generator from paginated calls.
+        """Builds a row generator from paginated calls.
 
         Args:
             query: The object query to execute and to send to graphQL, in string format
@@ -174,8 +169,7 @@ class GraphQLQuery(ABC):
 
     @typechecked
     def fragment_builder(self, fields: List[str]):
-        """
-        Builds a GraphQL fragment for a list of fields to query
+        """Builds a GraphQL fragment for a list of fields to query.
 
         Args:
             fields: The list of fields to query

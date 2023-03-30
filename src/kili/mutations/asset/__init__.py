@@ -1,6 +1,4 @@
-"""
-Asset mutations
-"""
+"""Asset mutations."""
 
 import warnings
 from typing import Any, Dict, List, Optional, Union
@@ -34,9 +32,7 @@ from .helpers import get_asset_ids_or_throw_error
 
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsAsset:
-    """
-    Set of Asset mutations
-    """
+    """Set of Asset mutations."""
 
     # pylint: disable=too-many-arguments,too-many-locals
 

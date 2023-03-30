@@ -1,6 +1,4 @@
-"""
-Helpers for the project mutations
-"""
+"""Helpers for the project mutations."""
 
 
 from typing import Optional
@@ -11,10 +9,8 @@ def verify_argument_ranges(
     min_consensus_size: Optional[int],
     review_coverage: Optional[int],
 ):
-    """
-    Ensure that all arguments are set in a correct range or raise
-    a ValueError otherwise
-    """
+    """Ensure that all arguments are set in a correct range or raise
+    a ValueError otherwise."""
     if consensus_tot_coverage is not None and (
         consensus_tot_coverage < 0 or consensus_tot_coverage > 100
     ):

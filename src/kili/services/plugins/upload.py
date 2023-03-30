@@ -1,6 +1,4 @@
-"""
-Class to upload a plugin
-"""
+"""Class to upload a plugin."""
 
 import ast
 import time
@@ -39,9 +37,7 @@ POSSIBLE_HANDLERS = {
 def check_file_mime_type(
     path: Path, compatible_mime_extensions: List[str], verbose: bool = True
 ) -> bool:
-    """
-    Returns true if the mime type of the file corresponds to one of compatible_mime_extensions
-    """
+    """Returns true if the mime type of the file corresponds to one of compatible_mime_extensions."""
     mime_type = get_data_type(path.as_posix())
 
     if not (compatible_mime_extensions and mime_type):
@@ -59,23 +55,17 @@ def check_file_mime_type(
 
 
 def check_file_is_py(path: Path, verbose: bool = True) -> bool:
-    """
-    Returns true if the mime type of the file corresponds to a python file
-    """
+    """Returns true if the mime type of the file corresponds to a python file."""
     return check_file_mime_type(path, mime_extensions_for_py_scripts, verbose)
 
 
 def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
-    """
-    Returns true if the mime type of the file corresponds to a .txt file
-    """
+    """Returns true if the mime type of the file corresponds to a .txt file."""
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
 
 
 def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
-    """
-    Return true if the file contain PluginHandler Class
-    """
+    """Return true if the file contain PluginHandler Class."""
     with open(path, encoding="utf-8") as file:
         module = ast.parse(file.read())
     for node in module.body:
@@ -89,9 +79,7 @@ def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
 
 
 class WebhookUploader:
-    """
-    Class to create a webhook
-    """
+    """Class to create a webhook."""
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -111,10 +99,7 @@ class WebhookUploader:
         self.handler_types = handler_types
 
     def create_webhook(self):
-        """
-        Create a webhook receiving Kili events
-        """
-
+        """Create a webhook receiving Kili events."""
         variables = {
             "handlerTypes": self.handler_types,
             "pluginName": self.plugin_name,
@@ -127,10 +112,7 @@ class WebhookUploader:
         return format_result("data", result)
 
     def update_webhook(self):
-        """
-        Update a webhook receiving Kili events
-        """
-
+        """Update a webhook receiving Kili events."""
         variables = {
             "handlerTypes": self.handler_types,
             "pluginName": self.plugin_name,
@@ -144,9 +126,7 @@ class WebhookUploader:
 
 
 class PluginUploader:
-    """
-    Class to upload a plugin
-    """
+    """Class to upload a plugin."""
 
     def __init__(
         self, auth: KiliAuth, plugin_path: str, plugin_name: Optional[str], verbose: bool
@@ -168,10 +148,8 @@ class PluginUploader:
         self.handler_types = None
 
     def _retrieve_plugin_src(self) -> List[Path]:
-        """
-        Retrieve script from plugin_path and execute it
-        to prevent an upload with indentation errors
-        """
+        """Retrieve script from plugin_path and execute it
+        to prevent an upload with indentation errors."""
         if self.plugin_path.is_dir():
             file_path = self.plugin_path / "main.py"
             if not file_path.is_file():
@@ -202,11 +180,8 @@ class PluginUploader:
         return [file_path]
 
     def _retrieve_requirements(self) -> Union[Path, None]:
-        """
-        Retrieve script from file_path and execute it
-        to prevent an upload with indentation errors
-        """
-
+        """Retrieve script from file_path and execute it
+        to prevent an upload with indentation errors."""
         if not self.plugin_path.is_dir():
             return None
 
@@ -225,10 +200,7 @@ class PluginUploader:
 
     @staticmethod
     def _parse_script(script_path: Path):
-        """
-        Method to detect indentation and class errors in the script
-        """
-
+        """Method to detect indentation and class errors in the script."""
         with script_path.open("r", encoding="utf-8") as file:
             source_code = file.read()
 
@@ -237,15 +209,11 @@ class PluginUploader:
 
     @staticmethod
     def _upload_file(zip_path: Path, url: str):
-        """
-        Upload a file to a signed url and returns the url with the file_id
-        """
+        """Upload a file to a signed url and returns the url with the file_id."""
         bucket.upload_data_via_rest(url, zip_path.read_bytes(), "application/zip")
 
     def _retrieve_upload_url(self, is_updating_plugin: bool) -> str:
-        """
-        Retrieve an upload url from the backend
-        """
+        """Retrieve an upload url from the backend."""
         variables = {"pluginName": self.plugin_name}
 
         if is_updating_plugin:
@@ -258,11 +226,8 @@ class PluginUploader:
         return upload_url
 
     def _create_zip(self, tmp_directory: Path):
-        """
-        Create a zip file from python file and requirements.txt
-        (if user has defined a path to a requirements.txt)
-        """
-
+        """Create a zip file from python file and requirements.txt
+        (if user has defined a path to a requirements.txt)"""
         file_paths = self._retrieve_plugin_src()
 
         for path in file_paths:
@@ -286,10 +251,7 @@ class PluginUploader:
         return zip_path
 
     def _upload_script(self, is_updating_plugin: bool):
-        """
-        Upload a script to Kili bucket
-        """
-
+        """Upload a script to Kili bucket."""
         with TemporaryDirectory() as tmp_directory:
             zip_path = self._create_zip(tmp_directory)
 
@@ -298,20 +260,14 @@ class PluginUploader:
             self._upload_file(zip_path, upload_url)
 
     def _create_plugin_runner(self):
-        """
-        Create plugin's runner
-        """
-
+        """Create plugin's runner."""
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.auth.client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
     def _check_plugin_runner_status(self, update=False):
-        """
-        Check the status of a plugin's runner until it is active
-        """
-
+        """Check the status of a plugin's runner until it is active."""
         logger = get_logger()
 
         action = "updated" if update else "created"
@@ -334,20 +290,16 @@ class PluginUploader:
             n_tries += 1
 
         if status == "DEPLOYING" and n_tries == 20:
-            raise RuntimeError(
-                f"""We could not check your plugin was deployed in time.
+            raise RuntimeError(f"""We could not check your plugin was deployed in time.
 Please check again the status of the plugin after some minutes with the command : \
 kili.get_plugin_status("{self.plugin_name}").
 If the status is different than DEPLOYING or ACTIVE, please check your plugin's code and try to \
-overwrite the plugin with a new version of the code (you can use kili.update_plugin() for that)."""
-            )
+overwrite the plugin with a new version of the code (you can use kili.update_plugin() for that).""")
 
         if status != "ACTIVE":
-            raise PluginCreationError(
-                """There was some error during the creation of the plugin. \
+            raise PluginCreationError("""There was some error during the creation of the plugin. \
 Please check your plugin's code and try to overwrite the plugin with a new version of the \
-code (you can use kili.update_plugin() for that)."""
-            )
+code (you can use kili.update_plugin() for that).""")
 
         message = f"Plugin {action} successfully"
         logger.info(message)
@@ -355,10 +307,7 @@ code (you can use kili.update_plugin() for that)."""
         return message
 
     def get_plugin_runner_status(self):
-        """
-        Get the status of a plugin's runner
-        """
-
+        """Get the status of a plugin's runner."""
         variables = {"name": self.plugin_name}
 
         result = self.auth.client.execute(GQL_GET_PLUGIN_RUNNER_STATUS, variables)
@@ -366,10 +315,7 @@ code (you can use kili.update_plugin() for that)."""
         return format_result("data", result)
 
     def create_plugin(self):
-        """
-        Create a plugin in Kili
-        """
-
+        """Create a plugin in Kili."""
         self._upload_script(False)
 
         self._create_plugin_runner()
@@ -377,19 +323,14 @@ code (you can use kili.update_plugin() for that)."""
         return self._check_plugin_runner_status()
 
     def _update_plugin_runner(self):
-        """
-        Update plugin's runner
-        """
+        """Update plugin's runner."""
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.auth.client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
     def update_plugin(self):
-        """
-        Update a plugin in Kili
-        """
-
+        """Update a plugin in Kili."""
         self._upload_script(True)
 
         self._update_plugin_runner()

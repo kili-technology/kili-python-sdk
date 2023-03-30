@@ -1,4 +1,4 @@
-"""Module to test validation of jsonResponse in the backend"""
+"""Module to test validation of jsonResponse in the backend."""
 
 
 import pytest

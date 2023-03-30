@@ -19,9 +19,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesOrganization:
-    """
-    Set of Organization queries
-    """
+    """Set of Organization queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 

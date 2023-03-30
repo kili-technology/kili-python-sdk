@@ -1,6 +1,4 @@
-"""
-Queries of label subscription
-"""
+"""Queries of label subscription."""
 
 from .fragments import LABEL_FRAGMENT
 

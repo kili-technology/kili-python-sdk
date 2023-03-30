@@ -1,6 +1,4 @@
-"""
-Fragments of label mutations
-"""
+"""Fragments of label mutations."""
 
 LABEL_FRAGMENT = """
 id

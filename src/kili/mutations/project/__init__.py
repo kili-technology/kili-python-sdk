@@ -310,8 +310,7 @@ class MutationsProject:
 
     @typechecked
     def delete_project(self, project_id: str) -> str:
-        """
-        Delete a project permanently.
+        """Delete a project permanently.
 
         Args:
             project_id: Identifier of the project
@@ -326,8 +325,7 @@ class MutationsProject:
 
     @typechecked
     def archive_project(self, project_id: str):
-        """
-        Archive a project.
+        """Archive a project.
 
         Args:
             project_id: Identifier of the project
@@ -336,7 +334,6 @@ class MutationsProject:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-
         variables = {
             "projectID": project_id,
             "archived": True,
@@ -347,8 +344,7 @@ class MutationsProject:
 
     @typechecked
     def unarchive_project(self, project_id: str):
-        """
-        Unarchive a project.
+        """Unarchive a project.
 
         Args:
             project_id: Identifier of the project
@@ -357,7 +353,6 @@ class MutationsProject:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-
         variables = {
             "projectID": project_id,
             "archived": False,

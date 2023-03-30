@@ -1,4 +1,4 @@
-"""Module for managing bucket's signed urls"""
+"""Module for managing bucket's signed urls."""
 
 
 import itertools
@@ -22,9 +22,7 @@ MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
 
 def generate_unique_id():
-    """
-    Generates a unique id
-    """
+    """Generates a unique id."""
     return cuid.cuid()
 
 
@@ -73,9 +71,7 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
 
 
 def clean_signed_url(url: str, endpoint: str):
-    """
-    return a cleaned signed url for frame upload
-    """
+    """Return a cleaned signed url for frame upload."""
     query = urlparse(url).query
     id_param = parse_qs(query)["id"][0]
     base_path = endpoint.replace("/graphql", "/files").replace("http://", "https://")

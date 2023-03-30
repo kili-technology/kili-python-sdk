@@ -1,14 +1,10 @@
-"""
-Tempfile utils
-"""
+"""Tempfile utils."""
 import tempfile
 from pathlib import Path
 
 
 class TemporaryDirectory:
-    """
-    Wrapper over temporary directory to output paths
-    """
+    """Wrapper over temporary directory to output paths."""
 
     def __init__(self) -> None:
         self.temporary_directory = (

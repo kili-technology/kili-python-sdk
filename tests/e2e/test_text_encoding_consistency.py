@@ -1,7 +1,5 @@
 # pylint: disable=missing-function-docstring,redefined-outer-name
-"""
-Tests that the external id check is strict
-"""
+"""Tests that the external id check is strict."""
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -61,10 +59,7 @@ def project_with_assets(kili, text):
 
 
 def test_encoding_decoding_consistency(text, kili, project_with_assets):
-    """
-    Test query by external id
-    """
-
+    """Test query by external id."""
     retrieved_assets = list(
         kili.assets(
             project_with_assets["id"],

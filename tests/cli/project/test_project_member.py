@@ -1,4 +1,4 @@
-"""Tests the Kili CLI project member commands"""
+"""Tests the Kili CLI project member commands."""
 
 import csv
 from unittest.mock import MagicMock, patch
@@ -110,9 +110,7 @@ kili.Kili = MagicMock(return_value=kili_client)
 @patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
 @patch("kili.client.Kili.__new__", return_value=kili_client)
 class TestCLIProjectMember:
-    """
-    test the CLI functions of the project member commands
-    """
+    """Test the CLI functions of the project member commands."""
 
     def test_list_members(self, *_):
         runner = CliRunner()

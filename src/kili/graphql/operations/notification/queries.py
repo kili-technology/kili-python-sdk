@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Notifications
-"""
+"""GraphQL Queries of Notifications."""
 
 
 from typing import Optional
@@ -9,9 +7,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class NotificationWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the NotificationQuery to restrict query
-    """
+    """Tuple to be passed to the NotificationQuery to restrict query."""
 
     def __init__(
         self,
@@ -25,7 +21,7 @@ class NotificationWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK NotificationWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK NotificationWhere."""
         return {
             "id": self.notification_id,
             "user": {
@@ -40,10 +36,7 @@ class NotificationQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL notifications query
-        """
-
+        """Return the GraphQL notifications query."""
         return f"""
         query notifications($where: NotificationWhere!, $first: PageSize!, $skip: Int!) {{
             data: notifications(where: $where, first: $first, skip: $skip) {{

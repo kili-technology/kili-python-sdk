@@ -16,9 +16,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesAsset:
-    """
-    Set of Asset queries
-    """
+    """Set of Asset queries."""
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin
 
@@ -206,7 +204,7 @@ class QueriesAsset:
             external_id_contains: Returned assets have an external id that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
-            honeypot_mark_lt : Maximum amount of honeypot for the asset.
+            honeypot_mark_lt: Maximum amount of honeypot for the asset.
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.

@@ -1,6 +1,4 @@
-"""
-Base class for all formatters and other utility classes.
-"""
+"""Base class for all formatters and other utility classes."""
 
 import csv
 import json
@@ -27,9 +25,7 @@ from kili.utils.tempfile import TemporaryDirectory
 
 
 class ExportParams(NamedTuple):
-    """
-    Contains all parameters that change the result of the export
-    """
+    """Contains all parameters that change the result of the export."""
 
     assets_ids: Optional[List[str]]
     export_type: ExportType
@@ -43,9 +39,7 @@ class ExportParams(NamedTuple):
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
-    """
-    Abstract class defining the interface for all exporters.
-    """
+    """Abstract class defining the interface for all exporters."""
 
     def __init__(
         self,
@@ -79,27 +73,19 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
-        """
-        Checks if the export label format is compatible with the export options.
-        """
+        """Checks if the export label format is compatible with the export options."""
 
     @abstractmethod
     def _check_project_compatibility(self) -> None:
-        """
-        Checks if the export label format is compatible with the project.
-        """
+        """Checks if the export label format is compatible with the project."""
 
     def _is_job_compatible(self, job: Job) -> bool:
-        """
-        Check if the export label format is compatible with the job.
-        """
+        """Check if the export label format is compatible with the job."""
         raise NotImplementedError
 
     @property
     def compatible_jobs(self) -> Tuple[str]:
-        """
-        Get all job names compatible with the export format.
-        """
+        """Get all job names compatible with the export format."""
         return tuple(
             job_name
             for job_name, job in self.project_json_interface["jobs"].items()
@@ -108,14 +94,10 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     @abstractmethod
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
-        """
-        Converts the asset and save them into an archive file.
-        """
+        """Converts the asset and save them into an archive file."""
 
     def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
-        """
-        Make the export archive
-        """
+        """Make the export archive."""
         path_folder = root_folder / self.project_id
         path_archive = shutil.make_archive(str(path_folder), "zip", path_folder)
         output_filename.parent.mkdir(parents=True, exist_ok=True)
@@ -123,9 +105,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return output_filename
 
     def create_readme_kili_file(self, root_folder: Path) -> None:
-        """
-        Create a README.kili.txt file to give information about exported labels
-        """
+        """Create a README.kili.txt file to give information about exported labels."""
         readme_file_name = root_folder / self.project_id / "README.kili.txt"
         project_info = get_project(self.auth, self.project_id, ["title", "id", "description"])
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
@@ -140,9 +120,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def write_video_metadata_file(video_metadata: Dict, base_folder: Path) -> None:
-        """
-        Write video metadata file
-        """
+        """Write video metadata file."""
         video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
         if video_metadata_json is not None:
             with (base_folder / "video_meta.json").open("wb") as output_file:
@@ -150,9 +128,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def write_remote_content_file(remote_content: List[str], images_folder: Path) -> None:
-        """
-        Write remote content file
-        """
+        """Write remote content file."""
         remote_content_header = ["external id", "url", "label file"]
         # newline="" to disable universal newlines translation (bug fix for windows)
         with (images_folder / "remote_assets.csv").open("w", newline="", encoding="utf8") as file:
@@ -163,8 +139,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def export_project(
         self,
     ) -> None:
-        """
-        Export a project to a json.
+        """Export a project to a json.
 
         Return the name of the exported archive file.
         """
@@ -189,23 +164,17 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     @property
     def base_folder(self) -> Path:
-        """
-        Export base folder
-        """
+        """Export base folder."""
         return self.export_root_folder / self.project_id
 
     @property
     def images_folder(self) -> Path:
-        """
-        Export images folder
-        """
+        """Export images folder."""
         return self.base_folder / "images"
 
     @staticmethod
     def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:
-        """
-        Removes AUTOSAVE labels from exports
-        """
+        """Removes AUTOSAVE labels from exports."""
         clean_assets = []
         for asset in assets:
             labels = asset.get("labels", [])
@@ -217,9 +186,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _format_json_response(label: Label, label_format: LabelFormat):
-        """
-        Format the label JSON response in the requested format
-        """
+        """Format the label JSON response in the requested format."""
         formatted_json_response = label.json_response(_format=label_format)
         json_response = {}
         for key, value in cast(Dict, formatted_json_response).items():
@@ -232,9 +199,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def pre_process_assets(assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
-        """
-        Format labels in the requested format, and filter out autosave labels
-        """
+        """Format labels in the requested format, and filter out autosave labels."""
         assets_in_format = []
         for asset in assets:
             if "labels" in asset:

@@ -124,9 +124,7 @@ def test_get_labels_asset_ids_map():
 
 @patch("kili.mutations.asset._mutate_from_paginated_call", return_value=[{"data": None}])
 class TestCheckWarnEmptyList(TestCase):
-    """
-    tests for the check_warn_empty_list helper
-    """
+    """Tests for the check_warn_empty_list helper."""
 
     def test_kwargs_empty(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset(auth=MagicMock())
@@ -155,7 +153,7 @@ class TestCheckWarnEmptyList(TestCase):
         mocked__mutate_from_paginated_call.assert_not_called()
 
     def test_none(self, mocked__mutate_from_paginated_call):
-        """test that the helper does not raise a warning if args are None"""
+        """Test that the helper does not raise a warning if args are None."""
         kili = MutationsAsset(auth=MagicMock())
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():

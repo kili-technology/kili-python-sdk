@@ -1,4 +1,4 @@
-"""Service for exporting kili objects """
+"""Service for exporting kili objects."""
 
 import warnings
 from pathlib import Path
@@ -41,9 +41,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     with_assets: bool,
     annotation_modifier: Optional[CocoAnnotationModifier],
 ) -> None:
-    """
-    Export the selected assets into the required format, and save it into a file archive.
-    """
+    """Export the selected assets into the required format, and save it into a file archive."""
     get_project(auth, project_id, ["id"])
 
     if with_assets:

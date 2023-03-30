@@ -1,4 +1,4 @@
-"""Deprecation tests"""
+"""Deprecation tests."""
 
 import inspect
 
