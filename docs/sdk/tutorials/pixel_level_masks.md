@@ -136,7 +136,7 @@ Now, we will use the `mask_to_normalized_vertices` helper method to create a seg
 
 
 ```python
-from kili.utils.labels import mask_to_normalized_vertices
+from kili.utils.labels.image import mask_to_normalized_vertices
 ```
 
 
@@ -194,7 +194,7 @@ Let's see how you can achieve this using the helper method `normalized_vertices_
 
 
 ```python
-from kili.utils.labels import normalized_vertices_to_mask
+from kili.utils.labels.image import normalized_vertices_to_mask
 ```
 
 Then, we can retrieve the json response and plot the mask:

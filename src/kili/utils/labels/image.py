@@ -43,7 +43,7 @@ def mask_to_normalized_vertices(
         ```python
         import urllib.request
         import cv2
-        from kili.utils.labels import mask_to_normalized_vertices
+        from kili.utils.labels.image import mask_to_normalized_vertices
 
         mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png"
         urllib.request.urlretrieve(mask_url, "mask.png")
@@ -111,7 +111,7 @@ def normalized_vertices_to_mask(
 
     !!! Example
         ```python
-        from kili.utils.labels import normalized_vertices_to_mask
+        from kili.utils.labels.image import normalized_vertices_to_mask
 
         normalized_vertices = label["jsonResponse"]["OBJECT_DETECTION_JOB"]["annotations"][0]["boundingPoly"][0]["normalizedVertices"]
         img_height, img_width = 1080, 1920
