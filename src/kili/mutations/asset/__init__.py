@@ -75,6 +75,7 @@ class MutationsAsset:
                 - For an `VIDEO_LEGACY` project, the content can be only be URLs
             external_id_array: List of external ids given to identify the assets.
                 If None, random identifiers are created.
+            id_array: Disabled parameter. Do not use.
             is_honeypot_array:  Whether to use the asset for honeypot
             status_array: By default, all imported assets are set to `TODO`. Other options:
                 `ONGOING`, `LABELED`, `REVIEWED`.

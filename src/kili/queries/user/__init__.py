@@ -115,10 +115,12 @@ class QueriesUser:
         """Get user count based on a set of constraints.
 
         Args:
-            organization_id: Identifier of the user's organization
+            organization_id: Identifier of the user's organization.
+            api_key: Filter by API Key.
+            email: Filter by email.
 
         Returns:
-            The number of organizations with the parameters provided
+            The number of organizations with the parameters provided.
         """
         where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
         return UserQuery(self.auth.client).count(where)

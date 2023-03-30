@@ -74,6 +74,7 @@ class GraphQLQuery(ABC):
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:
+        # pylint: disable=line-too-long
         """Get a generator of objects of the specified type in accordance with the provided where."""
         fragment = self.fragment_builder(fields)
         query = self.query(fragment)
@@ -111,9 +112,10 @@ class GraphQLQuery(ABC):
 
         Args:
             query: The object query to execute and to send to graphQL, in string format
-            where_payload: The where payload to be sent to graphQL,
+            where: The where payload to be sent to graphQL,
                 as a value of the 'where' key in the global payload
             options: The query options
+            post_call_function: A function to be applied to the result of the query
         """
         # we can get the total number of elements to query
         if isinstance(self.COUNT_QUERY, str):

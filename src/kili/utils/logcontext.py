@@ -21,6 +21,7 @@ class Singleton(type):
 
 
 class LogContext(Dict[str, str], metaclass=Singleton):
+    # pylint: disable=line-too-long
     """Dict-like singleton that holds the data for the log contex, to be passed to the request headers."""
 
     def __init__(self) -> None:

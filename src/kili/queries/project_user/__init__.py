@@ -102,6 +102,7 @@ class QueriesProjectUser:
         Args:
             project_id: Identifier of the project
             email: Email of the user
+            id: Identifier of the user
             organization_id: Identifier of the user's organization
             fields: All the fields to request among the possible fields for the projectUsers
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectuser) for all possible fields.
@@ -143,6 +144,7 @@ class QueriesProjectUser:
 
         Args:
             email: Email of the user
+            id: Identifier of the user
             organization_id: Identifier of the user's organization
             project_id: Identifier of the project
 

@@ -71,11 +71,7 @@ class KiliAuth:
         )
 
     def check_expiry_of_key_is_close(self) -> None:
-        """Check that the expiration date of the api_key is not too close.
-
-        Args:
-            api_key: key used to connect to the Kili API
-        """
+        """Check that the expiration date of the api_key is not too close."""
         warn_days = 30
 
         api_keys = APIKeyQuery(self.client)(

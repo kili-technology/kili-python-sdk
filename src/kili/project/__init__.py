@@ -110,6 +110,7 @@ class Project:
         Args:
             labels: list of dictionnaries with informations about the labels to create.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
+            model_name: Name of the model that generated the labels
 
         Returns:
             A result object which indicates if the mutation was successful,

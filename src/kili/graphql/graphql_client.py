@@ -280,9 +280,9 @@ class SubscriptionGraphQLClient:
         """Prepares a subscription.
 
         Args:
-            query
-            variables
-            headers
+            query: the GraphQL query
+            variables: the payload of the query
+            headers: headers
             callback: function executed after the subscription
             authorization: authorization header
         """

@@ -9,8 +9,8 @@ def check_asset_identifier_arguments(
     asset_id_array: Optional[List[str]],
     asset_external_id_array: Optional[List[str]],
 ):
+    # pylint: disable=line-too-long
     """Check that a list of assets can be identified either by their asset IDs or their external IDs."""
-
     if asset_id_array is not None:
         if asset_external_id_array is not None:
             raise IncompatibleArgumentsError(

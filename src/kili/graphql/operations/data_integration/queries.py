@@ -26,6 +26,7 @@ class DataIntegrationWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
+        # pylint: disable=line-too-long
         """Build the GraphQL Where payload sent in the resolver from the SDK DataIntegrationWhere."""
         return {
             "id": self.data_integration_id,

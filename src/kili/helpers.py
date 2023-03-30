@@ -164,7 +164,7 @@ def deprecate(
     return decorator
 
 
-def format_metadata(metadata):
+def format_metadata(metadata: object):
     """Formats metadata.
 
     Args:
@@ -200,7 +200,7 @@ def is_none_or_empty(_object):
     """Tests if an object is none or empty.
 
     Args:
-        object: a python object
+        _object: a python object
     """
     object_is_empty = isinstance(_object, list) and len(_object) == 0
     return _object is None or object_is_empty
@@ -210,13 +210,14 @@ def list_is_not_none_else_none(_object):
     """Formats an object as a singleton if not none.
 
     Args:
-        object: a python object
+        _object: a python object
     """
     return [_object] if _object is not None else None
 
 
 def validate_category_search_query(query):
-    """Validate the category search query
+    """Validate the category search query.
+
     Args:
         query: the query to parse
 
@@ -259,6 +260,8 @@ def get_file_paths_to_upload(
     Args:
         files: a list path that can either be file paths, folder paths or unexisting paths
         file_check_function: function to check files. Must use argument path and return a bool
+        verbose: if True, print the files that will be uploaded
+
     Returns:
         a list of the paths of the files to upload, compatible with the project type.
     """
@@ -301,6 +304,7 @@ def file_check_function_from_input_type(input_type: str):
 
 
 def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
+    # pylint: disable=line-too-long
     """Returns true if the mime type of the file corresponds to the allowed mime types of the project."""
     mime_type = get_data_type(path.lower())
 

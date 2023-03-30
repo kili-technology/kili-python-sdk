@@ -27,11 +27,11 @@ def generate_unique_id():
 
 
 def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
-    """
-    Get upload signed URLs
+    """Get upload signed URLs.
+
     Args:
         auth: Kili Auth
-        file_paths: the paths in Kili bucket of the data you upload. It must respect
+        file_urls: the paths in Kili bucket of the data you upload. It must respect
             the convention projects/:projectId/assets/xxx.
     """
     size = len(file_urls)
@@ -52,10 +52,11 @@ def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)
 def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str):
-    """upload data in buckets' signed URL via REST
+    """Upload data in buckets' signed URL via REST.
+
     Args:
-        signed_urls: Bucket signed URLs to upload local files to
-        path_array: a list of file paths, json or text to upload
+        url_with_id: signed url with id
+        data: data to upload
         content_type: mimetype of the data
     """
     if content_type == "text/plain":

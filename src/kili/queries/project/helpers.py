@@ -19,6 +19,7 @@ def get_project_metadata(project: dict, api_endpoint: str) -> List[Tuple]:
 
     Args:
         project: a project with its statistics fields
+        api_endpoint: Kili's API endpoint
 
     Return:
         a list of metadata (key, value)

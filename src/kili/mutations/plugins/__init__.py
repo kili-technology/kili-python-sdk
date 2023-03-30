@@ -32,7 +32,7 @@ class MutationsPlugins:
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
-        **kwargs
+        **kwargs  # pylint: disable=missing-param-doc
     ):
         """Uploads a plugin.
 
@@ -115,6 +115,7 @@ class MutationsPlugins:
     ):
         # pylint: disable=line-too-long,too-many-arguments
         """Update a webhook linked to Kili's events.
+
         For a complete example, refer to the notebook `webhooks_example` on kili repo.
 
         Args:
@@ -195,7 +196,7 @@ class MutationsPlugins:
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
-        **kwargs
+        **kwargs  # pylint: disable=missing-param-doc
     ):
         """Update a plugin with new code.
 
