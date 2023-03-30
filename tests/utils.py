@@ -1,6 +1,4 @@
-"""
-Common utils functions for tests
-"""
+"""Common utils functions for tests."""
 import os
 import traceback
 import uuid
@@ -13,12 +11,12 @@ COUNT_SAMPLE_MAX = 26000
 
 
 class burstthrottle:
-    """
-    Decorator that prevents a function from being called more that a certain amount of time
+    """Decorator that prevents a function from being called more that a certain amount of time
     To create a function that cannot be called more than 250 times in a minute:
-        @burstthrottle(max_hits = 250, minutes = 1)
-        def my_fun():
-            pass
+
+    @burstthrottle(max_hits = 250, minutes = 1)
+    def my_fun():
+        pass
     """
 
     def __init__(self, max_hits, seconds=0, minutes=1, hours=0, error_message="TooManyCalls"):
@@ -51,9 +49,7 @@ class burstthrottle:
 
 @burstthrottle(max_hits=250, minutes=1)
 def mocked_query_method(query, payload):
-    """
-    Simulates a query result by returning a list of ids
-    """
+    """Simulates a query result by returning a list of ids."""
     skip = payload["skip"]
     first = payload["first"]
     max_range = min(COUNT_SAMPLE_MAX, skip + first)
@@ -63,9 +59,7 @@ def mocked_query_method(query, payload):
 
 @burstthrottle(max_hits=250, minutes=1)
 def mocked_count_method(*_):
-    """
-    Simulates a count query
-    """
+    """Simulates a count query."""
     return COUNT_SAMPLE_MAX
 
 

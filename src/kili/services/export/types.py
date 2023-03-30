@@ -1,6 +1,4 @@
-"""
-Types used by the conversion service
-"""
+"""Types used by the conversion service."""
 from typing import Callable, Dict, NamedTuple, Tuple
 
 from typing_extensions import Literal
@@ -11,9 +9,7 @@ LabelFormat = Literal["raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "p
 
 
 class JobCategory(NamedTuple):
-    """
-    Contains information for a category
-    """
+    """Contains information for a category."""
 
     category_name: str
     id: int

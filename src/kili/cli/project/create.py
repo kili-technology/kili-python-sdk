@@ -1,4 +1,4 @@
-"""CLI's project create subcommand"""
+"""CLI's project create subcommand."""
 
 import json
 from typing import Optional
@@ -38,7 +38,7 @@ def create_project(
     description: str,
     tablefmt: str,
 ):
-    """Create a Kili project
+    """Create a Kili project.
 
     interface must be a path pointing to your json interface file
 

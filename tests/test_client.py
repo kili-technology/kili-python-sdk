@@ -1,6 +1,4 @@
-"""
-Tests for the client to return correct ee
-"""
+"""Tests for the client to return correct ee."""
 import os
 from unittest.mock import patch
 
@@ -12,7 +10,7 @@ from kili.exceptions import AuthenticationFailed
 
 @patch("kili.authentication.requests")
 def test_no_api_key(mocked_requests):
-    """test fail because no api key is found"""
+    """Test fail because no api key is found."""
     with patch.dict(os.environ):
         os.environ.pop("KILI_API_KEY", None)
         with pytest.raises(AuthenticationFailed):
@@ -21,7 +19,7 @@ def test_no_api_key(mocked_requests):
 
 @patch("kili.authentication.requests")
 def test_wrong_api_key(mocked_requests):
-    """test obfuscation of api key"""
+    """Test obfuscation of api key."""
     with patch.dict(os.environ):
         os.environ.pop("KILI_API_KEY", None)
         with pytest.raises(
@@ -32,7 +30,7 @@ def test_wrong_api_key(mocked_requests):
 
 @patch("kili.authentication.requests")
 def test_wrong_api_key_shot(mocked_requests):
-    """test no need to obfuscate api key"""
+    """Test no need to obfuscate api key."""
     with patch.dict(os.environ):
         os.environ.pop("KILI_API_KEY", None)
         with pytest.raises(AuthenticationFailed, match="failed with API key: no"):

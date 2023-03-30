@@ -1,6 +1,4 @@
-"""
-Queries of asset mutations
-"""
+"""Queries of asset mutations."""
 
 from kili.mutations.project.fragments import PROJECT_FRAGMENT_ID
 

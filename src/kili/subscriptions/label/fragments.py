@@ -1,6 +1,4 @@
-"""
-Fragments of label subscription
-"""
+"""Fragments of label subscription."""
 
 LABEL_FRAGMENT = """
 id

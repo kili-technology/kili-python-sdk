@@ -1,7 +1,7 @@
 import json
 
 from kili.services.label_data_parsing.category import Category, CategoryList
-from kili.utils.labels import parse_labels
+from kili.utils.labels.parse_labels import parse_labels
 
 
 def test_parse_labels_classification():
@@ -71,11 +71,8 @@ def test_parse_labels_classification():
 
 
 def test_parse_labels_classification_to_dict():
-    """
-    Test that checks that parsing the categories to CategoryList and Category
-    objects still allows to convert to dict and json
-    """
-
+    """Test that checks that parsing the categories to CategoryList and Category
+    objects still allows to convert to dict and json."""
     labels = [
         {
             "author": {

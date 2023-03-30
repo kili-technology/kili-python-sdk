@@ -180,7 +180,10 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
 
     @property
     def kind(self) -> str:
-        """Returns the job kind. In pose estimation jobs, this is always "POSE_ESTIMATION"."""
+        """Returns the job kind.
+
+        In pose estimation jobs, this is always "POSE_ESTIMATION".
+        """
         return self.json_data["kind"]
 
     @property

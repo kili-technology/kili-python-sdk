@@ -1,6 +1,4 @@
-"""
-Queries of organization mutations
-"""
+"""Queries of organization mutations."""
 
 from .fragments import ORGANIZATION_FRAGMENT
 

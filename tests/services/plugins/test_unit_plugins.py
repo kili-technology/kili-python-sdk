@@ -18,7 +18,7 @@ def kili():
 
 
 def test_wrong_plugin_path(kili):
-    """Test exception handling when plugin_path is neither a file nor a directory"""
+    """Test exception handling when plugin_path is neither a file nor a directory."""
     plugin_path = "plugin.py"
     with pytest.raises(
         FileNotFoundError, match=r"The provided path .* is neither a directory nor a file"

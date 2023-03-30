@@ -1,7 +1,5 @@
-"""
-DEPRECATED
-From https://docs.kili-technology.com/reference/graphql-api#enums
-"""
+"""DEPRECATED
+From https://docs.kili-technology.com/reference/graphql-api#enums."""
 from typing_extensions import Literal
 
 DataIntegrationPlatform = Literal[

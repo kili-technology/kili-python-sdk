@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Projects
-"""
+"""GraphQL Queries of Projects."""
 
 
 from typing import Optional
@@ -9,9 +7,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class ProjectWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the ProjectQuery to restrict query
-    """
+    """Tuple to be passed to the ProjectQuery to restrict query."""
 
     # pylint: disable=too-many-arguments
 
@@ -31,7 +27,7 @@ class ProjectWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK ProjectWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK ProjectWhere."""
         return {
             "id": self.project_id,
             "searchQuery": self.search_query,
@@ -46,9 +42,7 @@ class ProjectQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL projects query
-        """
+        """Return the GraphQL projects query."""
         return f"""
         query projects($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
             data: projects(where: $where, first: $first, skip: $skip) {{

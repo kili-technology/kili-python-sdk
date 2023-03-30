@@ -17,7 +17,7 @@ def mocked_AssetQuery(*_):
 
 
 class TestImportLabelsFromDict:
-    """Test class for import_label_from_dict_service"""
+    """Test class for import_label_from_dict_service."""
 
     def setup_class(self):
         self.kili = MagicMock()

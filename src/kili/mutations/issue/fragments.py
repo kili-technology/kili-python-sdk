@@ -1,6 +1,4 @@
-"""
-Fragments of issue mutations
-"""
+"""Fragments of issue mutations."""
 
 ISSUE_FRAGMENT = """
 id

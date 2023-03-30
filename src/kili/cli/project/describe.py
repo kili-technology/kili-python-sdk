@@ -1,4 +1,4 @@
-"""CLI's project describe command"""
+"""CLI's project describe command."""
 
 from typing import Optional
 
@@ -17,6 +17,7 @@ from kili.queries.project.helpers import get_project_metadata, get_project_metri
 @Options.endpoint
 def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id: str):
     """Show project description and analytics.
+
     \b
     !!! Examples
         ```
