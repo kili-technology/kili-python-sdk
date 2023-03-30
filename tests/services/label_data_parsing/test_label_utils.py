@@ -1,7 +1,7 @@
 import json
 
 from kili.services.label_data_parsing.category import Category, CategoryList
-from kili.utils.labels import parse_labels
+from kili.utils.labels.parse_labels import parse_labels
 
 
 def test_parse_labels_classification():
