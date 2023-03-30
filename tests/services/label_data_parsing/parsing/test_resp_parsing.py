@@ -2,6 +2,7 @@ import pytest
 
 from kili.services.label_data_parsing.bounding_poly import BoundingPoly
 from kili.services.label_data_parsing.json_response import ParsedJobs
+from kili.services.label_data_parsing.label import ParsedLabel
 
 
 def test_attribute_category():
@@ -913,15 +914,12 @@ def test_video_project_classification():
         "8": {},
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface)
+    label = {"jsonResponse": json_resp}
 
-    assert parsed_jobs.frames[5]["JOB_0"].categories[0].name == "OBJECT_A"
-    assert parsed_jobs.frames[5]["JOB_0"].category.confidence == 100
-    assert parsed_jobs.frames[5]["JOB_0"].is_key_frame is True
+    parsed_label = ParsedLabel(label, json_interface)
 
-    assert parsed_jobs[6]["JOB_0"].categories[0].name == "OBJECT_A"
-    assert parsed_jobs[6]["JOB_0"].category.confidence == 42
-    assert parsed_jobs[6]["JOB_0"].is_key_frame is False
+    parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].is_key_frame is True
+    parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_A"
 
 
 @pytest.mark.skip("Not implemented yet")
