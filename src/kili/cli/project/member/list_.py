@@ -1,4 +1,4 @@
-"""CLI's project member list subcommand"""
+"""CLI's project member list subcommand."""
 
 from typing import Optional
 
@@ -23,15 +23,13 @@ ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "
 @Arguments.project_id
 @Options.tablefmt
 def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: str, tablefmt: str):
-    """
-    List the members of the project
+    """List the members of the project.
 
     \b
     !!! Examples
         ```
         kili project member list <project_id> --stdout-format pretty
         ```
-
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     members_list = list(

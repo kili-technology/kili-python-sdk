@@ -631,8 +631,7 @@ class QueriesLabel:
         external_ids: Optional[List[str]] = None,
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
     ):
-        """
-        Export the project labels with the requested format into the requested output path.
+        """Export the project labels with the requested format into the requested output path.
 
         Args:
             project_id: Identifier of the project.

@@ -15,9 +15,7 @@ class FFmpegError(Exception):
 
 
 def get_video_dimensions(file_path: Union[Path, str]) -> Tuple:
-    """
-    Get a video width and height
-    """
+    """Get a video width and height."""
     assert Path(file_path).is_file(), f"File {file_path} does not exist"
     probe = ffmpeg.probe(str(file_path))
     video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")

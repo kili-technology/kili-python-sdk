@@ -27,8 +27,8 @@ from tests.fakes.fake_kili import (
 
 
 def get_file_tree(folder: str):
-    """
-    Returns the file tree in the shape of a dictionary.
+    """Returns the file tree in the shape of a dictionary.
+
     Example:
     {
         "images": {"remote_assets.csv": {}},

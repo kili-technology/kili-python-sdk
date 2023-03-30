@@ -1,4 +1,4 @@
-"""CLI's common helpers functions"""
+"""CLI's common helpers functions."""
 
 import csv
 import warnings
@@ -9,7 +9,7 @@ from kili.graphql.graphql_client import GraphQLClientName
 
 
 def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
-    """Instantiate a kili client for the CLI functions"""
+    """Instantiate a kili client for the CLI functions."""
     return Kili(api_key=api_key, api_endpoint=api_endpoint, client_name=GraphQLClientName.CLI)
 
 
@@ -31,7 +31,7 @@ def collect_from_csv(
     optional_columns: List[str],
     type_check_function,
 ):
-    """read a csv to collect required_columns and optional_columns"""
+    """Read a csv to collect required_columns and optional_columns."""
     out = []
     with open(csv_path, encoding="utf-8") as csv_file:
         csvreader = csv.DictReader(csv_file)

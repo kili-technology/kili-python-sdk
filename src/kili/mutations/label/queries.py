@@ -1,6 +1,4 @@
-"""
-Queries of label mutations
-"""
+"""Queries of label mutations."""
 
 from .fragments import LABEL_FRAGMENT, LABEL_FRAGMENT_ID
 

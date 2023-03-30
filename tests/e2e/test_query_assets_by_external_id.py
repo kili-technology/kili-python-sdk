@@ -1,7 +1,5 @@
 # pylint: disable=missing-function-docstring,redefined-outer-name
-"""
-Tests that the external id check is strict
-"""
+"""Tests that the external id check is strict."""
 import pytest
 
 from kili.client import Kili
@@ -51,10 +49,7 @@ def project_with_assets(kili):
 
 
 def test_query_asset_by_external_id(kili, project_with_assets):
-    """
-    Test query by external id
-    """
-
+    """Test query by external id."""
     retrieved_assets = list(
         kili.assets(
             project_with_assets["id"],

@@ -1,5 +1,4 @@
-"""
-Utils for inserting notebooks in Python SDK doc.
+"""Utils for inserting notebooks in Python SDK doc.
 
 Notebooks are stored in recipes/ and are converted to markdown using this script.
 
@@ -35,8 +34,7 @@ IGNORED_TUTORIALS = [
 
 
 class ExtractAttachmentsPreprocessor(Preprocessor):
-    """
-    Extract attachments in markdown cells.
+    """Extract attachments in markdown cells.
 
     This preprocessor aims at adding image data
     to `metadata["outputs"]` for images copy-pasted in the notebook.
@@ -44,7 +42,6 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
 
     def preprocess_cell(self, cell, resources, cell_index):  # pylint: disable=arguments-renamed
         """Extract attachments in a markdown cell."""
-
         if "attachments" not in cell or not cell["attachments"]:
             return cell, resources
 
@@ -73,9 +70,7 @@ class ExtractAttachmentsPreprocessor(Preprocessor):
 
 
 class RemoveTqdmOutputPreprocessor(Preprocessor):
-    """
-    Remove tqdm progress bar output.
-    """
+    """Remove tqdm progress bar output."""
 
     TQDM_PATTERNS = ("%|█", "█|", "/", " [", ":", "<", "it", "]")
 
@@ -85,7 +80,6 @@ class RemoveTqdmOutputPreprocessor(Preprocessor):
 
     def preprocess_cell(self, cell, resources, index):
         """Remove tqdm progress bar in a cell."""
-
         if "outputs" not in cell or not cell["outputs"]:
             return cell, resources
 
@@ -207,8 +201,7 @@ class OutdatedMarkdownError(Exception):
 
 
 def check_markdown_up_to_date(ipynb_filepath: Path, md_filepath: Path, remove_cell_tags: Sequence):
-    """
-    Check if markdown file is up to date with its associated notebook.
+    """Check if markdown file is up to date with its associated notebook.
 
     Overwrites the markdown file if it is not up to date.
     """
@@ -290,8 +283,7 @@ def check_colab_link_in_notebook(ipynb_filepath: Path):
     nargs=-1,
 )
 def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
-    """
-    Check if all notebooks in commit are up-to-date with their markdown files.
+    """Check if all notebooks in commit are up-to-date with their markdown files.
 
     `modified_files` are the files in commit that match:
         - markdown files in docs/sdk/tutorials/
@@ -364,7 +356,7 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
 
 @click.group()
 def main():
-    """Main"""
+    """Main."""
 
 
 if __name__ == "__main__":

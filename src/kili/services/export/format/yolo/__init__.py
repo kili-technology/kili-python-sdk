@@ -1,6 +1,4 @@
-"""
-Common code for the yolo exporter.
-"""
+"""Common code for the yolo exporter."""
 
 import logging
 from pathlib import Path
@@ -22,9 +20,7 @@ from ...media.video import cut_video
 
 
 class YoloExporter(AbstractExporter):
-    """
-    Common code for Yolo exporters.
-    """
+    """Common code for Yolo exporters."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,18 +35,14 @@ class YoloExporter(AbstractExporter):
             )
 
     def _check_arguments_compatibility(self):
-        """
-        Checks if the export label format is compatible with the export options.
-        """
+        """Checks if the export label format is compatible with the export options."""
         if self.single_file:
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not be exported into a single file."
             )
 
     def _check_project_compatibility(self) -> None:
-        """
-        Checks if the export label format is compatible with the project.
-        """
+        """Checks if the export label format is compatible with the project."""
         if self.project_input_type not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
                 f"Project with input type '{self.project_input_type}' not compatible with YOLO"
@@ -76,17 +68,13 @@ class YoloExporter(AbstractExporter):
                 )
 
     def _is_job_compatible(self, job: Job) -> bool:
-        """
-        Check job compatibility with the YOLO format.
-        """
+        """Check job compatibility with the YOLO format."""
         if "tools" not in job:
             return False
         return JobTool.Rectangle in job["tools"] and job["mlTask"] == JobMLTask.ObjectDetection
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
-        """
-        Yolo specific process and save
-        """
+        """Yolo specific process and save."""
         if self.split_option == "merged":
             return self._process_and_save_merge(assets, output_filename)
         return self._process_and_save_split(assets, output_filename)
@@ -126,9 +114,7 @@ class YoloExporter(AbstractExporter):
     def _get_categories_by_job(
         cls, json_interface: Dict, ml_task: str, tool: str
     ) -> Dict[str, Dict[str, JobCategory]]:
-        """
-        Return a dictionary of JobCategory instances by category full name and job id.
-        """
+        """Return a dictionary of JobCategory instances by category full name and job id."""
         categories_by_job: Dict[str, Dict[str, JobCategory]] = {}
         for job_id, job in json_interface.get("jobs", {}).items():
             if (
@@ -153,9 +139,7 @@ class YoloExporter(AbstractExporter):
         images_folder: Path,
         base_folder: Path,
     ):  # pylint: disable=too-many-arguments
-        """
-        Write all the labels into a single folder.
-        """
+        """Write all the labels into a single folder."""
         _write_class_file(base_folder, categories_id, self.label_format)
 
         remote_content = []
@@ -189,9 +173,7 @@ class YoloExporter(AbstractExporter):
         root_folder: Path,
         images_folder: Path,
     ) -> None:
-        """
-        Write assets into split folders.
-        """
+        """Write assets into split folders."""
         for job_id, category_ids in categories_by_job.items():
             base_folder = root_folder / self.project_id / job_id
             labels_folder = base_folder / "labels"
@@ -209,9 +191,7 @@ class YoloExporter(AbstractExporter):
     def _get_merged_categories(
         cls, json_interface: Dict, ml_task: str, tool: str
     ) -> Dict[str, JobCategory]:
-        """
-        Return a dictionary of JobCategory instances by category full name.
-        """
+        """Return a dictionary of JobCategory instances by category full name."""
         cat_number = 0
         merged_categories_id: Dict[str, JobCategory] = {}
         for job_id, job in json_interface.get("jobs", {}).items():
@@ -231,14 +211,13 @@ class YoloExporter(AbstractExporter):
 
 
 class _LabelFrames:
-    """
-    Holds asset frames data.
-    """
+    """Holds asset frames data."""
 
     @staticmethod
     def from_asset(asset, job_ids) -> "_LabelFrames":
-        """
-        Instantiate the label frames from the asset. It handles the case when there are several
+        """Instantiate the label frames from the asset.
+
+        It handles the case when there are several
         frames by label or a single one.
         """
         frames = {}
@@ -272,15 +251,11 @@ class _LabelFrames:
         self.external_id: str = external_id
 
     def get_leading_zeros(self) -> int:
-        """
-        Get leading zeros for file name building
-        """
+        """Get leading zeros for file name building."""
         return len(str(self.number_frames))
 
     def get_label_filename(self, idx: int) -> str:
-        """
-        Get label filemame for index
-        """
+        """Get label filemame for index."""
         return f"{self.external_id}_{str(idx + 1).zfill(self.get_leading_zeros())}"
 
 
@@ -288,9 +263,7 @@ def _convert_from_kili_to_yolo_format(
     job_id: str, label: Dict, category_ids: Dict[str, JobCategory]
 ) -> List[YoloAnnotation]:
     # pylint: disable=too-many-locals
-    """
-    Extract formatted annotations from labels and save the zip in the buckets.
-    """
+    """Extract formatted annotations from labels and save the zip in the buckets."""
     if label is None or "jsonResponse" not in label:
         return []
     json_response = label["jsonResponse"]
@@ -320,9 +293,7 @@ def _convert_from_kili_to_yolo_format(
 
 
 def get_category_full_name(job_id: str, category_name: str):
-    """
-    Return a full name to identify uniquely a category
-    """
+    """Return a full name to identify uniquely a category."""
     return f"{job_id}__{category_name}"
 
 
@@ -336,9 +307,7 @@ def _process_asset(
     project_input_type: str,
 ) -> Tuple[List[Tuple[str, str, str]], List[str]]:
     # pylint: disable=too-many-locals, too-many-arguments
-    """
-    Process an asset for all job_ids of category_ids.
-    """
+    """Process an asset for all job_ids of category_ids."""
     asset_remote_content = []
     job_ids = set(map(lambda job_category: job_category.job_id, category_ids.values()))
 
@@ -399,9 +368,7 @@ def _process_asset(
 def _write_class_file(
     folder: Path, category_ids: Dict[str, JobCategory], label_format: LabelFormat
 ):
-    """
-    Create a file that contains meta information about the export, depending of Yolo version
-    """
+    """Create a file that contains meta information about the export, depending of Yolo version."""
     if label_format == "yolo_v4":
         with (folder / "classes.txt").open("wb") as fout:
             for job_category in category_ids.values():

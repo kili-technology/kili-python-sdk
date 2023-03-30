@@ -1,6 +1,4 @@
-"""
-Fragments of project version mutations
-"""
+"""Fragments of project version mutations."""
 
 PROJECT_VERSION_FRAGMENT = """
 content

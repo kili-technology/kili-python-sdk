@@ -6,9 +6,7 @@ from kili.mutations.data_connection import MutationsDataConnection
 
 
 class MockerGetDataConnection:
-    """
-    Class to mock the get_data_connection function
-    """
+    """Class to mock the get_data_connection function."""
 
     def __init__(
         self,
@@ -123,9 +121,7 @@ def test_synchronize_cloud_storage_connection(
     caplog,
     mocker,
 ) -> None:
-    """
-    Test synchronize_cloud_storage_connection mutation
-    """
+    """Test synchronize_cloud_storage_connection mutation."""
     mocked_graphql_client = mocker.MagicMock()
     mocked_trigger_validate_data_differences = mocker.patch(
         "kili.services.data_connection.trigger_validate_data_differences"

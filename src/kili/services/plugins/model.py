@@ -1,4 +1,4 @@
-"""Develop Plugins for Kili"""
+"""Develop Plugins for Kili."""
 
 import logging
 from typing import Dict, Optional
@@ -8,8 +8,7 @@ from kili.services.plugins.helpers import get_logger
 
 
 class PluginCore:
-    """
-    Kili Plugin core class
+    """Kili Plugin core class.
 
     Args:
         kili: kili instance that plugins can make use of
@@ -42,8 +41,7 @@ class PluginCore:
         label: Dict,
         asset_id: str,
     ) -> None:
-        """
-        Handler for the submit action, triggered when a default label is submitted into Kili.
+        """Handler for the submit action, triggered when a default label is submitted into Kili.
 
         Args:
             label: Label submitted to Kili: a dictionary containing the following fields:
@@ -61,7 +59,6 @@ class PluginCore:
             >>>         return
             >>>     else:
             >>>         self.kili.send_back_to_queue(asset_ids=[asset_id])
-
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_submit on your plugin")
@@ -72,8 +69,7 @@ class PluginCore:
         label: Dict,
         asset_id: str,
     ) -> None:
-        """
-        Handler for the review action, triggered when a default label is reviewed on Kili
+        """Handler for the review action, triggered when a default label is reviewed on Kili.
 
         Args:
             label: Label submitted to Kili: a dictionary containing the following fields:
@@ -103,8 +99,7 @@ class PluginCore:
         label: Dict,
         asset_id: str,
     ) -> None:
-        """
-        Handler for the custom interface click action.
+        """Handler for the custom interface click action.
 
         **Warning**: This handler is in beta and is still in active development,
         so it should not be used.

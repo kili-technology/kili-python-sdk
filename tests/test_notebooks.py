@@ -1,6 +1,4 @@
-"""
-Test notebooks with pytest
-"""
+"""Test notebooks with pytest."""
 import os
 
 import nbformat
@@ -9,9 +7,7 @@ from nbconvert.preprocessors.execute import ExecutePreprocessor
 
 
 def process_notebook(notebook_filename):
-    """
-    Checks if an IPython notebook runs without error from start to finish.
-    """
+    """Checks if an IPython notebook runs without error from start to finish."""
     with open(notebook_filename, encoding="utf-8") as n_f:
         notebook = nbformat.read(n_f, as_version=4)
 
@@ -57,9 +53,7 @@ def process_notebook(notebook_filename):
     ],
 )
 def test_all_recipes(notebook_file):
-    """
-    Runs `process_notebook` on all notebooks in the git repository.
-    """
+    """Runs `process_notebook` on all notebooks in the git repository."""
     process_notebook(notebook_file)
 
     return

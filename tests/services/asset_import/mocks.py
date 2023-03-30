@@ -1,4 +1,4 @@
-"""Mocks for the import_asset service test"""
+"""Mocks for the import_asset service test."""
 from unittest.mock import MagicMock
 
 mocked_request_signed_urls = MagicMock(
