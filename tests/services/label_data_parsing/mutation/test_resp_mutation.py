@@ -501,3 +501,32 @@ def test_set_normalized_vertices():
         "x": 0.5,
         "y": 0.5,
     }
+
+
+def test_add_category_in_annotation_bbox():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            }
+        }
+    }
+
+    json_resp = {}
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+
+    # parsed_jobs["JOB_0"].add_annotation()  # TODO
