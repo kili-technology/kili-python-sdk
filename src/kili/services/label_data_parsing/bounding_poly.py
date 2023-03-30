@@ -3,6 +3,7 @@
 from typing import Dict, List
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 
 class BoundingPoly:
@@ -25,12 +26,14 @@ class BoundingPoly:
         return self._json_data
 
     @property
-    def normalized_vertices(self) -> List[Dict[str, float]]:
+    def normalized_vertices(self) -> List[Dict[Literal["x", "y"], float]]:
         """Returns the normalized vertices of the bounding polygon."""
         return self._json_data["normalizedVertices"]
 
     @normalized_vertices.setter
     @typechecked
-    def normalized_vertices(self, normalized_vertices: List[Dict[str, float]]) -> None:
+    def normalized_vertices(
+        self, normalized_vertices: List[Dict[Literal["x", "y"], float]]
+    ) -> None:
         """Sets the normalized vertices of the bounding polygon."""
         self._json_data["normalizedVertices"] = normalized_vertices

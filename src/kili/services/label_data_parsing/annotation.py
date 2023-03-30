@@ -3,7 +3,7 @@
 
 import functools
 from collections import defaultdict
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -70,6 +70,16 @@ class _BaseAnnotation:
             raise ValueError(f"Expected 1 category, got {self._json_data['categories']}")
 
         return self._json_data["categories"][0]
+
+    @typechecked
+    def add_category(self, name: str, confidence: Optional[int] = None) -> None:
+        """Adds a category to an annotation job with categories."""
+        if "categories" not in self._json_data:
+            category_list = CategoryList(job_interface=self._job_interface, categories_list=[])
+            category_list.add_category(name=name, confidence=confidence)
+            self._json_data["categories"] = category_list
+        else:
+            self._json_data["categories"].add_category(name=name, confidence=confidence)
 
     @property
     def mid(self) -> str:
@@ -138,10 +148,12 @@ class _BaseAnnotationWithTool(_BaseAnnotation):
     """Base class for annotations with a "type" key (tool used to create the annotation)."""
 
     @property
-    def type(self) -> str:
+    def type(self) -> Literal["rectangle", "polygon", "semantic", "marker", "vector", "polyline"]:
         """Returns the tool of the annotation.
 
-        One of: "rectangle", "polygon", or "semantic".
+        One of "rectangle", "polygon", or "semantic" for 2D annotations.
+
+        One of "marker", "vector", "polyline" for 1D annotations.
         """
         return self._json_data["type"]
 
@@ -158,9 +170,38 @@ class PointAnnotation(_BaseAnnotationWithTool):
         return ("marker",)
 
     @property
-    def point(self) -> Dict:
+    def point(self) -> Dict[Literal["x", "y"], float]:
         """Returns the point of a point detection job."""
         return self._json_data["point"]
+
+    @point.setter
+    @typechecked
+    def point(self, point: Dict[Literal["x", "y"], float]) -> None:
+        """Sets the point of a point detection job."""
+        self._json_data["point"] = point
+
+
+class PolyLineAnnotation(_BaseAnnotationWithTool):
+    """Class for parsing the "annotations" key of a job response for 1D object detection jobs."""
+
+    @staticmethod
+    def _get_compatible_ml_task() -> Literal["OBJECT_DETECTION"]:
+        return "OBJECT_DETECTION"
+
+    @staticmethod
+    def _get_compatible_type_of_tools() -> Sequence[Literal["vector", "polyline"]]:
+        return ("vector", "polyline")
+
+    @property
+    def polyline(self) -> List[Dict[Literal["x", "y"], float]]:
+        """Returns the polyline of a polyline detection job."""
+        return self._json_data["polyline"]
+
+    @polyline.setter
+    @typechecked
+    def polyline(self, polyline: List[Dict[Literal["x", "y"], float]]) -> None:
+        """Sets the polyline of a polyline detection job."""
+        self._json_data["polyline"] = polyline
 
 
 class _Base2DAnnotation(_BaseAnnotationWithTool):
@@ -188,9 +229,17 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
     def score(self) -> int:
         """Returns the score which is the confidence of the object detection.
 
-        Useful when a pre-annotation model is used.
+        Available when a pre-annotation model is used.
         """
         return self._json_data["score"]
+
+    @score.setter
+    @typechecked
+    def score(self, score: int) -> None:
+        """Sets the score of the annotation."""
+        if not 0 <= score <= 100:
+            raise ValueError(f"Score must be between 0 and 100, got {score}")
+        self._json_data["score"] = score
 
 
 class BoundingPolyAnnotation(_Base2DAnnotation):
@@ -221,8 +270,11 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
         return ("pose",)
 
     @property
-    def kind(self) -> str:
-        """Returns the job kind. In pose estimation jobs, this is always "POSE_ESTIMATION"."""
+    def kind(self) -> Literal["POSE_ESTIMATION"]:
+        """Returns the job kind.
+
+        In pose estimation jobs, this is always "POSE_ESTIMATION".
+        """
         return self._json_data["kind"]
 
     @property
@@ -239,14 +291,26 @@ class EntityRelationAnnotation(_BaseAnnotation):
         return "NAMED_ENTITIES_RELATION"
 
     @property
-    def start_entities(self) -> List[Dict]:
+    def start_entities(self) -> List[Dict[Literal["mid"], str]]:
         """Returns the list of the start entities composing the relation."""
         return self._json_data["startEntities"]
 
+    @start_entities.setter
+    @typechecked
+    def start_entities(self, start_entities: List[Dict[Literal["mid"], str]]) -> None:
+        """Sets the list of the start entities composing the relation."""
+        self._json_data["startEntities"] = start_entities
+
     @property
-    def end_entities(self) -> List[Dict]:
+    def end_entities(self) -> List[Dict[Literal["mid"], str]]:
         """Returns the list of the end entities composing the relation."""
         return self._json_data["endEntities"]
+
+    @end_entities.setter
+    @typechecked
+    def end_entities(self, end_entities: List[Dict[Literal["mid"], str]]) -> None:
+        """Sets the list of the end entities composing the relation."""
+        self._json_data["endEntities"] = end_entities
 
 
 class ObjectRelationAnnotation(_BaseAnnotation):
@@ -257,14 +321,26 @@ class ObjectRelationAnnotation(_BaseAnnotation):
         return "OBJECT_RELATION"
 
     @property
-    def start_objects(self) -> List[Dict]:
+    def start_objects(self) -> List[Dict[Literal["mid"], str]]:
         """Returns the list of the start objects composing the relation."""
         return self._json_data["startObjects"]
 
+    @start_objects.setter
+    @typechecked
+    def start_objects(self, start_objects: List[Dict[Literal["mid"], str]]) -> None:
+        """Sets the list of the start objects composing the relation."""
+        self._json_data["startObjects"] = start_objects
+
     @property
-    def end_objects(self) -> List[Dict]:
+    def end_objects(self) -> List[Dict[Literal["mid"], str]]:
         """Returns the list of the end objects composing the relation."""
         return self._json_data["endObjects"]
+
+    @end_objects.setter
+    @typechecked
+    def end_objects(self, end_objects: List[Dict[Literal["mid"], str]]) -> None:
+        """Sets the list of the end objects composing the relation."""
+        self._json_data["endObjects"] = end_objects
 
 
 def check_attribute_compatible_with_job(func):
@@ -294,6 +370,7 @@ def check_attribute_compatible_with_job(func):
 class Annotation(
     EntityAnnotation,
     PointAnnotation,
+    PolyLineAnnotation,
     BoundingPolyAnnotation,
     VideoAnnotation,
     PoseEstimationAnnotation,

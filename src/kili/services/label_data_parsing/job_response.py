@@ -106,11 +106,11 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("add_category")
 
         if "categories" not in self._json_data:
-            self._json_data["categories"] = CategoryList(
-                job_interface=self._job_interface, categories_list=[]
-            )
-
-        self._json_data["categories"].add_category(name=name, confidence=confidence)
+            category_list = CategoryList(job_interface=self._job_interface, categories_list=[])
+            category_list.add_category(name=name, confidence=confidence)
+            self._json_data["categories"] = category_list
+        else:
+            self._json_data["categories"].add_category(name=name, confidence=confidence)
 
     @property
     def text(self) -> str:
@@ -133,6 +133,14 @@ class JobPayload:
         if self._job_interface["mlTask"] != "CLASSIFICATION":
             raise AttributeNotCompatibleWithJobError("is_key_frame")
         return self._json_data["isKeyFrame"]
+
+    @is_key_frame.setter
+    @typechecked
+    def is_key_frame(self, is_key_frame: bool) -> None:
+        """Sets the value of the key frame for a video classification job."""
+        if self._job_interface["mlTask"] != "CLASSIFICATION":
+            raise AttributeNotCompatibleWithJobError("is_key_frame")
+        self._json_data["isKeyFrame"] = is_key_frame
 
     @property
     def annotations(self) -> List[Annotation]:
@@ -170,11 +178,12 @@ class JobPayload:
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("add_annotation")
 
-        annotation_list = self._json_data["annotations"] or AnnotationList(
-            job_interface=self._job_interface, annotations_list=[]
-        )
-        annotation_list.add_annotation(annotation_dict)
-        self._json_data["annotations"] = annotation_list
+        if "annotations" not in self._json_data:
+            annotation_list = AnnotationList(job_interface=self._job_interface, annotations_list=[])
+            annotation_list.add_annotation(annotation_dict)
+            self._json_data["annotations"] = annotation_list
+        else:
+            self._json_data["annotations"].add_annotation(annotation_dict)
 
 
 def _can_query_annotations(json_data: Dict, job_interface: Dict) -> bool:

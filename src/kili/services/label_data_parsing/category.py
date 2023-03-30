@@ -1,6 +1,6 @@
 # Feature is still under development and is not yet suitable for use by general users.
 """Module for the "categories" key parsing of a job response."""
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from typeguard import typechecked
 
@@ -74,7 +74,7 @@ class Category:
 class CategoryList:
     """Class for the categories list parsing."""
 
-    def __init__(self, categories_list: List[Dict], job_interface: Dict) -> None:
+    def __init__(self, categories_list: List[Dict[str, Any]], job_interface: Dict) -> None:
         """Class for the categories list parsing.
 
         Args:
