@@ -1,6 +1,6 @@
 import pytest
 
-from kili.utils.labels import (
+from kili.utils.labels.bbox import (
     bbox_points_to_normalized_vertices,
     normalized_vertices_to_bbox_points,
 )

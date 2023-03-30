@@ -49,7 +49,7 @@ def bbox_points_to_normalized_vertices(
 
     !!! Example
         ```python
-        from kili.utils.labels import bbox_points_to_normalized_vertices
+        from kili.utils.labels.bbox import bbox_points_to_normalized_vertices
 
         inputs = {
             bottom_left = {"x": 0, "y": 0},
@@ -128,7 +128,7 @@ def normalized_vertices_to_bbox_points(
 
     !!! Example
         ```python
-        from kili.utils.labels import normalized_vertices_to_bbox_points
+        from kili.utils.labels.bbox import normalized_vertices_to_bbox_points
 
         normalized_vertices = label["jsonResponse"]["OBJECT_DETECTION_JOB"]["annotations"][0]["boundingPoly"][0]["normalizedVertices"]
         img_height, img_width = 1080, 1920

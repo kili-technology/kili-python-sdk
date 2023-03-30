@@ -40,7 +40,7 @@ def point_to_normalized_point(
 
     !!! Example
         ```python
-        from kili.utils.labels import point_to_normalized_point
+        from kili.utils.labels.point import point_to_normalized_point
 
         normalized_point = point_to_normalized_point({"x": 5, "y": 40}, img_width=100, img_height=100)
 
