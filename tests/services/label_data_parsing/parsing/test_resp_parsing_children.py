@@ -50,7 +50,7 @@ def test_attribute_categories_nested():
     }
     json_interface = {"jobs": {"JOB_TRANSCRIPT": {}, "JOB_CLASSIF": {}}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
 
     assert parsed_jobs["JOB_TRANSCRIPT"].text == "sdfsdf"
 

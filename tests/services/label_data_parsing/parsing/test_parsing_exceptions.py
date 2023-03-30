@@ -20,7 +20,7 @@ def test_attribute_category_checkbox_job():
     }
 
     json_response_dict = {"JOB_0": {"categories": [{"name": "A"}]}}
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
     with pytest.raises(AttributeNotCompatibleWithJobError):
         _ = parsed_jobs["JOB_0"].category
 
@@ -29,7 +29,7 @@ def test_job_not_existing_error():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
     json_interface = {"jobs": {"JOB_0": {"required": 1}}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
 
     with pytest.raises(JobNotExistingError):
         _ = parsed_jobs["JOB_000000000"].text
@@ -39,7 +39,7 @@ def test_attribute_not_compatible_with_transcription_job_error():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
     json_interface = {"jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1}}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
 
     assert parsed_jobs["JOB_0"].text == "This is a transcription job"
 
@@ -69,7 +69,7 @@ def test_attribute_not_compatible_with_classif_job_error():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     assert parsed_jobs["JOB_0"].category.name == "A"
     assert parsed_jobs["JOB_0"].category.confidence == 100
@@ -118,7 +118,7 @@ def test_query_invalid_attributes_on_bbox_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].annotations
 
@@ -187,7 +187,7 @@ def test_access_bounding_poly_on_point_job():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface)
+    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
     job = parsed_jobs["OBJECT_DETECTION_JOB"]
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
@@ -230,4 +230,4 @@ def test_cannot_add_same_category_twice_to_categorylist():
             " exists"
         ),
     ):
-        _ = ParsedJobs(json_resp, json_interface)
+        _ = ParsedJobs(json_resp, json_interface, input_type="IMAGE")

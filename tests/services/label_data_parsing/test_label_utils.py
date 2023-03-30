@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from kili.services.label_data_parsing.category import Category, CategoryList
 from kili.utils.labels import parse_labels
 
@@ -61,7 +63,7 @@ def test_parse_labels_classification():
             },
         }
     }
-    labels = parse_labels(labels, json_interface=json_interface)
+    labels = parse_labels(labels, json_interface=json_interface, input_type="IMAGE")
 
     assert labels[0].jobs["REQUIRED_JOB"].category.name == "A"
     assert labels[0].jobs["REQUIRED_JOB"].category.confidence == 100
@@ -106,7 +108,7 @@ def test_parse_labels_classification_to_dict():
             },
         }
     }
-    parsed_labels = parse_labels(labels, json_interface=json_interface)
+    parsed_labels = parse_labels(labels, json_interface=json_interface, input_type="IMAGE")
 
     # we check that the label has been converted to CategoryList and Category objects
     # they inherit from Dict and List so they should be serializable
@@ -135,5 +137,6 @@ def test_parse_labels_classification_to_dict():
     }
 
 
+@pytest.mark.skip(reason="Not implemented yet")
 def test_parse_labels_video_frame_to_dict():
     pass  # TODO

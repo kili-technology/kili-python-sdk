@@ -26,7 +26,7 @@ def test_mutate_transcription_label_on_classif_project():
     }
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -58,7 +58,7 @@ def test_mutate_category_label_wrong_confidence_range(input_):
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -92,7 +92,7 @@ def test_mutate_single_class_classif_add_multiple_categories(input_):
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -123,7 +123,7 @@ def test_mutate_multi_class_classif_add_too_many_categories(input_):
 
     json_response_dict = {}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     parsed_jobs["JOB_0"].add_category(name="A", confidence=1)
     parsed_jobs["JOB_0"].add_category(name="B", confidence=2)
@@ -163,7 +163,7 @@ def test_mutate_category_wrong_class_name(input_):
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -208,7 +208,7 @@ def test_invalid_mutation_on_bbox_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].annotations
 
@@ -244,7 +244,7 @@ def test_cannot_add_same_category_twice_to_categorylist_with_add_category():
 
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface)
+    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
 
     with pytest.raises(
         InvalidMutationError,
@@ -289,7 +289,7 @@ def test_add_annotation_ner_wrong_category_name():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
 
     with pytest.raises(
         InvalidMutationError,

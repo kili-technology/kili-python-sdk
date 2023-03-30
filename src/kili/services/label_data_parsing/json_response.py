@@ -3,6 +3,8 @@
 
 from typing import Dict
 
+from kili.enums import InputType
+
 from .exceptions import JobNotExistingError
 from .job_response import JobPayload
 
@@ -10,12 +12,13 @@ from .job_response import JobPayload
 class ParsedJobs:
     """Class for label json response parsing."""
 
-    def __init__(self, json_response: Dict, json_interface: Dict):
+    def __init__(self, json_response: Dict, json_interface: Dict, input_type: InputType):
         """Class for label json response parsing.
 
         Args:
             json_response: Value of the key "jsonResponse" of a label.
             json_interface: Json interface of the project.
+            input_type: Type of assets of the project.
         """
         self._json_data: Dict[str, JobPayload] = {}
 

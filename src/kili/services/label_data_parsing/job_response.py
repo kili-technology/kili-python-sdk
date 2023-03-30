@@ -145,6 +145,13 @@ class JobPayload:
         return True
 
     @property
+    def is_key_frame(self) -> bool:
+        """Returns the value of the key frame for a video classification job."""
+        if self._job_interface["mlTask"] != "CLASSIFICATION":
+            raise AttributeNotCompatibleWithJobError("is_key_frame")
+        return self._json_data["isKeyFrame"]
+
+    @property
     def annotations(self) -> List[Annotation]:
         """Returns a list of Annotation objects for a job."""
         if not self._can_query_annotations():
