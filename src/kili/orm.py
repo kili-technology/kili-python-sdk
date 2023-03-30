@@ -125,17 +125,17 @@ class Label(DictClass):
 
     jsonResponse = {}
 
-    def json_response(self, _format: AnnotationFormat = "raw"):
+    def json_response(self, format_: AnnotationFormat = "raw"):
         """Format a json response.
 
         Args:
-            _format: expected format
+            format_: expected format
         """
         if "jsonResponse" not in self:
             raise KeyError(
                 f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"'
             )
-        if _format == "simple":
+        if format_ == "simple":
             job_names = self.jsonResponse.keys()
             if len(job_names) > 1:
                 return {
