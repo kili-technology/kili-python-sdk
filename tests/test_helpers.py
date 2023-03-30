@@ -59,7 +59,7 @@ def test_format_result_formatted_json_is_list():
             }
         ]
     }
-    ret = format_result("data", result, _object=List[Asset])
+    ret = format_result("data", result, object_=List[Asset])
     assert isinstance(ret, list)
     assert isinstance(ret[0], Asset)
 

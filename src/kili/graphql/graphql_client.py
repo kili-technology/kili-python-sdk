@@ -8,7 +8,7 @@ import threading
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -19,6 +19,7 @@ from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
+from typing_extensions import LiteralString
 
 from kili import __version__
 from kili.exceptions import GraphQLError
@@ -261,13 +262,13 @@ class SubscriptionGraphQLClient:
         self._conn.send(json.dumps(payload))
         return self._conn.recv()
 
-    def query(self, query, variables=None, headers=None):
+    def query(self, query: str, variables: Optional[Dict] = None, headers: Optional[Dict] = None):
         """Sends a query.
 
         Args:
-            query
-            variables
-            headers
+            query: the GraphQL query
+            variables: the payload of the query
+            headers: headers
         """
         self._conn_init(headers)
         payload = {"headers": headers, "query": query, "variables": variables}
@@ -276,7 +277,14 @@ class SubscriptionGraphQLClient:
         self._stop(_id)
         return res
 
-    def prepare_subscribe(self, query, variables, headers, callback, authorization):
+    def prepare_subscribe(
+        self,
+        query: str,
+        variables: Optional[Dict],
+        headers: Optional[Dict],
+        callback: Optional[Callable],
+        authorization: Optional[Dict],
+    ):
         """Prepares a subscription.
 
         Args:
@@ -293,13 +301,20 @@ class SubscriptionGraphQLClient:
         self._id = _id
         return _cc, _id
 
-    def subscribe(self, query, variables=None, headers=None, callback=None, authorization=None):
+    def subscribe(
+        self,
+        query: str,
+        variables: Optional[Dict] = None,
+        headers: Optional[Dict] = None,
+        callback: Optional[Callable] = None,
+        authorization: Optional[Dict] = None,
+    ):
         """Subscribes.
 
         Args:
-            query
-            variables
-            headers
+            query: the GraphQL query
+            variables: the payload of the query
+            headers: headers
             callback: function executed after the subscription
             authorization: authorization header
         """
@@ -367,7 +382,7 @@ class SubscriptionGraphQLClient:
         self._reconnect()
 
 
-def gen_id(size=6, chars=string.ascii_letters + string.digits):
+def gen_id(size: int = 6, chars: LiteralString = string.ascii_letters + string.digits) -> str:
     """Generate random alphanumeric id.
 
     Args:

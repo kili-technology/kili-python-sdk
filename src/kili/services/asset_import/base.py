@@ -253,6 +253,7 @@ class ContentBatchImporter(BaseBatchImporter):
     def get_type_and_data_from_content_array(
         self, content_array: List[Optional[Union[str, bytes]]]
     ) -> List[Tuple[Union[bytes, str], Optional[str]]]:
+        # pylint:disable=line-too-long
         """Returns the data of the content (path) and its content type for each element in the array."""
         return list(map(self.get_content_type_and_data_from_content, content_array))
 
@@ -338,15 +339,17 @@ class BaseAssetImporter:
     @staticmethod
     def is_hosted_content(assets: List[AssetLike]):
         """Determine if the assets to upload are from local files or hosted data
-        Raise an error if a mix of both."""
+
+        Raise an error if a mix of both.
+        """
         contents = [asset.get("content") for asset in assets]
         if all(is_url(content) for content in contents):
             return True
         if any(is_url(content) for content in contents):
-            raise ImportValidationError("""
-                Cannot upload hosted data and local files at the same time.
-                Please separate the assets into 2 calls
-                """)
+            raise ImportValidationError(
+                "Cannot upload hosted data and local files at the same time. Please separate the"
+                " assets into 2 calls."
+            )
         return False
 
     def _can_upload_from_local_data(self):
@@ -381,10 +384,10 @@ class BaseAssetImporter:
                 if raise_error:
                     raise err
         if len(filtered_assets) == 0:
-            raise ImportValidationError("""
-                No files to upload.
-                Check that the paths exist and file types are compatible with the project
-                """)
+            # pylint: disable=line-too-long
+            raise ImportValidationError(
+                """No files to upload. Check that the paths exist and file types are compatible with the project."""
+            )
         return filtered_assets
 
     def check_mime_type_compatibility(self, path: str):
@@ -402,11 +405,11 @@ class BaseAssetImporter:
 
         input_type = self.project_params.input_type
         if mime_type not in project_compatible_mimetypes[input_type]:
-            raise MimeTypeError(f"""
-                File mime type for {path} is {mime_type} and does not correspond
-                to the type of the project.
-                File mime type should be one of {project_compatible_mimetypes[input_type]}
-                """)
+            raise MimeTypeError(
+                f"File mime type for {path} is {mime_type} and does not correspond to the type of"
+                " the project. File mime type should be one of"
+                f" {project_compatible_mimetypes[input_type]}"
+            )
         return True
 
     def filter_duplicate_external_ids(self, assets):

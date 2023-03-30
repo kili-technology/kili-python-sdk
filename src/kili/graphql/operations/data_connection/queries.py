@@ -19,6 +19,7 @@ class DataConnectionsWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
+        # pylint: disable=line-too-long
         """Build the GraphQL Where payload sent in the resolver from the SDK DataConnectionsWhere."""
         return {
             "projectId": self.project_id,

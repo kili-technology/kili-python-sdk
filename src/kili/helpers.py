@@ -20,25 +20,25 @@ from kili.constants import mime_extensions_for_IV2
 T = TypeVar("T")
 
 
-def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) -> T:
+def format_result(name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
     """Formats the result of the GraphQL queries.
 
     Args:
         name: name of the field to extract, usually data
         result: query result to parse
-        _object: returned type
+        object_: returned type
     """
     formatted_json = format_json(result[name])
-    if _object is None:
+    if object_ is None:
         return formatted_json  # type:ignore X
     if isinstance(formatted_json, list):
-        if get_origin(_object) is list:
-            obj = get_args(_object)[0]
+        if get_origin(object_) is list:
+            obj = get_args(object_)[0]
             return [obj(element) for element in formatted_json]  # type:ignore
         # the legacy "orm" objects fall into this category.
-        return [_object(element) for element in formatted_json]  # type:ignore
+        return [object_(element) for element in formatted_json]  # type:ignore
 
-    return _object(formatted_json)  # type:ignore
+    return object_(formatted_json)  # type:ignore
 
 
 def content_escape(content: str) -> str:
@@ -63,7 +63,7 @@ def get_data_type(path: str):
     return mime_type if mime_type else ""
 
 
-def encode_base64(path):
+def encode_base64(path: str):
     """Encode a file in base 64.
 
     Args:
@@ -74,7 +74,7 @@ def encode_base64(path):
         return f"data:{data_type};base64," + base64.b64encode(image_file.read()).decode("ascii")
 
 
-def is_url(path):
+def is_url(path: object):
     """Check if the path is a url or something else.
 
     Args:
@@ -83,7 +83,7 @@ def is_url(path):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result: dict) -> Dict:
+def format_json_dict(result: Dict) -> Dict:
     """Formats the dict part of a json return by a GraphQL query into a python object.
 
     Args:
@@ -129,7 +129,7 @@ def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D
 def deprecate(
     msg: Optional[str] = None,
     removed_in: Optional[str] = None,
-    _type=DeprecationWarning,
+    type_: Type[Warning] = DeprecationWarning,
 ):
     """Decorator factory that tag a deprecated function.
 
@@ -141,7 +141,7 @@ def deprecate(
         msg: string message that will be displayed whenever the function is called
         removed_in: string version in the format "Major.Minor"
             in which the deprecation element has to be removed
-        type: DeprecationWarning by default
+        type_: DeprecationWarning by default
     """
 
     def decorator(func):
@@ -156,7 +156,7 @@ def deprecate(
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             if msg:
-                warnings.warn(msg, _type, stacklevel=2)
+                warnings.warn(msg, type_, stacklevel=2)
             return func(*args, **kwargs)
 
         return wrapper
@@ -182,12 +182,12 @@ def format_metadata(metadata: object):
     )
 
 
-def convert_to_list_of_none(array, length):
+def convert_to_list_of_none(array: List, length: int) -> List:
     """Turns a value in a list of length length.
 
     Args:
-        array
-        length
+        array: the array to convert
+        length: the length of the array
     """
     if isinstance(array, list):
         if len(array) != length:
@@ -196,26 +196,26 @@ def convert_to_list_of_none(array, length):
     return [None] * length
 
 
-def is_none_or_empty(_object):
+def is_none_or_empty(object_: object) -> bool:
     """Tests if an object is none or empty.
 
     Args:
-        _object: a python object
+        object_: a python object
     """
-    object_is_empty = isinstance(_object, list) and len(_object) == 0
-    return _object is None or object_is_empty
+    object_is_empty = isinstance(object_, list) and len(object_) == 0
+    return object_ is None or object_is_empty
 
 
-def list_is_not_none_else_none(_object):
+def list_is_not_none_else_none(object_: object):
     """Formats an object as a singleton if not none.
 
     Args:
-        _object: a python object
+        object_: a python object
     """
-    return [_object] if _object is not None else None
+    return [object_] if object_ is not None else None
 
 
-def validate_category_search_query(query):
+def validate_category_search_query(query: str):
     """Validate the category search query.
 
     Args:

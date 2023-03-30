@@ -1,6 +1,7 @@
 """This script defines object-relational mapping helpers to ease
 the manipulation of Kili data structures."""
 from dataclasses import dataclass
+from typing import Dict
 
 from typing_extensions import Literal
 
@@ -58,7 +59,7 @@ class JobTool:
     Vector = "vector"
 
 
-def get_polygon(annotation):
+def get_polygon(annotation: Dict):
     """Extracts a polygon from an annotation.
 
     Args:
@@ -70,7 +71,7 @@ def get_polygon(annotation):
         return None
 
 
-def get_category(annotation):
+def get_category(annotation: Dict):
     """Extracts a category from an annotation.
 
     Args:
@@ -82,7 +83,7 @@ def get_category(annotation):
         return None
 
 
-def get_named_entity(annotation):
+def get_named_entity(annotation: Dict):
     """Extracts a named entity from an annotation.
 
     Args:
@@ -100,7 +101,7 @@ def get_named_entity(annotation):
         return None
 
 
-def format_image_annotation(annotation):
+def format_image_annotation(annotation: Dict):
     """Extracts a category, polygon, named entity from an annotation
     depending of the annotation type.
 

@@ -37,6 +37,7 @@ POSSIBLE_HANDLERS = {
 def check_file_mime_type(
     path: Path, compatible_mime_extensions: List[str], verbose: bool = True
 ) -> bool:
+    # pylint: disable=line-too-long
     """Returns true if the mime type of the file corresponds to one of compatible_mime_extensions."""
     mime_type = get_data_type(path.as_posix())
 
@@ -136,8 +137,8 @@ class PluginUploader:
 
         if (not self.plugin_path.is_dir()) and (not self.plugin_path.is_file()):
             raise FileNotFoundError(
-                f"""The provided path "{plugin_path}" is neither a directory nor a file.
-                The absolute path is the following: '{self.plugin_path.absolute()}'"""
+                f"The provided path '{plugin_path}' is neither a directory nor a file. The absolute"
+                f" path is the following: '{self.plugin_path.absolute()}'"
             )
 
         if plugin_name:
@@ -148,8 +149,8 @@ class PluginUploader:
         self.handler_types = None
 
     def _retrieve_plugin_src(self) -> List[Path]:
-        """Retrieve script from plugin_path and execute it
-        to prevent an upload with indentation errors."""
+        # pylint: disable=line-too-long
+        """Retrieve script from plugin_path and execute it to prevent an upload with indentation errors."""
         if self.plugin_path.is_dir():
             file_path = self.plugin_path / "main.py"
             if not file_path.is_file():
@@ -180,8 +181,8 @@ class PluginUploader:
         return [file_path]
 
     def _retrieve_requirements(self) -> Union[Path, None]:
-        """Retrieve script from file_path and execute it
-        to prevent an upload with indentation errors."""
+        # pylint: disable=line-too-long
+        """Retrieve script from file_path and execute it to prevent an upload with indentation errors."""
         if not self.plugin_path.is_dir():
             return None
 
@@ -227,7 +228,9 @@ class PluginUploader:
 
     def _create_zip(self, tmp_directory: Path):
         """Create a zip file from python file and requirements.txt
-        (if user has defined a path to a requirements.txt)"""
+
+        (if user has defined a path to a requirements.txt)
+        """
         file_paths = self._retrieve_plugin_src()
 
         for path in file_paths:
@@ -290,16 +293,21 @@ class PluginUploader:
             n_tries += 1
 
         if status == "DEPLOYING" and n_tries == 20:
-            raise RuntimeError(f"""We could not check your plugin was deployed in time.
-Please check again the status of the plugin after some minutes with the command : \
-kili.get_plugin_status("{self.plugin_name}").
-If the status is different than DEPLOYING or ACTIVE, please check your plugin's code and try to \
-overwrite the plugin with a new version of the code (you can use kili.update_plugin() for that).""")
+            raise RuntimeError(
+                "We could not check your plugin was deployed in time. Please check again the"
+                " status of the plugin after some minutes with the command:"
+                f' kili.get_plugin_status("{self.plugin_name}"). If the status is different than'
+                " DEPLOYING or ACTIVE, please check your plugin's code and try to overwrite the"
+                " plugin with a new version of the code (you can use kili.update_plugin() for"
+                " that)."
+            )
 
         if status != "ACTIVE":
-            raise PluginCreationError("""There was some error during the creation of the plugin. \
-Please check your plugin's code and try to overwrite the plugin with a new version of the \
-code (you can use kili.update_plugin() for that).""")
+            raise PluginCreationError(
+                "There was some error during the creation of the plugin. Please check your plugin's"
+                " code and try to overwrite the plugin with a new version of the code (you can use"
+                " kili.update_plugin() for that)."
+            )
 
         message = f"Plugin {action} successfully"
         logger.info(message)
