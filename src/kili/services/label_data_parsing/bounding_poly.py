@@ -36,4 +36,9 @@ class BoundingPoly:
         self, normalized_vertices: List[Dict[Literal["x", "y"], float]]
     ) -> None:
         """Sets the normalized vertices of the bounding polygon."""
+        for vertex in normalized_vertices:
+            if not 0 <= vertex["x"] <= 1:
+                raise ValueError(f"Vertex x coordinate {vertex['x']} is not in [0, 1]")
+            if not 0 <= vertex["y"] <= 1:
+                raise ValueError(f"Vertex y coordinate {vertex['y']} is not in [0, 1]")
         self._json_data["normalizedVertices"] = normalized_vertices

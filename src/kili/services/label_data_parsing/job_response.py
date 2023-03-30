@@ -5,12 +5,7 @@ from typing import Dict, List, Optional, cast
 
 from typeguard import typechecked
 
-from .annotation import (
-    Annotation,
-    AnnotationList,
-    BoundingPolyAnnotation,
-    EntityAnnotation,
-)
+from .annotation import AnnotationList, BoundingPolyAnnotation, EntityAnnotation
 from .category import Category, CategoryList
 from .exceptions import AttributeNotCompatibleWithJobError
 
@@ -73,9 +68,7 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("categories")
 
         if "categories" not in self._json_data and not self._job_interface["required"]:
-            self._json_data["categories"] = CategoryList(
-                job_interface=self._job_interface, categories_list=[]
-            )
+            return CategoryList(job_interface=self._job_interface, categories_list=[])
 
         return self._json_data["categories"]
 
@@ -143,12 +136,15 @@ class JobPayload:
         self._json_data["isKeyFrame"] = is_key_frame
 
     @property
-    def annotations(self) -> List[Annotation]:
+    def annotations(self) -> AnnotationList:
         """Returns a list of Annotation objects for a job."""
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("annotations")
 
-        return self._json_data.get("annotations", [])
+        if "annotations" not in self._json_data and not self._job_interface["required"]:
+            return AnnotationList(job_interface=self._job_interface, annotations_list=[])
+
+        return self._json_data["annotations"]
 
     @property
     def entity_annotations(self) -> List[EntityAnnotation]:

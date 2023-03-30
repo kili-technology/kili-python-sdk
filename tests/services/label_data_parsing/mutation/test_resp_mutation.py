@@ -451,3 +451,53 @@ def test_add_annotation_ner():
 
     assert parsed_jobs["JOB_0"].annotations[0].begin_offset == 21
     assert parsed_jobs["JOB_0"].annotations[1].begin_offset == 8
+
+
+def test_set_normalized_vertices():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["semantic"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            }
+        }
+    }
+
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [
+                        {"normalizedVertices": [{"x": 0.5141441957015471, "y": 0.6164292619007603}]}
+                    ],
+                    "categories": [{"name": "OBJECT_B"}],
+                    "mid": "20230329145907681-18624",
+                    "type": "semantic",
+                }
+            ]
+        }
+    }
+
+    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+
+    parsed_jobs["JOB_0"].annotations[0].bounding_poly[0].normalized_vertices = [
+        {"x": 0.5, "y": 0.5}
+    ]
+
+    assert parsed_jobs["JOB_0"].annotations[0].bounding_poly[0].normalized_vertices[0] == {
+        "x": 0.5,
+        "y": 0.5,
+    }

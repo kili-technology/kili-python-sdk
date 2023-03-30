@@ -47,7 +47,14 @@ class _BaseAnnotation:
 
     def as_dict(self) -> Dict:
         """Returns the parsed annotation as a dict."""
-        return self._json_data
+        ret = {k: v for k, v in self._json_data.items() if k not in ("categories",)}
+        if "categories" in self._json_data:
+            ret["categories"] = (
+                self._json_data["categories"]
+                if isinstance(self._json_data["categories"], List)
+                else self._json_data["categories"].as_list()
+            )
+        return ret
 
     @property
     def categories(self) -> CategoryList:

@@ -47,9 +47,9 @@ class ParsedJobs:
 
     def to_dict(self) -> Dict:
         """Returns the parsed json response as a dict."""
-        return {
-            job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()
-        }
+        ret = {job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()}
+        ret = {k: v for k, v in ret.items() if v}  # remove empty json responses
+        return ret
 
     def __repr__(self) -> str:
         """Returns the representation of the object."""
