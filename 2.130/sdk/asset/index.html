@@ -1214,14 +1214,12 @@
 
     <div class="doc doc-contents first">
 
-      <p>Set of Asset queries</p>
+      <p>Set of Asset queries.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesAsset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Asset queries</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Asset queries.&quot;&quot;&quot;</span>
 
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin</span>
 
@@ -1409,7 +1407,7 @@
 <span class="sd">            external_id_contains: Returned assets have an external id that belongs to that list, if given.</span>
 <span class="sd">            metadata_where: Filters by the values of the metadata of the asset.</span>
 <span class="sd">            honeypot_mark_gt: Minimum amount of honeypot for the asset.</span>
-<span class="sd">            honeypot_mark_lt : Maximum amount of honeypot for the asset.</span>
+<span class="sd">            honeypot_mark_lt: Maximum amount of honeypot for the asset.</span>
 <span class="sd">            status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`</span>
 <span class="sd">            label_type_in: Returned assets should have a label whose type belongs to that list, if given.</span>
@@ -1553,6 +1551,7 @@
         <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Count and return the number of assets with the given constraints.</span>
 
 <span class="sd">        Parameters beginning with &#39;label_&#39; apply to labels, others apply to assets.</span>
@@ -1593,6 +1592,9 @@
 <span class="sd">                whose update date is greated or equal to this date.</span>
 <span class="sd">            updated_at_lte: Returned assets should have a label</span>
 <span class="sd">                whose update date is lower or equal to this date.</span>
+<span class="sd">            label_category_search: Returned assets should have a label that follows this category search query.</span>
+<span class="sd">            created_at_gte: Returned assets should have their import date greater or equal to this date.</span>
+<span class="sd">            created_at_lte: Returned assets should have their import date lower or equal to this date.</span>
 
 <span class="sd">        !!! info &quot;Dates format&quot;</span>
 <span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
@@ -1755,7 +1757,7 @@
       </tr>
       <tr>
         <td><code>honeypot_mark_lt</code></td>
-        <td></td>
+        <td><code>Optional[float]</code></td>
         <td><p>Maximum amount of honeypot for the asset.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -2016,7 +2018,7 @@ label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_
 <span class="sd">        external_id_contains: Returned assets have an external id that belongs to that list, if given.</span>
 <span class="sd">        metadata_where: Filters by the values of the metadata of the asset.</span>
 <span class="sd">        honeypot_mark_gt: Minimum amount of honeypot for the asset.</span>
-<span class="sd">        honeypot_mark_lt : Maximum amount of honeypot for the asset.</span>
+<span class="sd">        honeypot_mark_lt: Maximum amount of honeypot for the asset.</span>
 <span class="sd">        status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`</span>
 <span class="sd">        label_type_in: Returned assets should have a label whose type belongs to that list, if given.</span>
@@ -2309,6 +2311,24 @@ whose update date is greated or equal to this date.</p></td>
 whose update date is lower or equal to this date.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>label_category_search</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned assets should have a label that follows this category search query.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at_gte</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned assets should have their import date greater or equal to this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>created_at_lte</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Returned assets should have their import date lower or equal to this date.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>      <div class="admonition info">
 <p class="admonition-title">Dates format</p>
@@ -2380,6 +2400,7 @@ whose update date is lower or equal to this date.</p></td>
     <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">created_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count and return the number of assets with the given constraints.</span>
 
 <span class="sd">    Parameters beginning with &#39;label_&#39; apply to labels, others apply to assets.</span>
@@ -2420,6 +2441,9 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">            whose update date is greated or equal to this date.</span>
 <span class="sd">        updated_at_lte: Returned assets should have a label</span>
 <span class="sd">            whose update date is lower or equal to this date.</span>
+<span class="sd">        label_category_search: Returned assets should have a label that follows this category search query.</span>
+<span class="sd">        created_at_gte: Returned assets should have their import date greater or equal to this date.</span>
+<span class="sd">        created_at_lte: Returned assets should have their import date lower or equal to this date.</span>
 
 <span class="sd">    !!! info &quot;Dates format&quot;</span>
 <span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
@@ -2497,14 +2521,12 @@ whose update date is lower or equal to this date.</p></td>
 
     <div class="doc doc-contents first">
 
-      <p>Set of Asset mutations</p>
+      <p>Set of Asset mutations.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsAsset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Asset mutations</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Asset mutations.&quot;&quot;&quot;</span>
 
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
 
@@ -2547,6 +2569,7 @@ whose update date is lower or equal to this date.</p></td>
 <span class="sd">                - For an `VIDEO_LEGACY` project, the content can be only be URLs</span>
 <span class="sd">            external_id_array: List of external ids given to identify the assets.</span>
 <span class="sd">                If None, random identifiers are created.</span>
+<span class="sd">            id_array: Disabled parameter. Do not use.</span>
 <span class="sd">            is_honeypot_array:  Whether to use the asset for honeypot</span>
 <span class="sd">            status_array: By default, all imported assets are set to `TODO`. Other options:</span>
 <span class="sd">                `ONGOING`, `LABELED`, `REVIEWED`.</span>
@@ -3285,6 +3308,12 @@ If None, random identifiers are created.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
+        <td><code>id_array</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Disabled parameter. Do not use.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
         <td><code>is_honeypot_array</code></td>
         <td><code>Optional[List[bool]]</code></td>
         <td><p>Whether to use the asset for honeypot</p></td>
@@ -3400,6 +3429,7 @@ If <code>False</code>, the function will return faster but the assets might not 
 <span class="sd">            - For an `VIDEO_LEGACY` project, the content can be only be URLs</span>
 <span class="sd">        external_id_array: List of external ids given to identify the assets.</span>
 <span class="sd">            If None, random identifiers are created.</span>
+<span class="sd">        id_array: Disabled parameter. Do not use.</span>
 <span class="sd">        is_honeypot_array:  Whether to use the asset for honeypot</span>
 <span class="sd">        status_array: By default, all imported assets are set to `TODO`. Other options:</span>
 <span class="sd">            `ONGOING`, `LABELED`, `REVIEWED`.</span>

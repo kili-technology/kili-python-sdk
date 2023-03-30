@@ -1767,13 +1767,13 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an issue.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            project_id: Id of the project</span>
-<span class="sd">            label_id_array: list of Ids of the labels to add an issue to</span>
-<span class="sd">            object_mid: list of Mid of the objects in the labels to associate the issue to</span>
-<span class="sd">            text_array: list of texts to associate to the issues</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            label_id_array: List of Ids of the labels to add an issue to.</span>
+<span class="sd">            object_mid_array: List of mids of the objects in the labels to associate the issues to.</span>
+<span class="sd">            text_array: List of texts to associate to the issues.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A list of dictionary with the `id` key of the created issues</span>
+<span class="sd">            A list of dictionary with the `id` key of the created issues.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">label_id_array</span><span class="p">,</span> <span class="n">object_mid_array</span><span class="p">,</span> <span class="n">text_array</span><span class="p">])</span>
         <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_id_array</span><span class="p">))</span>
@@ -1809,15 +1809,17 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
         <span class="n">asset_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_external_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an issue.</span>
+        <span class="c1"># pylint:disable=line-too-long</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create questions.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            project_id: Id of the project</span>
-<span class="sd">            text_array: list of the question text</span>
-<span class="sd">            asset_id_array: list of the assets to add a question to</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            text_array: List of question strings.</span>
+<span class="sd">            asset_id_array: List of the assets to add the questions to.</span>
+<span class="sd">            asset_external_id_array: List of the assets to add the questions to. Used if `asset_id_array` is not given.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A list of dictionary with the `id` key of the created questions</span>
+<span class="sd">            A list of dictionary with the `id` key of the created questions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">text_array</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">])</span>
         <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_array</span><span class="p">))</span>
@@ -2035,25 +2037,25 @@ and provide better performances.</p>
       <tr>
         <td><code>project_id</code></td>
         <td><code>str</code></td>
-        <td><p>Id of the project</p></td>
+        <td><p>Id of the project.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>label_id_array</code></td>
         <td><code>List[str]</code></td>
-        <td><p>list of Ids of the labels to add an issue to</p></td>
+        <td><p>List of Ids of the labels to add an issue to.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
-        <td><code>object_mid</code></td>
-        <td></td>
-        <td><p>list of Mid of the objects in the labels to associate the issue to</p></td>
-        <td><em>required</em></td>
+        <td><code>object_mid_array</code></td>
+        <td><code>Optional[List[Union[str, NoneType]]]</code></td>
+        <td><p>List of mids of the objects in the labels to associate the issues to.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>text_array</code></td>
         <td><code>Optional[List[Union[str, NoneType]]]</code></td>
-        <td><p>list of texts to associate to the issues</p></td>
+        <td><p>List of texts to associate to the issues.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -2069,7 +2071,7 @@ and provide better performances.</p>
   <tbody>
     <tr>
       <td><code>List[Dict]</code></td>
-      <td><p>A list of dictionary with the <code>id</code> key of the created issues</p></td>
+      <td><p>A list of dictionary with the <code>id</code> key of the created issues.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2086,13 +2088,13 @@ and provide better performances.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an issue.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        project_id: Id of the project</span>
-<span class="sd">        label_id_array: list of Ids of the labels to add an issue to</span>
-<span class="sd">        object_mid: list of Mid of the objects in the labels to associate the issue to</span>
-<span class="sd">        text_array: list of texts to associate to the issues</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        label_id_array: List of Ids of the labels to add an issue to.</span>
+<span class="sd">        object_mid_array: List of mids of the objects in the labels to associate the issues to.</span>
+<span class="sd">        text_array: List of texts to associate to the issues.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A list of dictionary with the `id` key of the created issues</span>
+<span class="sd">        A list of dictionary with the `id` key of the created issues.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">label_id_array</span><span class="p">,</span> <span class="n">object_mid_array</span><span class="p">,</span> <span class="n">text_array</span><span class="p">])</span>
     <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_id_array</span><span class="p">))</span>
@@ -2139,7 +2141,7 @@ and provide better performances.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Create an issue.</p>
+      <p>Create questions.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2155,19 +2157,25 @@ and provide better performances.</p>
       <tr>
         <td><code>project_id</code></td>
         <td><code>str</code></td>
-        <td><p>Id of the project</p></td>
+        <td><p>Id of the project.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>text_array</code></td>
         <td><code>List[Optional[str]]</code></td>
-        <td><p>list of the question text</p></td>
+        <td><p>List of question strings.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>asset_id_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>list of the assets to add a question to</p></td>
+        <td><p>List of the assets to add the questions to.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_external_id_array</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>List of the assets to add the questions to. Used if <code>asset_id_array</code> is not given.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -2183,7 +2191,7 @@ and provide better performances.</p>
   <tbody>
     <tr>
       <td><code>List[Dict]</code></td>
-      <td><p>A list of dictionary with the <code>id</code> key of the created questions</p></td>
+      <td><p>A list of dictionary with the <code>id</code> key of the created questions.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2197,15 +2205,17 @@ and provide better performances.</p>
     <span class="n">asset_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">asset_external_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an issue.</span>
+    <span class="c1"># pylint:disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create questions.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        project_id: Id of the project</span>
-<span class="sd">        text_array: list of the question text</span>
-<span class="sd">        asset_id_array: list of the assets to add a question to</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        text_array: List of question strings.</span>
+<span class="sd">        asset_id_array: List of the assets to add the questions to.</span>
+<span class="sd">        asset_external_id_array: List of the assets to add the questions to. Used if `asset_id_array` is not given.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A list of dictionary with the `id` key of the created questions</span>
+<span class="sd">        A list of dictionary with the `id` key of the created questions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">text_array</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">])</span>
     <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_array</span><span class="p">))</span>

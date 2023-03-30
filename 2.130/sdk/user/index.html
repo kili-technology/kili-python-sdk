@@ -1247,7 +1247,7 @@
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            api_key: Query an user by its API Key</span>
@@ -1292,10 +1292,12 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get user count based on a set of constraints.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">            organization_id: Identifier of the user&#39;s organization.</span>
+<span class="sd">            api_key: Filter by API Key.</span>
+<span class="sd">            email: Filter by email.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The number of organizations with the parameters provided</span>
+<span class="sd">            The number of organizations with the parameters provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">UserWhere</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">UserQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
@@ -1342,7 +1344,19 @@
       <tr>
         <td><code>organization_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the user's organization</p></td>
+        <td><p>Identifier of the user's organization.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>api_key</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Filter by API Key.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>email</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Filter by email.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -1358,7 +1372,7 @@
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>The number of organizations with the parameters provided</p></td>
+      <td><p>The number of organizations with the parameters provided.</p></td>
     </tr>
   </tbody>
 </table>
@@ -1374,10 +1388,12 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get user count based on a set of constraints.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">        organization_id: Identifier of the user&#39;s organization.</span>
+<span class="sd">        api_key: Filter by API Key.</span>
+<span class="sd">        email: Filter by email.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The number of organizations with the parameters provided</span>
+<span class="sd">        The number of organizations with the parameters provided.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">where</span> <span class="o">=</span> <span class="n">UserWhere</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">UserQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
@@ -1401,7 +1417,7 @@
 
     <div class="doc doc-contents ">
 
-      <p>Get a generator or a list of users given a set of criteria</p>
+      <p>Get a generator or a list of users given a set of criteria.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1504,7 +1520,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        api_key: Query an user by its API Key</span>
@@ -1623,8 +1639,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
 <span class="sd">        This resolver only works for on-premise installations without Auth0.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            email : Email of the person whose password has to be updated.</span>
-<span class="sd">            old_password : The old password</span>
+<span class="sd">            email: Email of the person whose password has to be updated.</span>
+<span class="sd">            old_password: The old password</span>
 <span class="sd">            new_password_1: The new password</span>
 <span class="sd">            new_password_2: A confirmation field for the new password</span>
 
@@ -1644,8 +1660,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset password.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset password.</span>
 
 <span class="sd">        !!! warning &quot;Method removed&quot;</span>
 <span class="sd">            This method is not available anymore.</span>
@@ -1852,8 +1867,7 @@ Please use the Kili App instead to reset your password.</p>
         <details class="quote">
           <summary>Source code in <code>kili/mutations/user/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">reset_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reset password.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset password.</span>
 
 <span class="sd">    !!! warning &quot;Method removed&quot;</span>
 <span class="sd">        This method is not available anymore.</span>
@@ -1898,13 +1912,13 @@ Please use the Kili App instead to reset your password.</p>
   <tbody>
       <tr>
         <td><code>email</code></td>
-        <td></td>
+        <td><code>str</code></td>
         <td><p>Email of the person whose password has to be updated.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>old_password</code></td>
-        <td></td>
+        <td><code>str</code></td>
         <td><p>The old password</p></td>
         <td><em>required</em></td>
       </tr>
@@ -1948,8 +1962,8 @@ Please use the Kili App instead to reset your password.</p>
 <span class="sd">    This resolver only works for on-premise installations without Auth0.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        email : Email of the person whose password has to be updated.</span>
-<span class="sd">        old_password : The old password</span>
+<span class="sd">        email: Email of the person whose password has to be updated.</span>
+<span class="sd">        old_password: The old password</span>
 <span class="sd">        new_password_1: The new password</span>
 <span class="sd">        new_password_2: A confirmation field for the new password</span>
 

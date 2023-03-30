@@ -1229,7 +1229,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            has_been_seen: Filter on notifications that have been seen.</span>
-<span class="sd">            user_id: Filter on the notifications of a specific user</span>
+<span class="sd">            user_id: Filter on the notifications of a specific user.</span>
+<span class="sd">            notification_id: Filter on a specific notification.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of notifications with the parameters provided</span>
@@ -1289,7 +1290,13 @@
       <tr>
         <td><code>user_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Filter on the notifications of a specific user</p></td>
+        <td><p>Filter on the notifications of a specific user.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>notification_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Filter on a specific notification.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -1322,7 +1329,8 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        has_been_seen: Filter on notifications that have been seen.</span>
-<span class="sd">        user_id: Filter on the notifications of a specific user</span>
+<span class="sd">        user_id: Filter on the notifications of a specific user.</span>
+<span class="sd">        notification_id: Filter on a specific notification.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of notifications with the parameters provided</span>

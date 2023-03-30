@@ -1118,14 +1118,12 @@
 
     <div class="doc doc-contents first">
 
-      <p>Set of Organization queries</p>
+      <p>Set of Organization queries.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/queries/organization/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesOrganization</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set of Organization queries</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Organization queries.&quot;&quot;&quot;</span>
 
     <span class="c1"># pylint: disable=too-many-arguments,dangerous-default-value</span>
 
@@ -1181,8 +1179,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of organizations that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            email : Email of a user of the organization</span>
-<span class="sd">            organization_id : Identifier of the organization</span>
+<span class="sd">            email: Email of a user of the organization</span>
+<span class="sd">            organization_id: Identifier of the organization</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the organizations.</span>
 <span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#organization) for all possible fields.</span>
 <span class="sd">            first: Maximum number of organizations to return.</span>
@@ -1198,7 +1196,6 @@
 <span class="sd">            &gt;&gt;&gt; kili.organizations(organization_id=organization_id, fields=[&#39;users.email&#39;])</span>
 <span class="sd">            [{&#39;users&#39;: [{&#39;email&#39;: &#39;john@doe.com&#39;}]}]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationWhere</span><span class="p">(</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
             <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
@@ -1480,13 +1477,13 @@
   <tbody>
       <tr>
         <td><code>email</code></td>
-        <td></td>
+        <td><code>Optional[str]</code></td>
         <td><p>Email of a user of the organization</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>organization_id</code></td>
-        <td></td>
+        <td><code>Optional[str]</code></td>
         <td><p>Identifier of the organization</p></td>
         <td><code>None</code></td>
       </tr>
@@ -1562,8 +1559,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#organization
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of organizations that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        email : Email of a user of the organization</span>
-<span class="sd">        organization_id : Identifier of the organization</span>
+<span class="sd">        email: Email of a user of the organization</span>
+<span class="sd">        organization_id: Identifier of the organization</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the organizations.</span>
 <span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#organization) for all possible fields.</span>
 <span class="sd">        first: Maximum number of organizations to return.</span>
@@ -1579,7 +1576,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#organization
 <span class="sd">        &gt;&gt;&gt; kili.organizations(organization_id=organization_id, fields=[&#39;users.email&#39;])</span>
 <span class="sd">        [{&#39;users&#39;: [{&#39;email&#39;: &#39;john@doe.com&#39;}]}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">where</span> <span class="o">=</span> <span class="n">OrganizationWhere</span><span class="p">(</span>
         <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>

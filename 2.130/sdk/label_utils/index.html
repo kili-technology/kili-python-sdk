@@ -1434,7 +1434,7 @@ If not, the method expects the point coordinates to be already normalized.</p>
   </tbody>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels</span> <span class="kn">import</span> <span class="n">point_to_normalized_point</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.point</span> <span class="kn">import</span> <span class="n">point_to_normalized_point</span>
 
 <span class="n">normalized_point</span> <span class="o">=</span> <span class="n">point_to_normalized_point</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">},</span> <span class="n">img_width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 
@@ -1491,7 +1491,7 @@ If not, the method expects the point coordinates to be already normalized.</p>
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
-<span class="sd">        from kili.utils.labels import point_to_normalized_point</span>
+<span class="sd">        from kili.utils.labels.point import point_to_normalized_point</span>
 
 <span class="sd">        normalized_point = point_to_normalized_point({&quot;x&quot;: 5, &quot;y&quot;: 40}, img_width=100, img_height=100)</span>
 
@@ -1654,7 +1654,7 @@ If not, the method expects the points' coordinates to be already normalized.</p>
   </tbody>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels</span> <span class="kn">import</span> <span class="n">bbox_points_to_normalized_vertices</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.bbox</span> <span class="kn">import</span> <span class="n">bbox_points_to_normalized_vertices</span>
 
 <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">bottom_left</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
@@ -1725,7 +1725,7 @@ If not, the method expects the points' coordinates to be already normalized.</p>
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
-<span class="sd">        from kili.utils.labels import bbox_points_to_normalized_vertices</span>
+<span class="sd">        from kili.utils.labels.bbox import bbox_points_to_normalized_vertices</span>
 
 <span class="sd">        inputs = {</span>
 <span class="sd">            bottom_left = {&quot;x&quot;: 0, &quot;y&quot;: 0},</span>
@@ -1850,7 +1850,7 @@ If not, the method will keep the normalized coordinates.</p>
   </tbody>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_bbox_points</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.bbox</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_bbox_points</span>
 
 <span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;boundingPoly&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">]</span>
 <span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1920</span>
@@ -1897,7 +1897,7 @@ If not, the method will keep the normalized coordinates.</p>
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
-<span class="sd">        from kili.utils.labels import normalized_vertices_to_bbox_points</span>
+<span class="sd">        from kili.utils.labels.bbox import normalized_vertices_to_bbox_points</span>
 
 <span class="sd">        normalized_vertices = label[&quot;jsonResponse&quot;][&quot;OBJECT_DETECTION_JOB&quot;][&quot;annotations&quot;][0][&quot;boundingPoly&quot;][0][&quot;normalizedVertices&quot;]</span>
 <span class="sd">        img_height, img_width = 1080, 1920</span>
@@ -2020,7 +2020,7 @@ See the <a href="https://docs.kili-technology.com/reference/export-object-entity
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">urllib.request</span>
 <span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">from</span> <span class="nn">kili.utils.labels</span> <span class="kn">import</span> <span class="n">mask_to_normalized_vertices</span>
+<span class="kn">from</span> <span class="nn">kili.utils.labels.image</span> <span class="kn">import</span> <span class="n">mask_to_normalized_vertices</span>
 
 <span class="n">mask_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png&quot;</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">mask_url</span><span class="p">,</span> <span class="s2">&quot;mask.png&quot;</span><span class="p">)</span>
@@ -2070,7 +2070,7 @@ See the <a href="https://docs.kili-technology.com/reference/export-object-entity
 <span class="sd">        ```python</span>
 <span class="sd">        import urllib.request</span>
 <span class="sd">        import cv2</span>
-<span class="sd">        from kili.utils.labels import mask_to_normalized_vertices</span>
+<span class="sd">        from kili.utils.labels.image import mask_to_normalized_vertices</span>
 
 <span class="sd">        mask_url = &quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png&quot;</span>
 <span class="sd">        urllib.request.urlretrieve(mask_url, &quot;mask.png&quot;)</span>
@@ -2186,7 +2186,7 @@ See the <a href="https://docs.kili-technology.com/reference/export-object-entity
   </tbody>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_mask</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.image</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_mask</span>
 
 <span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;boundingPoly&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">]</span>
 <span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1920</span>
@@ -2218,7 +2218,7 @@ See the <a href="https://docs.kili-technology.com/reference/export-object-entity
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
-<span class="sd">        from kili.utils.labels import normalized_vertices_to_mask</span>
+<span class="sd">        from kili.utils.labels.image import normalized_vertices_to_mask</span>
 
 <span class="sd">        normalized_vertices = label[&quot;jsonResponse&quot;][&quot;OBJECT_DETECTION_JOB&quot;][&quot;annotations&quot;][0][&quot;boundingPoly&quot;][0][&quot;normalizedVertices&quot;]</span>
 <span class="sd">        img_height, img_width = 1080, 1920</span>

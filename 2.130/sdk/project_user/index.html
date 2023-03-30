@@ -1189,12 +1189,12 @@
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return project users (possibly with their KPIs) that match a set of criteria</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return project users (possibly with their KPIs) that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
 <span class="sd">            email: Email of the user</span>
+<span class="sd">            id: Identifier of the user</span>
 <span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the projectUsers</span>
 <span class="sd">                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectuser) for all possible fields.</span>
@@ -1232,11 +1232,11 @@
         <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Counts the number of projects and their users that match a set of criteria</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Counts the number of projects and their users that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            email: Email of the user</span>
+<span class="sd">            id: Identifier of the user</span>
 <span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
 <span class="sd">            project_id: Identifier of the project</span>
 
@@ -1274,7 +1274,7 @@
 
     <div class="doc doc-contents ">
 
-      <p>Counts the number of projects and their users that match a set of criteria</p>
+      <p>Counts the number of projects and their users that match a set of criteria.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1291,6 +1291,12 @@
         <td><code>email</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Email of the user</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the user</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1332,11 +1338,11 @@
     <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Counts the number of projects and their users that match a set of criteria</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Counts the number of projects and their users that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        email: Email of the user</span>
+<span class="sd">        id: Identifier of the user</span>
 <span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
 <span class="sd">        project_id: Identifier of the project</span>
 
@@ -1367,7 +1373,7 @@
 
     <div class="doc doc-contents ">
 
-      <p>Return project users (possibly with their KPIs) that match a set of criteria</p>
+      <p>Return project users (possibly with their KPIs) that match a set of criteria.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1390,6 +1396,12 @@
         <td><code>email</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Email of the user</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the user</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -1476,12 +1488,12 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#projectuser"
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return project users (possibly with their KPIs) that match a set of criteria</span>
-
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return project users (possibly with their KPIs) that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
 <span class="sd">        email: Email of the user</span>
+<span class="sd">        id: Identifier of the user</span>
 <span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the projectUsers</span>
 <span class="sd">            See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectuser) for all possible fields.</span>

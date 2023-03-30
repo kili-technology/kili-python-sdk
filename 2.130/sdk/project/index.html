@@ -1364,7 +1364,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Select a specific project through its project_id.</span>
 <span class="sd">            search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.</span>
-<span class="sd">            should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot or consensus settings.</span>
+<span class="sd">            should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot or consensus settings.</span>
 <span class="sd">            updated_at_gte: Returned projects should have a label whose update date is greater or equal</span>
 <span class="sd">                to this date.</span>
 <span class="sd">            updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.</span>
@@ -1412,13 +1412,12 @@
         <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Counts the number of projects with a search_query</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Counts the number of projects with a search_query.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Select a specific project through its project_id.</span>
 <span class="sd">            search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.</span>
-<span class="sd">            should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot</span>
+<span class="sd">            should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot</span>
 <span class="sd">                or consensus settings</span>
 <span class="sd">            updated_at_gte: Returned projects should have a label</span>
 <span class="sd">                whose update date is greater</span>
@@ -1467,7 +1466,7 @@
 
     <div class="doc doc-contents ">
 
-      <p>Counts the number of projects with a search_query</p>
+      <p>Counts the number of projects with a search_query.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1494,7 +1493,7 @@
       </tr>
       <tr>
         <td><code>should_relaunch_kpi_computation</code></td>
-        <td></td>
+        <td><code>Optional[bool]</code></td>
         <td><p>Technical field, added to indicate changes in honeypot
 or consensus settings</p></td>
         <td><code>None</code></td>
@@ -1547,13 +1546,12 @@ whose update date is lower or equal to this date.</p></td>
     <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Counts the number of projects with a search_query</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Counts the number of projects with a search_query.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Select a specific project through its project_id.</span>
 <span class="sd">        search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.</span>
-<span class="sd">        should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot</span>
+<span class="sd">        should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot</span>
 <span class="sd">            or consensus settings</span>
 <span class="sd">        updated_at_gte: Returned projects should have a label</span>
 <span class="sd">            whose update date is greater</span>
@@ -1622,7 +1620,7 @@ whose update date is lower or equal to this date.</p></td>
       </tr>
       <tr>
         <td><code>should_relaunch_kpi_computation</code></td>
-        <td></td>
+        <td><code>Optional[bool]</code></td>
         <td><p>Technical field, added to indicate changes in honeypot or consensus settings.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -1732,7 +1730,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Select a specific project through its project_id.</span>
 <span class="sd">        search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.</span>
-<span class="sd">        should_relaunch_kpi_computation : Technical field, added to indicate changes in honeypot or consensus settings.</span>
+<span class="sd">        should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot or consensus settings.</span>
 <span class="sd">        updated_at_gte: Returned projects should have a label whose update date is greater or equal</span>
 <span class="sd">            to this date.</span>
 <span class="sd">        updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.</span>
@@ -1876,9 +1874,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 <span class="sd">            consensus_mark: Should be between 0 and 1.</span>
 <span class="sd">            consensus_tot_coverage: Should be between 0 and 100.</span>
 <span class="sd">                It is the percentage of the dataset that will be annotated several times.</span>
-<span class="sd">            description : Description of the project.</span>
-<span class="sd">            honeypot_mark : Should be between 0 and 1</span>
-<span class="sd">            instructions : Instructions of the project.</span>
+<span class="sd">            description: Description of the project.</span>
+<span class="sd">            honeypot_mark: Should be between 0 and 1</span>
+<span class="sd">            instructions: Instructions of the project.</span>
 <span class="sd">            input_type: Currently, one of `AUDIO`, `IMAGE`, `PDF`, `TEXT`,</span>
 <span class="sd">                `VIDEO`, `VIDEO_LEGACY`.</span>
 <span class="sd">            json_interface: The json parameters of the project, see Edit your interface.</span>
@@ -2079,8 +2077,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">delete_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a project permanently.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a project permanently.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
@@ -2095,17 +2092,14 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">archive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Archive a project.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Archive a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message.</span>
+<span class="sd">            A result object which indicates if the mutation was successful, or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
             <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
@@ -2116,8 +2110,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">unarchive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Unarchive a project.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unarchive a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
@@ -2126,7 +2119,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
 <span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
             <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
@@ -2352,8 +2344,7 @@ This email is used as the unique identifier of the user.</p></td>
   <tbody>
     <tr>
       <td></td>
-      <td><p>A result object which indicates if the mutation was successful,
-    or an error message.</p></td>
+      <td><p>A result object which indicates if the mutation was successful, or an error message.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2361,17 +2352,14 @@ This email is used as the unique identifier of the user.</p></td>
           <summary>Source code in <code>kili/mutations/project/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">archive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Archive a project.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Archive a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message.</span>
+<span class="sd">        A result object which indicates if the mutation was successful, or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
         <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
@@ -2846,8 +2834,7 @@ if <code>None</code> is provided.</p></td>
           <summary>Source code in <code>kili/mutations/project/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">delete_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Delete a project permanently.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a project permanently.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
@@ -2920,8 +2907,7 @@ if <code>None</code> is provided.</p></td>
           <summary>Source code in <code>kili/mutations/project/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">unarchive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Unarchive a project.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unarchive a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
@@ -2930,7 +2916,6 @@ if <code>None</code> is provided.</p></td>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
 <span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
         <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
@@ -3004,19 +2989,19 @@ It is the percentage of the dataset that will be annotated several times.</p></t
       </tr>
       <tr>
         <td><code>description</code></td>
-        <td></td>
+        <td><code>Optional[str]</code></td>
         <td><p>Description of the project.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>honeypot_mark</code></td>
-        <td></td>
+        <td><code>Optional[float]</code></td>
         <td><p>Should be between 0 and 1</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>instructions</code></td>
-        <td></td>
+        <td><code>Optional[str]</code></td>
         <td><p>Instructions of the project.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -3177,9 +3162,9 @@ will default to the <code>string</code> type.</p>
 <span class="sd">        consensus_mark: Should be between 0 and 1.</span>
 <span class="sd">        consensus_tot_coverage: Should be between 0 and 100.</span>
 <span class="sd">            It is the percentage of the dataset that will be annotated several times.</span>
-<span class="sd">        description : Description of the project.</span>
-<span class="sd">        honeypot_mark : Should be between 0 and 1</span>
-<span class="sd">        instructions : Instructions of the project.</span>
+<span class="sd">        description: Description of the project.</span>
+<span class="sd">        honeypot_mark: Should be between 0 and 1</span>
+<span class="sd">        instructions: Instructions of the project.</span>
 <span class="sd">        input_type: Currently, one of `AUDIO`, `IMAGE`, `PDF`, `TEXT`,</span>
 <span class="sd">            `VIDEO`, `VIDEO_LEGACY`.</span>
 <span class="sd">        json_interface: The json parameters of the project, see Edit your interface.</span>

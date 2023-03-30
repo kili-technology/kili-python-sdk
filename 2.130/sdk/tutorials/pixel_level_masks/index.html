@@ -1213,7 +1213,7 @@
 </code></pre></div>
 <p>Kili SDK provides a set of utils to easily create labels. See the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label_utils/">documentation</a> for more information.</p>
 <p>Now, we will use the <code>mask_to_normalized_vertices</code> helper method to create a segmentation label from the mask image.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels</span> <span class="kn">import</span> <span class="n">mask_to_normalized_vertices</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.image</span> <span class="kn">import</span> <span class="n">mask_to_normalized_vertices</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;mask.png&quot;</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
 <span class="n">contours</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mask_to_normalized_vertices</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
@@ -1246,7 +1246,7 @@
 <h2 id="export-the-annotations-as-a-mask">Export the annotations as a mask</h2>
 <p>You may want to do the reverse operation, that is download the existing annotation from Kili and convert it to a mask.</p>
 <p>Let's see how you can achieve this using the helper method <code>normalized_vertices_to_mask</code>!</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_mask</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.image</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_mask</span>
 </code></pre></div>
 <p>Then, we can retrieve the json response and plot the mask:</p>
 <div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>

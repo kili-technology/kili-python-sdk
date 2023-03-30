@@ -1911,8 +1911,7 @@
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">annotation_modifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CocoAnnotationModifier</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Export the project labels with the requested format into the requested output path.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export the project labels with the requested format into the requested output path.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
@@ -2377,8 +2376,7 @@ kili.export_labels(
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">annotation_modifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CocoAnnotationModifier</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Export the project labels with the requested format into the requested output path.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export the project labels with the requested format into the requested output path.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
@@ -3556,21 +3554,20 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        !!! danger &quot;[DEPRECATED]&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;!!! danger &quot;[DEPRECATED]&quot;</span>
 <span class="sd">            append_to_labels method is deprecated. Please use append_labels instead.</span>
 <span class="sd">            This new function allows to import several labels 10 times faster.</span>
 
 <span class="sd">        Append a label to an asset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            json_response: Label is given here</span>
-<span class="sd">            author_id: ID of the author of the label</span>
-<span class="sd">            label_asset_external_id: External identifier of the asset</span>
-<span class="sd">            label_asset_id: Identifier of the asset</span>
-<span class="sd">            project_id: Identifier of the project</span>
-<span class="sd">            label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`</span>
-<span class="sd">            seconds_to_label: Time to create the label</span>
+<span class="sd">            json_response: Label is given here.</span>
+<span class="sd">            author_id: ID of the author of the label.</span>
+<span class="sd">            label_asset_external_id: External identifier of the asset.</span>
+<span class="sd">            label_asset_id: Identifier of the asset.</span>
+<span class="sd">            project_id: Identifier of the project.</span>
+<span class="sd">            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
+<span class="sd">            seconds_to_label: Time to create the label.</span>
 
 <span class="sd">        !!! warning</span>
 <span class="sd">            Either provide `label_asset_id` or `label_asset_external_id` and `project_id`</span>
@@ -3581,7 +3578,6 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.append_to_labels(label_asset_id=asset_id, json_response={...})</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">author_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">author_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">user_id</span>
@@ -3623,15 +3619,16 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Append labels to assets.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            asset_id_array: list of asset internal ids to append labels on</span>
-<span class="sd">            json_response_array: list of labels to append</span>
-<span class="sd">            author_id_array: list of the author id of the labels</span>
-<span class="sd">            seconds_to_label_array: list of times taken to produce the label, in seconds</span>
+<span class="sd">            asset_id_array: list of asset internal ids to append labels on.</span>
+<span class="sd">            json_response_array: list of labels to append.</span>
+<span class="sd">            author_id_array: list of the author id of the labels.</span>
+<span class="sd">            seconds_to_label_array: list of times taken to produce the label, in seconds.</span>
 <span class="sd">            model_name: Only useful when uploading predictions.</span>
-<span class="sd">                Name of the model when uploading predictions</span>
-<span class="sd">            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`</span>
-<span class="sd">            project_id: Identifier of the project</span>
-<span class="sd">            asset_external_id_array: list of asset external ids to append labels on</span>
+<span class="sd">                Name of the model when uploading predictions.</span>
+<span class="sd">            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
+<span class="sd">            project_id: Identifier of the project.</span>
+<span class="sd">            asset_external_id_array: list of asset external ids to append labels on.</span>
+<span class="sd">            disable_tqdm: Disable tqdm progress bar.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
@@ -3797,51 +3794,57 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
       <tr>
         <td><code>asset_id_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>list of asset internal ids to append labels on</p></td>
+        <td><p>list of asset internal ids to append labels on.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>json_response_array</code></td>
         <td><code>List[Dict]</code></td>
-        <td><p>list of labels to append</p></td>
+        <td><p>list of labels to append.</p></td>
         <td><code>[]</code></td>
       </tr>
       <tr>
         <td><code>author_id_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>list of the author id of the labels</p></td>
+        <td><p>list of the author id of the labels.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>seconds_to_label_array</code></td>
         <td><code>Optional[List[int]]</code></td>
-        <td><p>list of times taken to produce the label, in seconds</p></td>
+        <td><p>list of times taken to produce the label, in seconds.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>model_name</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Only useful when uploading predictions.
-Name of the model when uploading predictions</p></td>
+Name of the model when uploading predictions.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_type</code></td>
         <td><code>typing_extensions.Literal[&#39;AUTOSAVE&#39;, &#39;DEFAULT&#39;, &#39;PREDICTION&#39;, &#39;REVIEW&#39;, &#39;INFERENCE&#39;]</code></td>
-        <td><p>Can be one of <code>AUTOSAVE</code>, <code>DEFAULT</code>, <code>PREDICTION</code>, <code>REVIEW</code> or <code>INFERENCE</code></p></td>
+        <td><p>Can be one of <code>AUTOSAVE</code>, <code>DEFAULT</code>, <code>PREDICTION</code>, <code>REVIEW</code> or <code>INFERENCE</code>.</p></td>
         <td><code>&#39;DEFAULT&#39;</code></td>
       </tr>
       <tr>
         <td><code>project_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the project</p></td>
+        <td><p>Identifier of the project.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>asset_external_id_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>list of asset external ids to append labels on</p></td>
+        <td><p>list of asset external ids to append labels on.</p></td>
         <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>disable_tqdm</code></td>
+        <td><code>bool</code></td>
+        <td><p>Disable tqdm progress bar.</p></td>
+        <td><code>False</code></td>
       </tr>
   </tbody>
 </table>
@@ -3886,15 +3889,16 @@ Name of the model when uploading predictions</p></td>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Append labels to assets.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        asset_id_array: list of asset internal ids to append labels on</span>
-<span class="sd">        json_response_array: list of labels to append</span>
-<span class="sd">        author_id_array: list of the author id of the labels</span>
-<span class="sd">        seconds_to_label_array: list of times taken to produce the label, in seconds</span>
+<span class="sd">        asset_id_array: list of asset internal ids to append labels on.</span>
+<span class="sd">        json_response_array: list of labels to append.</span>
+<span class="sd">        author_id_array: list of the author id of the labels.</span>
+<span class="sd">        seconds_to_label_array: list of times taken to produce the label, in seconds.</span>
 <span class="sd">        model_name: Only useful when uploading predictions.</span>
-<span class="sd">            Name of the model when uploading predictions</span>
-<span class="sd">        label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`</span>
-<span class="sd">        project_id: Identifier of the project</span>
-<span class="sd">        asset_external_id_array: list of asset external ids to append labels on</span>
+<span class="sd">            Name of the model when uploading predictions.</span>
+<span class="sd">        label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
+<span class="sd">        project_id: Identifier of the project.</span>
+<span class="sd">        asset_external_id_array: list of asset external ids to append labels on.</span>
+<span class="sd">        disable_tqdm: Disable tqdm progress bar.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
@@ -3983,43 +3987,43 @@ This new function allows to import several labels 10 times faster.</p>
       <tr>
         <td><code>json_response</code></td>
         <td><code>dict</code></td>
-        <td><p>Label is given here</p></td>
+        <td><p>Label is given here.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>author_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>ID of the author of the label</p></td>
+        <td><p>ID of the author of the label.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_asset_external_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>External identifier of the asset</p></td>
+        <td><p>External identifier of the asset.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_asset_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the asset</p></td>
+        <td><p>Identifier of the asset.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>project_id</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Identifier of the project</p></td>
+        <td><p>Identifier of the project.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>label_type</code></td>
         <td><code>typing_extensions.Literal[&#39;AUTOSAVE&#39;, &#39;DEFAULT&#39;, &#39;PREDICTION&#39;, &#39;REVIEW&#39;, &#39;INFERENCE&#39;]</code></td>
-        <td><p>Can be one of <code>DEFAULT</code>, <code>PREDICTION</code>, <code>REVIEW</code> or <code>INFERENCE</code></p></td>
+        <td><p>Can be one of <code>AUTOSAVE</code>, <code>DEFAULT</code>, <code>PREDICTION</code>, <code>REVIEW</code> or <code>INFERENCE</code>.</p></td>
         <td><code>&#39;DEFAULT&#39;</code></td>
       </tr>
       <tr>
         <td><code>seconds_to_label</code></td>
         <td><code>Optional[int]</code></td>
-        <td><p>Time to create the label</p></td>
+        <td><p>Time to create the label.</p></td>
         <td><code>0</code></td>
       </tr>
   </tbody>
@@ -4067,21 +4071,20 @@ This new function allows to import several labels 10 times faster.</p>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">seconds_to_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    !!! danger &quot;[DEPRECATED]&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;!!! danger &quot;[DEPRECATED]&quot;</span>
 <span class="sd">        append_to_labels method is deprecated. Please use append_labels instead.</span>
 <span class="sd">        This new function allows to import several labels 10 times faster.</span>
 
 <span class="sd">    Append a label to an asset.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        json_response: Label is given here</span>
-<span class="sd">        author_id: ID of the author of the label</span>
-<span class="sd">        label_asset_external_id: External identifier of the asset</span>
-<span class="sd">        label_asset_id: Identifier of the asset</span>
-<span class="sd">        project_id: Identifier of the project</span>
-<span class="sd">        label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`</span>
-<span class="sd">        seconds_to_label: Time to create the label</span>
+<span class="sd">        json_response: Label is given here.</span>
+<span class="sd">        author_id: ID of the author of the label.</span>
+<span class="sd">        label_asset_external_id: External identifier of the asset.</span>
+<span class="sd">        label_asset_id: Identifier of the asset.</span>
+<span class="sd">        project_id: Identifier of the project.</span>
+<span class="sd">        label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
+<span class="sd">        seconds_to_label: Time to create the label.</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        Either provide `label_asset_id` or `label_asset_external_id` and `project_id`</span>
@@ -4092,7 +4095,6 @@ This new function allows to import several labels 10 times faster.</p>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.append_to_labels(label_asset_id=asset_id, json_response={...})</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">author_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">author_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">user_id</span>
@@ -4575,8 +4577,7 @@ provide the predictions model name.</p>
         <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Subscribe a callback to a project, which is executed when a label is created or updated.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subscribe a callback to a project, which is executed when a label is created or updated.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
@@ -4684,8 +4685,7 @@ See <a href="https://github.com/kili-technology/kili-python-sdk/blob/master/reci
     <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SubscriptionGraphQLClient</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Subscribe a callback to a project, which is executed when a label is created or updated.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subscribe a callback to a project, which is executed when a label is created or updated.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
