@@ -1,6 +1,4 @@
-"""
-Functions to import assets into an IMAGE project
-"""
+"""Functions to import assets into an IMAGE project."""
 import mimetypes
 import os
 from typing import List
@@ -11,14 +9,10 @@ from .types import AssetLike
 
 
 class ImageDataImporter(BaseAssetImporter):
-    """
-    Class for importing assets into an IMAGE project
-    """
+    """Class for importing assets into an IMAGE project."""
 
     def import_assets(self, assets: List[AssetLike]):
-        """
-        Import IMAGE assets into Kili.
-        """
+        """Import IMAGE assets into Kili."""
         self._check_upload_is_allowed(assets)
         is_hosted = self.is_hosted_content(assets)
         if not is_hosted:
@@ -44,9 +38,7 @@ class ImageDataImporter(BaseAssetImporter):
 
     @staticmethod
     def split_asset_by_upload_type(assets: List[AssetLike], is_hosted: bool):
-        """
-        Split assets into two groups, assets to to imported synchronously or asynchronously
-        """
+        """Split assets into two groups, assets to to imported synchronously or asynchronously."""
         if is_hosted:
             return assets, []
         sync_assets, async_assets = [], []

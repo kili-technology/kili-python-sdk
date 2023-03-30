@@ -1,6 +1,4 @@
-"""
-Python SDK service layer
-"""
+"""Python SDK service layer."""
 
 from kili.services.asset_import import import_assets
 from kili.services.data_connection import (

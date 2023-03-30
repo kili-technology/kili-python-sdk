@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Issues
-"""
+"""GraphQL Queries of Issues."""
 
 from typing import List, Optional
 
@@ -10,9 +8,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class IssueWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the IssueQuery to restrict query
-    """
+    """Tuple to be passed to the IssueQuery to restrict query."""
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -31,7 +27,7 @@ class IssueWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK IssueWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK IssueWhere."""
         return {
             "project": {"id": self.project_id},
             "asset": {"id": self.asset_id},
@@ -46,9 +42,7 @@ class IssueQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL issues query
-        """
+        """Return the GraphQL issues query."""
         return f"""
         query issues($where: IssueWhere!, $first: PageSize!, $skip: Int!) {{
             data: issues(where: $where, first: $first, skip: $skip) {{

@@ -1,3 +1,1 @@
-"""
-Utils for the Kili Python SDK
-"""
+"""Utils for the Kili Python SDK."""

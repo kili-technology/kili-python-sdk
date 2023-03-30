@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 
 class GraphQLError(Exception):
-    """Raised when the GraphQL call returns an error"""
+    """Raised when the GraphQL call returns an error."""
 
     def __init__(self, error, batch_number=None) -> None:
         self.error = error
@@ -22,7 +22,7 @@ class GraphQLError(Exception):
 
 
 class NotFound(Exception):
-    """Used when a given object is not found in Kili"""
+    """Used when a given object is not found in Kili."""
 
     def __init__(self, name: str):
         super().__init__()
@@ -33,9 +33,7 @@ class NotFound(Exception):
 
 
 class AuthenticationFailed(Exception):
-    """
-    Used when the authentification fails
-    """
+    """Used when the authentification fails."""
 
     @staticmethod
     def _obfuscate(input_str: str) -> str:
@@ -60,20 +58,20 @@ class AuthenticationFailed(Exception):
 
 
 class NonExistingFieldError(ValueError):
-    """Raised when querying a field that does not exist on an object"""
+    """Raised when querying a field that does not exist on an object."""
 
 
 class MissingArgumentError(ValueError):
-    """Raised when an required argument was not given by the user"""
+    """Raised when an required argument was not given by the user."""
 
 
 class IncompatibleArgumentsError(ValueError):
-    """Raised when the user gave at least two incompatible arguments"""
+    """Raised when the user gave at least two incompatible arguments."""
 
 
 class RemovedMethodError(Exception):
-    """Raised when the method used has been removed from SDK"""
+    """Raised when the method used has been removed from SDK."""
 
 
 class UserNotFoundError(Exception):
-    """Raised when the user is not found"""
+    """Raised when the user is not found."""

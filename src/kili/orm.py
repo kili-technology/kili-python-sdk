@@ -1,16 +1,13 @@
-"""
-This script defines object-relational mapping helpers to ease
-the manipulation of Kili data structures.
-"""
+"""This script defines object-relational mapping helpers to ease
+the manipulation of Kili data structures."""
 from dataclasses import dataclass
+from typing import Dict
 
 from typing_extensions import Literal
 
 
 class DictClass(dict):
-    """
-    A python class that acts like dict and can be used to access its attributes as dict keys
-    """
+    """A python class that acts like dict and can be used to access its attributes as dict keys."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,9 +21,7 @@ AnnotationFormat = Literal[
 
 @dataclass
 class AssetStatus:
-    """
-    List of asset status
-    """
+    """List of asset status."""
 
     Labeled = "LABELED"
     Ongoing = "ONGOING"
@@ -37,9 +32,7 @@ class AssetStatus:
 
 @dataclass
 class JobMLTask:
-    """
-    List of ML Tasks
-    """
+    """List of ML Tasks."""
 
     AssetAnnotation = "ASSET_ANNOTATION"
     Classification = "CLASSIFICATION"
@@ -55,9 +48,7 @@ class JobMLTask:
 
 @dataclass
 class JobTool:
-    """
-    List of tools
-    """
+    """List of tools."""
 
     Marker = "marker"
     Polygon = "polygon"
@@ -68,9 +59,8 @@ class JobTool:
     Vector = "vector"
 
 
-def get_polygon(annotation):
-    """
-    Extracts a polygon from an annotation
+def get_polygon(annotation: Dict):
+    """Extracts a polygon from an annotation.
 
     Args:
         annotation : Kili annotation
@@ -81,9 +71,8 @@ def get_polygon(annotation):
         return None
 
 
-def get_category(annotation):
-    """
-    Extracts a category from an annotation
+def get_category(annotation: Dict):
+    """Extracts a category from an annotation.
 
     Args:
         annotation : Kili annotation
@@ -94,9 +83,8 @@ def get_category(annotation):
         return None
 
 
-def get_named_entity(annotation):
-    """
-    Extracts a named entity from an annotation
+def get_named_entity(annotation: Dict):
+    """Extracts a named entity from an annotation.
 
     Args:
         annotation : Kili annotation
@@ -113,10 +101,9 @@ def get_named_entity(annotation):
         return None
 
 
-def format_image_annotation(annotation):
-    """
-    Extracts a category, polygon, named entity from an annotation
-    depending of the annotation type
+def format_image_annotation(annotation: Dict):
+    """Extracts a category, polygon, named entity from an annotation
+    depending of the annotation type.
 
     Args:
         annotation : Kili annotation
@@ -134,24 +121,21 @@ def format_image_annotation(annotation):
 
 
 class Label(DictClass):
-    """
-    Label class
-    """
+    """Label class."""
 
     jsonResponse = {}
 
-    def json_response(self, _format: AnnotationFormat = "raw"):
-        """
-        Format a json response
+    def json_response(self, format_: AnnotationFormat = "raw"):
+        """Format a json response.
 
         Args:
-            _format: expected format
+            format_: expected format
         """
         if "jsonResponse" not in self:
             raise KeyError(
                 f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"'
             )
-        if _format == "simple":
+        if format_ == "simple":
             job_names = self.jsonResponse.keys()
             if len(job_names) > 1:
                 return {
@@ -177,9 +161,7 @@ class Label(DictClass):
 
 
 class Asset(DictClass):
-    """
-    Asset class
-    """
+    """Asset class."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)  # will add keys in *args and **kwargs to self

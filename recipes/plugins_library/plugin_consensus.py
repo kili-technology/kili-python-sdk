@@ -4,9 +4,7 @@ from kili.plugins import PluginCore
 
 
 class PluginHandler(PluginCore):
-    """
-    Custom plugin instance
-    """
+    """Custom plugin instance."""
 
     def aggregate_object_detection_label(self, object_job_key, labels_array):
         json_response = {}
@@ -22,9 +20,7 @@ class PluginHandler(PluginCore):
         return json_response
 
     def on_submit(self, label: Dict, asset_id: str) -> None:
-        """
-        Dedicated handler for Submit action
-        """
+        """Dedicated handler for Submit action."""
         project_id = self.project_id
 
         project_info = self.kili.projects(

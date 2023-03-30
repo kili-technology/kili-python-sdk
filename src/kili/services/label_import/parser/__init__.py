@@ -1,6 +1,4 @@
-"""
-Parser classes
-"""
+"""Parser classes."""
 import csv
 import json
 from abc import abstractmethod
@@ -11,9 +9,7 @@ from kili.services.label_import.types import Classes
 
 
 class AbstractLabelParser:  # pylint: disable=too-few-public-methods
-    """
-    Abstract label parser
-    """
+    """Abstract label parser."""
 
     def __init__(self, classes_by_id: Optional[Classes], target_job: Optional[str]) -> None:
         self.classes_by_id = classes_by_id
@@ -21,20 +17,14 @@ class AbstractLabelParser:  # pylint: disable=too-few-public-methods
 
     @abstractmethod
     def parse(self, label_file: Path) -> Dict[str, Any]:
-        """
-        Parses a label file
-        """
+        """Parses a label file."""
 
 
 class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-methods
-    """
-    Yolo label parser
-    """
+    """Yolo label parser."""
 
     def parse(self, label_file: Path) -> Dict[str, Any]:
-        """
-        Parses a Yolo label file
-        """
+        """Parses a Yolo label file."""
         annotations = []
         assert self.classes_by_id
         assert self.target_job
@@ -87,9 +77,7 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
 
 
 class KiliRawLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-methods
-    """
-    Kili raw label parser
-    """
+    """Kili raw label parser."""
 
     def parse(self, label_file: Path) -> Dict[str, Any]:
         with label_file.open("r", encoding="utf-8") as l_f:

@@ -1,6 +1,4 @@
-"""
-Queries of data connection mutations
-"""
+"""Queries of data connection mutations."""
 
 from .fragments import DATA_CONNECTION_FRAGMENT
 

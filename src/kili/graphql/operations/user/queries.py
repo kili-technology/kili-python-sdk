@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Users
-"""
+"""GraphQL Queries of Users."""
 
 
 from typing import Optional
@@ -9,9 +7,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class UserWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the UserQuery to restrict query
-    """
+    """Tuple to be passed to the UserQuery to restrict query."""
 
     def __init__(
         self,
@@ -25,7 +21,7 @@ class UserWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK UserWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK UserWhere."""
         return {
             "apiKey": self.api_key,
             "email": self.email,
@@ -38,9 +34,7 @@ class UserQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL users query
-        """
+        """Return the GraphQL users query."""
         return f"""
         query users($where: UserWhere!, $first: PageSize!, $skip: Int!) {{
             data: users(where: $where, first: $first, skip: $skip) {{

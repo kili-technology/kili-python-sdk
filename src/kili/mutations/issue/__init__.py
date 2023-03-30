@@ -1,6 +1,4 @@
-"""
-Issue mutations
-"""
+"""Issue mutations."""
 
 from itertools import repeat
 from typing import Dict, List, Optional
@@ -112,13 +110,13 @@ class MutationsIssue:
         """Create an issue.
 
         Args:
-            project_id: Id of the project
-            label_id_array: list of Ids of the labels to add an issue to
-            object_mid: list of Mid of the objects in the labels to associate the issue to
-            text_array: list of texts to associate to the issues
+            project_id: Id of the project.
+            label_id_array: List of Ids of the labels to add an issue to.
+            object_mid_array: List of mids of the objects in the labels to associate the issues to.
+            text_array: List of texts to associate to the issues.
 
         Returns:
-            A list of dictionary with the `id` key of the created issues
+            A list of dictionary with the `id` key of the created issues.
         """
         assert_all_arrays_have_same_size([label_id_array, object_mid_array, text_array])
         issue_number_array = get_issue_numbers(self.auth, project_id, "ISSUE", len(label_id_array))
@@ -154,15 +152,17 @@ class MutationsIssue:
         asset_id_array: Optional[List[str]] = None,
         asset_external_id_array: Optional[List[str]] = None,
     ) -> List[Dict]:
-        """Create an issue.
+        # pylint:disable=line-too-long
+        """Create questions.
 
         Args:
-            project_id: Id of the project
-            text_array: list of the question text
-            asset_id_array: list of the assets to add a question to
+            project_id: Id of the project.
+            text_array: List of question strings.
+            asset_id_array: List of the assets to add the questions to.
+            asset_external_id_array: List of the assets to add the questions to. Used if `asset_id_array` is not given.
 
         Returns:
-            A list of dictionary with the `id` key of the created questions
+            A list of dictionary with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
         issue_number_array = get_issue_numbers(self.auth, project_id, "QUESTION", len(text_array))

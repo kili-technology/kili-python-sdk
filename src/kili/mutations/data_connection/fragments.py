@@ -1,6 +1,4 @@
-"""
-Fragments of data connection
-"""
+"""Fragments of data connection."""
 
 DATA_CONNECTION_FRAGMENT = """
     id

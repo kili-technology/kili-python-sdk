@@ -1,14 +1,10 @@
-"""
-GraphQL Queries of ProjectVersions
-"""
+"""GraphQL Queries of ProjectVersions."""
 
 from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class ProjectVersionWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the ProjectVersionQuery to restrict query
-    """
+    """Tuple to be passed to the ProjectVersionQuery to restrict query."""
 
     def __init__(
         self,
@@ -18,7 +14,7 @@ class ProjectVersionWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK ProjectVersionWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK ProjectVersionWhere."""
         return {
             "projectId": self.project_id,
         }
@@ -29,9 +25,7 @@ class ProjectVersionQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL projects query
-        """
+        """Return the GraphQL projects query."""
         return f"""
         query projectVersions($where: ProjectVersionWhere!, $first: PageSize!, $skip: Int!) {{
             data: projectVersions(where: $where, first: $first, skip: $skip) {{
