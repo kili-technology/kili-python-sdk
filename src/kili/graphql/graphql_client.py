@@ -283,7 +283,7 @@ class SubscriptionGraphQLClient:
         variables: Optional[Dict],
         headers: Optional[Dict],
         callback: Optional[Callable],
-        authorization: Optional[Dict],
+        authorization: Optional[str],
     ):
         """Prepares a subscription.
 
@@ -307,7 +307,7 @@ class SubscriptionGraphQLClient:
         variables: Optional[Dict] = None,
         headers: Optional[Dict] = None,
         callback: Optional[Callable] = None,
-        authorization: Optional[Dict] = None,
+        authorization: Optional[str] = None,
     ):
         """Subscribes.
 

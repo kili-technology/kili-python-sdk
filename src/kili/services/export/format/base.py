@@ -187,7 +187,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def _format_json_response(label: Label, label_format: LabelFormat):
         """Format the label JSON response in the requested format."""
-        formatted_json_response = label.json_response(_format=label_format)
+        formatted_json_response = label.json_response(format_=label_format)
         json_response = {}
         for key, value in cast(Dict, formatted_json_response).items():
             if key.isdigit():
