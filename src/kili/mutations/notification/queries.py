@@ -1,6 +1,4 @@
-"""
-Queries of notification mutations
-"""
+"""Queries of notification mutations."""
 
 from .fragments import NOTIFICATION_FRAGMENT
 

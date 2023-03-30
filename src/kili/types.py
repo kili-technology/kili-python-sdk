@@ -1,8 +1,6 @@
 # pylint: disable:invalid-name,too-many-instance-attributes
 
-"""
-GraphQL types
-"""
+"""GraphQL types."""
 
 from typing import Dict, List
 
@@ -26,9 +24,7 @@ from kili.helpers import deprecate
 
 @deprecate()
 class License(TypedDict):
-    """
-    A Wrapper for License GraphQL object.
-    """
+    """A Wrapper for License GraphQL object."""
 
     api: bool
     apiPriority: bool
@@ -50,8 +46,8 @@ class License(TypedDict):
 
 @deprecate()
 class OrganizationWithoutUser(TypedDict):
-    """
-    A wrapper for Organization GraphQL object.
+    """A wrapper for Organization GraphQL object.
+
     Defined in two steps to avoid cyclical dependencies.
     """
 
@@ -70,9 +66,7 @@ class OrganizationWithoutUser(TypedDict):
 
 @deprecate()
 class UserWithoutProjectUsers(TypedDict):
-    """
-    A wrapper for User GraphQL object.
-    """
+    """A wrapper for User GraphQL object."""
 
     id: str
     activated: bool
@@ -89,17 +83,15 @@ class UserWithoutProjectUsers(TypedDict):
 
 @deprecate()
 class Organization(OrganizationWithoutUser):
-    """
-    A wrapper for Organization GraphQL object.
-    """
+    """A wrapper for Organization GraphQL object."""
 
     users: UserWithoutProjectUsers
 
 
 @deprecate()
 class ProjectUserWithoutProject(TypedDict):
-    """
-    A wrapper for ProjectUser GraphQL object.
+    """A wrapper for ProjectUser GraphQL object.
+
     Defined in two steps to avoid cyclical dependencies.
     """
 
@@ -129,9 +121,7 @@ class ProjectUserWithoutProject(TypedDict):
 
 @deprecate()
 class DataConnection(TypedDict):
-    """
-    A wrapper for DataConnection GraphQL object.
-    """
+    """A wrapper for DataConnection GraphQL object."""
 
     id: str
     isChecking: bool
@@ -143,8 +133,8 @@ class DataConnection(TypedDict):
 
 @deprecate()
 class ProjectWithoutDataset(TypedDict, total=False):
-    """
-    A wrapper for Project GraphQL object.
+    """A wrapper for Project GraphQL object.
+
     Defined in two steps to avoid cyclical dependencies.
     """
 
@@ -190,27 +180,21 @@ class ProjectWithoutDataset(TypedDict, total=False):
 
 @deprecate()
 class ProjectUser(ProjectUserWithoutProject):
-    """
-    A wrapper for ProjectUser GraphQL object.
-    """
+    """A wrapper for ProjectUser GraphQL object."""
 
     project: ProjectWithoutDataset
 
 
 @deprecate()
 class UserWithoutApiKey(UserWithoutProjectUsers):
-    """
-    A wrapper for User GraphQL object.
-    """
+    """A wrapper for User GraphQL object."""
 
     projectUsers: ProjectUser
 
 
 @deprecate()
 class ApiKey(TypedDict):
-    """
-    A wrapper for ApiKey GraphQL object.
-    """
+    """A wrapper for ApiKey GraphQL object."""
 
     createdAt: str
     id: str
@@ -223,17 +207,15 @@ class ApiKey(TypedDict):
 
 @deprecate()
 class User(UserWithoutApiKey):
-    """
-    A wrapper for User GraphQL object.
-    """
+    """A wrapper for User GraphQL object."""
 
     apiKeys: ApiKey
 
 
 @deprecate()
 class LabelWithoutLabelOf(TypedDict):
-    """
-    A wrapper for Label GraphQL object.
+    """A wrapper for Label GraphQL object.
+
     Defined in two steps to avoid cyclical dependencies.
     """
 
@@ -267,9 +249,7 @@ class LabelWithoutLabelOf(TypedDict):
 
 @deprecate()
 class Lock(TypedDict):
-    """
-    A wrapper for Lock GraphQL object.
-    """
+    """A wrapper for Lock GraphQL object."""
 
     id: str
     author: User
@@ -281,8 +261,8 @@ class Lock(TypedDict):
 
 @deprecate()
 class CommentsWithoutCommentsOf(TypedDict):
-    """
-    A wrapper for Comment GraphQL object.
+    """A wrapper for Comment GraphQL object.
+
     Defined in two steps to avoid cyclical dependencies.
     """
 
@@ -295,9 +275,7 @@ class CommentsWithoutCommentsOf(TypedDict):
 
 @deprecate()
 class CommentWithoutIssue(TypedDict):
-    """
-    A wrapper for Comment GraphQL object.
-    """
+    """A wrapper for Comment GraphQL object."""
 
     id: str
     author: ProjectUser
@@ -310,8 +288,8 @@ class CommentWithoutIssue(TypedDict):
 
 @deprecate()
 class IssueWithoutAsset(TypedDict):
-    """
-    A wrapper for Issue GraphQL object.
+    """A wrapper for Issue GraphQL object.
+
     Defined in two steps to avoid cyclical dependencies.
     """
 
@@ -335,9 +313,7 @@ class IssueWithoutAsset(TypedDict):
 
 @deprecate()
 class Asset(TypedDict):
-    """
-    A wrapper for Asset GraphQL object.
-    """
+    """A wrapper for Asset GraphQL object."""
 
     id: str
     consensusMark: float
@@ -385,27 +361,21 @@ class Asset(TypedDict):
 
 @deprecate()
 class Label(LabelWithoutLabelOf):
-    """
-    A wrapper for Label GraphQL object.
-    """
+    """A wrapper for Label GraphQL object."""
 
     labelOf: Asset
 
 
 @deprecate()
 class Project(ProjectWithoutDataset, total=False):
-    """
-    A wrapper for Project GraphQL object.
-    """
+    """A wrapper for Project GraphQL object."""
 
     dataset: Asset
 
 
 @deprecate()
 class Notification(TypedDict):
-    """
-    A wrapper for Notification GraphQL object.
-    """
+    """A wrapper for Notification GraphQL object."""
 
     id: str
     createdAt: str
@@ -418,9 +388,7 @@ class Notification(TypedDict):
 
 @deprecate()
 class Plugin(TypedDict):
-    """
-    A wrapper for Plugin GraphQL object.
-    """
+    """A wrapper for Plugin GraphQL object."""
 
     id: str
     name: str
@@ -431,9 +399,7 @@ class Plugin(TypedDict):
 
 @deprecate()
 class ProjectVersion(TypedDict):
-    """
-    A wrapper for ProjectVersion GraphQL object.
-    """
+    """A wrapper for ProjectVersion GraphQL object."""
 
     id: str
     createdAt: str
@@ -445,18 +411,14 @@ class ProjectVersion(TypedDict):
 
 @deprecate()
 class Issue(IssueWithoutAsset):
-    """
-    A wrapper for Issue GraphQL object.
-    """
+    """A wrapper for Issue GraphQL object."""
 
     asset: Asset
 
 
 @deprecate()
 class Comment(CommentWithoutIssue):
-    """
-    A wrapper for Comment GraphQL object.
-    """
+    """A wrapper for Comment GraphQL object."""
 
     issue: Issue
 

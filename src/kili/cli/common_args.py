@@ -1,4 +1,4 @@
-"""Common arguments and options for the CLI"""
+"""Common arguments and options for the CLI."""
 from typing import List
 
 import click
@@ -8,7 +8,7 @@ ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
 
 
 class Options:  # pylint: disable=too-few-public-methods
-    """Common options for the CLI"""
+    """Common options for the CLI."""
 
     api_key = click.option(
         "--api-key",
@@ -90,7 +90,7 @@ def from_csv(required_columns: List[str], optionnal_columns: List[str]):
 
 
 class Arguments:  # pylint: disable=too-few-public-methods
-    """Common arguments for the CLI"""
+    """Common arguments for the CLI."""
 
     files = click.argument("files", type=click.Path(), required=False, nargs=-1)
 

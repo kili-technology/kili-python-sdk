@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Project Users
-"""
+"""GraphQL Queries of Project Users."""
 
 
 from typing import Optional
@@ -9,9 +7,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class ProjectUserWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the ProjectUserQuery to restrict query
-    """
+    """Tuple to be passed to the ProjectUserQuery to restrict query."""
 
     def __init__(
         self,
@@ -27,7 +23,7 @@ class ProjectUserWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK ProjectUserWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK ProjectUserWhere."""
         return {
             "id": self._id,
             "project": {
@@ -47,9 +43,7 @@ class ProjectUserQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL projectUsers query
-        """
+        """Return the GraphQL projectUsers query."""
         return f"""
         query projectUsers($where: ProjectUserWhere!, $first: PageSize!, $skip: Int!) {{
             data: projectUsers(where: $where, first: $first, skip: $skip) {{

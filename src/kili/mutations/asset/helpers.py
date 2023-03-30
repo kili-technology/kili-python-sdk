@@ -1,6 +1,4 @@
-"""
-Helpers for the asset mutations
-"""
+"""Helpers for the asset mutations."""
 from typing import Dict, List, Optional
 
 from kili.authentication import KiliAuth
@@ -11,10 +9,8 @@ from ...helpers import convert_to_list_of_none, format_metadata, is_none_or_empt
 
 
 def process_update_properties_in_assets_parameters(properties) -> Dict:
-    """
-    Process arguments of the update_properties_in_assets method
-    and return the properties for the paginated loop
-    """
+    """Process arguments of the update_properties_in_assets method
+    and return the properties for the paginated loop."""
     formatted_json_metadatas = None
     if properties["json_metadatas"] is None:
         formatted_json_metadatas = None
@@ -43,9 +39,7 @@ def get_asset_ids_or_throw_error(
     external_ids: Optional[List[str]],
     project_id: Optional[str],
 ) -> List[str]:
-    """
-    Check if external id to internal id conversion is valid and needed.
-    """
+    """Check if external id to internal id conversion is valid and needed."""
     check_asset_identifier_arguments(project_id, asset_ids, external_ids)
 
     if asset_ids is None:

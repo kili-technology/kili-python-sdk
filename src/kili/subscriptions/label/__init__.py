@@ -28,8 +28,7 @@ class SubscriptionsLabel:
         self, project_id: str, callback: Callable[[str, str], None]
     ) -> SubscriptionGraphQLClient:
         # pylint: disable=line-too-long
-        """
-        Subscribe a callback to a project, which is executed when a label is created or updated.
+        """Subscribe a callback to a project, which is executed when a label is created or updated.
 
         Args:
             project_id: Identifier of the project

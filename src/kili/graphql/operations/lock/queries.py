@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Locks
-"""
+"""GraphQL Queries of Locks."""
 
 from typing import Optional
 
@@ -8,9 +6,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class LockWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the LockQuery to restrict query
-    """
+    """Tuple to be passed to the LockQuery to restrict query."""
 
     def __init__(
         self,
@@ -20,7 +16,7 @@ class LockWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK LockWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK LockWhere."""
         return {"id": self.lock_id}
 
 
@@ -29,9 +25,7 @@ class LockQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL locks query
-        """
+        """Return the GraphQL locks query."""
         return f"""
         query locks($where: LockWhere!, $first: PageSize!, $skip: Int!) {{
             data: locks(where: $where, first: $first, skip: $skip) {{

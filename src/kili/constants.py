@@ -1,6 +1,4 @@
-"""
-This script lists package constants.
-"""
+"""This script lists package constants."""
 
 
 NO_ACCESS_RIGHT = (

@@ -1,6 +1,4 @@
-"""
-This script permits to initialize the Kili Python SDK client.
-"""
+"""This script permits to initialize the Kili Python SDK client."""
 import os
 
 from kili.authentication import KiliAuth
@@ -62,9 +60,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     QueriesUser,
     SubscriptionsLabel,
 ):
-    """
-    Kili Client.
-    """
+    """Kili Client."""
 
     def __init__(
         self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK
@@ -124,7 +120,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     )
     def get_project(self, project_id: str) -> Project:
         """Return a project object corresponding to the project_id given.
-        The returned project object inherit from many methods for project management
+        The returned project object inherit from many methods for project management.
 
         Args:
             project_id: id of the project to return

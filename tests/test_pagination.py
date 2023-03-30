@@ -1,4 +1,4 @@
-"""Tests for utils module"""
+"""Tests for utils module."""
 
 from typing import Dict
 from unittest.mock import MagicMock
@@ -74,9 +74,7 @@ from .utils import mocked_count_method, mocked_query_method
     ],
 )
 def test_row_generator_from_paginated_calls(test_case):
-    """
-    Simulates a count query result by returning a list of ids
-    """
+    """Simulates a count query result by returning a list of ids."""
 
     class MyGraphQLQuery(GraphQLQuery):
         @staticmethod

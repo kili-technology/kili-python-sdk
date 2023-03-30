@@ -1,4 +1,4 @@
-"""Project command of Kili CLI"""
+"""Project command of Kili CLI."""
 
 import click
 
@@ -15,7 +15,7 @@ from kili.cli.project.member import member
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def project():
-    """Commands to interact with a Kili project"""
+    """Commands to interact with a Kili project."""
 
 
 project.add_command(create_project, name="create")
