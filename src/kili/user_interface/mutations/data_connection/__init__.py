@@ -5,15 +5,15 @@ from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
+from kili import services
 from kili.core.authentication import KiliAuth
+from kili.core.helpers import format_result
 from kili.exceptions import GraphQLError
-from kili.utils.logcontext import for_all_methods, log_call
-
-from ... import services
-from ...core.helpers import format_result
-from ...queries.data_integration.queries import (
+from kili.queries.data_integration.queries import (
     GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS,
 )
+from kili.utils.logcontext import for_all_methods, log_call
+
 from .exceptions import AddDataConnectionError
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 

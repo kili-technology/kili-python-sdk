@@ -10,12 +10,12 @@ from tenacity.wait import wait_fixed
 from typeguard import typechecked
 
 from kili import services
+from kili.core.authentication import KiliAuth
+from kili.core.helpers import format_result
 from kili.exceptions import NotFound
+from kili.services.copy_project import ProjectCopier
 from kili.utils.logcontext import for_all_methods, log_call
 
-from ...core.authentication import KiliAuth
-from ...core.helpers import format_result
-from ...services.copy_project import ProjectCopier
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,

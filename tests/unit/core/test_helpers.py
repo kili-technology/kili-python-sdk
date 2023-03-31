@@ -12,9 +12,9 @@ from tenacity.wait import wait_fixed
 from kili.core.graphql.operations.label.queries import LabelQuery
 from kili.core.helpers import RetryLongWaitWarner, format_result
 from kili.exceptions import MissingArgumentError
-from kili.mutations.asset import MutationsAsset
-from kili.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.orm import Asset
+from kili.user_interface.mutations.asset import MutationsAsset
+from kili.user_interface.mutations.issue.helpers import get_labels_asset_ids_map
 from tests.fakes.fake_kili import FakeAuth
 
 
@@ -122,7 +122,9 @@ def test_get_labels_asset_ids_map():
         }
 
 
-@patch("kili.mutations.asset._mutate_from_paginated_call", return_value=[{"data": None}])
+@patch(
+    "kili.user_interface.mutations.asset._mutate_from_paginated_call", return_value=[{"data": None}]
+)
 class TestCheckWarnEmptyList(TestCase):
     """Tests for the check_warn_empty_list helper."""
 

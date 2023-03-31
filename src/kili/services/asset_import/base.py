@@ -23,7 +23,7 @@ from kili.core.graphql.operations.organization.queries import (
     OrganizationQuery,
     OrganizationWhere,
 )
-from kili.core.helpers import T, format_result, is_url
+from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
@@ -38,8 +38,6 @@ from kili.services.asset_import.exceptions import (
 from kili.services.asset_import.types import AssetLike, KiliResolverAsset
 from kili.utils import bucket, pagination
 from kili.utils.tqdm import tqdm
-
-from ...core.helpers import RetryLongWaitWarner
 
 
 class BatchParams(NamedTuple):

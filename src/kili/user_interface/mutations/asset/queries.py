@@ -1,6 +1,6 @@
 """Queries of asset mutations."""
 
-from kili.mutations.project.fragments import PROJECT_FRAGMENT_ID
+from kili.user_interface.mutations.project.fragments import PROJECT_FRAGMENT_ID
 
 GQL_UPDATE_PROPERTIES_IN_ASSETS = """
 mutation(

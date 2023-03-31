@@ -3,4 +3,4 @@
 ## Queries
 ::: kili.queries.user.__init__.QueriesUser
 ## Mutations
-::: kili.mutations.user.__init__.MutationsUser
+::: kili.user_interface.mutations.user.__init__.MutationsUser

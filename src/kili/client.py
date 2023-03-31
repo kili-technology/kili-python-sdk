@@ -5,15 +5,6 @@ from kili.core.authentication import KiliAuth
 from kili.core.graphql.graphql_client import GraphQLClientName
 from kili.exceptions import AuthenticationFailed
 from kili.internal import KiliInternal
-from kili.mutations.asset import MutationsAsset
-from kili.mutations.data_connection import MutationsDataConnection
-from kili.mutations.issue import MutationsIssue
-from kili.mutations.label import MutationsLabel
-from kili.mutations.notification import MutationsNotification
-from kili.mutations.plugins import MutationsPlugins
-from kili.mutations.project import MutationsProject
-from kili.mutations.project_version import MutationsProjectVersion
-from kili.mutations.user import MutationsUser
 from kili.project import Project
 from kili.queries.api_key import QueriesApiKey
 from kili.queries.asset import QueriesAsset
@@ -31,6 +22,15 @@ from kili.queries.user import QueriesUser
 from kili.services.project import get_project
 from kili.services.types import ProjectId
 from kili.subscriptions.label import SubscriptionsLabel
+from kili.user_interface.mutations.asset import MutationsAsset
+from kili.user_interface.mutations.data_connection import MutationsDataConnection
+from kili.user_interface.mutations.issue import MutationsIssue
+from kili.user_interface.mutations.label import MutationsLabel
+from kili.user_interface.mutations.notification import MutationsNotification
+from kili.user_interface.mutations.plugins import MutationsPlugins
+from kili.user_interface.mutations.project import MutationsProject
+from kili.user_interface.mutations.project_version import MutationsProjectVersion
+from kili.user_interface.mutations.user import MutationsUser
 
 from .core.helpers import deprecate
 

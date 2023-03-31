@@ -78,4 +78,4 @@ class PluginHandler(PluginCore):
 
 ## Mutations
 
-::: kili.mutations.plugins.__init__.MutationsPlugins
+::: kili.user_interface.mutations.plugins.__init__.MutationsPlugins

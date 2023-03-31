@@ -9,18 +9,18 @@ from typeguard import typechecked
 from kili import services
 from kili.core.authentication import KiliAuth
 from kili.core.helpers import deprecate, format_result
-from kili.mutations.helpers import check_asset_identifier_arguments
-from kili.mutations.label.queries import (
-    GQL_APPEND_TO_LABELS,
-    GQL_CREATE_HONEYPOT,
-    GQL_UPDATE_PROPERTIES_IN_LABEL,
-)
 from kili.orm import Label
 from kili.services.helpers import (
     assert_all_arrays_have_same_size,
     infer_ids_from_external_ids,
 )
 from kili.services.types import LabelType
+from kili.user_interface.mutations.helpers import check_asset_identifier_arguments
+from kili.user_interface.mutations.label.queries import (
+    GQL_APPEND_TO_LABELS,
+    GQL_CREATE_HONEYPOT,
+    GQL_UPDATE_PROPERTIES_IN_LABEL,
+)
 from kili.utils.logcontext import for_all_methods, log_call
 
 

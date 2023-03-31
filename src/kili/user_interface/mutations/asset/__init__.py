@@ -11,21 +11,22 @@ from typeguard import typechecked
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.core.helpers import format_result
+from kili.core.helpers import format_result, is_empty_list_with_warning
 from kili.exceptions import MissingArgumentError
-from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
-from kili.mutations.asset.queries import (
+from kili.orm import Asset
+from kili.services.asset_import import import_assets
+from kili.user_interface.mutations.asset.helpers import (
+    process_update_properties_in_assets_parameters,
+)
+from kili.user_interface.mutations.asset.queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
     GQL_DELETE_MANY_FROM_DATASET,
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
-from kili.orm import Asset
-from kili.services.asset_import import import_assets
 from kili.utils.logcontext import for_all_methods, log_call
 from kili.utils.pagination import _mutate_from_paginated_call
 
-from ...core.helpers import is_empty_list_with_warning
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error
 

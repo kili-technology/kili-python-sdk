@@ -20,4 +20,4 @@
 
 ## Mutations
 
-:::kili.mutations.data_connection.__init__.MutationsDataConnection
+:::kili.user_interface.mutations.data_connection.__init__.MutationsDataConnection

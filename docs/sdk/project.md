@@ -6,4 +6,4 @@
 
 ## Mutations
 
-::: kili.mutations.project.__init__.MutationsProject
+::: kili.user_interface.mutations.project.__init__.MutationsProject

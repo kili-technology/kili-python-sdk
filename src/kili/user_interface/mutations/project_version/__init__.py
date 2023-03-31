@@ -5,9 +5,9 @@ from typing import Optional
 from typeguard import typechecked
 
 from kili.core.authentication import KiliAuth
+from kili.core.helpers import format_result
 from kili.utils.logcontext import for_all_methods, log_call
 
-from ...core.helpers import format_result
 from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 
 

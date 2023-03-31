@@ -2,10 +2,9 @@
 from typing import Dict, List, Optional
 
 from kili.core.authentication import KiliAuth
-from kili.mutations.helpers import check_asset_identifier_arguments
+from kili.core.helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
 from kili.services.helpers import infer_ids_from_external_ids
-
-from ...core.helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
+from kili.user_interface.mutations.helpers import check_asset_identifier_arguments
 
 
 def process_update_properties_in_assets_parameters(properties) -> Dict:

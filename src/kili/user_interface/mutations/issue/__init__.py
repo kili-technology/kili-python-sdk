@@ -9,11 +9,11 @@ from typing_extensions import Literal
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.mutations.asset.helpers import get_asset_ids_or_throw_error
+from kili.core.helpers import deprecate, format_result
 from kili.services.helpers import assert_all_arrays_have_same_size
+from kili.user_interface.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.utils.logcontext import for_all_methods, log_call
 
-from ...core.helpers import deprecate, format_result
 from .helpers import get_issue_numbers, get_labels_asset_ids_map
 from .queries import GQL_CREATE_ISSUES
 

@@ -6,13 +6,12 @@ from typeguard import typechecked
 
 from kili.core.authentication import KiliAuth
 from kili.core.helpers import format_result
-from kili.mutations.user.queries import (
+from kili.exceptions import RemovedMethodError
+from kili.user_interface.mutations.user.queries import (
     GQL_CREATE_USER,
     GQL_UPDATE_PASSWORD,
     GQL_UPDATE_PROPERTIES_IN_USER,
 )
-
-from ...exceptions import RemovedMethodError
 
 
 class MutationsUser:

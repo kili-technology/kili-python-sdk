@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 import pytest
 
-from kili.mutations.data_connection import MutationsDataConnection
+from kili.user_interface.mutations.data_connection import MutationsDataConnection
 
 
 class MockerGetDataConnection:
