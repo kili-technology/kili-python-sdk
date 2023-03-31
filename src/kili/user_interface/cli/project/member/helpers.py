@@ -4,14 +4,14 @@ import re
 import warnings
 from typing import Iterable, Optional
 
-from kili.cli.common_args import ROLES
-from kili.cli.helpers import collect_from_csv
 from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
 )
+from kili.user_interface.cli.common_args import ROLES
+from kili.user_interface.cli.helpers import collect_from_csv
 
 REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 

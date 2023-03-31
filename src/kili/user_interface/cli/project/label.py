@@ -8,9 +8,9 @@ import click
 from typing_extensions import get_args
 
 from kili import services
-from kili.cli.common_args import Arguments, Options
-from kili.cli.helpers import get_kili_client
 from kili.services.label_import.types import LabelFormat
+from kili.user_interface.cli.common_args import Arguments, Options
+from kili.user_interface.cli.helpers import get_kili_client
 
 
 def type_check_label(key, value):

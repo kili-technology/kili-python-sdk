@@ -2,8 +2,8 @@
 import click
 
 from kili import __version__
-from kili.cli.common_args import CONTEXT_SETTINGS
-from kili.cli.project import project
+from kili.user_interface.cli.common_args import CONTEXT_SETTINGS
+from kili.user_interface.cli.project import project
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)

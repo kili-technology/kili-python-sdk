@@ -5,10 +5,10 @@ from unittest.mock import ANY, MagicMock, patch
 import pytest
 from click.testing import CliRunner
 
-from kili.cli.project.label import import_labels
 from kili.graphql.operations.project.queries import ProjectQuery
+from kili.user_interface.cli.project.label import import_labels
+from tests.utils import debug_subprocess_pytest
 
-from ...utils import debug_subprocess_pytest
 from .mocks.projects import mocked__ProjectQuery
 
 kili_client = MagicMock()

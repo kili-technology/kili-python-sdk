@@ -9,10 +9,10 @@ import numpy as np
 import pandas as pd
 from tabulate import tabulate
 
-from kili.cli.common_args import Options
-from kili.cli.helpers import get_kili_client
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.user_interface.cli.common_args import Options
+from kili.user_interface.cli.helpers import get_kili_client
 
 
 @click.command(name="list")

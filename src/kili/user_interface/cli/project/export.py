@@ -7,11 +7,11 @@ from typeguard import typechecked
 from typing_extensions import get_args
 
 from kili import services
-from kili.cli.common_args import Options
-from kili.cli.helpers import get_kili_client
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import ProjectId
+from kili.user_interface.cli.common_args import Options
+from kili.user_interface.cli.helpers import get_kili_client
 
 
 @click.command(name="export")

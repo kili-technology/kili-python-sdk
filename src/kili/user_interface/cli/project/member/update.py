@@ -5,18 +5,18 @@ from typing import Iterable, Optional
 
 import click
 
-from kili.cli.common_args import Arguments, Options, from_csv
-from kili.cli.helpers import get_kili_client
-from kili.cli.project.member.helpers import (
-    check_exclusive_options,
-    collect_members_from_csv,
-    collect_members_from_emails,
-    collect_members_from_project,
-)
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
+)
+from kili.user_interface.cli.common_args import Arguments, Options, from_csv
+from kili.user_interface.cli.helpers import get_kili_client
+from kili.user_interface.cli.project.member.helpers import (
+    check_exclusive_options,
+    collect_members_from_csv,
+    collect_members_from_emails,
+    collect_members_from_project,
 )
 
 

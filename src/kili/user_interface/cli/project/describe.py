@@ -6,9 +6,9 @@ import click
 from tabulate import tabulate
 
 from kili import services
-from kili.cli.common_args import Arguments, Options
-from kili.cli.helpers import get_kili_client
 from kili.queries.project.helpers import get_project_metadata, get_project_metrics
+from kili.user_interface.cli.common_args import Arguments, Options
+from kili.user_interface.cli.helpers import get_kili_client
 
 
 @click.command(name="describe")

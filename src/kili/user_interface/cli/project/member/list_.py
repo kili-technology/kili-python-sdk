@@ -6,13 +6,13 @@ import click
 import pandas as pd
 from tabulate import tabulate
 
-from kili.cli.common_args import Arguments, Options
-from kili.cli.helpers import get_kili_client
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
 )
+from kili.user_interface.cli.common_args import Arguments, Options
+from kili.user_interface.cli.helpers import get_kili_client
 
 ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 

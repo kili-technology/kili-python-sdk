@@ -8,15 +8,15 @@ from unittest.mock import ANY, MagicMock, patch
 import pytest
 from click.testing import CliRunner
 
-from kili.cli.project.create import create_project
-from kili.cli.project.describe import describe_project
-from kili.cli.project.export import export_labels
-from kili.cli.project.import_ import import_assets
-from kili.cli.project.list_ import list_projects
 from kili.graphql.operations.asset.queries import AssetQuery
 from kili.graphql.operations.project.queries import ProjectQuery
+from kili.user_interface.cli.project.create import create_project
+from kili.user_interface.cli.project.describe import describe_project
+from kili.user_interface.cli.project.export import export_labels
+from kili.user_interface.cli.project.import_ import import_assets
+from kili.user_interface.cli.project.list_ import list_projects
+from tests.utils import debug_subprocess_pytest
 
-from ...utils import debug_subprocess_pytest
 from .mocks.assets import mocked__project_assets
 from .mocks.projects import mocked__ProjectQuery
 

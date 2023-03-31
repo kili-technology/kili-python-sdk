@@ -5,8 +5,8 @@ from typing import Optional
 import click
 
 from kili import services
-from kili.cli.common_args import Options
-from kili.cli.helpers import get_kili_client
+from kili.user_interface.cli.common_args import Options
+from kili.user_interface.cli.helpers import get_kili_client
 
 
 @click.command(name="copy")

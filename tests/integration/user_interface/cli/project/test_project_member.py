@@ -5,13 +5,12 @@ from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
-from kili.cli.project.member.add import add_member
-from kili.cli.project.member.list_ import list_members
-from kili.cli.project.member.remove import remove_member
-from kili.cli.project.member.update import update_member
 from kili.graphql.operations.project_user.queries import ProjectUserQuery
-
-from ...utils import debug_subprocess_pytest
+from kili.user_interface.cli.project.member.add import add_member
+from kili.user_interface.cli.project.member.list_ import list_members
+from kili.user_interface.cli.project.member.remove import remove_member
+from kili.user_interface.cli.project.member.update import update_member
+from tests.utils import debug_subprocess_pytest
 
 
 def mocked__project_user_query(**kwargs):
