@@ -1,6 +1,6 @@
 #!/bin/bash
 
-get_sdk_version() {
+get_sdk_version_from_setup_cfg() {
     sdk_version=$(cat setup.cfg | grep current_version | cut -d ' ' -f 3)
     echo "$sdk_version"
 }
@@ -11,7 +11,7 @@ bump_version() {
     new_version=$(bump2version \
         --list \
         --"$1" \
-        --current-version "$(get_sdk_version)" \
+        --current-version "$(get_sdk_version_from_setup_cfg)" \
         "$2" \
         src/kili/__init__.py \
         | grep new_version | sed -r s,"^.*=",,)

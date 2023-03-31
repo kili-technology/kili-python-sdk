@@ -47,7 +47,7 @@ jobs:
           source ./.github/scripts/utils.sh   # to load the utils functions
 
           # Get release version
-          release_version=$(get_sdk_version)
+          release_version=$(get_sdk_version_from_setup_cfg)
           echo "Release version: $release_version"
 
           # make sure release_version is greater than last github release
