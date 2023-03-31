@@ -5,4 +5,4 @@
 ## Mutations
 ::: kili.user_interface.mutations.label.__init__.MutationsLabel
 ## Subscriptions
-::: kili.subscriptions.label.__init__.SubscriptionsLabel
+::: kili.user_interface.subscriptions.label.__init__.SubscriptionsLabel

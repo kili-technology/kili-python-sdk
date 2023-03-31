@@ -8,7 +8,6 @@ from kili.internal import KiliInternal
 from kili.project import Project
 from kili.services.project import get_project
 from kili.services.types import ProjectId
-from kili.subscriptions.label import SubscriptionsLabel
 from kili.user_interface.mutations.asset import MutationsAsset
 from kili.user_interface.mutations.data_connection import MutationsDataConnection
 from kili.user_interface.mutations.issue import MutationsIssue
@@ -31,6 +30,7 @@ from kili.user_interface.queries.project import QueriesProject
 from kili.user_interface.queries.project_user import QueriesProjectUser
 from kili.user_interface.queries.project_version import QueriesProjectVersion
 from kili.user_interface.queries.user import QueriesUser
+from kili.user_interface.subscriptions.label import SubscriptionsLabel
 
 from .core.helpers import deprecate
 
