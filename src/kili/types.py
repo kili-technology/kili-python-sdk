@@ -8,7 +8,7 @@ from typing import Dict, List
 
 from typing_extensions import TypedDict
 
-from kili.enums import (
+from kili.core.enums import (
     InputType,
     InvitationStatus,
     IssueStatus,
