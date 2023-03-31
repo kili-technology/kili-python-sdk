@@ -3,6 +3,7 @@ import pytest
 from kili.services.label_data_parsing.bounding_poly import BoundingPoly
 from kili.services.label_data_parsing.json_response import ParsedJobs
 from kili.services.label_data_parsing.label import ParsedLabel
+from kili.services.label_data_parsing.types import Project
 
 
 def test_attribute_category():
@@ -20,6 +21,7 @@ def test_attribute_category():
         "jobs": {
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
+                "isChild": False,
                 "required": 1,
                 "content": {
                     "categories": {
@@ -33,7 +35,8 @@ def test_attribute_category():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
     category = parsed_jobs["JOB_0"].category
 
     assert parsed_jobs["JOB_0"].categories[0].name == category.name == "A"
@@ -54,6 +57,7 @@ def test_attribute_categories_multiclass():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category30"},
@@ -66,7 +70,8 @@ def test_attribute_categories_multiclass():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
     categories = parsed_jobs["JOB_0"].categories
 
     assert categories[0].confidence == 42
@@ -77,9 +82,12 @@ def test_attribute_categories_multiclass():
 
 def test_attribute_text():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
-    json_interface = {"jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1}}}
+    json_interface = {
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+    }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].text == "This is a transcription job"
 
@@ -116,7 +124,8 @@ def test_attribute_entity_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_response_dict)
 
     assert parsed_jobs["JOB_0"].entity_annotations[0].begin_offset == 21
     assert parsed_jobs["JOB_0"].entity_annotations[0].content == "this is the text for Kili"
@@ -166,7 +175,8 @@ def test_attribute_object_detection():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name == "B"
     assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].categories[0].name == "B"
@@ -192,14 +202,16 @@ def test_not_required_job_classification_category_returns_none():
         }
     }
 
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "B"}]}}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     category = parsed_jobs["CLASSIFICATION_JOB"].category
     assert category.name == "B"
     assert category.confidence == 100
 
     json_resp = {}  # asset annotated but no category chosen
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert parsed_jobs["CLASSIFICATION_JOB"].category is None
 
 
@@ -222,7 +234,9 @@ def test_checkbox_job_categories_required():
     }
 
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "B"}]}}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].name == "B"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence == 100
@@ -246,8 +260,10 @@ def test_checkbox_job_categories_not_required():
         }
     }
 
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "B"}]}}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].name == "B"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence == 100
 
@@ -256,14 +272,14 @@ def test_checkbox_job_categories_not_required():
             "categories": [{"confidence": 100, "name": "B"}, {"confidence": 52, "name": "A"}]
         }
     }
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].name == "B"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence == 100
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[1].name == "A"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[1].confidence == 52
 
     json_resp = {}  # asset annotated but no classes chosen
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert len(parsed_jobs["CLASSIFICATION_JOB"].categories) == 0
 
 
@@ -289,7 +305,8 @@ def test_single_dropdown():
     }
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["CLASSIFICATION_JOB"].category.name == "A"
     assert parsed_jobs["CLASSIFICATION_JOB"].category.confidence == 100
@@ -324,7 +341,8 @@ def test_multiple_dropdown():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].name == "E"
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].confidence == 100
@@ -388,7 +406,8 @@ def test_bounding_poly_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations
 
@@ -455,7 +474,8 @@ def test_point_job():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     job = parsed_jobs["OBJECT_DETECTION_JOB"]
 
@@ -537,7 +557,8 @@ def test_multiple_bounding_poly():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     job = parsed_jobs["JOB_0"]
 
@@ -632,7 +653,8 @@ def test_text_ner_job_with_relation_job():
         },
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     relation_job = parsed_jobs["RELATION_JOB"]
 
     assert relation_job.annotations[0].categories[0].name == "CATEGORY_RELATION_JOB"
@@ -738,7 +760,8 @@ def test_object_detection_with_relations():
         },
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     relation_job = parsed_jobs["OBJECT_RELATION_JOB"]
 
@@ -771,7 +794,8 @@ def test_repr_str_custom_classes():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_response_dict)
 
     assert "object at 0x" not in str(parsed_jobs["JOB_0"].annotations)
     assert "object at 0x" not in repr(parsed_jobs["JOB_0"].annotations)
@@ -807,7 +831,8 @@ def test_annotations_empty_json_resp_non_required_job():
 
     json_resp = {}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert len(parsed_jobs["JOB_0"].annotations) == 0
 
@@ -857,7 +882,8 @@ def test_parsing_category_only_name():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_B"
 
@@ -916,7 +942,7 @@ def test_video_project_classification():
 
     label = {"jsonResponse": json_resp}
 
-    parsed_label = ParsedLabel(label, json_interface, input_type="VIDEO")
+    parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
     # assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].is_key_frame is True
     # assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_A"

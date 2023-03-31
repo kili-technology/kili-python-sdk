@@ -1,4 +1,5 @@
 from kili.services.label_data_parsing.json_response import ParsedJobs
+from kili.services.label_data_parsing.types import Project
 
 
 def test_mutate_transcription_label():
@@ -6,7 +7,8 @@ def test_mutate_transcription_label():
 
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].text == "This is a transcription job"
 
@@ -19,7 +21,8 @@ def test_mutate_transcription_label_non_required():
 
     json_response_dict = {}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     parsed_jobs["JOB_0"].text = "This is a transcription job"
     assert parsed_jobs["JOB_0"].text == "This is a transcription job"
@@ -45,7 +48,8 @@ def test_mutate_category():
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -76,7 +80,8 @@ def test_mutate_categories_radio_required():
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].categories[0].name == "A"
     assert parsed_jobs["JOB_0"].categories[0].confidence == 100
@@ -108,7 +113,8 @@ def test_mutate_category_categories_radio_required():
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "C"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].category.name == "C"
 
@@ -141,7 +147,8 @@ def test_mutate_category_categories_radio_non_required():
 
     json_response_dict = {}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     parsed_jobs["JOB_0"].add_category(name="A", confidence=50)
 
@@ -177,7 +184,8 @@ def test_mutate_categories_checkbox():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp_dict, project_info=project_info)
 
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].name == "A"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence == 100
@@ -225,7 +233,8 @@ def test_mutate_ner_project_entity_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     parsed_jobs["JOB_0"].entity_annotations[0].categories[0].name = "PERSON"
     parsed_jobs["JOB_0"].entity_annotations[0].categories[0].confidence = 98
@@ -272,7 +281,8 @@ def test_mutate_ner_project_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     parsed_jobs["JOB_0"].annotations[0].categories[0].name = "PERSON"
     parsed_jobs["JOB_0"].annotations[0].categories[0].confidence = 98
@@ -309,7 +319,8 @@ def test_mutation_single_dropdown():
     }
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
     parsed_jobs["CLASSIFICATION_JOB"].categories[0].name = "B"
     parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence = 99
@@ -345,7 +356,8 @@ def test_mutation_multiple_dropdown():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
     parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].name = "D"
     parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].confidence = 98
@@ -392,7 +404,8 @@ def test_add_annotations_to_empty_json_resp_of_non_required_job():
 
     json_resp = {"REQUIRED_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
     parsed_jobs["NON_REQUIRED_JOB"].add_category("C", 100)
 
@@ -432,7 +445,8 @@ def test_add_annotation_ner():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     parsed_jobs["JOB_0"].add_annotation(
         {
@@ -491,7 +505,8 @@ def test_set_normalized_vertices():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
     parsed_jobs["JOB_0"].annotations[0].bounding_poly[0].normalized_vertices = [
         {"x": 0.5, "y": 0.5}
@@ -526,7 +541,8 @@ def test_add_category_in_annotation_bbox():
     }
 
     json_resp = {}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
     parsed_jobs["JOB_0"].add_annotation(
         {

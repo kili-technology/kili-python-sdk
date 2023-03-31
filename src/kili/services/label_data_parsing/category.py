@@ -4,21 +4,24 @@ from typing import Any, Dict, List, Optional
 
 from typeguard import typechecked
 
-from .exceptions import InvalidMutationError
+from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
+from .types import Project
 
 
 class Category:
     """Class for Category parsing."""
 
-    def __init__(self, category_json: Dict, job_interface: Dict) -> None:
+    def __init__(self, category_json: Dict, project_info: Project, job_name: str) -> None:
         """Class for Category parsing.
 
         Args:
             category_json: Value of the key "categories".
-            job_interface: Job interface of the job.
+            project_info: Information about the project.
+            job_name: Name of the job.
         """
         self._json_data = category_json
-        self._job_interface = job_interface
+        self._project_info = project_info
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         # call the setters to check the values are valid
         self.name = self.name
@@ -69,20 +72,33 @@ class Category:
     @property
     def children(self):
         """Not implemented yet."""
+        if "children" not in self._json_data:
+            raise AttributeNotCompatibleWithJobError("children")
+        # parsed_children = json_response.ParsedJobs(
+        #     json_response=self._json_data["children"],
+        #     json_interface=self._json_interface,
+        #     input_type=self._input_type,
+        # )
 
 
 class CategoryList:
     """Class for the categories list parsing."""
 
-    def __init__(self, categories_list: List[Dict[str, Any]], job_interface: Dict) -> None:
+    def __init__(
+        self, categories_list: List[Dict[str, Any]], project_info: Project, job_name: str
+    ) -> None:
         """Class for the categories list parsing.
 
         Args:
             categories_list: List of dicts representing categories.
-            job_interface: Job interface of the job.
+            project_info: Information about the project.
+            job_name: Name of the job.
         """
         self._categories_list: List[Category] = []
-        self._job_interface = job_interface
+        self._project_info = project_info
+        self._job_name = job_name
+
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         for category_dict in categories_list:
             self.add_category(**category_dict)
@@ -116,15 +132,20 @@ class CategoryList:
             )
 
     @typechecked
-    def add_category(self, name: str, confidence: Optional[int] = None) -> None:
+    def add_category(
+        self, name: str, confidence: Optional[int] = None, children: Optional[Dict] = None
+    ) -> None:
         """Adds a category object to the CategoryList object."""
         category_dict: Dict[str, object] = {"name": name}
         if confidence is not None:
             category_dict["confidence"] = confidence
+        if children is not None:
+            category_dict["children"] = children
 
         category = Category(
             category_json=category_dict,
-            job_interface=self._job_interface,
+            project_info=self._project_info,
+            job_name=self._job_name,
         )
         self._check_can_append_category(category)
         self._categories_list.append(category)

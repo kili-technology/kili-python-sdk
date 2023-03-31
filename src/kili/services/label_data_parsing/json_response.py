@@ -3,40 +3,43 @@
 
 from typing import Dict
 
-from kili.enums import InputType
-
 from .exceptions import JobNotExistingError
 from .job_response import JobPayload
+from .types import Project
 
 
 class ParsedJobs:
     """Class for label json response parsing."""
 
-    def __init__(self, json_response: Dict, json_interface: Dict, input_type: InputType) -> None:
+    def __init__(self, project_info: Project, json_response: Dict) -> None:
         """Class for label json response parsing.
 
         Args:
+            project_info: Information about the project.
             json_response: Value of the key "jsonResponse" of a label.
-            json_interface: Json interface of the project.
-            input_type: Type of assets of the project.
         """
-        _ = input_type  # will be used in the future for video parsing
         self._json_data: Dict[str, JobPayload] = {}
 
-        for job_name, job_interface in json_interface["jobs"].items():
+        json_interface = project_info["jsonInterface"]
+
+        for job_name, job_interface in json_interface.items():
             job_response = json_response.get(job_name, {})
+
+            if job_interface.get("isChild"):
+                continue
 
             if job_interface["required"] and not job_response:
                 raise JobNotExistingError(job_name)
 
             self._json_data[job_name] = JobPayload(
-                job_interface=job_interface,
+                job_name=job_name,
+                project_info=project_info,
                 job_payload=job_response,
             )
 
         # check that the job names in the json response are in the json interface
         for job_name in json_response:
-            if job_name not in json_interface["jobs"]:
+            if job_name not in json_interface:
                 raise JobNotExistingError(job_name)
 
     def __getitem__(self, job_name: str) -> JobPayload:

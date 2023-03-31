@@ -5,33 +5,44 @@ from typing import Dict, List, Optional, cast
 
 from typeguard import typechecked
 
+from kili.services.types import Job
+
 from .annotation import AnnotationList, BoundingPolyAnnotation, EntityAnnotation
 from .category import Category, CategoryList
 from .exceptions import AttributeNotCompatibleWithJobError
+from .types import Project
 
 
 class JobPayload:
     """Class for job payload parsing."""
 
-    def __init__(self, job_interface: Dict, job_payload: Dict) -> None:
+    def __init__(self, job_name: str, project_info: Project, job_payload: Dict) -> None:
         """Class for job payload parsing.
 
         Args:
-            job_interface: Job interface of the job.
+            job_name: Name of the job.
+            project_info: Information about the project.
             job_payload: Value of the key "job_name" of the job response.
         """
-        self._job_interface = job_interface
+        self._job_name = job_name
+        self._project_info = project_info
         self._json_data = job_payload
+
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         # cast lists to objects
         if "categories" in self._json_data:
             self._json_data["categories"] = CategoryList(
-                job_interface=self._job_interface, categories_list=self._json_data["categories"]
+                job_name=self._job_name,
+                project_info=self._project_info,
+                categories_list=self._json_data["categories"],
             )
 
         if "annotations" in self._json_data:
             self._json_data["annotations"] = AnnotationList(
-                job_interface=self._job_interface, annotations_list=self._json_data["annotations"]
+                job_name=self._job_name,
+                project_info=self._project_info,
+                annotations_list=self._json_data["annotations"],
             )
 
     def to_dict(self) -> Dict:
@@ -68,7 +79,9 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("categories")
 
         if "categories" not in self._json_data and not self._job_interface["required"]:
-            return CategoryList(job_interface=self._job_interface, categories_list=[])
+            return CategoryList(
+                categories_list=[], project_info=self._project_info, job_name=self._job_name
+            )
 
         return self._json_data["categories"]
 
@@ -99,7 +112,9 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("add_category")
 
         if "categories" not in self._json_data:
-            category_list = CategoryList(job_interface=self._job_interface, categories_list=[])
+            category_list = CategoryList(
+                categories_list=[], project_info=self._project_info, job_name=self._job_name
+            )
             category_list.add_category(name=name, confidence=confidence)
             self._json_data["categories"] = category_list
         else:
@@ -142,7 +157,9 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("annotations")
 
         if "annotations" not in self._json_data and not self._job_interface["required"]:
-            return AnnotationList(job_interface=self._job_interface, annotations_list=[])
+            return AnnotationList(
+                annotations_list=[], project_info=self._project_info, job_name=self._job_name
+            )
 
         return self._json_data["annotations"]
 
@@ -175,14 +192,16 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("add_annotation")
 
         if "annotations" not in self._json_data:
-            annotation_list = AnnotationList(job_interface=self._job_interface, annotations_list=[])
+            annotation_list = AnnotationList(
+                annotations_list=[], project_info=self._project_info, job_name=self._job_name
+            )
             annotation_list.add_annotation(annotation_dict)
             self._json_data["annotations"] = annotation_list
         else:
             self._json_data["annotations"].add_annotation(annotation_dict)
 
 
-def _can_query_annotations(json_data: Dict, job_interface: Dict) -> bool:
+def _can_query_annotations(json_data: Dict, job_interface: Job) -> bool:
     """Checks if the "annotations" key can be queried for the job."""
     if "annotations" in json_data:
         return True

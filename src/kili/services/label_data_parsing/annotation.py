@@ -12,6 +12,7 @@ from .bounding_poly import BoundingPoly
 from .category import Category, CategoryList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
+from .types import Project
 
 
 class _BaseAnnotation:
@@ -20,23 +21,28 @@ class _BaseAnnotation:
     It is used as a base class for the common properties of all types of annotations.
     """
 
-    def __init__(self, annotation_json: Dict, job_interface: Dict) -> None:
+    def __init__(self, annotation_json: Dict, project_info: Project, job_name: str) -> None:
         """Class for Annotation parsing.
 
         Args:
             annotation_json: Dict of an annotation. It is the value of
                 the "annotations" key of a job response.
-            job_interface: Job interface of the job.
+            project_info: Information about the project.
+            job_name: Name of the job.
         """
         self._json_data = annotation_json
-        self._job_interface = job_interface
+        self._project_info = project_info
+        self._job_name = job_name
 
-        self._is_required_job = job_interface["required"]
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
+        self._is_required_job = project_info["jsonInterface"][job_name]["required"]  # type: ignore
 
         # cast lists to objects
         if "categories" in self._json_data:
             self._json_data["categories"] = CategoryList(
-                job_interface=self._job_interface, categories_list=self._json_data["categories"]
+                categories_list=self._json_data["categories"],
+                project_info=self._project_info,
+                job_name=self._job_name,
             )
 
     def __str__(self) -> str:
@@ -82,7 +88,9 @@ class _BaseAnnotation:
     def add_category(self, name: str, confidence: Optional[int] = None) -> None:
         """Adds a category to an annotation job with categories."""
         if "categories" not in self._json_data:
-            category_list = CategoryList(job_interface=self._job_interface, categories_list=[])
+            category_list = CategoryList(
+                categories_list=[], project_info=self._project_info, job_name=self._job_name
+            )
             category_list.add_category(name=name, confidence=confidence)
             self._json_data["categories"] = category_list
         else:
@@ -389,16 +397,17 @@ class Annotation(
     Contains all attributes that can be found in a job response.
     """
 
-    def __init__(self, json_data: Dict, job_interface: Dict) -> None:
+    def __init__(self, json_data: Dict, project_info: Project, job_name: str) -> None:
         """Initializes an Annotation object.
 
         This class is used to parse the "annotations" key of a job response.
 
         Args:
             json_data: The json data of the annotation.
-            job_interface: The job interface of the job.
+            project_info: The project info object.
+            job_name: The name of the job.
         """
-        super().__init__(annotation_json=json_data, job_interface=job_interface)
+        super().__init__(annotation_json=json_data, project_info=project_info, job_name=job_name)
 
         # dictionaries to store the valid attributes/properties for each mlTask and type of tool
         self._valid_attributes_for_ml_task = defaultdict(set)
@@ -429,15 +438,19 @@ class Annotation(
 class AnnotationList:
     """Class for the annotations list parsing."""
 
-    def __init__(self, annotations_list: List[Dict], job_interface: Dict) -> None:
+    def __init__(self, annotations_list: List[Dict], project_info: Project, job_name: str) -> None:
         """Class for the annotations list parsing.
 
         Args:
             annotations_list: List of dicts representing annotations.
-            job_interface: Job interface of the job.
+            project_info: The project info object.
+            job_name: The name of the job.
         """
+        self._project_info = project_info
+        self._job_name = job_name
+        self._job_interface = self._project_info["jsonInterface"][self._job_name]  # type: ignore
+
         self._annotations_list: List[Annotation] = []
-        self._job_interface = job_interface
 
         for annotation_dict in annotations_list:
             self.add_annotation(annotation_dict)
@@ -456,7 +469,9 @@ class AnnotationList:
     @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
         """Adds an annotation object to the AnnotationList object."""
-        annotation = Annotation(json_data=annotation_dict, job_interface=self._job_interface)
+        annotation = Annotation(
+            json_data=annotation_dict, project_info=self._project_info, job_name=self._job_name
+        )
         self._check_can_append_annotation(annotation)
         self._annotations_list.append(annotation)
 
