@@ -126,11 +126,10 @@ At this point, you should be able to see your assets in your Kili project:
 If you prefer to add your own images, you can use a local file. The code to do that would looks similar to this:
 
 ```python
-# Path to local image
 project_id = 'project_id'
 assets = kili.append_many_to_dataset(
     project_id=project_id,
-    content_array=['./image_1.jpeg'],
+    content_array=['./image_1.jpeg'], # Path to local image
     external_id_array=['image_1']
 )
 ```

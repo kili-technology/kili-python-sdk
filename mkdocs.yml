@@ -37,7 +37,7 @@ nav:
           - Image Assets: sdk/tutorials/importing_assets_and_labels.md
           - Video Assets: sdk/tutorials/importing_video_assets.md
       - Importing Labels:
-          - Classification Labels: sdk/tutorials/importing_labels.md
+          - Introduction: sdk/tutorials/importing_labels.md
           - OpenAI NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
           - OCR Pre-annotations: sdk/tutorials/ocr_pre_annotations.md
           - Segmentation Pre-annotations: sdk/tutorials/pixel_level_masks.md
