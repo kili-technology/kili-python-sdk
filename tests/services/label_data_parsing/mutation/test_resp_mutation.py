@@ -512,7 +512,7 @@ def test_add_category_in_annotation_bbox():
                         "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
                         "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
                     },
-                    "input": "radio",
+                    "input": "checkbox",
                 },
                 "instruction": "Categories",
                 "isChild": False,
@@ -526,7 +526,29 @@ def test_add_category_in_annotation_bbox():
     }
 
     json_resp = {}
-
     parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
 
-    # parsed_jobs["JOB_0"].add_annotation()  # TODO
+    parsed_jobs["JOB_0"].add_annotation(
+        {
+            "children": {},
+            "boundingPoly": [
+                {
+                    "normalizedVertices": [
+                        {"x": 0.5141441957015471, "y": 0.6164292619007603},
+                        {"x": 0.5141441957015471, "y": 0.6164292619007603},
+                        {"x": 0.5141441957015471, "y": 0.6164292619007603},
+                        {"x": 0.5141441957015471, "y": 0.6164292619007603},
+                    ]
+                },
+            ],
+            "categories": [{"name": "OBJECT_B"}],
+            "mid": "20230329145907681-18624",
+            "type": "rectangle",
+        }
+    )
+
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_B"
+
+    parsed_jobs["JOB_0"].annotations[0].add_category("OBJECT_A", 100)
+
+    assert parsed_jobs["JOB_0"].annotations[0].categories[1].name == "OBJECT_A"

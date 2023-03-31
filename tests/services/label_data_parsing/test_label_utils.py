@@ -214,16 +214,17 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
             "JOB_0": {
                 "content": {
                     "categories": {
-                        "A": {"children": [], "name": "A"},
-                        "B": {"children": [], "name": "B"},
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
                     },
                     "input": "radio",
                 },
-                "instruction": "Required",
+                "instruction": "Class",
                 "mlTask": "OBJECT_DETECTION",
                 "required": 0,
+                "tools": ["rectangle"],
                 "isChild": False,
-            },
+            }
         }
     }
     parsed_labels = parse_labels(labels, json_interface=json_interface, input_type="IMAGE")

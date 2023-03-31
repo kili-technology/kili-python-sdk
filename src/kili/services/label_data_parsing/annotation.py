@@ -11,7 +11,7 @@ from typing_extensions import Literal
 from .bounding_poly import BoundingPoly
 from .category import Category, CategoryList
 from .decorators import for_all_properties
-from .exceptions import AttributeNotCompatibleWithJobError
+from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 
 
 class _BaseAnnotation:
@@ -443,7 +443,15 @@ class AnnotationList:
             self.add_annotation(annotation_dict)
 
     def _check_can_append_annotation(self, annotation: Annotation) -> None:
-        _ = annotation  # unused for now
+        # pylint: disable=protected-access
+        if (
+            "type" in annotation._json_data
+            and annotation._json_data["type"] not in self._job_interface["tools"]
+        ):
+            raise InvalidMutationError(
+                f"Annotation of type '{annotation._json_data['type']}' cannot be added to this job"
+                f" with tools {self._job_interface['tools']}"
+            )
 
     @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
