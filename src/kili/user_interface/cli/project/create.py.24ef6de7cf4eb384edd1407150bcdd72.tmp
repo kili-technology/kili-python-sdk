@@ -8,9 +8,9 @@ from tabulate import tabulate
 
 from kili import services
 from kili.core.constants import INPUT_TYPE
+from kili.user_interface.queries.project.helpers import get_project_url
 from kili.user_interface.cli.common_args import Options
 from kili.user_interface.cli.helpers import get_kili_client
-from kili.user_interface.queries.project.helpers import get_project_url
 
 
 @click.command(name="create")

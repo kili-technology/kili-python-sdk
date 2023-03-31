@@ -1,4 +1,4 @@
 # Notification module
 
 ## Queries
-::: kili.queries.notification.__init__.QueriesNotification
+::: kili.user_interface.queries.notification.__init__.QueriesNotification

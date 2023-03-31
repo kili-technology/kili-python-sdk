@@ -1,6 +1,6 @@
 # User module
 
 ## Queries
-::: kili.queries.user.__init__.QueriesUser
+::: kili.user_interface.queries.user.__init__.QueriesUser
 ## Mutations
 ::: kili.user_interface.mutations.user.__init__.MutationsUser

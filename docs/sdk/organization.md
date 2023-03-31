@@ -1,4 +1,4 @@
 # Organization module
 
 ## Queries
-::: kili.queries.organization.__init__.QueriesOrganization
+::: kili.user_interface.queries.organization.__init__.QueriesOrganization

@@ -3,12 +3,12 @@
 from typing import Dict, List
 
 from kili.core.authentication import KiliAuth
+from kili.user_interface.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
 from kili.services.asset_import.video import VideoDataImporter
 from kili.services.project import get_project_field
-from kili.user_interface.queries.project import QueriesProject
 
 from .base import LoggerParams, ProcessingParams, ProjectParams
 

@@ -2,7 +2,7 @@
 
 ## Queries
 
-::: kili.queries.project.__init__.QueriesProject
+::: kili.user_interface.queries.project.__init__.QueriesProject
 
 ## Mutations
 

@@ -9,8 +9,8 @@ from typeguard import check_type
 
 from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.user.queries import UserQuery
-from kili.queries.asset import QueriesAsset
-from kili.queries.user import QueriesUser
+from kili.user_interface.queries.asset import QueriesAsset
+from kili.user_interface.queries.user import QueriesUser
 
 
 @pytest.mark.parametrize(

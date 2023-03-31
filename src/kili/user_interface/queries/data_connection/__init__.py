@@ -5,6 +5,7 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili import services
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
@@ -13,8 +14,6 @@ from kili.core.graphql.operations.data_connection.queries import (
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.utils.logcontext import for_all_methods, log_call
-
-from ... import services
 
 
 @for_all_methods(log_call, exclude=["__init__"])

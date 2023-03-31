@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kili.queries.data_connection import QueriesDataConnection
+from kili.user_interface.queries.data_connection import QueriesDataConnection
 
 
 @patch("kili.core.graphql.GraphQLClient")
