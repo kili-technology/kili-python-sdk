@@ -3,7 +3,7 @@
 from typing import Dict, List
 
 from kili.core.authentication import KiliAuth
-from kili.user_interface.queries.project import QueriesProject
+from kili.entrypoints.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter

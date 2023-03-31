@@ -1,4 +1,4 @@
-"""Unit tests for media_downloader.py of kili.user_interface.queries.assets."""
+"""Unit tests for media_downloader.py of kili.entrypoints.queries.assets."""
 
 import os
 from pathlib import Path
@@ -163,7 +163,7 @@ def test_download_media_jsoncontent_field_added_but_useful():
         ("http://...", "", True),
     ],
 )
-@mock.patch("kili.user_interface.queries.asset.media_downloader.requests")
+@mock.patch("kili.entrypoints.queries.asset.media_downloader.requests")
 def test_download_media_jsoncontent_none(
     mock_requests, content, jsoncontent, should_call_requests_get
 ):

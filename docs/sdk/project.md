@@ -2,8 +2,8 @@
 
 ## Queries
 
-::: kili.user_interface.queries.project.__init__.QueriesProject
+::: kili.entrypoints.queries.project.__init__.QueriesProject
 
 ## Mutations
 
-::: kili.user_interface.mutations.project.__init__.MutationsProject
+::: kili.entrypoints.mutations.project.__init__.MutationsProject
