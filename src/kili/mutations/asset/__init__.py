@@ -11,10 +11,10 @@ from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.core.authentication import KiliAuth
+from kili.core.helpers import format_result
 from kili.exceptions import MissingArgumentError
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.helpers import format_result
 from kili.mutations.asset.helpers import process_update_properties_in_assets_parameters
 from kili.mutations.asset.queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
@@ -27,7 +27,7 @@ from kili.services.asset_import import import_assets
 from kili.utils.logcontext import for_all_methods, log_call
 from kili.utils.pagination import _mutate_from_paginated_call
 
-from ...helpers import is_empty_list_with_warning
+from ...core.helpers import is_empty_list_with_warning
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error
 

@@ -13,6 +13,7 @@ from kili.core.constants import (
     mime_extensions_for_py_scripts,
     mime_extensions_for_txt_files,
 )
+from kili.core.helpers import format_result, get_data_type
 from kili.graphql.operations.plugin.mutations import (
     GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
@@ -22,7 +23,6 @@ from kili.graphql.operations.plugin.mutations import (
     GQL_UPDATE_WEBHOOK,
 )
 from kili.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
-from kili.helpers import format_result, get_data_type
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory

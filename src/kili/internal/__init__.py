@@ -4,7 +4,7 @@ Module for methods and classes that are for internal use by Kili Technology only
 
 from typeguard import typechecked
 
-from kili.helpers import format_result
+from kili.core.helpers import format_result
 from kili.mutations.project.queries import GQL_DELETE_PROJECT
 
 from ..mutations.organization import MutationsOrganization

@@ -7,7 +7,7 @@ from kili import services
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
 
-from ..helpers import deprecate
+from ..core.helpers import deprecate
 
 
 class Project:

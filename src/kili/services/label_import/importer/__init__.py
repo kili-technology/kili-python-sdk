@@ -11,8 +11,8 @@ from typing import Dict, List, NamedTuple, Optional, Type
 import yaml
 
 from kili.core.authentication import KiliAuth
+from kili.core.helpers import format_result, get_file_paths_to_upload
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
-from kili.helpers import format_result, get_file_paths_to_upload
 from kili.orm import Label
 from kili.services.helpers import (
     get_external_id_from_file_path,

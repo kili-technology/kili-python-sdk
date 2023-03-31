@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from typeguard import typechecked
 
 from kili.core.authentication import KiliAuth
-from kili.helpers import format_result
+from kili.core.helpers import format_result
 from kili.mutations.user.queries import (
     GQL_CREATE_USER,
     GQL_UPDATE_PASSWORD,

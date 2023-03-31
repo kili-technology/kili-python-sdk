@@ -7,7 +7,7 @@ from typeguard import typechecked
 from kili.core.authentication import KiliAuth
 from kili.utils.logcontext import for_all_methods, log_call
 
-from ...helpers import format_result
+from ...core.helpers import format_result
 from .queries import GQL_CREATE_NOTIFICATION, GQL_UPDATE_PROPERTIES_IN_NOTIFICATION
 
 

@@ -6,8 +6,8 @@ GraphQL Queries of Plugins
 from datetime import datetime
 from typing import List, NamedTuple, Optional
 
+from kili.core.helpers import format_result
 from kili.graphql import GraphQLQuery, QueryOptions
-from kili.helpers import format_result
 
 
 class PluginLogsWhere(NamedTuple):

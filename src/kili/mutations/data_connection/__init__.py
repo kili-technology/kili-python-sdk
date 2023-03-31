@@ -10,7 +10,7 @@ from kili.exceptions import GraphQLError
 from kili.utils.logcontext import for_all_methods, log_call
 
 from ... import services
-from ...helpers import format_result
+from ...core.helpers import format_result
 from ...queries.data_integration.queries import (
     GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS,
 )

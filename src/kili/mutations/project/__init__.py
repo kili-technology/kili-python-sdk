@@ -14,7 +14,7 @@ from kili.exceptions import NotFound
 from kili.utils.logcontext import for_all_methods, log_call
 
 from ...core.authentication import KiliAuth
-from ...helpers import format_result
+from ...core.helpers import format_result
 from ...services.copy_project import ProjectCopier
 from .helpers import verify_argument_ranges
 from .queries import (

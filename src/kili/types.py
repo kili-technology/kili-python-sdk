@@ -21,7 +21,7 @@ from kili.core.enums import (
     Right,
     Status,
 )
-from kili.helpers import deprecate
+from kili.core.helpers import deprecate
 
 
 @deprecate()

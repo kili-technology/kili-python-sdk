@@ -10,7 +10,7 @@ from typeguard import typechecked
 from kili import services
 from kili.cli.common_args import Arguments, Options, from_csv
 from kili.cli.helpers import collect_from_csv, get_kili_client
-from kili.helpers import get_file_paths_to_upload
+from kili.core.helpers import get_file_paths_to_upload
 from kili.services import asset_import
 from kili.services.helpers import (
     check_exclusive_options,

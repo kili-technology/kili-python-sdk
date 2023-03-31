@@ -8,10 +8,13 @@ from typing_extensions import Literal
 
 from kili import services
 from kili.core.authentication import KiliAuth
+from kili.core.helpers import (
+    disable_tqdm_if_as_generator,
+    validate_category_search_query,
+)
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids

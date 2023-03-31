@@ -6,11 +6,11 @@ from typing import Dict
 import requests
 
 from kili import __version__
+from kili.core.helpers import format_result
 from kili.graphql import QueryOptions
 from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.graphql.operations.user.queries import GQL_ME
-from kili.helpers import format_result
 
 from ..exceptions import AuthenticationFailed, UserNotFoundError
 

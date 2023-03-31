@@ -34,7 +34,7 @@ from kili.services.project import get_project
 from kili.services.types import ProjectId
 from kili.subscriptions.label import SubscriptionsLabel
 
-from .helpers import deprecate
+from .core.helpers import deprecate
 
 
 class Kili(  # pylint: disable=too-many-ancestors

@@ -6,8 +6,8 @@ GraphQL Queries of Organizations
 from datetime import datetime
 from typing import Dict, Optional
 
+from kili.core.helpers import format_result
 from kili.graphql import BaseQueryWhere, GraphQLQuery
-from kili.helpers import format_result
 
 
 class OrganizationWhere(BaseQueryWhere):

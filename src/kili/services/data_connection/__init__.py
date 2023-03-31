@@ -15,11 +15,11 @@ from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 
 from ...core.authentication import KiliAuth
+from ...core.helpers import format_result
 from ...graphql.operations.data_connection.queries import (
     DataConnectionIdWhere,
     DataConnectionQuery,
 )
-from ...helpers import format_result
 from ...mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,

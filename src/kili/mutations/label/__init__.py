@@ -10,7 +10,7 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.authentication import KiliAuth
-from kili.helpers import deprecate, format_result
+from kili.core.helpers import deprecate, format_result
 from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
