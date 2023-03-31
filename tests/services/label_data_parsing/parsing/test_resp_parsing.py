@@ -407,7 +407,6 @@ def test_bounding_poly_annotations():
     assert isinstance(my_parsed_job.bounding_poly_annotations[0].bounding_poly[0], BoundingPoly)
     assert isinstance(my_parsed_job.annotations[0].bounding_poly[0], BoundingPoly)
 
-    a = my_parsed_job.bounding_poly_annotations[0].bounding_poly
     assert (
         my_parsed_job.bounding_poly_annotations[0].bounding_poly[0].normalized_vertices == vertices
     )
