@@ -6,7 +6,7 @@ import time
 from time import sleep
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
-from kili.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
+from kili.core.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
 from kili.exceptions import GraphQLError
 
 # pylint: disable=too-many-arguments

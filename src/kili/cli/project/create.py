@@ -9,7 +9,7 @@ from tabulate import tabulate
 from kili import services
 from kili.cli.common_args import Options
 from kili.cli.helpers import get_kili_client
-from kili.constants import INPUT_TYPE
+from kili.core.constants import INPUT_TYPE
 from kili.queries.project.helpers import get_project_url
 
 

@@ -17,7 +17,7 @@ import requests
 import tenacity
 from typing_extensions import get_args, get_origin
 
-from kili.constants import mime_extensions_for_IV2
+from kili.core.constants import mime_extensions_for_IV2
 
 T = TypeVar("T")
 

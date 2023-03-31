@@ -4,7 +4,7 @@ from typing import Generator
 from unittest import TestCase
 from unittest.mock import MagicMock, call
 
-from kili.constants import QUERY_BATCH_SIZE
+from kili.core.constants import QUERY_BATCH_SIZE
 from kili.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
 
 NUMBER_OBJECT_IN_DB = 250
