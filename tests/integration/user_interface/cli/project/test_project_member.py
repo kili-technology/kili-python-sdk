@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
-from kili.graphql.operations.project_user.queries import ProjectUserQuery
+from kili.core.graphql.operations.project_user.queries import ProjectUserQuery
 from kili.user_interface.cli.project.member.add import add_member
 from kili.user_interface.cli.project.member.list_ import list_members
 from kili.user_interface.cli.project.member.remove import remove_member

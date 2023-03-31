@@ -6,8 +6,8 @@ import click
 import pandas as pd
 from tabulate import tabulate
 
-from kili.graphql import QueryOptions
-from kili.graphql.operations.project_user.queries import (
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
 )

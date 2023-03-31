@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from tabulate import tabulate
 
-from kili.graphql import QueryOptions
-from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.user_interface.cli.common_args import Options
 from kili.user_interface.cli.helpers import get_kili_client
 

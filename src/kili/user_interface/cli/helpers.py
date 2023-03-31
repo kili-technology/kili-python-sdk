@@ -5,7 +5,7 @@ import warnings
 from typing import Any, Dict, List, Optional
 
 from kili.client import Kili
-from kili.graphql.graphql_client import GraphQLClientName
+from kili.core.graphql.graphql_client import GraphQLClientName
 
 
 def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):

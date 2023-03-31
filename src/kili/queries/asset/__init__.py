@@ -7,12 +7,12 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import (
     disable_tqdm_if_as_generator,
     validate_category_search_query,
 )
-from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.queries.asset.media_downloader import get_download_assets_function
 from kili.utils.logcontext import for_all_methods, log_call
 

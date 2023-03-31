@@ -9,16 +9,15 @@ from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 from typing_extensions import Literal
 
-from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
-
-from ...core.authentication import KiliAuth
-from ...core.helpers import format_result
-from ...graphql.operations.data_connection.queries import (
+from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionIdWhere,
     DataConnectionQuery,
 )
-from ...mutations.data_connection.queries import (
+from kili.core.helpers import format_result
+from kili.mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
 )

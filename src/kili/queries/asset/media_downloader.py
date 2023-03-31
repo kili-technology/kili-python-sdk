@@ -13,9 +13,9 @@ from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
 from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.exceptions import NotFound
-from kili.graphql import QueryOptions
-from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 
 from .exceptions import MissingPropertyError
 

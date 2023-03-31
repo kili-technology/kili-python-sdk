@@ -3,7 +3,7 @@ import tempfile
 from unittest import TestCase
 from unittest.mock import call
 
-from kili.graphql.operations.asset.mutations import (
+from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )

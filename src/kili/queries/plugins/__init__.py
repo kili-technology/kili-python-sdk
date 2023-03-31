@@ -6,8 +6,8 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.graphql import QueryOptions
-from kili.graphql.operations.plugin.queries import PluginLogsWhere, PluginQuery
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.plugin.queries import PluginLogsWhere, PluginQuery
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 

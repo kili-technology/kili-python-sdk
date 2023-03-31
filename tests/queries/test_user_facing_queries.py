@@ -7,8 +7,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from typeguard import check_type
 
-from kili.graphql.operations.asset.queries import AssetQuery
-from kili.graphql.operations.user.queries import UserQuery
+from kili.core.graphql.operations.asset.queries import AssetQuery
+from kili.core.graphql.operations.user.queries import UserQuery
 from kili.queries.asset import QueriesAsset
 from kili.queries.user import QueriesUser
 

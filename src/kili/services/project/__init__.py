@@ -3,9 +3,9 @@
 from typing import List
 
 from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.exceptions import NotFound
-from kili.graphql import QueryOptions
-from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 
 
 def get_project(auth: KiliAuth, project_id: str, fields: List[str]):

@@ -5,8 +5,8 @@ import warnings
 from typing import Iterable, Optional
 
 from kili.core.authentication import KiliAuth
-from kili.graphql import QueryOptions
-from kili.graphql.operations.project_user.queries import (
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
 )

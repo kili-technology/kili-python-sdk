@@ -8,8 +8,8 @@ from unittest.mock import ANY, MagicMock, patch
 import pytest
 from click.testing import CliRunner
 
-from kili.graphql.operations.asset.queries import AssetQuery
-from kili.graphql.operations.project.queries import ProjectQuery
+from kili.core.graphql.operations.asset.queries import AssetQuery
+from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.user_interface.cli.project.create import create_project
 from kili.user_interface.cli.project.describe import describe_project
 from kili.user_interface.cli.project.export import export_labels

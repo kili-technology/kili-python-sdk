@@ -5,7 +5,7 @@ import pytest
 from kili.queries.data_connection import QueriesDataConnection
 
 
-@patch("kili.graphql.GraphQLClient")
+@patch("kili.core.graphql.GraphQLClient")
 def test_data_connections(mocked_graphql_client):
     """Test data_connections query."""
     kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))
@@ -28,7 +28,7 @@ def test_data_connections(mocked_graphql_client):
     }
 
 
-@patch("kili.graphql.GraphQLClient")
+@patch("kili.core.graphql.GraphQLClient")
 def test_data_connection(mocked_graphql_client):
     """Test data_connection query."""
     kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))

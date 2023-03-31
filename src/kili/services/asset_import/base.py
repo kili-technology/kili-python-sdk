@@ -13,17 +13,17 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
 from kili.core.authentication import KiliAuth
-from kili.core.helpers import T, format_result, is_url
-from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.mutations import (
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
 )
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.graphql.operations.organization.queries import (
+from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.graphql.operations.organization.queries import (
     OrganizationQuery,
     OrganizationWhere,
 )
+from kili.core.helpers import T, format_result, is_url
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,

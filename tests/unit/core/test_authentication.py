@@ -5,8 +5,8 @@ from unittest.mock import patch
 import pytest
 
 from kili.core.authentication import KiliAuth
-from kili.graphql.graphql_client import GraphQLClientName
-from kili.graphql.operations.api_key.queries import APIKeyQuery
+from kili.core.graphql.graphql_client import GraphQLClientName
+from kili.core.graphql.operations.api_key.queries import APIKeyQuery
 
 
 @patch("kili.core.authentication.requests")

@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kili.graphql.operations.asset.queries import AssetQuery
-from kili.graphql.operations.organization.queries import OrganizationQuery
-from kili.graphql.operations.project.queries import ProjectQuery
+from kili.core.graphql.operations.asset.queries import AssetQuery
+from kili.core.graphql.operations.organization.queries import OrganizationQuery
+from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.queries.asset import QueriesAsset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError

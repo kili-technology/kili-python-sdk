@@ -6,10 +6,10 @@ from typing import List
 from typing_extensions import Literal
 
 from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
+from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
-from kili.graphql import QueryOptions
-from kili.graphql.operations.issue.queries import IssueQuery, IssueWhere
-from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 
 
 def get_issue_numbers(

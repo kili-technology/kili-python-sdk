@@ -6,12 +6,12 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili.core.authentication import KiliAuth
-from kili.core.helpers import disable_tqdm_if_as_generator
-from kili.graphql import QueryOptions
-from kili.graphql.operations.data_connection.queries import (
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
+from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.utils.logcontext import for_all_methods, log_call
 
 from ... import services
