@@ -7,9 +7,7 @@ from kili import services
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.user_interface.queries.asset.media_downloader import (
-    get_download_assets_function,
-)
+from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 

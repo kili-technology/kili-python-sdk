@@ -4,11 +4,9 @@ from typing import Dict, List, Optional
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
 from kili.services.export.exceptions import NotExportableAssetError
 from kili.services.export.types import ExportType
-from kili.user_interface.queries.asset.media_downloader import (
-    get_download_assets_function,
-)
 
 DEFAULT_FIELDS = [
     "id",

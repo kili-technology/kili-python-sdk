@@ -11,10 +11,10 @@ from tenacity.wait import wait_fixed
 
 from kili.core.graphql.operations.label.queries import LabelQuery
 from kili.core.helpers import RetryLongWaitWarner, format_result
+from kili.entrypoints.mutations.asset import MutationsAsset
+from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
-from kili.user_interface.mutations.asset import MutationsAsset
-from kili.user_interface.mutations.issue.helpers import get_labels_asset_ids_map
 from tests.fakes.fake_kili import FakeAuth
 
 

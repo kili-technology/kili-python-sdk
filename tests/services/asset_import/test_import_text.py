@@ -5,9 +5,9 @@ import pytest
 from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.entrypoints.queries.asset import QueriesAsset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
-from kili.user_interface.queries.asset import QueriesAsset
 from tests.services.asset_import.base import ImportTestCase
 from tests.services.asset_import.mocks import (
     mocked_organization_with_upload_from_local,

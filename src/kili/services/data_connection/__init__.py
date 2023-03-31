@@ -17,7 +17,7 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionQuery,
 )
 from kili.core.helpers import format_result
-from kili.user_interface.mutations.data_connection.queries import (
+from kili.entrypoints.mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
 )

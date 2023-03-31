@@ -6,7 +6,7 @@ from unittest import mock
 
 import pytest
 
-from kili.user_interface.queries.asset.media_downloader import MediaDownloader
+from kili.entrypoints.queries.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
 
