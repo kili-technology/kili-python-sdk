@@ -5,7 +5,7 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,

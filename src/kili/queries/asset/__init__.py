@@ -6,7 +6,7 @@ import pandas as pd
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.helpers import disable_tqdm_if_as_generator, validate_category_search_query

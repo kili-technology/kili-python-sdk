@@ -5,7 +5,7 @@ from typing import Callable
 
 from typeguard import typechecked
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 
 from ...graphql.graphql_client import SubscriptionGraphQLClient
 from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED

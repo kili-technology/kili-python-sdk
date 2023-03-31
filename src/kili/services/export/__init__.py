@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter

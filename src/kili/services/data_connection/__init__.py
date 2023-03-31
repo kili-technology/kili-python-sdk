@@ -14,7 +14,7 @@ from typing_extensions import Literal
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 
-from ...authentication import KiliAuth
+from ...core.authentication import KiliAuth
 from ...graphql.operations.data_connection.queries import (
     DataConnectionIdWhere,
     DataConnectionQuery,

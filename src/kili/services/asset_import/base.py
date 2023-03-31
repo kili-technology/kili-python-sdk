@@ -14,7 +14,7 @@ from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,

@@ -7,7 +7,7 @@ from typing import List
 
 from typing_extensions import Literal
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.issue.queries import IssueQuery, IssueWhere

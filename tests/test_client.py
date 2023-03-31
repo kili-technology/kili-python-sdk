@@ -10,7 +10,7 @@ from kili.client import Kili
 from kili.exceptions import AuthenticationFailed
 
 
-@patch("kili.authentication.requests")
+@patch("kili.core.authentication.requests")
 def test_no_api_key(mocked_requests):
     """test fail because no api key is found"""
     with patch.dict(os.environ):
@@ -19,7 +19,7 @@ def test_no_api_key(mocked_requests):
             _ = Kili()
 
 
-@patch("kili.authentication.requests")
+@patch("kili.core.authentication.requests")
 def test_wrong_api_key(mocked_requests):
     """test obfuscation of api key"""
     with patch.dict(os.environ):
@@ -30,7 +30,7 @@ def test_wrong_api_key(mocked_requests):
             _ = Kili(api_key="wrong_api_key")
 
 
-@patch("kili.authentication.requests")
+@patch("kili.core.authentication.requests")
 def test_wrong_api_key_shot(mocked_requests):
     """test no need to obfuscate api key"""
     with patch.dict(os.environ):

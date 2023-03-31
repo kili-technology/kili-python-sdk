@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.services.plugins import (
     PluginUploader,
     WebhookUploader,

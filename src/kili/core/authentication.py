@@ -12,7 +12,7 @@ from kili.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.graphql.operations.user.queries import GQL_ME
 from kili.helpers import format_result
 
-from .exceptions import AuthenticationFailed, UserNotFoundError
+from ..exceptions import AuthenticationFailed, UserNotFoundError
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 

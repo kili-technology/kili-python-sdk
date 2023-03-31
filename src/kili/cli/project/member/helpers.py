@@ -4,9 +4,9 @@ import re
 import warnings
 from typing import Iterable, Optional
 
-from kili.authentication import KiliAuth
 from kili.cli.common_args import ROLES
 from kili.cli.helpers import collect_from_csv
+from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project_user.queries import (
     ProjectUserQuery,

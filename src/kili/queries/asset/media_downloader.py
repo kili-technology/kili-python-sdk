@@ -12,7 +12,7 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere

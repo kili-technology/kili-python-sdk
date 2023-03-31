@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.exceptions import GraphQLError
 from kili.utils.logcontext import for_all_methods, log_call
 

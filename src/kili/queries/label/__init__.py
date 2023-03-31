@@ -7,7 +7,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili import services
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere

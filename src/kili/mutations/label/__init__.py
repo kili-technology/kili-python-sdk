@@ -9,7 +9,7 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 
 from kili import services
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.helpers import deprecate, format_result
 from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.mutations.label.queries import (

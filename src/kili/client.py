@@ -3,7 +3,7 @@ This script permits to initialize the Kili Python SDK client.
 """
 import os
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.exceptions import AuthenticationFailed
 from kili.graphql.graphql_client import GraphQLClientName
 from kili.internal import KiliInternal

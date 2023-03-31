@@ -4,7 +4,7 @@ Notification mutations
 
 from typeguard import typechecked
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.utils.logcontext import for_all_methods, log_call
 
 from ...helpers import format_result

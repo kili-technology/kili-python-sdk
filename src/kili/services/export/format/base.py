@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets

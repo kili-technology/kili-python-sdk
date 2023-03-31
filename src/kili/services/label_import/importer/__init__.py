@@ -10,7 +10,7 @@ from typing import Dict, List, NamedTuple, Optional, Type
 
 import yaml
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.helpers import format_result, get_file_paths_to_upload
 from kili.orm import Label

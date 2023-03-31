@@ -5,7 +5,7 @@ from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere

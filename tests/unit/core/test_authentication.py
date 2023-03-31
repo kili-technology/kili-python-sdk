@@ -4,15 +4,15 @@ from unittest.mock import patch
 
 import pytest
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql.graphql_client import GraphQLClientName
 from kili.graphql.operations.api_key.queries import APIKeyQuery
 
 
-@patch("kili.authentication.requests")
+@patch("kili.core.authentication.requests")
 @patch.object(KiliAuth, "check_api_key_valid", return_value=True)
 @patch.object(KiliAuth, "get_user", return_value={"id": "id", "email": "email"})
-@patch("kili.authentication.GraphQLClient", return_value=None)
+@patch("kili.core.authentication.GraphQLClient", return_value=None)
 def test_check_expiry_of_key_is_close(*_):
     with patch.object(
         APIKeyQuery, "__call__", return_value=iter([{"expiryDate": "2021-01-01T00:00:00.000Z"}])

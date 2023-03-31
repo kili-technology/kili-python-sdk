@@ -3,7 +3,7 @@ Set of common functions used by different export formats
 """
 from typing import Dict, List, Optional
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.queries.asset.media_downloader import get_download_assets_function

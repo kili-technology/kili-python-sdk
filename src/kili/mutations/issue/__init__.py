@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.graphql import QueryOptions
 from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.mutations.asset.helpers import get_asset_ids_or_throw_error

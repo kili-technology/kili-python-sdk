@@ -11,7 +11,7 @@ from kili.graphql.operations.plugin.queries import PluginLogsWhere, PluginQuery
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 
-from ...authentication import KiliAuth
+from ...core.authentication import KiliAuth
 
 
 @for_all_methods(log_call, exclude=["__init__"])

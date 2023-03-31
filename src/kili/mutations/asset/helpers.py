@@ -3,7 +3,7 @@ Helpers for the asset mutations
 """
 from typing import Dict, List, Optional
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.mutations.helpers import check_asset_identifier_arguments
 from kili.services.helpers import infer_ids_from_external_ids
 

@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 from zipfile import ZipFile
 
-from kili.authentication import KiliAuth
 from kili.constants import mime_extensions_for_py_scripts, mime_extensions_for_txt_files
+from kili.core.authentication import KiliAuth
 from kili.graphql.operations.plugin.mutations import (
     GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
