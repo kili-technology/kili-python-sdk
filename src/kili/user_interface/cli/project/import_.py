@@ -1,4 +1,4 @@
-"""CLI's project import subcommand"""
+"""CLI's project import subcommand."""
 
 import os
 import urllib.request
@@ -19,7 +19,7 @@ from kili.user_interface.cli.helpers import collect_from_csv, get_kili_client
 
 
 def check_asset_type(key, value):
-    """type check value based on key"""
+    """Type check value based on key."""
     if key == "content" and not os.path.isfile(value):
         with urllib.request.urlopen(value) as http_response:
             if not http_response.getcode() == 200:
@@ -28,15 +28,14 @@ def check_asset_type(key, value):
     return ""
 
 
-def generate_json_metadata(as_frames, fps):
-    """Generate the json_metadata for input of the import_assets service
-    when uploading from a list of path
+def generate_json_metadata(as_frames: bool, fps: Optional[int]):
+    # pylint: disable=line-too-long
+    """Generate the json_metadata for input of the import_assets service when uploading from a list of path.
 
     Args:
         as_frames: for a frame project, if videos should be split in frames
         fps: for a frame project, import videos with this frame rate
     """
-
     return {
         "processingParameters": {
             "shouldKeepNativeFrameRate": fps is None,
@@ -79,8 +78,7 @@ def import_assets(
     as_frames: bool,
     verbose: bool,  # pylint: disable=unused-argument
 ):
-    """
-    Add assets into a project
+    """Add assets into a project.
 
     Files can be paths to files or to folders. You can provide several paths separated by spaces.
 

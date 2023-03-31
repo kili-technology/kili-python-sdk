@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Plugins
-"""
+"""GraphQL Queries of Plugins."""
 
 
 from datetime import datetime
@@ -11,9 +9,7 @@ from kili.graphql import GraphQLQuery, QueryOptions
 
 
 class PluginLogsWhere(NamedTuple):
-    """
-    Tuple to be passed to the PluginQuery to restrict query
-    """
+    """Tuple to be passed to the PluginQuery to restrict query."""
 
     project_id: str
     plugin_name: str
@@ -26,6 +22,7 @@ class PluginQuery(GraphQLQuery):
     @staticmethod
     def query(fragment):
         """The Plugin query is not implemented as other queries.
+
         To overpass the technical debt, the plugin query is access by calling the list method
         """
         _ = fragment
@@ -70,9 +67,7 @@ class PluginQuery(GraphQLQuery):
 
     @staticmethod
     def gql_list_plugins(fragment):
-        """
-        Return the GraphQL list_plugins query
-        """
+        """Return the GraphQL list_plugins query."""
         return f"""
         query listPlugins{{
             data: listPlugins {{
@@ -82,19 +77,14 @@ class PluginQuery(GraphQLQuery):
         """
 
     def list(self, fields: List[str]):
-        """
-        List plugins
-        """
+        """List plugins."""
         fragment = self.fragment_builder(fields)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
         return format_result("data", result)
 
     def get_logs(self, where: PluginLogsWhere, options: QueryOptions):
-        """
-        Get logs of a plugin in Kili
-        """
-
+        """Get logs of a plugin in Kili."""
         payload = {
             "projectId": where.project_id,
             "pluginName": where.plugin_name,

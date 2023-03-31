@@ -1,6 +1,4 @@
-"""
-Functions to activate/deactivate a plugin
-"""
+"""Functions to activate/deactivate a plugin."""
 
 
 from kili.core.authentication import KiliAuth
@@ -14,10 +12,7 @@ from kili.services.plugins.tools import check_errors_plugin_activation
 
 
 def activate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
-    """
-    Create a plugin in Kili
-    """
-
+    """Create a plugin in Kili."""
     logger = get_logger()
 
     variables = {"pluginName": plugin_name, "projectId": project_id}
@@ -33,10 +28,7 @@ def activate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
 
 
 def deactivate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
-    """
-    Create a plugin in Kili
-    """
-
+    """Create a plugin in Kili."""
     logger = get_logger()
 
     variables = {"pluginName": plugin_name, "projectId": project_id}

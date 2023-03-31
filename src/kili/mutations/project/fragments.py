@@ -1,6 +1,4 @@
-"""
-Fragments of project mutations
-"""
+"""Fragments of project mutations."""
 
 PROJECT_FRAGMENT = """
 id

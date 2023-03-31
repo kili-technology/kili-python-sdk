@@ -39,6 +39,7 @@ class QueriesPlugins:
     ):
         # pylint: disable=line-too-long
         """Get paginated logs of a plugin on a project.
+
         Args:
             project_id: Identifier of the project
             plugin_name: Name of the plugin

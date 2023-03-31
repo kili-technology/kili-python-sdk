@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Labels
-"""
+"""GraphQL Queries of Labels."""
 
 
 from typing import List, Optional
@@ -10,9 +8,7 @@ from kili.orm import Label as LabelFormatType
 
 
 class LabelWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the LabelQuery to restrict query
-    """
+    """Tuple to be passed to the LabelQuery to restrict query."""
 
     # pylint: disable=too-many-arguments,too-many-locals,too-many-instance-attributes
 
@@ -52,7 +48,7 @@ class LabelWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK LabelWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK LabelWhere."""
         return {
             "id": self.label_id,
             "asset": {
@@ -85,9 +81,7 @@ class LabelQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL labels query
-        """
+        """Return the GraphQL labels query."""
         return f"""
         query labels($where: LabelWhere!, $first: PageSize!, $skip: Int!) {{
             data: labels(where: $where, first: $first, skip: $skip) {{

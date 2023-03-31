@@ -1,6 +1,4 @@
-"""
-Common and generic functions to import files into a project
-"""
+"""Common and generic functions to import files into a project."""
 import logging
 import mimetypes
 import os
@@ -45,44 +43,34 @@ from ...core.helpers import RetryLongWaitWarner
 
 
 class BatchParams(NamedTuple):
-    """
-    Contains all parameters related to the batch to import
-    """
+    """Contains all parameters related to the batch to import."""
 
     is_asynchronous: bool
     is_hosted: bool
 
 
 class ProcessingParams(NamedTuple):
-    """
-    Contains all parameters related to the assets processing
-    """
+    """Contains all parameters related to the assets processing."""
 
     raise_error: bool
     verify: bool
 
 
 class ProjectParams(NamedTuple):
-    """
-    Contains all parameters related to the batch to import
-    """
+    """Contains all parameters related to the batch to import."""
 
     project_id: str
     input_type: str
 
 
 class LoggerParams(NamedTuple):
-    """
-    Contains all parameters related to logging
-    """
+    """Contains all parameters related to logging."""
 
     disable_tqdm: bool
 
 
 class BaseBatchImporter:
-    """
-    Base class for BatchImporters
-    """
+    """Base class for BatchImporters."""
 
     def __init__(
         self, auth: KiliAuth, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm
@@ -100,9 +88,7 @@ class BaseBatchImporter:
 
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):
-        """
-        Base actions to import a batch of asset
-        """
+        """Base actions to import a batch of asset."""
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
@@ -113,9 +99,7 @@ class BaseBatchImporter:
         return result_batch
 
     def verify_batch_imported(self, assets: List):
-        """
-        Verifies that the batch has been imported successfully
-        """
+        """Verifies that the batch has been imported successfully."""
         if self.is_asynchronous:
             logger_func = self.logger.info
             log_message = (
@@ -145,22 +129,16 @@ class BaseBatchImporter:
                     )
 
     def add_ids(self, assets: List[AssetLike]):
-        """
-        Adds ids to all assets
-        """
+        """Adds ids to all assets."""
         return self.loop_on_batch(self.add_id_to_asset)(assets)
 
     def generate_project_bucket_path(self) -> str:
-        """
-        Returns ids
-        """
+        """Returns ids."""
         return f"projects/{self.project_id}/assets"
 
     @staticmethod
     def stringify_metadata(asset: AssetLike) -> AssetLike:
-        """
-        Stringify the metadata
-        """
+        """Stringify the metadata."""
         json_metadata = asset.get("json_metadata", {})
         if not isinstance(json_metadata, str):
             json_metadata = dumps(json_metadata)
@@ -168,9 +146,7 @@ class BaseBatchImporter:
 
     @staticmethod
     def stringify_json_content(asset: AssetLike) -> AssetLike:
-        """
-        Stringify the metadata
-        """
+        """Stringify the metadata."""
         json_content = asset.get("json_content", "")
         if not isinstance(json_content, str):
             json_content = dumps(json_content)
@@ -178,17 +154,12 @@ class BaseBatchImporter:
 
     @staticmethod
     def add_id_to_asset(asset: AssetLike) -> AssetLike:
-        """
-        Generates an asset id
-        """
-
+        """Generates an asset id."""
         return {**asset, "id": asset.get("id", bucket.generate_unique_id())}
 
     @staticmethod
     def fill_empty_fields(asset: AssetLike):
-        """
-        fill empty fields with their default value
-        """
+        """Fill empty fields with their default value."""
         asset_fields_default_value = AssetLike(
             content="",
             json_content="",
@@ -205,9 +176,7 @@ class BaseBatchImporter:
 
     @staticmethod
     def loop_on_batch(func: Callable[[AssetLike], T]) -> Callable[[List[AssetLike]], List[T]]:
-        """
-        Apply a function, that takes a single asset as input, on the whole batch
-        """
+        """Apply a function, that takes a single asset as input, on the whole batch."""
 
         def loop_func(assets: List[AssetLike]):
             return [func(asset) for asset in assets]
@@ -216,15 +185,11 @@ class BaseBatchImporter:
 
     @staticmethod
     def build_url_from_parts(*parts) -> str:
-        """
-        Builds an url from the parts
-        """
+        """Builds an url from the parts."""
         return "/".join(parts)
 
     def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
-        """
-        Import assets with asynchronous resolver.
-        """
+        """Import assets with asynchronous resolver."""
         upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO"
         payload = {
             "data": {
@@ -240,9 +205,7 @@ class BaseBatchImporter:
         return format_result("data", results, Asset)
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
-        """
-        Import assets with synchronous resolver
-        """
+        """Import assets with synchronous resolver."""
         payload = {
             "data": {
                 "contentArray": [asset["content"] for asset in assets],
@@ -259,24 +222,18 @@ class BaseBatchImporter:
         return format_result("data", results, Asset)
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
-        """
-        Import assets to Kili with the right resolver
-        """
+        """Import assets to Kili with the right resolver."""
         if self.is_asynchronous:
             return self._async_import_to_kili(assets)
         return self._sync_import_to_kili(assets)
 
 
 class ContentBatchImporter(BaseBatchImporter):
-    """
-    Class defining the methods to import a batch of assets with content
-    """
+    """Class defining the methods to import a batch of assets with content."""
 
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):
-        """
-        Method to import a batch of asset with content
-        """
+        """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
             assets = self.upload_local_content_to_bucket(assets)
@@ -285,9 +242,7 @@ class ContentBatchImporter(BaseBatchImporter):
     def get_content_type_and_data_from_content(
         self, content: Optional[Union[str, bytes]]
     ) -> Tuple[bytes, Optional[str]]:
-        """
-        Returns the data of the content (path) and its content type
-        """
+        """Returns the data of the content (path) and its content type."""
         assert content
         assert isinstance(content, str)
         with Path(content).open("rb") as file:
@@ -298,15 +253,12 @@ class ContentBatchImporter(BaseBatchImporter):
     def get_type_and_data_from_content_array(
         self, content_array: List[Optional[Union[str, bytes]]]
     ) -> List[Tuple[Union[bytes, str], Optional[str]]]:
-        """
-        Returns the data of the content (path) and its content type for each element in the array
-        """
+        # pylint:disable=line-too-long
+        """Returns the data of the content (path) and its content type for each element in the array."""
         return list(map(self.get_content_type_and_data_from_content, content_array))
 
     def upload_local_content_to_bucket(self, assets: List[AssetLike]):
-        """
-        Upload local content to a bucket
-        """
+        """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
         asset_content_paths = [
             BaseBatchImporter.build_url_from_parts(
@@ -327,24 +279,18 @@ class ContentBatchImporter(BaseBatchImporter):
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
-    """
-    Class defining the import methods for a batch of assets twith json_content
-    """
+    """Class defining the import methods for a batch of assets twith json_content."""
 
     @staticmethod
     def stringify_json_content(asset: AssetLike):
-        """
-        Stringify the json content if not a str.
-        """
+        """Stringify the json content if not a str."""
         json_content = asset.get("json_content", {})
         if not isinstance(json_content, str):
             json_content = dumps(json_content)
         return AssetLike(**{**asset, "json_content": json_content})
 
     def upload_json_content_to_bucket(self, assets: List[AssetLike]):
-        """
-        Upload the json_contents to a bucket with signed urls
-        """
+        """Upload the json_contents to a bucket with signed urls."""
         project_bucket_path = self.generate_project_bucket_path()
         asset_json_content_paths = [
             BaseBatchImporter.build_url_from_parts(
@@ -367,9 +313,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
 
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):
-        """
-        Method to import a batch of asset with json content
-        """
+        """Method to import a batch of asset with json content."""
         assets = self.add_ids(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets = self.upload_json_content_to_bucket(assets)
@@ -377,9 +321,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
 
 
 class BaseAssetImporter:
-    """
-    Base class for DataImporters classes
-    """
+    """Base class for DataImporters classes."""
 
     def __init__(
         self,
@@ -396,19 +338,17 @@ class BaseAssetImporter:
 
     @staticmethod
     def is_hosted_content(assets: List[AssetLike]):
-        """
-        Determine if the assets to upload are from local files or hosted data
-        Raise an error if a mix of both
+        """Determine if the assets to upload are from local files or hosted data
+
+        Raise an error if a mix of both.
         """
         contents = [asset.get("content") for asset in assets]
         if all(is_url(content) for content in contents):
             return True
         if any(is_url(content) for content in contents):
             raise ImportValidationError(
-                """
-                Cannot upload hosted data and local files at the same time.
-                Please separate the assets into 2 calls
-                """
+                "Cannot upload hosted data and local files at the same time. Please separate the"
+                " assets into 2 calls."
             )
         return False
 
@@ -428,8 +368,8 @@ class BaseAssetImporter:
             raise UploadFromLocalDataForbiddenError("Cannot upload content from local data")
 
     def filter_local_assets(self, assets: List[AssetLike], raise_error: bool):
-        """
-        Filter out local files that cannot be imported.
+        """Filter out local files that cannot be imported.
+
         Return an error at the first file that cannot be imported if raise_error is True
         """
         filtered_assets = []
@@ -444,17 +384,14 @@ class BaseAssetImporter:
                 if raise_error:
                     raise err
         if len(filtered_assets) == 0:
+            # pylint: disable=line-too-long
             raise ImportValidationError(
-                """
-                No files to upload.
-                Check that the paths exist and file types are compatible with the project
-                """
+                """No files to upload. Check that the paths exist and file types are compatible with the project."""
             )
         return filtered_assets
 
     def check_mime_type_compatibility(self, path: str):
-        """
-        Check that the mimetype of a local file is compatible with the project input type.
+        """Check that the mimetype of a local file is compatible with the project input type.
 
         Raise:
              FileNotFoundError: if path do not exists
@@ -469,11 +406,9 @@ class BaseAssetImporter:
         input_type = self.project_params.input_type
         if mime_type not in project_compatible_mimetypes[input_type]:
             raise MimeTypeError(
-                f"""
-                File mime type for {path} is {mime_type} and does not correspond
-                to the type of the project.
-                File mime type should be one of {project_compatible_mimetypes[input_type]}
-                """
+                f"File mime type for {path} is {mime_type} and does not correspond to the type of"
+                " the project. File mime type should be one of"
+                f" {project_compatible_mimetypes[input_type]}"
             )
         return True
 

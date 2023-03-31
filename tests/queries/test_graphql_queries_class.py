@@ -1,4 +1,4 @@
-"""Module for testing the graphQLQuery class"""
+"""Module for testing the graphQLQuery class."""
 
 from typing import Generator
 from unittest import TestCase
@@ -48,10 +48,10 @@ class FakeWhere(BaseQueryWhere):
 
 
 class TestGraphQLQueries(TestCase):
-    """General tests of the GrpahQL Query class"""
+    """General tests of the GrpahQL Query class."""
 
     def setUp(self):
-        """Setup up before every test"""
+        """Setup up before every test."""
         self.fake_client = MagicMock()
         self.fake_client.execute = MagicMock(side_effect=mocked_client_execute)
         self.where = FakeWhere(project_id="project-id")

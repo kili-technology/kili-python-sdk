@@ -1,4 +1,4 @@
-"""Service module for projects"""
+"""Service module for projects."""
 
 from typing import List
 
@@ -9,7 +9,7 @@ from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 
 
 def get_project(auth: KiliAuth, project_id: str, fields: List[str]):
-    """Get a project from its id or raise a NotFound Error if not found"""
+    """Get a project from its id or raise a NotFound Error if not found."""
     projects = list(
         ProjectQuery(auth.client)(
             ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True)
@@ -25,6 +25,5 @@ def get_project(auth: KiliAuth, project_id: str, fields: List[str]):
 
 def get_project_field(auth: KiliAuth, project_id: str, field: str):
     """Get one project field from a the project id or raise a NotFound Error
-    if the project is not found
-    """
+    if the project is not found."""
     return get_project(auth, project_id, [field])[field]

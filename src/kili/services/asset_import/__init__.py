@@ -1,4 +1,4 @@
-"""Service for importing objects into kili"""
+"""Service for importing objects into kili."""
 
 from typing import Dict, List
 
@@ -29,9 +29,7 @@ def import_assets(  # pylint: disable=too-many-arguments
     disable_tqdm=False,
     verify=True,
 ):
-    """
-    import the selected assets into the specified project
-    """
+    """Import the selected assets into the specified project."""
     kili = QueriesProject(auth=auth)
     input_type = get_project_field(kili.auth, project_id, "inputType")
 

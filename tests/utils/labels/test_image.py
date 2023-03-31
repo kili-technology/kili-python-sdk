@@ -4,7 +4,10 @@ import urllib.request
 import cv2  # type: ignore
 import numpy as np
 
-from kili.utils.labels import mask_to_normalized_vertices, normalized_vertices_to_mask
+from kili.utils.labels.image import (
+    mask_to_normalized_vertices,
+    normalized_vertices_to_mask,
+)
 
 
 def test_mask_to_normalized_vertices():

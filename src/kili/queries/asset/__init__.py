@@ -19,9 +19,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesAsset:
-    """
-    Set of Asset queries
-    """
+    """Set of Asset queries."""
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin
 
@@ -209,7 +207,7 @@ class QueriesAsset:
             external_id_contains: Returned assets have an external id that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
             honeypot_mark_gt: Minimum amount of honeypot for the asset.
-            honeypot_mark_lt : Maximum amount of honeypot for the asset.
+            honeypot_mark_lt: Maximum amount of honeypot for the asset.
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
@@ -353,6 +351,7 @@ class QueriesAsset:
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
     ) -> int:
+        # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
 
         Parameters beginning with 'label_' apply to labels, others apply to assets.
@@ -393,6 +392,9 @@ class QueriesAsset:
                 whose update date is greated or equal to this date.
             updated_at_lte: Returned assets should have a label
                 whose update date is lower or equal to this date.
+            label_category_search: Returned assets should have a label that follows this category search query.
+            created_at_gte: Returned assets should have their import date greater or equal to this date.
+            created_at_lte: Returned assets should have their import date lower or equal to this date.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"

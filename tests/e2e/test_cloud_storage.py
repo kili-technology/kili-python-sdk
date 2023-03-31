@@ -1,6 +1,4 @@
-"""
-Test cloud storage methods
-"""
+"""Test cloud storage methods."""
 
 import json
 import os
@@ -104,9 +102,7 @@ def test_e2e_synchronize_cloud_storage_connection(
     platform_name: str,
     data_integration_id: str,
 ):
-    """
-    e2e test for cloud storage methods
-    """
+    """E2e test for cloud storage methods."""
     if not is_same_endpoint(endpoint_short_name, kili.auth.api_endpoint):
         pytest.skip("Skipping test because it is not the right endpoint.")
 

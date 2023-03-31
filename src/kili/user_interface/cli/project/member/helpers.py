@@ -1,4 +1,4 @@
-"""CLI's Project Member common functions"""
+"""CLI's Project Member common functions."""
 
 import re
 import warnings
@@ -17,7 +17,7 @@ REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z
 
 
 def type_check_member(key, value):
-    """type check value based on key"""
+    """Type check value based on key."""
     if key == "email" and not re.search(REGEX_EMAIL, value):
         return f"{value} is not a valid email address, "
 
@@ -28,7 +28,7 @@ def type_check_member(key, value):
 
 
 def collect_members_from_csv(csv_path: str, role: Optional[str]):
-    """read a csv with to collect members and role"""
+    """Read a csv with to collect members and role."""
     members_to_add = collect_from_csv(
         csv_path=csv_path,
         required_columns=["email"],
@@ -54,7 +54,7 @@ def collect_members_from_csv(csv_path: str, role: Optional[str]):
 
 
 def collect_members_from_project(auth: KiliAuth, project_id_source: str, role: Optional[str]):
-    """copy members from project of id project_id_source"""
+    """Copy members from project of id project_id_source."""
     activated_members = []
 
     if role is not None:
@@ -81,7 +81,7 @@ def collect_members_from_project(auth: KiliAuth, project_id_source: str, role: O
 
 
 def collect_members_from_emails(emails: Iterable[str], role: Optional[str]):
-    """collect members with email address from emails"""
+    """Collect members with email address from emails."""
     if role is None:
         role = "LABELER"
     members_to_add = []

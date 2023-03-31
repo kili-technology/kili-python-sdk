@@ -1,6 +1,4 @@
-"""
-Plugins related mutations
-"""
+"""Plugins related mutations."""
 
 GQL_CREATE_PLUGIN = """
 mutation(

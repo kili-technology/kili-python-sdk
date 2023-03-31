@@ -1,6 +1,4 @@
-"""
-Fragments of user mutations
-"""
+"""Fragments of user mutations."""
 
 AUTH_PAYLOAD_FRAGMENT = """
 id

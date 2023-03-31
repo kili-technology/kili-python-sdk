@@ -1,6 +1,4 @@
-"""
-My custom plugin for bills
-"""
+"""My custom plugin for bills."""
 from typing import Dict
 
 from kili.plugins import PluginCore
@@ -21,14 +19,10 @@ def check_rules_on_label(label: Dict):
 
 
 class PluginHandler(PluginCore):
-    """
-    Custom plugin instance
-    """
+    """Custom plugin instance."""
 
     def on_submit(self, label: Dict, asset_id: str) -> None:
-        """
-        Dedicated handler for Submit action
-        """
+        """Dedicated handler for Submit action."""
         self.logger.info("On submit called")
 
         issues_array = check_rules_on_label(label)

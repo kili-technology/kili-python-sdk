@@ -1,4 +1,4 @@
-"""Module for testing the user-facing-queries method"""
+"""Module for testing the user-facing-queries method."""
 
 
 from typing import Dict, Generator, List

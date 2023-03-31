@@ -84,9 +84,7 @@ class TestCLIProjectImport:
         name,
         test_case,
     ):
-        """
-        Test that the CLI properly calls the label_import service
-        """
+        """Test that the CLI properly calls the label_import service."""
         print()
         _, _, _ = mocker_project, mocker_kili, name
         runner = CliRunner()

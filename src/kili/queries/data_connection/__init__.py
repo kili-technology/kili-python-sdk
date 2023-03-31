@@ -20,9 +20,7 @@ from ... import services
 @for_all_methods(log_call, exclude=["__init__"])
 # pylint: disable=too-few-public-methods
 class QueriesDataConnection:
-    """
-    Set of cloud storage connection queries
-    """
+    """Set of cloud storage connection queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 

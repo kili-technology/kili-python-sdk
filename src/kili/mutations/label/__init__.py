@@ -1,6 +1,4 @@
-"""
-Label mutations
-"""
+"""Label mutations."""
 
 import warnings
 from json import dumps
@@ -133,21 +131,20 @@ class MutationsLabel:
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ):
-        """
-        !!! danger "[DEPRECATED]"
+        """!!! danger "[DEPRECATED]"
             append_to_labels method is deprecated. Please use append_labels instead.
             This new function allows to import several labels 10 times faster.
 
         Append a label to an asset.
 
         Args:
-            json_response: Label is given here
-            author_id: ID of the author of the label
-            label_asset_external_id: External identifier of the asset
-            label_asset_id: Identifier of the asset
-            project_id: Identifier of the project
-            label_type: Can be one of `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
-            seconds_to_label: Time to create the label
+            json_response: Label is given here.
+            author_id: ID of the author of the label.
+            label_asset_external_id: External identifier of the asset.
+            label_asset_id: Identifier of the asset.
+            project_id: Identifier of the project.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            seconds_to_label: Time to create the label.
 
         !!! warning
             Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
@@ -158,7 +155,6 @@ class MutationsLabel:
 
         Examples:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
-
         """
         if author_id is None:
             author_id = self.auth.user_id
@@ -200,15 +196,16 @@ class MutationsLabel:
         """Append labels to assets.
 
         Args:
-            asset_id_array: list of asset internal ids to append labels on
-            json_response_array: list of labels to append
-            author_id_array: list of the author id of the labels
-            seconds_to_label_array: list of times taken to produce the label, in seconds
+            asset_id_array: list of asset internal ids to append labels on.
+            json_response_array: list of labels to append.
+            author_id_array: list of the author id of the labels.
+            seconds_to_label_array: list of times taken to produce the label, in seconds.
             model_name: Only useful when uploading predictions.
-                Name of the model when uploading predictions
-            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`
-            project_id: Identifier of the project
-            asset_external_id_array: list of asset external ids to append labels on
+                Name of the model when uploading predictions.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            project_id: Identifier of the project.
+            asset_external_id_array: list of asset external ids to append labels on.
+            disable_tqdm: Disable tqdm progress bar.
 
         Returns:
             A result object which indicates if the mutation was successful,

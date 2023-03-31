@@ -1,6 +1,4 @@
-"""
-Notification mutations
-"""
+"""Notification mutations."""
 
 from typeguard import typechecked
 

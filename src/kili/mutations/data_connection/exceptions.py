@@ -1,6 +1,4 @@
-"""
-Exceptions for data connection mutations
-"""
+"""Exceptions for data connection mutations."""
 
 
 class AddDataConnectionError(Exception):

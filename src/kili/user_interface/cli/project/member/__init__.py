@@ -1,4 +1,4 @@
-"""Project member command of Kili CLI"""
+"""Project member command of Kili CLI."""
 
 import click
 
@@ -11,7 +11,7 @@ from kili.user_interface.cli.project.member.update import update_member
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def member():
-    """Commands to interact with Kili project members"""
+    """Commands to interact with Kili project members."""
 
 
 member.add_command(list_members, name="list")

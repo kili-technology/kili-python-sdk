@@ -1,4 +1,4 @@
-"""CLI's project copy subcommand"""
+"""CLI's project copy subcommand."""
 
 from typing import Optional
 

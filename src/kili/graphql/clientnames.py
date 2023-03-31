@@ -1,6 +1,4 @@
-"""
-Client names
-"""
+"""Client names."""
 from enum import Enum
 
 

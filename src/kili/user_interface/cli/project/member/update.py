@@ -1,4 +1,4 @@
-"""CLI's project member update subcommand"""
+"""CLI's project member update subcommand."""
 
 import warnings
 from typing import Iterable, Optional
@@ -38,7 +38,7 @@ def update_member(
     csv_path: Optional[str],
     project_id_src: Optional[str],
 ):
-    """Update member's role of a Kili project
+    """Update member's role of a Kili project.
 
     Emails can be passed directly as arguments.
     You can provide several emails separated by spaces.

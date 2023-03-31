@@ -1,6 +1,4 @@
-"""
-Set of common functions used by different export formats
-"""
+"""Set of common functions used by different export formats."""
 from typing import Dict, List, Optional
 
 from kili.core.authentication import KiliAuth
@@ -44,9 +42,7 @@ LATEST_LABEL_FIELDS = [
 
 
 def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportType):
-    """
-    Adds `name` field for author, by concatenating his/her first and last name
-    """
+    """Adds `name` field for author, by concatenating his/her first and last name."""
     for asset in assets:
         if export_type == "latest":
             latest_label = asset["latestLabel"]
@@ -65,8 +61,8 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     auth: KiliAuth,
     project_id: str,
     asset_ids: Optional[List[str]],
-    export_type,
-    label_type_in=None,
+    export_type: ExportType,
+    label_type_in: Optional[List[str]] = None,
     disable_tqdm: bool = False,
     download_media: bool = False,
     local_media_dir: Optional[str] = None,
@@ -78,8 +74,9 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     downloaded into the `$HOME/.cache` folder.
 
     Args:
+        auth: Kili authentication object
         project_id: project id
-        assets_ids: list of asset IDs
+        asset_ids: list of asset IDs
         export_type: type of export (latest label or all labels)
         label_type_in: types of label to fetch (default, reviewed, ...)
         disable_tqdm: tell to disable tqdm
@@ -89,7 +86,6 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     Returns:
         List of fetched assets.
     """
-
     fields = get_fields_to_fetch(export_type)
     assets = None
 
@@ -122,9 +118,7 @@ def _check_content_presence(assets: List[Dict]):
 
 
 def get_fields_to_fetch(export_type: ExportType):
-    """
-    Returns the fields to fetch depending on the export type
-    """
+    """Returns the fields to fetch depending on the export type."""
     if export_type == "latest":
         return LATEST_LABEL_FIELDS
     return DEFAULT_FIELDS

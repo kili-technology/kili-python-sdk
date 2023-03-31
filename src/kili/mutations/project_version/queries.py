@@ -1,6 +1,4 @@
-"""
-Queries of project version mutations
-"""
+"""Queries of project version mutations."""
 
 from .fragments import PROJECT_VERSION_FRAGMENT
 

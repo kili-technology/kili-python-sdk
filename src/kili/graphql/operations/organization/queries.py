@@ -1,6 +1,4 @@
-"""
-GraphQL Queries of Organizations
-"""
+"""GraphQL Queries of Organizations."""
 
 
 from datetime import datetime
@@ -11,9 +9,7 @@ from kili.graphql import BaseQueryWhere, GraphQLQuery
 
 
 class OrganizationWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the OrganizationQuery to restrict query
-    """
+    """Tuple to be passed to the OrganizationQuery to restrict query."""
 
     def __init__(
         self,
@@ -25,7 +21,7 @@ class OrganizationWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK OrganizationWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK OrganizationWhere."""
         return {
             "id": self.organization_id,
             "user": {
@@ -35,9 +31,7 @@ class OrganizationWhere(BaseQueryWhere):
 
 
 class OrganizationMetricsWhere(BaseQueryWhere):
-    """
-    Tuple to be passed to the OrganizationQuery to restrict query
-    """
+    """Tuple to be passed to the OrganizationQuery to restrict query."""
 
     def __init__(
         self,
@@ -51,7 +45,7 @@ class OrganizationMetricsWhere(BaseQueryWhere):
         super().__init__()
 
     def graphql_where_builder(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK OrganizationWhere"""
+        """Build the GraphQL Where payload sent in the resolver from the SDK OrganizationWhere."""
         return {
             "organizationId": self.organization_id,
             "startDate": self.start_date.isoformat(sep="T", timespec="milliseconds") + "Z",
@@ -64,9 +58,7 @@ class OrganizationQuery(GraphQLQuery):
 
     @staticmethod
     def query(fragment):
-        """
-        Return the GraphQL organizations query
-        """
+        """Return the GraphQL organizations query."""
         return f"""
         query organizations($where: OrganizationWhere!, $first: PageSize!, $skip: Int!) {{
             data: organizations(where: $where, first: $first, skip: $skip) {{
@@ -92,7 +84,7 @@ class OrganizationQuery(GraphQLQuery):
     """
 
     def metrics(self, where: OrganizationMetricsWhere) -> Dict:
-        """execute the organizationMetrics operation"""
+        """Execute the organizationMetrics operation."""
         payload = {"where": where.graphql_payload}
         result = self.client.execute(self.GQL_ORGANIZATION_METRICS, payload)
         return format_result("data", result)

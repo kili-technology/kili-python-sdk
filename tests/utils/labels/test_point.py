@@ -1,6 +1,6 @@
 import pytest
 
-from kili.utils.labels import normalized_point_to_point, point_to_normalized_point
+from kili.utils.labels.point import normalized_point_to_point, point_to_normalized_point
 
 
 def test_point_conversion():

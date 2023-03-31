@@ -9,10 +9,7 @@ from .helpers import get_logger
 
 
 def delete_plugin(auth: KiliAuth, plugin_name: str):
-    """
-    Create a plugin in Kili
-    """
-
+    """Create a plugin in Kili."""
     logger = get_logger()
 
     variables = {"pluginName": plugin_name}

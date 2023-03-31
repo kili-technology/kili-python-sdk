@@ -1,4 +1,4 @@
-"""Helpers for the asset queries"""
+"""Helpers for the asset queries."""
 
 import warnings
 from concurrent.futures import ThreadPoolExecutor

@@ -1,6 +1,4 @@
-"""
-label related mutations
-"""
+"""Label related mutations."""
 
 GQL_APPEND_MANY_LABELS = """
 mutation appendManyLabels(

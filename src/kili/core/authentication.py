@@ -1,4 +1,4 @@
-"""API authentication module"""
+"""API authentication module."""
 import warnings
 from datetime import datetime, timedelta
 from typing import Dict
@@ -18,9 +18,7 @@ warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
 
 class KiliAuth:
-    """
-    Kili authentication class
-    """
+    """Kili authentication class."""
 
     def __init__(
         self, api_key: str, api_endpoint: str, client_name: GraphQLClientName, verify=True
@@ -46,7 +44,7 @@ class KiliAuth:
         self.user_email = user["email"]
 
     def check_api_key_valid(self) -> None:
-        """Check that the api_key provided is valid"""
+        """Check that the api_key provided is valid."""
         response = requests.post(
             url=self.api_endpoint,
             data='{"query":"{ me { id email } }"}',
@@ -73,11 +71,7 @@ class KiliAuth:
         )
 
     def check_expiry_of_key_is_close(self) -> None:
-        """Check that the expiration date of the api_key is not too close.
-
-        Args:
-            api_key: key used to connect to the Kili API
-        """
+        """Check that the expiration date of the api_key is not too close."""
         warn_days = 30
 
         api_keys = APIKeyQuery(self.client)(
@@ -96,7 +90,7 @@ class KiliAuth:
             warnings.warn(message, UserWarning, stacklevel=2)
 
     def get_user(self) -> Dict:
-        """Get the current user from the api_key provided"""
+        """Get the current user from the api_key provided."""
         result = self.client.execute(GQL_ME)
         user = format_result("data", result)
         if user is None or user["id"] is None or user["email"] is None:

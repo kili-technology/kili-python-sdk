@@ -19,9 +19,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesOrganization:
-    """
-    Set of Organization queries
-    """
+    """Set of Organization queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
@@ -77,8 +75,8 @@ class QueriesOrganization:
         """Get a generator or a list of organizations that match a set of criteria.
 
         Args:
-            email : Email of a user of the organization
-            organization_id : Identifier of the organization
+            email: Email of a user of the organization
+            organization_id: Identifier of the organization
             fields: All the fields to request among the possible fields for the organizations.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#organization) for all possible fields.
             first: Maximum number of organizations to return.
@@ -94,7 +92,6 @@ class QueriesOrganization:
             >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
             [{'users': [{'email': 'john@doe.com'}]}]
         """
-
         where = OrganizationWhere(
             email=email,
             organization_id=organization_id,

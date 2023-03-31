@@ -77,8 +77,8 @@ jobs:
           # ${{ github.ref_name }}: The short ref name of the branch or tag that triggered the workflow run.
           git checkout ${{ github.ref_name }}
 
-          source ./.github/scripts/utils.sh  # to load the function get_sdk_version
-          sdk_version=$(get_sdk_version)
+          source ./.github/scripts/utils.sh  # to load the function get_sdk_version_from_setup_cfg
+          sdk_version=$(get_sdk_version_from_setup_cfg)
 
           # create a branch to merge the release branch and master
           git checkout -b merge_release/$sdk_version

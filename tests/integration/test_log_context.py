@@ -6,48 +6,36 @@ from kili.client import Kili
 class _FakeDatetime:
     @staticmethod
     def now(_):
-        """
-        Fake utcnow
-        """
+        """Fake utcnow."""
         return datetime(2000, 1, 1)
 
 
 class _FakeUUID:
     @staticmethod
     def uuid4():
-        """
-        Fake uuid4
-        """
+        """Fake uuid4."""
         return "abcd"
 
 
 class _FakePlatform:
     @staticmethod
     def python_version():
-        """
-        Fake python version
-        """
+        """Fake python version."""
         return "4.0.0"
 
     @staticmethod
     def name():
-        """
-        Fake name
-        """
+        """Fake name."""
         return "Dummy platform"
 
     @staticmethod
     def version():
-        """
-        Fake name
-        """
+        """Fake name."""
         return "v0.0.0"
 
     @staticmethod
     def system():
-        """
-        Fake name
-        """
+        """Fake name."""
         return "DummySystem"
 
 

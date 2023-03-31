@@ -1,6 +1,4 @@
-"""
-    CLI's project list subcommand
-"""
+"""CLI's project list subcommand."""
 
 from typing import Optional
 
@@ -27,15 +25,13 @@ from kili.user_interface.cli.helpers import get_kili_client
     default=100,
 )
 def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str, first: int):
-    """
-    List your projects
+    """List your projects.
 
     \b
     !!! Examples
         ```
         kili project list --max 10 --stdout-format pretty
         ```
-
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     projects = list(

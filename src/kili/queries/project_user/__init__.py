@@ -97,12 +97,12 @@ class QueriesProjectUser:
         as_generator: bool = False,
     ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
-        """Return project users (possibly with their KPIs) that match a set of criteria
-
+        """Return project users (possibly with their KPIs) that match a set of criteria.
 
         Args:
             project_id: Identifier of the project
             email: Email of the user
+            id: Identifier of the user
             organization_id: Identifier of the user's organization
             fields: All the fields to request among the possible fields for the projectUsers
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectuser) for all possible fields.
@@ -140,11 +140,11 @@ class QueriesProjectUser:
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
     ) -> int:
-        """
-        Counts the number of projects and their users that match a set of criteria
+        """Counts the number of projects and their users that match a set of criteria.
 
         Args:
             email: Email of the user
+            id: Identifier of the user
             organization_id: Identifier of the user's organization
             project_id: Identifier of the project
 

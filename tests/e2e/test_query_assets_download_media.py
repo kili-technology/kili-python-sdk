@@ -1,6 +1,4 @@
-"""
-E2E tests for helpers.py of .assets to download media
-"""
+"""E2E tests for helpers.py of .assets to download media."""
 
 import os
 import random
@@ -92,7 +90,7 @@ def src_project_image(kili):
 
 
 def test_download_assets_protected_content_images(kili, src_project_image):
-    """Tests with token protected content url"""
+    """Tests with token protected content url."""
     with TemporaryDirectory() as tmp_dir:
         assets = kili.assets(
             project_id=src_project_image["id"],
@@ -125,7 +123,7 @@ def test_download_assets_protected_content_images(kili, src_project_image):
 
 @pytest.fixture()
 def src_project_video_frames(kili):
-    """create video project with token protected urls and frames"""
+    """Create video project with token protected urls and frames."""
     interface = {
         "jobs": {
             "JOB_0": {
@@ -184,7 +182,7 @@ def src_project_video_frames(kili):
 
 
 def test_download_single_asset_protected_content_videos(kili, src_project_video_frames):
-    """Tests with token protected content url"""
+    """Tests with token protected content url."""
     with TemporaryDirectory() as tmp_dir:
         assets = kili.assets(
             project_id=src_project_video_frames["id"],
@@ -212,7 +210,7 @@ def test_download_single_asset_protected_content_videos(kili, src_project_video_
 
 @pytest.fixture()
 def src_project_text(kili):
-    """create text project with normal text and richtext"""
+    """Create text project with normal text and richtext."""
     interface = {
         "jobs": {
             "JOB_0": {
@@ -276,7 +274,7 @@ def src_project_text(kili):
 
 
 def test_download_assets_text(kili, src_project_text):
-    """test download_assets on text project"""
+    """Test download_assets on text project."""
     with TemporaryDirectory() as tmp_dir:
         assets = kili.assets(
             project_id=src_project_text["id"],
@@ -317,7 +315,7 @@ def test_download_assets_text(kili, src_project_text):
 
 @pytest.fixture()
 def src_project_big_image(kili):
-    """create image project with big images and jsonContent"""
+    """Create image project with big images and jsonContent."""
     interface = {
         "jobs": {
             "DETECTION": {
@@ -370,7 +368,7 @@ def src_project_big_image(kili):
 
 
 def test_download_single_asset_big_image(kili, src_project_big_image):
-    """test upload big image"""
+    """Test upload big image."""
     with TemporaryDirectory() as tmp_dir:
         assets = kili.assets(
             project_id=src_project_big_image["id"],
@@ -397,7 +395,7 @@ def test_download_single_asset_big_image(kili, src_project_big_image):
 
 @pytest.fixture()
 def src_project_video_content_and_jsoncontent(kili):
-    """create video project with both content and json content"""
+    """Create video project with both content and json content."""
     interface = {
         "jobs": {
             "JOB_0": {
@@ -457,7 +455,7 @@ def src_project_video_content_and_jsoncontent(kili):
 def test_download_single_asset_video_content_and_jsoncontent(
     kili, src_project_video_content_and_jsoncontent
 ):
-    """test video content and jsoncontent"""
+    """Test video content and jsoncontent."""
     with TemporaryDirectory() as tmp_dir:
         assets = kili.assets(
             project_id=src_project_video_content_and_jsoncontent["id"],

@@ -1,6 +1,4 @@
-"""
-Mockers for ffmpeg
-"""
+"""Mockers for ffmpeg."""
 
 from pathlib import Path
 
@@ -11,7 +9,7 @@ def mock_ffmpeg(mocker):
 
 
 def mocked_ffmpeg_probe(file_path: str):
-    """Mock ffmpeg.probe"""
+    """Mock ffmpeg.probe."""
     if Path(file_path).name == "short_video.mp4":
         return {
             "streams": [
@@ -26,7 +24,7 @@ def mocked_ffmpeg_probe(file_path: str):
 
 
 def mocked_ffmpeg_input(video_path: str):
-    """Mock ffmpeg.input"""
+    """Mock ffmpeg.input."""
     if Path(video_path).name == "short_video.mp4":
         fake_ffmpeg_splitter = FakeFFmpegVideoSplitter(video_path)
         return fake_ffmpeg_splitter

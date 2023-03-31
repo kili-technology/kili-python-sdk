@@ -1,4 +1,4 @@
-"""CLI's project export subcommand"""
+"""CLI's project export subcommand."""
 
 from typing import Optional, cast
 
@@ -65,8 +65,7 @@ def export_labels(
     verbose: bool,
     with_assets: bool,
 ):
-    """
-    Export the Kili labels of a project to a given format.
+    """Export the Kili labels of a project to a given format.
 
     \b
     The supported formats are:

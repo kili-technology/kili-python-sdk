@@ -1,4 +1,4 @@
-"""CLI's project label subcommand"""
+"""CLI's project label subcommand."""
 
 
 import os
@@ -14,7 +14,7 @@ from kili.user_interface.cli.helpers import get_kili_client
 
 
 def type_check_label(key, value):
-    """type check value based on key"""
+    """Type check value based on key."""
     if key == "json_response_path" and not (os.path.isfile(value) and value.endswith(".json")):
         return f"{value} is not a valid path to a json file, "
 
@@ -73,8 +73,7 @@ def import_labels(
     metadata_file: Optional[str],
     target_job: Optional[str],
 ):
-    """
-    Import labels or predictions
+    """Import labels or predictions.
 
     Files can be paths to files or to folders. <br>
     You can provide several paths separated by spaces.
@@ -110,8 +109,6 @@ def import_labels(
             --target-job IMAGE_DETECTION_JOB \\
             --input-format yolo_v5
         ```
-
-
     """
     if is_prediction and model_name is None:
         raise ValueError(

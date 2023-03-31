@@ -1,6 +1,4 @@
-"""
-Errors raised by the mutations module
-"""
+"""Errors raised by the mutations module."""
 
 
 class MutationError(Exception):

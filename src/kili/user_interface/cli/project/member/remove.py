@@ -1,4 +1,4 @@
-"""CLI's project member remove subcommand"""
+"""CLI's project member remove subcommand."""
 
 import warnings
 from typing import Iterable, Optional
@@ -43,7 +43,7 @@ def remove_member(
     csv_path: Optional[str],
     all_members: bool,
 ):
-    """Remove members from a Kili project
+    """Remove members from a Kili project.
 
     Emails can be passed directly as arguments.
     You can provide several emails separated by spaces.

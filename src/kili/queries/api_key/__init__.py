@@ -1,6 +1,4 @@
-"""
-Api key queries
-"""
+"""Api key queries."""
 
 from typing import Dict, Generator, Iterable, List, Optional, overload
 
@@ -16,9 +14,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesApiKey:
-    """
-    Set of ApiKey queries
-    """
+    """Set of ApiKey queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
