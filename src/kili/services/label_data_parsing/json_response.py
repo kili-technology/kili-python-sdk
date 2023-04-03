@@ -3,7 +3,7 @@
 
 from typing import Dict
 
-from kili.enums import InputType
+from kili.core.enums import InputType
 
 from .exceptions import JobNotExistingError
 from .job_response import JobPayload

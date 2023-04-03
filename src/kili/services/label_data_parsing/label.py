@@ -3,7 +3,7 @@
 from copy import deepcopy
 from typing import Dict
 
-from kili.enums import InputType
+from kili.core.enums import InputType
 
 from .json_response import ParsedJobs
 
