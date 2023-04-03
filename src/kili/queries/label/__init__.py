@@ -595,7 +595,6 @@ class QueriesLabel:
         Returns:
             The number of labels with the parameters provided
         """
-
         if category_search:
             validate_category_search_query(category_search)
 
@@ -630,7 +629,9 @@ class QueriesLabel:
         with_assets: bool = True,
         external_ids: Optional[List[str]] = None,
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
-    ):
+        asset_filter_kwargs: Optional[Dict[str, object]] = None,
+    ) -> None:
+        # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
 
         Args:
@@ -646,11 +647,31 @@ class QueriesLabel:
             disable_tqdm: Disable the progress bar if True.
             with_assets: Download the assets in the export.
             external_ids: Optional list of the assets external IDs from which to export the labels.
-            annotation_modifier: For COCO export only: function that takes the COCO annotation, the
+            annotation_modifier: (For COCO export only) function that takes the COCO annotation, the
                 COCO image, and the Kili annotation, and should return an updated COCO annotation.
                 This can be used if you want to add a new attribute to the COCO annotation. For
                 example, you can add a method that computes if the annotation is a rectangle or not
                 and add it to the COCO annotation (see example).
+            asset_filter_kwargs: Optional dictionary of arguments to pass to `kili.assets()` in order to filter the assets the labels are exported from. The supported arguments are:
+
+                - consensus_mark_gte
+                - consensus_mark_lte
+                - external_id_contains
+                - honeypot_mark_gte
+                - honeypot_mark_lte
+                - label_author_in
+                - label_reviewer_in
+                - skipped
+                - status_in
+                - label_category_search
+                - created_at_gte
+                - created_at_lte
+                - issue_type
+                - issue_status
+                - inference_mark_gte
+                - inference_mark_lte
+
+                See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
 
         !!! warning
             Export is not allowed for projects connected to a cloud storage.
@@ -709,6 +730,7 @@ class QueriesLabel:
                 log_level="WARNING",
                 with_assets=with_assets,
                 annotation_modifier=annotation_modifier,
+                asset_filter_kwargs=asset_filter_kwargs,
             )
         except NoCompatibleJobError as excp:
             print(str(excp))

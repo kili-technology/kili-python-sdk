@@ -81,6 +81,7 @@ class Project:
             log_level=log_level,
             with_assets=with_assets,
             annotation_modifier=None,
+            asset_filter_kwargs=None,
         )
 
     @deprecate(
