@@ -4,10 +4,9 @@ from typing import List, Optional, cast
 from typeguard import typechecked
 
 from kili import services
+from kili.core.helpers import deprecate
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import AssetId, InputType, LabelType, LogLevel, ProjectId
-
-from ..helpers import deprecate
 
 
 class Project:

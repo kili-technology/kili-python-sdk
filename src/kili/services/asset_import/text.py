@@ -3,7 +3,7 @@ import os
 from enum import Enum
 from typing import List, Optional, Tuple
 
-from kili.helpers import is_url
+from kili.core.helpers import is_url
 
 from .base import (
     BaseAssetImporter,

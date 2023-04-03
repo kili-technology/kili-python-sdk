@@ -8,9 +8,9 @@ from zipfile import ZipFile
 
 import pytest
 
-from kili.graphql.operations.asset.queries import AssetQuery
-from kili.graphql.operations.project.queries import ProjectQuery
-from kili.queries.label import QueriesLabel
+from kili.core.graphql.operations.asset.queries import AssetQuery
+from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.entrypoints.queries.label import QueriesLabel
 from kili.services import export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,

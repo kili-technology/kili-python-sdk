@@ -5,8 +5,8 @@ import pydantic
 import pytest
 
 from kili import services
-from kili.graphql.operations.asset.queries import AssetQuery
-from kili.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
+from kili.core.graphql.operations.asset.queries import AssetQuery
+from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 
 
 def mocked_AssetQuery(*_):

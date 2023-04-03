@@ -6,7 +6,7 @@ from typing import Dict, List
 
 from typing_extensions import TypedDict
 
-from kili.enums import (
+from kili.core.enums import (
     InputType,
     InvitationStatus,
     IssueStatus,
@@ -19,7 +19,7 @@ from kili.enums import (
     Right,
     Status,
 )
-from kili.helpers import deprecate
+from kili.core.helpers import deprecate
 
 
 @deprecate()

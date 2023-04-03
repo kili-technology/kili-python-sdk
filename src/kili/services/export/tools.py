@@ -1,11 +1,11 @@
 """Set of common functions used by different export formats."""
 from typing import Dict, List, Optional
 
-from kili.authentication import KiliAuth
-from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.helpers import validate_category_search_query
-from kili.queries.asset.media_downloader import get_download_assets_function
+from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.helpers import validate_category_search_query
+from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
 from kili.services.export.exceptions import NotExportableAssetError
 from kili.services.export.types import ExportType
 

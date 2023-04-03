@@ -75,7 +75,7 @@ setup(
     },
     include_package_data=True,
     entry_points={
-        "console_scripts": ["kili=kili.cli:main"],
+        "console_scripts": ["kili=kili.entrypoints.cli:main"],
     },
     url="https://github.com/kili-technology/kili-python-sdk",
     classifiers=[

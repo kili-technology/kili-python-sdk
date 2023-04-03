@@ -16,8 +16,8 @@ The methods are illustrated with code snippets.
 
 With Kili, once you have annotated enough assets, you can export the data programmatically to train a machine learning algorithm with it. There are several ways to do it:
 
- * Fetch the assets and/or the labels one by one using [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) or [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.labels), perform the data transformation yourself and then write the data to one or several output files.
- * Export the whole project as a dataset. To do that, use the [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.export_labels) method that creates an archive containing the labels in your chosen format.
+ * Fetch the assets and/or the labels one by one using [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets) or [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels), perform the data transformation yourself and then write the data to one or several output files.
+ * Export the whole project as a dataset. To do that, use the [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels) method that creates an archive containing the labels in your chosen format.
 
 ## Preliminary steps
 
@@ -87,7 +87,7 @@ for asset in assets:
 
 ### Filtering specific labels per asset through the method filters
 
-You can specify label filters directly in the [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) and the [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.labels) methods. The available filters are listed in the arguments list
+You can specify label filters directly in the [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets) and the [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels) methods. The available filters are listed in the arguments list
 for each one of these methods.
 
 When done, you can write the conversion code to get the data in the format that you need.
@@ -229,7 +229,7 @@ Kili has a method to export the whole project into specific export formats. It c
 
 ### The `.export_labels` method
 
-The [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.export_labels) method enables the export of a full project. It does the following preprocessing:
+The [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels) method enables the export of a full project. It does the following preprocessing:
 
 * Only fetches the labels of types `"DEFAULT"` and `"REVIEW"` (see the [label types explanations](https://docs.kili-technology.com/docs/asset-lifecycle#label-types-and-definitions-throughout-an-asset-lifecycle)).
 * If specified, selects a subset of asset ids.
@@ -377,5 +377,5 @@ kili.delete_project(your_project_id);
 
 In this tutorial, we have seen several ways to export labels from a Kili project:
 
-* Using [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) and [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.labels) and their filtering arguments, a subset of assets or labels can be selected and then exported.
-* Using [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.export_labels), the whole project can be exported into a standard output format.
+* Using [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets) and [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels) and their filtering arguments, a subset of assets or labels can be selected and then exported.
+* Using [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels), the whole project can be exported into a standard output format.
