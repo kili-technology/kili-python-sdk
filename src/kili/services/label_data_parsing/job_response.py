@@ -135,7 +135,7 @@ class JobPayload:
         if self._job_interface["mlTask"] != "TRANSCRIPTION":
             raise AttributeNotCompatibleWithJobError("text")
 
-        transcription_field_type = self._job_interface["content"]["input"]
+        transcription_field_type = self._job_interface.get("content", {}).get("input", "")
 
         if transcription_field_type == "date":
             try:

@@ -64,7 +64,7 @@ def test_multiple_jobs_with_children_jobs():
             },
         }
     }
-    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
 
     json_resp = {
         "MAIN_JOB": {
@@ -133,35 +133,29 @@ def test_multiple_jobs_with_children_jobs():
 
 def test_attribute_categories_nested():
     json_response_dict = {
-        "JOB_TRANSCRIPT": {"text": "sdfsdf"},
-        "JOB_CLASSIF": {
+        "JOB_0": {
             "categories": [
                 {
                     "confidence": 1,
-                    "name": "NAME1",
+                    "name": "A",
                     "children": {
-                        "JOB_0": {
+                        "JOB_1": {
                             "categories": [
                                 {
                                     "confidence": 2,
-                                    "name": "NAME2",
+                                    "name": "B",
                                     "children": {
-                                        "JOB_1": {
+                                        "JOB_2": {
                                             "categories": [
                                                 {
                                                     "confidence": 3,
-                                                    "name": "NAME3",
+                                                    "name": "C",
                                                     "children": {
-                                                        "JOB_2": {
-                                                            "categories": [
-                                                                {"confidence": 4, "name": "NAME4"}
-                                                            ]
-                                                        },
                                                         "JOB_3": {
                                                             "categories": [
-                                                                {"confidence": 5, "name": "NAME5"}
+                                                                {"confidence": 4, "name": "D"}
                                                             ]
-                                                        },
+                                                        }
                                                     },
                                                 }
                                             ]
@@ -173,19 +167,72 @@ def test_attribute_categories_nested():
                     },
                 }
             ]
-        },
+        }
     }
-    json_interface = {"jobs": {"JOB_TRANSCRIPT": {}, "JOB_CLASSIF": {}}}
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {"A": {"children": ["JOB_1"], "name": "A"}},
+                    "input": "radio",
+                },
+                "instruction": "Job1",
+                "isChild": False,
+                "mlTask": "CLASSIFICATION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "JOB_1": {
+                "content": {
+                    "categories": {"B": {"children": ["JOB_2"], "name": "B"}},
+                    "input": "radio",
+                },
+                "instruction": "Job2",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+            "JOB_2": {
+                "content": {
+                    "categories": {"C": {"children": ["JOB_3"], "name": "C"}},
+                    "input": "radio",
+                },
+                "instruction": "Job3",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+            "JOB_3": {
+                "content": {"categories": {"D": {"children": [], "name": "D"}}, "input": "radio"},
+                "instruction": "Job4",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+        }
+    }
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_response_dict))
 
-    assert parsed_jobs["JOB_TRANSCRIPT"].text == "sdfsdf"
-
-    assert parsed_jobs["JOB_CLASSIF"].category.name == "NAME1"
-    assert parsed_jobs["JOB_CLASSIF"].category.confidence == 1
-
-    # assert parsed_jobs["JOB_CLASSIF"].children["JOB_0"].category.name == "NAME2"
-    # assert parsed_jobs["JOB_CLASSIF"].children["JOB_0"].category.confidence == 2
+    assert parsed_jobs["JOB_0"].category.confidence == 1
+    assert parsed_jobs["JOB_0"].category.children["JOB_1"].category.confidence == 2
+    assert (
+        parsed_jobs["JOB_0"]
+        .category.children["JOB_1"]
+        .category.children["JOB_2"]
+        .category.confidence
+        == 3
+    )
+    assert (
+        parsed_jobs["JOB_0"]
+        .category.children["JOB_1"]
+        .category.children["JOB_2"]
+        .category.children["JOB_3"]
+        .category.confidence
+        == 4
+    )
 
 
 @pytest.mark.skip(reason="Not implemented yet")
