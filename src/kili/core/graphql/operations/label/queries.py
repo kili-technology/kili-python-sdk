@@ -29,6 +29,7 @@ class LabelWhere(BaseQueryWhere):
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
         category_search: Optional[str] = None,
+        reviewer_in: Optional[List[str]] = None,
     ):
         self.project_id = project_id
         self.asset_id = asset_id
@@ -45,6 +46,7 @@ class LabelWhere(BaseQueryWhere):
         self.type_in = type_in
         self.user_id = user_id
         self.category_search = category_search
+        self.reviewer_in = reviewer_in
         super().__init__()
 
     def graphql_where_builder(self):
@@ -71,6 +73,7 @@ class LabelWhere(BaseQueryWhere):
             "idIn": self.id_contains,
             "search": self.category_search,
             "typeIn": self.type_in,
+            "reviewerIn": self.reviewer_in,
         }
 
 

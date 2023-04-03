@@ -40,6 +40,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     log_level: LogLevel,
     with_assets: bool,
     annotation_modifier: Optional[CocoAnnotationModifier],
+    asset_filter_kwargs: Optional[Dict[str, object]] = None,
 ) -> None:
     """Export the selected assets into the required format, and save it into a file archive."""
     get_project(auth, project_id, ["id"])
@@ -65,6 +66,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         output_file=Path(output_file),
         with_assets=with_assets,
         annotation_modifier=annotation_modifier,
+        asset_filter_kwargs=asset_filter_kwargs,
     )
 
     logger = get_logger(log_level)

@@ -1,5 +1,6 @@
 """Asset queries."""
 
+import warnings
 from typing import Dict, Generator, Iterable, List, Optional, Union, overload
 
 import pandas as pd
@@ -80,6 +81,21 @@ class QueriesAsset:
         local_media_dir: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        consensus_mark_gte: Optional[float] = None,
+        consensus_mark_lte: Optional[float] = None,
+        inference_mark_gte: Optional[float] = None,
+        inference_mark_lte: Optional[float] = None,
+        label_reviewer_in: Optional[List[str]] = None,
+        label_consensus_mark_gte: Optional[float] = None,
+        label_consensus_mark_lte: Optional[float] = None,
+        label_created_at_gte: Optional[str] = None,
+        label_created_at_lte: Optional[str] = None,
+        label_honeypot_mark_gte: Optional[float] = None,
+        label_honeypot_mark_lte: Optional[float] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -134,6 +150,21 @@ class QueriesAsset:
         local_media_dir: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        consensus_mark_gte: Optional[float] = None,
+        consensus_mark_lte: Optional[float] = None,
+        inference_mark_gte: Optional[float] = None,
+        inference_mark_lte: Optional[float] = None,
+        label_reviewer_in: Optional[List[str]] = None,
+        label_consensus_mark_gte: Optional[float] = None,
+        label_consensus_mark_lte: Optional[float] = None,
+        label_created_at_gte: Optional[str] = None,
+        label_created_at_lte: Optional[str] = None,
+        label_honeypot_mark_gte: Optional[float] = None,
+        label_honeypot_mark_lte: Optional[float] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -188,6 +219,21 @@ class QueriesAsset:
         local_media_dir: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        consensus_mark_gte: Optional[float] = None,
+        consensus_mark_lte: Optional[float] = None,
+        inference_mark_gte: Optional[float] = None,
+        inference_mark_lte: Optional[float] = None,
+        label_reviewer_in: Optional[List[str]] = None,
+        label_consensus_mark_gte: Optional[float] = None,
+        label_consensus_mark_lte: Optional[float] = None,
+        label_created_at_gte: Optional[str] = None,
+        label_created_at_lte: Optional[str] = None,
+        label_honeypot_mark_gte: Optional[float] = None,
+        label_honeypot_mark_lte: Optional[float] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[Dict], pd.DataFrame]:
@@ -202,23 +248,23 @@ class QueriesAsset:
             fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
             first: Maximum number of assets to return.
-            consensus_mark_gt: Minimum amount of consensus for the asset.
-            consensus_mark_lt: Maximum amount of consensus for the asset.
+            consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
+            consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
             external_id_contains: Returned assets have an external id that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
-            honeypot_mark_gt: Minimum amount of honeypot for the asset.
-            honeypot_mark_lt: Maximum amount of honeypot for the asset.
+            honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
+            honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
             status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`
+                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose status belongs to that list, if given.
-            label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.
-            label_consensus_mark_lt: Returned assets should have a label whose consensus is lower than this number.
+            label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
+            label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
-            label_created_at_gt: Returned assets should have a label whose creation date is greater than this date.
-            label_created_at_lt: Returned assets should have a label whose creation date is lower than this date.
-            label_honeypot_mark_gt: Returned assets should have a label whose honeypot is greater than this number
-            label_honeypot_mark_lt: Returned assets should have a label whose honeypot is lower than this number
+            label_created_at_gt: Deprecated. Use `label_created_at_gte` instead.
+            label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
+            label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
+            label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
             skipped: Returned assets should be skipped
             updated_at_gte: Returned assets should have a label whose update date is greater or equal to this date.
             updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
@@ -230,6 +276,21 @@ class QueriesAsset:
             local_media_dir: Directory where the media are downloaded if `download_media` is True.
             created_at_gte: Returned assets should have their import date greater or equal to this date.
             created_at_lte: Returned assets should have their import date lower or equal to this date.
+            honeypot_mark_lte: Maximum amount of honeypot for the asset.
+            honeypot_mark_gte: Minimum amount of honeypot for the asset.
+            consensus_mark_lte: Maximum amount of consensus for the asset.
+            consensus_mark_gte: Minimum amount of consensus for the asset.
+            inference_mark_gte: Minimum amount of human/model IoU for the asset.
+            inference_mark_lte: Maximum amount of human/model IoU for the asset.
+            label_reviewer_in: Returned assets should have a label whose reviewer belongs to that list, if given.
+            label_consensus_mark_gte: Returned assets should have a label whose consensus is greater or equal to this number.
+            label_consensus_mark_lte: Returned assets should have a label whose consensus is lower or equal to this number.
+            label_created_at_lte: Returned assets should have a label whose creation date is lower or equal to this date.
+            label_created_at_gte: Returned assets should have a label whose creation date is greater or equal to this date.
+            label_honeypot_mark_gte: Returned assets should have a label whose honeypot is greater or equal to this number.
+            label_honeypot_mark_lte: Returned assets should have a label whose honeypot is lower or equal to this number.
+            issue_type: Returned assets should have issues of type `QUESTION` or `ISSUE`.
+            issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -282,23 +343,61 @@ class QueriesAsset:
         if label_category_search:
             validate_category_search_query(label_category_search)
 
+        for arg_name, arg_value in zip(
+            (
+                "consensus_mark_gt",
+                "consensus_mark_lt",
+                "honeypot_mark_gt",
+                "honeypot_mark_lt",
+                "label_consensus_mark_gt",
+                "label_consensus_mark_lt",
+                "label_created_at_gt",
+                "label_created_at_lt",
+                "label_honeypot_mark_gt",
+                "label_honeypot_mark_lt",
+            ),
+            (
+                consensus_mark_gt,
+                consensus_mark_lt,
+                honeypot_mark_gt,
+                honeypot_mark_lt,
+                label_consensus_mark_gt,
+                label_consensus_mark_lt,
+                label_created_at_gt,
+                label_created_at_lt,
+                label_honeypot_mark_gt,
+                label_honeypot_mark_lt,
+            ),
+        ):
+            if arg_value:
+                warnings.warn(
+                    (
+                        f"'{arg_name}' is deprecated, please use"
+                        f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead."
+                    ),
+                    DeprecationWarning,
+                    stacklevel=1,
+                )
+
         where = AssetWhere(
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
-            consensus_mark_gt=consensus_mark_gt,
-            consensus_mark_lt=consensus_mark_lt,
+            consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
+            consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
             external_id_contains=external_id_contains,
-            honeypot_mark_gt=honeypot_mark_gt,
-            honeypot_mark_lt=honeypot_mark_lt,
+            honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
+            inference_mark_gte=inference_mark_gte,
+            inference_mark_lte=inference_mark_lte,
             label_author_in=label_author_in,
-            label_consensus_mark_gt=label_consensus_mark_gt,
-            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_consensus_mark_gte=label_consensus_mark_gt or label_consensus_mark_gte,
+            label_consensus_mark_lte=label_consensus_mark_lt or label_consensus_mark_lte,
             label_created_at=label_created_at,
-            label_created_at_gt=label_created_at_gt,
-            label_created_at_lt=label_created_at_lt,
-            label_honeypot_mark_gt=label_honeypot_mark_gt,
-            label_honeypot_mark_lt=label_honeypot_mark_lt,
+            label_created_at_gte=label_created_at_gt or label_created_at_gte,
+            label_created_at_lte=label_created_at_lt or label_created_at_lte,
+            label_honeypot_mark_gte=label_honeypot_mark_gt or label_honeypot_mark_gte,
+            label_honeypot_mark_lte=label_honeypot_mark_lt or label_honeypot_mark_lte,
             label_type_in=label_type_in,
             metadata_where=metadata_where,
             skipped=skipped,
@@ -308,6 +407,9 @@ class QueriesAsset:
             label_category_search=label_category_search,
             created_at_gte=created_at_gte,
             created_at_lte=created_at_lte,
+            label_reviewer_in=label_reviewer_in,
+            issue_status=issue_status,
+            issue_type=issue_type,
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
@@ -350,6 +452,21 @@ class QueriesAsset:
         label_category_search: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        consensus_mark_gte: Optional[float] = None,
+        consensus_mark_lte: Optional[float] = None,
+        inference_mark_gte: Optional[float] = None,
+        inference_mark_lte: Optional[float] = None,
+        label_reviewer_in: Optional[List[str]] = None,
+        label_consensus_mark_gte: Optional[float] = None,
+        label_consensus_mark_lte: Optional[float] = None,
+        label_created_at_gte: Optional[str] = None,
+        label_created_at_lte: Optional[str] = None,
+        label_honeypot_mark_gte: Optional[float] = None,
+        label_honeypot_mark_lte: Optional[float] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -360,41 +477,43 @@ class QueriesAsset:
             project_id: Identifier of the project
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
-            external_id_contains: Returned assets should have an external id
-                that belongs to that list, if given.
+            external_id_contains: Returned assets should have an external id that belongs to that list, if given.
             metadata_where: Filters by the values of the metadata of the asset.
-            status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices: `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
-            consensus_mark_gt: Minimum amount of consensus for the asset.
-            consensus_mark_lt: Maximum amount of consensus for the asset.
-            honeypot_mark_gt: Minimum amount of honeypot for the asset.
-            honeypot_mark_lt: Maximum amount of consensus for the asset.
-            label_type_in: Returned assets should have a label
-                whose type belongs to that list, if given.
-            label_author_in: Returned assets should have a label
-                whose status belongs to that list, if given.
-            label_consensus_mark_gt: Returned assets should have a label
-                whose consensus is greater than this number.
-            label_consensus_mark_lt: Returned assets should have a label
-                whose consensus is lower than this number.
-            label_created_at: Returned assets should have a label
-                whose creation date is equal to this date.
-            label_created_at_gt: Returned assets should have a label
-                whose creation date is greater than this date.
-            label_created_at_lt: Returned assets should have a label
-                whose creation date is lower than this date.
-            label_honeypot_mark_gt: Returned assets should have a label
-                whose honeypot is greater than this number.
-            label_honeypot_mark_lt: Returned assets should have a label
-                whose honeypot is lower than this number.
-            skipped: Returned assets should be skipped
-            updated_at_gte: Returned assets should have a label
-                whose update date is greated or equal to this date.
-            updated_at_lte: Returned assets should have a label
-                whose update date is lower or equal to this date.
+            status_in: Returned assets should have a status that belongs to that list, if given. Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
+            consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
+            consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
+            honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
+            honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
+            label_type_in: Returned assets should have a label whose type belongs to that list, if given.
+            label_author_in: Returned assets should have a label whose status belongs to that list, if given.
+            label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
+            label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
+            label_created_at: Returned assets should have a label whose creation date is equal to this date.
+            label_created_at_gt: Deprecated. Use `label_created_at_gte` instead.
+            label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
+            label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
+            label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
+            skipped: Returned assets should be skipped.
+            updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.
+            updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
             label_category_search: Returned assets should have a label that follows this category search query.
             created_at_gte: Returned assets should have their import date greater or equal to this date.
             created_at_lte: Returned assets should have their import date lower or equal to this date.
+            honeypot_mark_lte: Maximum amount of honeypot for the asset.
+            honeypot_mark_gte: Minimum amount of honeypot for the asset.
+            consensus_mark_lte: Maximum amount of consensus for the asset.
+            consensus_mark_gte: Minimum amount of consensus for the asset.
+            inference_mark_gte: Minimum amount of human/model IoU for the asset.
+            inference_mark_lte: Maximum amount of human/model IoU for the asset.
+            label_reviewer_in: Returned assets should have a label whose reviewer belongs to that list, if given.
+            label_consensus_mark_gte: Returned assets should have a label whose consensus is greater or equal to this number.
+            label_consensus_mark_lte: Returned assets should have a label whose consensus is lower or equal to this number.
+            label_created_at_lte: Returned assets should have a label whose creation date is lower or equal to this date.
+            label_created_at_gte: Returned assets should have a label whose creation date is greater or equal to this date.
+            label_honeypot_mark_gte: Returned assets should have a label whose honeypot is greater or equal to this number.
+            label_honeypot_mark_lte: Returned assets should have a label whose honeypot is lower or equal to this number.
+            issue_type: Returned assets should have issues of type `QUESTION` or `ISSUE`.
+            issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -420,23 +539,62 @@ class QueriesAsset:
         if label_category_search:
             validate_category_search_query(label_category_search)
 
+        for arg_name, arg_value in zip(
+            (
+                "consensus_mark_gt",
+                "consensus_mark_lt",
+                "honeypot_mark_gt",
+                "honeypot_mark_lt",
+                "label_consensus_mark_gt",
+                "label_consensus_mark_lt",
+                "label_created_at_gt",
+                "label_created_at_lt",
+                "label_honeypot_mark_gt",
+                "label_honeypot_mark_lt",
+            ),
+            (
+                consensus_mark_gt,
+                consensus_mark_lt,
+                honeypot_mark_gt,
+                honeypot_mark_lt,
+                label_consensus_mark_gt,
+                label_consensus_mark_lt,
+                label_created_at_gt,
+                label_created_at_lt,
+                label_honeypot_mark_gt,
+                label_honeypot_mark_lt,
+            ),
+        ):
+            if arg_value:
+                warnings.warn(
+                    (
+                        f"'{arg_name}' is deprecated, please use"
+                        f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead."
+                    ),
+                    DeprecationWarning,
+                    stacklevel=1,
+                )
+
         where = AssetWhere(
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
-            consensus_mark_gt=consensus_mark_gt,
-            consensus_mark_lt=consensus_mark_lt,
+            consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
+            consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
             external_id_contains=external_id_contains,
-            honeypot_mark_gt=honeypot_mark_gt,
-            honeypot_mark_lt=honeypot_mark_lt,
+            honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
+            inference_mark_gte=inference_mark_gte,
+            inference_mark_lte=inference_mark_lte,
             label_author_in=label_author_in,
-            label_consensus_mark_gt=label_consensus_mark_gt,
-            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_reviewer_in=label_reviewer_in,
+            label_consensus_mark_gte=label_consensus_mark_gt or label_consensus_mark_gte,
+            label_consensus_mark_lte=label_consensus_mark_lt or label_consensus_mark_lte,
             label_created_at=label_created_at,
-            label_created_at_gt=label_created_at_gt,
-            label_created_at_lt=label_created_at_lt,
-            label_honeypot_mark_gt=label_honeypot_mark_gt,
-            label_honeypot_mark_lt=label_honeypot_mark_lt,
+            label_created_at_gte=label_created_at_gt or label_created_at_gte,
+            label_created_at_lte=label_created_at_lt or label_created_at_lte,
+            label_honeypot_mark_gte=label_honeypot_mark_gt or label_honeypot_mark_gte,
+            label_honeypot_mark_lte=label_honeypot_mark_lt or label_honeypot_mark_lte,
             label_type_in=label_type_in,
             metadata_where=metadata_where,
             skipped=skipped,
@@ -446,5 +604,7 @@ class QueriesAsset:
             label_category_search=label_category_search,
             created_at_gte=created_at_gte,
             created_at_lte=created_at_lte,
+            issue_status=issue_status,
+            issue_type=issue_type,
         )
         return AssetQuery(self.auth.client).count(where)

@@ -3,6 +3,8 @@
 
 from typing import List, Optional
 
+from typing_extensions import Literal
+
 from kili.core.graphql import BaseQueryWhere, GraphQLQuery
 from kili.orm import Asset as AssetFormatType
 
@@ -17,20 +19,21 @@ class AssetWhere(BaseQueryWhere):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_id_in: Optional[List[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
+        consensus_mark_gte: Optional[float] = None,
+        consensus_mark_lte: Optional[float] = None,
         external_id_contains: Optional[List[str]] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
         label_author_in: Optional[List[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
+        label_consensus_mark_gte: Optional[float] = None,
+        label_consensus_mark_lte: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
+        label_created_at_gte: Optional[str] = None,
+        label_created_at_lte: Optional[str] = None,
+        label_honeypot_mark_gte: Optional[float] = None,
+        label_honeypot_mark_lte: Optional[float] = None,
         label_type_in: Optional[List[str]] = None,
+        label_reviewer_in: Optional[List[str]] = None,
         metadata_where: Optional[dict] = None,
         skipped: Optional[bool] = None,
         status_in: Optional[List[str]] = None,
@@ -39,24 +42,29 @@ class AssetWhere(BaseQueryWhere):
         label_category_search: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-    ):
+        inference_mark_gte: Optional[float] = None,
+        inference_mark_lte: Optional[float] = None,
+        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
+        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+    ) -> None:
         self.project_id = project_id
         self.asset_id = asset_id
         self.asset_id_in = asset_id_in
-        self.consensus_mark_gt = consensus_mark_gt
-        self.consensus_mark_lt = consensus_mark_lt
+        self.consensus_mark_gte = consensus_mark_gte
+        self.consensus_mark_lte = consensus_mark_lte
         self.external_id_contains = external_id_contains
-        self.honeypot_mark_gt = honeypot_mark_gt
-        self.honeypot_mark_lt = honeypot_mark_lt
+        self.honeypot_mark_gte = honeypot_mark_gte
+        self.honeypot_mark_lte = honeypot_mark_lte
         self.label_author_in = label_author_in
-        self.label_consensus_mark_gt = label_consensus_mark_gt
-        self.label_consensus_mark_lt = label_consensus_mark_lt
+        self.label_consensus_mark_gte = label_consensus_mark_gte
+        self.label_consensus_mark_lte = label_consensus_mark_lte
         self.label_created_at = label_created_at
-        self.label_created_at_gt = label_created_at_gt
-        self.label_created_at_lt = label_created_at_lt
-        self.label_honeypot_mark_gt = label_honeypot_mark_gt
-        self.label_honeypot_mark_lt = label_honeypot_mark_lt
+        self.label_created_at_gte = label_created_at_gte
+        self.label_created_at_lte = label_created_at_lte
+        self.label_honeypot_mark_gte = label_honeypot_mark_gte
+        self.label_honeypot_mark_lte = label_honeypot_mark_lte
         self.label_type_in = label_type_in
+        self.label_reviewer_in = label_reviewer_in
         self.metadata_where = metadata_where
         self.skipped = skipped
         self.status_in = status_in
@@ -65,6 +73,10 @@ class AssetWhere(BaseQueryWhere):
         self.label_category_search = label_category_search
         self.created_at_gte = created_at_gte
         self.created_at_lte = created_at_lte
+        self.inference_mark_gte = inference_mark_gte
+        self.inference_mark_lte = inference_mark_lte
+        self.issue_type = issue_type
+        self.issue_status = issue_status
         super().__init__()
 
     def graphql_where_builder(self):
@@ -76,29 +88,36 @@ class AssetWhere(BaseQueryWhere):
             },
             "externalIdStrictlyIn": self.external_id_contains,
             "statusIn": self.status_in,
-            "consensusMarkGte": self.consensus_mark_gt,
-            "consensusMarkLte": self.consensus_mark_lt,
-            "honeypotMarkGte": self.honeypot_mark_gt,
-            "honeypotMarkLte": self.honeypot_mark_lt,
+            "consensusMarkGte": self.consensus_mark_gte,
+            "consensusMarkLte": self.consensus_mark_lte,
+            "honeypotMarkGte": self.honeypot_mark_gte,
+            "honeypotMarkLte": self.honeypot_mark_lte,
             "idIn": self.asset_id_in,
             "metadata": self.metadata_where,
             "label": {
                 "typeIn": self.label_type_in,
                 "authorIn": self.label_author_in,
-                "consensusMarkGte": self.label_consensus_mark_gt,
-                "consensusMarkLte": self.label_consensus_mark_lt,
+                "consensusMarkGte": self.label_consensus_mark_gte,
+                "consensusMarkLte": self.label_consensus_mark_lte,
                 "createdAt": self.label_created_at,
-                "createdAtGte": self.label_created_at_gt,
-                "createdAtLte": self.label_created_at_lt,
-                "honeypotMarkGte": self.label_honeypot_mark_gt,
-                "honeypotMarkLte": self.label_honeypot_mark_lt,
+                "createdAtGte": self.label_created_at_gte,
+                "createdAtLte": self.label_created_at_lte,
+                "honeypotMarkGte": self.label_honeypot_mark_gte,
+                "honeypotMarkLte": self.label_honeypot_mark_lte,
                 "search": self.label_category_search,
+                "reviewerIn": self.label_reviewer_in,
             },
             "skipped": self.skipped,
             "updatedAtGte": self.updated_at_gte,
             "updatedAtLte": self.updated_at_lte,
             "createdAtGte": self.created_at_gte,
             "createdAtLte": self.created_at_lte,
+            "inferenceMarkGte": self.inference_mark_gte,
+            "inferenceMarkLte": self.inference_mark_lte,
+            "issue": {
+                "type": self.issue_type,
+                "status": self.issue_status,
+            },
         }
 
 
