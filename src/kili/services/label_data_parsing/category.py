@@ -17,13 +17,14 @@ class Category:
             category_json: Value of the key "categories".
             job_interface: Job interface of the job.
         """
-        self._json_data = category_json
+        self._json_data = {}
         self._job_interface = job_interface
 
-        # call the setters to check the values are valid
-        self.name = self.name
+        self.name = category_json["name"]
         if "confidence" in self._json_data:
-            self.confidence = self.confidence
+            self.confidence = category_json["confidence"]
+        if "children" in self._json_data:
+            self.children = category_json["children"]
 
     def __str__(self) -> str:
         """Returns the string representation of the category."""
@@ -68,7 +69,14 @@ class Category:
 
     @property
     def children(self):
-        """Not implemented yet."""
+        """Returns the children of the category label."""
+        return self._json_data["children"]
+
+    @children.setter
+    @typechecked
+    def children(self, children: List[Dict[str, Any]]) -> None:
+        """Sets the children of the category label."""
+        self._json_data["children"] = children
 
 
 class CategoryList:
