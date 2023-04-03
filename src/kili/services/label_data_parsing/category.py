@@ -21,9 +21,9 @@ class Category:
         self._job_interface = job_interface
 
         self.name = category_json["name"]
-        if "confidence" in self._json_data:
+        if "confidence" in category_json:
             self.confidence = category_json["confidence"]
-        if "children" in self._json_data:
+        if "children" in category_json:
             self.children = category_json["children"]
 
     def __str__(self) -> str:
