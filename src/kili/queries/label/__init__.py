@@ -652,7 +652,7 @@ class QueriesLabel:
                 This can be used if you want to add a new attribute to the COCO annotation. For
                 example, you can add a method that computes if the annotation is a rectangle or not
                 and add it to the COCO annotation (see example).
-            asset_filter_kwargs: Optional dictionary of arguments to filter the assets the labels are exported from. The supported arguments are:
+            asset_filter_kwargs: Optional dictionary of arguments to pass to `kili.assets()` in order to filter the assets the labels are exported from. The supported arguments are:
 
                 - consensus_mark_gte
                 - consensus_mark_lte
