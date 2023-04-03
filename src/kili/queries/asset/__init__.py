@@ -208,7 +208,8 @@ class QueriesAsset:
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
-            label_author_in: Returned assets should have a label whose status belongs to that list, if given.
+            label_author_in: Returned assets should have a label that has been made by authors in that list, if given.
+                An author can be designated by the first name, the last name, or the first name + last name.
             label_consensus_mark_gt: Returned assets should have a label whose consensus is greater than this number.
             label_consensus_mark_lt: Returned assets should have a label whose consensus is lower than this number.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
@@ -369,7 +370,8 @@ class QueriesAsset:
             label_type_in: Returned assets should have a label
                 whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label
-                whose status belongs to that list, if given.
+                that has been made by authors in that list, if given.
+                An author can be designated by the first name, the last name, or the first name + last name.
             label_consensus_mark_gt: Returned assets should have a label
                 whose consensus is greater than this number.
             label_consensus_mark_lt: Returned assets should have a label
