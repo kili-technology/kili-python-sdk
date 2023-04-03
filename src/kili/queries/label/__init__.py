@@ -647,7 +647,7 @@ class QueriesLabel:
             disable_tqdm: Disable the progress bar if True.
             with_assets: Download the assets in the export.
             external_ids: Optional list of the assets external IDs from which to export the labels.
-            annotation_modifier: For COCO export only: function that takes the COCO annotation, the
+            annotation_modifier: (For COCO export only) function that takes the COCO annotation, the
                 COCO image, and the Kili annotation, and should return an updated COCO annotation.
                 This can be used if you want to add a new attribute to the COCO annotation. For
                 example, you can add a method that computes if the annotation is a rectangle or not
