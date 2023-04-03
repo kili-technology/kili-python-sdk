@@ -1,6 +1,7 @@
 # Feature is still under development and is not yet suitable for use by general users.
 """Classes for job response parsing."""
 
+from datetime import datetime
 from typing import Dict, List, Optional, cast
 
 from typeguard import typechecked
@@ -9,7 +10,7 @@ from kili.services.label_data_parsing import annotation as annotation_module
 from kili.services.label_data_parsing import category as category_module
 from kili.services.types import Job
 
-from .exceptions import AttributeNotCompatibleWithJobError
+from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import Project
 
 
@@ -133,6 +134,18 @@ class JobPayload:
         """Sets the text for a transcription job."""
         if self._job_interface["mlTask"] != "TRANSCRIPTION":
             raise AttributeNotCompatibleWithJobError("text")
+
+        transcription_field_type = self._job_interface["content"]["input"]
+
+        if transcription_field_type == "date":
+            try:
+                datetime.strptime(text, r"%Y-%m-%d")
+            except ValueError as err:
+                raise InvalidMutationError(f"Expected a date, got {text}") from err
+
+        elif transcription_field_type == "number" and not text.isnumeric():
+            raise InvalidMutationError(f"Expected a number, got {text}")
+
         self._json_data["text"] = text
 
     @property

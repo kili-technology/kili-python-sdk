@@ -410,27 +410,28 @@ def test_add_semantic_annotation_to_bbox_job():
         )
 
 
-@pytest.mark.skip("TODO")
 def test_mutation_transcription_with_restricted_values():
     json_interface = {
         "jobs": {
-            "TRANSCRIPTION_JOB_ANY_INPUT": {
-                "content": {"input": "textField"},
-                "instruction": "Transcription",
+            "TRANSCRIPTION_JOB_NORMAL": {
+                "content": {"input": "radio"},
+                "instruction": "Text field",
+                "isChild": False,
+                "mlTask": "TRANSCRIPTION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "TRANSCRIPTION_JOB_DATE": {
+                "content": {"input": "date"},
+                "instruction": "date field",
                 "mlTask": "TRANSCRIPTION",
                 "required": 1,
                 "isChild": False,
             },
             "TRANSCRIPTION_JOB_NUMBER": {
                 "content": {"input": "number"},
-                "instruction": "Number",
-                "mlTask": "TRANSCRIPTION",
-                "required": 1,
-                "isChild": False,
-            },
-            "TRANSCRIPTION_JOB_DATE": {
-                "content": {"input": "date"},
-                "instruction": "Date",
+                "instruction": "number field",
                 "mlTask": "TRANSCRIPTION",
                 "required": 1,
                 "isChild": False,
@@ -439,4 +440,26 @@ def test_mutation_transcription_with_restricted_values():
     }
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
 
-    # TODO: the setter should raise if value set is not compatible with input type
+    json_resp = {
+        "TRANSCRIPTION_JOB_NORMAL": {"text": "texttttttt"},
+        "TRANSCRIPTION_JOB_DATE": {"text": "1974-12-11"},
+        "TRANSCRIPTION_JOB_NUMBER": {"text": "42"},
+    }
+
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
+
+    parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "new text"
+    parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "1974-12-11"
+    parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "42"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "new text"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "1337"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text = "new text"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text = "1974-12-11"
