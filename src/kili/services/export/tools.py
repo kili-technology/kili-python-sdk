@@ -121,9 +121,9 @@ def fetch_assets(  # pylint: disable=too-many-arguments
         validate_category_search_query(asset_where_params["label_category_search"])  # type: ignore
 
     if asset_ids is not None and len(asset_ids) > 0:
-        where = AssetWhere(asset_id_in=asset_ids, **asset_where_params)
-    else:
-        where = AssetWhere(**asset_where_params)
+        asset_where_params["asset_id_in"] = asset_ids
+
+    where = AssetWhere(**asset_where_params)
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(
