@@ -8,8 +8,9 @@ from typing import Dict, List, Optional, Sequence
 from typeguard import typechecked
 from typing_extensions import Literal
 
+from kili.services.label_data_parsing import category as category_module
+
 from .bounding_poly import BoundingPoly
-from .category import Category, CategoryList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import Project
@@ -39,7 +40,7 @@ class _BaseAnnotation:
 
         # cast lists to objects
         if "categories" in self._json_data:
-            self._json_data["categories"] = CategoryList(
+            self._json_data["categories"] = category_module.CategoryList(
                 categories_list=self._json_data["categories"],
                 project_info=self._project_info,
                 job_name=self._job_name,
@@ -63,12 +64,12 @@ class _BaseAnnotation:
         return ret
 
     @property
-    def categories(self) -> CategoryList:
+    def categories(self) -> "category_module.CategoryList":
         """Returns the list of categories of the annotation."""
         return self._json_data["categories"]
 
     @property
-    def category(self) -> Category:
+    def category(self) -> "category_module.Category":
         """Returns the category of the annotation if there is only one category.
 
         Else raises an error.
@@ -88,7 +89,7 @@ class _BaseAnnotation:
     def add_category(self, name: str, confidence: Optional[int] = None) -> None:
         """Adds a category to an annotation job with categories."""
         if "categories" not in self._json_data:
-            category_list = CategoryList(
+            category_list = category_module.CategoryList(
                 categories_list=[], project_info=self._project_info, job_name=self._job_name
             )
             category_list.add_category(name=name, confidence=confidence)

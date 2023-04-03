@@ -5,10 +5,10 @@ from typing import Dict, List, Optional, cast
 
 from typeguard import typechecked
 
+from kili.services.label_data_parsing import annotation as annotation_module
+from kili.services.label_data_parsing import category as category_module
 from kili.services.types import Job
 
-from .annotation import AnnotationList, BoundingPolyAnnotation, EntityAnnotation
-from .category import Category, CategoryList
 from .exceptions import AttributeNotCompatibleWithJobError
 from .types import Project
 
@@ -32,14 +32,14 @@ class JobPayload:
 
         # cast lists to objects
         if "categories" in self._json_data:
-            self._json_data["categories"] = CategoryList(
+            self._json_data["categories"] = category_module.CategoryList(
                 job_name=self._job_name,
                 project_info=self._project_info,
                 categories_list=self._json_data["categories"],
             )
 
         if "annotations" in self._json_data:
-            self._json_data["annotations"] = AnnotationList(
+            self._json_data["annotations"] = annotation_module.AnnotationList(
                 job_name=self._job_name,
                 project_info=self._project_info,
                 annotations_list=self._json_data["annotations"],
@@ -73,20 +73,20 @@ class JobPayload:
         return str(self.to_dict())
 
     @property
-    def categories(self) -> CategoryList:
+    def categories(self) -> "category_module.CategoryList":
         """Returns a list of Category objects for a classification job."""
         if self._job_interface["mlTask"] != "CLASSIFICATION":
             raise AttributeNotCompatibleWithJobError("categories")
 
         if "categories" not in self._json_data and not self._job_interface["required"]:
-            return CategoryList(
+            return category_module.CategoryList(
                 categories_list=[], project_info=self._project_info, job_name=self._job_name
             )
 
         return self._json_data["categories"]
 
     @property
-    def category(self) -> Category:
+    def category(self) -> "category_module.Category":
         """Returns a Category object for a classification job if there is only one category.
 
         Else raises an error.
@@ -112,7 +112,7 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("add_category")
 
         if "categories" not in self._json_data:
-            category_list = CategoryList(
+            category_list = category_module.CategoryList(
                 categories_list=[], project_info=self._project_info, job_name=self._job_name
             )
             category_list.add_category(name=name, confidence=confidence)
@@ -151,20 +151,20 @@ class JobPayload:
         self._json_data["isKeyFrame"] = is_key_frame
 
     @property
-    def annotations(self) -> AnnotationList:
+    def annotations(self) -> "annotation_module.AnnotationList":
         """Returns a list of Annotation objects for a job."""
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("annotations")
 
         if "annotations" not in self._json_data and not self._job_interface["required"]:
-            return AnnotationList(
+            return annotation_module.AnnotationList(
                 annotations_list=[], project_info=self._project_info, job_name=self._job_name
             )
 
         return self._json_data["annotations"]
 
     @property
-    def entity_annotations(self) -> List[EntityAnnotation]:
+    def entity_annotations(self) -> List["annotation_module.EntityAnnotation"]:
         """Returns a list of EntityAnnotation objects for a named entities recognition job."""
         if self._job_interface["mlTask"] != "NAMED_ENTITIES_RECOGNITION":
             raise AttributeNotCompatibleWithJobError("entity_annotations")
@@ -172,10 +172,10 @@ class JobPayload:
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("entity_annotations")
 
-        return cast(List[EntityAnnotation], self._json_data["annotations"])
+        return cast(List["annotation_module.EntityAnnotation"], self._json_data["annotations"])
 
     @property
-    def bounding_poly_annotations(self) -> List[BoundingPolyAnnotation]:
+    def bounding_poly_annotations(self) -> List["annotation_module.BoundingPolyAnnotation"]:
         """Returns a list of BoundingPolyAnnotation objects for an object detection job."""
         if self._job_interface["mlTask"] != "OBJECT_DETECTION":
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
@@ -183,7 +183,9 @@ class JobPayload:
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
 
-        return cast(List[BoundingPolyAnnotation], self._json_data["annotations"])
+        return cast(
+            List["annotation_module.BoundingPolyAnnotation"], self._json_data["annotations"]
+        )
 
     @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
@@ -192,7 +194,7 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("add_annotation")
 
         if "annotations" not in self._json_data:
-            annotation_list = AnnotationList(
+            annotation_list = annotation_module.AnnotationList(
                 annotations_list=[], project_info=self._project_info, job_name=self._job_name
             )
             annotation_list.add_annotation(annotation_dict)

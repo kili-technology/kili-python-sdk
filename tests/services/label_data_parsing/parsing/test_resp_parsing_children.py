@@ -1,6 +1,7 @@
 import pytest
 
 from kili.services.label_data_parsing.json_response import ParsedJobs
+from kili.services.label_data_parsing.types import Project
 
 
 def test_multiple_jobs_with_children_jobs():
@@ -61,6 +62,7 @@ def test_multiple_jobs_with_children_jobs():
             },
         }
     }
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
 
     json_resp = {
         "MAIN_JOB": {
@@ -75,9 +77,7 @@ def test_multiple_jobs_with_children_jobs():
             ]
         }
     }
-    parsed_jobs = ParsedJobs(
-        json_response=json_resp, json_interface=json_interface, input_type="IMAGE"
-    )
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["MAIN_JOB"].category.confidence == 43
     assert parsed_jobs["MAIN_JOB"].category.name == "A"
@@ -95,9 +95,7 @@ def test_multiple_jobs_with_children_jobs():
             ]
         }
     }
-    parsed_jobs = ParsedJobs(
-        json_response=json_resp, json_interface=json_interface, input_type="IMAGE"
-    )
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["MAIN_JOB"].category.confidence == 100
     assert parsed_jobs["MAIN_JOB"].category.name == "B"
@@ -117,9 +115,7 @@ def test_multiple_jobs_with_children_jobs():
             ]
         }
     }
-    parsed_jobs = ParsedJobs(
-        json_response=json_resp, json_interface=json_interface, input_type="IMAGE"
-    )
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["MAIN_JOB"].category.confidence == 100
     assert parsed_jobs["MAIN_JOB"].category.name == "C"

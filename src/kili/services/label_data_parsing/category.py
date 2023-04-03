@@ -4,8 +4,11 @@ from typing import Any, Dict, List, Optional
 
 from typeguard import typechecked
 
-from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
+import kili.services.label_data_parsing.json_response as json_response_module
+
+from .exceptions import InvalidMutationError
 from .types import Project
+from .utils import get_children_job_names
 
 
 class Category:
@@ -19,14 +22,17 @@ class Category:
             project_info: Information about the project.
             job_name: Name of the job.
         """
-        self._json_data = category_json
+        self._json_data = {}
         self._project_info = project_info
+        self._job_name = job_name
         self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         # call the setters to check the values are valid
-        self.name = self.name
-        if "confidence" in self._json_data:
-            self.confidence = self.confidence
+        self.name = category_json["name"]
+        if "confidence" in category_json:
+            self.confidence = category_json["confidence"]
+        if "children" in category_json:
+            self.children = category_json["children"]
 
     def __str__(self) -> str:
         """Returns the string representation of the category."""
@@ -70,15 +76,24 @@ class Category:
         self._json_data["confidence"] = confidence
 
     @property
-    def children(self):
-        """Not implemented yet."""
-        if "children" not in self._json_data:
-            raise AttributeNotCompatibleWithJobError("children")
-        # parsed_children = json_response.ParsedJobs(
-        #     json_response=self._json_data["children"],
-        #     json_interface=self._json_interface,
-        #     input_type=self._input_type,
-        # )
+    def children(self) -> "json_response_module.ParsedJobs":
+        """Returns the parsed children jobs of the classification job."""
+        return self._json_data["children"]
+
+    @children.setter
+    @typechecked
+    def children(self, children: Dict) -> None:
+        """Sets the children jobs of the classification job."""
+        # pylint: disable=line-too-long
+        job_names_to_parse = get_children_job_names(
+            json_interface=self._project_info["jsonInterface"], job_interface=self._job_interface  # type: ignore
+        )
+        parsed_children_job = json_response_module.ParsedJobs(
+            project_info=self._project_info,
+            json_response=children,
+            job_names_to_parse=job_names_to_parse,
+        )
+        self._json_data["children"] = parsed_children_job
 
 
 class CategoryList:

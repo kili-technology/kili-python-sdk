@@ -4,8 +4,8 @@ from copy import deepcopy
 from typing import Dict
 
 from kili.enums import InputType
+from kili.services.label_data_parsing import json_response as json_response_module
 
-from .json_response import ParsedJobs
 from .types import Project
 
 
@@ -35,7 +35,9 @@ class ParsedLabel(Dict):
 
         project_info = Project(inputType=input_type, jsonInterface=json_interface["jobs"])
 
-        self.jobs = ParsedJobs(project_info=project_info, json_response=self["jsonResponse"])
+        self.jobs = json_response_module.ParsedJobs(
+            project_info=project_info, json_response=self["jsonResponse"]
+        )
 
     def to_dict(self) -> Dict:
         """Returns a copy of the parsed label as a dict."""
