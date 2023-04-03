@@ -69,7 +69,6 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     local_media_dir: Optional[str] = None,
     asset_filter_kwargs: Optional[Dict[str, object]] = None,
 ) -> List[Dict]:
-    # pylint: disable=line-too-long
     """Fetches assets.
 
     Fetches assets where ID are in asset_ids if the list has more than one element,
