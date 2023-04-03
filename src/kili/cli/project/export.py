@@ -118,6 +118,7 @@ def export_labels(
             log_level="INFO" if verbose else "WARNING",
             with_assets=with_assets,
             annotation_modifier=None,
+            asset_filter_kwargs=None,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))
