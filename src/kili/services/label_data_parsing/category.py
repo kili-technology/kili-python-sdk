@@ -44,7 +44,12 @@ class Category:
 
     def as_dict(self) -> Dict:
         """Returns the parsed category as a dict."""
-        return self._json_data
+        ret = {"name": self._json_data["name"]}
+        if "confidence" in self._json_data:
+            ret["confidence"] = self._json_data["confidence"]
+        if "children" in self._json_data:
+            ret["children"] = self._json_data["children"].to_dict()
+        return ret
 
     @property
     def name(self) -> str:

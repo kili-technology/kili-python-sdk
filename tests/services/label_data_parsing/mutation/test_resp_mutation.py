@@ -3,7 +3,9 @@ from kili.services.label_data_parsing.types import Project
 
 
 def test_mutate_transcription_label():
-    json_interface = {"jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1}}}
+    json_interface = {
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+    }
 
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
 
@@ -17,7 +19,9 @@ def test_mutate_transcription_label():
 
 
 def test_mutate_transcription_label_non_required():
-    json_interface = {"jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 0}}}
+    json_interface = {
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 0, "isChild": False}}
+    }
 
     json_response_dict = {}
 
@@ -34,6 +38,7 @@ def test_mutate_category():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category25"},
@@ -66,6 +71,7 @@ def test_mutate_categories_radio_required():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category25"},
@@ -107,6 +113,7 @@ def test_mutate_category_categories_radio_required():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
             }
         }
     }
@@ -141,6 +148,7 @@ def test_mutate_category_categories_radio_non_required():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
             }
         }
     }
@@ -225,6 +233,7 @@ def test_mutate_ner_project_entity_annotations():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"ORG": {}, "PERSON": {}},
                     "input": "radio",
@@ -273,6 +282,7 @@ def test_mutate_ner_project_annotations():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"ORG": {}, "PERSON": {}},
                     "input": "radio",
@@ -418,6 +428,7 @@ def test_add_annotation_ner():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"ORG": {}, "PERSON": {}},
                     "input": "radio",

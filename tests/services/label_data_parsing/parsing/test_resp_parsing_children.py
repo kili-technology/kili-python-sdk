@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pytest
 
 from kili.services.label_data_parsing.json_response import ParsedJobs
@@ -77,12 +79,14 @@ def test_multiple_jobs_with_children_jobs():
             ]
         }
     }
-    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
     assert parsed_jobs["MAIN_JOB"].category.confidence == 43
     assert parsed_jobs["MAIN_JOB"].category.name == "A"
     assert parsed_jobs["MAIN_JOB"].category.children["CLASSIFICATION_JOB"].category.name == "1"
     assert parsed_jobs["MAIN_JOB"].category.children["CLASSIFICATION_JOB"].category.confidence == 20
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
 
     json_resp = {
         "MAIN_JOB": {
@@ -95,11 +99,13 @@ def test_multiple_jobs_with_children_jobs():
             ]
         }
     }
-    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
     assert parsed_jobs["MAIN_JOB"].category.confidence == 100
     assert parsed_jobs["MAIN_JOB"].category.name == "B"
-    assert parsed_jobs["MAIN_JOB"].children["TRANSCRIPTION_JOB"].text == "some text"
+    assert parsed_jobs["MAIN_JOB"].category.children["TRANSCRIPTION_JOB"].text == "some text"
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
 
     json_resp = {
         "MAIN_JOB": {
@@ -115,12 +121,14 @@ def test_multiple_jobs_with_children_jobs():
             ]
         }
     }
-    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
     assert parsed_jobs["MAIN_JOB"].category.confidence == 100
     assert parsed_jobs["MAIN_JOB"].category.name == "C"
-    assert parsed_jobs["MAIN_JOB"].children["TRANSCRIPTION_JOB_0"].text == "1337"
-    assert parsed_jobs["MAIN_JOB"].children["TRANSCRIPTION_JOB_1"].text == "2013-12-13"
+    assert parsed_jobs["MAIN_JOB"].category.children["TRANSCRIPTION_JOB_0"].text == "1337"
+    assert parsed_jobs["MAIN_JOB"].category.children["TRANSCRIPTION_JOB_1"].text == "2013-12-13"
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
 
 
 def test_attribute_categories_nested():

@@ -14,6 +14,7 @@ def test_mutate_transcription_label_on_classif_project():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category25"},
@@ -46,6 +47,7 @@ def test_mutate_category_label_wrong_confidence_range(input_):
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category25"},
@@ -120,6 +122,7 @@ def test_mutate_multi_class_classif_add_too_many_categories(input_):
                 "instruction": "Class",
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
                 "isChild": False,
             }
         }
@@ -206,6 +209,7 @@ def test_invalid_mutation_on_bbox_annotations():
                 "mlTask": "OBJECT_DETECTION",
                 "tools": ["rectangle"],
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"A": {}, "B": {}},
                     "input": "radio",
@@ -270,6 +274,7 @@ def test_add_annotation_ner_wrong_category_name():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"ORG": {}, "PERSON": {}},
                     "input": "radio",
@@ -403,3 +408,35 @@ def test_add_semantic_annotation_to_bbox_job():
                 "type": "semantic",
             }
         )
+
+
+@pytest.mark.skip("TODO")
+def test_mutation_transcription_with_restricted_values():
+    json_interface = {
+        "jobs": {
+            "TRANSCRIPTION_JOB_ANY_INPUT": {
+                "content": {"input": "textField"},
+                "instruction": "Transcription",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": False,
+            },
+            "TRANSCRIPTION_JOB_NUMBER": {
+                "content": {"input": "number"},
+                "instruction": "Number",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": False,
+            },
+            "TRANSCRIPTION_JOB_DATE": {
+                "content": {"input": "date"},
+                "instruction": "Date",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": False,
+            },
+        }
+    }
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+
+    # TODO: the setter should raise if value set is not compatible with input type

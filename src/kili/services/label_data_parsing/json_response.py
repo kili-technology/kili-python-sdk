@@ -21,6 +21,9 @@ class ParsedJobs:
         # pylint: disable=line-too-long
         """Class for label json response parsing.
 
+        This class will modify the input json_response.
+        If you want to keep the original json_response, use deepcopy.
+
         Args:
             project_info: Information about the project.
             json_response: Value of the key "jsonResponse" of a label.

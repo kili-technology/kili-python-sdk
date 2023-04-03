@@ -116,6 +116,7 @@ def test_attribute_entity_annotations():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"ORG": {}, "PERSON": {}},
                     "input": "radio",
@@ -170,6 +171,7 @@ def test_attribute_object_detection():
                 "mlTask": "OBJECT_DETECTION",
                 "tools": ["rectangle"],
                 "required": 1,
+                "isChild": False,
                 "content": {"categories": {"A": {}, "B": {}}, "input": "radio"},
             }
         }
@@ -198,6 +200,7 @@ def test_not_required_job_classification_category_returns_none():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
             }
         }
     }
@@ -229,6 +232,7 @@ def test_checkbox_job_categories_required():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
             }
         }
     }
@@ -256,6 +260,7 @@ def test_checkbox_job_categories_not_required():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
             }
         }
     }
@@ -789,6 +794,7 @@ def test_repr_str_custom_classes():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {"categories": {"ORG": {}, "PERSON": {}}, "input": "radio"},
             }
         }

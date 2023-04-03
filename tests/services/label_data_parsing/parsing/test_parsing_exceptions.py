@@ -16,6 +16,7 @@ def test_attribute_category_checkbox_job():
                 "content": {"categories": {"A": {}}, "input": "checkbox"},
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
             }
         }
     }
@@ -30,7 +31,7 @@ def test_attribute_category_checkbox_job():
 
 def test_job_not_existing_error():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
-    json_interface = {"jobs": {"JOB_0": {"required": 1}}}
+    json_interface = {"jobs": {"JOB_0": {"required": 1, "isChild": False}}}
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
@@ -41,7 +42,9 @@ def test_job_not_existing_error():
 
 def test_attribute_not_compatible_with_transcription_job_error():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
-    json_interface = {"jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1}}}
+    json_interface = {
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+    }
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
@@ -62,6 +65,7 @@ def test_attribute_not_compatible_with_classif_job_error():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category30"},
@@ -116,6 +120,7 @@ def test_query_invalid_attributes_on_bbox_annotations():
                 "mlTask": "OBJECT_DETECTION",
                 "tools": ["rectangle"],
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"A": {}, "B": {}},
                     "input": "radio",
