@@ -111,6 +111,7 @@ def fetch_assets(  # pylint: disable=too-many-arguments
         "issue_status": asset_filter_kwargs.pop("issue_status", None),
         "inference_mark_gte": asset_filter_kwargs.pop("inference_mark_gte", None),
         "inference_mark_lte": asset_filter_kwargs.pop("inference_mark_lte", None),
+        "metadata_where": asset_filter_kwargs.pop("metadata_where", None),
     }
 
     if asset_filter_kwargs:

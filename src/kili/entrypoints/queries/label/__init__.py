@@ -673,6 +673,7 @@ class QueriesLabel:
                 - issue_status
                 - inference_mark_gte
                 - inference_mark_lte
+                - metadata_where
 
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
 
