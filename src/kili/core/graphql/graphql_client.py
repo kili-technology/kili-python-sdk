@@ -83,10 +83,15 @@ class GraphQLClient:
             self._purge_graphql_schema_cache_dir()
             self._cache_graphql_schema(graphql_schema_path)
 
-        return Client(
-            schema=graphql_schema_path.read_text(encoding="utf-8"),
-            transport=self._gql_transport,
-        )
+        try:
+            return Client(
+                schema=graphql_schema_path.read_text(encoding="utf-8"),
+                transport=self._gql_transport,
+            )
+        except graphql.error.syntax_error.GraphQLSyntaxError:
+            # if the schema cannot be read, we just fetch it from the backend
+            # this can happen if the schema is corrupted or it's being cached by another Kili client
+            return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """Cache the graphql schema on disk."""
