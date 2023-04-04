@@ -28,11 +28,6 @@ from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed
 from kili.internal import KiliInternal
-from kili.project import Project
-from kili.services.project import get_project
-from kili.services.types import ProjectId
-
-from .core.helpers import deprecate
 
 
 class Kili(  # pylint: disable=too-many-ancestors
@@ -113,25 +108,3 @@ class Kili(  # pylint: disable=too-many-ancestors
             raise exception
 
         self.internal = KiliInternal(self)
-
-    @deprecate(
-        msg="This method is deprecated. Use `kili.projects(project_id='<MY_PROJECT_ID>')` instead",
-        removed_in="2.131",
-    )
-    def get_project(self, project_id: str) -> Project:
-        """Return a project object corresponding to the project_id given.
-        The returned project object inherit from many methods for project management.
-
-        Args:
-            project_id: id of the project to return
-
-        raise:
-            NotFound if the given `project_id` does not correspond to an existing project
-        """
-        project = get_project(self.auth, project_id, ["inputType", "title"])
-        return Project(
-            client=self,
-            project_id=ProjectId(project_id),
-            input_type=project["inputType"],
-            title=project["title"],
-        )
