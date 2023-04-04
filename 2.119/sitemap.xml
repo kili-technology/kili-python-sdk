@@ -2,67 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/api_key/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/asset/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/issue/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/label/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/notification/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/organization/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/project/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/project_user/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/project_version/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/user/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/cli/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://python-sdk-docs.kili-technology.com/2.119/cli/reference/</loc>
-         <lastmod>2023-03-15</lastmod>
+         <lastmod>2023-04-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
