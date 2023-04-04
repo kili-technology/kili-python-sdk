@@ -14,6 +14,7 @@ from urllib.parse import urlparse
 import graphql
 import requests
 import websocket
+from filelock import FileLock
 from gql import Client, gql
 from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
@@ -83,27 +84,24 @@ class GraphQLClient:
             self._purge_graphql_schema_cache_dir()
             self._cache_graphql_schema(graphql_schema_path)
 
-        try:
-            return Client(
-                schema=graphql_schema_path.read_text(encoding="utf-8"),
-                transport=self._gql_transport,
-            )
-        except graphql.error.syntax_error.GraphQLSyntaxError:
-            # if the schema cannot be read, we just fetch it from the backend
-            # this can happen if the schema is corrupted or it's being cached by another Kili client
-            return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
+        return Client(
+            schema=graphql_schema_path.read_text(encoding="utf-8"),
+            transport=self._gql_transport,
+        )
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
         """Cache the graphql schema on disk."""
+        graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
+
         with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
-        graphql_schema_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with graphql_schema_path.open("w", encoding="utf-8") as file:
-            file.write(schema_str)
-            file.write("\n")
-            file.flush()
+        # Use mutex to avoid multiple processes operating in the cache directory at the same time
+        with FileLock(self.graphql_schema_cache_dir / "cache_dir.lock", timeout=3):
+            with graphql_schema_path.open("w", encoding="utf-8") as file:
+                file.write(schema_str)
+                file.write("\n")
+                file.flush()
 
     @property
     def graphql_schema_cache_dir(self) -> Path:
@@ -112,8 +110,10 @@ class GraphQLClient:
 
     def _purge_graphql_schema_cache_dir(self) -> None:
         """Purge the schema cache directory."""
-        for file in self.graphql_schema_cache_dir.glob("*.graphql"):
-            file.unlink()
+        # Use mutex to avoid multiple processes operating in the cache directory at the same time
+        with FileLock(self.graphql_schema_cache_dir / "cache_dir.lock", timeout=3):
+            for file in self.graphql_schema_cache_dir.glob("*.graphql"):
+                file.unlink()
 
     def _get_graphql_schema_path(self) -> Optional[Path]:
         """Get the path of the GraphQL schema.
