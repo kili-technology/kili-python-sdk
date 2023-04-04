@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 from src.kili import __version__
 
 install_requires = [
-    "pandas",
+    "pandas<2.0.0",
     "click",
     "requests",
     "tabulate",
