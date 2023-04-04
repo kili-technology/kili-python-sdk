@@ -97,6 +97,8 @@ class GraphQLClient:
 
         with graphql_schema_path.open("w", encoding="utf-8") as file:
             file.write(schema_str)
+            file.write("\n")
+            file.flush()
 
     @property
     def graphql_schema_cache_dir(self) -> Path:
