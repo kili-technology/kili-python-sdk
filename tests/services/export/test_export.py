@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-module-docstring
 import glob
 import os
 from pathlib import Path
@@ -8,8 +8,9 @@ from zipfile import ZipFile
 
 import pytest
 
-from kili.graphql.operations.asset.queries import AssetQuery
-from kili.graphql.operations.project.queries import ProjectQuery
+from kili.core.graphql.operations.asset.queries import AssetQuery
+from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.entrypoints.queries.label import QueriesLabel
 from kili.services import export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -17,6 +18,7 @@ from kili.services.export.exceptions import (
     NotCompatibleOptions,
     NotExportableAssetError,
 )
+from kili.services.export.format.kili import KiliExporter
 from tests.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.fakes.fake_kili import (
     FakeKili,
@@ -690,3 +692,78 @@ def test_export_service_errors(
                 fake_kili.auth,  # type: ignore
                 **default_kwargs,
             )
+
+
+def test_export_with_asset_filter_kwargs(mocker):
+    get_project_return_val = {"jsonInterface": {}, "inputType": "", "title": ""}
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
+    mocker_auth = mocker.MagicMock()
+    kili = QueriesLabel(auth=mocker_auth)
+    kili.export_labels(
+        project_id="fake_proj_id",
+        filename="fake_filename",
+        fmt="kili",
+        layout="merged",
+        with_assets=False,
+        asset_filter_kwargs={
+            "consensus_mark_gte": 0.1,
+            "consensus_mark_lte": 0.2,
+            "external_id_contains": ["truc"],
+            "honeypot_mark_gte": 0.3,
+            "honeypot_mark_lte": 0.4,
+            "label_author_in": None,
+            "label_reviewer_in": None,
+            "skipped": None,
+            "status_in": None,
+            "label_category_search": None,
+            "created_at_gte": 0.5,
+            "created_at_lte": 0.6,
+            "issue_type": "QUESTION",
+            "issue_status": None,
+            "inference_mark_gte": 0.7,
+            "inference_mark_lte": 0.8,
+        },
+    )
+
+    query_sent = mocker_auth.client.execute.call_args[0][0]
+    assert_where = mocker_auth.client.execute.call_args[0][1]["where"]
+
+    assert "query assets($where: AssetWhere!" in query_sent
+    assert "data: assets(where: $where" in query_sent
+
+    assert assert_where["project"]["id"] == "fake_proj_id"
+    assert assert_where["consensusMarkGte"] == 0.1
+    assert assert_where["consensusMarkLte"] == 0.2
+    assert assert_where["honeypotMarkGte"] == 0.3
+    assert assert_where["honeypotMarkLte"] == 0.4
+    assert assert_where["createdAtGte"] == 0.5
+    assert assert_where["createdAtLte"] == 0.6
+    assert assert_where["inferenceMarkGte"] == 0.7
+    assert assert_where["inferenceMarkLte"] == 0.8
+    assert assert_where["externalIdStrictlyIn"] == ["truc"]
+    assert assert_where["issue"]["type"] == "QUESTION"
+
+
+def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
+    get_project_return_val = {"jsonInterface": {}, "inputType": "", "title": ""}
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
+    mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
+    kili = QueriesLabel(auth=mocker.MagicMock())
+
+    with pytest.raises(NameError, match="Unknown asset filter arguments"):
+        kili.export_labels(
+            project_id="fake_proj_id",
+            filename="fake_filename",
+            fmt="kili",
+            layout="merged",
+            with_assets=False,
+            asset_filter_kwargs={"this_arg_does_not_exists": 42},
+        )

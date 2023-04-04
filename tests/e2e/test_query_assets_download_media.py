@@ -12,7 +12,7 @@ import requests
 from PIL import Image
 
 from kili.client import Kili
-from kili.queries.asset.media_downloader import MediaDownloader
+from kili.entrypoints.queries.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
 

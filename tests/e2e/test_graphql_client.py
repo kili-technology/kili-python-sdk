@@ -7,8 +7,8 @@ import pytest
 from gql.transport import exceptions
 from graphql import build_ast_schema, parse
 
+from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.exceptions import GraphQLError
-from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 
 
 def test_gql_bad_query_remote_validation():

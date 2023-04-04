@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
@@ -36,6 +36,7 @@ class ExportParams(NamedTuple):
     output_file: Path
     with_assets: bool
     annotation_modifier: Optional[CocoAnnotationModifier]
+    asset_filter_kwargs: Optional[Dict[str, object]]
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -63,6 +64,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.with_assets: bool = export_params.with_assets
         self.export_root_folder: Path = Path()
         self.annotation_modifier = export_params.annotation_modifier
+        self.asset_filter_kwargs = export_params.asset_filter_kwargs
 
         project_info = get_project(
             self.auth, self.project_id, ["jsonInterface", "inputType", "title"]
@@ -159,6 +161,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 disable_tqdm=self.disable_tqdm,
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),
+                asset_filter_kwargs=self.asset_filter_kwargs,
             )
             self.process_and_save(assets, self.output_file)
 

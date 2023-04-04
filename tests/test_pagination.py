@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from kili.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
+from kili.core.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
 from kili.utils.pagination import BatchIteratorBuilder, batch_object_builder
 
 from .utils import mocked_count_method, mocked_query_method
