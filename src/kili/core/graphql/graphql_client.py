@@ -58,6 +58,10 @@ class GraphQLClient:
             method="POST",
         )
 
+        # Use mutex to avoid multiple processes operating in the cache directory at the same time
+        self._cache_dir_lock = FileLock(
+            self.graphql_schema_cache_dir / "cache_dir.lock", timeout=15
+        )
         self._gql_client = self._initizalize_graphql_client()
 
     def _get_headers(self) -> Dict[str, str]:
@@ -80,28 +84,35 @@ class GraphQLClient:
             return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
 
         # If the schema is not in the cache, we fetch it from the backend and cache it
-        if not (graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0):
-            self._purge_graphql_schema_cache_dir()
-            self._cache_graphql_schema(graphql_schema_path)
+        with self._cache_dir_lock:
+            schema_in_cache = (
+                graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0
+            )
 
-        return Client(
-            schema=graphql_schema_path.read_text(encoding="utf-8"),
-            transport=self._gql_transport,
-        )
+        if not schema_in_cache:
+            self._purge_graphql_schema_cache_dir()  # delete old schema files
+            schema_str = self._cache_graphql_schema(graphql_schema_path)
+        else:
+            with self._cache_dir_lock:
+                schema_str = graphql_schema_path.read_text(encoding="utf-8")
 
-    def _cache_graphql_schema(self, graphql_schema_path: Path) -> None:
+        return Client(schema=schema_str, transport=self._gql_transport)
+
+    def _cache_graphql_schema(self, graphql_schema_path: Path) -> str:
         """Cache the graphql schema on disk."""
         self.graphql_schema_cache_dir.mkdir(parents=True, exist_ok=True)
 
         with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
-        # Use mutex to avoid multiple processes operating in the cache directory at the same time
-        with FileLock(self.graphql_schema_cache_dir / "cache_dir.lock", timeout=3):
+        schema_str += "\n"
+
+        with self._cache_dir_lock:
             with graphql_schema_path.open("w", encoding="utf-8") as file:
                 file.write(schema_str)
-                file.write("\n")
                 file.flush()
+
+        return schema_str
 
     @property
     def graphql_schema_cache_dir(self) -> Path:
@@ -112,8 +123,7 @@ class GraphQLClient:
         """Purge the schema cache directory."""
         self.graphql_schema_cache_dir.mkdir(parents=True, exist_ok=True)
 
-        # Use mutex to avoid multiple processes operating in the cache directory at the same time
-        with FileLock(self.graphql_schema_cache_dir / "cache_dir.lock", timeout=3):
+        with self._cache_dir_lock:
             for file in self.graphql_schema_cache_dir.glob("*.graphql"):
                 file.unlink()
 
