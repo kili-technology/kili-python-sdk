@@ -132,7 +132,7 @@ def test_multiple_jobs_with_children_jobs():
 
 
 def test_attribute_categories_nested():
-    json_response_dict = {
+    json_resp = {
         "JOB_0": {
             "categories": [
                 {
@@ -214,7 +214,7 @@ def test_attribute_categories_nested():
     }
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
 
-    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_response_dict))
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
     assert parsed_jobs["JOB_0"].category.confidence == 1
     assert parsed_jobs["JOB_0"].category.children["JOB_1"].category.confidence == 2
@@ -234,12 +234,58 @@ def test_attribute_categories_nested():
         == 4
     )
 
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
 
-@pytest.mark.skip(reason="Not implemented yet")
+
 def test_attribute_categories_nested_children_wrong_place():
-    json_response_dict = {
+    json_resp = {
         "JOB_0": {
-            "categories": [{"name": "YES_IT_IS_A_NEWS_ARTICLE", "confidence": 100}],
+            "categories": [{"name": "YES_IT_IS_A_NEWS_ARTICLE", "confidence": 42}],
             "children": {"NESTED_JOB": {"categories": [{"name": "SPORTS", "confidence": 100}]}},
         }
     }
+
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "YES_IT_IS_A_NEWS_ARTICLE": {
+                            "children": ["NESTED_JOB"],
+                            "name": "YES_IT_IS_A_NEWS_ARTICLE",
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Job1",
+                "isChild": False,
+                "mlTask": "CLASSIFICATION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "NESTED_JOB": {
+                "content": {
+                    "categories": {"SPORTS": {"children": [], "name": "SPORTS"}},
+                    "input": "radio",
+                },
+                "instruction": "Job2",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert parsed_jobs["JOB_0"].category.confidence == 42
+    assert parsed_jobs["JOB_0"].category.name == "YES_IT_IS_A_NEWS_ARTICLE"
+    assert parsed_jobs["JOB_0"].children["NESTED_JOB"].category.confidence == 100
+    assert parsed_jobs["JOB_0"].children["NESTED_JOB"].category.name == "SPORTS"
+
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp

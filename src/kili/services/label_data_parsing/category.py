@@ -63,7 +63,7 @@ class Category:
         if name not in self._job_interface["content"]["categories"]:
             raise InvalidMutationError(
                 f"Category '{name}' is not in the job interface with categories:"
-                f" {self._job_interface['content']['categories'].keys()}"
+                f" {list(self._job_interface['content']['categories'].keys())}"
             )
         self._json_data["name"] = name
 
@@ -89,9 +89,9 @@ class Category:
     @typechecked
     def children(self, children: Dict) -> None:
         """Sets the children jobs of the classification job."""
-        # pylint: disable=line-too-long
         job_names_to_parse = get_children_job_names(
-            json_interface=self._project_info["jsonInterface"], job_interface=self._job_interface  # type: ignore
+            json_interface=self._project_info["jsonInterface"],
+            job_interface=self._job_interface,  # type: ignore
         )
         parsed_children_job = json_response_module.ParsedJobs(
             project_info=self._project_info,

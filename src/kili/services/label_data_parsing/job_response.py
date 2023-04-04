@@ -8,10 +8,12 @@ from typeguard import typechecked
 
 from kili.services.label_data_parsing import annotation as annotation_module
 from kili.services.label_data_parsing import category as category_module
+from kili.services.label_data_parsing import json_response as json_response_module
 from kili.services.types import Job
 
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import Project
+from .utils import get_children_job_names
 
 
 class JobPayload:
@@ -46,9 +48,16 @@ class JobPayload:
                 annotations_list=self._json_data["annotations"],
             )
 
+        if "children" in self._json_data:
+            self.children = self._json_data["children"]
+
     def to_dict(self) -> Dict:
         """Returns the parsed job payload as a dict."""
-        ret = {k: v for k, v in self._json_data.items() if k not in ("categories", "annotations")}
+        ret = {
+            k: v
+            for k, v in self._json_data.items()
+            if k not in ("categories", "annotations", "children")
+        }
 
         # cast back to python native types
         if "categories" in self._json_data:
@@ -63,6 +72,8 @@ class JobPayload:
                 if isinstance(self._json_data["annotations"], List)
                 else self._json_data["annotations"].as_list()
             )
+        if "children" in self._json_data:
+            ret["children"] = self._json_data["children"].to_dict()
         return ret
 
     def __repr__(self) -> str:
@@ -105,6 +116,26 @@ class JobPayload:
             raise ValueError(f"Expected 1 category, got {self._json_data['categories']}")
 
         return self._json_data["categories"][0]
+
+    @property
+    def children(self) -> "json_response_module.ParsedJobs":
+        """Returns the parsed children jobs of the job."""
+        return self._json_data["children"]
+
+    @children.setter
+    @typechecked
+    def children(self, children: Dict) -> None:
+        """Sets the children jobs of the job."""
+        job_names_to_parse = get_children_job_names(
+            json_interface=self._project_info["jsonInterface"],
+            job_interface=self._job_interface,  # type: ignore
+        )
+        parsed_children_job = json_response_module.ParsedJobs(
+            project_info=self._project_info,
+            json_response=children,
+            job_names_to_parse=job_names_to_parse,
+        )
+        self._json_data["children"] = parsed_children_job
 
     @typechecked
     def add_category(self, name: str, confidence: Optional[int] = None) -> None:
