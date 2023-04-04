@@ -452,3 +452,73 @@ def test_bbox_with_nested_classif():
         .category.confidence
         == 42
     )
+
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
+
+
+def test_ner_text_project_with_classif_children_job():
+    job_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "INTERJECTION": {
+                            "children": ["CLASSIFICATION_JOB"],
+                            "name": "Interjection",
+                            "color": "#733AFB",
+                        },
+                        "NOUN": {"children": [], "name": "Noun", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "CLASSIFICATION_JOB": {
+                "content": {"categories": {"A": {"children": [], "name": "A"}}, "input": "radio"},
+                "instruction": "Classif",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+        }
+    }
+
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {
+                        "CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}
+                    },
+                    "beginId": "main/[0]",
+                    "beginOffset": 497,
+                    "categories": [{"name": "INTERJECTION"}],
+                    "content": "mpor. Cras vestib",
+                    "endId": "main/[0]",
+                    "endOffset": 514,
+                    "mid": "20230404162231697-76830",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=job_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert parsed_jobs["JOB_0"].entity_annotations[0].category.name == "INTERJECTION"
+    assert parsed_jobs["JOB_0"].entity_annotations[0].begin_offset == 497
+    assert parsed_jobs["JOB_0"].entity_annotations[0].end_offset == 514
+
+    assert (
+        parsed_jobs["JOB_0"].entity_annotations[0].children["CLASSIFICATION_JOB"].category.name
+        == "A"
+    )
+
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
