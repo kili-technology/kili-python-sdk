@@ -522,3 +522,104 @@ def test_ner_text_project_with_classif_children_job():
 
     parsed_jobs_as_dict = parsed_jobs.to_dict()
     assert parsed_jobs_as_dict == json_resp
+
+
+def test_relation_job():
+    json_interface = {
+        "jobs": {
+            "NAMED_ENTITIES_RELATION_JOB": {
+                "content": {
+                    "categories": {
+                        "RELATION": {
+                            "children": ["TRANSCRIPTION_JOB"],
+                            "color": "#472CED",
+                            "name": "Relation",
+                            "startEntities": ["ANY"],
+                            "endEntities": ["ANY"],
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Thing",
+                "mlTask": "NAMED_ENTITIES_RELATION",
+                "required": 1,
+                "isChild": False,
+            },
+            "TRANSCRIPTION_JOB": {
+                "content": {"input": "textField"},
+                "instruction": "Text",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": True,
+            },
+            "NAMED_ENTITIES_RECOGNITION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#5CE7B7", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#D33BCE"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Class",
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "isChild": False,
+            },
+        }
+    }
+
+    json_resp = {
+        "NAMED_ENTITIES_RECOGNITION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "beginId": "main/[0]",
+                    "beginOffset": 743,
+                    "categories": [{"name": "A"}],
+                    "content": ". Mauri",
+                    "endId": "main/[0]",
+                    "endOffset": 750,
+                    "mid": "20230404163931564-84302",
+                },
+                {
+                    "children": {},
+                    "beginId": "main/[0]",
+                    "beginOffset": 477,
+                    "categories": [{"name": "B"}],
+                    "content": (
+                        "t libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas"
+                        " leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue"
+                        " blandit sodales. Vestibulum ante ipsum primis in faucibus"
+                    ),
+                    "endId": "main/[0]",
+                    "endOffset": 683,
+                    "mid": "20230404163933009-81517",
+                },
+            ]
+        },
+        "NAMED_ENTITIES_RELATION_JOB": {
+            "annotations": [
+                {
+                    "children": {"TRANSCRIPTION_JOB": {"text": "truc"}},
+                    "categories": [{"name": "RELATION"}],
+                    "endEntities": [{"mid": "20230404163933009-81517"}],
+                    "mid": "20230404163934799-28300",
+                    "startEntities": [{"mid": "20230404163931564-84302"}],
+                }
+            ]
+        },
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert parsed_jobs["NAMED_ENTITIES_RECOGNITION_JOB"].entity_annotations[0].begin_offset == 743
+    assert parsed_jobs["NAMED_ENTITIES_RECOGNITION_JOB"].entity_annotations[0].content == ". Mauri"
+
+    assert (
+        parsed_jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].children["TRANSCRIPTION_JOB"].text
+        == "truc"
+    )
+
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
