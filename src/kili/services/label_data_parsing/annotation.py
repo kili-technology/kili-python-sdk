@@ -76,7 +76,7 @@ class _BaseAnnotation:
         if self._job_interface["content"]["input"] not in ("radio", "singleDropdown"):
             raise AttributeNotCompatibleWithJobError("category")
 
-        if "categories" not in self._json_data and not self._is_required_job:
+        if "categories" not in self._json_data and not self._job_interface["required"]:
             return None  # type: ignore
 
         if len(self._json_data["categories"]) != 1:

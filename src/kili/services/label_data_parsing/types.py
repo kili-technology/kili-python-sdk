@@ -2,7 +2,7 @@
 
 from typing_extensions import TypedDict
 
-from kili.enums import InputType
+from kili.core.enums import InputType
 from kili.services.types import Jobs
 
 
