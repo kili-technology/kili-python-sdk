@@ -448,15 +448,24 @@ def test_mutation_transcription_with_restricted_values():
 
     parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
+    # normal text job: TRANSCRIPTION_JOB_NORMAL
     parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "new text"
     parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "1974-12-11"
     parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "42"
+
+    # date job: TRANSCRIPTION_JOB_DATE
+    parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "1974-12-22"
+    assert parsed_jobs["TRANSCRIPTION_JOB_DATE"].text == "1974-12-22"
 
     with pytest.raises(InvalidMutationError):
         parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "new text"
 
     with pytest.raises(InvalidMutationError):
         parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "1337"
+
+    # number job: TRANSCRIPTION_JOB_NUMBER
+    parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text = "9999999"
+    assert parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text == "9999999"
 
     with pytest.raises(InvalidMutationError):
         parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text = "new text"
