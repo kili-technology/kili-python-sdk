@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from typing import List
 
-from kili.helpers import is_url
+from kili.core.helpers import is_url
 from kili.services.asset_import.base import (
     BaseAssetImporter,
     BaseBatchImporter,

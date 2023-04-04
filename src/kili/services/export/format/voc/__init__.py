@@ -39,7 +39,7 @@ class VocExporter(AbstractExporter):
         """Check if the export label format is compatible with the export options."""
         if self.single_file:
             raise NotCompatibleOptions(
-                "The Pascal VOC annotation format can not be exported into a single file.",
+                "The Pascal VOC annotation format cannot be exported into a single file.",
             )
         if self.split_option != "merged":
             raise NotCompatibleOptions(

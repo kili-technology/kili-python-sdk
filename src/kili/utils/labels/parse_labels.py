@@ -2,7 +2,7 @@
 
 from typing import Dict, Generator, Iterable, List, overload
 
-from kili.enums import InputType
+from kili.core.enums import InputType
 
 from ...services.label_data_parsing.label import ParsedLabel
 

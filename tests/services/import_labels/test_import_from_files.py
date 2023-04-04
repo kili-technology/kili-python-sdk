@@ -8,8 +8,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
+from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.exceptions import NotFound
-from kili.graphql.operations.project.queries import ProjectQuery
 from kili.services import import_labels_from_files
 from kili.services.label_import.exceptions import LabelParsingError
 from kili.services.label_import.importer import YoloLabelImporter

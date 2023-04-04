@@ -6,9 +6,12 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 from zipfile import ZipFile
 
-from kili.authentication import KiliAuth
-from kili.constants import mime_extensions_for_py_scripts, mime_extensions_for_txt_files
-from kili.graphql.operations.plugin.mutations import (
+from kili.core.authentication import KiliAuth
+from kili.core.constants import (
+    mime_extensions_for_py_scripts,
+    mime_extensions_for_txt_files,
+)
+from kili.core.graphql.operations.plugin.mutations import (
     GQL_CREATE_PLUGIN,
     GQL_CREATE_PLUGIN_RUNNER,
     GQL_CREATE_WEBHOOK,
@@ -16,8 +19,8 @@ from kili.graphql.operations.plugin.mutations import (
     GQL_UPDATE_PLUGIN_RUNNER,
     GQL_UPDATE_WEBHOOK,
 )
-from kili.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
-from kili.helpers import format_result, get_data_type
+from kili.core.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
+from kili.core.helpers import format_result, get_data_type
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory

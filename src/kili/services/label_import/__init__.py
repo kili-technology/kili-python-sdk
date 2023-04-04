@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Dict, List, Optional, Type, cast
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.services.helpers import is_target_job_in_json_interface
 from kili.services.label_import.importer import (

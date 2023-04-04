@@ -6,4 +6,4 @@ exclude_lines =
 [run]
 omit =
     src/kili/types.py
-    src/kili/enums.py
+    src/kili/core/enums.py

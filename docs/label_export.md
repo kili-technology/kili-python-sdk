@@ -23,7 +23,7 @@ kili.export_labels(
     fmt = "yolo_v5",
 )
 ```
-More details [here](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.queries.label.__init__.QueriesLabel.export_labels).
+More details [here](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels).
 
 ## From the Kili UI
 You can refer to this [Kili documentation page](https://docs.kili-technology.com/docs/exporting-project-data).

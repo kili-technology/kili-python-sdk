@@ -36,7 +36,6 @@ class _BaseAnnotation:
         self._job_name = job_name
 
         self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
-        self._is_required_job = project_info["jsonInterface"][job_name]["required"]  # type: ignore
 
         # cast lists to objects
         if "categories" in self._json_data:

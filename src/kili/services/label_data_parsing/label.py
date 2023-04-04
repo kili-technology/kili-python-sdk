@@ -3,7 +3,7 @@
 from copy import deepcopy
 from typing import Dict
 
-from kili.enums import InputType
+from kili.core.enums import InputType
 from kili.services.label_data_parsing import json_response as json_response_module
 
 from .types import Project

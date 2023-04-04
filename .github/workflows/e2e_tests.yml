@@ -137,14 +137,11 @@ jobs:
         shell: bash
         run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
-      - name: Get latest release branch
+      - name: Add latest release branch to github env
         shell: bash
         run: |
-          last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
-          echo "Last version: $last_version"
-          IFS=. read -r major minor patch <<< "$last_version"
-          last_minor_version="$major.$minor.0"
-          echo "LASTEST_RELEASE_BRANCH=release/$last_minor_version" >> $GITHUB_ENV
+          curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/.github/scripts/add_latest_release_branch_to_github_env.py --output add_latest_release_branch_to_github_env.py
+          python add_latest_release_branch_to_github_env.py
 
       - name: Set checkout branch/tag and endpoint
         shell: bash

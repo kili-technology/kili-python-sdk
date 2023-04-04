@@ -2,11 +2,10 @@
 
 from typeguard import typechecked
 
-from kili.helpers import format_result
-from kili.mutations.project.queries import GQL_DELETE_PROJECT
-
-from ..mutations.organization import MutationsOrganization
-from ..mutations.user.queries import GQL_RESET_PASSWORD
+from kili.core.helpers import format_result
+from kili.entrypoints.mutations.organization import MutationsOrganization
+from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
+from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
 
 
 class KiliInternal(MutationsOrganization):

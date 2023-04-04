@@ -5,6 +5,8 @@ from typing import Dict, List, Optional
 
 from kili.services.label_data_parsing import job_response as job_response_module
 
+from kili.core.enums import InputType
+
 from .exceptions import JobNotExistingError
 from .types import Project
 
