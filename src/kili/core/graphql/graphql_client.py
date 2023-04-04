@@ -100,8 +100,6 @@ class GraphQLClient:
 
     def _cache_graphql_schema(self, graphql_schema_path: Path) -> str:
         """Cache the graphql schema on disk."""
-        self.graphql_schema_cache_dir.mkdir(parents=True, exist_ok=True)
-
         with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
@@ -117,12 +115,12 @@ class GraphQLClient:
     @property
     def graphql_schema_cache_dir(self) -> Path:
         """Get the path of the GraphQL schema cache directory."""
-        return Path.home() / ".cache" / "kili" / "graphql"
+        path = Path.home() / ".cache" / "kili" / "graphql"
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
     def _purge_graphql_schema_cache_dir(self) -> None:
         """Purge the schema cache directory."""
-        self.graphql_schema_cache_dir.mkdir(parents=True, exist_ok=True)
-
         with self._cache_dir_lock:
             for file in self.graphql_schema_cache_dir.glob("*.graphql"):
                 file.unlink()
