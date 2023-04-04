@@ -108,13 +108,13 @@ class _BaseAnnotation:
 
     @property
     def mid(self) -> str:
-        """Returns the mid of the annotation."""
+        """Returns the annotation unique identifier."""
         return self._json_data["mid"]
 
     @mid.setter
     @typechecked
     def mid(self, mid: str) -> None:
-        """Sets the mid of the annotation."""
+        """Sets the annotation unique identifier."""
         if len(mid) == 0:
             raise ValueError("mid must be non-empty.")
         self._json_data["mid"] = mid

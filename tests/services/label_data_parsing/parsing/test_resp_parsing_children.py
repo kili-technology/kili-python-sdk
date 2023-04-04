@@ -375,3 +375,80 @@ def test_parsing_bbox_job_with_classif_subjob_and_transcription_subjob():
 
     parsed_jobs_as_dict = parsed_jobs.to_dict()
     assert parsed_jobs_as_dict == json_resp
+
+
+def test_bbox_with_nested_classif():
+    json_interface = {
+        "jobs": {
+            "JOB": {
+                "content": {
+                    "categories": {
+                        "FERRARI": {
+                            "children": ["CLASSIFICATION_JOB"],
+                            "color": "#472CED",
+                            "name": "FERRARI",
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "BBox",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["rectangle"],
+                "isChild": False,
+            },
+            "CLASSIFICATION_JOB": {
+                "content": {
+                    "categories": {"GREY": {"children": [], "name": "GREY"}},
+                    "input": "radio",
+                },
+                "instruction": "Classif task",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+        }
+    }
+
+    json_resp = {
+        "JOB": {
+            "annotations": [
+                {
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.09, "y": 0.84},
+                                {"x": 0.09, "y": 0.36},
+                                {"x": 0.92, "y": 0.36},
+                                {"x": 0.92, "y": 0.84},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "FERRARI", "confidence": 100}],
+                    "mid": "unique-ferrari",
+                    "type": "rectangle",
+                    "children": {
+                        "CLASSIFICATION_JOB": {"categories": [{"name": "GREY", "confidence": 42}]}
+                    },
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert parsed_jobs["JOB"].annotations[0].category.name == "FERRARI"
+    assert parsed_jobs["JOB"].annotations[0].mid == "unique-ferrari"
+
+    assert (
+        parsed_jobs["JOB"].bounding_poly_annotations[0].children["CLASSIFICATION_JOB"].category.name
+        == "GREY"
+    )
+    assert (
+        parsed_jobs["JOB"]
+        .bounding_poly_annotations[0]
+        .children["CLASSIFICATION_JOB"]
+        .category.confidence
+        == 42
+    )
