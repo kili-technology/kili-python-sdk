@@ -257,7 +257,7 @@ class QueriesAsset:
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
-            label_author_in: Returned assets should have a label whose status belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
+            label_author_in: Returned assets should have a label whose author belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
             label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
             label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
@@ -485,7 +485,7 @@ class QueriesAsset:
             honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
             honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
-            label_author_in: Returned assets should have a label whose status belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
+            label_author_in: Returned assets should have a label whose author belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
             label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
             label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
