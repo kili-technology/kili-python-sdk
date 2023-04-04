@@ -28,6 +28,7 @@ from kili.exceptions import GraphQLError
 from kili.utils.logcontext import LogContext
 
 
+# pylint: disable=too-many-instance-attributes
 class GraphQLClient:
     """GraphQL client."""
 
