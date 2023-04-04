@@ -9,11 +9,13 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili.services.label_data_parsing import category as category_module
+from kili.services.label_data_parsing import json_response as json_response_module
 
 from .bounding_poly import BoundingPoly
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import Project
+from .utils import get_children_job_names
 
 
 class _BaseAnnotation:
@@ -44,6 +46,8 @@ class _BaseAnnotation:
                 project_info=self._project_info,
                 job_name=self._job_name,
             )
+        if self._json_data.get("children"):
+            self.children = self._json_data["children"]
 
     def __str__(self) -> str:
         return str(self._json_data)
@@ -53,12 +57,18 @@ class _BaseAnnotation:
 
     def as_dict(self) -> Dict:
         """Returns the parsed annotation as a dict."""
-        ret = {k: v for k, v in self._json_data.items() if k not in ("categories",)}
+        ret = {k: v for k, v in self._json_data.items() if k not in ("categories", "children")}
         if "categories" in self._json_data:
             ret["categories"] = (
                 self._json_data["categories"]
                 if isinstance(self._json_data["categories"], List)
                 else self._json_data["categories"].as_list()
+            )
+        if "children" in self._json_data:
+            ret["children"] = (
+                self._json_data["children"].to_dict()
+                if not isinstance(self._json_data["children"], Dict)
+                else self._json_data["children"]
             )
         return ret
 
@@ -110,8 +120,24 @@ class _BaseAnnotation:
         self._json_data["mid"] = mid
 
     @property
-    def children(self):
-        """Not implemented yet."""
+    def children(self) -> "json_response_module.ParsedJobs":
+        """Returns the parsed children jobs of the job."""
+        return self._json_data["children"]
+
+    @children.setter
+    @typechecked
+    def children(self, children: Dict) -> None:
+        """Sets the children jobs of the annotation job."""
+        job_names_to_parse = get_children_job_names(
+            json_interface=self._project_info["jsonInterface"],
+            job_interface=self._job_interface,  # type: ignore
+        )
+        parsed_children_job = json_response_module.ParsedJobs(
+            project_info=self._project_info,
+            json_response=children,
+            job_names_to_parse=job_names_to_parse,
+        )
+        self._json_data["children"] = parsed_children_job
 
 
 class EntityAnnotation(_BaseAnnotation):
@@ -407,8 +433,6 @@ class Annotation(
             project_info: The project info object.
             job_name: The name of the job.
         """
-        super().__init__(annotation_json=json_data, project_info=project_info, job_name=job_name)
-
         # dictionaries to store the valid attributes/properties for each mlTask and type of tool
         self._valid_attributes_for_ml_task = defaultdict(set)
         self._valid_attributes_for_tool = defaultdict(set)
@@ -431,6 +455,8 @@ class Annotation(
 
             for tool in type_of_tools:
                 self._valid_attributes_for_tool[tool].update(parent_class_properties)
+
+        super().__init__(annotation_json=json_data, project_info=project_info, job_name=job_name)
 
     # all properties should be inherited from the base classes
 

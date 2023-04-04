@@ -31,7 +31,7 @@ class Category:
         self.name = category_json["name"]
         if "confidence" in category_json:
             self.confidence = category_json["confidence"]
-        if "children" in category_json:
+        if category_json.get("children"):
             self.children = category_json["children"]
 
     def __str__(self) -> str:
@@ -48,7 +48,11 @@ class Category:
         if "confidence" in self._json_data:
             ret["confidence"] = self._json_data["confidence"]
         if "children" in self._json_data:
-            ret["children"] = self._json_data["children"].to_dict()
+            ret["children"] = (
+                self._json_data["children"].to_dict()
+                if not isinstance(self._json_data["children"], Dict)
+                else self._json_data["children"]
+            )
         return ret
 
     @property

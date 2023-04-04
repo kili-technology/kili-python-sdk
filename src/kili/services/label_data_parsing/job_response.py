@@ -48,7 +48,7 @@ class JobPayload:
                 annotations_list=self._json_data["annotations"],
             )
 
-        if "children" in self._json_data:
+        if self._json_data.get("children"):
             self.children = self._json_data["children"]
 
     def to_dict(self) -> Dict:
@@ -73,7 +73,11 @@ class JobPayload:
                 else self._json_data["annotations"].as_list()
             )
         if "children" in self._json_data:
-            ret["children"] = self._json_data["children"].to_dict()
+            ret["children"] = (
+                self._json_data["children"].to_dict()
+                if not isinstance(self._json_data["children"], Dict)
+                else self._json_data["children"]
+            )
         return ret
 
     def __repr__(self) -> str:

@@ -289,3 +289,89 @@ def test_attribute_categories_nested_children_wrong_place():
 
     parsed_jobs_as_dict = parsed_jobs.to_dict()
     assert parsed_jobs_as_dict == json_resp
+
+
+def test_parsing_bbox_job_with_classif_subjob_and_transcription_subjob():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {
+                            "children": ["CLASSIFICATION_JOB", "TRANSCRIPTION_JOB"],
+                            "color": "#472CED",
+                            "name": "A",
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "BBox",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["rectangle"],
+                "isChild": False,
+            },
+            "CLASSIFICATION_JOB": {
+                "content": {"categories": {"B": {"children": [], "name": "B"}}, "input": "radio"},
+                "instruction": "Classif task",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+            "TRANSCRIPTION_JOB": {
+                "content": {"input": "textField"},
+                "instruction": "Transcription task",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": True,
+            },
+        }
+    }
+
+    json_resp = {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {
+                        "CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "B"}]},
+                        "TRANSCRIPTION_JOB": {"text": "some text"},
+                    },
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.5734189651307983, "y": 0.33436362565639133},
+                                {"x": 0.5734189651307983, "y": 0.10309483010170684},
+                                {"x": 0.7995650963228321, "y": 0.10309483010170684},
+                                {"x": 0.7995650963228321, "y": 0.33436362565639133},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "A"}],
+                    "mid": "20230404094129314-32394",
+                    "type": "rectangle",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name == "A"
+    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].mid == "20230404094129314-32394"
+
+    assert (
+        parsed_jobs["OBJECT_DETECTION_JOB"]
+        .annotations[0]
+        .children["CLASSIFICATION_JOB"]
+        .category.name
+        == "B"
+    )
+
+    assert (
+        parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].children["TRANSCRIPTION_JOB"].text
+        == "some text"
+    )
+
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp
