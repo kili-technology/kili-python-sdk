@@ -33,11 +33,7 @@ class GraphQLClient:
     """GraphQL client."""
 
     def __init__(
-        self,
-        endpoint: str,
-        api_key: str,
-        client_name: GraphQLClientName,
-        verify: bool = True,
+        self, endpoint: str, api_key: str, client_name: GraphQLClientName, verify: bool = True
     ) -> None:
         self.endpoint = endpoint
         self.api_key = api_key
