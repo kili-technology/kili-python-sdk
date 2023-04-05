@@ -3,7 +3,7 @@
 
 import functools
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, Iterator, List, Optional, Sequence
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -51,6 +51,7 @@ class _BaseAnnotation:
                 bounding_poly_list=self._json_data["boundingPoly"],
                 project_info=self._project_info,
                 job_name=self._job_name,
+                type_of_tool=self._json_data["type"],
             )
         if self._json_data.get("children"):
             self.children = self._json_data["children"]
@@ -285,7 +286,10 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
         """Adds a bounding polygon to the boundingPoly list."""
         bounding_poly_list = (
             BoundingPolyList(
-                bounding_poly_list=[], project_info=self._project_info, job_name=self._job_name
+                bounding_poly_list=[],
+                project_info=self._project_info,
+                job_name=self._job_name,
+                type_of_tool=self._json_data["type"],
             )
             if "boundingPoly" not in self._json_data
             else self._json_data["boundingPoly"]
@@ -536,6 +540,10 @@ class AnnotationList:
     def __len__(self) -> int:
         """Returns the number of annotations."""
         return len(self._annotations_list)
+
+    def __iter__(self) -> Iterator[Annotation]:
+        """Returns an iterator over the annotations."""
+        return iter(self._annotations_list)
 
     def __str__(self) -> str:
         """Returns the string representation of the annotations list."""
