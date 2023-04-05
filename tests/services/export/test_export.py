@@ -754,3 +754,43 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
             with_assets=False,
             asset_filter_kwargs={"this_arg_does_not_exists": 42},
         )
+
+
+def test_export_with_asset_cloud_storage_should_crash(mocker):
+    get_project_return_val = {
+        "jsonInterface": {"jobs": {"JOB": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"}}},
+        "inputType": "IMAGE",
+        "title": "",
+    }
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
+        return_value=(i for i in [get_project_return_val]),
+    )
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
+    mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
+    mocker.patch(
+        "kili.services.export.format.base.DataConnectionsQuery.__call__",
+        return_value=(i for i in [{"id": "fake_data_connection_id"}]),
+    )
+
+    kili = QueriesLabel(auth=mocker.MagicMock())
+
+    with pytest.raises(
+        NotCompatibleOptions,
+        match=(
+            "Export with download of assets is not allowed on projects with data"
+            " connections. Please disable the download of assets by setting"
+            " `with_assets=False`."
+        ),
+    ):
+        kili.export_labels(
+            project_id="fake_proj_id",
+            filename="fake_filename",
+            fmt="pascal_voc",
+            layout="merged",
+            with_assets=True,
+        )
