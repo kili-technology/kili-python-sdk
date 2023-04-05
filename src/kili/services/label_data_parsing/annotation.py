@@ -283,7 +283,15 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
         self, bounding_poly_dict: Dict[Literal["normalizedVertices"], Any]
     ) -> None:
         """Adds a bounding polygon to the boundingPoly list."""
-        self._json_data["boundingPoly"].add_bounding_poly(bounding_poly_dict)
+        bounding_poly_list = (
+            BoundingPolyList(
+                bounding_poly_list=[], project_info=self._project_info, job_name=self._job_name
+            )
+            if "boundingPoly" not in self._json_data
+            else self._json_data["boundingPoly"]
+        )
+        bounding_poly_list.add_bounding_poly(bounding_poly_dict)
+        self._json_data["boundingPoly"] = bounding_poly_list
 
     @property
     def score(self) -> int:
