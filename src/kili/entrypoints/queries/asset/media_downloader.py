@@ -53,7 +53,7 @@ def get_download_assets_function(
         )
 
     # We need to query the data connections to know if the assets are hosted in a cloud storage
-    # If so, we forbid the download
+    # If so, we remove the fields "content" and "jsonContent" from the query
     data_connections_gen = DataConnectionsQuery(auth.client)(
         where=DataConnectionsWhere(project_id=project_id),
         fields=["id"],
