@@ -1,5 +1,5 @@
 ::: mkdocs-click
-    :module: kili.cli
+    :module: kili.entrypoints.cli
     :command: cli
     :prog_name: kili
     :style: table
