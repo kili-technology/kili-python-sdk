@@ -14,6 +14,10 @@ from tenacity.wait import wait_random
 
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.data_connection.queries import (
+    DataConnectionsQuery,
+    DataConnectionsWhere,
+)
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.exceptions import NotFound
 
@@ -36,6 +40,7 @@ def get_download_assets_function(
     """
     if not download_media:
         return None, fields
+
     projects = list(
         ProjectQuery(auth.client)(
             ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
@@ -46,11 +51,31 @@ def get_download_assets_function(
             f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of the"
             " project."
         )
+
+    # We need to query the data connections to know if the assets are hosted in a cloud storage
+    # If so, we forbid the download
+    data_connections_gen = DataConnectionsQuery(auth.client)(
+        where=DataConnectionsWhere(project_id=project_id),
+        fields=["id"],
+        options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+    )
+    if len(list(data_connections_gen)) > 0:
+        warnings.warn(
+            (
+                "The download of assets from a project connected to a cloud storage is not allowed."
+                " Asset download is disabled."
+            ),
+            stacklevel=2,
+        )
+        fields = [field for field in fields if field not in ("content", "jsonContent")]
+        return None, fields
+
     input_type = projects[0]["inputType"]
     jsoncontent_field_added = False
     if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
         fields = fields + ["jsonContent"]
         jsoncontent_field_added = True
+
     return (
         MediaDownloader(
             local_media_dir,
@@ -163,7 +188,7 @@ class MediaDownloader:
 
 
 def get_file_extension_from_headers(url) -> Optional[str]:
-    """guess the extension of a file with the url response headers."""
+    """Guess the extension of a file with the url response headers."""
     with requests.head(url, timeout=20) as header_response:
         if header_response.status_code == 200:
             headers = header_response.headers
@@ -205,7 +230,7 @@ def download_file(url: str, external_id: str, local_dir_path: Path) -> str:
 
 
 def assert_required_fields_existence(assets: List[Dict]) -> None:
-    """check if all fields are available to download assets."""
+    """Check if all fields are available to download assets."""
     required_fields = ["content", "externalId"]
     for field in required_fields:
         if field not in assets[0].keys():
