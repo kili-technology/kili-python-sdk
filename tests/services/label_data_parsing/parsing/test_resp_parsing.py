@@ -1068,7 +1068,7 @@ def test_iterate_over_jobs():
     for i, (job_name, job_payload) in enumerate(parsed_jobs.items()):
         assert isinstance(job_payload, JobPayload)
 
-    assert i == nb_jobs - 1
+    assert i == nb_jobs - 1  # type: ignore
 
 
 def test_iterate_over_annotations():
