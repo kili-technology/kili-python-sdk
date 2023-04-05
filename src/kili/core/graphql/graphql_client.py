@@ -84,17 +84,11 @@ class GraphQLClient:
         if graphql_schema_path is None:
             return Client(transport=self._gql_transport, fetch_schema_from_transport=True)
 
-        # If the schema is not in the cache, we fetch it from the backend and cache it
         with self._cache_dir_lock:
-            schema_in_cache = (
-                graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0
-            )
-
-        if not schema_in_cache:
-            self._purge_graphql_schema_cache_dir()  # delete old schema files
-            schema_str = self._cache_graphql_schema(graphql_schema_path)
-        else:
-            with self._cache_dir_lock:
+            if not (graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0):
+                self._purge_graphql_schema_cache_dir()  # delete old schema files
+                schema_str = self._cache_graphql_schema(graphql_schema_path)
+            else:
                 schema_str = graphql_schema_path.read_text(encoding="utf-8")
 
         return Client(schema=schema_str, transport=self._gql_transport)
@@ -103,8 +97,6 @@ class GraphQLClient:
         """Cache the graphql schema on disk."""
         with Client(transport=self._gql_transport, fetch_schema_from_transport=True) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
-
-        schema_str += "\n"
 
         with self._cache_dir_lock:
             with graphql_schema_path.open("w", encoding="utf-8") as file:
