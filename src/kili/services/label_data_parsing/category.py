@@ -4,26 +4,34 @@ from typing import Any, Dict, List, Optional
 
 from typeguard import typechecked
 
+import kili.services.label_data_parsing.json_response as json_response_module
+
 from .exceptions import InvalidMutationError
+from .types import Project
+from .utils import get_children_job_names
 
 
 class Category:
     """Class for Category parsing."""
 
-    def __init__(self, category_json: Dict, job_interface: Dict) -> None:
+    def __init__(self, category_json: Dict, project_info: Project, job_name: str) -> None:
         """Class for Category parsing.
 
         Args:
             category_json: Value of the key "categories".
-            job_interface: Job interface of the job.
+            project_info: Information about the project.
+            job_name: Name of the job.
         """
         self._json_data = {}
-        self._job_interface = job_interface
+        self._project_info = project_info
+        self._job_name = job_name
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
+        # call the setters to check the values are valid
         self.name = category_json["name"]
         if "confidence" in category_json:
             self.confidence = category_json["confidence"]
-        if "children" in category_json:
+        if category_json.get("children"):
             self.children = category_json["children"]
 
     def __str__(self) -> str:
@@ -36,7 +44,16 @@ class Category:
 
     def as_dict(self) -> Dict:
         """Returns the parsed category as a dict."""
-        return self._json_data
+        ret = {"name": self._json_data["name"]}
+        if "confidence" in self._json_data:
+            ret["confidence"] = self._json_data["confidence"]
+        if "children" in self._json_data:
+            ret["children"] = (
+                self._json_data["children"].to_dict()
+                if not isinstance(self._json_data["children"], Dict)
+                else self._json_data["children"]
+            )
+        return ret
 
     @property
     def name(self) -> str:
@@ -50,7 +67,7 @@ class Category:
         if name not in self._job_interface["content"]["categories"]:
             raise InvalidMutationError(
                 f"Category '{name}' is not in the job interface with categories:"
-                f" {self._job_interface['content']['categories'].keys()}"
+                f" {list(self._job_interface['content']['categories'].keys())}"
             )
         self._json_data["name"] = name
 
@@ -68,29 +85,44 @@ class Category:
         self._json_data["confidence"] = confidence
 
     @property
-    def children(self):
-        """Returns the children of the category label."""
+    def children(self) -> "json_response_module.ParsedJobs":
+        """Returns the parsed children jobs of the classification job."""
         return self._json_data["children"]
 
     @children.setter
     @typechecked
-    def children(self, children: List[Dict[str, Any]]) -> None:
-        """Sets the children of the category label."""
-        self._json_data["children"] = children
+    def children(self, children: Dict) -> None:
+        """Sets the children jobs of the classification job."""
+        job_names_to_parse = get_children_job_names(
+            json_interface=self._project_info["jsonInterface"],
+            job_interface=self._job_interface,  # type: ignore
+        )
+        parsed_children_job = json_response_module.ParsedJobs(
+            project_info=self._project_info,
+            json_response=children,
+            job_names_to_parse=job_names_to_parse,
+        )
+        self._json_data["children"] = parsed_children_job
 
 
 class CategoryList:
     """Class for the categories list parsing."""
 
-    def __init__(self, categories_list: List[Dict[str, Any]], job_interface: Dict) -> None:
+    def __init__(
+        self, categories_list: List[Dict[str, Any]], project_info: Project, job_name: str
+    ) -> None:
         """Class for the categories list parsing.
 
         Args:
             categories_list: List of dicts representing categories.
-            job_interface: Job interface of the job.
+            project_info: Information about the project.
+            job_name: Name of the job.
         """
         self._categories_list: List[Category] = []
-        self._job_interface = job_interface
+        self._project_info = project_info
+        self._job_name = job_name
+
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         for category_dict in categories_list:
             self.add_category(**category_dict)
@@ -124,15 +156,20 @@ class CategoryList:
             )
 
     @typechecked
-    def add_category(self, name: str, confidence: Optional[int] = None) -> None:
+    def add_category(
+        self, name: str, confidence: Optional[int] = None, children: Optional[Dict] = None
+    ) -> None:
         """Adds a category object to the CategoryList object."""
         category_dict: Dict[str, object] = {"name": name}
         if confidence is not None:
             category_dict["confidence"] = confidence
+        if children is not None:
+            category_dict["children"] = children
 
         category = Category(
             category_json=category_dict,
-            job_interface=self._job_interface,
+            project_info=self._project_info,
+            job_name=self._job_name,
         )
         self._check_can_append_category(category)
         self._categories_list.append(category)

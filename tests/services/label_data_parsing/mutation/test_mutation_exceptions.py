@@ -5,6 +5,7 @@ from kili.services.label_data_parsing.exceptions import (
     InvalidMutationError,
 )
 from kili.services.label_data_parsing.json_response import ParsedJobs
+from kili.services.label_data_parsing.types import Project
 
 
 def test_mutate_transcription_label_on_classif_project():
@@ -13,6 +14,7 @@ def test_mutate_transcription_label_on_classif_project():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category25"},
@@ -26,7 +28,8 @@ def test_mutate_transcription_label_on_classif_project():
     }
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -44,6 +47,7 @@ def test_mutate_category_label_wrong_confidence_range(input_):
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category25"},
@@ -58,7 +62,8 @@ def test_mutate_category_label_wrong_confidence_range(input_):
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -92,7 +97,8 @@ def test_mutate_single_class_classif_add_multiple_categories(input_):
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -117,13 +123,15 @@ def test_mutate_multi_class_classif_add_too_many_categories(input_):
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
                 "isChild": False,
+                "isChild": False,
             }
         }
     }
 
     json_response_dict = {}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     parsed_jobs["JOB_0"].add_category(name="A", confidence=1)
     parsed_jobs["JOB_0"].add_category(name="B", confidence=2)
@@ -163,7 +171,8 @@ def test_mutate_category_wrong_class_name(input_):
 
     json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].category.name == "A"
 
@@ -200,6 +209,7 @@ def test_invalid_mutation_on_bbox_annotations():
                 "mlTask": "OBJECT_DETECTION",
                 "tools": ["rectangle"],
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"A": {}, "B": {}},
                     "input": "radio",
@@ -208,7 +218,8 @@ def test_invalid_mutation_on_bbox_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].annotations
 
@@ -244,7 +255,8 @@ def test_cannot_add_same_category_twice_to_categorylist_with_add_category():
 
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
     with pytest.raises(
         InvalidMutationError,
@@ -262,6 +274,7 @@ def test_add_annotation_ner_wrong_category_name():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"ORG": {}, "PERSON": {}},
                     "input": "radio",
@@ -289,7 +302,8 @@ def test_add_annotation_ner_wrong_category_name():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     with pytest.raises(
         InvalidMutationError,
@@ -348,7 +362,8 @@ def test_set_normalized_vertices_wrong_values():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
     with pytest.raises(ValueError):
         parsed_jobs["JOB_0"].annotations[0].bounding_poly[0].normalized_vertices = [
             {"x": 10000, "y": 0}
@@ -378,7 +393,8 @@ def test_add_semantic_annotation_to_bbox_job():
     }
 
     json_resp = {}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
 
     with pytest.raises(InvalidMutationError):
         parsed_jobs["JOB_0"].add_annotation(
@@ -392,3 +408,67 @@ def test_add_semantic_annotation_to_bbox_job():
                 "type": "semantic",
             }
         )
+
+
+def test_mutation_transcription_with_restricted_values():
+    json_interface = {
+        "jobs": {
+            "TRANSCRIPTION_JOB_NORMAL": {
+                "content": {"input": "radio"},
+                "instruction": "Text field",
+                "isChild": False,
+                "mlTask": "TRANSCRIPTION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "TRANSCRIPTION_JOB_DATE": {
+                "content": {"input": "date"},
+                "instruction": "date field",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": False,
+            },
+            "TRANSCRIPTION_JOB_NUMBER": {
+                "content": {"input": "number"},
+                "instruction": "number field",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": False,
+            },
+        }
+    }
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+
+    json_resp = {
+        "TRANSCRIPTION_JOB_NORMAL": {"text": "texttttttt"},
+        "TRANSCRIPTION_JOB_DATE": {"text": "1974-12-11"},
+        "TRANSCRIPTION_JOB_NUMBER": {"text": "42"},
+    }
+
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
+
+    # normal text job: TRANSCRIPTION_JOB_NORMAL
+    parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "new text"
+    parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "1974-12-11"
+    parsed_jobs["TRANSCRIPTION_JOB_NORMAL"].text = "42"
+
+    # date job: TRANSCRIPTION_JOB_DATE
+    parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "1974-12-22"
+    assert parsed_jobs["TRANSCRIPTION_JOB_DATE"].text == "1974-12-22"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "new text"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_DATE"].text = "1337"
+
+    # number job: TRANSCRIPTION_JOB_NUMBER
+    parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text = "9999999"
+    assert parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text == "9999999"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text = "new text"
+
+    with pytest.raises(InvalidMutationError):
+        parsed_jobs["TRANSCRIPTION_JOB_NUMBER"].text = "1974-12-11"
