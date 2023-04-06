@@ -21,7 +21,7 @@ from kili.core.graphql.operations.data_connection.queries import (
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.exceptions import NotFound
 
-from .exceptions import MissingPropertyError
+from .exceptions import DownloadNotAllowedError, MissingPropertyError
 
 
 def get_download_assets_function(
@@ -60,15 +60,10 @@ def get_download_assets_function(
         options=QueryOptions(disable_tqdm=True, first=1, skip=0),
     )
     if len(list(data_connections_gen)) > 0:
-        warnings.warn(
-            (
-                "The download of assets from a project connected to a cloud storage is not allowed."
-                " Asset download is disabled."
-            ),
-            stacklevel=2,
+        raise DownloadNotAllowedError(
+            "The download of assets from a project connected to a cloud storage is not allowed."
+            " Asset download is disabled."
         )
-        fields = [field for field in fields if field not in ("content", "jsonContent")]
-        return None, fields
 
     input_type = projects[0]["inputType"]
     jsoncontent_field_added = False
