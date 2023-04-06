@@ -3,7 +3,7 @@
 
 import functools
 from collections import defaultdict
-from typing import Any, Dict, Iterator, List, Optional, Sequence
+from typing import Dict, Iterator, List, Optional, Sequence
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -281,7 +281,10 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
         return self._json_data["boundingPoly"]
 
     def add_bounding_poly(
-        self, bounding_poly_dict: Dict[Literal["normalizedVertices"], Any]
+        self,
+        bounding_poly_dict: Dict[
+            Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]
+        ],
     ) -> None:
         """Adds a bounding polygon to the boundingPoly list."""
         bounding_poly_list = (

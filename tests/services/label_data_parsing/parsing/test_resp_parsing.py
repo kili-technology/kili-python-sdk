@@ -1062,7 +1062,9 @@ def test_iterate_over_jobs():
 
     assert len(parsed_jobs) == nb_jobs
 
-    for job_name, parsed_job_name in zip(json_interface["jobs"].keys(), parsed_jobs):
+    for job_name, parsed_job_name in zip(
+        sorted(json_interface["jobs"].keys()), sorted(parsed_jobs)
+    ):
         assert job_name == parsed_job_name
 
     for i, (job_name, job_payload) in enumerate(parsed_jobs.items()):

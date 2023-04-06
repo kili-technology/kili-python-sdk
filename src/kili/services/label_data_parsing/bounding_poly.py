@@ -1,6 +1,6 @@
 """Module for the "boundingPoly" key parsing of an object detection job response."""
 
-from typing import Any, Dict, Iterator, List
+from typing import Dict, Iterator, List
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -14,11 +14,15 @@ class BoundingPoly:
 
     def __init__(
         self,
-        bounding_poly_json: Dict[Literal["normalizedVertices"], Any],
+        bounding_poly_json: Dict[
+            Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]
+        ],
         type_of_tool: Literal["rectangle", "polygon", "semantic"],
     ) -> None:
         """Class for BoundingPoly parsing."""
-        self._json_data: Dict[Literal["normalizedVertices"], Any] = {}
+        self._json_data: Dict[
+            Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]
+        ] = {}
         self._type_of_tool = type_of_tool
 
         self.normalized_vertices = bounding_poly_json["normalizedVertices"]
@@ -72,7 +76,9 @@ class BoundingPolyList:
 
     def __init__(
         self,
-        bounding_poly_list: List[Dict[Literal["normalizedVertices"], Any]],
+        bounding_poly_list: List[
+            Dict[Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]]
+        ],
         project_info: Project,
         job_name: str,
         type_of_tool: Literal["rectangle", "polygon", "semantic"],
@@ -104,7 +110,10 @@ class BoundingPolyList:
             )
 
     @typechecked
-    def add_bounding_poly(self, bounding_poly: Dict[Literal["normalizedVertices"], Any]) -> None:
+    def add_bounding_poly(
+        self,
+        bounding_poly: Dict[Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]],
+    ) -> None:
         """Adds a boundingPoly object to a BoundingPolyList object."""
         bounding_poly_obj = BoundingPoly(bounding_poly, type_of_tool=self._type_of_tool)
         self._check_can_append_bounding_poly(bounding_poly_obj)
