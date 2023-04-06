@@ -28,7 +28,7 @@ from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
-from ..exceptions import NotCompatibleOptions
+from ..exceptions import NotCompatibleOptions, NotExportableAssetError
 
 
 class ExportParams(NamedTuple):
@@ -184,6 +184,17 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 local_media_dir=str(self.images_folder),
                 asset_filter_kwargs=self.asset_filter_kwargs,
             )
+            # if the asset["externalId"] has slashes in it, the export will not work
+            # since the slashes will be interpreted as folders
+            if any(
+                asset["externalId"].find("/") != -1 or asset["externalId"].find("\\") != -1
+                for asset in assets
+            ):
+                raise NotExportableAssetError(
+                    "The export is not supported for assets with externalIds that contain slashes."
+                    " Please remove the slashes from the externalIds using"
+                    " `kili.change_asset_external_ids()` and try again."
+                )
 
             self.process_and_save(assets, self.output_file)
 
