@@ -624,7 +624,7 @@ def test_add_bounding_poly():
     parsed_jobs = ParsedJobs(json_response=deepcopy(json_resp), project_info=project_info)
 
     parsed_jobs["JOB_0"].bounding_poly_annotations[0].add_bounding_poly(
-        {"normalizedVertices": [point, point, point, point]}
+        {"normalizedVertices": [point, point, point, point]}  # type: ignore
     )
 
     assert parsed_jobs.to_dict() == {
