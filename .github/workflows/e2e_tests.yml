@@ -139,9 +139,12 @@ jobs:
 
       - name: Add latest release branch to github env
         shell: bash
+        timeout-minutes: 3
         run: |
           curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/.github/scripts/add_latest_release_branch_to_github_env.py --output add_latest_release_branch_to_github_env.py
           python add_latest_release_branch_to_github_env.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set checkout branch/tag and endpoint
         shell: bash
