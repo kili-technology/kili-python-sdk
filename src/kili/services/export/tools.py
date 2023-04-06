@@ -1,4 +1,5 @@
 """Set of common functions used by different export formats."""
+import warnings
 from typing import Dict, List, Optional
 
 from kili.core.authentication import KiliAuth
@@ -55,6 +56,9 @@ def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportT
             firstname = label["author"]["firstname"]
             lastname = label["author"]["lastname"]
             label["author"]["name"] = f"{firstname} {lastname}"
+
+
+THRESHOLD_WARN_MANY_ASSETS = 1000
 
 
 def fetch_assets(  # pylint: disable=too-many-arguments
@@ -123,6 +127,17 @@ def fetch_assets(  # pylint: disable=too-many-arguments
         asset_where_params["asset_id_in"] = asset_ids
 
     where = AssetWhere(**asset_where_params)
+
+    if download_media:
+        count = AssetQuery(auth.client).count(where)
+        if count > THRESHOLD_WARN_MANY_ASSETS:
+            warnings.warn(
+                (
+                    f"Downloading many assets ({count}). This might take a while. Consider"
+                    " disabling assets download in the options."
+                ),
+                stacklevel=3,
+            )
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(
