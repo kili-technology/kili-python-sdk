@@ -212,10 +212,9 @@ for asset in assets:
 
 ## Exporting a whole project
 
-Kili has a method to export the whole project into specific export formats. It can be useful when your goal is to use one of the standard output formats.
+You can export your project data from the Kili UI (see [documentation](https://docs.kili-technology.com/docs/exporting-project-data)), but Kili SDK also enables you to export your labels and assets into several export formats.
 
 ### Available formats
-
 
 | Format        | UI  | Python Client | Command Line Interface |
 | ------------- | --- | ------------- | ---------------------- |

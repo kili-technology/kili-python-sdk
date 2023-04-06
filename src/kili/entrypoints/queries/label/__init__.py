@@ -678,40 +678,33 @@ class QueriesLabel:
 
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
 
-        !!! warning
-            Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.
-
         !!! Info
             The supported formats are:
 
-            - Yolo V4, V5, V7 for object detection tasks (bounding box)
+            - Yolo V4, V5, V7 for object detection tasks (bounding box).
+            - Kili (a.k.a raw) for all tasks.
+            - COCO for object detection tasks (bounding box and semantic segmentation).
+            - Pascal VOC for object detection tasks (bounding box).
 
-            - Kili for all tasks.
-
-            - COCO for semantic segmentation tasks (bounding box and semantic segmentation)
-
-            - Pascal VOC for object detection tasks.
+        !!! warning "Cloud storage"
+            Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.
 
         !!! Example
-            ```
-            from kili.client import Kili
-            kili = Kili()
+            ```python
             kili.export_labels("your_project_id", "export.zip", "yolo_v4")
             ```
 
         !!! Example
-            ```
-            from kili.client import Kili
-            kili = Kili()
-
+            ```python
             def is_rectangle(coco_annotation, coco_image, kili_annotation):
                 is_rectangle = ...
                 return {**coco_annotation, "attributes": {"is_rectangle": is_rectangle}}
+
             kili.export_labels(
                 "your_project_id",
                 "export.zip",
                 "coco",
-                annotation_modifier = add_is_rectangle
+                annotation_modifier=add_is_rectangle
             )
             ```
         """

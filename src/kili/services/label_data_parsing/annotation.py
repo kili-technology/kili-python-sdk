@@ -3,7 +3,7 @@
 
 import functools
 from collections import defaultdict
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, Iterator, List, Optional, Sequence
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -11,7 +11,7 @@ from typing_extensions import Literal
 from kili.services.label_data_parsing import category as category_module
 from kili.services.label_data_parsing import json_response as json_response_module
 
-from .bounding_poly import BoundingPoly
+from .bounding_poly import BoundingPolyList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import Project
@@ -46,6 +46,13 @@ class _BaseAnnotation:
                 project_info=self._project_info,
                 job_name=self._job_name,
             )
+        if "boundingPoly" in self._json_data:
+            self._json_data["boundingPoly"] = BoundingPolyList(
+                bounding_poly_list=self._json_data["boundingPoly"],
+                project_info=self._project_info,
+                job_name=self._job_name,
+                type_of_tool=self._json_data["type"],
+            )
         if self._json_data.get("children"):
             self.children = self._json_data["children"]
 
@@ -57,12 +64,22 @@ class _BaseAnnotation:
 
     def as_dict(self) -> Dict:
         """Returns the parsed annotation as a dict."""
-        ret = {k: v for k, v in self._json_data.items() if k not in ("categories", "children")}
+        ret = {
+            k: v
+            for k, v in self._json_data.items()
+            if k not in ("categories", "children", "boundingPoly")
+        }
         if "categories" in self._json_data:
             ret["categories"] = (
                 self._json_data["categories"]
                 if isinstance(self._json_data["categories"], List)
                 else self._json_data["categories"].as_list()
+            )
+        if "boundingPoly" in self._json_data:
+            ret["boundingPoly"] = (
+                self._json_data["boundingPoly"]
+                if isinstance(self._json_data["boundingPoly"], List)
+                else self._json_data["boundingPoly"].as_list()
             )
         if "children" in self._json_data:
             ret["children"] = (
@@ -259,12 +276,29 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
         return ("rectangle", "polygon", "semantic", "polyline", "vector")
 
     @property
-    def bounding_poly(self) -> List[BoundingPoly]:
+    def bounding_poly(self) -> BoundingPolyList:
         """Returns the polygon of the object contour."""
-        self._json_data["boundingPoly"] = [
-            (BoundingPoly(p) if isinstance(p, dict) else p) for p in self._json_data["boundingPoly"]
-        ]
         return self._json_data["boundingPoly"]
+
+    def add_bounding_poly(
+        self,
+        bounding_poly_dict: Dict[
+            Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]
+        ],
+    ) -> None:
+        """Adds a bounding polygon to the boundingPoly list."""
+        bounding_poly_list = (
+            BoundingPolyList(
+                bounding_poly_list=[],
+                project_info=self._project_info,
+                job_name=self._job_name,
+                type_of_tool=self._json_data["type"],
+            )
+            if "boundingPoly" not in self._json_data
+            else self._json_data["boundingPoly"]
+        )
+        bounding_poly_list.add_bounding_poly(bounding_poly_dict)
+        self._json_data["boundingPoly"] = bounding_poly_list
 
     @property
     def score(self) -> int:
@@ -509,6 +543,10 @@ class AnnotationList:
     def __len__(self) -> int:
         """Returns the number of annotations."""
         return len(self._annotations_list)
+
+    def __iter__(self) -> Iterator[Annotation]:
+        """Returns an iterator over the annotations."""
+        return iter(self._annotations_list)
 
     def __str__(self) -> str:
         """Returns the string representation of the annotations list."""

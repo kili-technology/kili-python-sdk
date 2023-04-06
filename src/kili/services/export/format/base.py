@@ -10,6 +10,11 @@ from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
 from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.data_connection.queries import (
+    DataConnectionsQuery,
+    DataConnectionsWhere,
+)
 from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
@@ -23,7 +28,7 @@ from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
-from ..exceptions import NotExportableAssetError
+from ..exceptions import NotCompatibleOptions, NotExportableAssetError
 
 
 class ExportParams(NamedTuple):
@@ -149,6 +154,20 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         self._check_arguments_compatibility()
         self._check_project_compatibility()
+
+        # if asset download is enabled and there are data connections, we forbid the export
+        if self.with_assets:
+            data_connections_gen = DataConnectionsQuery(self.auth.client)(
+                where=DataConnectionsWhere(project_id=self.project_id),
+                fields=["id"],
+                options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+            )
+            if len(list(data_connections_gen)) > 0:
+                raise NotCompatibleOptions(
+                    "Export with download of assets is not allowed on projects with data"
+                    " connections. Please disable the download of assets by setting"
+                    " `with_assets=False`."
+                )
 
         self.logger.warning("Fetching assets...")
 

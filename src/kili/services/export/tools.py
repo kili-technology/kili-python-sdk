@@ -1,4 +1,5 @@
 """Set of common functions used by different export formats."""
+import warnings
 from typing import Dict, List, Optional
 
 from kili.core.authentication import KiliAuth
@@ -6,7 +7,6 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
-from kili.services.export.exceptions import NotExportableAssetError
 from kili.services.export.types import ExportType
 
 DEFAULT_FIELDS = [
@@ -58,7 +58,11 @@ def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportT
             label["author"]["name"] = f"{firstname} {lastname}"
 
 
-def fetch_assets(  # pylint: disable=too-many-arguments
+THRESHOLD_WARN_MANY_ASSETS = 1000
+
+
+# pylint: disable=too-many-arguments, too-many-locals
+def fetch_assets(
     auth: KiliAuth,
     project_id: str,
     asset_ids: Optional[List[str]],
@@ -125,21 +129,24 @@ def fetch_assets(  # pylint: disable=too-many-arguments
 
     where = AssetWhere(**asset_where_params)
 
+    if download_media:
+        count = AssetQuery(auth.client).count(where)
+        if count > THRESHOLD_WARN_MANY_ASSETS:
+            warnings.warn(
+                (
+                    f"Downloading many assets ({count}). This might take a while. Consider"
+                    " disabling assets download in the options."
+                ),
+                stacklevel=3,
+            )
+
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(
         auth, download_media, fields, project_id, local_media_dir
     )
     assets = list(AssetQuery(auth.client)(where, fields, options, post_call_function))
-    _check_content_presence(assets)
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
-
-
-def _check_content_presence(assets: List[Dict]):
-    if any(a.get("content") in [None, ""] and a.get("jsonContent") in [None, ""] for a in assets):
-        raise NotExportableAssetError(
-            "The assets cannot be exported. This can happen if they are hosted in a cloud storage."
-        )
 
 
 def get_fields_to_fetch(export_type: ExportType):

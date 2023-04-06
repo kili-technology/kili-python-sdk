@@ -65,15 +65,17 @@ def export_labels(
     verbose: bool,
     with_assets: bool,
 ):
+    # pylint: disable=line-too-long
     """Export the Kili labels of a project to a given format.
 
     \b
-    The supported formats are:
+    !!! Info
+        The supported formats are:
 
-    - YOLO V4, V5, V7 for object detection tasks (bounding box).
-    - Kili (a.k.a raw) for all tasks.
-    - COCO for object detection tasks (semantic or bounding box)
-    - Pascal VOC for object detection tasks.
+        - Yolo V4, V5, V7 for object detection tasks (bounding box).
+        - Kili (a.k.a raw) for all tasks.
+        - COCO for object detection tasks (bounding box and semantic segmentation).
+        - Pascal VOC for object detection tasks (bounding box).
     \b
     \b
     !!! warning "Cloud storage"
@@ -94,13 +96,6 @@ def export_labels(
             --output-file /tmp/export_split.zip \\
             --layout split
         ```
-    \b
-    \b
-    !!! warning "Unsupported exports"
-        Currently, this command does not support the export of videos that have not
-        been cut into separated frames.
-
-        For such exports, please use the Kili UI.
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 

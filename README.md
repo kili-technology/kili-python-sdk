@@ -147,7 +147,7 @@ kili.append_many_to_dataset(
 )
 ```
 
-See the detailed example in this [recipe](https://docs.kili-technology.com/recipes/importing-data).
+See the detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/).
 
 ### Importing predictions
 
@@ -184,14 +184,7 @@ See detailed examples in this [recipe](https://docs.kili-technology.com/recipes/
 ### Exporting labels
 
 ```python
-assets = kili.assets(project_id=project_id)
-
-with open("labels.json", "w") as label_file:
-    for asset in assets:
-        for label in asset.labels:
-            label_file.write(label.json_response(format='simple'))
+kili.export_labels("your_project_id", "export.zip", "yolo_v4")
 ```
 
-See a detailed example in this [recipe](https://docs.kili-technology.com/recipes/exporting-assets-and-labels).
-
-More ways to export in other formats (YOLO, Pascal VOC) are described [here](docs/label_export.md).
+See a detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/).

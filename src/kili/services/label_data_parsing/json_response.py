@@ -1,7 +1,7 @@
 # Feature is still under development and is not yet suitable for use by general users.
 """Classes for json response parsing."""
 
-from typing import Dict, List, Optional
+from typing import Dict, Iterator, List, Optional, Tuple
 
 from kili.services.label_data_parsing import job_response as job_response_module
 
@@ -80,3 +80,23 @@ class ParsedJobs:
     def __str__(self) -> str:
         """Returns the string representation of the object."""
         return str(self.to_dict())
+
+    def __len__(self) -> int:
+        """Returns the number of jobs."""
+        return len(self._json_data)
+
+    def __iter__(self) -> Iterator[str]:
+        """Returns an iterator over the job names."""
+        return iter(self._json_data)
+
+    def items(self) -> Iterator[Tuple[str, "job_response_module.JobPayload"]]:
+        """Returns an iterator over the job names and the corresponding JobPayload objects."""
+        return iter(self._json_data.items())
+
+    def keys(self) -> Iterator[str]:
+        """Returns an iterator over the job names."""
+        return iter(self._json_data.keys())
+
+    def values(self) -> Iterator["job_response_module.JobPayload"]:
+        """Returns an iterator over the JobPayload objects."""
+        return iter(self._json_data.values())
