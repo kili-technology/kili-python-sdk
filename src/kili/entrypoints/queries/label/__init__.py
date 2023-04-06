@@ -642,7 +642,7 @@ class QueriesLabel:
             project_id: Identifier of the project.
             filename: Relative or full path of the archive that will contain
                 the exported data.
-            fmt: Format of the exported labels.
+            fmt: Format of the exported labels. One of "raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "pascal_voc".
             asset_ids: Optional list of the assets internal IDs from which to export the labels.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
@@ -658,23 +658,23 @@ class QueriesLabel:
                 and add it to the COCO annotation (see example).
             asset_filter_kwargs: Optional dictionary of arguments to pass to `kili.assets()` in order to filter the assets the labels are exported from. The supported arguments are:
 
-                - consensus_mark_gte
-                - consensus_mark_lte
-                - external_id_contains
-                - honeypot_mark_gte
-                - honeypot_mark_lte
-                - label_author_in
-                - label_reviewer_in
-                - skipped
-                - status_in
-                - label_category_search
-                - created_at_gte
-                - created_at_lte
-                - issue_type
-                - issue_status
-                - inference_mark_gte
-                - inference_mark_lte
-                - metadata_where
+                - `consensus_mark_gte`
+                - `consensus_mark_lte`
+                - `external_id_contains`
+                - `honeypot_mark_gte`
+                - `honeypot_mark_lte`
+                - `label_author_in`
+                - `label_reviewer_in`
+                - `skipped`
+                - `status_in`
+                - `label_category_search`
+                - `created_at_gte`
+                - `created_at_lte`
+                - `issue_type`
+                - `issue_status`
+                - `inference_mark_gte`
+                - `inference_mark_lte`
+                - `metadata_where`
 
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
 
