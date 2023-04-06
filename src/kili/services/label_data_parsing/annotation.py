@@ -3,7 +3,7 @@
 
 import functools
 from collections import defaultdict
-from typing import Dict, Iterator, List, Optional, Sequence
+from typing import Dict, Iterator, List, Optional, Sequence, Union
 
 from typeguard import typechecked
 from typing_extensions import Literal
@@ -14,7 +14,7 @@ from kili.services.label_data_parsing import json_response as json_response_modu
 from .bounding_poly import BoundingPolyList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
-from .types import Project
+from .types import NormalizedVertexType, Project
 from .utils import get_children_job_names
 
 
@@ -45,13 +45,6 @@ class _BaseAnnotation:
                 categories_list=self._json_data["categories"],
                 project_info=self._project_info,
                 job_name=self._job_name,
-            )
-        if "boundingPoly" in self._json_data:
-            self._json_data["boundingPoly"] = BoundingPolyList(
-                bounding_poly_list=self._json_data["boundingPoly"],
-                project_info=self._project_info,
-                job_name=self._job_name,
-                type_of_tool=self._json_data["type"],
             )
         if self._json_data.get("children"):
             self.children = self._json_data["children"]
@@ -157,7 +150,25 @@ class _BaseAnnotation:
         self._json_data["children"] = parsed_children_job
 
 
-class EntityAnnotation(_BaseAnnotation):
+class _BaseNamedEntityRecognitionAnnotation(_BaseAnnotation):
+    """Base class for parsing the "annotations" key of a job response for NER jobs.
+
+    Either simple NER or NER in PDFs.
+    """
+
+    @property
+    def content(self) -> str:
+        """Returns the content of the annotation."""
+        return self._json_data["content"]
+
+    @content.setter
+    @typechecked
+    def content(self, content: str) -> None:
+        """Sets the content of the annotation."""
+        self._json_data["content"] = content
+
+
+class EntityAnnotation(_BaseNamedEntityRecognitionAnnotation):
     """Class for parsing the "annotations" key of a job response for named entities recognition."""
 
     @staticmethod
@@ -190,17 +201,6 @@ class EntityAnnotation(_BaseAnnotation):
             raise ValueError(f"end_offset must be positive, got {end_offset}")
         self._json_data["endOffset"] = end_offset
 
-    @property
-    def content(self) -> str:
-        """Returns the content of the annotation."""
-        return self._json_data["content"]
-
-    @content.setter
-    @typechecked
-    def content(self, content: str) -> None:
-        """Sets the content of the annotation."""
-        self._json_data["content"] = content
-
 
 class _BaseAnnotationWithTool(_BaseAnnotation):
     """Base class for annotations with a "type" key (tool used to create the annotation)."""
@@ -228,13 +228,13 @@ class PointAnnotation(_BaseAnnotationWithTool):
         return ("marker",)
 
     @property
-    def point(self) -> Dict[Literal["x", "y"], float]:
+    def point(self) -> NormalizedVertexType:
         """Returns the point of a point detection job."""
         return self._json_data["point"]
 
     @point.setter
     @typechecked
-    def point(self, point: Dict[Literal["x", "y"], float]) -> None:
+    def point(self, point: NormalizedVertexType) -> None:
         """Sets the point of a point detection job."""
         self._json_data["point"] = point
 
@@ -251,18 +251,72 @@ class PolyLineAnnotation(_BaseAnnotationWithTool):
         return ("vector", "polyline")
 
     @property
-    def polyline(self) -> List[Dict[Literal["x", "y"], float]]:
+    def polyline(self) -> List[NormalizedVertexType]:
         """Returns the polyline of a polyline detection job."""
         return self._json_data["polyline"]
 
     @polyline.setter
     @typechecked
-    def polyline(self, polyline: List[Dict[Literal["x", "y"], float]]) -> None:
+    def polyline(self, polyline: List[NormalizedVertexType]) -> None:
         """Sets the polyline of a polyline detection job."""
         self._json_data["polyline"] = polyline
 
 
-class _Base2DAnnotation(_BaseAnnotationWithTool):
+class _BaseAnnotationWithBoundingPoly(_BaseAnnotation):
+    def __init__(self, annotation_json: Dict, project_info: Project, job_name: str) -> None:
+        super().__init__(annotation_json, project_info, job_name)
+
+        if "boundingPoly" in self._json_data and isinstance(self._json_data["boundingPoly"], List):
+            self._json_data["boundingPoly"] = BoundingPolyList(
+                bounding_poly_list=self._json_data["boundingPoly"],
+                project_info=self._project_info,
+                job_name=self._job_name,
+                type_of_tool=self._json_data.get("type"),
+            )
+
+    @property
+    def bounding_poly(self) -> BoundingPolyList:
+        """Returns the polygon of the object contour."""
+        return self._json_data["boundingPoly"]
+
+
+# pylint: disable=line-too-long
+class EntityInPdfAnnotation(_BaseNamedEntityRecognitionAnnotation, _BaseAnnotationWithBoundingPoly):
+    """Class for parsing the "annotations" key of a job response for named entities recognition in PDFs."""
+
+    @staticmethod
+    def _get_compatible_ml_task() -> Literal["NAMED_ENTITIES_RECOGNITION"]:
+        return "NAMED_ENTITIES_RECOGNITION"
+
+    @property
+    def annotations(self) -> "AnnotationList":
+        """Return the tist of positions of the annotation.
+
+        For NER, when an annotation spans multiple lines, there will be multiple polys and a single boundingPoly.
+        """
+        return AnnotationList(
+            job_name=self._job_name,
+            project_info=self._project_info,
+            annotations_list=self._json_data["annotations"],
+        )
+
+    @property
+    def polys(
+        self,
+    ) -> List[Dict[Literal["normalizedVertices"], List[List[NormalizedVertexType]]]]:
+        """Return the coordinates from the different rectangles in the annotation.
+
+        An annotation can have several rectangles (for example if the annotation covers more than one line).
+        """
+        return self._json_data["polys"]
+
+    @property
+    def page_number_array(self) -> List[int]:
+        """Return the pages where the annotation appears."""
+        return self._json_data["pageNumberArray"]
+
+
+class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly):
     """Base class for 2D annotations."""
 
     @staticmethod
@@ -275,15 +329,11 @@ class _Base2DAnnotation(_BaseAnnotationWithTool):
     ):
         return ("rectangle", "polygon", "semantic", "polyline", "vector")
 
-    @property
-    def bounding_poly(self) -> BoundingPolyList:
-        """Returns the polygon of the object contour."""
-        return self._json_data["boundingPoly"]
-
     def add_bounding_poly(
         self,
         bounding_poly_dict: Dict[
-            Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]
+            Literal["normalizedVertices"],
+            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
         ],
     ) -> None:
         """Adds a bounding polygon to the boundingPoly list."""
@@ -446,6 +496,7 @@ class Annotation(
     EntityAnnotation,
     PointAnnotation,
     PolyLineAnnotation,
+    EntityInPdfAnnotation,
     BoundingPolyAnnotation,
     VideoAnnotation,
     PoseEstimationAnnotation,

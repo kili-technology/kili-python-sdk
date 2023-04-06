@@ -1,12 +1,12 @@
 """Module for the "boundingPoly" key parsing of an object detection job response."""
 
-from typing import Dict, Iterator, List
+from typing import Dict, Iterator, List, Optional, Union
 
 from typeguard import typechecked
 from typing_extensions import Literal
 
 from .exceptions import InvalidMutationError
-from .types import Project
+from .types import NormalizedVertexType, Project
 
 
 class BoundingPoly:
@@ -15,13 +15,15 @@ class BoundingPoly:
     def __init__(
         self,
         bounding_poly_json: Dict[
-            Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]
+            Literal["normalizedVertices"],
+            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
         ],
-        type_of_tool: Literal["rectangle", "polygon", "semantic"],
+        type_of_tool: Optional[Literal["rectangle", "polygon", "semantic"]],
     ) -> None:
         """Class for BoundingPoly parsing."""
         self._json_data: Dict[
-            Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]
+            Literal["normalizedVertices"],
+            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
         ] = {}
         self._type_of_tool = type_of_tool
 
@@ -40,29 +42,41 @@ class BoundingPoly:
         return self._json_data
 
     @property
-    def normalized_vertices(self) -> List[Dict[Literal["x", "y"], float]]:
+    def normalized_vertices(
+        self,
+    ) -> Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]]:
         """Returns the normalized vertices of the bounding polygon."""
         return self._json_data["normalizedVertices"]
 
     @normalized_vertices.setter
     @typechecked
     def normalized_vertices(
-        self, normalized_vertices: List[Dict[Literal["x", "y"], float]]
+        self,
+        normalized_vertices: Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
     ) -> None:
-        """Sets the normalized vertices of the bounding polygon."""
-        nb_vertices = len(normalized_vertices)
+        """Sets the normalized vertices of the bounding polygon.
 
-        if self._type_of_tool == "rectangle" and nb_vertices != 4:
-            raise InvalidMutationError(
-                f"Bounding polygon with {nb_vertices} vertices is not a rectangle."
-            )
+        Args:
+            normalized_vertices: List of normalized vertices for object detection tasks.
+                Or a list of a list of normalized vertices for NER in PDF task.
+        """
+        # for object detection tasks type of tool is defined
+        if self._type_of_tool:
+            nb_vertices = len(normalized_vertices)
 
-        if self._type_of_tool == "polygon" and nb_vertices < 3:
-            raise InvalidMutationError(
-                f"Bounding polygon with {nb_vertices} vertices is not a polygon."
-            )
+            if self._type_of_tool == "rectangle" and nb_vertices != 4:
+                raise InvalidMutationError(
+                    f"Bounding polygon with {nb_vertices} vertices is not a rectangle."
+                )
 
-        for vertex in normalized_vertices:
+            if self._type_of_tool == "polygon" and nb_vertices < 3:
+                raise InvalidMutationError(
+                    f"Bounding polygon with {nb_vertices} vertices is not a polygon."
+                )
+
+        vertices = normalized_vertices if self._type_of_tool else normalized_vertices[0]
+        for vertex in vertices:
+            assert isinstance(vertex, dict), f"Vertex {vertex} is not a dict."
             if not 0 <= vertex["x"] <= 1:
                 raise ValueError(f"Vertex x coordinate with value {vertex['x']} is not in [0, 1].")
             if not 0 <= vertex["y"] <= 1:
@@ -77,11 +91,14 @@ class BoundingPolyList:
     def __init__(
         self,
         bounding_poly_list: List[
-            Dict[Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]]
+            Dict[
+                Literal["normalizedVertices"],
+                Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+            ]
         ],
         project_info: Project,
         job_name: str,
-        type_of_tool: Literal["rectangle", "polygon", "semantic"],
+        type_of_tool: Optional[Literal["rectangle", "polygon", "semantic"]],
     ) -> None:
         """Class for the boundingPoly list parsing.
 
@@ -94,7 +111,7 @@ class BoundingPolyList:
         self._bounding_poly_list: List[BoundingPoly] = []
         self._project_info = project_info
         self._job_name = job_name
-        self._type_of_tool: Literal["rectangle", "polygon", "semantic"] = type_of_tool
+        self._type_of_tool: Optional[Literal["rectangle", "polygon", "semantic"]] = type_of_tool
 
         self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
@@ -104,7 +121,8 @@ class BoundingPolyList:
     def _check_can_append_bounding_poly(self, bounding_poly: BoundingPoly) -> None:
         if "normalizedVertices" not in bounding_poly._json_data:  # pylint: disable=protected-access
             raise KeyError("Bounding polygon must have a 'normalizedVertices' key.")
-        if self._job_interface["mlTask"] != "OBJECT_DETECTION":
+
+        if self._job_interface["mlTask"] not in ("OBJECT_DETECTION", "NAMED_ENTITIES_RECOGNITION"):
             raise InvalidMutationError(
                 "BoundingPolyList can only be mutated for an object detection job."
             )
@@ -112,7 +130,10 @@ class BoundingPolyList:
     @typechecked
     def add_bounding_poly(
         self,
-        bounding_poly: Dict[Literal["normalizedVertices"], List[Dict[Literal["x", "y"], float]]],
+        bounding_poly: Dict[
+            Literal["normalizedVertices"],
+            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+        ],
     ) -> None:
         """Adds a boundingPoly object to a BoundingPolyList object."""
         bounding_poly_obj = BoundingPoly(bounding_poly, type_of_tool=self._type_of_tool)

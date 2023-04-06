@@ -1304,3 +1304,124 @@ def test_iterate_nested_transcription_bbox_get_ocr_data():
             annotation.children["TRANSCRIPTION_JOB"].text
             == json_resp["JOB_0"]["annotations"][i]["children"]["TRANSCRIPTION_JOB"]["text"]
         )
+
+
+def test_parsing_ner_in_pdf_1():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "ENTITY_A": {"children": [], "name": "Entity A", "color": "#733AFB"},
+                        "ENTITY_B": {"children": [], "name": "Entity B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "What entities can you identify?",
+                "isChild": False,
+                "tools": [],
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            }
+        }
+    }
+    normalizedVertices = [{"x": 0.5711857871965076, "y": 0.23031839796480386}] * 4
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "annotations": [
+                        {
+                            "boundingPoly": [{"normalizedVertices": [normalizedVertices]}],
+                            "pageNumberArray": [1],
+                            "polys": [{"normalizedVertices": [normalizedVertices]}],
+                        }
+                    ],
+                    "categories": [{"confidence": 100, "name": "ENTITY_A"}],
+                    "content": "sznitman@artorg.unibe",
+                    "mid": "20230406142049158-44926",
+                },
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation_1 = parsed_jobs["JOB_0"].annotations[0]
+    assert annotation_1.category.name == "ENTITY_A"
+    assert annotation_1.category.confidence == 100
+    assert annotation_1.content == "sznitman@artorg.unibe"
+    assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices]}]
+    assert annotation_1.annotations[0].bounding_poly[0].normalized_vertices == [normalizedVertices]
+    assert annotation_1.annotations[0].page_number_array == [1]
+
+
+def test_parsing_ner_in_pdf_2():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "ENTITY_A": {"children": [], "name": "Entity A", "color": "#733AFB"},
+                        "ENTITY_B": {"children": [], "name": "Entity B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "What entities can you identify?",
+                "isChild": False,
+                "tools": [],
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            }
+        }
+    }
+    normalizedVertices = [
+        {"x": 0.20860370092292516, "y": 0.2975776083261186},
+        {"x": 0.20860370092292516, "y": 0.5460800199831146},
+        {"x": 0.7914542223597735, "y": 0.2975776083261186},
+        {"x": 0.7914542223597735, "y": 0.5460800199831146},
+    ]
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "annotations": [
+                        {
+                            "boundingPoly": [{"normalizedVertices": [normalizedVertices]}],
+                            "pageNumberArray": [1, 1, 1],
+                            "polys": [
+                                {
+                                    "normalizedVertices": [
+                                        normalizedVertices,
+                                        normalizedVertices,
+                                        normalizedVertices,
+                                    ]
+                                }
+                            ],
+                        }
+                    ],
+                    "categories": [{"confidence": 100, "name": "ENTITY_A"}],
+                    "content": "While many ",
+                    "mid": "20230406150551169-73300",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation_1 = parsed_jobs["JOB_0"].annotations[0]
+    assert annotation_1.category.name == "ENTITY_A"
+    assert annotation_1.category.confidence == 100
+    assert annotation_1.content == "While many "
+
+    assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices] * 3}]
+    assert annotation_1.annotations[0].page_number_array == [1, 1, 1]
