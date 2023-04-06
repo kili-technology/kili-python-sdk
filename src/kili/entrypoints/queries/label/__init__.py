@@ -642,7 +642,7 @@ class QueriesLabel:
             project_id: Identifier of the project.
             filename: Relative or full path of the archive that will contain
                 the exported data.
-            fmt: Format of the exported labels. One of "raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "pascal_voc".
+            fmt: Format of the exported labels.
             asset_ids: Optional list of the assets internal IDs from which to export the labels.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
