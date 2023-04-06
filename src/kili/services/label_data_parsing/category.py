@@ -1,6 +1,6 @@
 # Feature is still under development and is not yet suitable for use by general users.
 """Module for the "categories" key parsing of a job response."""
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterator, List, Optional
 
 from typeguard import typechecked
 
@@ -182,6 +182,10 @@ class CategoryList:
     def __len__(self) -> int:
         """Returns the number of categories."""
         return len(self._categories_list)
+
+    def __iter__(self) -> Iterator[Category]:
+        """Returns an iterator over the categories."""
+        return iter(self._categories_list)
 
     def __str__(self) -> str:
         """Returns the string representation of the categories list."""

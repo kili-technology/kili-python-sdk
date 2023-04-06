@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from kili.services.label_data_parsing.json_response import ParsedJobs
 from kili.services.label_data_parsing.types import Project
 
@@ -579,3 +581,65 @@ def test_add_category_in_annotation_bbox():
     parsed_jobs["JOB_0"].annotations[0].add_category("OBJECT_A", 100)
 
     assert parsed_jobs["JOB_0"].annotations[0].categories[1].name == "OBJECT_A"
+
+
+def test_add_bounding_poly():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            }
+        }
+    }
+
+    point = {"x": 0.5, "y": 0.5}
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": [point] * 4}],
+                    "categories": [{"name": "OBJECT_A"}],
+                    "mid": "20230405103955940-26928",
+                    "type": "rectangle",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=deepcopy(json_resp), project_info=project_info)
+
+    parsed_jobs["JOB_0"].bounding_poly_annotations[0].add_bounding_poly(
+        {"normalizedVertices": [point, point, point, point]}  # type: ignore
+    )
+
+    assert parsed_jobs.to_dict() == {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [
+                        {"normalizedVertices": [point] * 4},
+                        {"normalizedVertices": [point] * 4},
+                    ],
+                    "categories": [{"name": "OBJECT_A"}],
+                    "mid": "20230405103955940-26928",
+                    "type": "rectangle",
+                }
+            ]
+        }
+    }

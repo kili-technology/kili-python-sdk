@@ -220,7 +220,7 @@ class JobPayload:
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("entity_annotations")
 
-        return cast(List["annotation_module.EntityAnnotation"], self._json_data["annotations"])
+        return cast(List["annotation_module.EntityAnnotation"], self.annotations)
 
     @property
     def bounding_poly_annotations(self) -> List["annotation_module.BoundingPolyAnnotation"]:
@@ -231,9 +231,7 @@ class JobPayload:
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
 
-        return cast(
-            List["annotation_module.BoundingPolyAnnotation"], self._json_data["annotations"]
-        )
+        return cast(List["annotation_module.BoundingPolyAnnotation"], self.annotations)
 
     @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
