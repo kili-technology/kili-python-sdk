@@ -15,16 +15,26 @@ def parse_version(version: str) -> Version:
         return parse("0.0.0")
 
 
+github_token = os.environ["GITHUB_TOKEN"]
+headers = {
+    "Authorization": f"Bearer {github_token}",
+    "Accept": "application/vnd.github+json",
+}
+
 BRANCH_PREFIX = "release/"
 per_page = 100
 page = 1
 retries = 0
 branch_versions = []
 while True:
-    url = f"https://api.github.com/repos/kili-technology/kili-python-sdk/branches?page={page}&per_page={per_page}&protected=true"
+    url = (
+        "https://api.github.com/repos/kili-technology/kili-python-sdk"
+        + f"/branches?page={page}&per_page={per_page}&protected=true"
+    )
 
     try:
-        with urllib.request.urlopen(url) as response:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req) as response:
             data = response.read()
     except urllib.error.HTTPError as err:
         print(f"Error while fetching branches: {err}")
