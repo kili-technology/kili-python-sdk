@@ -77,7 +77,7 @@ def export_labels(
     \b
     \b
     !!! warning "Cloud storage"
-            Export is not allowed for projects connected to a cloud storage.
+        Export with asset download (`--with-assets`) is not allowed for projects connected to a cloud storage.
     \b
     \b
     !!! Examples

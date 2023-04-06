@@ -679,7 +679,7 @@ class QueriesLabel:
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
 
         !!! warning
-            Export is not allowed for projects connected to a cloud storage.
+            Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.
 
         !!! Info
             The supported formats are:
