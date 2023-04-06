@@ -15,7 +15,3 @@ class NotCompatibleOptions(ValueError):
 
 class NotCompatibleInputType(ValueError):
     """Exception thrown when project input type is not compatible with the export format."""
-
-
-class NotExportableAssetError(ValueError):
-    """Exception thrown when the assets can't be exported."""
