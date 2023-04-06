@@ -61,7 +61,8 @@ def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportT
 THRESHOLD_WARN_MANY_ASSETS = 1000
 
 
-def fetch_assets(  # pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-locals
+def fetch_assets(
     auth: KiliAuth,
     project_id: str,
     asset_ids: Optional[List[str]],
