@@ -40,11 +40,18 @@ class _BaseAnnotation:
         self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         # cast lists to objects
-        if "categories" in self._json_data:
+        if "categories" in self._json_data and isinstance(self._json_data["categories"], List):
             self._json_data["categories"] = category_module.CategoryList(
                 categories_list=self._json_data["categories"],
                 project_info=self._project_info,
                 job_name=self._job_name,
+            )
+        if "boundingPoly" in self._json_data and isinstance(self._json_data["boundingPoly"], List):
+            self._json_data["boundingPoly"] = BoundingPolyList(
+                bounding_poly_list=self._json_data["boundingPoly"],
+                project_info=self._project_info,
+                job_name=self._job_name,
+                type_of_tool=self._json_data.get("type"),
             )
         if self._json_data.get("children"):
             self.children = self._json_data["children"]
@@ -263,16 +270,7 @@ class PolyLineAnnotation(_BaseAnnotationWithTool):
 
 
 class _BaseAnnotationWithBoundingPoly(_BaseAnnotation):
-    def __init__(self, annotation_json: Dict, project_info: Project, job_name: str) -> None:
-        super().__init__(annotation_json, project_info, job_name)
-
-        if "boundingPoly" in self._json_data and isinstance(self._json_data["boundingPoly"], List):
-            self._json_data["boundingPoly"] = BoundingPolyList(
-                bounding_poly_list=self._json_data["boundingPoly"],
-                project_info=self._project_info,
-                job_name=self._job_name,
-                type_of_tool=self._json_data.get("type"),
-            )
+    """Base class for annotations with a "boundingPoly" key."""
 
     @property
     def bounding_poly(self) -> BoundingPolyList:
