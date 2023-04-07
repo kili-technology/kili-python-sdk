@@ -14,7 +14,7 @@ from kili.services.label_data_parsing import json_response as json_response_modu
 from .bounding_poly import BoundingPolyList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
-from .types import NormalizedVertexType, Project
+from .types import NormalizedVertex, Project
 from .utils import get_children_job_names
 
 
@@ -228,13 +228,13 @@ class PointAnnotation(_BaseAnnotationWithTool):
         return ("marker",)
 
     @property
-    def point(self) -> NormalizedVertexType:
+    def point(self) -> NormalizedVertex:
         """Returns the point of a point detection job."""
         return self._json_data["point"]
 
     @point.setter
     @typechecked
-    def point(self, point: NormalizedVertexType) -> None:
+    def point(self, point: NormalizedVertex) -> None:
         """Sets the point of a point detection job."""
         self._json_data["point"] = point
 
@@ -251,13 +251,13 @@ class PolyLineAnnotation(_BaseAnnotationWithTool):
         return ("vector", "polyline")
 
     @property
-    def polyline(self) -> List[NormalizedVertexType]:
+    def polyline(self) -> List[NormalizedVertex]:
         """Returns the polyline of a polyline detection job."""
         return self._json_data["polyline"]
 
     @polyline.setter
     @typechecked
-    def polyline(self, polyline: List[NormalizedVertexType]) -> None:
+    def polyline(self, polyline: List[NormalizedVertex]) -> None:
         """Sets the polyline of a polyline detection job."""
         self._json_data["polyline"] = polyline
 
@@ -303,7 +303,7 @@ class EntityInPdfAnnotation(_BaseNamedEntityRecognitionAnnotation, _BaseAnnotati
     @property
     def polys(
         self,
-    ) -> List[Dict[Literal["normalizedVertices"], List[List[NormalizedVertexType]]]]:
+    ) -> List[Dict[Literal["normalizedVertices"], List[List[NormalizedVertex]]]]:
         """Return the coordinates from the different rectangles in the annotation.
 
         An annotation can have several rectangles (for example if the annotation covers more than one line).
@@ -333,7 +333,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
         self,
         bounding_poly_dict: Dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
         ],
     ) -> None:
         """Adds a bounding polygon to the boundingPoly list."""

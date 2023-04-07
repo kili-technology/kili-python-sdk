@@ -6,7 +6,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from .exceptions import InvalidMutationError
-from .types import NormalizedVertexType, Project
+from .types import NormalizedVertex, Project
 
 
 class BoundingPoly:
@@ -16,14 +16,14 @@ class BoundingPoly:
         self,
         bounding_poly_json: Dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
         ],
         type_of_tool: Optional[Literal["rectangle", "polygon", "semantic"]],
     ) -> None:
         """Class for BoundingPoly parsing."""
         self._json_data: Dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
         ] = {}
         self._type_of_tool = type_of_tool
 
@@ -44,7 +44,7 @@ class BoundingPoly:
     @property
     def normalized_vertices(
         self,
-    ) -> Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]]:
+    ) -> Union[List[NormalizedVertex], List[List[NormalizedVertex]]]:
         """Returns the normalized vertices of the bounding polygon."""
         return self._json_data["normalizedVertices"]
 
@@ -52,7 +52,7 @@ class BoundingPoly:
     @typechecked
     def normalized_vertices(
         self,
-        normalized_vertices: Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+        normalized_vertices: Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
     ) -> None:
         """Sets the normalized vertices of the bounding polygon.
 
@@ -93,7 +93,7 @@ class BoundingPolyList:
         bounding_poly_list: List[
             Dict[
                 Literal["normalizedVertices"],
-                Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+                Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
             ]
         ],
         project_info: Project,
@@ -132,7 +132,7 @@ class BoundingPolyList:
         self,
         bounding_poly: Dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertexType], List[List[NormalizedVertexType]]],
+            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
         ],
     ) -> None:
         """Adds a boundingPoly object to a BoundingPolyList object."""

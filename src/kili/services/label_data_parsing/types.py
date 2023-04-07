@@ -15,4 +15,4 @@ class Project(TypedDict):
     jsonInterface: Jobs
 
 
-NormalizedVertexType = Dict[Literal["x", "y"], float]
+NormalizedVertex = Dict[Literal["x", "y"], float]
