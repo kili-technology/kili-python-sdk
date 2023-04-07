@@ -1,11 +1,9 @@
-"""
-label import service
-"""
+"""Label import service."""
 
 from pathlib import Path
 from typing import Dict, List, Optional, Type, cast
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
 from kili.exceptions import NotFound
 from kili.services.helpers import is_target_job_in_json_interface
 from kili.services.label_import.importer import (
@@ -31,9 +29,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     model_name: Optional[str],
     is_prediction: bool,
 ) -> None:
-    """
-    Imports labels from a list of files contained in file path.
-    """
+    """Imports labels from a list of files contained in file path."""
     get_project(auth, project_id, ["id"])
 
     if len(labels_files) == 0:
@@ -75,9 +71,7 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     model_name: Optional[str] = None,
     disable_tqdm: bool = False,
 ) -> List:
-    """
-    Imports labels from a list of dictionaries
-    """
+    """Imports labels from a list of dictionaries."""
     _ClientInputLabelsValidator(labels=labels)
     if label_type == "PREDICTION" and not model_name:
         raise ValueError("You must provide model_name when uploading predictions")

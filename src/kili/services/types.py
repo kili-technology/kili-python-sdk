@@ -1,6 +1,4 @@
-"""
-Types used by the conversion service
-"""
+"""Types used by the conversion service."""
 from typing import Any, Dict, List, NamedTuple, NewType, Tuple, Union
 
 from typing_extensions import Literal, TypedDict
@@ -13,9 +11,7 @@ LogLevel = Union[int, Literal["ERROR", "WARNING", "DEBUG", "INFO", "CRITICAL"]]
 
 
 class JobCategory(NamedTuple):
-    """
-    Contains information for a category
-    """
+    """Contains information for a category."""
 
     category_name: str
     id: int
@@ -31,9 +27,7 @@ JobName = NewType("JobName", str)
 
 
 class Job(TypedDict):
-    """
-    Contains job settings
-    """
+    """Contains job settings."""
 
     content: Any
     instruction: str

@@ -1,6 +1,4 @@
-"""
-Test copy project service
-"""
+"""Test copy project service."""
 import pytest
 
 from kili.services.copy_project import ProjectCopier

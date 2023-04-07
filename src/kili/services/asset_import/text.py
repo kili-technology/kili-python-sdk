@@ -1,11 +1,9 @@
-"""
-Functions to import assets into a TEXT project
-"""
+"""Functions to import assets into a TEXT project."""
 import os
 from enum import Enum
 from typing import List, Optional, Tuple
 
-from kili.helpers import is_url
+from kili.core.helpers import is_url
 
 from .base import (
     BaseAssetImporter,
@@ -18,9 +16,7 @@ from .types import AssetLike
 
 
 class TextDataType(Enum):
-    """
-    Text data type
-    """
+    """Text data type."""
 
     RICH_TEXT = "RICH_TEXT"
     LOCAL_FILE = "LOCAL_FILE"
@@ -29,27 +25,19 @@ class TextDataType(Enum):
 
 
 class RawTextBatchImporter(ContentBatchImporter):
-    """
-    class for importing a batch of raw text assets into a TEXT project
-    """
+    """Class for importing a batch of raw text assets into a TEXT project."""
 
     def get_content_type_and_data_from_content(self, content: Optional[str]) -> Tuple[str, str]:
-        """
-        Returns the data of the content (path) and its content type
-        """
+        """Returns the data of the content (path) and its content type."""
         return content or "", "text/plain"
 
 
 class TextDataImporter(BaseAssetImporter):
-    """
-    Class for importing data into a TEXT project
-    """
+    """Class for importing data into a TEXT project."""
 
     @staticmethod
     def get_data_type(assets: List[AssetLike]) -> TextDataType:
-        """
-        Determine the type of data to upload from the service payload
-        """
+        """Determine the type of data to upload from the service payload."""
         content_array = [asset.get("content", "") for asset in assets]
         has_local_file = any(os.path.exists(content) for content in content_array)
         has_hosted_file = any(is_url(content) for content in content_array)
@@ -61,12 +49,10 @@ class TextDataImporter(BaseAssetImporter):
                 )
             return TextDataType.RICH_TEXT
         if has_local_file and has_hosted_file:
-            raise ImportValidationError(
-                """
+            raise ImportValidationError("""
                 Cannot upload hosted data and local files at the same time.
                 Please separate the assets into 2 calls
-                """
-            )
+                """)
         if has_local_file:
             return TextDataType.LOCAL_FILE
         if has_hosted_file:
@@ -74,9 +60,7 @@ class TextDataImporter(BaseAssetImporter):
         return TextDataType.RAW_TEXT
 
     def import_assets(self, assets: List[AssetLike]):
-        """
-        Import TEXT assets into Kili.
-        """
+        """Import TEXT assets into Kili."""
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)
         assets = self.filter_duplicate_external_ids(assets)

@@ -1,21 +1,25 @@
 {
-  "python.formatting.provider": "black",
-  "python.linting.mypyEnabled": false,
-  "python.linting.flake8Enabled": true,
-  "python.linting.enabled": true,
+  "editor.showUnused": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.typeCheckingMode": "basic",
   "python.formatting.blackArgs": [
     "--preview"
   ],
-  "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true,
-  "python.testing.cwd": "${workspaceFolder}",
+  "python.formatting.provider": "black",
   "python.languageServer": "Pylance",
-  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": false,
+  "python.linting.pydocstyleArgs": [
+    "--convention=google"
+  ],
+  "python.linting.pydocstyleEnabled": true,
   "python.linting.pylintArgs": [
     "--rcfile",
     "${workspaceFolder}/.pylintrc"
   ],
-  "python.analysis.diagnosticMode": "workspace",
-  "python.analysis.typeCheckingMode": "basic",
-  "editor.showUnused": true
+  "python.linting.pylintEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false
 }

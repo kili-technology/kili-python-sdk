@@ -1,6 +1,4 @@
-"""
-Fake Kili object
-"""
+"""Fake Kili object."""
 
 from unittest.mock import MagicMock
 
@@ -23,9 +21,7 @@ class FakeAuth:
 
 
 def mocked_ProjectQuery(where, _fields, _options):
-    """
-    Fake projects
-    """
+    """Fake projects."""
     project_id = where.project_id
     if project_id in [
         "object_detection",
@@ -219,9 +215,7 @@ def mocked_ProjectQuery(where, _fields, _options):
 
 
 def mocked_AssetQuery(where, _fields, _options, post_call_function=None):
-    """
-    Fake assets
-    """
+    """Fake assets."""
     project_id = where.project_id
 
     def _assets():
@@ -266,8 +260,6 @@ def mocked_AssetQuery_count(where) -> int:
 
 
 class FakeKili:
-    """
-    Handke .assets and .project methods of Kili
-    """
+    """Handke .assets and .project methods of Kili."""
 
     auth = FakeAuth()

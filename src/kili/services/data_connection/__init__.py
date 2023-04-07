@@ -1,6 +1,4 @@
-"""
-Services for data connections
-"""
+"""Services for data connections."""
 import logging
 import time
 from typing import Any, Dict, List, Optional
@@ -11,16 +9,15 @@ from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 from typing_extensions import Literal
 
-from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
-
-from ...authentication import KiliAuth
-from ...graphql.operations.data_connection.queries import (
+from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionIdWhere,
     DataConnectionQuery,
 )
-from ...helpers import format_result
-from ...mutations.data_connection.queries import (
+from kili.core.helpers import format_result
+from kili.entrypoints.mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
 )
@@ -41,9 +38,7 @@ def _get_logger() -> logging.Logger:
 
 
 def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[str]) -> Dict:
-    """
-    Get data connection information
-    """
+    """Get data connection information."""
     where = DataConnectionIdWhere(data_connection_id=data_connection_id)
     options = QueryOptions(first=1, disable_tqdm=True)
     data_connection = list(DataConnectionQuery(auth.client)(where, fields, options))
@@ -55,9 +50,7 @@ def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[st
 def trigger_validate_data_differences(
     auth: KiliAuth, diff_type: Literal["ADD", "REMOVE"], data_connection_id: str
 ) -> Dict:
-    """
-    Call the validateDataDifferences resolver
-    """
+    """Call the validateDataDifferences resolver."""
     variables = {
         "where": {"connectionId": data_connection_id, "type": diff_type},
         "processingParameters": None,
@@ -70,9 +63,7 @@ def trigger_validate_data_differences(
 def validate_data_differences(
     auth: KiliAuth, diff_type: Literal["ADD", "REMOVE"], data_connection: Dict
 ) -> None:
-    """
-    Call the validateDataDifferences resolver and wait until the validation is done
-    """
+    """Call the validateDataDifferences resolver and wait until the validation is done."""
     diff = data_connection["dataDifferencesSummary"]["added" if diff_type == "ADD" else "removed"]
 
     where = AssetWhere(project_id=data_connection["projectId"])
@@ -98,9 +89,7 @@ def validate_data_differences(
 def compute_differences(
     auth: KiliAuth, data_connection_id: str, blob_paths: Optional[List[str]] = None
 ) -> Dict:
-    """
-    Compute the data connection differences
-    """
+    """Compute the data connection differences."""
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
         variables["data"] = {"blobPaths": blob_paths}
@@ -110,8 +99,7 @@ def compute_differences(
 
 
 def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
-    """
-    Verify that the data connection differences have been computed.
+    """Verify that the data connection differences have been computed.
 
     Trigger the computation if not already computing.
     """
@@ -140,9 +128,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 def synchronize_data_connection(
     auth: KiliAuth, data_connection_id: str, delete_extraneous_files: bool
 ) -> Dict:
-    """
-    Launch a data connection synchronization
-    """
+    """Launch a data connection synchronization."""
     logger = _get_logger()
     logger.info("Synchronizing data connection: %s", data_connection_id)
 

@@ -1,6 +1,4 @@
-"""
-Common code for the coco exporter.
-"""
+"""Common code for the coco exporter."""
 
 import json
 import time
@@ -32,9 +30,7 @@ DATA_SUBDIR = "data"
 
 
 class CocoExporter(AbstractExporter):
-    """
-    Common code for COCO exporter.
-    """
+    """Common code for COCO exporter."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,14 +42,10 @@ class CocoExporter(AbstractExporter):
         self.with_assets = True
 
     def _check_arguments_compatibility(self):
-        """
-        Checks if the export label format is compatible with the export options.
-        """
+        """Checks if the export label format is compatible with the export options."""
 
     def _check_project_compatibility(self) -> None:
-        """
-        Checks if the export label format is compatible with the project.
-        """
+        """Checks if the export label format is compatible with the project."""
         if self.project_input_type not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
                 f"Project with input type '{self.project_input_type}' not compatible with COCO"
@@ -68,15 +60,11 @@ class CocoExporter(AbstractExporter):
 
     @property
     def images_folder(self) -> Path:
-        """
-        Export images folder
-        """
+        """Export images folder."""
         return self.base_folder / DATA_SUBDIR
 
     def process_and_save(self, assets: List[Asset], output_filename: Path):
-        """
-        Extract formatted annotations from labels.
-        """
+        """Extract formatted annotations from labels."""
         clean_assets = self.pre_process_assets(assets, self.label_format)
 
         self._save_assets_export(
@@ -93,9 +81,7 @@ class CocoExporter(AbstractExporter):
         output_directory: Path,
         annotation_modifier: Optional[CocoAnnotationModifier],
     ):
-        """
-        Save the assets to a file and return the link to that file
-        """
+        """Save the assets to a file and return the link to that file."""
         if self.split_option == "split":
             for job_name, job in self.project_json_interface["jobs"].items():
                 if self._is_job_compatible(job):
@@ -143,15 +129,13 @@ def _convert_kili_semantic_to_coco(
     annotation_modifier: Optional[CocoAnnotationModifier],
     merged: bool,
 ) -> Tuple[CocoFormat, List[Path]]:
-    """
-    creates the following structure on the disk:
+    """Creates the following structure on the disk:
     <dataset_dir>/
         data/
             <filename0>.<ext>
             <filename1>.<ext>
             ...
-        labels.json
-
+        labels.json.
 
     We iterate on the assets and create a coco format for each asset.
 
@@ -218,10 +202,8 @@ def _convert_kili_semantic_to_coco(
 def _get_coco_categories_with_mapping(
     jobs: Dict[JobName, Job], merged: bool
 ) -> Tuple[Dict[JobName, Dict[str, int]], List[CocoCategory]]:
-    """
-    Get the mapping between a category name in Kili of a given job and the COCO category id, and
-    also return the list of COCO categories.
-    """
+    """Get the mapping between a category name in Kili of a given job and the COCO category id, and
+    also return the list of COCO categories."""
     if merged:
         # id_offset: int = 0
         mapping_cat_name_cat_kili_id: Dict[str, str] = {}

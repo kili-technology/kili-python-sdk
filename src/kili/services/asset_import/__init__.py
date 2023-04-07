@@ -1,9 +1,9 @@
-"""Service for importing objects into kili"""
+"""Service for importing objects into kili."""
 
 from typing import Dict, List
 
-from kili.authentication import KiliAuth
-from kili.queries.project import QueriesProject
+from kili.core.authentication import KiliAuth
+from kili.entrypoints.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
@@ -29,9 +29,7 @@ def import_assets(  # pylint: disable=too-many-arguments
     disable_tqdm=False,
     verify=True,
 ):
-    """
-    import the selected assets into the specified project
-    """
+    """Import the selected assets into the specified project."""
     kili = QueriesProject(auth=auth)
     input_type = get_project_field(kili.auth, project_id, "inputType")
 

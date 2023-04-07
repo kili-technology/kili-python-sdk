@@ -1,17 +1,15 @@
-"""
-This script permits to setup the python package.
-"""
+"""This script permits to setup the python package."""
 
 from setuptools import find_packages, setup
 
 from src.kili import __version__
 
 install_requires = [
-    "pandas",
+    "pandas<2.0.0",
     "click",
     "requests",
     "tabulate",
-    "tenacity",
+    "tenacity>=8.0.0,<9.0.0",
     "tqdm",
     "typeguard<3.0.0",
     "typing_extensions>=4.1.0",
@@ -24,6 +22,7 @@ install_requires = [
     "urllib3>=1.26",
     "ffmpeg-python",
     "gql[requests,websockets]",
+    "filelock",
 ]
 
 image_requires = [
@@ -77,7 +76,7 @@ setup(
     },
     include_package_data=True,
     entry_points={
-        "console_scripts": ["kili=kili.cli:main"],
+        "console_scripts": ["kili=kili.entrypoints.cli:main"],
     },
     url="https://github.com/kili-technology/kili-python-sdk",
     classifiers=[

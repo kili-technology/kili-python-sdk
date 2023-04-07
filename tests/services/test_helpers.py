@@ -1,7 +1,7 @@
 import pytest
 
-from kili.graphql.operations.asset.queries import AssetQuery
-from kili.graphql.operations.project.queries import ProjectQuery
+from kili.core.graphql.operations.asset.queries import AssetQuery
+from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.services.helpers import _build_id_map
 from tests.fakes.fake_kili import (
     FakeAuth,

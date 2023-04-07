@@ -29,7 +29,7 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python module names) to load,
 # usually to register additional checkers.
-load-plugins=
+load-plugins=pylint.extensions.docparams
 
 # Pickle collected data for later comparisons.
 persistent=yes
@@ -69,7 +69,9 @@ disable=raw-checker-failed,
         deprecated-pragma,
         use-symbolic-message-instead,
         duplicate-code,
-        logging-fstring-interpolation
+        logging-fstring-interpolation,
+        cyclic-import,
+
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

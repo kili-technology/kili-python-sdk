@@ -1,13 +1,12 @@
-"""Tests for utils module"""
+"""Tests for utils module."""
 
 from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
 
-from kili.graphql import QueryOptions
+from kili.core.graphql import QueryOptions
 from kili.utils.pagination import BatchIteratorBuilder, batch_object_builder
-from tests import utils
 
 from .utils import (
     MyGraphQLQuery,
@@ -90,9 +89,7 @@ from .utils import (
     ],
 )
 def test_row_generator_from_paginated_calls(mocker, name, test_case):
-    """
-    Simulates a count query result by returning a list of ids
-    """
+    """Simulates a count query result by returning a list of ids."""
     _ = name
 
     # original

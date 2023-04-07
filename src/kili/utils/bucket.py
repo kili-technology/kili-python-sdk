@@ -1,4 +1,4 @@
-"""Module for managing bucket's signed urls"""
+"""Module for managing bucket's signed urls."""
 
 
 import itertools
@@ -11,8 +11,10 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.authentication import KiliAuth
-from kili.graphql.operations.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
+from kili.core.authentication import KiliAuth
+from kili.core.graphql.operations.asset.queries import (
+    GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
+)
 
 AZURE_STRING = "blob.core.windows.net"
 GCP_STRING = "storage.googleapis.com"
@@ -22,18 +24,16 @@ MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
 
 def generate_unique_id():
-    """
-    Generates a unique id
-    """
+    """Generates a unique id."""
     return cuid.cuid()
 
 
 def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
-    """
-    Get upload signed URLs
+    """Get upload signed URLs.
+
     Args:
         auth: Kili Auth
-        file_paths: the paths in Kili bucket of the data you upload. It must respect
+        file_urls: the paths in Kili bucket of the data you upload. It must respect
             the convention projects/:projectId/assets/xxx.
     """
     size = len(file_urls)
@@ -54,10 +54,11 @@ def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)
 def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str):
-    """upload data in buckets' signed URL via REST
+    """Upload data in buckets' signed URL via REST.
+
     Args:
-        signed_urls: Bucket signed URLs to upload local files to
-        path_array: a list of file paths, json or text to upload
+        url_with_id: signed url with id
+        data: data to upload
         content_type: mimetype of the data
     """
     if content_type == "text/plain":
@@ -73,9 +74,7 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
 
 
 def clean_signed_url(url: str, endpoint: str):
-    """
-    return a cleaned signed url for frame upload
-    """
+    """Return a cleaned signed url for frame upload."""
     query = urlparse(url).query
     id_param = parse_qs(query)["id"][0]
     base_path = endpoint.replace("/graphql", "/files").replace("http://", "https://")

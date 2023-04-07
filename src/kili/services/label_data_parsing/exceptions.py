@@ -20,7 +20,3 @@ class AttributeNotCompatibleWithJobError(Exception):
 
 class InvalidMutationError(Exception):
     """Raised when the mutation is invalid."""
-
-    def __init__(self, msg: str) -> None:
-        """Init."""
-        super().__init__(msg)

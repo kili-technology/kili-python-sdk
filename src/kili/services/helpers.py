@@ -1,14 +1,12 @@
-"""
-Helpers for the services.
-"""
+"""Helpers for the services."""
 from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.exceptions import NotFound
-from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
@@ -47,7 +45,7 @@ def get_external_id_from_file_path(path: PathLike) -> str:
 
 
 def is_target_job_in_json_interface(auth: KiliAuth, project_id: str, target_job_name: str):
-    """Tell if the target job id is defined in the project's JSON interface"""
+    """Tell if the target job id is defined in the project's JSON interface."""
     json_interface = get_project_field(auth, project_id, "jsonInterface")
     return target_job_name in json_interface["jobs"]
 
@@ -55,8 +53,7 @@ def is_target_job_in_json_interface(auth: KiliAuth, project_id: str, target_job_
 def infer_ids_from_external_ids(
     auth: KiliAuth, asset_external_ids: List[str], project_id: str
 ) -> Dict[str, str]:
-    """
-    Infer asset ids from their external ids and project Id.
+    """Infer asset ids from their external ids and project Id.
 
     Args:
         auth: Kili authentication
@@ -108,7 +105,7 @@ def _build_id_map(auth, asset_external_ids, project_id):
 
 
 def assert_all_arrays_have_same_size(arrays: List[Optional[List[Any]]], raise_error=True):
-    """Assert that all given arrays have the same size if they are not None"""
+    """Assert that all given arrays have the same size if they are not None."""
     sizes_arrays = {len(array) for array in arrays if array is not None}
     if len(sizes_arrays) > 1:
         if raise_error:
