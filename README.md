@@ -79,7 +79,7 @@ For more details, read the [SDK reference](https://python-sdk-docs.kili-technolo
 Check out our [tutorials](https://python-sdk-docs.kili-technology.com/latest/tutorials):
 
 - 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
-- 📂 [Assets and labels import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/): Learn how to import assets and labels into your Kili project.
+- 📂 [Assets import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/): Learn how to import assets into your Kili project.
 - 🎥 [Video import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/): See how to import video assets into your Kili project.
 - 🏷️ [Prediction](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/pixel_level_masks/) and [Inference](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/inference_labels/) labels import: Learn how to import prediction and inference labels into your Kili project.
 - 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
