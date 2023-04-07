@@ -34,6 +34,7 @@ class QueriesProject:
         should_relaunch_kpi_computation: Optional[bool] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
+        archived: Optional[bool] = None,
         skip: int = 0,
         fields: List[str] = [
             "consensusTotCoverage",
@@ -63,6 +64,7 @@ class QueriesProject:
         should_relaunch_kpi_computation: Optional[bool] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
+        archived: Optional[bool] = None,
         skip: int = 0,
         fields: List[str] = [
             "consensusTotCoverage",
@@ -92,6 +94,7 @@ class QueriesProject:
         should_relaunch_kpi_computation: Optional[bool] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
+        archived: Optional[bool] = None,
         skip: int = 0,
         fields: List[str] = [
             "consensusTotCoverage",
@@ -121,6 +124,8 @@ class QueriesProject:
             updated_at_gte: Returned projects should have a label whose update date is greater or equal
                 to this date.
             updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.
+            archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
+                None disable this filter.
             skip: Number of projects to skip (they are ordered by their creation).
             fields: All the fields to request among the possible fields for the projects.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#project) for all possible fields.
@@ -146,6 +151,7 @@ class QueriesProject:
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
+            archived=archived,
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
@@ -163,6 +169,7 @@ class QueriesProject:
         should_relaunch_kpi_computation: Optional[bool] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
+        archived: Optional[bool] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Counts the number of projects with a search_query.
@@ -177,6 +184,8 @@ class QueriesProject:
                 or equal to this date.
             updated_at_lte: Returned projects should have a label
                 whose update date is lower or equal to this date.
+            archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
+                None disable this filter.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -190,5 +199,6 @@ class QueriesProject:
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
+            archived=archived,
         )
         return ProjectQuery(self.auth.client).count(where)
