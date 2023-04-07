@@ -52,7 +52,12 @@ class ParsedJobs:
             job_response = json_response.get(job_name, {})  # the json response may be empty
 
             # a required parent job should have a non-empty json response
-            if not job_interface["isChild"] and job_interface["required"] and not job_response:
+            if (
+                not job_interface["isChild"]  # check if parent
+                and job_interface["required"]  # check if required
+                and "VIDEO" not in project_info["inputType"]  # can have empty frames
+                and not job_response
+            ):
                 raise JobNotExistingError(job_name)
 
             self._json_data[job_name] = job_response_module.JobPayload(
@@ -66,6 +71,11 @@ class ParsedJobs:
         if job_name not in self._json_data:
             raise JobNotExistingError(job_name)
         return self._json_data[job_name]
+
+    @property
+    def jobs(self) -> "ParsedJobs":
+        """Returns self."""
+        return self
 
     def to_dict(self) -> Dict:
         """Returns the parsed json response as a dict."""

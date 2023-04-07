@@ -244,8 +244,3 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
 
     for original_label, parsed_label in zip(labels, labels_modified):
         assert original_label == parsed_label
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_parse_labels_video_frame_to_dict():
-    pass  # TODO

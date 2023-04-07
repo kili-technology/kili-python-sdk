@@ -349,12 +349,12 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
         self._json_data["boundingPoly"] = bounding_poly_list
 
     @property
-    def score(self) -> int:
+    def score(self) -> Optional[int]:
         """Returns the score which is the confidence of the object detection.
 
         Available when a pre-annotation model is used.
         """
-        return self._json_data["score"]
+        return self._json_data.get("score")
 
     @score.setter
     @typechecked
@@ -374,7 +374,10 @@ class VideoAnnotation(_Base2DAnnotation):
 
     @property
     def is_key_frame(self) -> bool:
-        """Returns a boolean indicating if the timestamp or frame is used for interpolation."""
+        """Returns the value of isKeyFrame for a video job.
+
+        This is a Boolean indicating if the timestamp or frame is used for interpolation.
+        """
         try:
             return self._json_data["isKeyFrame"]
         except KeyError as err:
