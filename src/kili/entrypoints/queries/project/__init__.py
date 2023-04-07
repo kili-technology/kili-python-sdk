@@ -125,7 +125,7 @@ class QueriesProject:
                 to this date.
             updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.
             archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
-                None disable this filter.
+                `None` disables this filter.
             skip: Number of projects to skip (they are ordered by their creation).
             fields: All the fields to request among the possible fields for the projects.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#project) for all possible fields.
