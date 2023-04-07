@@ -34,10 +34,11 @@ nav:
       - Getting Started: tutorials.md
       - Basic Project Setup: sdk/tutorials/basic_project_setup.md
       - Importing Assets:
-          - Assets and Labels: sdk/tutorials/importing_assets_and_labels.md
+          - Image Assets with Metadata: sdk/tutorials/importing_assets_and_labels.md
           - Video Assets: sdk/tutorials/importing_video_assets.md
       - Importing Labels:
-          - NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
+          - Introduction: sdk/tutorials/importing_labels.md
+          - OpenAI NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
           - OCR Pre-annotations: sdk/tutorials/ocr_pre_annotations.md
           - Segmentation Pre-annotations: sdk/tutorials/pixel_level_masks.md
           - Inference Labels: sdk/tutorials/inference_labels.md
