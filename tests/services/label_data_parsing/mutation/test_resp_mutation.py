@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 from kili.services.label_data_parsing.json_response import ParsedJobs
+from kili.services.label_data_parsing.label import ParsedLabel
 from kili.services.label_data_parsing.types import Project
 
 
@@ -643,3 +644,65 @@ def test_add_bounding_poly():
             ]
         }
     }
+
+
+def test_video_project_set_score():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Train", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Car", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Track objects A and B",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {"tracking": {}},
+                "isVisible": True,
+                "required": 0,
+            },
+        }
+    }
+
+    json_resp = {
+        "0": {},
+        "1": {
+            "JOB_0": {
+                "annotations": [
+                    {
+                        "children": {},
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {"x": 0.3046607129483673, "y": 0.6337517633095981},
+                                    {"x": 0.3046607129483673, "y": 0.5534349836511678},
+                                    {"x": 0.3670709937679789, "y": 0.5534349836511678},
+                                    {"x": 0.3670709937679789, "y": 0.6337517633095981},
+                                ]
+                            }
+                        ],
+                        "categories": [{"name": "OBJECT_B"}],
+                        "mid": "20230407140827577-43802",
+                        "type": "rectangle",
+                        "isKeyFrame": True,
+                    },
+                ]
+            }
+        },
+    }
+
+    label = {"jsonResponse": json_resp}
+
+    parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
+
+    assert len(parsed_label.frames) == 2
+
+    frame = parsed_label.frames[1]
+
+    assert frame.jobs["JOB_0"].annotations[0].score is None
+    frame.jobs["JOB_0"].annotations[0].score = 42
+    assert frame.jobs["JOB_0"].annotations[0].score == 42

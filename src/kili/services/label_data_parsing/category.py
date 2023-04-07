@@ -145,9 +145,6 @@ class CategoryList:
                     " classification job."
                 )
 
-        else:
-            raise ValueError(f"Invalid input type: {input_type}")
-
         # Check that the name of the category we want to add is not already in the list
         if any(category.name == cat.name for cat in self._categories_list):
             raise InvalidMutationError(

@@ -361,7 +361,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
     def score(self, score: int) -> None:
         """Sets the score of the annotation."""
         if not 0 <= score <= 100:
-            raise ValueError(f"Score must be between 0 and 100, got {score}")
+            raise ValueError(f"Score must be between 0 and 100, got {score}.")
         self._json_data["score"] = score
 
 

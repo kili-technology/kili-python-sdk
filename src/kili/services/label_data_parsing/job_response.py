@@ -193,17 +193,6 @@ class JobPayload:
             raise AttributeNotCompatibleWithJobError("is_key_frame")
         return self._json_data["isKeyFrame"]
 
-    @is_key_frame.setter
-    @typechecked
-    def is_key_frame(self, is_key_frame: bool) -> None:
-        """Sets the value of isKeyFrame for a video job.
-
-        This is a Boolean indicating if the timestamp or frame is used for interpolation.
-        """
-        if self._job_interface["mlTask"] != "CLASSIFICATION":
-            raise AttributeNotCompatibleWithJobError("is_key_frame")
-        self._json_data["isKeyFrame"] = is_key_frame
-
     @property
     def annotations(self) -> "annotation_module.AnnotationList":
         """Returns a list of Annotation objects for a job."""
