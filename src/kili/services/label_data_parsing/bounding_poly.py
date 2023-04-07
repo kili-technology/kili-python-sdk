@@ -124,7 +124,7 @@ class BoundingPolyList:
 
         if self._job_interface["mlTask"] not in ("OBJECT_DETECTION", "NAMED_ENTITIES_RECOGNITION"):
             raise InvalidMutationError(
-                "BoundingPolyList can only be mutated for an object detection job."
+                "BoundingPolyList can only be mutated for an object detection or NER in PDF jobs."
             )
 
     @typechecked

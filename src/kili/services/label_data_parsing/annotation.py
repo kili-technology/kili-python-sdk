@@ -158,7 +158,7 @@ class _BaseAnnotation:
 
 
 class _BaseNamedEntityRecognitionAnnotation(_BaseAnnotation):
-    """Base class for parsing the "annotations" key of a job response for NER jobs.
+    """Base class for parsing the "content" key of an annotation for NER job response.
 
     Either simple NER or NER in PDFs.
     """
