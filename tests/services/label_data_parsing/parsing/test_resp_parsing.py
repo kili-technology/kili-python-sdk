@@ -1341,7 +1341,7 @@ def test_parsing_ner_in_pdf_1():
                         }
                     ],
                     "categories": [{"confidence": 100, "name": "ENTITY_A"}],
-                    "content": "sznitman@artorg.unibe",
+                    "content": "abcdefghijsdjfspdjfso",
                     "mid": "20230406142049158-44926",
                 },
             ]
@@ -1354,7 +1354,7 @@ def test_parsing_ner_in_pdf_1():
     annotation_1 = parsed_jobs["JOB_0"].annotations[0]
     assert annotation_1.category.name == "ENTITY_A"
     assert annotation_1.category.confidence == 100
-    assert annotation_1.content == "sznitman@artorg.unibe"
+    assert annotation_1.content == "abcdefghijsdjfspdjfso"
     assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices]}]
     assert annotation_1.annotations[0].bounding_poly[0].normalized_vertices == [normalizedVertices]
     assert annotation_1.annotations[0].page_number_array == [1]
