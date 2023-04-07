@@ -881,7 +881,7 @@
   
     <li class="md-nav__item">
       <a href="../tutorials/importing_assets_and_labels/" class="md-nav__link">
-        Assets and Labels
+        Image Assets with Metadata
       </a>
     </li>
   
@@ -942,8 +942,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../tutorials/importing_labels/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../tutorials/ner_pre_annotations_openai/" class="md-nav__link">
-        NER Pre-annotations
+        OpenAI NER Pre-annotations
       </a>
     </li>
   
@@ -1935,60 +1949,53 @@
 <span class="sd">                and add it to the COCO annotation (see example).</span>
 <span class="sd">            asset_filter_kwargs: Optional dictionary of arguments to pass to `kili.assets()` in order to filter the assets the labels are exported from. The supported arguments are:</span>
 
-<span class="sd">                - consensus_mark_gte</span>
-<span class="sd">                - consensus_mark_lte</span>
-<span class="sd">                - external_id_contains</span>
-<span class="sd">                - honeypot_mark_gte</span>
-<span class="sd">                - honeypot_mark_lte</span>
-<span class="sd">                - label_author_in</span>
-<span class="sd">                - label_reviewer_in</span>
-<span class="sd">                - skipped</span>
-<span class="sd">                - status_in</span>
-<span class="sd">                - label_category_search</span>
-<span class="sd">                - created_at_gte</span>
-<span class="sd">                - created_at_lte</span>
-<span class="sd">                - issue_type</span>
-<span class="sd">                - issue_status</span>
-<span class="sd">                - inference_mark_gte</span>
-<span class="sd">                - inference_mark_lte</span>
-<span class="sd">                - metadata_where</span>
+<span class="sd">                - `consensus_mark_gte`</span>
+<span class="sd">                - `consensus_mark_lte`</span>
+<span class="sd">                - `external_id_contains`</span>
+<span class="sd">                - `honeypot_mark_gte`</span>
+<span class="sd">                - `honeypot_mark_lte`</span>
+<span class="sd">                - `label_author_in`</span>
+<span class="sd">                - `label_reviewer_in`</span>
+<span class="sd">                - `skipped`</span>
+<span class="sd">                - `status_in`</span>
+<span class="sd">                - `label_category_search`</span>
+<span class="sd">                - `created_at_gte`</span>
+<span class="sd">                - `created_at_lte`</span>
+<span class="sd">                - `issue_type`</span>
+<span class="sd">                - `issue_status`</span>
+<span class="sd">                - `inference_mark_gte`</span>
+<span class="sd">                - `inference_mark_lte`</span>
+<span class="sd">                - `metadata_where`</span>
 
 <span class="sd">                See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.</span>
-
-<span class="sd">        !!! warning</span>
-<span class="sd">            Export is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">        !!! Info</span>
 <span class="sd">            The supported formats are:</span>
 
-<span class="sd">            - Yolo V4, V5, V7 for object detection tasks (bounding box)</span>
+<span class="sd">            - Yolo V4, V5, V7 for object detection tasks (bounding box).</span>
+<span class="sd">            - Kili (a.k.a raw) for all tasks.</span>
+<span class="sd">            - COCO for object detection tasks (bounding box and semantic segmentation).</span>
+<span class="sd">            - Pascal VOC for object detection tasks (bounding box).</span>
 
-<span class="sd">            - Kili for all tasks.</span>
-
-<span class="sd">            - COCO for semantic segmentation tasks (bounding box and semantic segmentation)</span>
-
-<span class="sd">            - Pascal VOC for object detection tasks.</span>
+<span class="sd">        !!! warning &quot;Cloud storage&quot;</span>
+<span class="sd">            Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">        !!! Example</span>
-<span class="sd">            ```</span>
-<span class="sd">            from kili.client import Kili</span>
-<span class="sd">            kili = Kili()</span>
+<span class="sd">            ```python</span>
 <span class="sd">            kili.export_labels(&quot;your_project_id&quot;, &quot;export.zip&quot;, &quot;yolo_v4&quot;)</span>
 <span class="sd">            ```</span>
 
 <span class="sd">        !!! Example</span>
-<span class="sd">            ```</span>
-<span class="sd">            from kili.client import Kili</span>
-<span class="sd">            kili = Kili()</span>
-
+<span class="sd">            ```python</span>
 <span class="sd">            def is_rectangle(coco_annotation, coco_image, kili_annotation):</span>
 <span class="sd">                is_rectangle = ...</span>
 <span class="sd">                return {**coco_annotation, &quot;attributes&quot;: {&quot;is_rectangle&quot;: is_rectangle}}</span>
+
 <span class="sd">            kili.export_labels(</span>
 <span class="sd">                &quot;your_project_id&quot;,</span>
 <span class="sd">                &quot;export.zip&quot;,</span>
 <span class="sd">                &quot;coco&quot;,</span>
-<span class="sd">                annotation_modifier = add_is_rectangle</span>
+<span class="sd">                annotation_modifier=add_is_rectangle</span>
 <span class="sd">            )</span>
 <span class="sd">            ```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2344,71 +2351,59 @@ and add it to the COCO annotation (see example).</p></td>
         <td><code>Optional[Dict[str, object]]</code></td>
         <td><p>Optional dictionary of arguments to pass to <code>kili.assets()</code> in order to filter the assets the labels are exported from. The supported arguments are:</p>
 <ul>
-<li>consensus_mark_gte</li>
-<li>consensus_mark_lte</li>
-<li>external_id_contains</li>
-<li>honeypot_mark_gte</li>
-<li>honeypot_mark_lte</li>
-<li>label_author_in</li>
-<li>label_reviewer_in</li>
-<li>skipped</li>
-<li>status_in</li>
-<li>label_category_search</li>
-<li>created_at_gte</li>
-<li>created_at_lte</li>
-<li>issue_type</li>
-<li>issue_status</li>
-<li>inference_mark_gte</li>
-<li>inference_mark_lte</li>
-<li>metadata_where</li>
+<li><code>consensus_mark_gte</code></li>
+<li><code>consensus_mark_lte</code></li>
+<li><code>external_id_contains</code></li>
+<li><code>honeypot_mark_gte</code></li>
+<li><code>honeypot_mark_lte</code></li>
+<li><code>label_author_in</code></li>
+<li><code>label_reviewer_in</code></li>
+<li><code>skipped</code></li>
+<li><code>status_in</code></li>
+<li><code>label_category_search</code></li>
+<li><code>created_at_gte</code></li>
+<li><code>created_at_lte</code></li>
+<li><code>issue_type</code></li>
+<li><code>issue_status</code></li>
+<li><code>inference_mark_gte</code></li>
+<li><code>inference_mark_lte</code></li>
+<li><code>metadata_where</code></li>
 </ul>
 <p>See the documentation of <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets"><code>kili.assets()</code></a> for more information.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
-</table>      <div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Export is not allowed for projects connected to a cloud storage.</p>
-</div>
-<div class="admonition info">
+</table>      <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>The supported formats are:</p>
 <ul>
-<li>
-<p>Yolo V4, V5, V7 for object detection tasks (bounding box)</p>
-</li>
-<li>
-<p>Kili for all tasks.</p>
-</li>
-<li>
-<p>COCO for semantic segmentation tasks (bounding box and semantic segmentation)</p>
-</li>
-<li>
-<p>Pascal VOC for object detection tasks.</p>
-</li>
+<li>Yolo V4, V5, V7 for object detection tasks (bounding box).</li>
+<li>Kili (a.k.a raw) for all tasks.</li>
+<li>COCO for object detection tasks (bounding box and semantic segmentation).</li>
+<li>Pascal VOC for object detection tasks (bounding box).</li>
 </ul>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Cloud storage</p>
+<p>Export with asset download (<code>with_assets=True</code>) is not allowed for projects connected to a cloud storage.</p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code>from kili.client import Kili
-kili = Kili()
-kili.export_labels(&quot;your_project_id&quot;, &quot;export.zip&quot;, &quot;yolo_v4&quot;)
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span> <span class="s2">&quot;export.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;yolo_v4&quot;</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code>from kili.client import Kili
-kili = Kili()
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_rectangle</span><span class="p">(</span><span class="n">coco_annotation</span><span class="p">,</span> <span class="n">coco_image</span><span class="p">,</span> <span class="n">kili_annotation</span><span class="p">):</span>
+    <span class="n">is_rectangle</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">coco_annotation</span><span class="p">,</span> <span class="s2">&quot;attributes&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;is_rectangle&quot;</span><span class="p">:</span> <span class="n">is_rectangle</span><span class="p">}}</span>
 
-def is_rectangle(coco_annotation, coco_image, kili_annotation):
-    is_rectangle = ...
-    return {**coco_annotation, &quot;attributes&quot;: {&quot;is_rectangle&quot;: is_rectangle}}
-kili.export_labels(
-    &quot;your_project_id&quot;,
-    &quot;export.zip&quot;,
-    &quot;coco&quot;,
-    annotation_modifier = add_is_rectangle
-)
+<span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
+    <span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export.zip&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;coco&quot;</span><span class="p">,</span>
+    <span class="n">annotation_modifier</span><span class="o">=</span><span class="n">add_is_rectangle</span>
+<span class="p">)</span>
 </code></pre></div>
 </div>
 
@@ -2451,60 +2446,53 @@ kili.export_labels(
 <span class="sd">            and add it to the COCO annotation (see example).</span>
 <span class="sd">        asset_filter_kwargs: Optional dictionary of arguments to pass to `kili.assets()` in order to filter the assets the labels are exported from. The supported arguments are:</span>
 
-<span class="sd">            - consensus_mark_gte</span>
-<span class="sd">            - consensus_mark_lte</span>
-<span class="sd">            - external_id_contains</span>
-<span class="sd">            - honeypot_mark_gte</span>
-<span class="sd">            - honeypot_mark_lte</span>
-<span class="sd">            - label_author_in</span>
-<span class="sd">            - label_reviewer_in</span>
-<span class="sd">            - skipped</span>
-<span class="sd">            - status_in</span>
-<span class="sd">            - label_category_search</span>
-<span class="sd">            - created_at_gte</span>
-<span class="sd">            - created_at_lte</span>
-<span class="sd">            - issue_type</span>
-<span class="sd">            - issue_status</span>
-<span class="sd">            - inference_mark_gte</span>
-<span class="sd">            - inference_mark_lte</span>
-<span class="sd">            - metadata_where</span>
+<span class="sd">            - `consensus_mark_gte`</span>
+<span class="sd">            - `consensus_mark_lte`</span>
+<span class="sd">            - `external_id_contains`</span>
+<span class="sd">            - `honeypot_mark_gte`</span>
+<span class="sd">            - `honeypot_mark_lte`</span>
+<span class="sd">            - `label_author_in`</span>
+<span class="sd">            - `label_reviewer_in`</span>
+<span class="sd">            - `skipped`</span>
+<span class="sd">            - `status_in`</span>
+<span class="sd">            - `label_category_search`</span>
+<span class="sd">            - `created_at_gte`</span>
+<span class="sd">            - `created_at_lte`</span>
+<span class="sd">            - `issue_type`</span>
+<span class="sd">            - `issue_status`</span>
+<span class="sd">            - `inference_mark_gte`</span>
+<span class="sd">            - `inference_mark_lte`</span>
+<span class="sd">            - `metadata_where`</span>
 
 <span class="sd">            See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.</span>
-
-<span class="sd">    !!! warning</span>
-<span class="sd">        Export is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">    !!! Info</span>
 <span class="sd">        The supported formats are:</span>
 
-<span class="sd">        - Yolo V4, V5, V7 for object detection tasks (bounding box)</span>
+<span class="sd">        - Yolo V4, V5, V7 for object detection tasks (bounding box).</span>
+<span class="sd">        - Kili (a.k.a raw) for all tasks.</span>
+<span class="sd">        - COCO for object detection tasks (bounding box and semantic segmentation).</span>
+<span class="sd">        - Pascal VOC for object detection tasks (bounding box).</span>
 
-<span class="sd">        - Kili for all tasks.</span>
-
-<span class="sd">        - COCO for semantic segmentation tasks (bounding box and semantic segmentation)</span>
-
-<span class="sd">        - Pascal VOC for object detection tasks.</span>
+<span class="sd">    !!! warning &quot;Cloud storage&quot;</span>
+<span class="sd">        Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```</span>
-<span class="sd">        from kili.client import Kili</span>
-<span class="sd">        kili = Kili()</span>
+<span class="sd">        ```python</span>
 <span class="sd">        kili.export_labels(&quot;your_project_id&quot;, &quot;export.zip&quot;, &quot;yolo_v4&quot;)</span>
 <span class="sd">        ```</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```</span>
-<span class="sd">        from kili.client import Kili</span>
-<span class="sd">        kili = Kili()</span>
-
+<span class="sd">        ```python</span>
 <span class="sd">        def is_rectangle(coco_annotation, coco_image, kili_annotation):</span>
 <span class="sd">            is_rectangle = ...</span>
 <span class="sd">            return {**coco_annotation, &quot;attributes&quot;: {&quot;is_rectangle&quot;: is_rectangle}}</span>
+
 <span class="sd">        kili.export_labels(</span>
 <span class="sd">            &quot;your_project_id&quot;,</span>
 <span class="sd">            &quot;export.zip&quot;,</span>
 <span class="sd">            &quot;coco&quot;,</span>
-<span class="sd">            annotation_modifier = add_is_rectangle</span>
+<span class="sd">            annotation_modifier=add_is_rectangle</span>
 <span class="sd">        )</span>
 <span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>

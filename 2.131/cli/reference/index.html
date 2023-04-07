@@ -859,7 +859,7 @@
   
     <li class="md-nav__item">
       <a href="../../sdk/tutorials/importing_assets_and_labels/" class="md-nav__link">
-        Assets and Labels
+        Image Assets with Metadata
       </a>
     </li>
   
@@ -920,8 +920,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../../sdk/tutorials/importing_labels/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../sdk/tutorials/ner_pre_annotations_openai/" class="md-nav__link">
-        NER Pre-annotations
+        OpenAI NER Pre-annotations
       </a>
     </li>
   
@@ -1525,16 +1539,19 @@ to create a new project with the json_interface of another project
 </table>
 <h3 id="export">export</h3>
 <p>Export the Kili labels of a project to a given format.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
 <p>The supported formats are:</p>
 <ul>
-<li>YOLO V4, V5, V7 for object detection tasks (bounding box).</li>
+<li>Yolo V4, V5, V7 for object detection tasks (bounding box).</li>
 <li>Kili (a.k.a raw) for all tasks.</li>
-<li>COCO for object detection tasks (semantic or bounding box)</li>
-<li>Pascal VOC for object detection tasks.</li>
+<li>COCO for object detection tasks (bounding box and semantic segmentation).</li>
+<li>Pascal VOC for object detection tasks (bounding box).</li>
 </ul>
+</div>
 <div class="admonition warning">
-<p class="admonition-title">Cloud storage<p>Export is not allowed for projects connected to a cloud storage.</p>
-</p>
+<p class="admonition-title">Cloud storage</p>
+<p>Export with asset download (<code>--with-assets</code>) is not allowed for projects connected to a cloud storage.</p>
 </div>
 <div class="admonition examples">
 <p class="admonition-title">Examples</p>
@@ -1549,12 +1566,6 @@ to create a new project with the json_interface of another project
     --output-file /tmp/export_split.zip \
     --layout split
 </code></pre></div></p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Unsupported exports</p>
-<p>Currently, this command does not support the export of videos that have not
-been cut into separated frames.</p>
-<p>For such exports, please use the Kili UI.</p>
 </div>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>kili project export [OPTIONS]
