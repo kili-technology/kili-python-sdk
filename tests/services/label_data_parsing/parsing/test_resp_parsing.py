@@ -9,6 +9,7 @@ from kili.services.label_data_parsing.annotation import (
 )
 from kili.services.label_data_parsing.bounding_poly import BoundingPoly
 from kili.services.label_data_parsing.category import Category, CategoryList
+from kili.services.label_data_parsing.exceptions import FrameIndexError
 from kili.services.label_data_parsing.job_response import JobPayload
 from kili.services.label_data_parsing.json_response import ParsedJobs
 from kili.services.label_data_parsing.label import ParsedLabel
@@ -909,7 +910,6 @@ def test_parsing_category_only_name():
     assert parsed_jobs["JOB_0"].annotations[0].category.confidence == 42
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_video_project_classification():
     json_interface = {
         "jobs": {
@@ -959,13 +959,166 @@ def test_video_project_classification():
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
-    # assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].is_key_frame is True
-    # assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_A"
+    assert len(parsed_label.frames) == 9
+    assert not hasattr(parsed_label, "jobs")
+
+    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].is_key_frame is True
+    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_A"
+    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.confidence == 100
+
+    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].is_key_frame is False
+    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_B"
+    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].category.confidence == 42
+
+    for i, frame in enumerate(parsed_label.frames):
+        if i == 5:
+            frame.jobs["FRAME_CLASSIF_JOB"].category.name = "OBJECT_A"
+            frame.jobs["FRAME_CLASSIF_JOB"].category.confidence = 100
+        elif i == 6:
+            frame.jobs["FRAME_CLASSIF_JOB"].category.name = "OBJECT_B"
+            frame.jobs["FRAME_CLASSIF_JOB"].category.confidence = 42
+
+    assert parsed_label.frames[0].to_dict() == {}
+
+    with pytest.raises(
+        FrameIndexError, match="Frame index 999999999 out of range for frame list of size 9."
+    ):
+        _ = parsed_label.frames[999999999]
+
+    assert parsed_label.to_dict() == label
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_video_project_object_detection():
-    pass
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": ["JOB_1"], "name": "Train", "color": "#733AFB"},
+                        "OBJECT_B": {"children": ["JOB_2"], "name": "Car", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Track objects A and B",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {"tracking": {}},
+                "isVisible": True,
+                "required": 0,
+            },
+            "JOB_1": {
+                "content": {
+                    "categories": {
+                        "IS_THE OBJECT OCCLUDED?": {
+                            "children": [],
+                            "name": "Is the object occluded?",
+                        }
+                    },
+                    "input": "checkbox",
+                },
+                "instruction": "",
+                "isChild": True,
+                "mlTask": "CLASSIFICATION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            },
+            "JOB_2": {
+                "content": {
+                    "categories": {
+                        "IS_THE OBJECT OCCLUDED?": {
+                            "children": [],
+                            "name": "Is the object occluded?",
+                        }
+                    },
+                    "input": "checkbox",
+                },
+                "instruction": "",
+                "isChild": True,
+                "mlTask": "CLASSIFICATION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            },
+        }
+    }
+
+    json_resp = {
+        "0": {},
+        "1": {
+            "JOB_0": {
+                "annotations": [
+                    {
+                        "children": {},
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {"x": 0.3046607129483673, "y": 0.6337517633095981},
+                                    {"x": 0.3046607129483673, "y": 0.5534349836511678},
+                                    {"x": 0.3670709937679789, "y": 0.5534349836511678},
+                                    {"x": 0.3670709937679789, "y": 0.6337517633095981},
+                                ]
+                            }
+                        ],
+                        "categories": [{"name": "OBJECT_B"}],
+                        "mid": "20230407140827577-43802",
+                        "type": "rectangle",
+                        "isKeyFrame": True,
+                    },
+                    {
+                        "children": {
+                            "JOB_1": {
+                                "categories": [
+                                    {"confidence": 100, "name": "IS_THE OBJECT OCCLUDED?"}
+                                ],
+                                "isKeyFrame": False,
+                            }
+                        },
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {"x": 0.22829023773489518, "y": 0.5694983395828539},
+                                    {"x": 0.22829023773489518, "y": 0.5213082717877957},
+                                    {"x": 0.2750979483496039, "y": 0.5213082717877957},
+                                    {"x": 0.2750979483496039, "y": 0.5694983395828539},
+                                ]
+                            }
+                        ],
+                        "categories": [{"name": "OBJECT_A"}],
+                        "mid": "20230407140852397-83130",
+                        "type": "rectangle",
+                        "isKeyFrame": False,
+                    },
+                ]
+            }
+        },
+    }
+
+    label = {"jsonResponse": json_resp}
+
+    parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
+
+    assert len(parsed_label.frames) == 2
+
+    frame = parsed_label.frames[1]
+
+    first_annotation = frame.jobs["JOB_0"].annotations[0]
+    assert first_annotation.category.name == "OBJECT_B"
+    assert first_annotation.type == "rectangle"
+    assert first_annotation.is_key_frame is True
+    assert len(first_annotation.bounding_poly) == 1
+
+    second_annotation = frame.jobs["JOB_0"].annotations[1]
+    assert second_annotation.category.name == "OBJECT_A"
+    assert second_annotation.type == "rectangle"
+    assert second_annotation.is_key_frame is False
+    assert len(second_annotation.bounding_poly) == 1
+    assert second_annotation.children["JOB_1"].categories[0].name == "IS_THE OBJECT OCCLUDED?"
+    assert second_annotation.children["JOB_1"].categories[0].confidence == 100
+    assert second_annotation.children["JOB_1"].is_key_frame is False
+
+    assert parsed_label.to_dict() == label
 
 
 def test_iterate_over_jobs():
