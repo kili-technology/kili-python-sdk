@@ -5,57 +5,57 @@ from setuptools import find_packages, setup
 from src.kili import __version__
 
 install_requires = [
-    "pandas",
-    "click",
-    "requests",
-    "tabulate",
-    "tenacity",
-    "tqdm",
-    "typeguard<3.0.0",
+    "pandas>=1.0.0",
+    "click>=8.0.0",
+    "requests>=2.0.0",
+    "tabulate>=0.9.0,<0.10.0",
+    "tenacity>=8.0.0",
+    "tqdm>=4.0.0",
+    "typeguard>=2.0.0,<3.0.0",
     "typing_extensions>=4.1.0",
-    "pyparsing",
-    "websocket-client",
-    "pyyaml",
-    "Pillow",
-    "cuid",
-    "pydantic",
+    "pyparsing>=3.0.0",
+    "websocket-client>=1.0.0",
+    "pyyaml>=6.0",
+    "Pillow>=9.0.0",
+    "cuid>=0.4,<0.5",
+    "pydantic>=1.0.0",
     "urllib3>=1.26",
-    "ffmpeg-python",
-    "gql[requests,websockets]",
+    "ffmpeg-python>=0.2.0,<0.3.0",
+    "gql[requests,websockets]>=3.0.0",
 ]
 
 image_requires = [
-    "opencv-python",
+    "opencv-python>=4.0.0",
 ]
 
 dev_extra = [
     # release
-    "bump2version",
+    "bump2version>=1.0.0",
     # tests
-    "pytest",
-    "pytest-mock",
-    "pytest-cov",
-    "pytest-xdist[psutil]",
+    "pytest>=7.0.0",
+    "pytest-mock>=3.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-xdist[psutil]>=3.0.0",
     # documentation
-    "mkdocs",
-    "mkdocs-material",
-    "mkdocstrings",
-    "mkdocstrings-python-legacy",
-    "mkdocs-click",
-    "mike",
-    "pymdown-extensions",
+    "mkdocs>=1.0.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings>=0.20.0, <0.21.0",
+    "mkdocstrings-python-legacy>=0.2.0,<0.3.0",
+    "mkdocs-click>=0.8.0,<0.9.0",
+    "mike>=1.0.0",
+    "pymdown-extensions>=9.0",
     # linting
-    "black",
-    "pre-commit",
-    "pylint",
-    "flake8-unused-arguments",
-    "pyright",
+    "black>=23.0.0",
+    "pre-commit>=3.0.0",
+    "pylint>=2.0.0",
+    "flake8-unused-arguments>=0.0.13,<0.0.14",
+    "pyright>=1.0.0",
     # notebooks tests
-    "nbformat",
-    "nbconvert",
-    "ipykernel",
+    "nbformat>=5.0.0",
+    "nbconvert>=7.0.0",
+    "ipykernel>=6.0.0",
     # image utils
-    "opencv-python",
+    "opencv-python>=4.0.0",
 ]
 
 setup(
