@@ -30,32 +30,32 @@ image_requires = [
 
 dev_extra = [
     # release
-    "bump2version>=1.0.0",
+    "bump2version",
     # tests
-    "pytest>=7.0.0",
-    "pytest-mock>=3.0.0",
-    "pytest-cov>=4.0.0",
-    "pytest-xdist[psutil]>=3.0.0",
+    "pytest",
+    "pytest-mock",
+    "pytest-cov",
+    "pytest-xdist[psutil]",
     # documentation
-    "mkdocs>=1.0.0",
-    "mkdocs-material>=9.0.0",
-    "mkdocstrings>=0.20.0, <0.21.0",
-    "mkdocstrings-python-legacy>=0.2.0,<0.3.0",
-    "mkdocs-click>=0.8.0,<0.9.0",
-    "mike>=1.0.0",
-    "pymdown-extensions>=9.0",
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocstrings-python-legacy",
+    "mkdocs-click",
+    "mike",
+    "pymdown-extensions",
     # linting
-    "black>=23.0.0",
-    "pre-commit>=3.0.0",
-    "pylint>=2.0.0",
-    "flake8-unused-arguments>=0.0.13,<0.0.14",
-    "pyright>=1.0.0",
+    "black",
+    "pre-commit",
+    "pylint",
+    "flake8-unused-arguments",
+    "pyright",
     # notebooks tests
-    "nbformat>=5.0.0",
-    "nbconvert>=7.0.0",
-    "ipykernel>=6.0.0",
+    "nbformat",
+    "nbconvert",
+    "ipykernel",
     # image utils
-    "opencv-python>=4.0.0",
+    "opencv-python",
 ]
 
 setup(
