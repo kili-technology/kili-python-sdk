@@ -9,13 +9,15 @@ def check_rules_on_label(label: Dict):
     print("Custom method - checking number of bboxes")
 
     counter = 0
+    issues_array = []
     for annotation in label["jsonResponse"]["JOB_0"]["annotations"]:
         if annotation["categories"][0]["name"] == "OBJECT_A":
             counter += 1
 
     if counter <= 1:
-        return []
-    return [f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"]
+        return issues_array
+    issues_array.append([f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"])
+    return issues_array
 
 
 class PluginHandler(PluginCore):
@@ -32,12 +34,11 @@ class PluginHandler(PluginCore):
         if len(issues_array) > 0:
             print("Creating an issue...")
 
-            for i, _ in enumerate(issues_array):
-                self.kili.append_to_issues(
-                    label_id=label["id"],
-                    project_id=project_id,
-                    text=issues_array[i],
-                )
+            self.kili.create_issues(
+                project_id=project_id,
+                label_id_array=[label["id"]] * len(issues_array),
+                text_array=issues_array,
+            )
 
             print("Issue created!")
 

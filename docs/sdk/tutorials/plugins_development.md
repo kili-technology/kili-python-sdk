@@ -108,10 +108,10 @@ class PluginHandler(PluginCore):
         if random_seed > 0.5:
             self.logger.warning("Generating issue")
             # Use kili for actions with self.kili
-            self.kili.append_to_issues(
-                label_id=label_id,
+            self.kili.create_issues(
                 project_id=project_id,
-                text="Random issue generated for this label",
+                label_id_array=[label_id],
+                text_array=["Random issue generated for this label"],
             )
 
     def on_review(self, label: Dict, asset_id: str) -> None:
