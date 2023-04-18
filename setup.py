@@ -5,27 +5,27 @@ from setuptools import find_packages, setup
 from src.kili import __version__
 
 install_requires = [
-    "pandas>=1.0.0",
-    "click>=8.0.0",
-    "requests>=2.0.0",
+    "pandas>=1.0.0,<2.0.0",
+    "click>=8.0.0, <9.0.0",
+    "requests>=2.0.0, <3.0.0",
     "tabulate>=0.9.0,<0.10.0",
-    "tenacity>=8.0.0",
-    "tqdm>=4.0.0",
+    "tenacity>=8.0.0, <9.0.0",
+    "tqdm>=4.0.0, <5.0.0",
     "typeguard>=2.0.0,<3.0.0",
-    "typing_extensions>=4.1.0",
-    "pyparsing>=3.0.0",
-    "websocket-client>=1.0.0",
-    "pyyaml>=6.0",
-    "Pillow>=9.0.0",
+    "typing_extensions>=4.1.0,<5.0.0",
+    "pyparsing>=3.0.0,<4.0.0",
+    "websocket-client>=1.0.0,<2.0.0",
+    "pyyaml>=6.0,<7.0",
+    "Pillow>=9.0.0,<10.0.0",
     "cuid>=0.4,<0.5",
-    "pydantic>=1.0.0",
-    "urllib3>=1.26",
+    "pydantic>=1.0.0,<2.0.0",
+    "urllib3>=1.26,<2.0",
     "ffmpeg-python>=0.2.0,<0.3.0",
-    "gql[requests,websockets]>=3.0.0",
+    "gql[requests,websockets]>=3.0.0,<4.0.0",
 ]
 
 image_requires = [
-    "opencv-python>=4.0.0",
+    "opencv-python>=4.0.0,<5.0.0",
 ]
 
 dev_extra = [
