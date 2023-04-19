@@ -80,9 +80,6 @@ project_id = project["id"]
 print(f"Created project {project_id}")
 ```
 
-    Created project cldlyo2bq61if0jn9efvn3soo
-
-
 Upload an asset:
 
 
@@ -107,9 +104,9 @@ To iterate on the plugin code, you can refer to the plugins_development.ipynb no
 
 ```python
 from kili.plugins import PluginCore
-from typing import Dict
+from typing import Dict, List, Optional
 
-def check_rules_on_label(label: Dict):
+def check_rules_on_label(label: Dict) -> List[Optional[str]]:
     #custom methods
     print('Custom method - checking number of bboxes')
 
@@ -118,9 +115,10 @@ def check_rules_on_label(label: Dict):
         if annotation["categories"][0]["name"] == "OBJECT_A":
             counter += 1
 
-    if counter == 0:
+    if counter <= 1:
         return []
-    return [f'There are too many BBox ({counter}) - Only 1 BBox of Object A accepted']
+    return [f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"]
+
 
 class PluginHandler(PluginCore):
     """
@@ -218,9 +216,6 @@ except GraphQLError as error:
 kili.activate_plugin_on_project(plugin_name=plugin_name, project_id=project_id)
 ```
 
-    Plugin with name "Plugin bbox count" activated on project "cldlyo2bq61if0jn9efvn3soo"
-
-
 ## Step 4 bis: Upload the plugin from a .py file
 
 Alternatively, you can also create a plugin directly from a `.py` file.
@@ -317,15 +312,6 @@ kili.append_labels(
 )
 ```
 
-
-
-
-
-
-    [{'id': 'cldlyovj52lfr0joi831qfbao'}]
-
-
-
 If you use the base plugin provided, the plugin should:
 
  - Create an issue with information that three bboxes were found, instead of one
@@ -342,14 +328,6 @@ print(
     f" {kili.auth.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
-
-
-
-    [{'issues': [], 'status': 'LABELED'}]
-    Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
-
-
-
 
 Woah! Amazing! Well done :) 🚀
 
@@ -390,14 +368,6 @@ print(
     f" {kili.auth.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
-
-
-
-    [{'status': 'LABELED'}]
-    Go to my project: https://cloud.kili-technology.com/label/projects/cldlyo2bq61if0jn9efvn3soo/menu/queue
-
-
-
 
 The status of your asset should have now changed to `LABELED`. In this plugin, previous issues remain but you can solve them through the API as well.
 
@@ -455,9 +425,6 @@ Deactivate the plugin on a certain project (the plugin can still be active for o
 ```python
 kili.deactivate_plugin_on_project(plugin_name=plugin_name, project_id=project_id);
 ```
-
-    Plugin Plugin bbox count deactivated on project cldlyo2bq61if0jn9efvn3soo
-
 
 Delete the plugin completely (deactivates the plugin from all projects):
 
