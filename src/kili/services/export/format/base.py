@@ -49,6 +49,8 @@ class ExportParams(NamedTuple):
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     """Abstract class defining the interface for all exporters."""
 
+    requires_asset_access = False
+
     def __init__(
         self,
         export_params: ExportParams,
@@ -163,10 +165,17 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 options=QueryOptions(disable_tqdm=True, first=1, skip=0),
             )
             if len(list(data_connections_gen)) > 0:
+                if self.requires_asset_access:
+                    resolution_str = (
+                        "This export format requires accessing the image height and width."
+                    )
+                else:
+                    resolution_str = (
+                        "Please disable the download of assets by setting `with_assets=False`."
+                    )
                 raise NotCompatibleOptions(
                     "Export with download of assets is not allowed on projects with data"
-                    " connections. Please disable the download of assets by setting"
-                    " `with_assets=False`."
+                    f" connections. {resolution_str}"
                 )
 
         self.logger.warning("Fetching assets...")

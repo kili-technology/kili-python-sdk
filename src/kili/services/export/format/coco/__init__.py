@@ -32,6 +32,8 @@ DATA_SUBDIR = "data"
 class CocoExporter(AbstractExporter):
     """Common code for COCO exporter."""
 
+    requires_asset_access = True
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.with_assets:

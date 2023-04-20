@@ -23,17 +23,7 @@ from ...media.video import cut_video, get_video_dimensions
 class VocExporter(AbstractExporter):
     """Common code for VOC exporter."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.with_assets:
-            warnings.warn(
-                (
-                    "For an export to the Pascal VOC format, the download of assets cannot be"
-                    " disabled."
-                ),
-                stacklevel=2,
-            )
-        self.with_assets = True
+    requires_asset_access = True
 
     def _check_arguments_compatibility(self):
         """Check if the export label format is compatible with the export options."""
