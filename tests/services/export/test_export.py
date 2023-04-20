@@ -756,9 +756,19 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
         )
 
 
-def test_export_with_asset_cloud_storage_should_crash(mocker):
+def test_when_exporting_with_assets_given_a_project_with_data_connection_with_asset_cloud_storage_then_it_should_crash(
+    mocker,
+):
     get_project_return_val = {
-        "jsonInterface": {"jobs": {"JOB": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"}}},
+        "jsonInterface": {
+            "jobs": {
+                "JOB": {
+                    "tools": ["rectangle"],
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {"categories": ["CLASS_A", "CLASS_B"]},
+                }
+            }
+        },
         "inputType": "IMAGE",
         "title": "",
     }
@@ -790,7 +800,7 @@ def test_export_with_asset_cloud_storage_should_crash(mocker):
         kili.export_labels(
             project_id="fake_proj_id",
             filename="fake_filename",
-            fmt="pascal_voc",
+            fmt="yolo_v5",
             layout="merged",
             with_assets=True,
         )
