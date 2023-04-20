@@ -9,7 +9,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
-from kili.authentication import KiliAuth
+from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.data_connection.queries import (
+    DataConnectionsQuery,
+    DataConnectionsWhere,
+)
 from kili.orm import Asset, Label
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import fetch_assets
@@ -22,6 +27,8 @@ from kili.services.export.types import (
 from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
+
+from ..exceptions import NotCompatibleOptions, NotExportableAssetError
 
 
 class ExportParams(NamedTuple):
@@ -36,6 +43,7 @@ class ExportParams(NamedTuple):
     output_file: Path
     with_assets: bool
     annotation_modifier: Optional[CocoAnnotationModifier]
+    asset_filter_kwargs: Optional[Dict[str, object]]
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -63,6 +71,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.with_assets: bool = export_params.with_assets
         self.export_root_folder: Path = Path()
         self.annotation_modifier = export_params.annotation_modifier
+        self.asset_filter_kwargs = export_params.asset_filter_kwargs
 
         project_info = get_project(
             self.auth, self.project_id, ["jsonInterface", "inputType", "title"]
@@ -146,6 +155,20 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self._check_arguments_compatibility()
         self._check_project_compatibility()
 
+        # if asset download is enabled and there are data connections, we forbid the export
+        if self.with_assets:
+            data_connections_gen = DataConnectionsQuery(self.auth.client)(
+                where=DataConnectionsWhere(project_id=self.project_id),
+                fields=["id"],
+                options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+            )
+            if len(list(data_connections_gen)) > 0:
+                raise NotCompatibleOptions(
+                    "Export with download of assets is not allowed on projects with data"
+                    " connections. Please disable the download of assets by setting"
+                    " `with_assets=False`."
+                )
+
         self.logger.warning("Fetching assets...")
 
         with TemporaryDirectory() as export_root_folder:
@@ -159,7 +182,20 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 disable_tqdm=self.disable_tqdm,
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),
+                asset_filter_kwargs=self.asset_filter_kwargs,
             )
+            # if the asset["externalId"] has slashes in it, the export will not work
+            # since the slashes will be interpreted as folders
+            if any(
+                asset["externalId"].find("/") != -1 or asset["externalId"].find("\\") != -1
+                for asset in assets
+            ):
+                raise NotExportableAssetError(
+                    "The export is not supported for assets with externalIds that contain slashes."
+                    " Please remove the slashes from the externalIds using"
+                    " `kili.change_asset_external_ids()` and try again."
+                )
+
             self.process_and_save(assets, self.output_file)
 
     @property

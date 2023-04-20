@@ -1,5 +1,4 @@
 """Test module for the GraphQL client."""
-import os
 from pathlib import Path
 from unittest import mock
 
@@ -7,21 +6,13 @@ import pytest
 from gql.transport import exceptions
 from graphql import build_ast_schema, parse
 
+from kili.client import Kili
 from kili.exceptions import GraphQLError
-from kili.graphql.graphql_client import GraphQLClient, GraphQLClientName
 
 
 def test_gql_bad_query_remote_validation():
     """Test validation by the server no local schema."""
-    api_endpoint = os.getenv("KILI_API_ENDPOINT")
-    api_key = os.getenv("KILI_API_KEY")
-
-    client = GraphQLClient(
-        endpoint=api_endpoint,  # type: ignore
-        api_key=api_key,  # type: ignore
-        client_name=GraphQLClientName.SDK,
-        verify=True,
-    )
+    client = Kili().auth.client
 
     query = """
     query MyQuery {
@@ -51,10 +42,10 @@ def test_outdated_cached_schema(mocker):
     the client should refecth an up-to-date schema and retry the query automatically
     """
     SCHEMA_PATH = Path.home() / ".cache" / "kili" / "graphql" / "schema.graphql"
-    mocker.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=SCHEMA_PATH)
-
-    api_endpoint = os.getenv("KILI_API_ENDPOINT")
-    api_key = os.getenv("KILI_API_KEY")
+    mocker.patch(
+        "kili.core.graphql.graphql_client.GraphQLClient._get_graphql_schema_path",
+        return_value=SCHEMA_PATH,
+    )
 
     # write a fake schema
     if SCHEMA_PATH.is_file():
@@ -71,12 +62,7 @@ def test_outdated_cached_schema(mocker):
     SCHEMA_PATH.parent.mkdir(parents=True, exist_ok=True)
     SCHEMA_PATH.write_text(fake_schema)
 
-    client = GraphQLClient(
-        endpoint=api_endpoint,  # type: ignore
-        api_key=api_key,  # type: ignore
-        client_name=GraphQLClientName.SDK,
-        verify=True,
-    )
+    client = Kili().auth.client
 
     client._gql_client.schema = build_ast_schema(parse(fake_schema))
 
@@ -88,8 +74,8 @@ def test_outdated_cached_schema(mocker):
 
     assert "email" in client._gql_client.schema.type_map["User"].fields  # type: ignore
 
-    assert result["me"]["id"]  # pylint: disable=unsubscriptable-object
-    assert result["me"]["email"]  # pylint: disable=unsubscriptable-object
+    assert result["me"]["id"]
+    assert result["me"]["email"]
 
     if SCHEMA_PATH.is_file():
         SCHEMA_PATH.unlink()

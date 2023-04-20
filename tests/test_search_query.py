@@ -2,7 +2,7 @@
 
 import pytest
 
-from kili.helpers import validate_category_search_query
+from kili.core.helpers import validate_category_search_query
 
 
 @pytest.mark.parametrize(

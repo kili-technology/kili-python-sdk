@@ -11,8 +11,10 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.authentication import KiliAuth
-from kili.graphql.operations.asset.queries import GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
+from kili.core.authentication import KiliAuth
+from kili.core.graphql.operations.asset.queries import (
+    GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
+)
 
 AZURE_STRING = "blob.core.windows.net"
 GCP_STRING = "storage.googleapis.com"

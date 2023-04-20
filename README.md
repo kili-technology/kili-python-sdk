@@ -79,7 +79,7 @@ For more details, read the [SDK reference](https://python-sdk-docs.kili-technolo
 Check out our [tutorials](https://python-sdk-docs.kili-technology.com/latest/tutorials):
 
 - 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
-- 📂 [Assets and labels import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/): Learn how to import assets and labels into your Kili project.
+- 📂 [Assets import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/): Learn how to import assets into your Kili project.
 - 🎥 [Video import](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/): See how to import video assets into your Kili project.
 - 🏷️ [Prediction](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/pixel_level_masks/) and [Inference](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/inference_labels/) labels import: Learn how to import prediction and inference labels into your Kili project.
 - 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
@@ -147,7 +147,7 @@ kili.append_many_to_dataset(
 )
 ```
 
-See the detailed example in this [recipe](https://docs.kili-technology.com/recipes/importing-data).
+See the detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/).
 
 ### Importing predictions
 
@@ -184,14 +184,7 @@ See detailed examples in this [recipe](https://docs.kili-technology.com/recipes/
 ### Exporting labels
 
 ```python
-assets = kili.assets(project_id=project_id)
-
-with open("labels.json", "w") as label_file:
-    for asset in assets:
-        for label in asset.labels:
-            label_file.write(label.json_response(format='simple'))
+kili.export_labels("your_project_id", "export.zip", "yolo_v4")
 ```
 
-See a detailed example in this [recipe](https://docs.kili-technology.com/recipes/exporting-assets-and-labels).
-
-More ways to export in other formats (YOLO, Pascal VOC) are described [here](docs/label_export.md).
+See a detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/).

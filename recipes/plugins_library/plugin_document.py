@@ -41,12 +41,12 @@ class PluginHandler(PluginCore):
 
         n_issues = len(text_issues_array)
 
-        for i in range(n_issues):
-            self.kili.append_to_issues(
-                label_id=label["id"],
+        if n_issues:
+            self.kili.create_issues(
                 project_id=project_id,
-                text=text_issues_array[i],
-                object_mid=mid_issues_array[i],
+                label_id_array=[label["id"]] * len(text_issues_array),
+                object_mid_array=mid_issues_array,
+                text_array=text_issues_array,
             )
 
         self.kili.add_to_review(asset_ids=[asset_id])

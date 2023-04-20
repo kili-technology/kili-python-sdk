@@ -15,9 +15,9 @@
 
 ## Queries
 
-::: kili.queries.data_integration.__init__.QueriesDataIntegration
-::: kili.queries.data_connection.__init__.QueriesDataConnection
+::: kili.entrypoints.queries.data_integration.__init__.QueriesDataIntegration
+::: kili.entrypoints.queries.data_connection.__init__.QueriesDataConnection
 
 ## Mutations
 
-:::kili.mutations.data_connection.__init__.MutationsDataConnection
+:::kili.entrypoints.mutations.data_connection.__init__.MutationsDataConnection

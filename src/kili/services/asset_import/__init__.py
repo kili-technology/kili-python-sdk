@@ -2,8 +2,8 @@
 
 from typing import Dict, List
 
-from kili.authentication import KiliAuth
-from kili.queries.project import QueriesProject
+from kili.core.authentication import KiliAuth
+from kili.entrypoints.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter

@@ -68,14 +68,11 @@ class PluginHandler(PluginCore):
 ## Model for Plugins
 
 ::: kili.services.plugins.model.PluginCore
-    options:
-        filters:
-            - '!on_custom_interface_click'
 
 ## Queries
 
-::: kili.queries.plugins.__init__.QueriesPlugins
+::: kili.entrypoints.queries.plugins.__init__.QueriesPlugins
 
 ## Mutations
 
-::: kili.mutations.plugins.__init__.MutationsPlugins
+::: kili.entrypoints.mutations.plugins.__init__.MutationsPlugins

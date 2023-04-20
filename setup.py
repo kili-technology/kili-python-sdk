@@ -22,6 +22,7 @@ install_requires = [
     "urllib3>=1.26,<2.0",
     "ffmpeg-python>=0.2.0,<0.3.0",
     "gql[requests,websockets]>=3.0.0,<4.0.0",
+    "filelock>=3.0.0,<4.0.0",
 ]
 
 image_requires = [
@@ -75,7 +76,7 @@ setup(
     },
     include_package_data=True,
     entry_points={
-        "console_scripts": ["kili=kili.cli:main"],
+        "console_scripts": ["kili=kili.entrypoints.cli:main"],
     },
     url="https://github.com/kili-technology/kili-python-sdk",
     classifiers=[

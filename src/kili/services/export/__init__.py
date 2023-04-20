@@ -1,13 +1,11 @@
 """Service for exporting kili objects."""
 
-import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
-from kili.authentication import KiliAuth
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.authentication import KiliAuth
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.kili import KiliExporter
@@ -24,8 +22,6 @@ from kili.services.export.types import (
 from kili.services.project import get_project
 from kili.services.types import LogLevel, ProjectId
 
-THRESHOLD_WARN_MANY_ASSETS = 1000
-
 
 def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     auth: KiliAuth,
@@ -40,20 +36,10 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     log_level: LogLevel,
     with_assets: bool,
     annotation_modifier: Optional[CocoAnnotationModifier],
+    asset_filter_kwargs: Optional[Dict[str, object]] = None,
 ) -> None:
     """Export the selected assets into the required format, and save it into a file archive."""
     get_project(auth, project_id, ["id"])
-
-    if with_assets:
-        count = AssetQuery(auth.client).count(AssetWhere(project_id=project_id))
-        if count > THRESHOLD_WARN_MANY_ASSETS:
-            warnings.warn(
-                (
-                    f"Downloading many assets ({count}). This might take a while. Consider"
-                    " disabling assets download in the options."
-                ),
-                stacklevel=2,
-            )
 
     export_params = ExportParams(
         assets_ids=asset_ids,
@@ -65,6 +51,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         output_file=Path(output_file),
         with_assets=with_assets,
         annotation_modifier=annotation_modifier,
+        asset_filter_kwargs=asset_filter_kwargs,
     )
 
     logger = get_logger(log_level)

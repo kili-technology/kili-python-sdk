@@ -4,10 +4,10 @@ import logging
 from typing import Dict, Optional
 
 from kili import services
-from kili.graphql import QueryOptions
-from kili.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.queries.asset.media_downloader import get_download_assets_function
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
+from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 

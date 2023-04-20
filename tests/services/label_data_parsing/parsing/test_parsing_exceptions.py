@@ -6,6 +6,7 @@ from kili.services.label_data_parsing.exceptions import (
     JobNotExistingError,
 )
 from kili.services.label_data_parsing.json_response import ParsedJobs
+from kili.services.label_data_parsing.types import Project
 
 
 def test_attribute_category_checkbox_job():
@@ -15,21 +16,25 @@ def test_attribute_category_checkbox_job():
                 "content": {"categories": {"A": {}}, "input": "checkbox"},
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
             }
         }
     }
 
     json_response_dict = {"JOB_0": {"categories": [{"name": "A"}]}}
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
     with pytest.raises(AttributeNotCompatibleWithJobError):
         _ = parsed_jobs["JOB_0"].category
 
 
 def test_job_not_existing_error():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
-    json_interface = {"jobs": {"JOB_0": {"required": 1}}}
+    json_interface = {"jobs": {"JOB_0": {"required": 1, "isChild": False}}}
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     with pytest.raises(JobNotExistingError):
         _ = parsed_jobs["JOB_000000000"].text
@@ -37,9 +42,12 @@ def test_job_not_existing_error():
 
 def test_attribute_not_compatible_with_transcription_job_error():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
-    json_interface = {"jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1}}}
+    json_interface = {
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+    }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].text == "This is a transcription job"
 
@@ -57,6 +65,7 @@ def test_attribute_not_compatible_with_classif_job_error():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category30"},
@@ -69,7 +78,8 @@ def test_attribute_not_compatible_with_classif_job_error():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].category.name == "A"
     assert parsed_jobs["JOB_0"].category.confidence == 100
@@ -110,6 +120,7 @@ def test_query_invalid_attributes_on_bbox_annotations():
                 "mlTask": "OBJECT_DETECTION",
                 "tools": ["rectangle"],
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"A": {}, "B": {}},
                     "input": "radio",
@@ -118,7 +129,8 @@ def test_query_invalid_attributes_on_bbox_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface)
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].annotations
 
@@ -187,7 +199,8 @@ def test_access_bounding_poly_on_point_job():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface)
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
     job = parsed_jobs["OBJECT_DETECTION_JOB"]
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
@@ -223,6 +236,8 @@ def test_cannot_add_same_category_twice_to_categorylist():
         }
     }
 
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+
     with pytest.raises(
         InvalidMutationError,
         match=(
@@ -230,4 +245,4 @@ def test_cannot_add_same_category_twice_to_categorylist():
             " exists"
         ),
     ):
-        _ = ParsedJobs(json_resp, json_interface)
+        _ = ParsedJobs(json_response=json_resp, project_info=project_info)
