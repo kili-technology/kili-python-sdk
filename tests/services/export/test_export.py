@@ -780,8 +780,6 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
-    mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
-    mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
     mocker.patch(
         "kili.services.export.format.base.DataConnectionsQuery.__call__",
         return_value=(i for i in [{"id": "fake_data_connection_id"}]),

@@ -192,7 +192,10 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             self.process_and_save(assets, self.output_file)
 
     def _check_asset_access(self):
-        """Check asset access: if asset download is enabled and there are data connections, we forbid the export"""
+        """Check asset access.
+
+        If asset download is enabled and there are data connections, we forbid the export.
+        """
         if self.with_assets:
             data_connections_gen = DataConnectionsQuery(self.auth.client)(
                 where=DataConnectionsWhere(project_id=self.project_id),
