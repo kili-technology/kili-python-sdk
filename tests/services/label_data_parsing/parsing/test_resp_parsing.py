@@ -1,8 +1,19 @@
+from copy import deepcopy
+
 import pytest
 
+from kili.services.label_data_parsing.annotation import (
+    Annotation,
+    AnnotationList,
+    BoundingPolyAnnotation,
+)
 from kili.services.label_data_parsing.bounding_poly import BoundingPoly
+from kili.services.label_data_parsing.category import Category, CategoryList
+from kili.services.label_data_parsing.exceptions import FrameIndexError
+from kili.services.label_data_parsing.job_response import JobPayload
 from kili.services.label_data_parsing.json_response import ParsedJobs
 from kili.services.label_data_parsing.label import ParsedLabel
+from kili.services.label_data_parsing.types import Project
 
 
 def test_attribute_category():
@@ -20,6 +31,7 @@ def test_attribute_category():
         "jobs": {
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
+                "isChild": False,
                 "required": 1,
                 "content": {
                     "categories": {
@@ -33,7 +45,8 @@ def test_attribute_category():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
     category = parsed_jobs["JOB_0"].category
 
     assert parsed_jobs["JOB_0"].categories[0].name == category.name == "A"
@@ -54,6 +67,7 @@ def test_attribute_categories_multiclass():
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {
                         "A": {"children": [], "name": "A", "id": "category30"},
@@ -66,7 +80,8 @@ def test_attribute_categories_multiclass():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
     categories = parsed_jobs["JOB_0"].categories
 
     assert categories[0].confidence == 42
@@ -77,9 +92,12 @@ def test_attribute_categories_multiclass():
 
 def test_attribute_text():
     json_response_dict = {"JOB_0": {"text": "This is a transcription job"}}
-    json_interface = {"jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1}}}
+    json_interface = {
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+    }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["JOB_0"].text == "This is a transcription job"
 
@@ -108,6 +126,7 @@ def test_attribute_entity_annotations():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {
                     "categories": {"ORG": {}, "PERSON": {}},
                     "input": "radio",
@@ -116,7 +135,8 @@ def test_attribute_entity_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_response_dict)
 
     assert parsed_jobs["JOB_0"].entity_annotations[0].begin_offset == 21
     assert parsed_jobs["JOB_0"].entity_annotations[0].content == "this is the text for Kili"
@@ -161,12 +181,14 @@ def test_attribute_object_detection():
                 "mlTask": "OBJECT_DETECTION",
                 "tools": ["rectangle"],
                 "required": 1,
+                "isChild": False,
                 "content": {"categories": {"A": {}, "B": {}}, "input": "radio"},
             }
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name == "B"
     assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].categories[0].name == "B"
@@ -188,18 +210,21 @@ def test_not_required_job_classification_category_returns_none():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
             }
         }
     }
 
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "B"}]}}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     category = parsed_jobs["CLASSIFICATION_JOB"].category
     assert category.name == "B"
     assert category.confidence == 100
 
     json_resp = {}  # asset annotated but no category chosen
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert parsed_jobs["CLASSIFICATION_JOB"].category is None
 
 
@@ -217,12 +242,15 @@ def test_checkbox_job_categories_required():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
+                "isChild": False,
             }
         }
     }
 
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "B"}]}}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].name == "B"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence == 100
@@ -242,12 +270,15 @@ def test_checkbox_job_categories_not_required():
                 },
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
+                "isChild": False,
             }
         }
     }
 
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "B"}]}}
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].name == "B"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence == 100
 
@@ -256,14 +287,14 @@ def test_checkbox_job_categories_not_required():
             "categories": [{"confidence": 100, "name": "B"}, {"confidence": 52, "name": "A"}]
         }
     }
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].name == "B"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[0].confidence == 100
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[1].name == "A"
     assert parsed_jobs["CLASSIFICATION_JOB"].categories[1].confidence == 52
 
     json_resp = {}  # asset annotated but no classes chosen
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     assert len(parsed_jobs["CLASSIFICATION_JOB"].categories) == 0
 
 
@@ -289,7 +320,8 @@ def test_single_dropdown():
     }
     json_resp = {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["CLASSIFICATION_JOB"].category.name == "A"
     assert parsed_jobs["CLASSIFICATION_JOB"].category.confidence == 100
@@ -324,7 +356,8 @@ def test_multiple_dropdown():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].name == "E"
     assert parsed_jobs["CLASSIFICATION_JOB_0"].categories[0].confidence == 100
@@ -388,7 +421,8 @@ def test_bounding_poly_annotations():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations
 
@@ -455,7 +489,8 @@ def test_point_job():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     job = parsed_jobs["OBJECT_DETECTION_JOB"]
 
@@ -537,7 +572,8 @@ def test_multiple_bounding_poly():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     job = parsed_jobs["JOB_0"]
 
@@ -632,7 +668,8 @@ def test_text_ner_job_with_relation_job():
         },
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     relation_job = parsed_jobs["RELATION_JOB"]
 
     assert relation_job.annotations[0].categories[0].name == "CATEGORY_RELATION_JOB"
@@ -738,7 +775,8 @@ def test_object_detection_with_relations():
         },
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     relation_job = parsed_jobs["OBJECT_RELATION_JOB"]
 
@@ -766,12 +804,14 @@ def test_repr_str_custom_classes():
             "JOB_0": {
                 "mlTask": "NAMED_ENTITIES_RECOGNITION",
                 "required": 1,
+                "isChild": False,
                 "content": {"categories": {"ORG": {}, "PERSON": {}}, "input": "radio"},
             }
         }
     }
 
-    parsed_jobs = ParsedJobs(json_response_dict, json_interface, input_type="TEXT")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_response_dict)
 
     assert "object at 0x" not in str(parsed_jobs["JOB_0"].annotations)
     assert "object at 0x" not in repr(parsed_jobs["JOB_0"].annotations)
@@ -807,7 +847,8 @@ def test_annotations_empty_json_resp_non_required_job():
 
     json_resp = {}
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert len(parsed_jobs["JOB_0"].annotations) == 0
 
@@ -857,7 +898,8 @@ def test_parsing_category_only_name():
         }
     }
 
-    parsed_jobs = ParsedJobs(json_resp, json_interface, input_type="IMAGE")
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
     assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_B"
 
@@ -868,7 +910,6 @@ def test_parsing_category_only_name():
     assert parsed_jobs["JOB_0"].annotations[0].category.confidence == 42
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_video_project_classification():
     json_interface = {
         "jobs": {
@@ -916,12 +957,624 @@ def test_video_project_classification():
 
     label = {"jsonResponse": json_resp}
 
-    parsed_label = ParsedLabel(label, json_interface, input_type="VIDEO")
+    parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
-    # assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].is_key_frame is True
-    # assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_A"
+    assert len(parsed_label.frames) == 9
+    assert not hasattr(parsed_label, "jobs")
+
+    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].is_key_frame is True
+    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_A"
+    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.confidence == 100
+
+    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].is_key_frame is False
+    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_B"
+    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].category.confidence == 42
+
+    for i, frame in enumerate(parsed_label.frames):
+        if i == 5:
+            frame.jobs["FRAME_CLASSIF_JOB"].category.name = "OBJECT_A"
+            frame.jobs["FRAME_CLASSIF_JOB"].category.confidence = 100
+        elif i == 6:
+            frame.jobs["FRAME_CLASSIF_JOB"].category.name = "OBJECT_B"
+            frame.jobs["FRAME_CLASSIF_JOB"].category.confidence = 42
+
+    assert parsed_label.frames[0].to_dict() == {}
+
+    with pytest.raises(
+        FrameIndexError, match="Frame index 999999999 out of range for frame list of size 9."
+    ):
+        _ = parsed_label.frames[999999999]
+
+    assert parsed_label.to_dict() == label
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_video_project_object_detection():
-    pass
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": ["JOB_1"], "name": "Train", "color": "#733AFB"},
+                        "OBJECT_B": {"children": ["JOB_2"], "name": "Car", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Track objects A and B",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {"tracking": {}},
+                "isVisible": True,
+                "required": 0,
+            },
+            "JOB_1": {
+                "content": {
+                    "categories": {
+                        "IS_THE OBJECT OCCLUDED?": {
+                            "children": [],
+                            "name": "Is the object occluded?",
+                        }
+                    },
+                    "input": "checkbox",
+                },
+                "instruction": "",
+                "isChild": True,
+                "mlTask": "CLASSIFICATION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            },
+            "JOB_2": {
+                "content": {
+                    "categories": {
+                        "IS_THE OBJECT OCCLUDED?": {
+                            "children": [],
+                            "name": "Is the object occluded?",
+                        }
+                    },
+                    "input": "checkbox",
+                },
+                "instruction": "",
+                "isChild": True,
+                "mlTask": "CLASSIFICATION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            },
+        }
+    }
+
+    json_resp = {
+        "0": {},
+        "1": {
+            "JOB_0": {
+                "annotations": [
+                    {
+                        "children": {},
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {"x": 0.3046607129483673, "y": 0.6337517633095981},
+                                    {"x": 0.3046607129483673, "y": 0.5534349836511678},
+                                    {"x": 0.3670709937679789, "y": 0.5534349836511678},
+                                    {"x": 0.3670709937679789, "y": 0.6337517633095981},
+                                ]
+                            }
+                        ],
+                        "categories": [{"name": "OBJECT_B"}],
+                        "mid": "20230407140827577-43802",
+                        "type": "rectangle",
+                        "isKeyFrame": True,
+                    },
+                    {
+                        "children": {
+                            "JOB_1": {
+                                "categories": [
+                                    {"confidence": 100, "name": "IS_THE OBJECT OCCLUDED?"}
+                                ],
+                                "isKeyFrame": False,
+                            }
+                        },
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {"x": 0.22829023773489518, "y": 0.5694983395828539},
+                                    {"x": 0.22829023773489518, "y": 0.5213082717877957},
+                                    {"x": 0.2750979483496039, "y": 0.5213082717877957},
+                                    {"x": 0.2750979483496039, "y": 0.5694983395828539},
+                                ]
+                            }
+                        ],
+                        "categories": [{"name": "OBJECT_A"}],
+                        "mid": "20230407140852397-83130",
+                        "type": "rectangle",
+                        "isKeyFrame": False,
+                    },
+                ]
+            }
+        },
+    }
+
+    label = {"jsonResponse": json_resp}
+
+    parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
+
+    assert len(parsed_label.frames) == 2
+
+    frame = parsed_label.frames[1]
+
+    first_annotation = frame.jobs["JOB_0"].annotations[0]
+    assert first_annotation.category.name == "OBJECT_B"
+    assert first_annotation.type == "rectangle"
+    assert first_annotation.is_key_frame is True
+    assert len(first_annotation.bounding_poly) == 1
+
+    second_annotation = frame.jobs["JOB_0"].annotations[1]
+    assert second_annotation.category.name == "OBJECT_A"
+    assert second_annotation.type == "rectangle"
+    assert second_annotation.is_key_frame is False
+    assert len(second_annotation.bounding_poly) == 1
+    assert second_annotation.children["JOB_1"].categories[0].name == "IS_THE OBJECT OCCLUDED?"
+    assert second_annotation.children["JOB_1"].categories[0].confidence == 100
+    assert second_annotation.children["JOB_1"].is_key_frame is False
+
+    assert parsed_label.to_dict() == label
+
+
+def test_iterate_over_jobs():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            },
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {"A": {"children": [], "color": "#472CED", "name": "A"}},
+                    "input": "radio",
+                },
+                "instruction": "Pose est job",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 0,
+                "tools": ["pose"],
+                "isChild": False,
+            },
+            "OBJECT_RELATION_JOB": {
+                "content": {
+                    "categories": {
+                        "V": {
+                            "children": [],
+                            "color": "#5CE7B7",
+                            "name": "V",
+                            "startObjects": ["OBJECT_A"],
+                            "endObjects": ["OBJECT_B"],
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Relation job",
+                "mlTask": "OBJECT_RELATION",
+                "required": 0,
+                "isChild": False,
+            },
+            "TRANSCRIPTION_JOB": {
+                "content": {"input": "number"},
+                "instruction": "Transcription number",
+                "mlTask": "TRANSCRIPTION",
+                "required": 0,
+                "isChild": False,
+            },
+            "OBJECT_DETECTION_JOB_0": {
+                "content": {
+                    "categories": {"CAT": {"children": [], "color": "#D33BCE", "name": "Cat"}},
+                    "input": "radio",
+                },
+                "instruction": "Semantic",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 0,
+                "tools": ["semantic"],
+                "isChild": False,
+                "models": {
+                    "interactive-segmentation": {"job": "OBJECT_DETECTION_JOB_0_INTERACTIVE"}
+                },
+            },
+            "OBJECT_DETECTION_JOB_0_INTERACTIVE": {
+                "content": {
+                    "categories": {"CAT": {"children": [], "color": "#D33BCE", "name": "Cat"}},
+                    "input": "radio",
+                },
+                "instruction": "Interactive Segmentation",
+                "isChild": False,
+                "isModel": True,
+                "isVisible": False,
+                "mlTask": "OBJECT_DETECTION",
+                "required": 0,
+                "tools": ["marker"],
+            },
+        }
+    }
+
+    nb_jobs = 6
+
+    json_resp = {}
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
+
+    assert len(parsed_jobs) == nb_jobs
+
+    for job_name, parsed_job_name in zip(
+        sorted(json_interface["jobs"].keys()), sorted(parsed_jobs)
+    ):
+        assert job_name == parsed_job_name
+
+    for i, (job_name, job_payload) in enumerate(parsed_jobs.items()):
+        assert isinstance(job_payload, JobPayload)
+
+    assert i == nb_jobs - 1  # type: ignore
+
+
+def test_iterate_over_annotations():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "BBox job",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["rectangle"],
+                "isChild": False,
+            }
+        }
+    }
+    normalizedVertices = [{"x": 0.43103066030618425, "y": 0.6210119016340082}] * 4
+    json_resp = {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": normalizedVertices}],
+                    "categories": [{"name": "A"}],
+                    "mid": "25617",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": normalizedVertices}],
+                    "categories": [{"name": "B"}],
+                    "mid": "12345",
+                    "type": "rectangle",
+                },
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert isinstance(parsed_jobs["OBJECT_DETECTION_JOB"].annotations, AnnotationList)
+    assert len(parsed_jobs["OBJECT_DETECTION_JOB"].annotations) == 2
+    assert len(parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations) == 2
+
+    for i, annotation in enumerate(parsed_jobs["OBJECT_DETECTION_JOB"].annotations):
+        assert isinstance(annotation, Annotation)
+        assert annotation.mid == json_resp["OBJECT_DETECTION_JOB"]["annotations"][i]["mid"]
+        assert (
+            annotation.category.name
+            == json_resp["OBJECT_DETECTION_JOB"]["annotations"][i]["categories"][0]["name"]
+        )
+
+    for i, annotation in enumerate(parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations):
+        assert isinstance(annotation, BoundingPolyAnnotation)
+        assert annotation.mid == json_resp["OBJECT_DETECTION_JOB"]["annotations"][i]["mid"]
+        assert (
+            annotation.category.name
+            == json_resp["OBJECT_DETECTION_JOB"]["annotations"][i]["categories"][0]["name"]
+        )
+
+
+def test_iterate_over_categories():
+    json_interface = {
+        "jobs": {
+            "CLASSIFICATION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "name": "A"},
+                        "B": {"children": [], "name": "B"},
+                        "C": {"children": [], "name": "C"},
+                    },
+                    "input": "checkbox",
+                },
+                "instruction": "Classif",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": False,
+            },
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "D": {"children": ["CLASSIFICATION_JOB_0"], "color": "#472CED", "name": "D"}
+                    },
+                    "input": "radio",
+                },
+                "instruction": "BBox",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["polygon"],
+                "isChild": False,
+            },
+            "CLASSIFICATION_JOB_0": {
+                "content": {
+                    "categories": {
+                        "E": {"children": [], "name": "E"},
+                        "F": {"children": [], "name": "F"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "sub classif",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+        }
+    }
+
+    json_resp = {
+        "CLASSIFICATION_JOB": {
+            "categories": [{"confidence": 100, "name": "B"}, {"confidence": 100, "name": "C"}]
+        },
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {
+                        "CLASSIFICATION_JOB_0": {"categories": [{"confidence": 100, "name": "F"}]}
+                    },
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.8601284476961973, "y": 0.4480172517038974},
+                                {"x": 0.848580988145027, "y": 0.7559302912219427},
+                                {"x": 0.6906799220451861, "y": 0.5418387997854648},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "D"}],
+                    "mid": "20230405140558322-57457",
+                    "type": "polygon",
+                }
+            ]
+        },
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert isinstance(parsed_jobs["CLASSIFICATION_JOB"].categories, CategoryList)
+    assert len(parsed_jobs["CLASSIFICATION_JOB"].categories) == 2
+    for i, category in enumerate(parsed_jobs["CLASSIFICATION_JOB"].categories):
+        assert isinstance(category, Category)
+        assert category.name == json_resp["CLASSIFICATION_JOB"]["categories"][i]["name"]
+
+    assert parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations[0].category.name == "D"
+
+    assert isinstance(
+        parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations[0].children, ParsedJobs
+    )
+    assert len(parsed_jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations[0].children) == 1
+
+    for category in (
+        parsed_jobs["OBJECT_DETECTION_JOB"]
+        .annotations[0]
+        .children["CLASSIFICATION_JOB_0"]
+        .categories
+    ):
+        assert category.name == "F"
+
+
+def test_iterate_nested_transcription_bbox_get_ocr_data():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {
+                            "children": ["TRANSCRIPTION_JOB"],
+                            "name": "Object A",
+                            "color": "#733AFB",
+                        },
+                        "OBJECT_B": {
+                            "children": ["TRANSCRIPTION_JOB"],
+                            "name": "Object B",
+                            "color": "#3CD876",
+                        },
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Categories",
+                "isChild": False,
+                "tools": ["rectangle"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+            "TRANSCRIPTION_JOB": {
+                "content": {"input": "radio"},
+                "instruction": "Transcription of A",
+                "isChild": True,
+                "mlTask": "TRANSCRIPTION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            },
+        }
+    }
+    normalized_vertices = [{"x": 0.3611668381138057, "y": 0.37484025016089995}] * 4
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {"TRANSCRIPTION_JOB": {"text": "De Bruijn"}},
+                    "boundingPoly": [{"normalizedVertices": normalized_vertices}],
+                    "categories": [{"name": "OBJECT_A"}],
+                    "mid": "20230405144458283-64550",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {"TRANSCRIPTION_JOB": {"text": "SPECI2014"}},
+                    "boundingPoly": [{"normalizedVertices": normalized_vertices}],
+                    "categories": [{"name": "OBJECT_B"}],
+                    "mid": "20230405144503601-32283",
+                    "type": "rectangle",
+                },
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    for i, annotation in enumerate(parsed_jobs["JOB_0"].bounding_poly_annotations):
+        assert (
+            annotation.children["TRANSCRIPTION_JOB"].text
+            == json_resp["JOB_0"]["annotations"][i]["children"]["TRANSCRIPTION_JOB"]["text"]
+        )
+
+
+def test_parsing_ner_in_pdf_1():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "ENTITY_A": {"children": [], "name": "Entity A", "color": "#733AFB"},
+                        "ENTITY_B": {"children": [], "name": "Entity B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "What entities can you identify?",
+                "isChild": False,
+                "tools": [],
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            }
+        }
+    }
+    normalizedVertices = [{"x": 0.5711857871965076, "y": 0.23031839796480386}] * 4
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "annotations": [
+                        {
+                            "boundingPoly": [{"normalizedVertices": [normalizedVertices]}],
+                            "pageNumberArray": [1],
+                            "polys": [{"normalizedVertices": [normalizedVertices]}],
+                        }
+                    ],
+                    "categories": [{"confidence": 100, "name": "ENTITY_A"}],
+                    "content": "abcdefghijsdjfspdjfso",
+                    "mid": "20230406142049158-44926",
+                },
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation_1 = parsed_jobs["JOB_0"].annotations[0]
+    assert annotation_1.category.name == "ENTITY_A"
+    assert annotation_1.category.confidence == 100
+    assert annotation_1.content == "abcdefghijsdjfspdjfso"
+    assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices]}]
+    assert annotation_1.annotations[0].bounding_poly[0].normalized_vertices == [normalizedVertices]
+    assert annotation_1.annotations[0].page_number_array == [1]
+
+
+def test_parsing_ner_in_pdf_2():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "ENTITY_A": {"children": [], "name": "Entity A", "color": "#733AFB"},
+                        "ENTITY_B": {"children": [], "name": "Entity B", "color": "#3CD876"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "What entities can you identify?",
+                "isChild": False,
+                "tools": [],
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "models": {},
+                "isVisible": True,
+                "required": 1,
+            }
+        }
+    }
+    normalizedVertices = [
+        {"x": 0.20860370092292516, "y": 0.2975776083261186},
+        {"x": 0.20860370092292516, "y": 0.5460800199831146},
+        {"x": 0.7914542223597735, "y": 0.2975776083261186},
+        {"x": 0.7914542223597735, "y": 0.5460800199831146},
+    ]
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "annotations": [
+                        {
+                            "boundingPoly": [{"normalizedVertices": [normalizedVertices]}],
+                            "pageNumberArray": [1, 1, 1],
+                            "polys": [
+                                {
+                                    "normalizedVertices": [
+                                        normalizedVertices,
+                                        normalizedVertices,
+                                        normalizedVertices,
+                                    ]
+                                }
+                            ],
+                        }
+                    ],
+                    "categories": [{"confidence": 100, "name": "ENTITY_A"}],
+                    "content": "While many ",
+                    "mid": "20230406150551169-73300",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation_1 = parsed_jobs["JOB_0"].annotations[0]
+    assert annotation_1.category.name == "ENTITY_A"
+    assert annotation_1.category.confidence == 100
+    assert annotation_1.content == "While many "
+
+    assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices] * 3}]
+    assert annotation_1.annotations[0].page_number_array == [1, 1, 1]
