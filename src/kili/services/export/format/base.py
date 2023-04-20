@@ -156,27 +156,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         self._check_arguments_compatibility()
         self._check_project_compatibility()
-
-        # if asset download is enabled and there are data connections, we forbid the export
-        if self.with_assets:
-            data_connections_gen = DataConnectionsQuery(self.auth.client)(
-                where=DataConnectionsWhere(project_id=self.project_id),
-                fields=["id"],
-                options=QueryOptions(disable_tqdm=True, first=1, skip=0),
-            )
-            if len(list(data_connections_gen)) > 0:
-                if self.requires_asset_access:
-                    resolution_str = (
-                        "This export format requires accessing the image height and width."
-                    )
-                else:
-                    resolution_str = (
-                        "Please disable the download of assets by setting `with_assets=False`."
-                    )
-                raise NotCompatibleOptions(
-                    "Export with download of assets is not allowed on projects with data"
-                    f" connections. {resolution_str}"
-                )
+        self._check_asset_access()
 
         self.logger.warning("Fetching assets...")
 
@@ -206,6 +186,28 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 )
 
             self.process_and_save(assets, self.output_file)
+
+    def _check_asset_access(self):
+        """Check asset access: if asset download is enabled and there are data connections, we forbid the export"""
+        if self.with_assets:
+            data_connections_gen = DataConnectionsQuery(self.auth.client)(
+                where=DataConnectionsWhere(project_id=self.project_id),
+                fields=["id"],
+                options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+            )
+            if len(list(data_connections_gen)) > 0:
+                if self.requires_asset_access:
+                    resolution_str = (
+                        "This export format requires accessing the image height and width."
+                    )
+                else:
+                    resolution_str = (
+                        "Please disable the download of assets by setting `with_assets=False`."
+                    )
+                raise NotCompatibleOptions(
+                    "Export with download of assets is not allowed on projects with data"
+                    f" connections. {resolution_str}"
+                )
 
     @property
     def base_folder(self) -> Path:
