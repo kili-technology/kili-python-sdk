@@ -6,11 +6,11 @@ from src.kili import __version__
 
 install_requires = [
     "pandas>=1.0.0,<2.0.0",
-    "click>=8.0.0, <9.0.0",
+    "click>=8.0.0,<9.0.0",
     "requests>=2.0.0,<3.0.0",
     "tabulate>=0.9.0,<0.10.0",
-    "tenacity>=8.0.0, <9.0.0",
-    "tqdm>=4.0.0, <5.0.0",
+    "tenacity>=8.0.0,<9.0.0",
+    "tqdm>=4.0.0,<5.0.0",
     "typeguard>=2.0.0,<3.0.0",
     "typing_extensions>=4.1.0,<5.0.0",
     "pyparsing>=3.0.0,<4.0.0",
