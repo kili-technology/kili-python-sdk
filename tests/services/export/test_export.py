@@ -756,7 +756,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
         )
 
 
-def test_when_exporting_with_assets_given_a_project_with_data_connection_with_asset_cloud_storage_then_it_should_crash(
+def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it_should_crash(
     mocker,
 ):
     get_project_return_val = {

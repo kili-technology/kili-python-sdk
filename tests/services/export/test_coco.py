@@ -10,7 +10,11 @@ from PIL import Image
 
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
-from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotAccessibleAssetError,
+    NotCompatibleOptions,
+)
 from kili.services.export.format.coco import (
     CocoExporter,
     _convert_kili_semantic_to_coco,
@@ -595,7 +599,7 @@ def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_sho
     kili = QueriesLabel(auth=mocker.MagicMock())
 
     with pytest.raises(
-        NotCompatibleOptions,
+        NotAccessibleAssetError,
         match=(
             "Export with download of assets is not allowed on projects with data"
             " connections. This export format requires accessing the image height and width."

@@ -28,7 +28,11 @@ from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
-from ..exceptions import NotCompatibleOptions, NotExportableAssetError
+from ..exceptions import (
+    NotAccessibleAssetError,
+    NotCompatibleOptions,
+    NotExportableAssetError,
+)
 
 
 class ExportParams(NamedTuple):
@@ -200,11 +204,13 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                     resolution_str = (
                         "This export format requires accessing the image height and width."
                     )
+                    exception_type = NotAccessibleAssetError
                 else:
                     resolution_str = (
                         "Please disable the download of assets by setting `with_assets=False`."
                     )
-                raise NotCompatibleOptions(
+                    exception_type = NotCompatibleOptions
+                raise exception_type(
                     "Export with download of assets is not allowed on projects with data"
                     f" connections. {resolution_str}"
                 )

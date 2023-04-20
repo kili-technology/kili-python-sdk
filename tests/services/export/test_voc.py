@@ -3,7 +3,10 @@ from pathlib import Path
 import pytest
 
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.services.export.exceptions import NotCompatibleOptions
+from kili.services.export.exceptions import (
+    NotAccessibleAssetError,
+    NotCompatibleOptions,
+)
 from kili.services.export.format.kili import KiliExporter
 from kili.services.export.format.voc import _convert_from_kili_to_voc_format
 from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotation
@@ -63,7 +66,7 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
     kili = QueriesLabel(auth=mocker.MagicMock())
 
     with pytest.raises(
-        NotCompatibleOptions,
+        NotAccessibleAssetError,
         match=(
             "Export with download of assets is not allowed on projects with data"
             " connections. This export format requires accessing the image height and width."
