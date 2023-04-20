@@ -689,6 +689,8 @@ class QueriesLabel:
 
         !!! warning "Cloud storage"
             Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.
+            As they require an access to the assets to read their dimension, the COCO and Pascal VOC formats are not
+            allowed in this case.
 
         !!! Example
             ```python
