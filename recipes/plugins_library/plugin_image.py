@@ -1,23 +1,21 @@
 """My custom plugin for bills."""
-from typing import Dict
+from typing import Dict, List, Optional
 
 from kili.plugins import PluginCore
 
 
-def check_rules_on_label(label: Dict):
+def check_rules_on_label(label: Dict) -> List[Optional[str]]:
     # custom methods
     print("Custom method - checking number of bboxes")
 
     counter = 0
-    issues_array = []
     for annotation in label["jsonResponse"]["JOB_0"]["annotations"]:
         if annotation["categories"][0]["name"] == "OBJECT_A":
             counter += 1
 
     if counter <= 1:
-        return issues_array
-    issues_array.append([f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"])
-    return issues_array
+        return []
+    return [f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"]
 
 
 class PluginHandler(PluginCore):
