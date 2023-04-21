@@ -43,7 +43,9 @@ nav:
           - Segmentation Pre-annotations: sdk/tutorials/pixel_level_masks.md
           - Inference Labels: sdk/tutorials/inference_labels.md
       - Managing Workflows: sdk/tutorials/set_up_workflows.md
-      - Exporting Project Data: sdk/tutorials/export_a_kili_project.md
+      - Exporting Project Data:
+          - Introduction: sdk/tutorials/export_a_kili_project.md
+          - Visualizing segmentation masks: sdk/tutorials/medical_imaging.md
       - Setting Up Plugins:
           - Developing Plugins: sdk/tutorials/plugins_development.md
           - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md
