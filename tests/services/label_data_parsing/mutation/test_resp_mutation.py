@@ -699,10 +699,10 @@ def test_video_project_set_score():
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
-    assert len(parsed_label.frames) == 2
+    assert len(parsed_label.jobs["JOB_0"].frames) == 2
 
-    frame = parsed_label.frames[1]
+    frame = parsed_label.jobs["JOB_0"].frames[1]
 
-    assert frame.jobs["JOB_0"].annotations[0].score is None
-    frame.jobs["JOB_0"].annotations[0].score = 42
-    assert frame.jobs["JOB_0"].annotations[0].score == 42
+    assert frame.annotations[0].score is None
+    frame.annotations[0].score = 42
+    assert frame.annotations[0].score == 42

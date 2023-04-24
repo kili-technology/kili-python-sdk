@@ -5,8 +5,23 @@ from typing import Dict, Iterator, List, Optional, Tuple
 
 from kili.services.label_data_parsing import job_response as job_response_module
 
-from .exceptions import JobNotExistingError
+from .exceptions import FrameIndexError, JobNotExistingError
 from .types import Project
+
+
+class FramesList(List["job_response_module.JobPayload"]):
+    """List class that allows to access the JobPayload object corresponding to a frame number."""
+
+    def __getitem__(self, key: int) -> "job_response_module.JobPayload":
+        """Returns the JobPayload object corresponding to the frame number."""
+        if not 0 <= key <= len(self) - 1:
+            raise FrameIndexError(frame_index=key, nb_frames=len(self))
+        return super().__getitem__(key)
+
+    @property
+    def frames(self) -> "FramesList":
+        """Returns the list of frames."""
+        return self
 
 
 class ParsedJobs:
@@ -71,11 +86,6 @@ class ParsedJobs:
         if job_name not in self._json_data:
             raise JobNotExistingError(job_name)
         return self._json_data[job_name]
-
-    @property
-    def jobs(self) -> "ParsedJobs":
-        """Returns self."""
-        return self
 
     def to_dict(self) -> Dict:
         """Returns the parsed json response as a dict."""
