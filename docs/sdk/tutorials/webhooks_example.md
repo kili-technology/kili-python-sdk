@@ -226,8 +226,8 @@ class PluginHandler(PluginCore):
 
 ```
 
-You will need to deploy this on your premise for this to work. Easy solutions are [FastAPI](https://fastapi.tiangolo.com/), with a few lines of codes.
-For this demo, we will use [https://webhook.site](https://webhook.site) that will allow us to explore the payload of the calls.
+You will need to deploy this on your premise for this to work. Easy solutions are [FastAPI](https://fastapi.tiangolo.com/), with a few lines of codes, and to quickly test your code, we recommend [ngrok](https://github.com/inconshreveable/ngrok) that allows to quckly expose your local server.
+For this demo, we will also display the use of [https://webhook.site](https://webhook.site) that will enable us to explore the payload of the calls.
 
 ```python
 """
@@ -275,6 +275,40 @@ def main(raw_payload: Dict):
     if event_type == 'onReview':
         plugin.on_review(label, asset_id)
 ```
+
+### Local dev webhook
+
+To quickly get started, setup the following folder:
+
+```bash
+├── local_webhook
+    ├── main.py
+    └── plugin.py
+```
+with the code the code above.
+
+To start your fastapi app, just run `uvicorn main:app --reload` to have live reload in case your code changes.
+
+To start exposing your app, just run `ngrok http 8000`. You will need to register on ngrok to be able to request a public url that redirects to your computer.
+
+```
+Session Status                online
+Account                       *** (Plan: Free)
+Update                        update available (version 2.3.41, Ctrl-U to update)
+Version                       2.3.40
+Region                        United States (us)
+Web Interface                 http://127.0.0.1:4040
+Forwarding                    http://your-unique-id.ngrok-free.app -> http://localhost:8000
+Forwarding                    https://your-unique-id.ngrok-free.app -> http://localhost:8000
+
+HTTP Requests
+-------------
+
+POST /                         200 OK
+```
+```
+
+Then, follow the rest of the tutorial to register the webhook with the `https` url returned by `ngrok`
 
 ## Step 4: Register & activate the webhook
 
