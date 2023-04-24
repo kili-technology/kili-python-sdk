@@ -4,6 +4,6 @@
     "config:base"
   ],
   "pre-commit": {
-    "enabled": false
+    "enabled": true
   }
 }
