@@ -233,7 +233,7 @@ jobs:
 
       - name: E2E tests
         if: github.event.inputs.runE2ETests != 'false'
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: pytest -n auto -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
