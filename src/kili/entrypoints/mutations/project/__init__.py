@@ -8,6 +8,7 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili import services
 from kili.core.authentication import KiliAuth
@@ -110,7 +111,7 @@ class MutationsProject:
             description: Description of the project.
             honeypot_mark: Should be between 0 and 1
             instructions: Instructions of the project.
-            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT`, `VIDEO`.
+            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
@@ -199,36 +200,41 @@ class MutationsProject:
         title: str,
         description: str = "",
         project_type: Optional[str] = None,
-    ) -> Dict:
+    ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create a project.
 
         Args:
-            input_type: Currently, one of {IMAGE, PDF, TEXT, VIDEO}
+            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
             json_interface: The json parameters of the project, see Edit your interface.
-            title: Title of the project
-            description: Description of the project
-            project_type:
-                Currently, one of {
-                    `IMAGE_CLASSIFICATION_SINGLE`,
-                    `IMAGE_CLASSIFICATION_MULTI`,
-                    `IMAGE_OBJECT_DETECTION_RECTANGLE`,
-                    `IMAGE_OBJECT_DETECTION_POLYGON`,
-                    `IMAGE_OBJECT_DETECTION_SEMANTIC`,
-                    `OCR, PDF_CLASSIFICATION_SINGLE`,
-                    `PDF_CLASSIFICATION_MULTI`,
-                    `TEXT_CLASSIFICATION_SINGLE`,
-                    `TEXT_CLASSIFICATION_MULTI`,
-                    `TEXT_TRANSCRIPTION, TEXT_NER`,
-                    `VIDEO_CLASSIFICATION_SINGLE`,
-                    `VIDEO_FRAME_CLASSIFICATION`,
-                    `VIDEO_FRAME_OBJECT_TRACKING`,
-                    `SPEECH_TO_TEXT`
-                }
+            title: Title of the project.
+            description: Description of the project.
+            project_type: Currently, one of:
+
+                - `IMAGE_CLASSIFICATION_MULTI`
+                - `IMAGE_CLASSIFICATION_SINGLE`
+                - `IMAGE_OBJECT_DETECTION_POLYGON`
+                - `IMAGE_OBJECT_DETECTION_RECTANGLE`
+                - `IMAGE_OBJECT_DETECTION_SEMANTIC`
+                - `IMAGE_POSE_ESTIMATION`
+                - `OCR`
+                - `PDF_CLASSIFICATION_MULTI`
+                - `PDF_CLASSIFICATION_SINGLE`
+                - `PDF_NAMED_ENTITY_RECOGNITION`
+                - `PDF_OBJECT_DETECTION_RECTANGLE`
+                - `SPEECH_TO_TEXT`
+                - `TEXT_CLASSIFICATION_MULTI`
+                - `TEXT_CLASSIFICATION_SINGLE`
+                - `TEXT_NER`
+                - `TEXT_TRANSCRIPTION`
+                - `TIME_SERIES`
+                - `VIDEO_CLASSIFICATION_SINGLE`
+                - `VIDEO_FRAME_CLASSIFICATION`
+                - `VIDEO_FRAME_OBJECT_TRACKING`
+
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict with the id of the created project.
 
         Examples:
             >>> kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
