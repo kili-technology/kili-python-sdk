@@ -202,7 +202,7 @@ print(healthy)
     YES
 
 
-`annotations` is a list containing 10 masks.
+In this example, `annotations` is a list containing 10 masks.
 
 A mask is represented by a Python dictionary where the vertices are stored in the `boundingPoly` key. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#od-standard) for more information about the json response format.
 
