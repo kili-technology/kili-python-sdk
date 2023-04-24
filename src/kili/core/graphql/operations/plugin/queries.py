@@ -8,6 +8,13 @@ from kili.core.graphql import GraphQLQuery, QueryOptions
 from kili.core.helpers import format_result
 
 
+class PluginBuildErrorsWhere(NamedTuple):
+    """Tuple to be passed to the PluginQuery to restrict query."""
+
+    plugin_name: str
+    start_date: Optional[datetime]
+
+
 class PluginLogsWhere(NamedTuple):
     """Tuple to be passed to the PluginQuery to restrict query."""
 
@@ -31,6 +38,29 @@ class PluginQuery(GraphQLQuery):
     COUNT_QUERY = """
     query countPlugins($where: PluginWhere!) {
         data: countPlugins(where: $where)
+    }
+    """
+
+    GQL_GET_PLUGIN_BUILD_ERRORS = """
+    query getPluginBuildErrors(
+        $pluginName: String!
+        $createdAt: DateTime
+        $limit: Int
+        $skip: Int
+    ) {
+        data: getPluginBuildErrors(
+            data: {
+                pluginName: $pluginName
+                createdAt: $createdAt
+                limit: $limit
+                skip: $skip
+            }
+        ) {
+            content
+            createdAt
+            logType
+            pluginName
+        }
     }
     """
 
@@ -81,6 +111,22 @@ class PluginQuery(GraphQLQuery):
         fragment = self.fragment_builder(fields)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
+        return format_result("data", result)
+
+    def get_build_errors(self, where: PluginBuildErrorsWhere, options: QueryOptions):
+        """Get build errors of a plugin in Kili."""
+        payload = {
+            "pluginName": where.plugin_name,
+            "limit": options.first,
+            "skip": options.skip,
+        }
+
+        if where.start_date:
+            payload["createdAt"] = (
+                where.start_date.isoformat(sep="T", timespec="milliseconds") + "Z"
+            )
+
+        result = self.client.execute(self.GQL_GET_PLUGIN_BUILD_ERRORS, payload)
         return format_result("data", result)
 
     def get_logs(self, where: PluginLogsWhere, options: QueryOptions):

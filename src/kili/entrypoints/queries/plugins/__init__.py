@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.plugin.queries import PluginLogsWhere, PluginQuery
+from kili.core.graphql.operations.plugin.queries import PluginBuildErrorsWhere, PluginLogsWhere, PluginQuery
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -26,6 +26,38 @@ class QueriesPlugins:
             auth: KiliAuth object
         """
         self.auth = auth
+
+    @typechecked
+    def get_plugin_build_errors(
+        self,
+        plugin_name: str,
+        start_date: Optional[datetime] = None,
+        limit: Optional[int] = None,
+        skip: Optional[int] = None,
+    ):
+        # pylint: disable=line-too-long
+        """Get paginated build errors of a plugin.
+
+        Args:
+            plugin_name: Name of the plugin
+            start_date: Datetime used to get the build errors from, if not provided, it will be the plugin's creation date
+            limit: Limit for pagination, if not provided, it will be 100
+            skip: Skip for pagination, if not provided, it will be 0
+        Returns:
+            A result array which contains the build errors of the plugin,
+                or an error message.
+        Examples:
+            >>> kili.get_plugin_build_errors(plugin_name="my_plugin_name", start_date="1970/01/01")
+        """
+
+        where = PluginBuildErrorsWhere(
+            plugin_name=plugin_name, start_date=start_date
+        )
+        options = QueryOptions(
+            first=limit, skip=skip or 0, disable_tqdm=False
+        )  # disable tqm is not implemnted for this query
+        pretty_result = PluginQuery(self.auth.client).get_build_errors(where, options)
+        return json.dumps(pretty_result, sort_keys=True, indent=4)
 
     @typechecked
     def get_plugin_logs(
