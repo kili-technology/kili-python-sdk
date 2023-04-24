@@ -110,8 +110,7 @@ class MutationsProject:
             description: Description of the project.
             honeypot_mark: Should be between 0 and 1
             instructions: Instructions of the project.
-            input_type: Currently, one of `AUDIO`, `IMAGE`, `PDF`, `TEXT`,
-                `VIDEO`, `VIDEO_LEGACY`.
+            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT`, `VIDEO`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
@@ -205,7 +204,7 @@ class MutationsProject:
         """Create a project.
 
         Args:
-            input_type: Currently, one of {AUDIO, IMAGE, PDF, TEXT, URL, VIDEO, VIDEO_LEGACY, NA}
+            input_type: Currently, one of {IMAGE, PDF, TEXT, VIDEO}
             json_interface: The json parameters of the project, see Edit your interface.
             title: Title of the project
             description: Description of the project
