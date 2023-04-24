@@ -114,7 +114,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 
     for attempt in Retrying(
         wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_delay(3 * 60),
+        stop=stop_after_delay(5 * 60),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
     ):
@@ -149,7 +149,7 @@ def synchronize_data_connection(
         ],
     )
     if data_connection["isChecking"]:
-        raise ValueError(f"Data connection is still checking: {data_connection}")
+        raise ValueError(f"Data connection is checking: {data_connection}")
 
     added = data_connection["dataDifferencesSummary"]["added"]
     removed = data_connection["dataDifferencesSummary"]["removed"]
