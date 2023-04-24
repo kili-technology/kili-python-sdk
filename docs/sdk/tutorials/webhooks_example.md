@@ -306,9 +306,8 @@ HTTP Requests
 
 POST /                         200 OK
 ```
-```
 
-Then, follow the rest of the tutorial to register the webhook with the `https` url returned by `ngrok`
+Then, follow the rest of the tutorial to register the webhook with the `https` url returned by `ngrok`.
 
 ## Step 4: Register & activate the webhook
 
