@@ -94,7 +94,6 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
 
 
 @pytest.mark.parametrize("endpoint_short_name,platform_name,data_integration_id", get_test_cases())
-@pytest.mark.skip(reason="This test is not stable")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
@@ -104,7 +103,10 @@ def test_e2e_synchronize_cloud_storage_connection(
 ):
     """E2e test for cloud storage methods."""
     if not is_same_endpoint(endpoint_short_name, kili.auth.api_endpoint):
-        pytest.skip("Skipping test because it is not the right endpoint.")
+        pytest.skip(
+            f"Skipping test because endpoint {kili.auth.api_endpoint} does not match"
+            f" {endpoint_short_name}"
+        )
 
     project_id = src_project["id"]
 
