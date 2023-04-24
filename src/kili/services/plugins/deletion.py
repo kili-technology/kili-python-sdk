@@ -1,6 +1,4 @@
-"""
-Function to delete a plugin
-"""
+"""Function to delete a plugin."""
 from kili.core.authentication import KiliAuth
 from kili.core.graphql.operations.plugin.mutations import GQL_DELETE_PLUGIN
 from kili.core.helpers import format_result

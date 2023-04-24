@@ -5,11 +5,11 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: detect-private-key
-  # - repo: https://github.com/PyCQA/docformatter
-  #   rev: v1.6.0-rc7
-  #   hooks:
-  #     - id: docformatter
-  #       args: [--in-place, --wrap-summaries=0, --wrap-descriptions=0]
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.6.2
+    hooks:
+      - id: docformatter
+        args: [--in-place, --wrap-summaries=0, --wrap-descriptions=0]
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
