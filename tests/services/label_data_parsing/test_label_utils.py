@@ -135,10 +135,8 @@ def test_parse_labels_classification_to_dict():
 
 
 def test_parse_labels_classification_to_dict_classif_with_bbox():
-    """
-    Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
-    still allows to convert to dict and json
-    """
+    """Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
+    still allows to convert to dict and json."""
     vertices = [
         {"x": 0.5141441957015471, "y": 0.6164292619007603},
         {"x": 0.5141441957015471, "y": 0.367821056372058},

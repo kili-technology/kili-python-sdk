@@ -502,9 +502,8 @@ def test_point_job():
 
 
 def test_multiple_bounding_poly():
-    """most of the time bounddingPoly will be a list of one element,
-    but it can be more for segmentation jobs
-    """
+    """Most of the time bounddingPoly will be a list of one element,
+    but it can be more for segmentation jobs."""
     json_interface = {
         "jobs": {
             "JOB_0": {

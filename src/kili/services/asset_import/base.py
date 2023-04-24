@@ -336,7 +336,7 @@ class BaseAssetImporter:
 
     @staticmethod
     def is_hosted_content(assets: List[AssetLike]):
-        """Determine if the assets to upload are from local files or hosted data
+        """Determine if the assets to upload are from local files or hosted data.
 
         Raise an error if a mix of both.
         """
