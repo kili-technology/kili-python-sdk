@@ -8,7 +8,11 @@ from typeguard import typechecked
 
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.plugin.queries import PluginBuildErrorsWhere, PluginLogsWhere, PluginQuery
+from kili.core.graphql.operations.plugin.queries import (
+    PluginBuildErrorsWhere,
+    PluginLogsWhere,
+    PluginQuery,
+)
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -50,9 +54,7 @@ class QueriesPlugins:
             >>> kili.get_plugin_build_errors(plugin_name="my_plugin_name", start_date="1970/01/01")
         """
 
-        where = PluginBuildErrorsWhere(
-            plugin_name=plugin_name, start_date=start_date
-        )
+        where = PluginBuildErrorsWhere(plugin_name=plugin_name, start_date=start_date)
         options = QueryOptions(
             first=limit, skip=skip or 0, disable_tqdm=False
         )  # disable tqm is not implemnted for this query
