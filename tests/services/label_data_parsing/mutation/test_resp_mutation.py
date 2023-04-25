@@ -699,6 +699,7 @@ def test_video_project_set_score():
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
+    a = parsed_label.jobs["JOB_0"]
     assert len(parsed_label.jobs["JOB_0"].frames) == 2
 
     frame = parsed_label.jobs["JOB_0"].frames[1]
@@ -706,3 +707,34 @@ def test_video_project_set_score():
     assert frame.annotations[0].score is None
     frame.annotations[0].score = 42
     assert frame.annotations[0].score == 42
+
+    label_as_dict = parsed_label.to_dict()
+    assert label_as_dict == {
+        "jsonResponse": {
+            "0": {},
+            "1": {
+                "JOB_0": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {"x": 0.3046607129483673, "y": 0.6337517633095981},
+                                        {"x": 0.3046607129483673, "y": 0.5534349836511678},
+                                        {"x": 0.3670709937679789, "y": 0.5534349836511678},
+                                        {"x": 0.3670709937679789, "y": 0.6337517633095981},
+                                    ]
+                                }
+                            ],
+                            "categories": [{"name": "OBJECT_B"}],
+                            "mid": "20230407140827577-43802",
+                            "type": "rectangle",
+                            "isKeyFrame": True,
+                            "score": 42,
+                        },
+                    ]
+                }
+            },
+        }
+    }

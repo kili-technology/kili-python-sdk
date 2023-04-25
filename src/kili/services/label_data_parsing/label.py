@@ -1,12 +1,11 @@
 """Module for label parsing."""
 
 from copy import deepcopy
-from typing import Dict
+from typing import Dict, Union, overload
 
-from kili.core.enums import InputType
 from kili.services.label_data_parsing import json_response as json_response_module
 
-from .types import Project
+from .types import InputType, Project
 
 
 class ParsedLabel(Dict):
@@ -33,16 +32,62 @@ class ParsedLabel(Dict):
         """
         super().__init__(deepcopy(label))
 
-        project_info = Project(inputType=input_type, jsonInterface=json_interface["jobs"])
+        self.jobs = self._initialize_jobs(json_interface=json_interface, input_type=input_type)
 
+    @overload
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType = "AUDIO"
+    ) -> "json_response_module.ParsedJobs":
+        ...
+
+    @overload
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType = "IMAGE"
+    ) -> "json_response_module.ParsedJobs":
+        ...
+
+    @overload
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType = "PDF"
+    ) -> "json_response_module.ParsedJobs":
+        ...
+
+    @overload
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType = "TEXT"
+    ) -> "json_response_module.ParsedJobs":
+        ...
+
+    @overload
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType = "TIME_SERIES"
+    ) -> "json_response_module.ParsedJobs":
+        ...
+
+    @overload
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType = "VIDEO"
+    ) -> "json_response_module.ParsedVideoJobs":
+        ...
+
+    @overload
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType = "VIDEO_LEGACY"
+    ) -> "json_response_module.ParsedVideoJobs":
+        ...
+
+    def _initialize_jobs(
+        self, json_interface: Dict, input_type: InputType
+    ) -> Union["json_response_module.ParsedVideoJobs", "json_response_module.ParsedJobs"]:
+        """Initializes the jobs attribute."""
+        project_info = Project(inputType=input_type, jsonInterface=json_interface["jobs"])
         if "VIDEO" in input_type:
-            self.jobs = json_response_module.ParsedVideoJobs(
+            return json_response_module.ParsedVideoJobs(
                 project_info=project_info, json_response=self["jsonResponse"]
             )
-        else:
-            self.jobs = json_response_module.ParsedJobs(
-                project_info=project_info, json_response=self["jsonResponse"]
-            )
+        return json_response_module.ParsedJobs(
+            project_info=project_info, json_response=self["jsonResponse"]
+        )
 
     def to_dict(self) -> Dict:
         """Returns a copy of the parsed label as a dict."""

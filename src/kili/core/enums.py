@@ -36,15 +36,12 @@ HubspotSubscriptionStatus = Literal[
 InputType = Literal[
     "AUDIO",
     "IMAGE",
-    "NA",
     "PDF",
     "TEXT",
     "TIME_SERIES",
     "VIDEO",
     "VIDEO_LEGACY",
-    "URL",
 ]
-
 
 InvitationStatus = Literal[
     "ACCEPTED",
