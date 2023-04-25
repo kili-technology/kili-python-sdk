@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional, Iterable
 
 from typeguard import typechecked
 
@@ -38,7 +38,7 @@ class QueriesPlugins:
         start_date: Optional[datetime] = None,
         limit: Optional[int] = None,
         skip: Optional[int] = None,
-    ):
+    ) -> Iterable[Dict]:
         # pylint: disable=line-too-long
         """Get paginated build errors of a plugin.
 
