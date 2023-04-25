@@ -165,7 +165,9 @@ class ParsedVideoJobs(_ParsedJobs):
                         project_info=project_info,
                         job_payload=job_response,
                     )
-                    for _, frame_json_response in json_response.items()
+                    for _, frame_json_response in sorted(
+                        json_response.items(), key=lambda item: int(item[0])  # sort by frame id
+                    )
                     for job_name, job_response in frame_json_response.items()
                     if job_name == current_job_name
                 ]
