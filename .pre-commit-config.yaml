@@ -41,6 +41,10 @@ repos:
           - --preserve-cell-metadata
           - tags
           - --
+  # - repo: https://github.com/nbQA-dev/nbQA  # to enable once we stop supporting Python 3.7
+  #   rev: 1.7.0
+  #   hooks:
+  #     - id: nbqa-isort
   - repo: local
     hooks:
       - id: clean-notebook-metadata
