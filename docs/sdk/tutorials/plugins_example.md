@@ -150,7 +150,7 @@ class PluginHandler(PluginCore):
 
 ```python
 import urllib.request
-
+from pathlib import Path
 
 plugin_folder = "plugin_folder"
 
