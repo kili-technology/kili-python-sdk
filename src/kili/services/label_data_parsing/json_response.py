@@ -139,6 +139,7 @@ class ParsedVideoJobs(_ParsedJobs):
             job_names_to_parse: List of job names to parse. By default, parse all the jobs that are not children.
         """
         self._json_data: Dict[str, "FramesList"] = {}
+        self._nb_frames = len(json_response)
 
         json_interface = project_info["jsonInterface"]
 
@@ -158,20 +159,23 @@ class ParsedVideoJobs(_ParsedJobs):
             ]
 
         for current_job_name in job_names_to_parse:
-            self._json_data[current_job_name] = FramesList(
-                [
-                    job_response_module.JobPayload(
-                        job_name=job_name,
-                        project_info=project_info,
-                        job_payload=job_response,
-                    )
-                    for _, frame_json_response in sorted(
-                        json_response.items(), key=lambda item: int(item[0])  # sort by frame id
-                    )
-                    for job_name, job_response in frame_json_response.items()
-                    if job_name == current_job_name
-                ]
+            frames_list_for_job = []
+            for _, frame_json_response in sorted(
+                json_response.items(), key=lambda item: int(item[0])  # sort by frame number
+            ):
+                job_response = frame_json_response.get(current_job_name, {})
+                job_payload = job_response_module.JobPayload(
+                    job_name=current_job_name,
+                    project_info=project_info,
+                    job_payload=job_response,
+                )
+                frames_list_for_job.append(job_payload)
+
+            assert len(frames_list_for_job) == self._nb_frames, (
+                f"len(frames_list_for_job) = {len(frames_list_for_job)} != {self._nb_frames} ="
+                " self._nb_frames"
             )
+            self._json_data[current_job_name] = FramesList(frames_list_for_job)
 
     def __getitem__(self, job_name: str) -> "FramesList":
         """Returns the FramesList object corresponding to the job name."""
@@ -186,6 +190,16 @@ class ParsedVideoJobs(_ParsedJobs):
     def values(self) -> Iterator["FramesList"]:
         """Returns an iterator over the FramesList objects."""
         return iter(self._json_data.values())
+
+    def to_dict(self) -> Dict:
+        """Returns the parsed json response as a dict."""
+        ret = {str(frame_id): {} for frame_id in range(self._nb_frames)}
+        for job_name, frames_list in self._json_data.items():
+            for frame_id, job_payload in enumerate(frames_list):
+                job_payload_dict = job_payload.to_dict()
+                if job_payload_dict:
+                    ret[str(frame_id)][job_name] = job_payload_dict
+        return ret
 
 
 class FramesList(List["job_response_module.JobPayload"]):
