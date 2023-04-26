@@ -699,7 +699,6 @@ def test_video_project_set_score():
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
-    a = parsed_label.jobs["JOB_0"]
     assert len(parsed_label.jobs["JOB_0"].frames) == 2
 
     frame = parsed_label.jobs["JOB_0"].frames[1]

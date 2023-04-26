@@ -34,14 +34,9 @@ class ParsedLabel(Dict):
 
         project_info = Project(inputType=input_type, jsonInterface=json_interface["jobs"])
 
-        if "VIDEO" in input_type:
-            self.jobs = json_response_module.ParsedVideoJobs(
-                project_info=project_info, json_response=self["jsonResponse"]
-            )
-        else:
-            self.jobs = json_response_module.ParsedJobs(
-                project_info=project_info, json_response=self["jsonResponse"]
-            )
+        self.jobs = json_response_module.ParsedJobs(
+            project_info=project_info, json_response=self["jsonResponse"]
+        )
 
     def to_dict(self) -> Dict:
         """Returns a copy of the parsed label as a dict."""
