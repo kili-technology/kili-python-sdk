@@ -428,11 +428,11 @@ class BaseAssetImporter:
             raise ImportValidationError(
                 "No assets to import, all given external_ids already exist in the project"
             )
-        nb_filtered_assets = len(assets) - len(filtered_assets)
-        if nb_filtered_assets > 0:
+        nb_duplicate_assets = len(assets) - len(filtered_assets)
+        if nb_duplicate_assets > 0:
             warnings.warn(
                 (
-                    f"{nb_filtered_assets} assets were not imported because their external_id are"
+                    f"{nb_duplicate_assets} assets were not imported because their external_id are"
                     " already in the project"
                 ),
                 stacklevel=2,
