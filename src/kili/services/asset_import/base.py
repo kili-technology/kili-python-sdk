@@ -2,6 +2,7 @@
 import logging
 import mimetypes
 import os
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from pathlib import Path
@@ -426,6 +427,15 @@ class BaseAssetImporter:
         if len(filtered_assets) == 0:
             raise ImportValidationError(
                 "No assets to import, all given external_ids already exist in the project"
+            )
+        nb_filtered_assets = len(assets) - len(filtered_assets)
+        if nb_filtered_assets > 0:
+            warnings.warn(
+                (
+                    f"{nb_filtered_assets} assets were not imported because their external_id are"
+                    " already in the project"
+                ),
+                stacklevel=2,
             )
         return filtered_assets
 
