@@ -101,7 +101,10 @@ def fetch_assets(
         "label_type_in": label_type_in,
         "consensus_mark_gte": asset_filter_kwargs.pop("consensus_mark_gte", None),
         "consensus_mark_lte": asset_filter_kwargs.pop("consensus_mark_lte", None),
-        "external_id_contains": asset_filter_kwargs.pop("external_id_contains", None),
+        "external_id_strictly_in": asset_filter_kwargs.pop(
+            "external_id_strictly_in", None
+        ) or asset_filter_kwargs.pop("external_id_contains", None),
+        "external_id_in": asset_filter_kwargs.pop("external_id_in", None),
         "honeypot_mark_gte": asset_filter_kwargs.pop("honeypot_mark_gte", None),
         "honeypot_mark_lte": asset_filter_kwargs.pop("honeypot_mark_lte", None),
         "label_author_in": asset_filter_kwargs.pop("label_author_in", None),

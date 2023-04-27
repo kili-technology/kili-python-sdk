@@ -50,13 +50,21 @@ def project_with_assets(kili):
 
 def test_query_asset_by_external_id(kili, project_with_assets):
     """Test query by external id."""
-    retrieved_assets = list(
-        kili.assets(
-            project_with_assets["id"],
-            external_id_contains=["text_1_"],
-            fields=["externalId"],
-        )
+    retrieved_assets = kili.assets(
+        project_with_assets["id"], external_id_strictly_in=["text_1_"], fields=["externalId"]
     )
 
     assert len(retrieved_assets) == 1
-    assert retrieved_assets[0]["externalId"] in ["text_1_"]
+    assert retrieved_assets[0]["externalId"] == "text_1_"
+
+
+def test_query_asset_by_external_id_not_strictly_in(kili, project_with_assets):
+    """Test query by external id."""
+    retrieved_assets = kili.assets(
+        project_with_assets["id"], external_id_in=["text_1"], fields=["externalId"]
+    )
+
+    assert len(retrieved_assets) == 3
+    assert sorted([a["externalId"] for a in retrieved_assets]) == sorted(
+        ["text_1_", "text_10_", "text_11_"]
+    )

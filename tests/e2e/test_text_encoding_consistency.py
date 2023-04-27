@@ -63,7 +63,7 @@ def test_encoding_decoding_consistency(text, kili, project_with_assets):
     retrieved_assets = list(
         kili.assets(
             project_with_assets["id"],
-            external_id_contains=["apostroph_1"],
+            external_id_strictly_in=["apostroph_1"],
             fields=["content"],
             disable_tqdm=True,
         )

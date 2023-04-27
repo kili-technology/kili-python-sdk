@@ -202,7 +202,7 @@ In the example below, we take an existing annotation from asset `image_1`, and a
 
 
 ```python
-asset_image_1 = kili.assets(project_id=project_id, external_id_contains=["image_1"])[0]
+asset_image_1 = kili.assets(project_id=project_id, external_id_strictly_in=["image_1"])[0]
 
 json_response = asset_image_1["labels"][-1]["jsonResponse"]
 
