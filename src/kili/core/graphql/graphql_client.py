@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 import random
 import string
 import threading
@@ -35,6 +36,14 @@ class GraphQLClient:
     def __init__(
         self, endpoint: str, api_key: str, client_name: GraphQLClientName, verify: bool = True
     ) -> None:
+        """Initialize the GraphQL client.
+
+        Args:
+            endpoint: Kili API endpoint.
+            api_key: Kili API key.
+            client_name: Name of the client.
+            verify: Whether to verify the SSL certificate.
+        """
         self.endpoint = endpoint
         self.api_key = api_key
         self.client_name = client_name
@@ -43,6 +52,7 @@ class GraphQLClient:
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
         gql_requests_logger.setLevel(logging.WARNING)
+
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
@@ -73,6 +83,9 @@ class GraphQLClient:
 
     def _initizalize_graphql_client(self) -> Client:
         """Initialize the GraphQL client."""
+        if os.environ.get("KILI_SDK_SKIP_CHECKS", None) is not None:
+            return Client(transport=self._gql_transport, fetch_schema_from_transport=False)
+
         graphql_schema_path = self._get_graphql_schema_path()
 
         # In some cases (local development), we cannot get the kili version from the backend
