@@ -36,8 +36,8 @@ class QueriesPlugins:
         self,
         plugin_name: str,
         start_date: Optional[datetime] = None,
-        limit: Optional[int] = 100,
-        skip: Optional[int] = 0,
+        limit: int = 100,
+        skip: int = 0,
     ) -> str:
         # pylint: disable=line-too-long
         """Get paginated build errors of a plugin.
@@ -67,8 +67,8 @@ class QueriesPlugins:
         project_id: str,
         plugin_name: str,
         start_date: Optional[datetime] = None,
-        limit: Optional[int] = 100,
-        skip: Optional[int] = 0,
+        limit: int = 100,
+        skip: int = 0,
     ) -> str:
         # pylint: disable=line-too-long
         """Get paginated logs of a plugin on a project.
