@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import Dict, List, Optional, Iterable
+from typing import Dict, Iterable, List, Optional
 
 from typeguard import typechecked
 
