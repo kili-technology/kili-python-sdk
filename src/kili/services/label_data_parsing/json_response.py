@@ -69,7 +69,7 @@ class _ParsedVideoJobs:
 
 
 # pylint: disable=too-few-public-methods
-class _ParseClassicJobs:
+class _ParsedJobs:
     def __init__(
         self,
         project_info: Project,
@@ -128,7 +128,7 @@ def _is_video_response(project_info: Project, json_response: Dict) -> bool:
     return True
 
 
-class ParsedJobs(_ParseClassicJobs, _ParsedVideoJobs):
+class ParsedJobs(_ParsedJobs, _ParsedVideoJobs):
     """Class for label json response parsing."""
 
     def __init__(
@@ -158,7 +158,7 @@ class ParsedJobs(_ParseClassicJobs, _ParsedVideoJobs):
                 job_names_to_parse=job_names_to_parse,
             )
         else:
-            _ParseClassicJobs.__init__(
+            _ParsedJobs.__init__(
                 self,
                 project_info=project_info,
                 json_response=json_response,
@@ -169,7 +169,7 @@ class ParsedJobs(_ParseClassicJobs, _ParsedVideoJobs):
         """Returns the parsed json response as a dict."""
         if self._is_video_response:
             return _ParsedVideoJobs.to_dict(self)
-        return _ParseClassicJobs.to_dict(self)
+        return _ParsedJobs.to_dict(self)
 
     def __repr__(self) -> str:
         """Returns the representation of the object."""
