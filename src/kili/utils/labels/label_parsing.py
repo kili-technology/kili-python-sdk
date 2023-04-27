@@ -1,22 +1,21 @@
-"""Module for label parsing."""
+"""Module for parsing labels returned by kili.labels()."""
 
 from copy import deepcopy
-from typing import Dict
+from typing import Dict, Generator, Iterable, List, overload
 
 from kili.services.label_data_parsing import json_response as json_response_module
-
-from .types import InputType, Project
+from kili.services.label_data_parsing.types import InputType, Project
 
 
 class ParsedLabel(Dict):
-    """Class that parses a label."""
+    """Class that represents a parsed label."""
 
     def __init__(self, label: Dict, json_interface: Dict, input_type: InputType) -> None:
-        """Class that parses a label.
+        """Class that represents a parsed label.
 
         The class behaves like a dict but adds the attribute "jobs".
 
-        The original label is not modified.
+        The original input label passed to this class is not modified.
 
         Args:
             label: Label to parse.
@@ -51,3 +50,37 @@ class ParsedLabel(Dict):
     def __str__(self) -> str:
         """Returns the string representation of the object."""
         return str(self.to_dict())
+
+
+@overload
+def parse_labels(
+    labels: List[Dict], json_interface: Dict, input_type: InputType
+) -> List[ParsedLabel]:
+    ...
+
+
+@overload
+def parse_labels(
+    labels: Generator[Dict, None, None], json_interface: Dict, input_type: InputType
+) -> Generator[ParsedLabel, None, None]:
+    ...
+
+
+def parse_labels(
+    labels: Iterable[Dict], json_interface: Dict, input_type: InputType
+) -> Iterable[ParsedLabel]:
+    """Parse labels returned by kili.labels().
+
+    Args:
+        labels: List or generator of labels from kili.labels().
+        json_interface: Json interface of the project.
+        input_type: Type of assets of the project.
+
+    Returns:
+        Parsed labels.
+    """
+    gen = (
+        ParsedLabel(label=label, json_interface=json_interface, input_type=input_type)
+        for label in labels
+    )
+    return gen if isinstance(labels, Generator) else list(gen)

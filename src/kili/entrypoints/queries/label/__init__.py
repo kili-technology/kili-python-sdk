@@ -19,6 +19,7 @@ from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import ProjectId
+from kili.utils.labels.label_parsing import parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -65,6 +66,7 @@ class QueriesLabel:
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
         category_search: Optional[str] = None,
+        output_format: Optional[Literal["dict", "parsed_label"]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -99,6 +101,7 @@ class QueriesLabel:
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
         category_search: Optional[str] = None,
+        output_format: Optional[Literal["dict", "parsed_label"]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -133,6 +136,7 @@ class QueriesLabel:
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
         category_search: Optional[str] = None,
+        output_format: Optional[Literal["dict", "parsed_label"]] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
@@ -143,7 +147,7 @@ class QueriesLabel:
             project_id: Identifier of the project.
             asset_id: Identifier of the asset.
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
-                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
+                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`.
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
@@ -160,9 +164,11 @@ class QueriesLabel:
             skip: Number of labels to skip (they are ordered by their date of creation, first to last).
             type_in: Returned labels should have a label whose type belongs to that list, if given.
             user_id: Identifier of the user.
-            disable_tqdm: If `True`, the progress bar will be disabled
+            disable_tqdm: If `True`, the progress bar will be disabled.
             as_generator: If `True`, a generator on the labels is returned.
-            category_search: Query to filter labels based on the content of their jsonResponse
+            category_search: Query to filter labels based on the content of their jsonResponse.
+            output_format: If `dict`, the output is a regular Python dictionary.
+                If `parsed_label`, the output is a parsed label.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -193,7 +199,6 @@ class QueriesLabel:
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
-
         if category_search:
             validate_category_search_query(category_search)
 
@@ -214,9 +219,14 @@ class QueriesLabel:
             user_id=user_id,
             category_search=category_search,
         )
+
+        post_call_function = None
+        if output_format == "parsed_label":
+            post_call_function = parse_labels
+
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        labels_gen = LabelQuery(self.auth.client)(where, fields, options)
+        labels_gen = LabelQuery(self.auth.client)(where, fields, options, post_call_function)
 
         if as_generator:
             return labels_gen
