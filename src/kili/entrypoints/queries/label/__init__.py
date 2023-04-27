@@ -1,6 +1,7 @@
 """Label queries."""
 
-from typing import Dict, Generator, Iterable, List, Optional, cast, overload
+from functools import partial
+from typing import Dict, Generator, Iterable, List, Optional, Union, cast, overload
 
 import pandas as pd
 from typeguard import typechecked
@@ -11,6 +12,7 @@ from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
+from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.core.helpers import (
     disable_tqdm_if_as_generator,
     validate_category_search_query,
@@ -19,7 +21,7 @@ from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import ProjectId
-from kili.utils.labels.label_parsing import parse_labels
+from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -66,7 +68,7 @@ class QueriesLabel:
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
         category_search: Optional[str] = None,
-        output_format: Optional[Literal["dict", "parsed_label"]] = None,
+        output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -101,10 +103,80 @@ class QueriesLabel:
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
         category_search: Optional[str] = None,
-        output_format: Optional[Literal["dict", "parsed_label"]] = None,
+        output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
+        ...
+
+    @overload
+    def labels(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: List[str] = [
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "secondsToLabel",
+        ],
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        type_in: Optional[List[str]] = None,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        output_format: Literal["parsed_label"] = "parsed_label",
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[ParsedLabel]:
+        ...
+
+    @overload
+    def labels(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_status_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[List[str]] = None,
+        author_in: Optional[List[str]] = None,
+        created_at: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        fields: List[str] = [
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "secondsToLabel",
+        ],
+        first: Optional[int] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        id_contains: Optional[List[str]] = None,
+        label_id: Optional[str] = None,
+        skip: int = 0,
+        type_in: Optional[List[str]] = None,
+        user_id: Optional[str] = None,
+        disable_tqdm: bool = False,
+        category_search: Optional[str] = None,
+        output_format: Literal["parsed_label"] = "parsed_label",
+        *,
+        as_generator: Literal[True] = True,
+    ) -> Generator[ParsedLabel, None, None]:
         ...
 
     @typechecked
@@ -136,10 +208,10 @@ class QueriesLabel:
         user_id: Optional[str] = None,
         disable_tqdm: bool = False,
         category_search: Optional[str] = None,
-        output_format: Optional[Literal["dict", "parsed_label"]] = None,
+        output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[Union[Dict, ParsedLabel]]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
 
@@ -167,8 +239,8 @@ class QueriesLabel:
             disable_tqdm: If `True`, the progress bar will be disabled.
             as_generator: If `True`, a generator on the labels is returned.
             category_search: Query to filter labels based on the content of their jsonResponse.
-            output_format: If `dict`, the output is a regular Python dictionary.
-                If `parsed_label`, the output is a parsed label.
+            output_format: If `dict`, the output is an iterable of Python dictionaries.
+                If `parsed_label`, the output is an iterable of parsed labels objects.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -222,7 +294,18 @@ class QueriesLabel:
 
         post_call_function = None
         if output_format == "parsed_label":
-            post_call_function = parse_labels
+            project = next(
+                ProjectQuery(self.auth.client)(
+                    ProjectWhere(project_id=project_id),
+                    fields=["jsonInterface", "inputType"],
+                    options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+                )
+            )
+            post_call_function = partial(
+                parse_labels,
+                json_interface=project["jsonInterface"],
+                input_type=project["inputType"],
+            )
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)

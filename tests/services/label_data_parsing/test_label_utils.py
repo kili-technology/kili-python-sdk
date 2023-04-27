@@ -1,10 +1,13 @@
 import json
+from typing import Dict, Generator, List
 
-import pytest
+from typing_extensions import assert_type
 
+from kili.client import Kili
+from kili.entrypoints.queries.label import QueriesLabel
 from kili.services.label_data_parsing.annotation import Annotation, AnnotationList
 from kili.services.label_data_parsing.category import Category, CategoryList
-from kili.utils.labels.label_parsing import parse_labels
+from kili.utils.labels.parsing import ParsedLabel, parse_labels
 
 
 def test_parse_labels_classification():
@@ -242,3 +245,15 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
 
     for original_label, parsed_label in zip(labels, labels_modified):
         assert original_label == parsed_label
+
+
+def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
+    _ = mocker.patch.object(Kili, "__init__", return_value=None)
+    _ = mocker.patch.object(QueriesLabel, "labels")
+    assert_type(Kili().labels("project_id"), List[Dict])
+    assert_type(Kili().labels("project_id", as_generator=True), Generator[Dict, None, None])
+    assert_type(Kili().labels("project_id", output_format="parsed_label"), List[ParsedLabel])
+    assert_type(
+        Kili().labels("project_id", output_format="parsed_label", as_generator=True),
+        Generator[ParsedLabel, None, None],
+    )

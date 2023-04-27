@@ -8,7 +8,7 @@ from kili.services.label_data_parsing.json_response import (
     ParsedJobs,
 )
 from kili.services.label_data_parsing.types import Project
-from kili.utils.labels.label_parsing import ParsedLabel
+from kili.utils.labels.parsing import ParsedLabel
 
 
 def test_mutate_transcription_label():

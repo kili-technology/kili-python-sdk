@@ -13,7 +13,7 @@ from kili.services.label_data_parsing.exceptions import FrameIndexError
 from kili.services.label_data_parsing.job_response import JobPayload
 from kili.services.label_data_parsing.json_response import ParsedJobs
 from kili.services.label_data_parsing.types import Project
-from kili.utils.labels.label_parsing import ParsedLabel
+from kili.utils.labels.parsing import ParsedLabel
 
 
 def test_attribute_category():
