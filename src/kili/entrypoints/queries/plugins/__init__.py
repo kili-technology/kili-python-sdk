@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import Dict, Iterable, List, Optional
+from typing import List, Optional
 
 from typeguard import typechecked
 
@@ -36,9 +36,9 @@ class QueriesPlugins:
         self,
         plugin_name: str,
         start_date: Optional[datetime] = None,
-        limit: Optional[int] = None,
-        skip: Optional[int] = None,
-    ) -> Iterable[Dict]:
+        limit: Optional[int] = 100,
+        skip: Optional[int] = 0,
+    ) -> str:
         # pylint: disable=line-too-long
         """Get paginated build errors of a plugin.
 
@@ -56,8 +56,8 @@ class QueriesPlugins:
 
         where = PluginBuildErrorsWhere(plugin_name=plugin_name, start_date=start_date)
         options = QueryOptions(
-            first=limit, skip=skip or 0, disable_tqdm=False
-        )  # disable tqm is not implemnted for this query
+            first=limit, skip=skip, disable_tqdm=False
+        )  # disable tqm is not implemented for this query
         pretty_result = PluginQuery(self.auth.client).get_build_errors(where, options)
         return json.dumps(pretty_result, sort_keys=True, indent=4)
 
@@ -67,9 +67,9 @@ class QueriesPlugins:
         project_id: str,
         plugin_name: str,
         start_date: Optional[datetime] = None,
-        limit: Optional[int] = None,
-        skip: Optional[int] = None,
-    ):
+        limit: Optional[int] = 100,
+        skip: Optional[int] = 0,
+    ) -> str:
         # pylint: disable=line-too-long
         """Get paginated logs of a plugin on a project.
 
@@ -90,8 +90,8 @@ class QueriesPlugins:
             project_id=project_id, plugin_name=plugin_name, start_date=start_date
         )
         options = QueryOptions(
-            first=limit, skip=skip or 0, disable_tqdm=False
-        )  # disable tqm is not implemnted for this query
+            first=limit, skip=skip, disable_tqdm=False
+        )  # disable tqm is not implemented for this query
         pretty_result = PluginQuery(self.auth.client).get_logs(where, options)
         return json.dumps(pretty_result, sort_keys=True, indent=4)
 
