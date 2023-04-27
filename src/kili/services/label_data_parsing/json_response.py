@@ -241,12 +241,12 @@ class JobPayload(FramesList, job_response_module.JobPayload):
     # pylint: disable=line-too-long
     """JobPayload class.
 
-    It can be used to access the job response of a job `job_name`: `label.jobs["job_name"]`.
+    It is the value of the parsed job response of a job `job_name`: `label.jobs["job_name"]`.
 
     If the job is a video job, it can be used to access the job response of a frame `frame_number`: `label.jobs["job_name"].frames[frame_number]`.
     """
 
-    # Class only used for type checking.
+    # Class only used for return type hints.
     # It should not be instantiated.
     # It inherits from both FramesList and JobResponseModule.JobPayload to expose the methods
     # and properties of both classes.
