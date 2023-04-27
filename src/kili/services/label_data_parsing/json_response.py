@@ -1,7 +1,7 @@
 # Feature is still under development and is not yet suitable for use by general users.
 """Classes for json response parsing."""
 
-from typing import Dict, Iterator, List, Optional, Tuple
+from typing import Dict, Iterator, List, Optional, Tuple, cast
 
 from kili.services.label_data_parsing import job_response as job_response_module
 
@@ -9,13 +9,14 @@ from .exceptions import FrameIndexError, JobNotExistingError
 from .types import Project
 
 
+# pylint: disable=too-few-public-methods
 class _ParsedVideoJobs:
     def __init__(
         self,
         project_info: Project,
         json_response: Dict,
         job_names_to_parse: Optional[List[str]] = None,
-    ):
+    ) -> None:
         self.project_info = project_info
 
         self._json_data: Dict[str, "FramesList"] = {}
@@ -58,7 +59,8 @@ class _ParsedVideoJobs:
             )
             self._json_data[current_job_name] = FramesList(frames_list_for_job)
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Dict]:
+        """Returns a copy of the parsed label as a dict."""
         ret = {str(frame_id): {} for frame_id in range(self._nb_frames)}
         for job_name, frames_list in self._json_data.items():
             for frame_id, job_payload in enumerate(frames_list):
@@ -68,26 +70,14 @@ class _ParsedVideoJobs:
         return ret
 
 
+# pylint: disable=too-few-public-methods
 class _ParsedOtherJobs:
-    """Class for label json response parsing."""
-
     def __init__(
         self,
         project_info: Project,
         json_response: Dict,
         job_names_to_parse: Optional[List[str]] = None,
     ) -> None:
-        # pylint: disable=line-too-long
-        """Class for label json response parsing.
-
-        This class will modify the input json_response.
-        If you want to keep the original json_response, use deepcopy.
-
-        Args:
-            project_info: Information about the project.
-            json_response: Value of the key "jsonResponse" of a label.
-            job_names_to_parse: List of job names to parse. By default, parse all the jobs that are not children.
-        """
         self.project_info = project_info
 
         self._json_data: Dict[str, "job_response_module.JobPayload"] = {}
@@ -127,7 +117,7 @@ class _ParsedOtherJobs:
                 job_payload=job_response,
             )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Dict]:
         """Returns the parsed json response as a dict."""
         ret = {job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()}
         ret = {k: v for k, v in ret.items() if v}  # remove empty json responses
@@ -154,12 +144,25 @@ def _is_video_job(project_info: Project, json_response: Dict) -> bool:
 
 
 class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
+    """Class for label json response parsing."""
+
     def __init__(
         self,
         project_info: Project,
         json_response: Dict,
         job_names_to_parse: Optional[List[str]] = None,
     ) -> None:
+        # pylint: disable=line-too-long
+        """Class for label json response parsing.
+
+        This class will modify the input json_response.
+        If you want to keep the original json_response, use deepcopy.
+
+        Args:
+            project_info: Information about the project.
+            json_response: Value of the key "jsonResponse" of a label.
+            job_names_to_parse: List of job names to parse. By default, parse all the jobs that are not children.
+        """
         self._is_video_job = _is_video_job(project_info, json_response)
 
         if self._is_video_job:
@@ -178,6 +181,7 @@ class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
             )
 
     def to_dict(self) -> Dict[str, Dict]:
+        """Returns the parsed json response as a dict."""
         if self._is_video_job:
             return _ParsedVideoJobs.to_dict(self)
         return _ParsedOtherJobs.to_dict(self)
@@ -200,7 +204,7 @@ class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
 
     def items(self) -> Iterator[Tuple[str, "JobPayload"]]:
         """Returns an iterator over the job names and the corresponding objects."""
-        return iter(self._json_data.items())  # type: ignore
+        return cast(Iterator[Tuple[str, "JobPayload"]], iter(self._json_data.items()))
 
     def keys(self) -> Iterator[str]:
         """Returns an iterator over the job names."""
@@ -208,13 +212,18 @@ class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
 
     def values(self) -> Iterator["JobPayload"]:
         """Returns an iterator over the objects."""
-        return iter(self._json_data.values())  # type: ignore
+        return cast(Iterator["JobPayload"], iter(self._json_data.values()))
 
     def __getitem__(self, job_name: str) -> "JobPayload":
-        """Returns the object corresponding to the job name."""
+        """Returns the object corresponding to the job name.
+
+        For a video job, the returned object is a FramesList.
+
+        Otherwise, the returned object is a JobPayload.
+        """
         if job_name not in self._json_data:
             raise JobNotExistingError(job_name)
-        return self._json_data[job_name]  # type: ignore
+        return cast("JobPayload", self._json_data[job_name])
 
 
 class FramesList(List["job_response_module.JobPayload"]):
@@ -233,4 +242,15 @@ class FramesList(List["job_response_module.JobPayload"]):
 
 
 class JobPayload(FramesList, job_response_module.JobPayload):
-    ...
+    # pylint: disable=line-too-long
+    """JobPayload class.
+
+    It can be used to access the job response of a job `job_name`: `label.jobs["job_name"]`.
+
+    If the job is a video job, it can be used to access the job response of a frame `frame_number`: `label.jobs["job_name"].frames[frame_number]`.
+    """
+
+    # Class only used for type checking.
+    # It should not be instantiated.
+    # It inherits from both FramesList and JobResponseModule.JobPayload to expose the methods
+    # and properties of both classes.

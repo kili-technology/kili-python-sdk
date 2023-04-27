@@ -1,6 +1,12 @@
 from copy import deepcopy
 
-from kili.services.label_data_parsing.json_response import ParsedJobs
+from typing_extensions import assert_type
+
+from kili.services.label_data_parsing.json_response import (
+    FramesList,
+    JobPayload,
+    ParsedJobs,
+)
 from kili.services.label_data_parsing.label import ParsedLabel
 from kili.services.label_data_parsing.types import Project
 
@@ -698,6 +704,10 @@ def test_video_project_set_score():
     label = {"jsonResponse": json_resp}
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
+
+    job_payload = parsed_label.jobs["JOB_0"]
+    assert_type(job_payload, JobPayload)
+    assert_type(job_payload.frames, FramesList)
 
     assert len(parsed_label.jobs["JOB_0"].frames) == 2
 
