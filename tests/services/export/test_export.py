@@ -699,7 +699,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         asset_filter_kwargs={
             "consensus_mark_gte": 0.1,
             "consensus_mark_lte": 0.2,
-            "external_id_contains": ["truc"],
+            "external_id_strictly_in": ["truc"],
             "honeypot_mark_gte": 0.3,
             "honeypot_mark_lte": 0.4,
             "label_author_in": None,
