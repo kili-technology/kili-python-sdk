@@ -25,7 +25,7 @@ class _ParsedVideoJobs:
 
         # all job names in the json response should be in the json interface too
         for _, frame_response in json_response.items():
-            for job_name in frame_response:
+            for job_name in frame_response.keys():
                 if job_name not in json_interface:
                     raise JobNotExistingError(job_name)
 
@@ -69,7 +69,7 @@ class _ParsedVideoJobs:
 
 
 # pylint: disable=too-few-public-methods
-class _ParsedOtherJobs:
+class _ParseClassicJobs:
     def __init__(
         self,
         project_info: Project,
@@ -95,18 +95,7 @@ class _ParsedOtherJobs:
             ]
 
         for job_name in job_names_to_parse:
-            job_interface = json_interface[job_name]  # type: ignore
-            job_response = json_response.get(job_name, {})  # the json response may be empty
-
-            # a required parent job should have a non-empty json response
-            if (
-                not job_interface["isChild"]  # check if parent
-                and job_interface["required"]  # check if required
-                and "VIDEO" not in project_info["inputType"]  # can have empty frames
-                and not job_response
-            ):
-                raise JobNotExistingError(job_name)
-
+            job_response = json_response.get(job_name, {})  # the json response can be empty
             self._json_data[job_name] = job_response_module.JobPayload(
                 job_name=job_name,
                 project_info=project_info,
@@ -120,7 +109,7 @@ class _ParsedOtherJobs:
         return ret
 
 
-def _is_video_job(project_info: Project, json_response: Dict) -> bool:
+def _is_video_response(project_info: Project, json_response: Dict) -> bool:
     """Returns True if the json response is a video job, False otherwise."""
     if "VIDEO" not in project_info["inputType"]:
         return False
@@ -139,7 +128,7 @@ def _is_video_job(project_info: Project, json_response: Dict) -> bool:
     return True
 
 
-class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
+class ParsedJobs(_ParseClassicJobs, _ParsedVideoJobs):
     """Class for label json response parsing."""
 
     def __init__(
@@ -159,9 +148,9 @@ class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
             json_response: Value of the key "jsonResponse" of a label.
             job_names_to_parse: List of job names to parse. By default, parse all the jobs that are not children.
         """
-        self._is_video_job = _is_video_job(project_info, json_response)
+        self._is_video_response = _is_video_response(project_info, json_response)
 
-        if self._is_video_job:
+        if self._is_video_response:
             _ParsedVideoJobs.__init__(
                 self,
                 project_info=project_info,
@@ -169,7 +158,7 @@ class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
                 job_names_to_parse=job_names_to_parse,
             )
         else:
-            _ParsedOtherJobs.__init__(
+            _ParseClassicJobs.__init__(
                 self,
                 project_info=project_info,
                 json_response=json_response,
@@ -178,9 +167,9 @@ class ParsedJobs(_ParsedOtherJobs, _ParsedVideoJobs):
 
     def to_dict(self) -> Dict[str, Dict]:
         """Returns the parsed json response as a dict."""
-        if self._is_video_job:
+        if self._is_video_response:
             return _ParsedVideoJobs.to_dict(self)
-        return _ParsedOtherJobs.to_dict(self)
+        return _ParseClassicJobs.to_dict(self)
 
     def __repr__(self) -> str:
         """Returns the representation of the object."""
