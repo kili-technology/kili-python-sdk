@@ -299,7 +299,7 @@ class QueriesAsset:
             issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.
             external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
-                For example, with `external_id_in=['abc']`, any asset with an external id containing 'abc' will be returned.
+                For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -535,7 +535,7 @@ class QueriesAsset:
             issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.
             external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
-                For example, with `external_id_in=['abc']`, any asset with an external id containing 'abc' will be returned.
+                For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
