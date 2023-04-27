@@ -17,13 +17,11 @@ class _ParsedVideoJobs:
         json_response: Dict,
         job_names_to_parse: Optional[List[str]] = None,
     ) -> None:
-        self.project_info = project_info
-
         self._json_data: Dict[str, "FramesList"] = {}
 
         self._nb_frames = len(json_response)
 
-        json_interface = self.project_info["jsonInterface"]
+        json_interface = project_info["jsonInterface"]
 
         # all job names in the json response should be in the json interface too
         for _, frame_response in json_response.items():
@@ -48,7 +46,7 @@ class _ParsedVideoJobs:
                 job_response = frame_json_response.get(current_job_name, {})
                 job_payload = job_response_module.JobPayload(
                     job_name=current_job_name,
-                    project_info=self.project_info,
+                    project_info=project_info,
                     job_payload=job_response,
                 )
                 frames_list_for_job.append(job_payload)
@@ -78,11 +76,9 @@ class _ParsedOtherJobs:
         json_response: Dict,
         job_names_to_parse: Optional[List[str]] = None,
     ) -> None:
-        self.project_info = project_info
-
         self._json_data: Dict[str, "job_response_module.JobPayload"] = {}
 
-        json_interface = self.project_info["jsonInterface"]
+        json_interface = project_info["jsonInterface"]
 
         # all job names in the json response should be in the json interface too
         for job_name in json_response:
@@ -106,7 +102,7 @@ class _ParsedOtherJobs:
             if (
                 not job_interface["isChild"]  # check if parent
                 and job_interface["required"]  # check if required
-                and "VIDEO" not in self.project_info["inputType"]  # can have empty frames
+                and "VIDEO" not in project_info["inputType"]  # can have empty frames
                 and not job_response
             ):
                 raise JobNotExistingError(job_name)
