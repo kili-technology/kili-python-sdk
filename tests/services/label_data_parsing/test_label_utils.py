@@ -248,6 +248,7 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
 
 
 def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
+    """This test does not check types at runtime, but rather during pyright type checking."""
     _ = mocker.patch.object(Kili, "__init__", return_value=None)
     _ = mocker.patch.object(QueriesLabel, "labels")
     assert_type(Kili().labels("project_id"), List[Dict])
@@ -257,3 +258,41 @@ def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
         Kili().labels("project_id", output_format="parsed_label", as_generator=True),
         Generator[ParsedLabel, None, None],
     )
+
+
+def test_integration_of_label_parsing_in_kili_labels(mocker):
+    mocker_project_query = mocker.patch(
+        "kili.core.graphql.operations.project.queries.ProjectQuery.__call__",
+        return_value=iter(
+            [
+                {
+                    "jsonInterface": {
+                        "jobs": {
+                            "JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}
+                        }
+                    },
+                    "inputType": "TEXT",
+                }
+            ]
+        ),
+    )
+
+    mocker_label_query = mocker.patch(
+        "kili.core.graphql.operations.label.queries.LabelQuery.get_number_of_elements_to_query",
+        return_value=1,
+    )
+
+    mocked_execute = mocker.MagicMock(
+        return_value={
+            "data": [{"jsonResponse": {"JOB_0": {"text": "This is a transcription job"}}}]
+        }
+    )
+    mocker_auth = mocker.MagicMock()
+    mocker_auth.client.execute = mocked_execute
+    kili = QueriesLabel(auth=mocker_auth)
+    labels = kili.labels(project_id="project_id", output_format="parsed_label")
+
+    assert isinstance(labels, List)
+    assert all(isinstance(label, ParsedLabel) for label in labels)
+    assert len(labels) == 1
+    assert labels[0].jobs["JOB_0"].text == "This is a transcription job"
