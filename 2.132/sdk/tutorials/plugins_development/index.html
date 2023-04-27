@@ -1,0 +1,1558 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kili Python SDK">
+      
+      
+      
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.132/sdk/tutorials/plugins_development/">
+      
+      
+        <link rel="prev" href="../export_a_kili_project/">
+      
+      
+        <link rel="next" href="../plugins_example/">
+      
+      <link rel="icon" href="../../../assets/kili_favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.8">
+    
+    
+      
+        <title>Developing Plugins - Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ded33207.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archia:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Archia";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-HRVEXSEWL0"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-HRVEXSEWL0",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-HRVEXSEWL0",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="kili" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-develop-and-test-a-kili-plugin" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Python SDK
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Developing Plugins
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        Python SDK
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../cli/" class="md-tabs__link">
+        Command Line Interface
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tutorials/" class="md-tabs__link md-tabs__link--active">
+        Tutorials
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo.png" alt="logo">
+
+    </a>
+    Python SDK
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+          Python SDK
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Python SDK
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        Tutorials
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_key/" class="md-nav__link">
+        API Key
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asset/" class="md-nav__link">
+        Asset
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud_storage/" class="md-nav__link">
+        Cloud Storage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../issue/" class="md-nav__link">
+        Issue
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label/" class="md-nav__link">
+        Label
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label_utils/" class="md-nav__link">
+        Label Utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notification/" class="md-nav__link">
+        Notification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../organization/" class="md-nav__link">
+        Organization
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project/" class="md-nav__link">
+        Project
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_user/" class="md-nav__link">
+        Project User
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_version/" class="md-nav__link">
+        Project Version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/" class="md-nav__link">
+        User
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Command Line Interface
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Command Line Interface
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/reference/" class="md-nav__link">
+        Reference
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_project_setup/" class="md-nav__link">
+        Basic Project Setup
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          Importing Assets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Importing Assets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_assets_and_labels/" class="md-nav__link">
+        Image Assets with Metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_video_assets/" class="md-nav__link">
+        Video Assets
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          Importing Labels
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Importing Labels
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_labels/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ner_pre_annotations_openai/" class="md-nav__link">
+        OpenAI NER Pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ocr_pre_annotations/" class="md-nav__link">
+        OCR Pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pixel_level_masks/" class="md-nav__link">
+        Segmentation Pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_labels/" class="md-nav__link">
+        Inference Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+          Working with Labels
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Working with Labels
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../medical_imaging/" class="md-nav__link">
+        Converting and Visualizing Segmentation Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../set_up_workflows/" class="md-nav__link">
+        Managing Workflows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../export_a_kili_project/" class="md-nav__link">
+        Exporting Project Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+          Setting Up Plugins
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3_8">
+          <span class="md-nav__icon md-icon"></span>
+          Setting Up Plugins
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Developing Plugins
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Developing Plugins
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#preliminary" class="md-nav__link">
+    Preliminary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instantiate-kili" class="md-nav__link">
+    Instantiate Kili
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#develop-your-plugin" class="md-nav__link">
+    Develop your plugin
+  </a>
+  
+    <nav class="md-nav" aria-label="Develop your plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-first-option-plugin-defined-in-a-single-file" class="md-nav__link">
+    1. First option - Plugin defined in a single file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-second-option-plugin-defined-in-a-folder" class="md-nav__link">
+    2. Second option - Plugin defined in a folder
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Second option - Plugin defined in a folder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-relative-import" class="md-nav__link">
+    2.1 Relative import
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-absolute-path-import" class="md-nav__link">
+    2.2 Absolute path import
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-plugin-locally" class="md-nav__link">
+    Testing the plugin locally
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-plugin-run" class="md-nav__link">
+    Test the plugin run
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-plugin-run-on-kili" class="md-nav__link">
+    Test the plugin run on Kili
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-the-plugin" class="md-nav__link">
+    Monitoring the plugin
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#managing-your-plugin" class="md-nav__link">
+    Managing your plugin
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_example/" class="md-nav__link">
+        Plugin Example - Programmatic QA
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_library/" class="md-nav__link">
+        Plugins Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../webhooks_example/" class="md-nav__link">
+        Webhooks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#preliminary" class="md-nav__link">
+    Preliminary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instantiate-kili" class="md-nav__link">
+    Instantiate Kili
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#develop-your-plugin" class="md-nav__link">
+    Develop your plugin
+  </a>
+  
+    <nav class="md-nav" aria-label="Develop your plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-first-option-plugin-defined-in-a-single-file" class="md-nav__link">
+    1. First option - Plugin defined in a single file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-second-option-plugin-defined-in-a-folder" class="md-nav__link">
+    2. Second option - Plugin defined in a folder
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Second option - Plugin defined in a folder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-relative-import" class="md-nav__link">
+    2.1 Relative import
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-absolute-path-import" class="md-nav__link">
+    2.2 Absolute path import
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-plugin-locally" class="md-nav__link">
+    Testing the plugin locally
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-plugin-run" class="md-nav__link">
+    Test the plugin run
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-plugin-run-on-kili" class="md-nav__link">
+    Test the plugin run on Kili
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-the-plugin" class="md-nav__link">
+    Monitoring the plugin
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#managing-your-plugin" class="md-nav__link">
+    Managing your plugin
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/plugins_development.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="how-to-develop-and-test-a-kili-plugin">How to develop and test a Kili plugin</h1>
+<h2 id="preliminary">Preliminary</h2>
+<p>This notebook will teach you how to build your first plugin.</p>
+<p>A plugin is an uploaded Python script triggered by an event that you define.</p>
+<p>For instance, you can trigger a plugin when a labeler clicks on <strong>Submit</strong> with the <code>on_submit</code> handler.</p>
+<p>The plugin should have different methods for the different types of events:</p>
+<ul>
+<li><code>on_submit</code></li>
+<li><code>on_review</code></li>
+</ul>
+<p>These methods have a predefined set of parameters:</p>
+<ul>
+<li>the <code>label</code> submitted</li>
+<li>the <code>asset_id</code> of the asset labeled</li>
+</ul>
+<p>Some attributes are available in the class:</p>
+<ul>
+<li><code>self.kili</code></li>
+<li><code>self.project_id</code></li>
+</ul>
+<p>Therefore, the skeleton of the plugin should look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom plugin&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Review action&quot;&quot;&quot;</span>
+        <span class="c1"># Do something...</span>
+
+    <span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Submit action&quot;&quot;&quot;</span>
+        <span class="c1"># Do something...</span>
+</code></pre></div>
+<p>Do not hesitate to reach out to us if you need more.</p>
+<p><strong>NB: The plugin capabilities of Kili are under active development, and compatible with version 2.125.2 and later of Kili. Don't hesitate to reach out via Github or Kili support to provide feedback.</strong></p>
+<h2 id="instantiate-kili">Instantiate Kili</h2>
+<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span>  <span class="n">kili</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">load_ext</span> <span class="n">autoreload</span>
+<span class="o">%</span><span class="n">autoreload</span> <span class="mi">2</span>
+
+<span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">api_endpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;KILI_API_ENDPOINT&quot;</span><span class="p">)</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;KILI_API_KEY&quot;</span><span class="p">)</span>
+
+
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_endpoint</span><span class="o">=</span><span class="n">api_endpoint</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="develop-your-plugin">Develop your plugin</h2>
+<p>The first step is to define the functions that will be called when the event is triggered. You will be able to iterate on these functions locally (more on that in the next section).</p>
+<p>The plugin can be defined in two ways: a single <code>.py</code> file with everything inside or a module (folder containing multiple <code>.py</code> files). In the case of the module type, a file named <code>main.py</code> needs to be at the root of the folder and will serve as the entrypoint.</p>
+<h3 id="1-first-option-plugin-defined-in-a-single-file">1. First option - Plugin defined in a single file</h3>
+<p>This cell should be the contents of the <code>.py</code> file that you will upload as a plugin at the end.</p>
+<p><strong>This file should define the <code>PluginHandler</code> class that will contain the proper methods.</strong></p>
+<p>We recommend using a modern IDE like VScode to get type hints and autocompletion on the methods.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+
+<span class="k">def</span> <span class="nf">custom_function</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;My custom function for review of label with id </span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom plugin instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">custom_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;custom_method called for label </span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">random_seed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">random_seed</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Generating issue&quot;</span><span class="p">)</span>
+            <span class="c1"># Use kili for actions with self.kili</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">create_issues</span><span class="p">(</span>
+                <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+                <span class="n">label_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">label_id</span><span class="p">],</span>
+                <span class="n">text_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Random issue generated for this label&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dedicated handler for Review action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">custom_function</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dedicated handler for Submit action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;On submit called&quot;</span><span class="p">)</span>
+
+        <span class="n">project_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span>
+        <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">custom_method</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="n">label_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-second-option-plugin-defined-in-a-folder">2. Second option - Plugin defined in a folder</h3>
+<p>As said previously, the structure of the folder can be the following (the only constraint being the presence of the <code>main.py</code> file):
+<div class="highlight"><pre><span></span><code>plugin_folder
+|__ main.py
+|__ other_file.py
+|__ requirements.txt
+|
+|___helpers
+    |__ helper.py
+</code></pre></div></p>
+<p>You can notice that you can also include a <code>requirements.txt</code> file in the folder and the necessary packages will be installed with your plugin. Don't forget to add them, since the plugin could work on your machine if you have them installed, but it won't be possible to create the plugin if there are missing dependencies.</p>
+<p><strong>Important: The main.py file need to have the same skeleton as the plugin defined in a single file (presence of the class <code>PluginHandler</code>), the difference being that it can import and call functions defined in other files</strong></p>
+<p>Depending on where the folder is stored, there are two ways to import the plugin in order to test it:</p>
+<ul>
+<li>The first way is to use a relative import (having the plugin folder and the notebook in the same folder). It is simpler and we recommend it as it will also allow the IDE to detect the correct methods and propose hints and autocompletion.</li>
+<li>The second is to use an absolute path to the plugin folder</li>
+</ul>
+<h4 id="21-relative-import">2.1 Relative import</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Here replace &#39;plugin_folder&#39; with the actual name of the folder</span>
+<span class="kn">from</span> <span class="nn">plugin_folder.main</span> <span class="kn">import</span> <span class="n">PluginHandler</span>
+</code></pre></div>
+<h4 id="22-absolute-path-import">2.2 Absolute path import</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Input the path to the plugin folder (it should include the folder), for example &#39;/path/to/plugin_folder&#39;</span>
+<span class="n">plugin_path</span> <span class="o">=</span> <span class="s2">&quot;&lt;INSERT PATH TO PLUGIN FOLDER&gt;&quot;</span>
+
+<span class="n">module_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">plugin_path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span>
+
+<span class="c1"># We are inserting the path in the system PATH to be able to import the module in the next line</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">module_path</span><span class="p">)</span>
+
+<span class="c1"># In the next line replace &#39;plugin_folder&#39; with the actual name of the folder</span>
+<span class="kn">from</span> <span class="nn">plugin_folder.main</span> <span class="kn">import</span> <span class="n">PluginHandler</span>
+</code></pre></div>
+<h3 id="testing-the-plugin-locally">Testing the plugin locally</h3>
+<p>In this we will show you how to test your plugin locally before uploading it.</p>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="s2">&quot;&lt;PROJECT ID&gt;&quot;</span>
+</code></pre></div>
+<p>Instantiate the plugin:</p>
+<div class="highlight"><pre><span></span><code><span class="n">my_plugin_instance</span> <span class="o">=</span> <span class="n">PluginHandler</span><span class="p">(</span><span class="n">kili</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_label</span><span class="p">(</span><span class="n">label_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to get the object Label with the same keys as it will be in the plugin</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelType&quot;</span><span class="p">,</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">label</span><span class="p">[</span><span class="s2">&quot;authorId&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">label</span>
+</code></pre></div>
+<h3 id="test-the-plugin-run">Test the plugin run</h3>
+<p>If you already have a test project with labels added, you can directly use the IDs of these labels (see the following cell). Otherwise, you can follow the <em>plugins_example.ipynb</em> notebook to create a new project and then upload an asset with an associated label.</p>
+<div class="highlight"><pre><span></span><code><span class="n">asset_id</span> <span class="o">=</span> <span class="s2">&quot;&lt;YOUR_ASSET_ID&gt;&quot;</span>
+<span class="n">label_id</span> <span class="o">=</span> <span class="s2">&quot;&lt;YOUR_LABEL_ID&gt;&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">label</span> <span class="o">=</span> <span class="n">get_label</span><span class="p">(</span><span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
+
+<span class="n">my_plugin_instance</span><span class="o">.</span><span class="n">on_submit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="test-the-plugin-run-on-kili">Test the plugin run on Kili</h3>
+<p>When you finish debugging the code, you may want to upload it directly into Kili.</p>
+<p>Note that you might get an error if the plugin name already exists in your Kili organization.</p>
+<div class="highlight"><pre><span></span><code><span class="n">path_to_plugin</span> <span class="o">=</span> <span class="s2">&quot;path/to/my/plugin.py&quot;</span>
+<span class="n">plugin_name</span> <span class="o">=</span> <span class="s2">&quot;My first kili plugin&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.exceptions</span> <span class="kn">import</span> <span class="n">GraphQLError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">path_to_plugin</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+</code></pre></div>
+<p>Plugins must be activated in the project that you want them to run in. Be careful with production projects: your custom workflows or rules will also be applied</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="monitoring-the-plugin">Monitoring the plugin</h2>
+<p>Plugin creation takes some time (around 5 minutes). The plugin will begin to run only after it's been fully created (if labeling events are to be triggered on this project).</p>
+<p>Additionally, you can get the logs of the runs:</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_logs</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">)</span>
+</code></pre></div>
+<p>You can set custom date rules for filtering your logs:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">dt</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>  <span class="c1"># You can change this date if needed</span>
+<span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+
+<span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_logs</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="managing-your-plugin">Managing your plugin</h2>
+<p>There are several other methods to manage your plugins and their lifecycle. To find out more, check the plugins <a href="https://python-sdk-docs.kili-technology.com/latest/tutorials">tutorials</a>.</p>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../../extra_javascript/katex.js"></script>
+      
+    
+  </body>
+</html>

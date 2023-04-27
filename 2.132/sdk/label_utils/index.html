@@ -1,0 +1,2371 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kili Python SDK">
+      
+      
+      
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/2.132/sdk/label_utils/">
+      
+      
+        <link rel="prev" href="../label/">
+      
+      
+        <link rel="next" href="../notification/">
+      
+      <link rel="icon" href="../../assets/kili_favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.8">
+    
+    
+      
+        <title>Label Utils - Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ded33207.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archia:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Archia";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-HRVEXSEWL0"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-HRVEXSEWL0",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-HRVEXSEWL0",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="kili" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#label-utils-module" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../assets/kili_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Python SDK
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Label Utils
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link md-tabs__link--active">
+        Python SDK
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli/" class="md-tabs__link">
+        Command Line Interface
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tutorials/" class="md-tabs__link">
+        Tutorials
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../assets/kili_logo.png" alt="logo">
+
+    </a>
+    Python SDK
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+          Python SDK
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Python SDK
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/" class="md-nav__link">
+        Tutorials
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api_key/" class="md-nav__link">
+        API Key
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asset/" class="md-nav__link">
+        Asset
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud_storage/" class="md-nav__link">
+        Cloud Storage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../issue/" class="md-nav__link">
+        Issue
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label/" class="md-nav__link">
+        Label
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Label Utils
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Label Utils
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#points" class="md-nav__link">
+    Points
+  </a>
+  
+    <nav class="md-nav" aria-label="Points">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.point.normalized_point_to_point" class="md-nav__link">
+    normalized_point_to_point()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.point.point_to_normalized_point" class="md-nav__link">
+    point_to_normalized_point()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bounding-boxes" class="md-nav__link">
+    Bounding boxes
+  </a>
+  
+    <nav class="md-nav" aria-label="Bounding boxes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.bbox.bbox_points_to_normalized_vertices" class="md-nav__link">
+    bbox_points_to_normalized_vertices()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.bbox.normalized_vertices_to_bbox_points" class="md-nav__link">
+    normalized_vertices_to_bbox_points()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#polygon-and-segmentation-masks" class="md-nav__link">
+    Polygon and segmentation masks
+  </a>
+  
+    <nav class="md-nav" aria-label="Polygon and segmentation masks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.image.mask_to_normalized_vertices" class="md-nav__link">
+    mask_to_normalized_vertices()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.image.normalized_vertices_to_mask" class="md-nav__link">
+    normalized_vertices_to_mask()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notification/" class="md-nav__link">
+        Notification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../organization/" class="md-nav__link">
+        Organization
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project/" class="md-nav__link">
+        Project
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_user/" class="md-nav__link">
+        Project User
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_version/" class="md-nav__link">
+        Project Version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user/" class="md-nav__link">
+        User
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Command Line Interface
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Command Line Interface
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/reference/" class="md-nav__link">
+        Reference
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/basic_project_setup/" class="md-nav__link">
+        Basic Project Setup
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          Importing Assets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Importing Assets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/importing_assets_and_labels/" class="md-nav__link">
+        Image Assets with Metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/importing_video_assets/" class="md-nav__link">
+        Video Assets
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          Importing Labels
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Importing Labels
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/importing_labels/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/ner_pre_annotations_openai/" class="md-nav__link">
+        OpenAI NER Pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/ocr_pre_annotations/" class="md-nav__link">
+        OCR Pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/pixel_level_masks/" class="md-nav__link">
+        Segmentation Pre-annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/inference_labels/" class="md-nav__link">
+        Inference Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+          Working with Labels
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Working with Labels
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/medical_imaging/" class="md-nav__link">
+        Converting and Visualizing Segmentation Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/set_up_workflows/" class="md-nav__link">
+        Managing Workflows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/export_a_kili_project/" class="md-nav__link">
+        Exporting Project Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+          Setting Up Plugins
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_8">
+          <span class="md-nav__icon md-icon"></span>
+          Setting Up Plugins
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_development/" class="md-nav__link">
+        Developing Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_example/" class="md-nav__link">
+        Plugin Example - Programmatic QA
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/plugins_library/" class="md-nav__link">
+        Plugins Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/webhooks_example/" class="md-nav__link">
+        Webhooks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#points" class="md-nav__link">
+    Points
+  </a>
+  
+    <nav class="md-nav" aria-label="Points">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.point.normalized_point_to_point" class="md-nav__link">
+    normalized_point_to_point()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.point.point_to_normalized_point" class="md-nav__link">
+    point_to_normalized_point()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bounding-boxes" class="md-nav__link">
+    Bounding boxes
+  </a>
+  
+    <nav class="md-nav" aria-label="Bounding boxes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.bbox.bbox_points_to_normalized_vertices" class="md-nav__link">
+    bbox_points_to_normalized_vertices()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.bbox.normalized_vertices_to_bbox_points" class="md-nav__link">
+    normalized_vertices_to_bbox_points()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#polygon-and-segmentation-masks" class="md-nav__link">
+    Polygon and segmentation masks
+  </a>
+  
+    <nav class="md-nav" aria-label="Polygon and segmentation masks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.image.mask_to_normalized_vertices" class="md-nav__link">
+    mask_to_normalized_vertices()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.image.normalized_vertices_to_mask" class="md-nav__link">
+    normalized_vertices_to_mask()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="label-utils-module">Label Utils module</h1>
+<p>This module provides a set of helper functions to read, modify and create labels.</p>
+<h2 id="points">Points</h2>
+
+
+  <div class="doc doc-object doc-module">
+
+
+    <div class="doc doc-contents first">
+
+      <p>Helpers to create point annotations.</p>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 class="doc doc-heading" id="kili.utils.labels.point.normalized_point_to_point">
+<code class="highlight language-python"><span class="n">normalized_point_to_point</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Converts a Kili label format normalized point to a 2D point.</p>
+<p>It is the inverse of the method <code>point_to_normalized_point</code>.</p>
+<p>A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).</p>
+<p>Conventions for the input point:</p>
+<ul>
+<li>The origin is the top left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from top to bottom.</li>
+</ul>
+<p>Conventions for the output point:</p>
+<ul>
+<li>The origin is the bottom left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from bottom to top.</li>
+</ul>
+<p>If the image width and height are provided, the point coordinates will be scaled to the image size.
+If not, the method will keep the normalized coordinates.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>point</code></td>
+        <td><code>Dict[str, float]</code></td>
+        <td><p>Point to convert.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>img_width</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Width of the image the point is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>img_height</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Height of the image the point is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Dict[str, float]</code></td>
+      <td><p>A dict with keys 'x' and 'y', and corresponding values in pixels.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/point.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">normalized_point_to_point</span><span class="p">(</span>
+    <span class="n">point</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">img_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">img_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a Kili label format normalized point to a 2D point.</span>
+
+<span class="sd">    It is the inverse of the method `point_to_normalized_point`.</span>
+
+<span class="sd">    A point is a dict with keys &#39;x&#39; and &#39;y&#39;, and corresponding values in pixels (int or float).</span>
+
+<span class="sd">    Conventions for the input point:</span>
+
+<span class="sd">    - The origin is the top left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from top to bottom.</span>
+
+<span class="sd">    Conventions for the output point:</span>
+
+<span class="sd">    - The origin is the bottom left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from bottom to top.</span>
+
+<span class="sd">    If the image width and height are provided, the point coordinates will be scaled to the image size.</span>
+<span class="sd">    If not, the method will keep the normalized coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        point: Point to convert.</span>
+<span class="sd">        img_width: Width of the image the point is defined in.</span>
+<span class="sd">        img_height: Height of the image the point is defined in.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with keys &#39;x&#39; and &#39;y&#39;, and corresponding values in pixels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">img_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">img_height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;img_width and img_height must be both None or both not None.&quot;</span><span class="p">)</span>
+
+    <span class="n">img_height</span> <span class="o">=</span> <span class="n">img_height</span> <span class="ow">or</span> <span class="mi">1</span>
+    <span class="n">img_width</span> <span class="o">=</span> <span class="n">img_width</span> <span class="ow">or</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">img_width</span><span class="p">,</span>
+        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">img_height</span><span class="p">,</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 class="doc doc-heading" id="kili.utils.labels.point.point_to_normalized_point">
+<code class="highlight language-python"><span class="n">point_to_normalized_point</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Converts a 2D point to a Kili label format normalized point.</p>
+<p>The output can be used to create object detection annotations. See the <a href="https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation">documentation</a> for more details.</p>
+<p>A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).</p>
+<p>Conventions for the input point:</p>
+<ul>
+<li>The origin is the bottom left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from bottom to top.</li>
+</ul>
+<p>Conventions for the output point:</p>
+<ul>
+<li>The origin is the top left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from top to bottom.</li>
+</ul>
+<p>If the image width and height are provided, the point coordinates will be normalized to [0, 1].
+If not, the method expects the point coordinates to be already normalized.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>point</code></td>
+        <td><code>Dict[str, Union[int, float]]</code></td>
+        <td><p>Point to convert.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>img_width</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Width of the image the point is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>img_height</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Height of the image the point is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Dict[str, float]</code></td>
+      <td><p>A dict with keys 'x' and 'y', and corresponding normalized values.</p></td>
+    </tr>
+  </tbody>
+</table>      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.point</span> <span class="kn">import</span> <span class="n">point_to_normalized_point</span>
+
+<span class="n">normalized_point</span> <span class="o">=</span> <span class="n">point_to_normalized_point</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">},</span> <span class="n">img_width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="n">json_response</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;point&quot;</span><span class="p">:</span> <span class="n">normalized_point</span><span class="p">,</span>
+                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASS_A&quot;</span><span class="p">}],</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;marker&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/point.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">point_to_normalized_point</span><span class="p">(</span>
+    <span class="n">point</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">img_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">img_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a 2D point to a Kili label format normalized point.</span>
+
+<span class="sd">    The output can be used to create object detection annotations. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation) for more details.</span>
+
+<span class="sd">    A point is a dict with keys &#39;x&#39; and &#39;y&#39;, and corresponding values in pixels (int or float).</span>
+
+<span class="sd">    Conventions for the input point:</span>
+
+<span class="sd">    - The origin is the bottom left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from bottom to top.</span>
+
+<span class="sd">    Conventions for the output point:</span>
+
+<span class="sd">    - The origin is the top left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from top to bottom.</span>
+
+<span class="sd">    If the image width and height are provided, the point coordinates will be normalized to [0, 1].</span>
+<span class="sd">    If not, the method expects the point coordinates to be already normalized.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        point: Point to convert.</span>
+<span class="sd">        img_width: Width of the image the point is defined in.</span>
+<span class="sd">        img_height: Height of the image the point is defined in.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with keys &#39;x&#39; and &#39;y&#39;, and corresponding normalized values.</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python</span>
+<span class="sd">        from kili.utils.labels.point import point_to_normalized_point</span>
+
+<span class="sd">        normalized_point = point_to_normalized_point({&quot;x&quot;: 5, &quot;y&quot;: 40}, img_width=100, img_height=100)</span>
+
+<span class="sd">        json_response = {</span>
+<span class="sd">            &quot;OBJECT_DETECTION_JOB&quot;: {</span>
+<span class="sd">                &quot;annotations&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;point&quot;: normalized_point,</span>
+<span class="sd">                        &quot;categories&quot;: [{&quot;name&quot;: &quot;CLASS_A&quot;}],</span>
+<span class="sd">                        &quot;type&quot;: &quot;marker&quot;,</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">img_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">img_height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;img_width and img_height must be both None or both not None.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">img_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">img_height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">img_width</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">img_height</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Point x coordinate </span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> should be in [0, 1].&quot;</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Point y coordinate </span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> should be in [0, 1].&quot;</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+<h2 id="bounding-boxes">Bounding boxes</h2>
+
+
+  <div class="doc doc-object doc-module">
+
+
+    <div class="doc doc-contents first">
+
+      <p>Helpers to create boundingPoly rectangle annotations.</p>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 class="doc doc-heading" id="kili.utils.labels.bbox.bbox_points_to_normalized_vertices">
+<code class="highlight language-python"><span class="n">bbox_points_to_normalized_vertices</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">,</span> <span class="n">top_right</span><span class="p">,</span> <span class="n">top_left</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Converts a bounding box defined by its 4 points in pixels coordinates to normalized vertices.</p>
+<p>The output can be used to create a boundingPoly rectangle annotation. See the <a href="https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection">documentation</a> for more details.</p>
+<p>A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).</p>
+<p>Conventions for the input points:</p>
+<ul>
+<li>The origin is the bottom left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from bottom to top.</li>
+</ul>
+<p>Conventions for the output vertices:</p>
+<ul>
+<li>The origin is the top left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from top to bottom.</li>
+</ul>
+<p>If the image width and height are provided, the point coordinates will be normalized to [0, 1].
+If not, the method expects the points' coordinates to be already normalized.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>bottom_left</code></td>
+        <td><code>Dict[str, Union[int, float]]</code></td>
+        <td><p>Bottom left point of the bounding box.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>bottom_right</code></td>
+        <td><code>Dict[str, Union[int, float]]</code></td>
+        <td><p>Bottom right point of the bounding box.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>top_right</code></td>
+        <td><code>Dict[str, Union[int, float]]</code></td>
+        <td><p>Top right point of the bounding box.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>top_left</code></td>
+        <td><code>Dict[str, Union[int, float]]</code></td>
+        <td><p>Top left point of the bounding box.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>img_width</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Width of the image the bounding box is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>img_height</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Height of the image the bounding box is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>List[Dict[str, float]]</code></td>
+      <td><p>A list of normalized vertices.</p></td>
+    </tr>
+  </tbody>
+</table>      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.bbox</span> <span class="kn">import</span> <span class="n">bbox_points_to_normalized_vertices</span>
+
+<span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">bottom_left</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">bottom_right</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">top_right</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+    <span class="n">top_left</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+    <span class="n">img_width</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">img_height</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">bbox_points_to_normalized_vertices</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+<span class="n">json_response</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;boundingPoly&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">:</span> <span class="n">normalized_vertices</span><span class="p">}],</span>
+                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASS_A&quot;</span><span class="p">}],</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/bbox.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">bbox_points_to_normalized_vertices</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">bottom_left</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">bottom_right</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">top_right</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">top_left</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">img_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">img_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a bounding box defined by its 4 points in pixels coordinates to normalized vertices.</span>
+
+<span class="sd">    The output can be used to create a boundingPoly rectangle annotation. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection) for more details.</span>
+
+<span class="sd">    A point is a dict with keys &#39;x&#39; and &#39;y&#39;, and corresponding values in pixels (int or float).</span>
+
+<span class="sd">    Conventions for the input points:</span>
+
+<span class="sd">    - The origin is the bottom left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from bottom to top.</span>
+
+<span class="sd">    Conventions for the output vertices:</span>
+
+<span class="sd">    - The origin is the top left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from top to bottom.</span>
+
+<span class="sd">    If the image width and height are provided, the point coordinates will be normalized to [0, 1].</span>
+<span class="sd">    If not, the method expects the points&#39; coordinates to be already normalized.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bottom_left: Bottom left point of the bounding box.</span>
+<span class="sd">        bottom_right: Bottom right point of the bounding box.</span>
+<span class="sd">        top_right: Top right point of the bounding box.</span>
+<span class="sd">        top_left: Top left point of the bounding box.</span>
+<span class="sd">        img_width: Width of the image the bounding box is defined in.</span>
+<span class="sd">        img_height: Height of the image the bounding box is defined in.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of normalized vertices.</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python</span>
+<span class="sd">        from kili.utils.labels.bbox import bbox_points_to_normalized_vertices</span>
+
+<span class="sd">        inputs = {</span>
+<span class="sd">            bottom_left = {&quot;x&quot;: 0, &quot;y&quot;: 0},</span>
+<span class="sd">            bottom_right = {&quot;x&quot;: 10, &quot;y&quot;: 0},</span>
+<span class="sd">            top_right = {&quot;x&quot;: 10, &quot;y&quot;: 10},</span>
+<span class="sd">            top_left = {&quot;x&quot;: 0, &quot;y&quot;: 10},</span>
+<span class="sd">            img_width = 100,</span>
+<span class="sd">            img_height = 100,</span>
+<span class="sd">        }</span>
+<span class="sd">        normalized_vertices = bbox_points_to_normalized_vertices(**inputs)</span>
+<span class="sd">        json_response = {</span>
+<span class="sd">            &quot;OBJECT_DETECTION_JOB&quot;: {</span>
+<span class="sd">                &quot;annotations&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;boundingPoly&quot;: [{&quot;normalizedVertices&quot;: normalized_vertices}],</span>
+<span class="sd">                        &quot;categories&quot;: [{&quot;name&quot;: &quot;CLASS_A&quot;}],</span>
+<span class="sd">                        &quot;type&quot;: &quot;rectangle&quot;,</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">bottom_left</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">bottom_right</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;bottom_left.x must be &lt;= bottom_right.x&quot;</span>
+    <span class="k">assert</span> <span class="n">top_left</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">top_right</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;top_left.x must be &lt;= top_right.x&quot;</span>
+    <span class="k">assert</span> <span class="n">bottom_left</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">top_left</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;bottom_left.y must be &lt;= top_left.y&quot;</span>
+    <span class="k">assert</span> <span class="n">bottom_right</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">top_right</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;bottom_right.y must be &lt;= top_right.y&quot;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">img_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">img_height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;img_width and img_height must be both None or both not None.&quot;</span><span class="p">)</span>
+
+    <span class="n">vertices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">point_to_normalized_point</span><span class="p">(</span><span class="n">top_left</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="n">img_height</span><span class="p">),</span>
+        <span class="n">point_to_normalized_point</span><span class="p">(</span><span class="n">bottom_left</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="n">img_height</span><span class="p">),</span>
+        <span class="n">point_to_normalized_point</span><span class="p">(</span><span class="n">bottom_right</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="n">img_height</span><span class="p">),</span>
+        <span class="n">point_to_normalized_point</span><span class="p">(</span><span class="n">top_right</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="n">img_height</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">vertices</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 class="doc doc-heading" id="kili.utils.labels.bbox.normalized_vertices_to_bbox_points">
+<code class="highlight language-python"><span class="n">normalized_vertices_to_bbox_points</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="n">img_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img_height</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Converts a rectangle normalizedVertices annotation to its 4 points in pixels or in normalized coordinates depending on the image width and height arguments.</p>
+<p>It is the inverse of the method <code>bbox_points_to_normalized_vertices</code>.</p>
+<p>A point is a dict with keys 'x' and 'y', and corresponding values in pixels (int or float).</p>
+<p>Conventions for the input vertices:</p>
+<ul>
+<li>The origin is the top left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from top to bottom.</li>
+</ul>
+<p>Conventions for the output points (top_left, bottom_left, bottom_right, top_right):</p>
+<ul>
+<li>The origin is the bottom left corner of the image.</li>
+<li>x-axis is horizontal and goes from left to right.</li>
+<li>y-axis is vertical and goes from bottom to top.</li>
+</ul>
+<p>If the image width and height are provided, the point coordinates will be scaled to the image size.
+If not, the method will keep the normalized coordinates.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>normalized_vertices</code></td>
+        <td><code>List[Dict[str, float]]</code></td>
+        <td><p>A list of normalized vertices.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>img_width</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Width of the image the bounding box is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>img_height</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Height of the image the bounding box is defined in.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Dict[str, Dict[str, float]]</code></td>
+      <td><p>A dict with keys 'top_left', 'bottom_left', 'bottom_right', 'top_right', and corresponding points.</p></td>
+    </tr>
+  </tbody>
+</table>      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.bbox</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_bbox_points</span>
+
+<span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;boundingPoly&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">]</span>
+<span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1920</span>
+<span class="n">bbox_points</span> <span class="o">=</span> <span class="n">normalized_vertices_to_bbox_points</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">)</span>
+</code></pre></div>
+</div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/bbox.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">normalized_vertices_to_bbox_points</span><span class="p">(</span>
+    <span class="n">normalized_vertices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">img_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">img_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a rectangle normalizedVertices annotation to its 4 points in pixels or in normalized coordinates depending on the image width and height arguments.</span>
+
+<span class="sd">    It is the inverse of the method `bbox_points_to_normalized_vertices`.</span>
+
+<span class="sd">    A point is a dict with keys &#39;x&#39; and &#39;y&#39;, and corresponding values in pixels (int or float).</span>
+
+<span class="sd">    Conventions for the input vertices:</span>
+
+<span class="sd">    - The origin is the top left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from top to bottom.</span>
+
+<span class="sd">    Conventions for the output points (top_left, bottom_left, bottom_right, top_right):</span>
+
+<span class="sd">    - The origin is the bottom left corner of the image.</span>
+<span class="sd">    - x-axis is horizontal and goes from left to right.</span>
+<span class="sd">    - y-axis is vertical and goes from bottom to top.</span>
+
+<span class="sd">    If the image width and height are provided, the point coordinates will be scaled to the image size.</span>
+<span class="sd">    If not, the method will keep the normalized coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        normalized_vertices: A list of normalized vertices.</span>
+<span class="sd">        img_width: Width of the image the bounding box is defined in.</span>
+<span class="sd">        img_height: Height of the image the bounding box is defined in.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with keys &#39;top_left&#39;, &#39;bottom_left&#39;, &#39;bottom_right&#39;, &#39;top_right&#39;, and corresponding points.</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python</span>
+<span class="sd">        from kili.utils.labels.bbox import normalized_vertices_to_bbox_points</span>
+
+<span class="sd">        normalized_vertices = label[&quot;jsonResponse&quot;][&quot;OBJECT_DETECTION_JOB&quot;][&quot;annotations&quot;][0][&quot;boundingPoly&quot;][0][&quot;normalizedVertices&quot;]</span>
+<span class="sd">        img_height, img_width = 1080, 1920</span>
+<span class="sd">        bbox_points = normalized_vertices_to_bbox_points(normalized_vertices, img_width, img_height)</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;normalized_vertices must have length 4.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">img_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">img_height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;img_width and img_height must be both None or both not None.&quot;</span><span class="p">)</span>
+
+    <span class="n">img_height</span> <span class="o">=</span> <span class="n">img_height</span> <span class="ow">or</span> <span class="mi">1</span>
+    <span class="n">img_width</span> <span class="o">=</span> <span class="n">img_width</span> <span class="ow">or</span> <span class="mi">1</span>
+
+    <span class="n">top_left</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">bottom_left</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">bottom_right</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">top_right</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">vertex</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="p">(</span><span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">,</span> <span class="n">top_right</span><span class="p">)):</span>
+        <span class="n">point</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vertex</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">img_width</span>
+        <span class="n">point</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">vertex</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">img_height</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;top_left&quot;</span><span class="p">:</span> <span class="n">top_left</span><span class="p">,</span>
+        <span class="s2">&quot;bottom_left&quot;</span><span class="p">:</span> <span class="n">bottom_left</span><span class="p">,</span>
+        <span class="s2">&quot;bottom_right&quot;</span><span class="p">:</span> <span class="n">bottom_right</span><span class="p">,</span>
+        <span class="s2">&quot;top_right&quot;</span><span class="p">:</span> <span class="n">top_right</span><span class="p">,</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+<h2 id="polygon-and-segmentation-masks">Polygon and segmentation masks</h2>
+
+
+  <div class="doc doc-object doc-module">
+
+
+    <div class="doc doc-contents first">
+
+      <p>Helpers to create boundingPoly polygon and semantic annotations.</p>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 class="doc doc-heading" id="kili.utils.labels.image.mask_to_normalized_vertices">
+<code class="highlight language-python"><span class="n">mask_to_normalized_vertices</span><span class="p">(</span><span class="n">image</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Converts a binary mask to a list of normalized vertices using OpenCV <a href="https://docs.opencv.org/4.7.0/d3/dc0/group__imgproc__shape.html#gadf1ad6a0b82947fa1fe3c3d497f260e0">cv2.findContours</a>.</p>
+<p>The output can be used to create "boundingPoly" polygon or semantic annotations.
+See the <a href="https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection">documentation</a> for more details.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>image</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>Binary mask. Should be an array of shape (height, width) with values 0 and 255.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tuple</code></td>
+      <td><p>A tuple containing a list of normalized vertices and the hierarchy of the contours (see <a href="https://docs.opencv.org/4.7.0/d9/d8b/tutorial_py_contours_hierarchy.html">documentation</a>).</p></td>
+    </tr>
+  </tbody>
+</table>      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">kili.utils.labels.image</span> <span class="kn">import</span> <span class="n">mask_to_normalized_vertices</span>
+
+<span class="n">mask_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png&quot;</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">mask_url</span><span class="p">,</span> <span class="s2">&quot;mask.png&quot;</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;mask.png&quot;</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># keep only height and width</span>
+<span class="n">img</span><span class="p">[</span><span class="mi">200</span><span class="p">:</span><span class="mi">220</span><span class="p">,</span> <span class="mi">200</span><span class="p">:</span><span class="mi">220</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># add a hole in the mask to test the hierarchy</span>
+
+<span class="n">contours</span><span class="p">,</span> <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">mask_to_normalized_vertices</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="c1"># hierarchy tells us that the first contour is the outer contour</span>
+<span class="c1"># and the second one is the inner contour</span>
+
+<span class="n">json_response</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;boundingPoly&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">:</span> <span class="n">contours</span><span class="p">[</span><span class="mi">0</span><span class="p">]},</span>  <span class="c1"># outer contour</span>
+                    <span class="p">{</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">:</span> <span class="n">contours</span><span class="p">[</span><span class="mi">1</span><span class="p">]},</span>  <span class="c1"># inner contour</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">}],</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;semantic&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/image.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">mask_to_normalized_vertices</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a binary mask to a list of normalized vertices using OpenCV [cv2.findContours](https://docs.opencv.org/4.7.0/d3/dc0/group__imgproc__shape.html#gadf1ad6a0b82947fa1fe3c3d497f260e0).</span>
+
+<span class="sd">    The output can be used to create &quot;boundingPoly&quot; polygon or semantic annotations.</span>
+<span class="sd">    See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection) for more details.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: Binary mask. Should be an array of shape (height, width) with values 0 and 255.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple: A tuple containing a list of normalized vertices and the hierarchy of the contours (see [documentation](https://docs.opencv.org/4.7.0/d9/d8b/tutorial_py_contours_hierarchy.html)).</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python</span>
+<span class="sd">        import urllib.request</span>
+<span class="sd">        import cv2</span>
+<span class="sd">        from kili.utils.labels.image import mask_to_normalized_vertices</span>
+
+<span class="sd">        mask_url = &quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png&quot;</span>
+<span class="sd">        urllib.request.urlretrieve(mask_url, &quot;mask.png&quot;)</span>
+
+<span class="sd">        img = cv2.imread(&quot;mask.png&quot;)[:, :, 0]  # keep only height and width</span>
+<span class="sd">        img[200:220, 200:220] = 0  # add a hole in the mask to test the hierarchy</span>
+
+<span class="sd">        contours, hierarchy = mask_to_normalized_vertices(img)</span>
+<span class="sd">        # hierarchy tells us that the first contour is the outer contour</span>
+<span class="sd">        # and the second one is the inner contour</span>
+
+<span class="sd">        json_response = {</span>
+<span class="sd">            &quot;OBJECT_DETECTION_JOB&quot;: {</span>
+<span class="sd">                &quot;annotations&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;boundingPoly&quot;: [</span>
+<span class="sd">                            {&quot;normalizedVertices&quot;: contours[0]},  # outer contour</span>
+<span class="sd">                            {&quot;normalizedVertices&quot;: contours[1]},  # inner contour</span>
+<span class="sd">                        ],</span>
+<span class="sd">                        &quot;categories&quot;: [{&quot;name&quot;: &quot;A&quot;}],</span>
+<span class="sd">                        &quot;type&quot;: &quot;semantic&quot;,</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image should be a 2D array, got </span><span class="si">{</span><span class="n">image</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">D array&quot;</span><span class="p">)</span>
+
+    <span class="n">unique_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">unique_values</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image should be binary with values 0 and 255, got </span><span class="si">{</span><span class="n">unique_values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># pylint:disable=no-member</span>
+    <span class="n">contours</span><span class="p">,</span> <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">RETR_TREE</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_SIMPLE</span><span class="p">)</span>
+
+    <span class="n">contours</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_opencv_contour_to_normalized_vertices</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">contours</span>
+    <span class="p">]</span>
+    <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">hierarchy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">contours</span><span class="p">,</span> <span class="n">hierarchy</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 class="doc doc-heading" id="kili.utils.labels.image.normalized_vertices_to_mask">
+<code class="highlight language-python"><span class="n">normalized_vertices_to_mask</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Converts a Kili label with normalized vertices to a binary mask.</p>
+<p>It is the inverse of the method <code>mask_to_normalized_vertices</code>.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>normalized_vertices</code></td>
+        <td><code>List[Dict[str, float]]</code></td>
+        <td><p>A list of normalized vertices.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>img_width</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Width of the image the segmentation is defined in.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>img_height</code></td>
+        <td><code>Union[int, float]</code></td>
+        <td><p>Height of the image the segmentation is defined in.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>A numpy array of shape (height, width) with values 0 and 255.</p></td>
+    </tr>
+  </tbody>
+</table>      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.image</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_mask</span>
+
+<span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;boundingPoly&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">]</span>
+<span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1920</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">normalized_vertices_to_mask</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/image.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">normalized_vertices_to_mask</span><span class="p">(</span>
+    <span class="n">normalized_vertices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">img_width</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">img_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a Kili label with normalized vertices to a binary mask.</span>
+
+<span class="sd">    It is the inverse of the method `mask_to_normalized_vertices`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        normalized_vertices: A list of normalized vertices.</span>
+<span class="sd">        img_width: Width of the image the segmentation is defined in.</span>
+<span class="sd">        img_height: Height of the image the segmentation is defined in.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A numpy array of shape (height, width) with values 0 and 255.</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python</span>
+<span class="sd">        from kili.utils.labels.image import normalized_vertices_to_mask</span>
+
+<span class="sd">        normalized_vertices = label[&quot;jsonResponse&quot;][&quot;OBJECT_DETECTION_JOB&quot;][&quot;annotations&quot;][0][&quot;boundingPoly&quot;][0][&quot;normalizedVertices&quot;]</span>
+<span class="sd">        img_height, img_width = 1080, 1920</span>
+<span class="sd">        mask = normalized_vertices_to_mask(normalized_vertices, img_width, img_height)</span>
+<span class="sd">        plt.imshow(mask)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">polygon</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">vertice</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">img_width</span><span class="p">)),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">vertice</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">img_height</span><span class="p">)),</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">vertice</span> <span class="ow">in</span> <span class="n">normalized_vertices</span>
+    <span class="p">]</span>
+    <span class="n">polygon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">polygon</span><span class="p">])</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">fillPoly</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">pts</span><span class="o">=</span><span class="n">polygon</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>  <span class="c1"># pylint:disable=no-member</span>
+    <span class="k">return</span> <span class="n">mask</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../extra_javascript/katex.js"></script>
+      
+    
+  </body>
+</html>
