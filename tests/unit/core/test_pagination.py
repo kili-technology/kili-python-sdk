@@ -6,9 +6,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from kili.core.graphql import QueryOptions
-from kili.utils.pagination import BatchIteratorBuilder, batch_object_builder
-
-from .utils import (
+from kili.core.utils.pagination import BatchIteratorBuilder, batch_object_builder
+from tests.helpers import (
     MyGraphQLQuery,
     MyGraphQLWhere,
     ThrottlingError,
@@ -126,7 +125,7 @@ def test_row_generator_from_paginated_calls(mocker, name, test_case):
     ],
 )
 def test_row_generator_from_paginated_calls_handles_throttled_queries(name, test_case, mocker):
-    """ """
+    """"""
     _ = name
     expected = test_case["expected_result"]
     skip = test_case["args"].get("skip", 0)

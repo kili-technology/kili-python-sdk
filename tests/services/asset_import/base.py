@@ -9,8 +9,8 @@ from kili.core.graphql.operations.asset.mutations import (
 )
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.constants import IMPORT_BATCH_SIZE
+from tests.helpers import LocalDownloader
 from tests.services.asset_import.mocks import mocked_auth
-from tests.utils import LocalDownloader
 
 
 class ImportTestCase(TestCase):

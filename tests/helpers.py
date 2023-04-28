@@ -27,8 +27,9 @@ class MyGraphQLWhere(BaseQueryWhere):
 
 
 class ThrottlingError(Exception):
-    """
-    Raised when the function is called too much. Used for testing purposes.
+    """Raised when the function is called too much.
+
+    Used for testing purposes.
     """
 
 
@@ -81,8 +82,9 @@ def mocked_query_method(query, payload):
 
 @burstthrottle(max_hits=10, minutes=1.0 / 10)
 def throttling_mocked_query_method(query, payload):
-    """
-    Simulates a query result by returning a list of ids. The decorator makes it crash if there
+    """Simulates a query result by returning a list of ids.
+
+    The decorator makes it crash if there
     is more than 10 calls within 6 seconds.
     """
     skip = payload["skip"]

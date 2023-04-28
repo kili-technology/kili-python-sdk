@@ -7,7 +7,7 @@ from click.testing import CliRunner
 
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.cli.project.label import import_labels
-from tests.utils import debug_subprocess_pytest
+from tests.helpers import debug_subprocess_pytest
 
 from .mocks.projects import mocked__ProjectQuery
 
