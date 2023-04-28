@@ -91,7 +91,7 @@ jobs:
         with:
           fail: true
           debug: false
-          args: "--verbose --no-progress './**/*.md' --exclude '^(http|https)://cloud.kili-technology.com/api/label/v2/graphql$'"
+          args: "--verbose --no-progress './**/*.md' './**/*.py' --exclude '^(http|https)://cloud.kili-technology.com/api/label/v2/graphql$'"
 
   build-test:
     runs-on: ubuntu-latest
