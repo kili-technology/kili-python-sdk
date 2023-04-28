@@ -10,7 +10,7 @@ from kili.entrypoints.cli.project.member.add import add_member
 from kili.entrypoints.cli.project.member.list_ import list_members
 from kili.entrypoints.cli.project.member.remove import remove_member
 from kili.entrypoints.cli.project.member.update import update_member
-from tests.utils import debug_subprocess_pytest
+from tests.helpers import debug_subprocess_pytest
 
 
 def mocked__project_user_query(**kwargs):
