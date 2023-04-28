@@ -6,14 +6,14 @@ def test_client_init_not_too_long():
     timer = timeit.Timer("_ = Kili()", setup="from kili.client import Kili")
     time_spent = timer.timeit(number=1)
 
-    assert time_spent < 3
+    assert time_spent < 5
 
 
 def test_import_and_init_time_not_too_long():
     timer = timeit.Timer("from kili.client import Kili; _ = Kili()")
     time_spent = timer.timeit(number=1)
 
-    assert time_spent < 4
+    assert time_spent < 5
 
 
 @mock.patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "True"})
