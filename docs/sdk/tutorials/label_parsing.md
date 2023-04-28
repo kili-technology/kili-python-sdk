@@ -19,19 +19,100 @@ from kili.utils.labels.parsing import ParsedLabel
 kili = Kili()
 ```
 
-## `.jobs` attribute
+## `ParsedLabel` class
 
-The `.jobs` attribute of a `ParsedLabel` class is a dictionary-like object that contains the parsed labels. The keys are the names of the jobs, and the values are the parsed job responses.
+The `ParsedLabel` class represents a Kili label.
 
-Let's create a simple Kili project to illustrate this.
+This class directly inherits from `dict`, and thus behaves like a dictionary.
 
-We define a json interface for a single-class classification job, with name `CLASSIFICATION_JOB` and three categories `A`, `B` and `C`:
+
+```python
+print(ParsedLabel.__bases__[0])
+```
+
+    <class 'dict'>
+
+
+Converting a label to a `ParsedLabel` is as simple as:
 
 
 ```python
 json_interface = {
     "jobs": {
         "CLASSIFICATION_JOB": {
+            "content": {
+                "categories": {
+                    "A": {"children": [], "name": "A"},
+                    "B": {"children": [], "name": "B"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Class",
+            "mlTask": "CLASSIFICATION",
+            "required": 1,
+            "isChild": False,
+        }
+    }
+}
+
+my_label = {
+    "author": {"email": "first.last@kili-technology.com", "id": "123456"},
+    "id": "clh0fsi9u0tli0j666l4sfhpz",
+    "jsonResponse": {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}},
+    "labelType": "DEFAULT",
+    "secondsToLabel": 5,
+}
+
+my_parsed_label = ParsedLabel(my_label, json_interface=json_interface, input_type="IMAGE")
+```
+
+
+```python
+print(my_parsed_label["author"]["email"])
+```
+
+
+
+
+    'first.last@kili-technology.com'
+
+
+
+The `jsonResponse` dict key is not accessible anymore:
+
+
+```python
+try:
+    my_parsed_label["jsonResponse"]
+except KeyError as err:
+    print(f"The key {err} is not accessible anymore.")
+```
+
+    The key 'jsonResponse' is not accessible anymore.
+
+
+It is replaced with the `.jobs` attribute instead.
+
+## `.jobs` attribute
+
+The `.jobs` attribute of a `ParsedLabel` class is a dictionary-like object that contains the parsed labels.
+
+The keys are the names of the jobs, and the values are the parsed job responses.
+
+Let's create a simple Kili project to illustrate this.
+
+## Classification job
+
+We define a json interface for a two classification jobs:
+
+- a single-class classification job, with name `SINGLE_CLASS_JOB` and three categories `A`, `B` and `C`
+- a multi-class classification job, with name `MULTI_CLASS_JOB` and three categories `D`, `E` and `F`.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "SINGLE_CLASS_JOB": {
             "content": {
                 "categories": {
                     "A": {"children": [], "name": "A"},
@@ -44,7 +125,21 @@ json_interface = {
             "mlTask": "CLASSIFICATION",
             "required": 1,
             "isChild": False,
-        }
+        },
+        "MULTI_CLASS_JOB": {
+            "content": {
+                "categories": {
+                    "D": {"children": [], "name": "D"},
+                    "E": {"children": [], "name": "E"},
+                    "F": {"children": [], "name": "F"},
+                },
+                "input": "checkbox",
+            },
+            "instruction": "Class",
+            "mlTask": "CLASSIFICATION",
+            "required": 1,
+            "isChild": False,
+        },
     }
 }
 project_id = kili.create_project(
@@ -60,7 +155,7 @@ kili.append_many_to_dataset(
     project_id,
     content_array=["text1", "text2", "text3"],
     external_id_array=["asset1", "asset2", "asset3"],
-)
+);
 ```
 
 
@@ -68,7 +163,7 @@ kili.append_many_to_dataset(
 
 
 
-    {'id': 'clh0ghbb80xff0j668f3i15lp'}
+    {'id': 'clh0hbf8e12hv0j960bzya8wm'}
 
 
 
@@ -79,15 +174,30 @@ For this tutorial, we will just only upload already existing labels.
 
 ```python
 labels_to_upload = [
-    {"CLASSIFICATION_JOB": {"categories": [{"confidence": 75, "name": "A"}]}},
-    {"CLASSIFICATION_JOB": {"categories": [{"confidence": 50, "name": "B"}]}},
-    {"CLASSIFICATION_JOB": {"categories": [{"confidence": 25, "name": "C"}]}},
+    {
+        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 75, "name": "A"}]},
+        "MULTI_CLASS_JOB": {
+            "categories": [{"confidence": 1, "name": "D"}, {"confidence": 1, "name": "E"}]
+        },
+    },
+    {
+        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 50, "name": "B"}]},
+        "MULTI_CLASS_JOB": {
+            "categories": [{"confidence": 2, "name": "E"}, {"confidence": 2, "name": "F"}]
+        },
+    },
+    {
+        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 25, "name": "C"}]},
+        "MULTI_CLASS_JOB": {
+            "categories": [{"confidence": 3, "name": "F"}, {"confidence": 3, "name": "D"}]
+        },
+    },
 ]
 kili.append_labels(
     json_response_array=labels_to_upload,
     project_id=project_id,
     asset_external_id_array=["asset1", "asset2", "asset3"],
-)
+);
 ```
 
 
@@ -95,9 +205,9 @@ kili.append_labels(
 
 
 
-    [{'id': 'clh0gheax0xgs0j66bj9y58lo'},
-     {'id': 'clh0gheax0xgt0j66eohy17op'},
-     {'id': 'clh0gheax0xgu0j66awoz8sfn'}]
+    [{'id': 'clh0hbi8u12j30j965fe86ss6'},
+     {'id': 'clh0hbi8u12j40j969nvx8vj5'},
+     {'id': 'clh0hbi8u12j50j96holkcb2j'}]
 
 
 
@@ -105,16 +215,9 @@ When querying labels using `kili.labels()`, it is possible to automatically pars
 
 
 ```python
-labels = kili.labels(
-    project_id, output_format="parsed_label"
-)  # labels is a list of ParsedLabel object
+# labels is a list of ParsedLabel object
+labels = kili.labels(project_id, output_format="parsed_label")
 ```
-
-
-
-    3
-    <class 'kili.utils.labels.parsing.ParsedLabel'>
-
 
 
 
@@ -138,7 +241,7 @@ Using the `.jobs` attribute with the job name, one can access the label's data:
 
 
 ```python
-print(labels[0].jobs["CLASSIFICATION_JOB"])
+print(labels[0].jobs["SINGLE_CLASS_JOB"])
 ```
 
     {'categories': [{'name': 'A', 'confidence': 75}]}
@@ -146,7 +249,7 @@ print(labels[0].jobs["CLASSIFICATION_JOB"])
 
 
 ```python
-print(labels[0].jobs["CLASSIFICATION_JOB"].categories)
+print(labels[0].jobs["SINGLE_CLASS_JOB"].categories)
 ```
 
     [{'name': 'A', 'confidence': 75}]
@@ -154,22 +257,59 @@ print(labels[0].jobs["CLASSIFICATION_JOB"].categories)
 
 
 ```python
-print(labels[0].jobs["CLASSIFICATION_JOB"].categories[0].name)
+print(labels[0].jobs["SINGLE_CLASS_JOB"].categories[0].name)
 ```
 
     A
 
 
-Since `CLASSIFICATION_JOB` is a single-category classification job, the `.category` attribute is available, and is an alias for `.categories[0]`:
+Since `SINGLE_CLASS_JOB` is a single-category classification job, the `.category` attribute is available, and is an alias for `.categories[0]`:
 
 
 ```python
-print(labels[0].jobs["CLASSIFICATION_JOB"].category.name)
-print(labels[0].jobs["CLASSIFICATION_JOB"].category.confidence)
+print(labels[0].jobs["SINGLE_CLASS_JOB"].category.name)
+print(labels[0].jobs["SINGLE_CLASS_JOB"].category.confidence)
 ```
 
     A
     75
+
+
+The `.category` attribute is forbidden for multi-categories classification jobs:
+
+
+```python
+try:
+    print(labels[0].jobs["MULTI_CLASS_JOB"].category.name)
+except Exception as err:
+    print("Error: ", err)
+```
+
+    Error:  The attribute 'category' is not compatible with the job.
+
+
+It is also possible to iterate over the job names:
+
+
+```python
+for i, label in enumerate(labels):
+    print(f"\nLabel {i}")
+    for job_name, job_data in label.jobs.items():
+        print(job_name, ": ", job_data.categories)
+```
+
+
+    Label 0
+    SINGLE_CLASS_JOB :  [{'name': 'A', 'confidence': 75}]
+    MULTI_CLASS_JOB :  [{'name': 'D', 'confidence': 1}, {'name': 'E', 'confidence': 1}]
+
+    Label 1
+    SINGLE_CLASS_JOB :  [{'name': 'B', 'confidence': 50}]
+    MULTI_CLASS_JOB :  [{'name': 'E', 'confidence': 2}, {'name': 'F', 'confidence': 2}]
+
+    Label 2
+    SINGLE_CLASS_JOB :  [{'name': 'C', 'confidence': 25}]
+    MULTI_CLASS_JOB :  [{'name': 'F', 'confidence': 3}, {'name': 'D', 'confidence': 3}]
 
 
 ## Convert to Python dict
@@ -178,11 +318,21 @@ A `ParsedLabel` is a custom class and is not serializable by default. However, i
 
 
 ```python
+label = labels[0]
+print(type(label))
+```
+
+    <class 'kili.utils.labels.parsing.ParsedLabel'>
+
+
+
+```python
 label_as_dict = label.to_dict()
 print(type(label_as_dict))
 ```
 
-## Classification job
+    <class 'dict'>
+
 
 ## Object detection job
 

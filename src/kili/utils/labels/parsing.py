@@ -31,12 +31,15 @@ class ParsedLabel(Dict):
             print(parsed_label.jobs["JOB_0"])
             ```
         """
-        super().__init__(deepcopy(label))
+        label_copy = deepcopy(label)
+        json_response = label_copy.pop("jsonResponse")
+
+        super().__init__(label_copy)
 
         project_info = Project(inputType=input_type, jsonInterface=json_interface["jobs"])
 
         self.jobs = json_response_module.ParsedJobs(
-            project_info=project_info, json_response=self["jsonResponse"]
+            project_info=project_info, json_response=json_response
         )
 
     def to_dict(self) -> Dict:
