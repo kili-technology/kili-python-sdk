@@ -1,6 +1,5 @@
 """Common code for the PASCAL VOC exporter."""
 
-import warnings
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Sequence

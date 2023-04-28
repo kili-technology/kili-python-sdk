@@ -2,7 +2,6 @@
 
 import json
 import time
-import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -33,15 +32,6 @@ class CocoExporter(AbstractExporter):
     """Common code for COCO exporter."""
 
     requires_asset_access = True
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.with_assets:
-            warnings.warn(
-                "For an export to the COCO format, the download of assets cannot be disabled.",
-                stacklevel=2,
-            )
-        self.with_assets = True
 
     def _check_arguments_compatibility(self):
         """Checks if the export label format is compatible with the export options."""
