@@ -283,9 +283,7 @@ def test_integration_of_label_parsing_in_kili_labels(mocker):
     )
 
     mocked_execute = mocker.MagicMock(
-        return_value={
-            "data": [{"jsonResponse": {"JOB_0": {"text": "This is a transcription job"}}}]
-        }
+        return_value={"data": [{"jsonResponse": {"JOB_0": {"text": "some text abc"}}}]}
     )
     mocker_auth = mocker.MagicMock()
     mocker_auth.client.execute = mocked_execute
@@ -295,6 +293,6 @@ def test_integration_of_label_parsing_in_kili_labels(mocker):
     assert_type(labels, List[ParsedLabel])
 
     assert isinstance(labels, List)
-    assert all(isinstance(label, ParsedLabel) for label in labels)
+    assert all(isinstance(labl, ParsedLabel) for labl in labels)  # pylint: disable=not-an-iterable
     assert len(labels) == 1
-    assert labels[0].jobs["JOB_0"].text == "This is a transcription job"
+    assert labels[0].jobs["JOB_0"].text == "some text abc"  # pylint: disable=unsubscriptable-object

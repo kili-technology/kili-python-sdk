@@ -19,7 +19,7 @@ from kili.utils.labels.parsing import ParsedLabel
 kili = Kili()
 ```
 
-## `ParsedLabel` class
+## ParsedLabel class
 
 The `ParsedLabel` class represents a Kili label.
 
@@ -37,24 +37,6 @@ Converting a label to a `ParsedLabel` is as simple as:
 
 
 ```python
-json_interface = {
-    "jobs": {
-        "CLASSIFICATION_JOB": {
-            "content": {
-                "categories": {
-                    "A": {"children": [], "name": "A"},
-                    "B": {"children": [], "name": "B"},
-                },
-                "input": "radio",
-            },
-            "instruction": "Class",
-            "mlTask": "CLASSIFICATION",
-            "required": 1,
-            "isChild": False,
-        }
-    }
-}
-
 my_label = {
     "author": {"email": "first.last@kili-technology.com", "id": "123456"},
     "id": "clh0fsi9u0tli0j666l4sfhpz",
@@ -71,11 +53,7 @@ my_parsed_label = ParsedLabel(my_label, json_interface=json_interface, input_typ
 print(my_parsed_label["author"]["email"])
 ```
 
-
-
-
-    'first.last@kili-technology.com'
-
+    first.last@kili-technology.com
 
 
 The `jsonResponse` dict key is not accessible anymore:
@@ -93,7 +71,7 @@ except KeyError as err:
 
 It is replaced with the `.jobs` attribute instead.
 
-## `.jobs` attribute
+## .jobs attribute
 
 The `.jobs` attribute of a `ParsedLabel` class is a dictionary-like object that contains the parsed labels.
 
@@ -160,16 +138,9 @@ kili.append_many_to_dataset(
 
 
 
-
-
-
-    {'id': 'clh0hbf8e12hv0j960bzya8wm'}
-
-
-
 Once the assets are uploaded, we can start labeling them manually through the Kili UI.
 
-For this tutorial, we will just only upload already existing labels.
+For this tutorial, we will just upload already existing labels.
 
 
 ```python
@@ -199,15 +170,6 @@ kili.append_labels(
     asset_external_id_array=["asset1", "asset2", "asset3"],
 );
 ```
-
-
-
-
-
-
-    [{'id': 'clh0hbi8u12j30j965fe86ss6'},
-     {'id': 'clh0hbi8u12j40j969nvx8vj5'},
-     {'id': 'clh0hbi8u12j50j96holkcb2j'}]
 
 
 
@@ -295,21 +257,32 @@ It is also possible to iterate over the job names:
 for i, label in enumerate(labels):
     print(f"\nLabel {i}")
     for job_name, job_data in label.jobs.items():
-        print(job_name, ": ", job_data.categories)
+        print("job_name: ", job_name)
+        for category in job_data.categories:
+            print("category: ", category.name, category.confidence)
 ```
 
 
     Label 0
-    SINGLE_CLASS_JOB :  [{'name': 'A', 'confidence': 75}]
-    MULTI_CLASS_JOB :  [{'name': 'D', 'confidence': 1}, {'name': 'E', 'confidence': 1}]
+    job_name:  SINGLE_CLASS_JOB
+    category:  A 75
+    job_name:  MULTI_CLASS_JOB
+    category:  D 1
+    category:  E 1
 
     Label 1
-    SINGLE_CLASS_JOB :  [{'name': 'B', 'confidence': 50}]
-    MULTI_CLASS_JOB :  [{'name': 'E', 'confidence': 2}, {'name': 'F', 'confidence': 2}]
+    job_name:  SINGLE_CLASS_JOB
+    category:  B 50
+    job_name:  MULTI_CLASS_JOB
+    category:  E 2
+    category:  F 2
 
     Label 2
-    SINGLE_CLASS_JOB :  [{'name': 'C', 'confidence': 25}]
-    MULTI_CLASS_JOB :  [{'name': 'F', 'confidence': 3}, {'name': 'D', 'confidence': 3}]
+    job_name:  SINGLE_CLASS_JOB
+    category:  C 25
+    job_name:  MULTI_CLASS_JOB
+    category:  F 3
+    category:  D 3
 
 
 ## Convert to Python dict
@@ -334,13 +307,543 @@ print(type(label_as_dict))
     <class 'dict'>
 
 
+## Transcription job
+
+For a transcription job, the `.text` allows to access the label data:
+
+
+```python
+json_interface = {
+    "jobs": {"TRANSCRIPTION_JOB": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+}
+
+dict_label = {
+    "jsonResponse": {"TRANSCRIPTION_JOB": {"text": "This is a transcription annotation..."}}
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="TEXT")
+```
+
+
+```python
+print(label.jobs["TRANSCRIPTION_JOB"].text)
+```
+
+    This is a transcription annotation...
+
+
 ## Object detection job
 
-## Transcription job
+For object detection jobs, a parsed label has a `.annotations` attribute:
+
+
+```python
+json_interface = {
+    "jobs": {
+        "OBJECT_DETECTION_JOB": {
+            "mlTask": "OBJECT_DETECTION",
+            "tools": ["rectangle"],
+            "required": 1,
+            "isChild": False,
+            "content": {"categories": {"A": {}, "B": {}}, "input": "radio"},
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.54, "y": 0.52},
+                                {"x": 0.54, "y": 0.33},
+                                {"x": 0.70, "y": 0.33},
+                                {"x": 0.70, "y": 0.52},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "B"}],
+                    "mid": "20230315142306286-25528",
+                    "type": "rectangle",
+                }
+            ]
+        }
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="IMAGE")
+```
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name)
+```
+
+    B
+
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].type)
+```
+
+    rectangle
+
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].bounding_poly)
+```
+
+    [{'normalizedVertices': [{'x': 0.54, 'y': 0.52}, {'x': 0.54, 'y': 0.33}, {'x': 0.7, 'y': 0.33}, {'x': 0.7, 'y': 0.52}]}]
+
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].bounding_poly[0].normalized_vertices)
+```
+
+    [{'x': 0.54, 'y': 0.52}, {'x': 0.54, 'y': 0.33}, {'x': 0.7, 'y': 0.33}, {'x': 0.7, 'y': 0.52}]
+
+
+The `.bounding_poly_annotations` attribute is equivalent to `.annotations`:
+
+
+```python
+print(
+    label.jobs["OBJECT_DETECTION_JOB"].annotations
+    == label.jobs["OBJECT_DETECTION_JOB"].bounding_poly_annotations
+)
+```
+
+    True
+
+
+## Point detection job
+
+The point coordinates of a point detection label is accessible through the `.point` attribute:
+
+
+```python
+json_interface = {
+    "jobs": {
+        "OBJECT_DETECTION_JOB": {
+            "content": {
+                "categories": {
+                    "A": {"children": [], "color": "#472CED", "name": "A"},
+                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Class",
+            "mlTask": "OBJECT_DETECTION",
+            "required": 1,
+            "tools": ["marker"],
+            "isChild": False,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "point": {"x": 0.10, "y": 0.20},
+                    "categories": [{"name": "A"}],
+                    "mid": "20230323113855529-11197",
+                    "type": "marker",
+                },
+                {
+                    "children": {},
+                    "point": {"x": 0.30, "y": 0.40},
+                    "categories": [{"name": "B"}],
+                    "mid": "20230323113857016-51829",
+                    "type": "marker",
+                },
+            ]
+        }
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="IMAGE")
+```
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[1].type)
+```
+
+    marker
+
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[1].point)
+```
+
+    {'x': 0.3, 'y': 0.4}
+
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[1].category.name)
+```
+
+    B
+
+
+## Line detection job
+
+A polyline parsed label has a `.polyline` attribute.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "OBJECT_DETECTION_JOB": {
+            "content": {
+                "categories": {
+                    "A": {"children": [], "color": "#472CED", "name": "A"},
+                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Job name",
+            "mlTask": "OBJECT_DETECTION",
+            "required": 1,
+            "tools": ["polyline"],
+            "isChild": False,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "polyline": [{"x": 0.59, "y": 0.40}, {"x": 0.25, "y": 0.30}],
+                    "categories": [{"name": "A"}],
+                    "mid": "20230428163557647-23000",
+                    "type": "polyline",
+                },
+                {
+                    "children": {},
+                    "polyline": [{"x": 0.70, "y": 0.50}, {"x": 0.40, "y": 0.70}],
+                    "categories": [{"name": "B"}],
+                    "mid": "20230428163606237-86143",
+                    "type": "polyline",
+                },
+            ]
+        }
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="IMAGE")
+```
+
+
+```python
+print(len(label.jobs["OBJECT_DETECTION_JOB"].annotations))
+```
+
+    2
+
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name)
+```
+
+
+
+
+    'A'
+
+
+
+
+```python
+print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].polyline)
+```
+
+    [{'x': 0.59, 'y': 0.4}, {'x': 0.25, 'y': 0.3}]
+
 
 ## Video job
 
+A video label has an additional attribute `.frames` that returns the annotations for each frame.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "FRAME_CLASSIF_JOB": {
+            "content": {
+                "categories": {
+                    "OBJECT_A": {"children": [], "name": "Object A"},
+                    "OBJECT_B": {"children": [], "name": "Object B"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Categories",
+            "isChild": False,
+            "mlTask": "CLASSIFICATION",
+            "models": {},
+            "isVisible": False,
+            "required": 1,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "0": {},
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {
+            "FRAME_CLASSIF_JOB": {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "isKeyFrame": True,
+                "annotations": [],
+            }
+        },
+        "6": {
+            "FRAME_CLASSIF_JOB": {
+                "categories": [{"confidence": 42, "name": "OBJECT_B"}],
+                "isKeyFrame": False,
+                "annotations": [],
+            }
+        },
+        "7": {},
+        "8": {},
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO")
+```
+
+
+```python
+for i, frame_annotations in enumerate(label.jobs["FRAME_CLASSIF_JOB"].frames):
+    print(f"Frame {i}: {frame_annotations}")
+```
+
+    Frame 0: {}
+    Frame 1: {}
+    Frame 2: {}
+    Frame 3: {}
+    Frame 4: {}
+    Frame 5: {'isKeyFrame': True, 'categories': [{'name': 'OBJECT_A', 'confidence': 100}], 'annotations': []}
+    Frame 6: {'isKeyFrame': False, 'categories': [{'name': 'OBJECT_B', 'confidence': 42}], 'annotations': []}
+    Frame 7: {}
+    Frame 8: {}
+
+
+
+```python
+frame = label.jobs["FRAME_CLASSIF_JOB"].frames[5]
+```
+
+
+```python
+print(frame.category.name)
+```
+
+    OBJECT_A
+
+
+The syntax is similar for object detection jobs on video:
+
+
+```python
+json_interface = {
+    "jobs": {
+        "JOB_0": {
+            "content": {
+                "categories": {
+                    "OBJECT_A": {"children": [], "name": "Train", "color": "#733AFB"},
+                    "OBJECT_B": {"children": [], "name": "Car", "color": "#3CD876"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Track objects A and B",
+            "isChild": False,
+            "tools": ["rectangle"],
+            "mlTask": "OBJECT_DETECTION",
+            "models": {"tracking": {}},
+            "isVisible": True,
+            "required": 0,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "0": {},
+        "1": {
+            "JOB_0": {
+                "annotations": [
+                    {
+                        "children": {},
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {"x": 0.30, "y": 0.63},
+                                    {"x": 0.30, "y": 0.55},
+                                    {"x": 0.36, "y": 0.55},
+                                    {"x": 0.36, "y": 0.63},
+                                ]
+                            }
+                        ],
+                        "categories": [{"name": "OBJECT_B"}],
+                        "mid": "20230407140827577-43802",
+                        "type": "rectangle",
+                        "isKeyFrame": True,
+                    }
+                ]
+            }
+        },
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO")
+```
+
+
+```python
+print(label.jobs["JOB_0"].frames[1].annotations[0].category.name)
+```
+
+    OBJECT_B
+
+
 ## Named entities recognition job
+
+For NER jobs, the content of the job reponse is a list of annotations.
+
+Those annotations can be accessed through the `.annotations` or `.entity_annotations` attributes.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "NER_JOB": {
+            "mlTask": "NAMED_ENTITIES_RECOGNITION",
+            "required": 1,
+            "isChild": False,
+            "content": {
+                "categories": {"ORG": {}, "PERSON": {}},
+                "input": "radio",
+            },
+        }
+    }
+}
+dict_label = {
+    "jsonResponse": {
+        "NER_JOB": {
+            "annotations": [
+                {
+                    "categories": [{"name": "ORG", "confidence": 42}],
+                    "beginOffset": 21,
+                    "content": "this is the text for Kili",
+                    "mid": "mid_a",
+                },
+                {
+                    "categories": [{"name": "PERSON", "confidence": 100}],
+                    "beginOffset": 8,
+                    "content": "this is Toto's text",
+                    "mid": "mid_b",
+                },
+            ]
+        }
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="TEXT")
+```
+
+
+```python
+print("Number of annotations in this label: ", len(label.jobs["NER_JOB"].annotations))
+```
+
+    Number of annotations in this label:  2
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].category)
+```
+
+    {'name': 'ORG', 'confidence': 42}
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].begin_offset)
+```
+
+    21
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].content)
+```
+
+    this is the text for Kili
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].mid)
+```
+
+    mid_a
+
+
+It is also possible to iterate over the annotations of this label:
+
+
+```python
+for annotation in label.jobs["NER_JOB"].annotations:
+    print(annotation)
+```
+
+    {'categories': [{'name': 'ORG', 'confidence': 42}], 'beginOffset': 21, 'content': 'this is the text for Kili', 'mid': 'mid_a'}
+    {'categories': [{'name': 'PERSON', 'confidence': 100}], 'beginOffset': 8, 'content': "this is Toto's text", 'mid': 'mid_b'}
+
 
 ## Named entities recognition in PDF job
 
