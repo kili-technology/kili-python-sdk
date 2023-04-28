@@ -87,13 +87,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.project_input_type = project_info["inputType"]
         self.project_title = project_info["title"]
 
-        if self.requires_asset_access and not self.with_assets:
-            warnings.warn(
-                "For an export this format, the download of assets cannot be disabled.",
-                stacklevel=2,
-            )
-            self.with_assets = True
-
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
@@ -168,7 +161,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """
         self._check_arguments_compatibility()
         self._check_project_compatibility()
-        self._check_asset_access()
+        self._check_and_ensure_asset_access()
 
         self.logger.warning("Fetching assets...")
 
@@ -199,32 +192,46 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
             self.process_and_save(assets, self.output_file)
 
-    def _check_asset_access(self):
+    def _check_and_ensure_asset_access(self):
         """Check asset access.
 
-        If asset download is enabled and there are data connections, we forbid the export.
+        If there is a data connection, and that the format requires a data access, or that
+        with assets is passed, then output an error.
+
+        If not, if the format requires a data access, ensure that the assets are requested.
         """
-        if self.with_assets:
-            data_connections_gen = DataConnectionsQuery(self.auth.client)(
-                where=DataConnectionsWhere(project_id=self.project_id),
-                fields=["id"],
-                options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+        if self._has_data_connection():
+            data_conn_excp_str = (
+                "Export with download of assets is not allowed on projects with data connections"
             )
-            if len(list(data_connections_gen)) > 0:
-                if self.requires_asset_access:
-                    resolution_str = (
-                        "This export format requires accessing the image height and width."
-                    )
-                    exception_type = NotAccessibleAssetError
-                else:
-                    resolution_str = (
-                        "Please disable the download of assets by setting `with_assets=False`."
-                    )
-                    exception_type = NotCompatibleOptions
-                raise exception_type(
-                    "Export with download of assets is not allowed on projects with data"
-                    f" connections. {resolution_str}"
+            if self.requires_asset_access:
+                raise NotAccessibleAssetError(
+                    f"{data_conn_excp_str}. This export format requires accessing the image height"
+                    " and width."
                 )
+            if self.with_assets:
+                raise NotCompatibleOptions(
+                    f"{data_conn_excp_str}. Please disable the download of assets by setting"
+                    " `with_assets=False`."
+                )
+        else:
+            if self.requires_asset_access and not self.with_assets:
+                warnings.warn(
+                    (
+                        "For an export to this format, the download of assets cannot be disabled,"
+                        " so they will be downloaded anyway."
+                    ),
+                    stacklevel=2,
+                )
+                self.with_assets = True
+
+    def _has_data_connection(self) -> bool:
+        data_connections_gen = DataConnectionsQuery(self.auth.client)(
+            where=DataConnectionsWhere(project_id=self.project_id),
+            fields=["id"],
+            options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+        )
+        return len(list(data_connections_gen)) > 0
 
     @property
     def base_folder(self) -> Path:

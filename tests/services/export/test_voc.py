@@ -3,11 +3,7 @@ from pathlib import Path
 import pytest
 
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.services.export.exceptions import (
-    NotAccessibleAssetError,
-    NotCompatibleOptions,
-)
-from kili.services.export.format.kili import KiliExporter
+from kili.services.export.exceptions import NotAccessibleAssetError
 from kili.services.export.format.voc import _convert_from_kili_to_voc_format
 from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotation
 
