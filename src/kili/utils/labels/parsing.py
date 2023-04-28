@@ -11,9 +11,10 @@ class ParsedLabel(Dict):
     """Class that represents a parsed label."""
 
     def __init__(self, label: Dict, json_interface: Dict, input_type: InputType) -> None:
+        # pylint: disable=line-too-long
         """Class that represents a parsed label.
 
-        The class behaves like a dict but adds the attribute "jobs".
+        The class behaves like a dict but adds the attribute `.jobs`.
 
         The original input label passed to this class is not modified.
 
@@ -24,9 +25,10 @@ class ParsedLabel(Dict):
 
         !!! Example
             ```python
-            label = kili.labels(...)[0]
-            parsed_label = ParsedLabel(label, json_interface, input_type)
-            print(parsed_label.jobs["JOB_0"].category.name)
+            label = kili.labels("project_id", output_format="parsed_label")[0]  # label is a ParsedLabel object
+
+            # Access the job "JOB_0" data through the attribute ".jobs":
+            print(parsed_label.jobs["JOB_0"])
             ```
         """
         super().__init__(deepcopy(label))
@@ -38,7 +40,17 @@ class ParsedLabel(Dict):
         )
 
     def to_dict(self) -> Dict:
-        """Returns a copy of the parsed label as a dict."""
+        # pylint: disable=line-too-long
+        """Returns a copy of the parsed label as a dict.
+
+        !!! Example
+            ```python
+            label = kili.labels("project_id", output_format="parsed_label")[0]  # label is a ParsedLabel object
+
+            # Convert back to native Python dictionary
+            my_label_as_dict = label.to_dict()
+            ```
+        """
         ret = {k: deepcopy(v) for k, v in self.items() if k != "jsonResponse"}
         ret["jsonResponse"] = self.jobs.to_dict()
         return ret

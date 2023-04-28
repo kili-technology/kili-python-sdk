@@ -1,10 +1,14 @@
 # Label Utils module
 
-This module provides a set of helper functions to read, modify and create labels.
+This module provides a set of helpers to parse, read, modify and create labels.
 
-## Label Parsing
+## ParsedLabel
 
-::: kili.utils.labels.parsing
+::: kili.utils.labels.parsing.ParsedLabel
+    options:
+        members:
+            - to_dict
+            - "__init__"
 
 ## Points
 

@@ -38,6 +38,7 @@ def process_notebook(notebook_filename):
         "recipes/importing_labels.ipynb",
         "recipes/importing_video_assets.ipynb",
         "recipes/inference_labels.ipynb",
+        "recipes/label_parsing.ipynb",
         "recipes/medical_imaging.ipynb",
         # "recipes/ner_pre_annotations_openai.ipynb",
         "recipes/ocr_pre_annotations.ipynb",

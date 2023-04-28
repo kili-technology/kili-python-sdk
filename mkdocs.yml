@@ -44,6 +44,7 @@ nav:
           - Inference Labels: sdk/tutorials/inference_labels.md
       - Working with Labels:
           - Converting and Visualizing Segmentation Labels: sdk/tutorials/medical_imaging.md
+          - Parsing Labels: sdk/tutorials/label_parsing.md
       - Managing Workflows: sdk/tutorials/set_up_workflows.md
       - Exporting Project Data: sdk/tutorials/export_a_kili_project.md
       - Setting Up Plugins:
