@@ -648,6 +648,17 @@ def test_export_service_layout(
             },
             NoCompatibleJobError,
         ),
+        (
+            "When exporting, given an unexisting format, it throws an error",
+            {
+                "export_kwargs": {
+                    "project_id": "semantic_segmentation",
+                    "label_format": "notexisting",
+                    "split_option": "merged",
+                },
+            },
+            ValueError,
+        ),
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
