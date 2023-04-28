@@ -1,6 +1,12 @@
 from copy import deepcopy
 
-from kili.services.label_data_parsing.json_response import ParsedJobs
+from typing_extensions import assert_type
+
+from kili.services.label_data_parsing.json_response import (
+    FramesList,
+    JobPayload,
+    ParsedJobs,
+)
 from kili.services.label_data_parsing.label import ParsedLabel
 from kili.services.label_data_parsing.types import Project
 
@@ -699,10 +705,45 @@ def test_video_project_set_score():
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
-    assert len(parsed_label.frames) == 2
+    job_payload = parsed_label.jobs["JOB_0"]
+    assert_type(job_payload, JobPayload)
+    assert_type(job_payload.frames, FramesList)
 
-    frame = parsed_label.frames[1]
+    assert len(parsed_label.jobs["JOB_0"].frames) == 2
 
-    assert frame.jobs["JOB_0"].annotations[0].score is None
-    frame.jobs["JOB_0"].annotations[0].score = 42
-    assert frame.jobs["JOB_0"].annotations[0].score == 42
+    frame = parsed_label.jobs["JOB_0"].frames[1]
+
+    assert frame.annotations[0].score is None
+    frame.annotations[0].score = 42
+    assert frame.annotations[0].score == 42
+
+    label_as_dict = parsed_label.to_dict()
+    assert label_as_dict == {
+        "jsonResponse": {
+            "0": {},
+            "1": {
+                "JOB_0": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {"x": 0.3046607129483673, "y": 0.6337517633095981},
+                                        {"x": 0.3046607129483673, "y": 0.5534349836511678},
+                                        {"x": 0.3670709937679789, "y": 0.5534349836511678},
+                                        {"x": 0.3670709937679789, "y": 0.6337517633095981},
+                                    ]
+                                }
+                            ],
+                            "categories": [{"name": "OBJECT_B"}],
+                            "mid": "20230407140827577-43802",
+                            "type": "rectangle",
+                            "isKeyFrame": True,
+                            "score": 42,
+                        },
+                    ]
+                }
+            },
+        }
+    }
