@@ -14,7 +14,7 @@ def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
 
 
 def dict_type_check(dict_: Dict[str, Any], type_check):
-    """check if elements in row have correct type and return [row]"""
+    """Check if elements in row have correct type and return [row]"""
     warnings_message = ""
     for key, value in dict_.items():
         warnings_message += type_check(key, value)

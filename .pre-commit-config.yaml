@@ -6,7 +6,7 @@ repos:
       - id: trailing-whitespace
       - id: detect-private-key
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.2
+    rev: v1.6.4
     hooks:
       - id: docformatter
         args: [--in-place, --wrap-summaries=0, --wrap-descriptions=0]
@@ -28,7 +28,7 @@ repos:
           - flake8-bugbear>=20.0.0
           - flake8-unused-arguments
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.3.2
     hooks:
       - id: pyupgrade
         args: [--py37-plus]
@@ -41,6 +41,10 @@ repos:
           - --preserve-cell-metadata
           - tags
           - --
+  # - repo: https://github.com/nbQA-dev/nbQA  # to enable once we stop supporting Python 3.7
+  #   rev: 1.7.0
+  #   hooks:
+  #     - id: nbqa-isort
   - repo: local
     hooks:
       - id: clean-notebook-metadata

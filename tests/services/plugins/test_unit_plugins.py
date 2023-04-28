@@ -6,7 +6,12 @@ from zipfile import ZipFile
 
 import pytest
 
-from kili.services.plugins.upload import PluginUploader, check_file_contains_handler
+from kili.core.constants import mime_extensions_for_py_scripts
+from kili.services.plugins.upload import (
+    PluginUploader,
+    check_file_contains_handler,
+    check_file_mime_type,
+)
 from kili.utils.tempfile import TemporaryDirectory
 
 PLUGIN_NAME = "test_plugin"
@@ -15,6 +20,15 @@ PLUGIN_NAME = "test_plugin"
 @pytest.fixture
 def kili():
     return MagicMock()
+
+
+def test_invalid_mime_type():
+    plugin_path = Path(
+        os.path.join("tests", "services", "plugins", "plugin_folder", "requirements.txt")
+    )
+
+    mime_type = check_file_mime_type(plugin_path, mime_extensions_for_py_scripts)
+    assert mime_type is False
 
 
 def test_wrong_plugin_path(kili):

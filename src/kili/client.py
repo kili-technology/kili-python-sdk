@@ -60,7 +60,8 @@ class Kili(  # pylint: disable=too-many-ancestors
     def __init__(
         self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK
     ):
-        """
+        """Initialize Kili client.
+
         Args:
             api_key: User API key generated
                 from https://cloud.kili-technology.com/label/my-account/api-key
