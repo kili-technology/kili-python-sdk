@@ -1,10 +1,10 @@
 """My custom plugin for bills."""
-from typing import Dict
+from typing import Dict, List, Optional
 
 from kili.plugins import PluginCore
 
 
-def check_rules_on_label(label: Dict):
+def check_rules_on_label(label: Dict) -> List[Optional[str]]:
     # custom methods
     print("Custom method - checking number of bboxes")
 
@@ -32,12 +32,11 @@ class PluginHandler(PluginCore):
         if len(issues_array) > 0:
             print("Creating an issue...")
 
-            for i, _ in enumerate(issues_array):
-                self.kili.append_to_issues(
-                    label_id=label["id"],
-                    project_id=project_id,
-                    text=issues_array[i],
-                )
+            self.kili.create_issues(
+                project_id=project_id,
+                label_id_array=[label["id"]] * len(issues_array),
+                text_array=issues_array,
+            )
 
             print("Issue created!")
 

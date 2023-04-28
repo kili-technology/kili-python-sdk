@@ -18,12 +18,14 @@ class ProjectWhere(BaseQueryWhere):
         should_relaunch_kpi_computation: Optional[bool] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
+        archived: Optional[bool] = None,
     ):
         self.project_id = project_id
         self.search_query = search_query
         self.should_relaunch_kpi_computation = should_relaunch_kpi_computation
         self.updated_at_gte = updated_at_gte
         self.updated_at_lte = updated_at_lte
+        self.archived = archived
         super().__init__()
 
     def graphql_where_builder(self):
@@ -34,6 +36,7 @@ class ProjectWhere(BaseQueryWhere):
             "shouldRelaunchKpiComputation": self.should_relaunch_kpi_computation,
             "updatedAtGte": self.updated_at_gte,
             "updatedAtLte": self.updated_at_lte,
+            "archived": self.archived,
         }
 
 

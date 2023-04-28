@@ -135,10 +135,8 @@ def test_parse_labels_classification_to_dict():
 
 
 def test_parse_labels_classification_to_dict_classif_with_bbox():
-    """
-    Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
-    still allows to convert to dict and json
-    """
+    """Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
+    still allows to convert to dict and json."""
     vertices = [
         {"x": 0.5141441957015471, "y": 0.6164292619007603},
         {"x": 0.5141441957015471, "y": 0.367821056372058},
@@ -244,8 +242,3 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
 
     for original_label, parsed_label in zip(labels, labels_modified):
         assert original_label == parsed_label
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_parse_labels_video_frame_to_dict():
-    pass  # TODO

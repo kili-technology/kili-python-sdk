@@ -230,7 +230,7 @@ class PluginUploader:
         return upload_url
 
     def _create_zip(self, tmp_directory: Path):
-        """Create a zip file from python file and requirements.txt
+        """Create a zip file from python file and requirements.txt.
 
         (if user has defined a path to a requirements.txt)
         """

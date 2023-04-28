@@ -21,7 +21,8 @@ class AssetWhere(BaseQueryWhere):
         asset_id_in: Optional[List[str]] = None,
         consensus_mark_gte: Optional[float] = None,
         consensus_mark_lte: Optional[float] = None,
-        external_id_contains: Optional[List[str]] = None,
+        external_id_strictly_in: Optional[List[str]] = None,
+        external_id_in: Optional[List[str]] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
         label_author_in: Optional[List[str]] = None,
@@ -52,7 +53,8 @@ class AssetWhere(BaseQueryWhere):
         self.asset_id_in = asset_id_in
         self.consensus_mark_gte = consensus_mark_gte
         self.consensus_mark_lte = consensus_mark_lte
-        self.external_id_contains = external_id_contains
+        self.external_id_strictly_in = external_id_strictly_in
+        self.external_id_in = external_id_in
         self.honeypot_mark_gte = honeypot_mark_gte
         self.honeypot_mark_lte = honeypot_mark_lte
         self.label_author_in = label_author_in
@@ -86,7 +88,8 @@ class AssetWhere(BaseQueryWhere):
             "project": {
                 "id": self.project_id,
             },
-            "externalIdStrictlyIn": self.external_id_contains,
+            "externalIdStrictlyIn": self.external_id_strictly_in,
+            "externalIdIn": self.external_id_in,
             "statusIn": self.status_in,
             "consensusMarkGte": self.consensus_mark_gte,
             "consensusMarkLte": self.consensus_mark_lte,

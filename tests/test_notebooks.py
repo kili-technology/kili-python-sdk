@@ -35,6 +35,7 @@ def process_notebook(notebook_filename):
         "recipes/frame_dicom_data.ipynb",
         "recipes/import_text_assets.ipynb",
         "recipes/importing_assets_and_labels.ipynb",
+        "recipes/importing_labels.ipynb",
         "recipes/importing_video_assets.ipynb",
         "recipes/inference_labels.ipynb",
         "recipes/medical_imaging.ipynb",

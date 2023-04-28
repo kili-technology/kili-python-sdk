@@ -3,10 +3,9 @@
 from copy import deepcopy
 from typing import Dict
 
-from kili.core.enums import InputType
 from kili.services.label_data_parsing import json_response as json_response_module
 
-from .types import Project
+from .types import InputType, Project
 
 
 class ParsedLabel(Dict):
@@ -28,7 +27,7 @@ class ParsedLabel(Dict):
             ```python
             label = kili.labels(...)[0]
             parsed_label = ParsedLabel(label, json_interface, input_type)
-            print(parsed_label.jobs["JOB_0"].category.name)  # "A"
+            print(parsed_label.jobs["JOB_0"].category.name)
             ```
         """
         super().__init__(deepcopy(label))
@@ -44,3 +43,11 @@ class ParsedLabel(Dict):
         ret = {k: deepcopy(v) for k, v in self.items() if k != "jsonResponse"}
         ret["jsonResponse"] = self.jobs.to_dict()
         return ret
+
+    def __repr__(self) -> str:
+        """Returns the representation of the object."""
+        return repr(self.to_dict())
+
+    def __str__(self) -> str:
+        """Returns the string representation of the object."""
+        return str(self.to_dict())

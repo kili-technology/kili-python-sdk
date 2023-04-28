@@ -20,3 +20,13 @@ class AttributeNotCompatibleWithJobError(Exception):
 
 class InvalidMutationError(Exception):
     """Raised when the mutation is invalid."""
+
+
+class FrameIndexError(Exception):
+    """Raised when the frame index is invalid."""
+
+    def __init__(self, frame_index: int, nb_frames: int) -> None:
+        """Init."""
+        super().__init__(
+            f"Frame index {frame_index} out of range for frame list of size {nb_frames}."
+        )

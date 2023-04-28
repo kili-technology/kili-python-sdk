@@ -1,4 +1,5 @@
 """API authentication module."""
+import os
 import warnings
 from datetime import datetime, timedelta
 from typing import Dict
@@ -23,12 +24,23 @@ class KiliAuth:
     def __init__(
         self, api_key: str, api_endpoint: str, client_name: GraphQLClientName, verify=True
     ) -> None:
+        """Initialize KiliAuth.
+
+        Args:
+            api_key: Kili API key.
+            api_endpoint: Kili API endpoint.
+            client_name: Name of the client.
+            verify: Whether to verify the SSL certificate.
+        """
         self.api_key = api_key
         self.api_endpoint = api_endpoint
         self.client_name = client_name
         self.verify = verify
 
-        self.check_api_key_valid()
+        skip_checks = os.environ.get("KILI_SDK_SKIP_CHECKS", None) is not None
+
+        if not skip_checks:
+            self.check_api_key_valid()
 
         self.client = GraphQLClient(
             endpoint=api_endpoint,
@@ -37,11 +49,8 @@ class KiliAuth:
             verify=self.verify,
         )
 
-        self.check_expiry_of_key_is_close()
-
-        user = self.get_user()
-        self.user_id = user["id"]
-        self.user_email = user["email"]
+        if not skip_checks:
+            self.check_expiry_of_key_is_close()
 
     def check_api_key_valid(self) -> None:
         """Check that the api_key provided is valid."""

@@ -91,7 +91,7 @@ def _build_id_map(auth, asset_external_ids, project_id):
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
         assets_generators.append(
             AssetQuery(auth.client)(
-                AssetWhere(project_id, external_id_contains=external_ids_batch),
+                AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),
             )

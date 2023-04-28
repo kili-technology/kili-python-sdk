@@ -40,7 +40,7 @@ def kili() -> Kili:
 
 @pytest.fixture()
 def src_project_image(kili):
-    """create image project with token protected url."""
+    """Create image project with token protected url."""
     interface = {
         "jobs": {
             "DETECTION": {

@@ -16,8 +16,9 @@ class PluginCore:
 
     Implements:
 
-        on_submit(self, label: Label, asset_id: str)
-        on_review(self, label: Label, asset_id: str)
+        on_submit(self, label: Dict, asset_id: str)
+        on_review(self, label: Dict, asset_id: str)
+        on_custom_interface_click(self, label: Dict, asset_id: str):
 
     # Warning : if using a custom init, be sure to call super().__init__()
     """
@@ -53,7 +54,7 @@ class PluginCore:
 
         Example use:
 
-            >>> def on_submit(self, label: Label, asset_id: str):
+            >>> def on_submit(self, label: Dict, asset_id: str):
             >>>     json_response = label.get('jsonResponse')
             >>>     if label_is_respecting_business_rule(json_response):
             >>>         return
@@ -83,7 +84,7 @@ class PluginCore:
 
         Example use:
 
-            >>> def on_review(self, label: Label, asset_id: str):
+            >>> def on_review(self, label: Dict, asset_id: str):
             >>>     json_response = label.get('jsonResponse')
             >>>     if label_is_respecting_business_rule(json_response):
             >>>         return
@@ -102,11 +103,27 @@ class PluginCore:
         """Handler for the custom interface click action.
 
         **Warning**: This handler is in beta and is still in active development,
-        so it should not be used.
+        it should be used with caution.
 
         Args:
-            label: label submitted to Kili
+            label: Label submitted to Kili: a dictionary containing the following fields:
+                `id`, `jsonResponse`.
             asset_id: id of the asset on which the action is called
+
+        Example use:
+
+            >>> def on_custom_interface_click(self, label: Dict, asset_id: str):
+            >>>     json_response = label.get('jsonResponse')`
+            >>>     label_id = label.get('id')
+            >>>     issue = label_is_respecting_business_rule(json_response)
+            >>>     if !issue:
+            >>>         return
+            >>>     else:
+            >>>         self.kili.create_issues(
+                            project_id=self.project_id,
+                            label_id_array=[label_id],
+                            text_array=[issue]
+                        )
         """
         # pylint: disable=unused-argument
         self.logger.warning("Handler is in active development.")

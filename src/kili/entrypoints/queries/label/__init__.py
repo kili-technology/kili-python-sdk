@@ -660,7 +660,8 @@ class QueriesLabel:
 
                 - `consensus_mark_gte`
                 - `consensus_mark_lte`
-                - `external_id_contains`
+                - `external_id_strictly_in`
+                - `external_id_in`
                 - `honeypot_mark_gte`
                 - `honeypot_mark_lte`
                 - `label_author_in`

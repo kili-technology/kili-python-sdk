@@ -1,5 +1,4 @@
 # pylint: disable:invalid-name,too-many-instance-attributes
-
 """GraphQL types."""
 
 from typing import Dict, List

@@ -157,7 +157,9 @@ class MutationsLabel:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
         """
         if author_id is None:
-            author_id = self.auth.user_id
+            user = self.auth.get_user()
+            author_id = user["id"]
+
         check_asset_identifier_arguments(
             project_id,
             [label_asset_id] if label_asset_id else None,
