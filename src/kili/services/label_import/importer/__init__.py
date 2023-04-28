@@ -11,6 +11,7 @@ import yaml
 from kili.core.authentication import KiliAuth
 from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.core.helpers import format_result, get_file_paths_to_upload
+from kili.core.utils import pagination
 from kili.orm import Label
 from kili.services.helpers import (
     get_external_id_from_file_path,
@@ -28,7 +29,7 @@ from kili.services.label_import.parser import (
 )
 from kili.services.label_import.types import Classes, LabelFormat
 from kili.services.types import LabelType, LogLevel, ProjectId
-from kili.utils import pagination, tqdm
+from kili.utils import tqdm
 
 
 class LoggerParams(NamedTuple):

@@ -6,13 +6,13 @@ from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.utils import pagination
 from kili.exceptions import NotFound
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
 )
 from kili.services.project import get_project_field
-from kili.utils import pagination
 
 PathLike = TypeVar("PathLike", Path, str)
 

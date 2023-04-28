@@ -201,11 +201,10 @@ class YoloExporter(AbstractExporter):
                 or job.get("isModel")
             ):
                 continue
-            for category in job.get("content", {}).get("categories", {}):
+            for cat_number, category in enumerate(job.get("content", {}).get("categories", {})):
                 merged_categories_id[get_category_full_name(job_id, category)] = JobCategory(
                     category_name=category, id=cat_number, job_id=job_id
                 )
-                cat_number += 1
 
         return merged_categories_id
 
