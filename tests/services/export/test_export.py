@@ -770,33 +770,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
 def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it_should_crash(
     mocker,
 ):
-    get_project_return_val = {
-        "jsonInterface": {
-            "jobs": {
-                "JOB": {
-                    "tools": ["rectangle"],
-                    "mlTask": "OBJECT_DETECTION",
-                    "content": {"categories": ["CLASS_A", "CLASS_B"]},
-                }
-            }
-        },
-        "inputType": "IMAGE",
-        "title": "",
-    }
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
-    mocker.patch(
-        "kili.services.export.format.base.DataConnectionsQuery.__call__",
-        return_value=(i for i in [{"id": "fake_data_connection_id"}]),
-    )
-
-    kili = QueriesLabel(auth=mocker.MagicMock())
+    kili = mock_kili(mocker, with_data_connection=True)
 
     with pytest.raises(
         NotCompatibleOptions,
@@ -812,4 +786,63 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
             fmt="yolo_v5",
             layout="merged",
             with_assets=True,
+        )
+
+
+def mock_kili(mocker, with_data_connection):
+    get_project_return_val = {
+        "jsonInterface": {
+            "jobs": {
+                "JOB": {
+                    "tools": ["rectangle"],
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {
+                        "categories": {
+                            "CLASS_A": {"name": "class A"},
+                            "CLASS_B": {"name": "class B"},
+                        }
+                    },
+                }
+            }
+        },
+        "inputType": "IMAGE",
+        "title": "",
+        "description": "This is a mocked project",
+    }
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
+        return_value=(i for i in [get_project_return_val]),
+    )
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    if with_data_connection:
+        mocker.patch(
+            "kili.services.export.format.base.DataConnectionsQuery.__call__",
+            return_value=(i for i in [{"id": "fake_data_connection_id"}]),
+        )
+
+    kili = QueriesLabel(auth=mocker.MagicMock())
+    return kili
+
+
+def test_when_exporting_without_assets_given_a_project_that_needs_them_it_should_issue_a_warning_and_ensure(
+    mocker,
+):
+    kili = mock_kili(mocker, with_data_connection=False)
+
+    with pytest.warns(
+        UserWarning,
+        match=(
+            "For an export to this format, the download of assets cannot be disabled,"
+            " so they will be downloaded anyway."
+        ),
+    ):
+        kili.export_labels(
+            project_id="fake_proj_id",
+            filename="fake_filename",
+            fmt="coco",
+            layout="merged",
+            with_assets=False,
         )
