@@ -8,14 +8,19 @@ import pytest
 import requests
 from PIL import Image
 
+from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
-from kili.services.export.exceptions import NoCompatibleJobError
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotAccessibleAssetError,
+)
 from kili.services.export.format.coco import (
     CocoExporter,
     _convert_kili_semantic_to_coco,
     _get_coco_categories_with_mapping,
     _get_coco_geometry_from_kili_bpoly,
 )
+from kili.services.export.format.kili import KiliExporter
 from kili.services.types import Job, JobName
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -292,7 +297,7 @@ def test__get_coco_image_annotations_without_annotation():
 )
 @patch.object(CocoExporter, "__init__", lambda x: None)
 def test__check_project_compatibility(jobs, expected_error):
-    exporter = CocoExporter()
+    exporter = CocoExporter()  # type: ignore
     exporter.project_input_type = "IMAGE"
     exporter.project_json_interface = {"jobs": jobs}
     if expected_error:
@@ -566,4 +571,43 @@ def test_coco_export_with_multi_jobs():
         assert (
             categories_by_id[coco_annotation["annotations"][1]["category_id"]]
             == "MAIN_JOB/SPAGHETTIS"
+        )
+
+
+def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_should_crash(mocker):
+    get_project_return_val = {
+        "jsonInterface": {"jobs": {"JOB": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"}}},
+        "inputType": "IMAGE",
+        "title": "",
+    }
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
+        return_value=(i for i in [get_project_return_val]),
+    )
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
+    mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
+    mocker.patch(
+        "kili.services.export.format.base.DataConnectionsQuery.__call__",
+        return_value=(i for i in [{"id": "fake_data_connection_id"}]),
+    )
+
+    kili = QueriesLabel(auth=mocker.MagicMock())
+
+    with pytest.raises(
+        NotAccessibleAssetError,
+        match=(
+            "Export with download of assets is not allowed on projects with data"
+            " connections. This export format requires accessing the image height and width."
+        ),
+    ):
+        kili.export_labels(
+            project_id="fake_proj_id",
+            filename="fake_filename",
+            fmt="coco",
+            layout="merged",
+            with_assets=False,
         )
