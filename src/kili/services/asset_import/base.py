@@ -2,6 +2,7 @@
 import logging
 import mimetypes
 import os
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from pathlib import Path
@@ -24,6 +25,7 @@ from kili.core.graphql.operations.organization.queries import (
     OrganizationWhere,
 )
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
+from kili.core.utils import pagination
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
@@ -36,7 +38,7 @@ from kili.services.asset_import.exceptions import (
     UploadFromLocalDataForbiddenError,
 )
 from kili.services.asset_import.types import AssetLike, KiliResolverAsset
-from kili.utils import bucket, pagination
+from kili.utils import bucket
 from kili.utils.tqdm import tqdm
 
 
@@ -426,6 +428,15 @@ class BaseAssetImporter:
         if len(filtered_assets) == 0:
             raise ImportValidationError(
                 "No assets to import, all given external_ids already exist in the project"
+            )
+        nb_duplicate_assets = len(assets) - len(filtered_assets)
+        if nb_duplicate_assets > 0:
+            warnings.warn(
+                (
+                    f"{nb_duplicate_assets} assets were not imported because their external_id are"
+                    " already in the project"
+                ),
+                stacklevel=2,
             )
         return filtered_assets
 

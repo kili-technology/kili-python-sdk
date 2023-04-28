@@ -958,31 +958,31 @@ def test_video_project_classification():
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
-    assert len(parsed_label.frames) == 9
-    assert not hasattr(parsed_label, "jobs")
+    assert len(parsed_label.jobs["FRAME_CLASSIF_JOB"].frames) == 9
+    assert not hasattr(parsed_label, "frames")
 
-    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].is_key_frame is True
-    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_A"
-    assert parsed_label.frames[5].jobs["FRAME_CLASSIF_JOB"].category.confidence == 100
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].is_key_frame is True
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].category.name == "OBJECT_A"
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].category.confidence == 100
 
-    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].is_key_frame is False
-    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].category.name == "OBJECT_B"
-    assert parsed_label.frames[6].jobs["FRAME_CLASSIF_JOB"].category.confidence == 42
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].is_key_frame is False
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].category.name == "OBJECT_B"
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].category.confidence == 42
 
-    for i, frame in enumerate(parsed_label.frames):
+    for i, frame in enumerate(parsed_label.jobs["FRAME_CLASSIF_JOB"].frames):
         if i == 5:
-            frame.jobs["FRAME_CLASSIF_JOB"].category.name = "OBJECT_A"
-            frame.jobs["FRAME_CLASSIF_JOB"].category.confidence = 100
+            frame.category.name = "OBJECT_A"
+            frame.category.confidence = 100
         elif i == 6:
-            frame.jobs["FRAME_CLASSIF_JOB"].category.name = "OBJECT_B"
-            frame.jobs["FRAME_CLASSIF_JOB"].category.confidence = 42
+            frame.category.name = "OBJECT_B"
+            frame.category.confidence = 42
 
-    assert parsed_label.frames[0].to_dict() == {}
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[0].to_dict() == {}
 
     with pytest.raises(
         FrameIndexError, match="Frame index 999999999 out of range for frame list of size 9."
     ):
-        _ = parsed_label.frames[999999999]
+        _ = parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[999999999]
 
     assert parsed_label.to_dict() == label
 
@@ -1098,17 +1098,17 @@ def test_video_project_object_detection():
 
     parsed_label = ParsedLabel(label=label, json_interface=json_interface, input_type="VIDEO")
 
-    assert len(parsed_label.frames) == 2
+    assert len(parsed_label.jobs["JOB_0"].frames) == 2
 
-    frame = parsed_label.frames[1]
+    frame = parsed_label.jobs["JOB_0"].frames[1]
 
-    first_annotation = frame.jobs["JOB_0"].annotations[0]
+    first_annotation = frame.annotations[0]
     assert first_annotation.category.name == "OBJECT_B"
     assert first_annotation.type == "rectangle"
     assert first_annotation.is_key_frame is True
     assert len(first_annotation.bounding_poly) == 1
 
-    second_annotation = frame.jobs["JOB_0"].annotations[1]
+    second_annotation = frame.annotations[1]
     assert second_annotation.category.name == "OBJECT_A"
     assert second_annotation.type == "rectangle"
     assert second_annotation.is_key_frame is False

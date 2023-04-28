@@ -12,6 +12,7 @@ from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import format_result, is_empty_list_with_warning
+from kili.core.utils.pagination import _mutate_from_paginated_call
 from kili.entrypoints.mutations.asset.helpers import (
     process_update_properties_in_assets_parameters,
 )
@@ -25,7 +26,6 @@ from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.utils.logcontext import for_all_methods, log_call
-from kili.utils.pagination import _mutate_from_paginated_call
 
 from ..exceptions import MutationError
 from .helpers import get_asset_ids_or_throw_error

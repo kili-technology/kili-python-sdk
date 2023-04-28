@@ -15,7 +15,7 @@ from kili.entrypoints.cli.project.describe import describe_project
 from kili.entrypoints.cli.project.export import export_labels
 from kili.entrypoints.cli.project.import_ import import_assets
 from kili.entrypoints.cli.project.list_ import list_projects
-from tests.utils import debug_subprocess_pytest
+from tests.helpers import debug_subprocess_pytest
 
 from .mocks.assets import mocked__project_assets
 from .mocks.projects import mocked__ProjectQuery

@@ -85,9 +85,10 @@ class MutationsDataConnection:
         cloud_storage_connection_id: str,
         delete_extraneous_files: bool = False,
     ) -> Dict:
+        # pylint: disable=line-too-long
         """Synchronize a cloud storage connection.
 
-        This method will compute differences between the cloud storage connection and the project
+        This method will compute differences between the cloud storage connection and the project,
             and then validate the differences.
 
         If `delete_extraneous_files` is True, it will also delete files that are not in the
@@ -99,6 +100,11 @@ class MutationsDataConnection:
 
         Returns:
             A dict with the DataConnection ID.
+
+        !!! warning "Azure Blob Storage"
+            This method currently does not work for Azure cloud storage connection using credentials mode.
+            Use service account mode instead or use the Kili app to synchronize the data connection.
+            More information in the [documentation](https://docs.kili-technology.com/docs/creating-an-azure-blob-storage-integration#service-creds).
         """
         return services.synchronize_data_connection(
             self.auth, cloud_storage_connection_id, delete_extraneous_files

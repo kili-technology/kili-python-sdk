@@ -96,6 +96,8 @@ class QueriesAsset:
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        external_id_strictly_in: Optional[List[str]] = None,
+        external_id_in: Optional[List[str]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -165,6 +167,8 @@ class QueriesAsset:
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        external_id_strictly_in: Optional[List[str]] = None,
+        external_id_in: Optional[List[str]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -234,6 +238,8 @@ class QueriesAsset:
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        external_id_strictly_in: Optional[List[str]] = None,
+        external_id_in: Optional[List[str]] = None,
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[Dict], pd.DataFrame]:
@@ -250,7 +256,7 @@ class QueriesAsset:
             first: Maximum number of assets to return.
             consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
             consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
-            external_id_contains: Returned assets have an external id that belongs to that list, if given.
+            external_id_contains: Deprecated. Use `external_id_strictly_in` instead.
             metadata_where: Filters by the values of the metadata of the asset.
             honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
             honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
@@ -291,6 +297,9 @@ class QueriesAsset:
             label_honeypot_mark_lte: Returned assets should have a label whose honeypot is lower or equal to this number.
             issue_type: Returned assets should have issues of type `QUESTION` or `ISSUE`.
             issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.
+            external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
+            external_id_in: Returned assets should have external ids that partially match the ones in the list.
+                For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -343,6 +352,13 @@ class QueriesAsset:
         if label_category_search:
             validate_category_search_query(label_category_search)
 
+        if external_id_contains is not None:
+            warnings.warn(
+                "external_id_contains is deprecated, use external_id_strictly_in instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         for arg_name, arg_value in zip(
             (
                 "consensus_mark_gt",
@@ -385,7 +401,8 @@ class QueriesAsset:
             asset_id_in=asset_id_in,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
-            external_id_contains=external_id_contains,
+            external_id_strictly_in=external_id_strictly_in or external_id_contains,
+            external_id_in=external_id_in,
             honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,
@@ -467,6 +484,8 @@ class QueriesAsset:
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        external_id_strictly_in: Optional[List[str]] = None,
+        external_id_in: Optional[List[str]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -477,7 +496,7 @@ class QueriesAsset:
             project_id: Identifier of the project
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
-            external_id_contains: Returned assets should have an external id that belongs to that list, if given.
+            external_id_contains: Deprecated. Use `external_id_strictly_in` instead.
             metadata_where: Filters by the values of the metadata of the asset.
             status_in: Returned assets should have a status that belongs to that list, if given. Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
             consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
@@ -514,6 +533,9 @@ class QueriesAsset:
             label_honeypot_mark_lte: Returned assets should have a label whose honeypot is lower or equal to this number.
             issue_type: Returned assets should have issues of type `QUESTION` or `ISSUE`.
             issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.
+            external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
+            external_id_in: Returned assets should have external ids that partially match the ones in the list.
+                For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -538,6 +560,13 @@ class QueriesAsset:
         """
         if label_category_search:
             validate_category_search_query(label_category_search)
+
+        if external_id_contains is not None:
+            warnings.warn(
+                "external_id_contains is deprecated, use external_id_strictly_in instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
 
         for arg_name, arg_value in zip(
             (
@@ -581,7 +610,8 @@ class QueriesAsset:
             asset_id_in=asset_id_in,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
-            external_id_contains=external_id_contains,
+            external_id_strictly_in=external_id_strictly_in or external_id_contains,
+            external_id_in=external_id_in,
             honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,

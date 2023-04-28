@@ -6,13 +6,13 @@ from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.core.utils import pagination
 from kili.exceptions import NotFound
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
 )
 from kili.services.project import get_project_field
-from kili.utils import pagination
 
 PathLike = TypeVar("PathLike", Path, str)
 
@@ -91,7 +91,7 @@ def _build_id_map(auth, asset_external_ids, project_id):
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
         assets_generators.append(
             AssetQuery(auth.client)(
-                AssetWhere(project_id, external_id_contains=external_ids_batch),
+                AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),
             )
