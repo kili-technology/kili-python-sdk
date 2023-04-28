@@ -70,7 +70,6 @@ class burstthrottle:
         return wrapper
 
 
-@burstthrottle(max_hits=BURST_THROTTLE_MAX_HITS, minutes=BURST_THROTTLE_MINUTES)
 def mocked_query_method(query, payload):
     """Simulates a query result by returning a list of ids."""
     skip = payload["skip"]
@@ -94,7 +93,6 @@ def throttling_mocked_query_method(query, payload):
     return res
 
 
-@burstthrottle(max_hits=BURST_THROTTLE_MAX_HITS, minutes=BURST_THROTTLE_MINUTES)
 def mocked_count_method(*_):
     """Simulates a count query."""
     return COUNT_SAMPLE_MAX
