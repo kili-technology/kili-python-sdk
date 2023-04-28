@@ -292,6 +292,8 @@ def test_integration_of_label_parsing_in_kili_labels(mocker):
     kili = QueriesLabel(auth=mocker_auth)
     labels = kili.labels(project_id="project_id", output_format="parsed_label")
 
+    assert_type(labels, List[ParsedLabel])
+
     assert isinstance(labels, List)
     assert all(isinstance(label, ParsedLabel) for label in labels)
     assert len(labels) == 1
