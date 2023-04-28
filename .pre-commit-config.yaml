@@ -6,10 +6,10 @@ repos:
       - id: trailing-whitespace
       - id: detect-private-key
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.4
+    rev: v1.7.0-rc1
     hooks:
       - id: docformatter
-        args: [--in-place, --wrap-summaries=0, --wrap-descriptions=0]
+        args: [--in-place, --wrap-summaries=0, --wrap-descriptions=0, --black]
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
