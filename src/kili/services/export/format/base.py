@@ -4,6 +4,7 @@ import csv
 import json
 import logging
 import shutil
+import warnings
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
@@ -85,6 +86,13 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.project_json_interface = project_info["jsonInterface"]
         self.project_input_type = project_info["inputType"]
         self.project_title = project_info["title"]
+
+        if self.requires_asset_access and not self.with_assets:
+            warnings.warn(
+                "For an export this format, the download of assets cannot be disabled.",
+                stacklevel=2,
+            )
+            self.with_assets = True
 
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
