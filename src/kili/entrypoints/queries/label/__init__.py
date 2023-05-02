@@ -240,7 +240,7 @@ class QueriesLabel:
             as_generator: If `True`, a generator on the labels is returned.
             category_search: Query to filter labels based on the content of their jsonResponse.
             output_format: If `dict`, the output is an iterable of Python dictionaries.
-                If `parsed_label`, the output is an iterable of parsed labels objects.
+                If `parsed_label`, the output is an iterable of parsed labels objects. More information on parsed labels in the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
