@@ -83,7 +83,7 @@ The keys are the names of the jobs, and the values are the parsed job responses.
 
 Let's create a simple Kili project to illustrate this.
 
-## Classification job
+## Classification jobs
 
 We define a json interface for a two classification jobs:
 
@@ -191,10 +191,10 @@ labels = kili.labels(project_id, output_format="parsed_label")
 
 
 ```python
-print(len(labels))
+print(f"This project contains {len(labels)} labels.")
 ```
 
-    3
+    This project contains 3 labels.
 
 
 
@@ -313,7 +313,17 @@ print(type(label_as_dict))
     <class 'dict'>
 
 
-## Transcription job
+## ParsedLabel integration to kili.labels()
+
+The `kili.labels()` method has an `output_format` argument that allows to automatically parse the labels:
+
+```python
+labels = kili.labels(project_id=project_id, output_format='parsed_label')  # labels is a list of ParsedLabel
+
+labels[0].jobs["MY_JOB_NAME"]...
+```
+
+## Transcription jobs
 
 For a transcription job, the `.text` allows to access the label data:
 
@@ -341,9 +351,9 @@ print(label.jobs["TRANSCRIPTION_JOB"].text)
     This is a transcription annotation...
 
 
-## Object detection job
+## Object detection jobs
 
-For object detection jobs, a parsed label has a `.annotations` attribute:
+For object detection jobs, a parsed label has an `.annotations` attribute:
 
 
 ```python
@@ -435,7 +445,7 @@ print(
     True
 
 
-## Point detection job
+## Point detection jobs
 
 The point coordinates of a point detection label is accessible through the `.point` attribute:
 
@@ -513,7 +523,7 @@ print(label.jobs["OBJECT_DETECTION_JOB"].annotations[1].category.name)
     B
 
 
-## Line detection job
+## Line detection jobs
 
 A polyline parsed label has a `.polyline` attribute.
 
@@ -595,7 +605,7 @@ print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].polyline)
     [{'x': 0.59, 'y': 0.4}, {'x': 0.25, 'y': 0.3}]
 
 
-## Video job
+## Video jobs
 
 A video label has an additional attribute `.frames` that returns the annotations for each frame.
 
@@ -751,7 +761,7 @@ print(label.jobs["JOB_0"].frames[1].annotations[0].category.name)
     OBJECT_B
 
 
-## Named entities recognition job
+## Named entities recognition jobs
 
 For NER jobs, the content of the job reponse is a list of annotations.
 
@@ -851,7 +861,11 @@ for annotation in label.jobs["NER_JOB"].annotations:
     {'categories': [{'name': 'PERSON', 'confidence': 100}], 'beginOffset': 8, 'content': "this is Toto's text", 'mid': 'mid_b'}
 
 
-## Named entities recognition in PDF job
+## Named entities recognition in PDF jobs
+
+A NER in PDFs parsed label has a few additional attributes such as `.page_number_array` and `.polys`.
+
+The description of those attributes can be found in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
 
 
 ```python
@@ -1014,9 +1028,13 @@ print(first_ann.annotations[0].bounding_poly)
     [{'normalizedVertices': [[{'x': 0.46269795405629893, 'y': 0.26256487006078677}, {'x': 0.46269795405629893, 'y': 0.278286415605941}, {'x': 0.602529939052542, 'y': 0.26256487006078677}, {'x': 0.602529939052542, 'y': 0.278286415605941}]]}]
 
 
-## Relation job
+## Relation jobs
 
-### Named entities relation job
+A relation job is a job that links two annotations together. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/json-named_entities_relation-jobs).
+
+### Named entities relation jobs
+
+A NER relation parsed label has the `.start_entities` and `.end_entities` attributes.
 
 
 ```python
@@ -1148,7 +1166,9 @@ print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].end_entities)
 
 We can see that the relation annotation above refers to the entity annotations using their unique IDs.
 
-### Object detection relation job
+### Object detection relation jobs
+
+For object detection relation jobs, the relation data is accessible through the `.start_objects` and `.end_objects` attributes.
 
 
 ```python
@@ -1277,7 +1297,12 @@ print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].end_objects)
     [{'mid': '20230502102129606-15732'}]
 
 
-## Pose estimation job
+## Pose estimation jobs
+
+
+```python
+# TODO!
+```
 
 ## Children jobs
 

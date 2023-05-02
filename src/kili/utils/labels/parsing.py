@@ -30,6 +30,9 @@ class ParsedLabel(Dict):
             # Access the job "JOB_0" data through the attribute ".jobs":
             print(parsed_label.jobs["JOB_0"])
             ```
+
+        !!! info
+            More information about the label parsing can be found in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
         """
         label_copy = deepcopy(label)
         json_response = label_copy.pop("jsonResponse", {})

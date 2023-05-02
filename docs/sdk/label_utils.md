@@ -1,6 +1,6 @@
 # Label Utils module
 
-This module provides a set of helpers to parse, read, modify and create labels.
+This module `kili.utils.labels` provides a set of helpers to parse, read, modify and create labels.
 
 ## ParsedLabel
 
