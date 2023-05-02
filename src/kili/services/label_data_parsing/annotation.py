@@ -61,7 +61,7 @@ class _BaseAnnotation:
                 for point in self._json_data["points"]
             ]
         if self._json_data.get("children"):
-            self.children = self._json_data["children"]
+            self.children = self._json_data["children"]  # call children setter
 
     def __str__(self) -> str:
         return str(self._json_data)

@@ -1299,10 +1299,336 @@ print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].end_objects)
 
 ## Pose estimation jobs
 
+A pose estimation parsed label annotation has a `.points` attribute that returns a list of the points composing the annotated object.
+
+Read more about pose estimation json response in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#pose-estimation).
+
 
 ```python
-# TODO!
+json_interface = {
+    "jobs": {
+        "JOB_0": {
+            "content": {
+                "categories": {
+                    "HEAD": {
+                        "children": [],
+                        "name": "Head",
+                        "color": "#733AFB",
+                        "points": [
+                            {"code": "RIGHT_EARBASE", "name": "Right earbase"},
+                            {"code": "RIGHT_EYE", "name": "Right eye"},
+                            {"code": "NOSE", "name": "Nose"},
+                            {"code": "LEFT_EYE", "name": "Left eye"},
+                            {"code": "LEFT_EARBASE", "name": "Left earbase"},
+                        ],
+                    },
+                    "BODY": {
+                        "children": [],
+                        "name": "Body",
+                        "color": "#3CD876",
+                        "points": [
+                            {"code": "THROAT", "name": "Throat"},
+                            {"code": "WITHERS", "name": "Withers"},
+                            {"code": "TAILBASE", "name": "Tailbase"},
+                        ],
+                    },
+                    "FRONT_RIGHT_LEG": {
+                        "children": [],
+                        "name": "Front right leg",
+                        "color": "#3BCADB",
+                        "points": [
+                            {"code": "PAW", "name": "Paw"},
+                            {"code": "KNEE", "name": "Knee"},
+                            {"code": "ELBOW", "name": "Elbow"},
+                        ],
+                    },
+                    "FRONT_LEFT_LEG": {
+                        "children": [],
+                        "name": "Front left leg",
+                        "color": "#199CFC",
+                        "points": [
+                            {"code": "PAW", "name": "Paw"},
+                            {"code": "KNEE", "name": "Knee"},
+                            {"code": "ELBOW", "name": "Elbow"},
+                        ],
+                    },
+                    "BACK_RIGHT_LEG": {
+                        "children": [],
+                        "name": "Back right leg",
+                        "color": "#FA484A",
+                        "points": [
+                            {"code": "PAW", "name": "Paw"},
+                            {"code": "KNEE", "name": "Knee"},
+                            {"code": "ELBOW", "name": "Elbow"},
+                        ],
+                    },
+                    "BACK_LEFT_LEG": {
+                        "children": [],
+                        "name": "Back left leg",
+                        "color": "#ECB82A",
+                        "points": [
+                            {"code": "PAW", "name": "Paw"},
+                            {"code": "KNEE", "name": "Knee"},
+                            {"code": "ELBOW", "name": "Elbow"},
+                        ],
+                    },
+                },
+                "input": "radio",
+            },
+            "instruction": "Body parts from the animal point of view",
+            "isChild": False,
+            "tools": ["pose"],
+            "mlTask": "OBJECT_DETECTION",
+            "models": {},
+            "isVisible": True,
+            "required": 0,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"name": "HEAD"}],
+                    "children": {},
+                    "mid": "20230220175803297-40094",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "RIGHT_EARBASE",
+                            "mid": "20230220170039711-76095",
+                            "point": {"x": 0.350897302238901, "y": 0.18537832978498114},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "RIGHT_EYE",
+                            "mid": "20230220170039711-75233",
+                            "point": {"x": 0.3581081932428414, "y": 0.2305347416594279},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "NOSE",
+                            "mid": "20230220170039711-59132",
+                            "point": {"x": 0.38815357242592613, "y": 0.32807259130823285},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "LEFT_EYE",
+                            "mid": "20230220170039711-27852",
+                            "point": {"x": 0.4386476019456967, "y": 0.23889914422760516},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "LEFT_EARBASE",
+                            "mid": "20230220170039711-40802",
+                            "point": {"x": 0.46187314422288966, "y": 0.1875659030559057},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+                {
+                    "categories": [{"name": "BODY"}],
+                    "children": {},
+                    "mid": "20230220175812521-86245",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "THROAT",
+                            "mid": "20230220170039712-55565",
+                            "point": {"x": 0.41045627160921705, "y": 0.3819115257598137},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "WITHERS",
+                            "mid": "20230220170039712-92408",
+                            "point": {"x": 0.4818714352479842, "y": 0.2536057346999746},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "TAILBASE",
+                            "mid": "20230220170039712-18390",
+                            "point": {"x": 0.6107470753777133, "y": 0.17341461528757518},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+                {
+                    "categories": [{"name": "FRONT_RIGHT_LEG"}],
+                    "children": {},
+                    "mid": "20230220175821453-77849",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "PAW",
+                            "mid": "20230220170039712-77846",
+                            "point": {"x": 0.3776217136143816, "y": 0.9050043662345423},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "KNEE",
+                            "mid": "20230220170039712-53563",
+                            "point": {"x": 0.4014267681606373, "y": 0.7026760034094114},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "ELBOW",
+                            "mid": "20230220170039712-78929",
+                            "point": {"x": 0.3907555368123158, "y": 0.5151521549373389},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+                {
+                    "categories": [{"name": "FRONT_LEFT_LEG"}],
+                    "children": {},
+                    "mid": "20230220175828920-37602",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "PAW",
+                            "mid": "20230220170039712-72948",
+                            "point": {"x": 0.46873761205005, "y": 0.9148740424699144},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "KNEE",
+                            "mid": "20230220170039712-67331",
+                            "point": {"x": 0.4695584759999209, "y": 0.703909712938833},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "ELBOW",
+                            "mid": "20230220170039712-86687",
+                            "point": {"x": 0.4958261223957892, "y": 0.541060055055191},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+                {
+                    "categories": [{"name": "BACK_RIGHT_LEG"}],
+                    "children": {},
+                    "mid": "20230220175834605-4761",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "PAW",
+                            "mid": "20230220170039712-95942",
+                            "point": {"x": 0.5303024082903665, "y": 0.7470895464685865},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "KNEE",
+                            "mid": "20230220170039712-89543",
+                            "point": {"x": 0.5623755076892811, "y": 0.5105044952809976},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "ELBOW",
+                            "mid": "20230220170039712-61950",
+                            "point": {"x": 0.5359355740081666, "y": 0.4003228503073476},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+                {
+                    "categories": [{"name": "BACK_LEFT_LEG"}],
+                    "children": {},
+                    "mid": "20230220175849088-95977",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "PAW",
+                            "mid": "20230220170039712-40305",
+                            "point": {"x": 0.6741443182503564, "y": 0.7362865546532311},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "KNEE",
+                            "mid": "20230220170039712-36409",
+                            "point": {"x": 0.6753461334176798, "y": 0.49605444348117467},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "ELBOW",
+                            "mid": "20230220170039712-60395",
+                            "point": {"x": 0.6380898632306548, "y": 0.38045402908259107},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+            ]
+        }
+    }
+}
 ```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="IMAGE")
+```
+
+
+```python
+print(list(label.jobs.keys()))
+```
+
+    ['JOB_0']
+
+
+
+```python
+print(label.jobs["JOB_0"].annotations[0].category)
+```
+
+
+
+
+    {'name': 'HEAD'}
+
+
+
+
+```python
+print("Number of points in this annotation: ", len(label.jobs["JOB_0"].annotations[0].points))
+```
+
+    Number of points in this annotation:  5
+
+
+
+```python
+for point in label.jobs["JOB_0"].annotations[0].points:
+    print(point.code, point.point)
+```
+
+    RIGHT_EARBASE {'x': 0.350897302238901, 'y': 0.18537832978498114}
+    RIGHT_EYE {'x': 0.3581081932428414, 'y': 0.2305347416594279}
+    NOSE {'x': 0.38815357242592613, 'y': 0.32807259130823285}
+    LEFT_EYE {'x': 0.4386476019456967, 'y': 0.23889914422760516}
+    LEFT_EARBASE {'x': 0.46187314422288966, 'y': 0.1875659030559057}
+
 
 ## Children jobs
 

@@ -1580,7 +1580,7 @@ def test_parsing_ner_in_pdf_2():
     assert annotation_1.annotations[0].page_number_array == [1, 1, 1]
 
 
-def test_pose_estimation():
+def test_pose_estimation_1():
     json_interface = {
         "jobs": {
             "JOB_0": {
@@ -1681,5 +1681,186 @@ def test_pose_estimation():
         assert point.job_name == "JOB_0"
         assert point.name == f"Point A{i + 1}"
         assert "x" in point.point and "y" in point.point
+
+    assert parsed_jobs.to_dict() == json_resp
+
+
+def test_pose_estimation_2():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "HEAD": {
+                            "children": [],
+                            "name": "Head",
+                            "color": "#733AFB",
+                            "points": [
+                                {"code": "RIGHT_EARBASE", "name": "Right earbase"},
+                                {"code": "RIGHT_EYE", "name": "Right eye"},
+                                {"code": "NOSE", "name": "Nose"},
+                                {"code": "LEFT_EYE", "name": "Left eye"},
+                                {"code": "LEFT_EARBASE", "name": "Left earbase"},
+                            ],
+                        },
+                        "BODY": {
+                            "children": [],
+                            "name": "Body",
+                            "color": "#3CD876",
+                            "points": [
+                                {"code": "THROAT", "name": "Throat"},
+                                {"code": "WITHERS", "name": "Withers"},
+                                {"code": "TAILBASE", "name": "Tailbase"},
+                            ],
+                        },
+                        "FRONT_RIGHT_LEG": {
+                            "children": [],
+                            "name": "Front right leg",
+                            "color": "#3BCADB",
+                            "points": [
+                                {"code": "PAW", "name": "Paw"},
+                                {"code": "KNEE", "name": "Knee"},
+                                {"code": "ELBOW", "name": "Elbow"},
+                            ],
+                        },
+                        "FRONT_LEFT_LEG": {
+                            "children": [],
+                            "name": "Front left leg",
+                            "color": "#199CFC",
+                            "points": [
+                                {"code": "PAW", "name": "Paw"},
+                                {"code": "KNEE", "name": "Knee"},
+                                {"code": "ELBOW", "name": "Elbow"},
+                            ],
+                        },
+                        "BACK_RIGHT_LEG": {
+                            "children": [],
+                            "name": "Back right leg",
+                            "color": "#FA484A",
+                            "points": [
+                                {"code": "PAW", "name": "Paw"},
+                                {"code": "KNEE", "name": "Knee"},
+                                {"code": "ELBOW", "name": "Elbow"},
+                            ],
+                        },
+                        "BACK_LEFT_LEG": {
+                            "children": [],
+                            "name": "Back left leg",
+                            "color": "#ECB82A",
+                            "points": [
+                                {"code": "PAW", "name": "Paw"},
+                                {"code": "KNEE", "name": "Knee"},
+                                {"code": "ELBOW", "name": "Elbow"},
+                            ],
+                        },
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Body parts from the animal point of view",
+                "isChild": False,
+                "tools": ["pose"],
+                "mlTask": "OBJECT_DETECTION",
+                "models": {},
+                "isVisible": True,
+                "required": 0,
+            }
+        }
+    }
+
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"name": "HEAD"}],
+                    "children": {},
+                    "mid": "20230220175803297-40094",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "RIGHT_EARBASE",
+                            "mid": "20230220170039711-76095",
+                            "point": {"x": 0.350897302238901, "y": 0.18537832978498114},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "RIGHT_EYE",
+                            "mid": "20230220170039711-75233",
+                            "point": {"x": 0.3581081932428414, "y": 0.2305347416594279},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "NOSE",
+                            "mid": "20230220170039711-59132",
+                            "point": {"x": 0.38815357242592613, "y": 0.32807259130823285},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "LEFT_EYE",
+                            "mid": "20230220170039711-27852",
+                            "point": {"x": 0.4386476019456967, "y": 0.23889914422760516},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "LEFT_EARBASE",
+                            "mid": "20230220170039711-40802",
+                            "point": {"x": 0.46187314422288966, "y": 0.1875659030559057},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+                {
+                    "categories": [{"name": "BODY"}],
+                    "children": {},
+                    "mid": "20230220175812521-86245",
+                    "points": [
+                        {
+                            "children": {},
+                            "code": "THROAT",
+                            "mid": "20230220170039712-55565",
+                            "point": {"x": 0.41045627160921705, "y": 0.3819115257598137},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "WITHERS",
+                            "mid": "20230220170039712-92408",
+                            "point": {"x": 0.4818714352479842, "y": 0.2536057346999746},
+                            "type": "marker",
+                        },
+                        {
+                            "children": {},
+                            "code": "TAILBASE",
+                            "mid": "20230220170039712-18390",
+                            "point": {"x": 0.6107470753777133, "y": 0.17341461528757518},
+                            "type": "marker",
+                        },
+                    ],
+                    "type": "pose",
+                },
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    assert len(parsed_jobs["JOB_0"].annotations) == 2
+
+    first_ann = parsed_jobs["JOB_0"].annotations[0]
+
+    assert first_ann.category.name == "HEAD"
+    assert first_ann.points[0].code == "RIGHT_EARBASE"
+    assert first_ann.points[1].code == "RIGHT_EYE"
+
+    second_ann = parsed_jobs["JOB_0"].annotations[1]
+
+    assert second_ann.category.name == "BODY"
+    assert second_ann.points[0].code == "THROAT"
+    assert second_ann.points[1].code == "WITHERS"
 
     assert parsed_jobs.to_dict() == json_resp
