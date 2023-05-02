@@ -146,15 +146,6 @@ kili.append_many_to_dataset(
 )
 ```
 
-
-
-
-
-
-    {'id': 'cleoicwgf02e50jx8e05zai93'}
-
-
-
 We simulate some model predictions:
 
 
@@ -172,6 +163,7 @@ And we upload those predictions to Kili:
 
 ```python
 predicted_categories = [predictions[asset["external_id"]] for asset in stream_of_assets]
+
 inference_labels = [
     {"CLASSIFICATION_JOB": {"categories": [{"name": predicted_category}]}}
     for predicted_category in predicted_categories
@@ -184,18 +176,6 @@ kili.append_labels(
     label_type="INFERENCE",  # We import model-generated labels as "INFERENCE" labels
 )
 ```
-
-
-
-
-
-
-    [{'id': 'cleoicyaq01je0jvh7a6jecvt'},
-     {'id': 'cleoicyaq01jf0jvhaqtlh6mx'},
-     {'id': 'cleoicyaq01jg0jvh5w3sf52r'},
-     {'id': 'cleoicyaq01jh0jvhafbiad1z'}]
-
-
 
 Then, human labelers can annotate a subsample of the assets pushed to Kili.
 
@@ -214,6 +194,7 @@ human_labels = [
     {"CLASSIFICATION_JOB": {"categories": [{"name": ground_truths[asset["external_id"]]}]}}
     for asset in stream_of_assets
 ]
+
 kili.append_labels(
     project_id=project_id,
     json_response_array=human_labels,
@@ -221,18 +202,6 @@ kili.append_labels(
     label_type="DEFAULT",
 )
 ```
-
-
-
-
-
-
-    [{'id': 'cleoicz3b02eg0jx8cub2c6q6'},
-     {'id': 'cleoicz3b02eh0jx8fe1iap2a'},
-     {'id': 'cleoicz3b02ei0jx8bi4ifnkw'},
-     {'id': 'cleoicz3b02ej0jx86n5c2m0a'}]
-
-
 
 You can now fetch the agreement between the human and the model, for human labels:
 
@@ -246,7 +215,7 @@ print(labels)
 
 
 
-    [{'labelOf': {'id': 'cleoicx8s0000h8vzn0qu3mpz'}, 'inferenceMark': 0.5, 'id': 'cleoicz3b02eg0jx8cub2c6q6'}, {'labelOf': {'id': 'cleoicx8s0001h8vzh742in5x'}, 'inferenceMark': 1, 'id': 'cleoicz3b02eh0jx8fe1iap2a'}, {'labelOf': {'id': 'cleoicx8s0002h8vz0jhz2co8'}, 'inferenceMark': 0.5, 'id': 'cleoicz3b02ei0jx8bi4ifnkw'}, {'labelOf': {'id': 'cleoicx8s0003h8vzbiaawl1j'}, 'inferenceMark': 0.5, 'id': 'cleoicz3b02ej0jx86n5c2m0a'}]
+    [{'labelOf': {'id': 'clh6bi7is0000qsvzhp6u3n47'}, 'inferenceMark': 0.5, 'id': 'clh6bi9s26yic0j3z6jb07a1v'}, {'labelOf': {'id': 'clh6bi7is0001qsvznxu1z4a3'}, 'inferenceMark': 1, 'id': 'clh6bi9s36yid0j3zddwk96s3'}, {'labelOf': {'id': 'clh6bi7it0002qsvz7zhgua9x'}, 'inferenceMark': 0.5, 'id': 'clh6bi9s36yie0j3zfc9shu4i'}, {'labelOf': {'id': 'clh6bi7it0003qsvz8xpvlc8r'}, 'inferenceMark': 0.5, 'id': 'clh6bi9s36yif0j3z2n8p6d7s'}]
 
 
 
@@ -259,29 +228,37 @@ for label in labels:
     # this label has disagreement between human and model
     if label["inferenceMark"] < 1:
         asset_id = label["labelOf"]["id"]
+
         # get the model-generated label
         inference_label = kili.labels(
             project_id=project_id,
             asset_id=asset_id,
             type_in=["INFERENCE"],
             disable_tqdm=True,
+            output_format="parsed_label",
         )[0]
-        # get the human-made label
-        human_label = kili.labels(project_id=project_id, label_id=label["id"], disable_tqdm=True)[0]
 
-        inference_category = inference_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0][
-            "name"
-        ]
-        human_category = human_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0]["name"]
+        # get the human-made label
+        human_label = kili.labels(
+            project_id=project_id,
+            label_id=label["id"],
+            disable_tqdm=True,
+            output_format="parsed_label",
+        )[0]
+
+        inference_category = inference_label.jobs["CLASSIFICATION_JOB"].category.name
+
+        human_category = human_label.jobs["CLASSIFICATION_JOB"].category.name
+
         print(
             f"The model predicted {inference_category} but the human predicted {human_category} for"
             f" asset with id {asset_id}."
         )
 ```
 
-    The model predicted WHITE but the human predicted BLACK for asset with id cleoicx8s0000h8vzn0qu3mpz.
-    The model predicted RED but the human predicted WHITE for asset with id cleoicx8s0002h8vz0jhz2co8.
-    The model predicted BLACK but the human predicted RED for asset with id cleoicx8s0003h8vzbiaawl1j.
+    The model predicted WHITE but the human predicted BLACK for asset with id clh6bi7is0000qsvzhp6u3n47.
+    The model predicted RED but the human predicted WHITE for asset with id clh6bi7it0002qsvz7zhgua9x.
+    The model predicted BLACK but the human predicted RED for asset with id clh6bi7it0003qsvz8xpvlc8r.
 
 
 You can also find the assets with most disagreement directly from the interface with the "Human/Model IoU" filter.
@@ -338,15 +315,6 @@ kili.append_many_to_dataset(
 )
 ```
 
-
-
-
-
-
-    {'id': 'cleoid1uc01k10jvhduat80fu'}
-
-
-
 `ground_truths` represents labels made by human annotators:
 
 
@@ -376,18 +344,6 @@ kili.append_labels(
 )
 ```
 
-
-
-
-
-
-    [{'id': 'cleoid3m802fg0jx831mhak3l'},
-     {'id': 'cleoid3m802fh0jx893nia1og'},
-     {'id': 'cleoid3m802fi0jx861b52nd5'},
-     {'id': 'cleoid3m802fj0jx8g5xj0lt2'}]
-
-
-
 We take 80% of the training data and use it to train a model.
 
 We can then run the trained model against the remaining 20% of the labeled assets, and upload predictions to Kili:
@@ -407,18 +363,6 @@ kili.append_labels(
 ```
 
 
-
-
-
-
-    [{'id': 'cleoid4au01k70jvh0iive67w'},
-     {'id': 'cleoid4au01k80jvheudkf7tc'},
-     {'id': 'cleoid4au01k90jvh9e5892br'},
-     {'id': 'cleoid4av01ka0jvh90mygj0s'}]
-
-
-
-
 ```python
 labels = kili.labels(
     project_id=project_id, fields=["inferenceMark", "id", "labelOf.id"], type_in=["DEFAULT"]
@@ -428,7 +372,7 @@ print(labels)
 
 
 
-    [{'labelOf': {'id': 'cleoid2lk0004h8vzyqb6bfp5'}, 'inferenceMark': 0.5, 'id': 'cleoid3m802fg0jx831mhak3l'}, {'labelOf': {'id': 'cleoid2lk0005h8vzmodn4ce8'}, 'inferenceMark': 1, 'id': 'cleoid3m802fh0jx893nia1og'}, {'labelOf': {'id': 'cleoid2lk0006h8vza2xtc6h5'}, 'inferenceMark': 0.5, 'id': 'cleoid3m802fi0jx861b52nd5'}, {'labelOf': {'id': 'cleoid2lk0007h8vzkp2yodiu'}, 'inferenceMark': 0.5, 'id': 'cleoid3m802fj0jx8g5xj0lt2'}]
+    [{'labelOf': {'id': 'clh6bihje0004qsvzv9qnr1la'}, 'inferenceMark': 0.5, 'id': 'clh6biitf6q500k931jgrd27h'}, {'labelOf': {'id': 'clh6bihje0005qsvzm0rx528u'}, 'inferenceMark': 1, 'id': 'clh6biitf6q510k93bt0bantu'}, {'labelOf': {'id': 'clh6bihje0006qsvzmedua6x9'}, 'inferenceMark': 0.5, 'id': 'clh6biitg6q520k934scvdq0v'}, {'labelOf': {'id': 'clh6bihje0007qsvzsf3uovzl'}, 'inferenceMark': 0.5, 'id': 'clh6biitg6q530k93ajd0eykf'}]
 
 
 
@@ -439,22 +383,22 @@ We can now print out a list of disagreements between human and machine labels:
 ```python
 for label in labels:
     if label["inferenceMark"] < 1:
-        inference_label = list(
-            kili.labels(
-                project_id=project_id,
-                asset_id=label["labelOf"]["id"],
-                type_in=["INFERENCE"],
-                disable_tqdm=True,
-            )
+        inference_label = kili.labels(
+            project_id=project_id,
+            asset_id=label["labelOf"]["id"],
+            type_in=["INFERENCE"],
+            disable_tqdm=True,
+            output_format="parsed_label",
         )[0]
-        human_label = list(
-            kili.labels(project_id=project_id, label_id=label["id"], disable_tqdm=True)
+        human_label = kili.labels(
+            project_id=project_id,
+            label_id=label["id"],
+            disable_tqdm=True,
+            output_format="parsed_label",
         )[0]
 
-        inference_category = inference_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0][
-            "name"
-        ]
-        human_category = human_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0]["name"]
+        inference_category = inference_label.jobs["CLASSIFICATION_JOB"].category.name
+        human_category = human_label.jobs["CLASSIFICATION_JOB"].category.name
 
         print(
             f"The human predicted {human_category} but the model predicted {inference_category} for"
@@ -462,9 +406,9 @@ for label in labels:
         )
 ```
 
-    The human predicted BLACK but the model predicted WHITE for asset with id cleoicx8s0003h8vzbiaawl1j.
-    The human predicted WHITE but the model predicted RED for asset with id cleoicx8s0003h8vzbiaawl1j.
-    The human predicted RED but the model predicted BLACK for asset with id cleoicx8s0003h8vzbiaawl1j.
+    The human predicted BLACK but the model predicted WHITE for asset with id clh6bi7it0003qsvz8xpvlc8r.
+    The human predicted WHITE but the model predicted RED for asset with id clh6bi7it0003qsvz8xpvlc8r.
+    The human predicted RED but the model predicted BLACK for asset with id clh6bi7it0003qsvz8xpvlc8r.
 
 
 ## Cleanup

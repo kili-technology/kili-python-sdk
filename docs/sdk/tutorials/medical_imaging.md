@@ -145,7 +145,8 @@ json_interface = {
                 "input": "radio",
             },
             "required": True,
-            "tools": ["semantic"],
+            "tools": ["polygon"],
+            "isChild": False,
             "instruction": "Segmentation",
         },
     }
@@ -194,15 +195,24 @@ In this tutorial, we assume that our labels have already been downloaded and sto
 
 
 ```python
+from kili.utils.labels.parsing import ParsedLabel
+```
+
+
+```python
 wget.download(
     "https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/conf/medical-labels.pkl?raw=true"
 )
 
 with open("medical-labels.pkl", "rb") as f:
-    labels = pickle.load(f)
+    label = pickle.load(f)
 
-healthy = labels["CLASSIFICATION_JOB"]["categories"][0]["name"]
-annotations = labels["JOB_0"]["annotations"]
+label = ParsedLabel(
+    label={"jsonResponse": label}, json_interface=json_interface, input_type="IMAGE"
+)
+
+healthy = label.jobs["CLASSIFICATION_JOB"].category.name
+annotations = label.jobs["JOB_0"].annotations
 ```
 
 
@@ -219,12 +229,12 @@ A mask is represented by a Python dictionary where the vertices are stored in th
 
 
 ```python
-print(len(annotations), type(annotations))
-print(annotations[0].keys())
+print(len(annotations))
+print(type(annotations))
 ```
 
-    10 <class 'list'>
-    dict_keys(['boundingPoly', 'categories', 'mid', 'score', 'type'])
+    10
+    <class 'kili.services.label_data_parsing.annotation.AnnotationList'>
 
 
 We assign a color to each class:
@@ -262,8 +272,8 @@ img_width, img_height = im.size
 class_names = []
 masks = []
 for annotation in annotations:
-    class_name = annotation["categories"][0]["name"]
-    normalized_vertices = annotation["boundingPoly"][0]["normalizedVertices"]
+    class_name = annotation.category.name
+    normalized_vertices = annotation.bounding_poly[0].normalized_vertices
 
     # convert the label normalized vertices to a numpy mask
     mask = normalized_vertices_to_mask(normalized_vertices, img_width, img_height)
