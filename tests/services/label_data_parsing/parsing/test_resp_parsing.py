@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 import pytest
+from typing_extensions import assert_type
 
 from kili.services.label_data_parsing.annotation import (
     Annotation,
@@ -1577,3 +1578,108 @@ def test_parsing_ner_in_pdf_2():
 
     assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices] * 3}]
     assert annotation_1.annotations[0].page_number_array == [1, 1, 1]
+
+
+def test_pose_estimation():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "POSE_A": {
+                            "children": [],
+                            "color": "#472CED",
+                            "name": "A",
+                            "points": [
+                                {"code": "POINT_A1", "name": "Point A1", "mandatory": True},
+                                {"code": "POINT_A2", "name": "Point A2", "mandatory": True},
+                                {"code": "POINT_A3", "name": "Point A3", "mandatory": True},
+                                {"code": "POINT_A4", "name": "Point A4", "mandatory": True},
+                            ],
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Job name",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["pose"],
+                "isChild": False,
+            }
+        }
+    }
+
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"confidence": 100, "name": "POSE_A"}],
+                    "children": {},
+                    "jobName": "JOB_0",
+                    "kind": "POSE_ESTIMATION",
+                    "mid": "20220511111820SS-508",
+                    "points": [
+                        {
+                            "categories": [{"confidence": 1, "name": "POSE_A"}],
+                            "children": {},
+                            "code": "POINT_A1",
+                            "jobName": "JOB_0",
+                            "mid": "20220511111820SS-508",
+                            "name": "Point A1",
+                            "point": {"x": 0.3817781479042206, "y": 0.10908308099784103},
+                        },
+                        {
+                            "categories": [{"confidence": 2, "name": "POSE_A"}],
+                            "children": {},
+                            "code": "POINT_A2",
+                            "jobName": "JOB_0",
+                            "mid": "20220511111820SS-508",
+                            "name": "Point A2",
+                            "point": {"x": 0.31799659574838424, "y": 0.3245229905019995},
+                        },
+                        {
+                            "categories": [{"confidence": 3, "name": "POSE_A"}],
+                            "children": {},
+                            "code": "POINT_A3",
+                            "jobName": "JOB_0",
+                            "mid": "20220511111820SS-508",
+                            "name": "Point A3",
+                            "point": {"x": 0.5129859123390841, "y": 0.3569199693748055},
+                        },
+                        {
+                            "categories": [{"confidence": 4, "name": "POSE_A"}],
+                            "children": {},
+                            "code": "POINT_A4",
+                            "jobName": "JOB_0",
+                            "mid": "20220511111820SS-508",
+                            "name": "Point A4",
+                            "point": {"x": 0.5439655233862045, "y": 0.12366172149060362},
+                        },
+                    ],
+                    "type": "marker",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation = parsed_jobs["JOB_0"].annotations[0]
+
+    assert annotation.category.name == "POSE_A"
+    assert annotation.category.confidence == 100
+    assert annotation.kind == "POSE_ESTIMATION"
+    assert annotation.type == "marker"
+
+    assert len(annotation.points) == 4
+
+    for i, point in enumerate(annotation.points):
+        assert point.category.name == "POSE_A"
+        assert point.category.confidence == i + 1
+        assert point.code == f"POINT_A{i + 1}"
+        assert point.job_name == "JOB_0"
+        assert point.name == f"Point A{i + 1}"
+        assert "x" in point.point and "y" in point.point
+
+    assert parsed_jobs.to_dict() == json_resp
