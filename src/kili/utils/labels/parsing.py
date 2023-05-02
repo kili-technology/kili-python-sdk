@@ -32,7 +32,7 @@ class ParsedLabel(Dict):
             ```
         """
         label_copy = deepcopy(label)
-        json_response = label_copy.pop("jsonResponse")
+        json_response = label_copy.pop("jsonResponse", {})
 
         super().__init__(label_copy)
 
