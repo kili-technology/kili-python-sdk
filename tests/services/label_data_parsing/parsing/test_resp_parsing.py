@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 import pytest
-from typing_extensions import assert_type
 
 from kili.services.label_data_parsing.annotation import (
     Annotation,

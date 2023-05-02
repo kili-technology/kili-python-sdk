@@ -294,6 +294,12 @@ class QueriesLabel:
 
         post_call_function = None
         if output_format == "parsed_label":
+            if "jsonResponse" not in fields:
+                raise ValueError(
+                    "The field 'jsonResponse' is required to parse labels. Please add it to the"
+                    " 'fields' argument."
+                )
+
             project = next(
                 ProjectQuery(self.auth.client)(
                     ProjectWhere(project_id=project_id),

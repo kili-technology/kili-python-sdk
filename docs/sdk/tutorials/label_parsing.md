@@ -3,6 +3,8 @@
 
 # How to use the label parser
 
+## Setup
+
 
 ```python
 %pip install kili
@@ -11,16 +13,17 @@
 
 ```python
 from kili.client import Kili
-```
 
-
-```python
 kili = Kili()
 ```
 
 ## ParsedLabel class
 
-The `ParsedLabel` class represents a Kili label.
+The `ParsedLabel` class represents a Kili label with a parsed json response.
+
+The purpose of this class is to provide a simple way to read and modify label data using a Python attribute syntax instead of a json dictionary syntax.
+
+In this tutorial, we will see how using the `ParsedLabel` class can help you to read and modify label data.
 
 
 ```python
@@ -60,7 +63,7 @@ print(my_parsed_label["author"]["email"])
     first.last@kili-technology.com
 
 
-The `jsonResponse` dict key is not accessible anymore:
+In a parsed label, the `jsonResponse` dict key is not accessible anymore, since it is parsed and transformed into a `.jobs` object:
 
 
 ```python
@@ -73,17 +76,86 @@ except KeyError as err:
     The key 'jsonResponse' is not accessible anymore.
 
 
-It is replaced with the `.jobs` attribute instead.
-
 ## .jobs attribute
 
-The `.jobs` attribute of a `ParsedLabel` class is a dictionary-like object that contains the parsed labels.
+The `.jobs` attribute of a `ParsedLabel` class is a dictionary-like object that contains the json response data of a parsed label.
 
 The keys are the names of the jobs, and the values are the parsed job responses.
 
-Let's create a simple Kili project to illustrate this.
+Let's illustrate this with the previous label.
 
-## Classification jobs
+
+```python
+print(list(my_parsed_label.jobs.keys()))
+```
+
+    ['CLASSIFICATION_JOB']
+
+
+The values are `ParsedJob` objects, which are also dictionary-like objects that contain the job response data.
+
+The available data attributes are specific to the job interface described in the ontology (also called the json interface).
+
+
+```python
+print(my_parsed_label.jobs["CLASSIFICATION_JOB"])
+```
+
+    {'categories': [{'name': 'A', 'confidence': 100}]}
+
+
+For example, for a classification job, the available data attributes are `categories` or `category`, and a category object can have a `name` and a `confidence` attribute.
+
+
+```python
+print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].name)
+```
+
+    A
+
+
+## Autocomplete
+
+The `ParsedLabel` class enables your IDE to explore the possible attributes during development:
+
+<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/label_parsing_autocompletion.gif" width="600">
+
+Note that some attributes will not be avaible at runtime, since they are specific to the project ontology that will only be known at runtime.
+
+## Convert to Python dict
+
+A `ParsedLabel` is a custom class and is not serializable by default. However, it is possible to convert it to a Python dict using the `to_dict` method:
+
+
+```python
+print(type(my_parsed_label))
+```
+
+    <class 'kili.utils.labels.parsing.ParsedLabel'>
+
+
+
+```python
+label_as_dict = my_parsed_label.to_dict()
+print(type(label_as_dict))
+```
+
+    <class 'dict'>
+
+
+## ParsedLabel integration to kili.labels()
+
+The `kili.labels()` method has an `output_format` argument that allows to automatically parse the labels:
+
+```python
+labels = kili.labels(project_id=project_id, output_format='parsed_label')  # labels is a list of ParsedLabel
+
+labels[0].jobs["MY_JOB_NAME"]...
+```
+
+## Task specific attributes
+
+### Classification jobs
 
 We define a json interface for a two classification jobs:
 
@@ -124,33 +196,17 @@ json_interface = {
         },
     }
 }
-project_id = kili.create_project(
-    input_type="TEXT", json_interface=json_interface, title="Label parsing tutorial"
-)["id"]
 ```
 
-We also upload some assets to the project:
+For this tutorial, we will work with already existing labels.
 
-
-```python
-kili.append_many_to_dataset(
-    project_id,
-    content_array=["text1", "text2", "text3"],
-    external_id_array=["asset1", "asset2", "asset3"],
-);
-```
-
-
-
-Once the assets are uploaded, we can start labeling them manually through the Kili UI.
-
-For this tutorial, we will just upload already existing labels.
+Note that those labels could have been downloaded from a real Kili project using the `kili.labels()` method.
 
 To learn more about the json response format for classification jobs, please refer to the [documentation](https://docs.kili-technology.com/reference/export-classification).
 
 
 ```python
-labels_to_upload = [
+json_responses = [
     {
         "SINGLE_CLASS_JOB": {"categories": [{"confidence": 75, "name": "A"}]},
         "MULTI_CLASS_JOB": {
@@ -170,42 +226,15 @@ labels_to_upload = [
         },
     },
 ]
-kili.append_labels(
-    json_response_array=labels_to_upload,
-    project_id=project_id,
-    asset_external_id_array=["asset1", "asset2", "asset3"],
-);
 ```
-
-
-
-When querying labels using `kili.labels()`, it is possible to automatically parse the labels using the `output_format` argument:
 
 
 ```python
-# labels is a list of ParsedLabel object
-labels = kili.labels(project_id, output_format="parsed_label")
+labels = [
+    ParsedLabel({"jsonResponse": label}, json_interface=json_interface, input_type="IMAGE")
+    for label in json_responses
+]
 ```
-
-
-
-
-```python
-print(f"This project contains {len(labels)} labels.")
-```
-
-    This project contains 3 labels.
-
-
-
-```python
-print(type(labels[0]))
-```
-
-    <class 'kili.utils.labels.parsing.ParsedLabel'>
-
-
-Using the `.jobs` attribute with the job name, one can access the label's data:
 
 
 ```python
@@ -291,39 +320,7 @@ for i, label in enumerate(labels):
     category:  D 3
 
 
-## Convert to Python dict
-
-A `ParsedLabel` is a custom class and is not serializable by default. However, it is possible to convert it to a Python dict using the `to_dict` method:
-
-
-```python
-label = labels[0]
-print(type(label))
-```
-
-    <class 'kili.utils.labels.parsing.ParsedLabel'>
-
-
-
-```python
-label_as_dict = label.to_dict()
-print(type(label_as_dict))
-```
-
-    <class 'dict'>
-
-
-## ParsedLabel integration to kili.labels()
-
-The `kili.labels()` method has an `output_format` argument that allows to automatically parse the labels:
-
-```python
-labels = kili.labels(project_id=project_id, output_format='parsed_label')  # labels is a list of ParsedLabel
-
-labels[0].jobs["MY_JOB_NAME"]...
-```
-
-## Transcription jobs
+### Transcription jobs
 
 For a transcription job, the `.text` allows to access the label data:
 
@@ -351,7 +348,9 @@ print(label.jobs["TRANSCRIPTION_JOB"].text)
     This is a transcription annotation...
 
 
-## Object detection jobs
+### Object detection jobs
+
+#### Standard object detection job
 
 For object detection jobs, a parsed label has an `.annotations` attribute:
 
@@ -445,7 +444,7 @@ print(
     True
 
 
-## Point detection jobs
+#### Point detection jobs
 
 The point coordinates of a point detection label is accessible through the `.point` attribute:
 
@@ -523,7 +522,7 @@ print(label.jobs["OBJECT_DETECTION_JOB"].annotations[1].category.name)
     B
 
 
-## Line detection jobs
+#### Line detection jobs
 
 A polyline parsed label has a `.polyline` attribute.
 
@@ -590,11 +589,7 @@ print(len(label.jobs["OBJECT_DETECTION_JOB"].annotations))
 print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name)
 ```
 
-
-
-
-    'A'
-
+    A
 
 
 
@@ -605,699 +600,7 @@ print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].polyline)
     [{'x': 0.59, 'y': 0.4}, {'x': 0.25, 'y': 0.3}]
 
 
-## Video jobs
-
-A video label has an additional attribute `.frames` that returns the annotations for each frame.
-
-
-```python
-json_interface = {
-    "jobs": {
-        "FRAME_CLASSIF_JOB": {
-            "content": {
-                "categories": {
-                    "OBJECT_A": {"children": [], "name": "Object A"},
-                    "OBJECT_B": {"children": [], "name": "Object B"},
-                },
-                "input": "radio",
-            },
-            "instruction": "Categories",
-            "isChild": False,
-            "mlTask": "CLASSIFICATION",
-            "models": {},
-            "isVisible": False,
-            "required": 1,
-        }
-    }
-}
-
-dict_label = {
-    "jsonResponse": {
-        "0": {},
-        "1": {},
-        "2": {},
-        "3": {},
-        "4": {},
-        "5": {
-            "FRAME_CLASSIF_JOB": {
-                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-                "isKeyFrame": True,
-                "annotations": [],
-            }
-        },
-        "6": {
-            "FRAME_CLASSIF_JOB": {
-                "categories": [{"confidence": 42, "name": "OBJECT_B"}],
-                "isKeyFrame": False,
-                "annotations": [],
-            }
-        },
-        "7": {},
-        "8": {},
-    }
-}
-```
-
-
-```python
-label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO")
-```
-
-
-```python
-for i, frame_annotations in enumerate(label.jobs["FRAME_CLASSIF_JOB"].frames):
-    print(f"Frame {i}: {frame_annotations}")
-```
-
-    Frame 0: {}
-    Frame 1: {}
-    Frame 2: {}
-    Frame 3: {}
-    Frame 4: {}
-    Frame 5: {'isKeyFrame': True, 'categories': [{'name': 'OBJECT_A', 'confidence': 100}], 'annotations': []}
-    Frame 6: {'isKeyFrame': False, 'categories': [{'name': 'OBJECT_B', 'confidence': 42}], 'annotations': []}
-    Frame 7: {}
-    Frame 8: {}
-
-
-
-```python
-frame = label.jobs["FRAME_CLASSIF_JOB"].frames[5]
-```
-
-
-```python
-print(frame.category.name)
-```
-
-    OBJECT_A
-
-
-The syntax is similar for object detection jobs on video:
-
-
-```python
-json_interface = {
-    "jobs": {
-        "JOB_0": {
-            "content": {
-                "categories": {
-                    "OBJECT_A": {"children": [], "name": "Train", "color": "#733AFB"},
-                    "OBJECT_B": {"children": [], "name": "Car", "color": "#3CD876"},
-                },
-                "input": "radio",
-            },
-            "instruction": "Track objects A and B",
-            "isChild": False,
-            "tools": ["rectangle"],
-            "mlTask": "OBJECT_DETECTION",
-            "models": {"tracking": {}},
-            "isVisible": True,
-            "required": 0,
-        }
-    }
-}
-
-dict_label = {
-    "jsonResponse": {
-        "0": {},
-        "1": {
-            "JOB_0": {
-                "annotations": [
-                    {
-                        "children": {},
-                        "boundingPoly": [
-                            {
-                                "normalizedVertices": [
-                                    {"x": 0.30, "y": 0.63},
-                                    {"x": 0.30, "y": 0.55},
-                                    {"x": 0.36, "y": 0.55},
-                                    {"x": 0.36, "y": 0.63},
-                                ]
-                            }
-                        ],
-                        "categories": [{"name": "OBJECT_B"}],
-                        "mid": "20230407140827577-43802",
-                        "type": "rectangle",
-                        "isKeyFrame": True,
-                    }
-                ]
-            }
-        },
-    }
-}
-```
-
-
-```python
-label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO")
-```
-
-
-```python
-print(label.jobs["JOB_0"].frames[1].annotations[0].category.name)
-```
-
-    OBJECT_B
-
-
-## Named entities recognition jobs
-
-For NER jobs, the content of the job reponse is a list of annotations.
-
-Those annotations can be accessed through the `.annotations` or `.entity_annotations` attributes.
-
-
-```python
-json_interface = {
-    "jobs": {
-        "NER_JOB": {
-            "mlTask": "NAMED_ENTITIES_RECOGNITION",
-            "required": 1,
-            "isChild": False,
-            "content": {
-                "categories": {"ORG": {}, "PERSON": {}},
-                "input": "radio",
-            },
-        }
-    }
-}
-dict_label = {
-    "jsonResponse": {
-        "NER_JOB": {
-            "annotations": [
-                {
-                    "categories": [{"name": "ORG", "confidence": 42}],
-                    "beginOffset": 21,
-                    "content": "this is the text for Kili",
-                    "mid": "mid_a",
-                },
-                {
-                    "categories": [{"name": "PERSON", "confidence": 100}],
-                    "beginOffset": 8,
-                    "content": "this is Toto's text",
-                    "mid": "mid_b",
-                },
-            ]
-        }
-    }
-}
-```
-
-
-```python
-label = ParsedLabel(dict_label, json_interface=json_interface, input_type="TEXT")
-```
-
-
-```python
-print("Number of annotations in this label: ", len(label.jobs["NER_JOB"].annotations))
-```
-
-    Number of annotations in this label:  2
-
-
-
-```python
-print(label.jobs["NER_JOB"].annotations[0].category)
-```
-
-    {'name': 'ORG', 'confidence': 42}
-
-
-
-```python
-print(label.jobs["NER_JOB"].annotations[0].begin_offset)
-```
-
-    21
-
-
-
-```python
-print(label.jobs["NER_JOB"].annotations[0].content)
-```
-
-    this is the text for Kili
-
-
-
-```python
-print(label.jobs["NER_JOB"].annotations[0].mid)
-```
-
-    mid_a
-
-
-It is also possible to iterate over the annotations of this label:
-
-
-```python
-for annotation in label.jobs["NER_JOB"].annotations:
-    print(annotation)
-```
-
-    {'categories': [{'name': 'ORG', 'confidence': 42}], 'beginOffset': 21, 'content': 'this is the text for Kili', 'mid': 'mid_a'}
-    {'categories': [{'name': 'PERSON', 'confidence': 100}], 'beginOffset': 8, 'content': "this is Toto's text", 'mid': 'mid_b'}
-
-
-## Named entities recognition in PDF jobs
-
-A NER in PDFs parsed label has a few additional attributes such as `.page_number_array` and `.polys`.
-
-The description of those attributes can be found in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
-
-
-```python
-json_interface = {
-    "jobs": {
-        "NAMED_ENTITIES_RECOGNITION_JOB": {
-            "content": {
-                "categories": {
-                    "A": {"children": [], "color": "#472CED", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
-                    "C": {"children": [], "name": "C", "color": "#D33BCE"},
-                },
-                "input": "radio",
-            },
-            "instruction": "Job name",
-            "mlTask": "NAMED_ENTITIES_RECOGNITION",
-            "required": 1,
-            "isChild": False,
-        }
-    }
-}
-
-dict_label = {
-    "jsonResponse": {
-        "NAMED_ENTITIES_RECOGNITION_JOB": {
-            "annotations": [
-                {
-                    "children": {},
-                    "annotations": [
-                        {
-                            "boundingPoly": [
-                                {
-                                    "normalizedVertices": [
-                                        [
-                                            {"x": 0.46269795405629893, "y": 0.26256487006078677},
-                                            {"x": 0.46269795405629893, "y": 0.278286415605941},
-                                            {"x": 0.602529939052542, "y": 0.26256487006078677},
-                                            {"x": 0.602529939052542, "y": 0.278286415605941},
-                                        ]
-                                    ]
-                                }
-                            ],
-                            "pageNumberArray": [1],
-                            "polys": [
-                                {
-                                    "normalizedVertices": [
-                                        [
-                                            {"x": 0.46269795405629893, "y": 0.26256487006078677},
-                                            {"x": 0.46269795405629893, "y": 0.278286415605941},
-                                            {"x": 0.602529939052542, "y": 0.26256487006078677},
-                                            {"x": 0.602529939052542, "y": 0.278286415605941},
-                                        ]
-                                    ]
-                                }
-                            ],
-                        }
-                    ],
-                    "categories": [{"confidence": 100, "name": "C"}],
-                    "content": "Some content",
-                    "mid": "20230502085706687-73004",
-                },
-                {
-                    "children": {},
-                    "annotations": [
-                        {
-                            "boundingPoly": [
-                                {
-                                    "normalizedVertices": [
-                                        [
-                                            {"x": 0.18745653985687646, "y": 0.4369143838760365},
-                                            {"x": 0.18745653985687646, "y": 0.45263593566837257},
-                                            {"x": 0.4306102589135375, "y": 0.4369143838760365},
-                                            {"x": 0.4306102589135375, "y": 0.45263593566837257},
-                                        ]
-                                    ]
-                                }
-                            ],
-                            "pageNumberArray": [1],
-                            "polys": [
-                                {
-                                    "normalizedVertices": [
-                                        [
-                                            {"x": 0.18745653985687646, "y": 0.4369143838760365},
-                                            {"x": 0.18745653985687646, "y": 0.45263593566837257},
-                                            {"x": 0.4306102589135375, "y": 0.4369143838760365},
-                                            {"x": 0.4306102589135375, "y": 0.45263593566837257},
-                                        ]
-                                    ]
-                                }
-                            ],
-                        }
-                    ],
-                    "categories": [{"confidence": 100, "name": "A"}],
-                    "content": "chier    compressé   “Coregist",
-                    "mid": "20230502085709115-90490",
-                },
-            ]
-        }
-    }
-}
-```
-
-
-```python
-label = ParsedLabel(dict_label, json_interface=json_interface, input_type="PDF")
-```
-
-
-```python
-print("Number of annotations: ", len(label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations))
-```
-
-    Number of annotations:  2
-
-
-
-```python
-first_ann = label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0]
-```
-
-
-```python
-print(first_ann.content)
-```
-
-    Some content
-
-
-
-```python
-print(first_ann.category)
-```
-
-    {'name': 'C', 'confidence': 100}
-
-
-The NER in PDFs json response format is a bit complex, and thus requires to use the `.annotations` attribute a second time. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
-
-
-```python
-print(first_ann.annotations[0].page_number_array)
-```
-
-    [1]
-
-
-
-```python
-print(first_ann.annotations[0].polys)
-```
-
-    [{'normalizedVertices': [[{'x': 0.46269795405629893, 'y': 0.26256487006078677}, {'x': 0.46269795405629893, 'y': 0.278286415605941}, {'x': 0.602529939052542, 'y': 0.26256487006078677}, {'x': 0.602529939052542, 'y': 0.278286415605941}]]}]
-
-
-
-```python
-print(first_ann.annotations[0].bounding_poly)
-```
-
-    [{'normalizedVertices': [[{'x': 0.46269795405629893, 'y': 0.26256487006078677}, {'x': 0.46269795405629893, 'y': 0.278286415605941}, {'x': 0.602529939052542, 'y': 0.26256487006078677}, {'x': 0.602529939052542, 'y': 0.278286415605941}]]}]
-
-
-## Relation jobs
-
-A relation job is a job that links two annotations together. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/json-named_entities_relation-jobs).
-
-### Named entities relation jobs
-
-A NER relation parsed label has the `.start_entities` and `.end_entities` attributes.
-
-
-```python
-json_interface = {
-    "jobs": {
-        "NAMED_ENTITIES_RELATION_JOB": {
-            "content": {
-                "categories": {
-                    "RELATION_1": {
-                        "children": [],
-                        "color": "#472CED",
-                        "name": "Relation 1",
-                        "endEntities": ["B"],
-                        "startEntities": ["A"],
-                    }
-                },
-                "input": "radio",
-            },
-            "mlTask": "NAMED_ENTITIES_RELATION",
-            "required": 1,
-            "isChild": False,
-        },
-        "NAMED_ENTITIES_RECOGNITION_JOB": {
-            "content": {
-                "categories": {
-                    "A": {"children": [], "color": "#5CE7B7", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#D33BCE"},
-                },
-                "input": "radio",
-            },
-            "mlTask": "NAMED_ENTITIES_RECOGNITION",
-            "required": 1,
-            "isChild": False,
-        },
-    }
-}
-
-dict_label = {
-    "jsonResponse": {
-        "NAMED_ENTITIES_RECOGNITION_JOB": {
-            "annotations": [
-                {
-                    "children": {},
-                    "beginId": "main/[0]",
-                    "beginOffset": 159,
-                    "categories": [{"name": "A"}],
-                    "content": "KBDFR",
-                    "endId": "main/[0]",
-                    "endOffset": 164,
-                    "mid": "123",
-                },
-                {
-                    "children": {},
-                    "beginId": "main/[0]",
-                    "beginOffset": 145,
-                    "categories": [{"name": "B"}],
-                    "content": "KBDJPN",
-                    "endId": "main/[0]",
-                    "endOffset": 151,
-                    "mid": "456",
-                },
-            ]
-        },
-        "NAMED_ENTITIES_RELATION_JOB": {
-            "annotations": [
-                {
-                    "children": {},
-                    "categories": [{"name": "RELATION_1"}],
-                    "endEntities": [{"mid": "456"}],
-                    "mid": "20230502100607943-6453",
-                    "startEntities": [{"mid": "123"}],
-                }
-            ]
-        },
-    }
-}
-```
-
-
-```python
-label = ParsedLabel(dict_label, json_interface=json_interface, input_type="TEXT")
-```
-
-
-```python
-print(list(label.jobs.keys()))
-```
-
-    ['NAMED_ENTITIES_RELATION_JOB', 'NAMED_ENTITIES_RECOGNITION_JOB']
-
-
-
-```python
-print("Annotation content: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].content)
-print("Category: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].category.name)
-print("Begin offset: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].begin_offset)
-print("End offset: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].end_offset)
-```
-
-    Annotation content:  KBDFR
-    Category:  A
-    Begin offset:  159
-    End offset:  164
-
-
-Below, we print the entity recognition annotations unique IDs:
-
-
-```python
-for ann in label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations:
-    print(ann.mid, ann.category.name)
-```
-
-    123 A
-    456 B
-
-
-
-```python
-print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].category.name)
-print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].start_entities)
-print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].end_entities)
-```
-
-    RELATION_1
-    [{'mid': '123'}]
-    [{'mid': '456'}]
-
-
-We can see that the relation annotation above refers to the entity annotations using their unique IDs.
-
-### Object detection relation jobs
-
-For object detection relation jobs, the relation data is accessible through the `.start_objects` and `.end_objects` attributes.
-
-
-```python
-json_interface = {
-    "jobs": {
-        "OBJECT_DETECTION_JOB": {
-            "content": {
-                "categories": {
-                    "A": {"children": [], "color": "#472CED", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
-                },
-                "input": "radio",
-            },
-            "instruction": "BBOX",
-            "mlTask": "OBJECT_DETECTION",
-            "required": 1,
-            "tools": ["rectangle"],
-            "isChild": False,
-        },
-        "OBJECT_RELATION_JOB": {
-            "content": {
-                "categories": {
-                    "RELATION_1": {
-                        "children": [],
-                        "color": "#D33BCE",
-                        "name": "Relation 1",
-                        "startObjects": ["A"],
-                        "endObjects": ["B"],
-                    }
-                },
-                "input": "radio",
-            },
-            "instruction": "Relation job",
-            "mlTask": "OBJECT_RELATION",
-            "required": 1,
-            "isChild": False,
-        },
-    }
-}
-
-dict_label = {
-    "jsonResponse": {
-        "OBJECT_DETECTION_JOB": {
-            "annotations": [
-                {
-                    "children": {},
-                    "boundingPoly": [
-                        {
-                            "normalizedVertices": [
-                                {"x": 0.11634755020512799, "y": 0.49755605764956},
-                                {"x": 0.11634755020512799, "y": 0.22714821030828314},
-                                {"x": 0.4035032060305503, "y": 0.22714821030828314},
-                                {"x": 0.4035032060305503, "y": 0.49755605764956},
-                            ]
-                        }
-                    ],
-                    "categories": [{"name": "A"}],
-                    "mid": "20230502102127826-44552",
-                    "type": "rectangle",
-                },
-                {
-                    "children": {},
-                    "boundingPoly": [
-                        {
-                            "normalizedVertices": [
-                                {"x": 0.539654594568466, "y": 0.8005026086128164},
-                                {"x": 0.539654594568466, "y": 0.5413150038998081},
-                                {"x": 0.7760629146661198, "y": 0.5413150038998081},
-                                {"x": 0.7760629146661198, "y": 0.8005026086128164},
-                            ]
-                        }
-                    ],
-                    "categories": [{"name": "B"}],
-                    "mid": "20230502102129606-15732",
-                    "type": "rectangle",
-                },
-            ]
-        },
-        "OBJECT_RELATION_JOB": {
-            "annotations": [
-                {
-                    "children": {},
-                    "categories": [{"name": "RELATION_1"}],
-                    "endObjects": [{"mid": "20230502102129606-15732"}],
-                    "mid": "20230502102131372-75485",
-                    "startObjects": [{"mid": "20230502102127826-44552"}],
-                }
-            ]
-        },
-    }
-}
-```
-
-
-```python
-label = ParsedLabel(dict_label, json_interface=json_interface, input_type="IMAGE")
-```
-
-
-```python
-print(list(label.jobs.keys()))
-```
-
-    ['OBJECT_DETECTION_JOB', 'OBJECT_RELATION_JOB']
-
-
-
-```python
-for ann in label.jobs["OBJECT_DETECTION_JOB"].annotations:
-    print(ann.mid, ann.category.name)
-```
-
-    20230502102127826-44552 A
-    20230502102129606-15732 B
-
-
-
-```python
-print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].category)
-print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].start_objects)
-print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].end_objects)
-```
-
-    {'name': 'RELATION_1'}
-    [{'mid': '20230502102127826-44552'}]
-    [{'mid': '20230502102129606-15732'}]
-
-
-## Pose estimation jobs
+#### Pose estimation jobs
 
 A pose estimation parsed label annotation has a `.points` attribute that returns a list of the points composing the annotated object.
 
@@ -1602,11 +905,7 @@ print(list(label.jobs.keys()))
 print(label.jobs["JOB_0"].annotations[0].category)
 ```
 
-
-
-
     {'name': 'HEAD'}
-
 
 
 
@@ -1630,7 +929,699 @@ for point in label.jobs["JOB_0"].annotations[0].points:
     LEFT_EARBASE {'x': 0.46187314422288966, 'y': 0.1875659030559057}
 
 
-## Children jobs
+### Video jobs
+
+A video label has an additional attribute `.frames` that returns the annotations for each frame.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "FRAME_CLASSIF_JOB": {
+            "content": {
+                "categories": {
+                    "OBJECT_A": {"children": [], "name": "Object A"},
+                    "OBJECT_B": {"children": [], "name": "Object B"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Categories",
+            "isChild": False,
+            "mlTask": "CLASSIFICATION",
+            "models": {},
+            "isVisible": False,
+            "required": 1,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "0": {},
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {
+            "FRAME_CLASSIF_JOB": {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "isKeyFrame": True,
+                "annotations": [],
+            }
+        },
+        "6": {
+            "FRAME_CLASSIF_JOB": {
+                "categories": [{"confidence": 42, "name": "OBJECT_B"}],
+                "isKeyFrame": False,
+                "annotations": [],
+            }
+        },
+        "7": {},
+        "8": {},
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO")
+```
+
+
+```python
+for i, frame_annotations in enumerate(label.jobs["FRAME_CLASSIF_JOB"].frames):
+    print(f"Frame {i}: {frame_annotations}")
+```
+
+    Frame 0: {}
+    Frame 1: {}
+    Frame 2: {}
+    Frame 3: {}
+    Frame 4: {}
+    Frame 5: {'isKeyFrame': True, 'categories': [{'name': 'OBJECT_A', 'confidence': 100}], 'annotations': []}
+    Frame 6: {'isKeyFrame': False, 'categories': [{'name': 'OBJECT_B', 'confidence': 42}], 'annotations': []}
+    Frame 7: {}
+    Frame 8: {}
+
+
+
+```python
+frame = label.jobs["FRAME_CLASSIF_JOB"].frames[5]
+```
+
+
+```python
+print(frame.category.name)
+```
+
+    OBJECT_A
+
+
+The syntax is similar for object detection jobs on video:
+
+
+```python
+json_interface = {
+    "jobs": {
+        "JOB_0": {
+            "content": {
+                "categories": {
+                    "OBJECT_A": {"children": [], "name": "Train", "color": "#733AFB"},
+                    "OBJECT_B": {"children": [], "name": "Car", "color": "#3CD876"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Track objects A and B",
+            "isChild": False,
+            "tools": ["rectangle"],
+            "mlTask": "OBJECT_DETECTION",
+            "models": {"tracking": {}},
+            "isVisible": True,
+            "required": 0,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "0": {},
+        "1": {
+            "JOB_0": {
+                "annotations": [
+                    {
+                        "children": {},
+                        "boundingPoly": [
+                            {
+                                "normalizedVertices": [
+                                    {"x": 0.30, "y": 0.63},
+                                    {"x": 0.30, "y": 0.55},
+                                    {"x": 0.36, "y": 0.55},
+                                    {"x": 0.36, "y": 0.63},
+                                ]
+                            }
+                        ],
+                        "categories": [{"name": "OBJECT_B"}],
+                        "mid": "20230407140827577-43802",
+                        "type": "rectangle",
+                        "isKeyFrame": True,
+                    }
+                ]
+            }
+        },
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO")
+```
+
+
+```python
+print(label.jobs["JOB_0"].frames[1].annotations[0].category.name)
+```
+
+    OBJECT_B
+
+
+### Named entities recognition jobs
+
+For NER jobs, the content of the job reponse is a list of annotations.
+
+Those annotations can be accessed through the `.annotations` or `.entity_annotations` attributes.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "NER_JOB": {
+            "mlTask": "NAMED_ENTITIES_RECOGNITION",
+            "required": 1,
+            "isChild": False,
+            "content": {
+                "categories": {"ORG": {}, "PERSON": {}},
+                "input": "radio",
+            },
+        }
+    }
+}
+dict_label = {
+    "jsonResponse": {
+        "NER_JOB": {
+            "annotations": [
+                {
+                    "categories": [{"name": "ORG", "confidence": 42}],
+                    "beginOffset": 21,
+                    "content": "this is the text for Kili",
+                    "mid": "mid_a",
+                },
+                {
+                    "categories": [{"name": "PERSON", "confidence": 100}],
+                    "beginOffset": 8,
+                    "content": "this is Toto's text",
+                    "mid": "mid_b",
+                },
+            ]
+        }
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="TEXT")
+```
+
+
+```python
+print("Number of annotations in this label: ", len(label.jobs["NER_JOB"].annotations))
+```
+
+    Number of annotations in this label:  2
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].category)
+```
+
+    {'name': 'ORG', 'confidence': 42}
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].begin_offset)
+```
+
+    21
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].content)
+```
+
+    this is the text for Kili
+
+
+
+```python
+print(label.jobs["NER_JOB"].annotations[0].mid)
+```
+
+    mid_a
+
+
+It is also possible to iterate over the annotations of this label:
+
+
+```python
+for annotation in label.jobs["NER_JOB"].annotations:
+    print(annotation)
+```
+
+    {'categories': [{'name': 'ORG', 'confidence': 42}], 'beginOffset': 21, 'content': 'this is the text for Kili', 'mid': 'mid_a'}
+    {'categories': [{'name': 'PERSON', 'confidence': 100}], 'beginOffset': 8, 'content': "this is Toto's text", 'mid': 'mid_b'}
+
+
+### Named entities recognition in PDF jobs
+
+A NER in PDFs parsed label has a few additional attributes such as `.page_number_array` and `.polys`.
+
+The description of those attributes can be found in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
+
+
+```python
+json_interface = {
+    "jobs": {
+        "NAMED_ENTITIES_RECOGNITION_JOB": {
+            "content": {
+                "categories": {
+                    "A": {"children": [], "color": "#472CED", "name": "A"},
+                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    "C": {"children": [], "name": "C", "color": "#D33BCE"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Job name",
+            "mlTask": "NAMED_ENTITIES_RECOGNITION",
+            "required": 1,
+            "isChild": False,
+        }
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "NAMED_ENTITIES_RECOGNITION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "annotations": [
+                        {
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        [
+                                            {"x": 0.46269795405629893, "y": 0.26256487006078677},
+                                            {"x": 0.46269795405629893, "y": 0.278286415605941},
+                                            {"x": 0.602529939052542, "y": 0.26256487006078677},
+                                            {"x": 0.602529939052542, "y": 0.278286415605941},
+                                        ]
+                                    ]
+                                }
+                            ],
+                            "pageNumberArray": [1],
+                            "polys": [
+                                {
+                                    "normalizedVertices": [
+                                        [
+                                            {"x": 0.46269795405629893, "y": 0.26256487006078677},
+                                            {"x": 0.46269795405629893, "y": 0.278286415605941},
+                                            {"x": 0.602529939052542, "y": 0.26256487006078677},
+                                            {"x": 0.602529939052542, "y": 0.278286415605941},
+                                        ]
+                                    ]
+                                }
+                            ],
+                        }
+                    ],
+                    "categories": [{"confidence": 100, "name": "C"}],
+                    "content": "Some content",
+                    "mid": "20230502085706687-73004",
+                },
+                {
+                    "children": {},
+                    "annotations": [
+                        {
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        [
+                                            {"x": 0.18745653985687646, "y": 0.4369143838760365},
+                                            {"x": 0.18745653985687646, "y": 0.45263593566837257},
+                                            {"x": 0.4306102589135375, "y": 0.4369143838760365},
+                                            {"x": 0.4306102589135375, "y": 0.45263593566837257},
+                                        ]
+                                    ]
+                                }
+                            ],
+                            "pageNumberArray": [1],
+                            "polys": [
+                                {
+                                    "normalizedVertices": [
+                                        [
+                                            {"x": 0.18745653985687646, "y": 0.4369143838760365},
+                                            {"x": 0.18745653985687646, "y": 0.45263593566837257},
+                                            {"x": 0.4306102589135375, "y": 0.4369143838760365},
+                                            {"x": 0.4306102589135375, "y": 0.45263593566837257},
+                                        ]
+                                    ]
+                                }
+                            ],
+                        }
+                    ],
+                    "categories": [{"confidence": 100, "name": "A"}],
+                    "content": "chier    compressé   “Coregist",
+                    "mid": "20230502085709115-90490",
+                },
+            ]
+        }
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="PDF")
+```
+
+
+```python
+print("Number of annotations: ", len(label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations))
+```
+
+    Number of annotations:  2
+
+
+
+```python
+first_ann = label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0]
+```
+
+
+```python
+print(first_ann.content)
+```
+
+    Some content
+
+
+
+```python
+print(first_ann.category)
+```
+
+    {'name': 'C', 'confidence': 100}
+
+
+The NER in PDFs json response format is a bit complex, and thus requires to use the `.annotations` attribute a second time. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
+
+
+```python
+print(first_ann.annotations[0].page_number_array)
+```
+
+    [1]
+
+
+
+```python
+print(first_ann.annotations[0].polys)
+```
+
+    [{'normalizedVertices': [[{'x': 0.46269795405629893, 'y': 0.26256487006078677}, {'x': 0.46269795405629893, 'y': 0.278286415605941}, {'x': 0.602529939052542, 'y': 0.26256487006078677}, {'x': 0.602529939052542, 'y': 0.278286415605941}]]}]
+
+
+
+```python
+print(first_ann.annotations[0].bounding_poly)
+```
+
+    [{'normalizedVertices': [[{'x': 0.46269795405629893, 'y': 0.26256487006078677}, {'x': 0.46269795405629893, 'y': 0.278286415605941}, {'x': 0.602529939052542, 'y': 0.26256487006078677}, {'x': 0.602529939052542, 'y': 0.278286415605941}]]}]
+
+
+### Relation jobs
+
+A relation job is a job that links two annotations together. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/json-named_entities_relation-jobs).
+
+#### Named entities relation jobs
+
+A NER relation parsed label has the `.start_entities` and `.end_entities` attributes.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "NAMED_ENTITIES_RELATION_JOB": {
+            "content": {
+                "categories": {
+                    "RELATION_1": {
+                        "children": [],
+                        "color": "#472CED",
+                        "name": "Relation 1",
+                        "endEntities": ["B"],
+                        "startEntities": ["A"],
+                    }
+                },
+                "input": "radio",
+            },
+            "mlTask": "NAMED_ENTITIES_RELATION",
+            "required": 1,
+            "isChild": False,
+        },
+        "NAMED_ENTITIES_RECOGNITION_JOB": {
+            "content": {
+                "categories": {
+                    "A": {"children": [], "color": "#5CE7B7", "name": "A"},
+                    "B": {"children": [], "name": "B", "color": "#D33BCE"},
+                },
+                "input": "radio",
+            },
+            "mlTask": "NAMED_ENTITIES_RECOGNITION",
+            "required": 1,
+            "isChild": False,
+        },
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "NAMED_ENTITIES_RECOGNITION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "beginId": "main/[0]",
+                    "beginOffset": 159,
+                    "categories": [{"name": "A"}],
+                    "content": "KBDFR",
+                    "endId": "main/[0]",
+                    "endOffset": 164,
+                    "mid": "123",
+                },
+                {
+                    "children": {},
+                    "beginId": "main/[0]",
+                    "beginOffset": 145,
+                    "categories": [{"name": "B"}],
+                    "content": "KBDJPN",
+                    "endId": "main/[0]",
+                    "endOffset": 151,
+                    "mid": "456",
+                },
+            ]
+        },
+        "NAMED_ENTITIES_RELATION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "categories": [{"name": "RELATION_1"}],
+                    "endEntities": [{"mid": "456"}],
+                    "mid": "20230502100607943-6453",
+                    "startEntities": [{"mid": "123"}],
+                }
+            ]
+        },
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="TEXT")
+```
+
+
+```python
+print(list(label.jobs.keys()))
+```
+
+    ['NAMED_ENTITIES_RELATION_JOB', 'NAMED_ENTITIES_RECOGNITION_JOB']
+
+
+
+```python
+print("Annotation content: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].content)
+print("Category: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].category.name)
+print("Begin offset: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].begin_offset)
+print("End offset: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0].end_offset)
+```
+
+    Annotation content:  KBDFR
+    Category:  A
+    Begin offset:  159
+    End offset:  164
+
+
+Below, we print the entity recognition annotations unique IDs:
+
+
+```python
+for ann in label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations:
+    print(ann.mid, ann.category.name)
+```
+
+    123 A
+    456 B
+
+
+
+```python
+print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].category.name)
+print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].start_entities)
+print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].end_entities)
+```
+
+    RELATION_1
+    [{'mid': '123'}]
+    [{'mid': '456'}]
+
+
+We can see that the relation annotation above refers to the entity annotations using their unique IDs.
+
+#### Object detection relation jobs
+
+For object detection relation jobs, the relation data is accessible through the `.start_objects` and `.end_objects` attributes.
+
+
+```python
+json_interface = {
+    "jobs": {
+        "OBJECT_DETECTION_JOB": {
+            "content": {
+                "categories": {
+                    "A": {"children": [], "color": "#472CED", "name": "A"},
+                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                },
+                "input": "radio",
+            },
+            "instruction": "BBOX",
+            "mlTask": "OBJECT_DETECTION",
+            "required": 1,
+            "tools": ["rectangle"],
+            "isChild": False,
+        },
+        "OBJECT_RELATION_JOB": {
+            "content": {
+                "categories": {
+                    "RELATION_1": {
+                        "children": [],
+                        "color": "#D33BCE",
+                        "name": "Relation 1",
+                        "startObjects": ["A"],
+                        "endObjects": ["B"],
+                    }
+                },
+                "input": "radio",
+            },
+            "instruction": "Relation job",
+            "mlTask": "OBJECT_RELATION",
+            "required": 1,
+            "isChild": False,
+        },
+    }
+}
+
+dict_label = {
+    "jsonResponse": {
+        "OBJECT_DETECTION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.11634755020512799, "y": 0.49755605764956},
+                                {"x": 0.11634755020512799, "y": 0.22714821030828314},
+                                {"x": 0.4035032060305503, "y": 0.22714821030828314},
+                                {"x": 0.4035032060305503, "y": 0.49755605764956},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "A"}],
+                    "mid": "20230502102127826-44552",
+                    "type": "rectangle",
+                },
+                {
+                    "children": {},
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.539654594568466, "y": 0.8005026086128164},
+                                {"x": 0.539654594568466, "y": 0.5413150038998081},
+                                {"x": 0.7760629146661198, "y": 0.5413150038998081},
+                                {"x": 0.7760629146661198, "y": 0.8005026086128164},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "B"}],
+                    "mid": "20230502102129606-15732",
+                    "type": "rectangle",
+                },
+            ]
+        },
+        "OBJECT_RELATION_JOB": {
+            "annotations": [
+                {
+                    "children": {},
+                    "categories": [{"name": "RELATION_1"}],
+                    "endObjects": [{"mid": "20230502102129606-15732"}],
+                    "mid": "20230502102131372-75485",
+                    "startObjects": [{"mid": "20230502102127826-44552"}],
+                }
+            ]
+        },
+    }
+}
+```
+
+
+```python
+label = ParsedLabel(dict_label, json_interface=json_interface, input_type="IMAGE")
+```
+
+
+```python
+print(list(label.jobs.keys()))
+```
+
+    ['OBJECT_DETECTION_JOB', 'OBJECT_RELATION_JOB']
+
+
+
+```python
+for ann in label.jobs["OBJECT_DETECTION_JOB"].annotations:
+    print(ann.mid, ann.category.name)
+```
+
+    20230502102127826-44552 A
+    20230502102129606-15732 B
+
+
+
+```python
+print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].category)
+print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].start_objects)
+print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].end_objects)
+```
+
+    {'name': 'RELATION_1'}
+    [{'mid': '20230502102127826-44552'}]
+    [{'mid': '20230502102129606-15732'}]
+
+
+### Children jobs
 
 For children jobs, the `.children` attribute allows to access the children labels:
 
