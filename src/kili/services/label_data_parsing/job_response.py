@@ -1,4 +1,3 @@
-# Feature is still under development and is not yet suitable for use by general users.
 """Classes for job response parsing."""
 
 from datetime import datetime

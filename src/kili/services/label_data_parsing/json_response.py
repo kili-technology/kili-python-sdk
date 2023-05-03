@@ -1,4 +1,3 @@
-# Feature is still under development and is not yet suitable for use by general users.
 """Classes for json response parsing."""
 
 from typing import Dict, Iterator, List, Optional, Tuple, cast

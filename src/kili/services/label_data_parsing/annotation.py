@@ -1,4 +1,3 @@
-# Feature is still under development and is not yet suitable for use by general users.
 """Module for the "annotations" key parsing of a job response."""
 
 import functools

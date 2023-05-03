@@ -20,6 +20,7 @@ nav:
           - Issue: sdk/issue.md
           - Label: sdk/label.md
           - Label Utils: sdk/label_utils.md
+          - Label Parsing: sdk/label_parsing.md
           - Notification: sdk/notification.md
           - Organization: sdk/organization.md
           - Plugins: sdk/plugins.md
