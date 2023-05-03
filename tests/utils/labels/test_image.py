@@ -14,7 +14,7 @@ def test_mask_to_normalized_vertices():
     mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png"
     urllib.request.urlretrieve(mask_url, "mask.png")
 
-    mask = cv2.imread("mask.png")[:, :, 0]  # pylint:disable=no-member
+    mask = cv2.imread("mask.png")[:, :, 0]  # pylint:disable=no-member  # type: ignore
     mask[200:220, 200:220] = 0  # add a hole in the mask to test the hierarchy
 
     contours, hierarchy = mask_to_normalized_vertices(mask)
