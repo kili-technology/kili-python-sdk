@@ -58,7 +58,7 @@ class ParsedLabel(Dict):
             ```
         """
         ret = {k: deepcopy(v) for k, v in self.items() if k != "jsonResponse"}
-        ret["jsonResponse"] = self.jobs.to_dict()
+        ret["jsonResponse"] = self.json_response
         return ret
 
     def __repr__(self) -> str:
@@ -68,6 +68,11 @@ class ParsedLabel(Dict):
     def __str__(self) -> str:
         """Returns the string representation of the object."""
         return str(self.to_dict())
+
+    @property
+    def json_response(self) -> Dict:
+        """Returns a copy of the json response of the parsed label."""
+        return self.jobs.to_dict()
 
 
 @overload
