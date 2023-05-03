@@ -62,6 +62,7 @@ on:
 jobs:
   test_setup:
     name: E2E tests setup
+    if: github.repository == 'kili-technology/kili-python-sdk'
     runs-on: ubuntu-latest
     outputs:
       test_mode_array: ${{ steps.setup_step.outputs.TEST_MODE_ARRAY }}
@@ -108,6 +109,7 @@ jobs:
 
   tests:
     name: ${{ matrix.test_mode }}, ${{ matrix.os }}
+    if: github.repository == 'kili-technology/kili-python-sdk'
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
