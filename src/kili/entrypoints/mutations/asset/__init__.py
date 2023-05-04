@@ -86,7 +86,7 @@ class MutationsAsset:
                     list of URLs to images or a list of paths to images.
                 - For `TEXT` projects, each element is a json_content dict,
                     formatted according to documentation [on how to import
-                rich-text assets](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb)
+                rich-text assets](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/import_text_assets/).
             json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.
 
                 - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.
@@ -109,7 +109,7 @@ class MutationsAsset:
             - For more detailed examples on how to import assets,
                 see [the recipe](https://docs.kili-technology.com/recipes/importing-data).
             - For more detailed examples on how to import text assets,
-                see [the recipe](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
+                see [the recipe](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/import_text_assets/).
         """
         if is_empty_list_with_warning(
             "append_many_to_dataset", "content_array", content_array
