@@ -2,10 +2,12 @@
 
 The module `kili.utils.labels.parsing` provides a `ParsedLabel` class that is used to parse labels.
 
+Using labels as `ParsedLabel` instances is recommended when manipulating the label data, as it will provide autocompletion to access the meaningful fields of the label. If you prefer not to use it, you can still access the labeling data through the label dictionaries.
+
 Read more about this feature in the [label parsing tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
 
 !!! warning
-    This feature is currently in beta.
+    This feature is currently in beta. The classes and methods can still change marginally.
 
 ## ParsedLabel
 
@@ -16,16 +18,6 @@ Read more about this feature in the [label parsing tutorial](https://python-sdk-
             - "__init__"
 
 ## Task specific attributes and methods
-
-In most cases, the attributes of a parsed label are the snake case version of the keys present in the json response.
-
-For example, with a NER (named entities recognition) label, you can access the `beginOffset` data of the first annotation with `parsed_label.jobs["NER_JOB"].annotations[0].begin_offset`.
-
-The different json response keys are listed in the Kili documentation:
-
-- for classification tasks: [link](https://docs.kili-technology.com/reference/export-classification)
-- for exported object/entity detection and relation jobs: [link](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation)
-- for exported transcription jobs: [link](https://docs.kili-technology.com/reference/export-transcription).
 
 ### Classification tasks
 
@@ -79,7 +71,7 @@ label.jobs["TRANSCRIPTION_JOB"].text
 
 ### Object detection tasks
 
-For more information about the different object detection tasks and their json response format, please refer to the [Kili documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation).
+For more information about the different object detection tasks and their label formats, please refer to the [Kili documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation).
 
 #### Standard object detection
 
@@ -189,7 +181,7 @@ label.jobs["POSE_JOB"].annotations[0].points[0].point.job_name
 
 #### `.frames`
 
-Returns a list of parsed job responses for a each frame.
+Returns a list of parsed label data for a each frame.
 
 ```python
 label.jobs["FRAME_CLASSIF_JOB"].frames
@@ -253,7 +245,7 @@ label.jobs["NER_PDF_JOB"].annotations[0].content
 
 #### `.annotations`
 
-NER in PDFs json responses have an additional layer of annotations. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs) for more information.
+NER in PDFs annotations have an additional layer of annotations. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs) for more information.
 
 #### `.polys`
 
@@ -329,4 +321,16 @@ label.jobs["CLASSIF_JOB"].category.children
 label.jobs["OBJECT_DETECTION_JOB"].annotations[0].children
 ```
 
-You can find more information about the children key in the json response in the [Kili documentation](https://docs.kili-technology.com/reference/export-classification).
+You can find more information about the children jobs in the Kili documentation.
+
+## Migrating from jsonReponse format
+
+In most cases, the attributes of a parsed label are the snake case version of the keys present in the json response.
+
+For example, with a NER (named entities recognition) label, you can access the `beginOffset` data of an annotation with `parsed_label.jobs["NER_JOB"].annotations[0].begin_offset`.
+
+The different json response keys are listed in the Kili documentation:
+
+- for [classification tasks](https://docs.kili-technology.com/reference/export-classification)
+- for [exported object/entity detection and relation tasks](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation)
+- for [exported transcription tasks](https://docs.kili-technology.com/reference/export-transcription).
