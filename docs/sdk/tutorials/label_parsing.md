@@ -17,13 +17,59 @@ from kili.client import Kili
 kili = Kili()
 ```
 
+## Kili labels
+
+In Kili SDK, a label is a dictionary that follows a json structure as described in the [documentation](https://docs.kili-technology.com/docs/data-format):
+
+```python
+my_label = kili.labels(project_id="my_project_id", output_format='dict')[0]
+
+print(my_label)
+```
+
+```json
+{
+  "id": "abc123",
+  "author": {"email": "john.doe@kili-techonology.com", "id": "123456"},
+  "createdAt": "2020-02-20T14:00:00.000Z",
+  "labelType": "DEFAULT",
+  "secondsToLabel": 10,
+  "jsonResponse": {},
+  ...  // many other possible fields!
+}
+```
+
+The `jsonResponse` field is the one that contains the actual label data, that is the data that the annotator has entered in the interface (the bounding boxes, polygons, text, etc.).
+
+Is it however quite difficult to extract the label data from the `jsonResponse` field, as it is a nested dictionary. This is why we have developed a label parser that allows you to extract the label data in a more convenient way.
+
+## Parsed Label integration to kili.labels()
+
+The `kili.labels()` method has an `output_format` argument that allows to automatically parse the labels.
+
+```python
+my_label = kili.labels(project_id="my_project_id", output_format='parsed_label')[0]
+
+# example of how to access the category name of the first label
+my_label.jobs["MY_JOB_NAME"].category.name
+```
+
+Instead of:
+
+```python
+my_label = kili.labels(project_id="my_project_id", output_format='dict')[0]
+
+# example of how to access the category name of the first label
+my_label["jsonResponse"]["jobs"]["MY_JOB_NAME"]["categories"][0]["name"]
+```
+
+As you can see, the parsed label is much easier to use than the raw label, and helps you develop your own scripts faster using your IDE auto-completion, type checking, etc.
+
 ## ParsedLabel class
 
 The `ParsedLabel` class represents a Kili label with a parsed json response.
 
-The purpose of this class is to provide a simple way to read and modify label data using a Python attribute syntax instead of a json dictionary syntax.
-
-In this tutorial, we will see how using the `ParsedLabel` class can help you to read and modify label data.
+As we have seen earlier, the `kili.labels(..., output_format='parsed_label')` will automatically return a list of `ParsedLabel` objects, but you can also create a `ParsedLabel` object from a raw dict label.
 
 
 ```python
@@ -122,7 +168,27 @@ The `ParsedLabel` class enables your IDE to explore the possible attributes duri
 
 Note that some attributes will not be avaible at runtime, since they are specific to the project ontology that will only be known at runtime.
 
-## Convert to Python dict
+## Get the json response from a parsed label
+
+If you need to get the json response from a parsed label, you can use the `.json_response` attribute:
+
+
+```python
+print(type(my_parsed_label.json_response))
+```
+
+    <class 'dict'>
+
+
+
+```python
+print(my_parsed_label.json_response)
+```
+
+    {'CLASSIFICATION_JOB': {'categories': [{'name': 'A', 'confidence': 100}]}}
+
+
+## Convert ParsedLabel to Python dict
 
 A `ParsedLabel` is a custom class and is not serializable by default. However, it is possible to convert it to a Python dict using the `to_dict` method:
 
@@ -137,21 +203,23 @@ print(type(my_parsed_label))
 
 ```python
 label_as_dict = my_parsed_label.to_dict()
+```
+
+
+```python
 print(type(label_as_dict))
 ```
 
     <class 'dict'>
 
 
-## ParsedLabel integration to kili.labels()
-
-The `kili.labels()` method has an `output_format` argument that allows to automatically parse the labels:
 
 ```python
-labels = kili.labels(project_id=project_id, output_format='parsed_label')  # labels is a list of ParsedLabel
-
-labels[0].jobs["MY_JOB_NAME"]...
+print(label_as_dict)
 ```
+
+    {'author': {'email': 'first.last@kili-technology.com', 'id': '123456'}, 'id': 'clh0fsi9u0tli0j666l4sfhpz', 'labelType': 'DEFAULT', 'secondsToLabel': 5, 'jsonResponse': {'CLASSIFICATION_JOB': {'categories': [{'name': 'A', 'confidence': 100}]}}}
+
 
 ## Task specific attributes
 
