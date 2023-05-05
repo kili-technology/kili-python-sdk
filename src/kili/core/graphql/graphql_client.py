@@ -59,9 +59,9 @@ class GraphQLClient:
             cookies=None,
             auth=None,
             use_json=True,
-            timeout=60 * 10,
+            timeout=30,
             verify=verify,
-            retries=50,
+            retries=20,
             method="POST",
         )
 
