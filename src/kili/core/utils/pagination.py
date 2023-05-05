@@ -87,8 +87,10 @@ def _mutate_from_paginated_call(
     batch_size: int = MUTATION_BATCH_SIZE,
     last_batch_callback: Optional[Callable] = None,
 ):
-    """Run a mutation by making paginated calls
+    """Run a mutation by making paginated calls.
+
     Args:
+        self: kili
         properties_to_batch: a dictionnary of properties to be batched.
             constants across batch are defined in the generate_variables function
         generate_variables: function that takes batched properties and return
@@ -97,8 +99,9 @@ def _mutate_from_paginated_call(
         batch_size: the size of the batches to produce
         last_batch_callback: a function that takes the last batch and the result of
             this method as arguments
+
     Example:
-        '''
+        ```python
         properties_to_batch={prop1: [0,1], prop2: ['a', 'b']}
         def generate_variables(batched_properties):
             return {
@@ -110,7 +113,7 @@ def _mutate_from_paginated_call(
                 generate_variables=generate_variables
                 request= APPEND_MANY_TO_DATASET
         )
-        '''
+        ```
     """
     results = []
     batch = None

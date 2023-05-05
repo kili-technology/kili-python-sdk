@@ -15,9 +15,17 @@ def get_children_job_names(json_interface: Dict, job_interface: Dict) -> List[st
             and all(json_interface[job_name]["isChild"] for job_name in value)
         ):
             children_job_names.extend(value)
+
         elif isinstance(value, Dict):
             children_job_names.extend(
                 get_children_job_names(json_interface=json_interface, job_interface=value)
             )
+
+        # pose estimation json interface
+        elif key == "points" and isinstance(value, List):
+            for point in value:
+                children_job_names.extend(
+                    get_children_job_names(json_interface=json_interface, job_interface=point)
+                )
 
     return children_job_names

@@ -1,15 +1,21 @@
-# Label Utils module
+# Label utils module
 
-This module provides a set of helper functions to read, modify and create labels.
+The module `kili.utils.labels` provides a set of helpers to convert point, bounding box, polygon and segmentation labels.
 
 ## Points
+
+`kili.utils.labels.point`
 
 ::: kili.utils.labels.point
 
 ## Bounding boxes
 
+`kili.utils.labels.bbox`
+
 ::: kili.utils.labels.bbox
 
 ## Polygon and segmentation masks
+
+`kili.utils.labels.image`
 
 ::: kili.utils.labels.image

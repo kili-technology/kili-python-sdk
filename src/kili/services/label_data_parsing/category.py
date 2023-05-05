@@ -1,4 +1,3 @@
-# Feature is still under development and is not yet suitable for use by general users.
 """Module for the "categories" key parsing of a job response."""
 from typing import Any, Dict, Iterator, List, Optional
 

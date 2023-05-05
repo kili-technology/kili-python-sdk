@@ -214,7 +214,7 @@ class MutationsLabel:
                 or an error message.
 
         Examples:
-            >>> kili.append_to_labels(
+            >>> kili.append_labels(
                     asset_id_array=['cl9wmlkuc00050qsz6ut39g8h', 'cl9wmlkuw00080qsz2kqh8aiy'],
                     json_response_array=[{...}, {...}]
                 )
@@ -305,13 +305,13 @@ class MutationsLabel:
             which measures the similarity between this label and other labels.
 
         Args:
-            json_response: The JSON response of the honeypot label of the asset
-            asset_id: Identifier of the asset
-                Either provide asset_id or asset_external_id and project_id
-            asset_external_id: External identifier of the asset
-                Either provide asset_id or asset_external_id and project_id
-            project_id: Identifier of the project
-                Either provide asset_id or asset_external_id and project_id
+            json_response: The JSON response of the honeypot label of the asset.
+            asset_id: Identifier of the asset.
+                Either provide `asset_id` or `asset_external_id` and `project_id`.
+            asset_external_id: External identifier of the asset.
+                Either provide `asset_id` or `asset_external_id` and `project_id`.
+            project_id: Identifier of the project.
+                Either provide `asset_id` or `asset_external_id` and `project_id`.
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -319,7 +319,9 @@ class MutationsLabel:
         """
         if asset_id is None:
             if asset_external_id is None or project_id is None:
-                raise ValueError("Either provide asset_id or external_id and project_id")
+                raise ValueError(
+                    "Either provide `asset_id` or `asset_external_id` and `project_id`."
+                )
             asset_id = infer_ids_from_external_ids(self.auth, [asset_external_id], project_id)[
                 asset_external_id
             ]

@@ -1,10 +1,13 @@
 import json
+from typing import Dict, Generator, List
 
-import pytest
+from typing_extensions import assert_type
 
+from kili.client import Kili
+from kili.entrypoints.queries.label import QueriesLabel
 from kili.services.label_data_parsing.annotation import Annotation, AnnotationList
 from kili.services.label_data_parsing.category import Category, CategoryList
-from kili.utils.labels.parse_labels import parse_labels
+from kili.utils.labels.parsing import ParsedLabel, parse_labels
 
 
 def test_parse_labels_classification():
@@ -242,3 +245,54 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
 
     for original_label, parsed_label in zip(labels, labels_modified):
         assert original_label == parsed_label
+
+
+def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
+    """This test does not check types at runtime, but rather during pyright type checking."""
+    _ = mocker.patch.object(Kili, "__init__", return_value=None)
+    _ = mocker.patch.object(QueriesLabel, "labels")
+    assert_type(Kili().labels("project_id"), List[Dict])
+    assert_type(Kili().labels("project_id", as_generator=True), Generator[Dict, None, None])
+    assert_type(Kili().labels("project_id", output_format="parsed_label"), List[ParsedLabel])
+    assert_type(
+        Kili().labels("project_id", output_format="parsed_label", as_generator=True),
+        Generator[ParsedLabel, None, None],
+    )
+
+
+def test_integration_of_label_parsing_in_kili_labels(mocker):
+    mocker_project_query = mocker.patch(
+        "kili.core.graphql.operations.project.queries.ProjectQuery.__call__",
+        return_value=iter(
+            [
+                {
+                    "jsonInterface": {
+                        "jobs": {
+                            "JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}
+                        }
+                    },
+                    "inputType": "TEXT",
+                }
+            ]
+        ),
+    )
+
+    mocker_label_query = mocker.patch(
+        "kili.core.graphql.operations.label.queries.LabelQuery.get_number_of_elements_to_query",
+        return_value=1,
+    )
+
+    mocked_execute = mocker.MagicMock(
+        return_value={"data": [{"jsonResponse": {"JOB_0": {"text": "some text abc"}}}]}
+    )
+    mocker_auth = mocker.MagicMock()
+    mocker_auth.client.execute = mocked_execute
+    kili = QueriesLabel(auth=mocker_auth)
+    labels = kili.labels(project_id="project_id", output_format="parsed_label")
+
+    assert_type(labels, List[ParsedLabel])
+
+    assert isinstance(labels, List)
+    assert all(isinstance(labl, ParsedLabel) for labl in labels)  # pylint: disable=not-an-iterable
+    assert len(labels) == 1
+    assert labels[0].jobs["JOB_0"].text == "some text abc"  # pylint: disable=unsubscriptable-object
