@@ -58,9 +58,7 @@ class TestImportLabelsFromDict:
         }
 
         services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60, retries=0
-        )
+        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
 
     @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
     def test_import_default_labels_with_external_id(self, mocker):
@@ -96,9 +94,7 @@ class TestImportLabelsFromDict:
         }
 
         services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60, retries=0
-        )
+        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
 
     def test_import_labels_with_optional_params(self):
         project_id = "project_id"
@@ -132,9 +128,7 @@ class TestImportLabelsFromDict:
         }
 
         services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60, retries=0
-        )
+        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
 
     def test_return_error_when_give_unexisting_label_field(self):
         project_id = "project_id"
@@ -202,9 +196,7 @@ class TestImportLabelsFromDict:
         }
 
         services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60, retries=0
-        )
+        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
 
     def test_import_predictions_without_giving_model_name(self):
         self.kili.assets = MagicMock(
