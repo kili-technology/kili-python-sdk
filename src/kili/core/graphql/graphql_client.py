@@ -153,16 +153,19 @@ class GraphQLClient:
         return None
 
     def execute(
-        self, query: Union[str, DocumentNode], variables: Optional[Dict] = None
+        self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
     ) -> Dict[str, Any]:
         """Execute a query.
 
         Args:
             query: the GraphQL query
             variables: the payload of the query
+            kwargs: additional arguments to pass to the GraphQL client
         """
 
-        def _execute(document: DocumentNode, variables: Optional[Dict] = None) -> Dict[str, Any]:
+        def _execute(
+            document: DocumentNode, variables: Optional[Dict] = None, **kwargs
+        ) -> Dict[str, Any]:
             try:
                 result = self._gql_client.execute(
                     document=document,
@@ -173,6 +176,7 @@ class GraphQLClient:
                             **LogContext(),
                         }
                     },
+                    **kwargs,
                 )
             except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
                 if isinstance(err, exceptions.TransportQueryError):
@@ -184,14 +188,14 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         try:
-            ret = _execute(document, variables)
+            ret = _execute(document, variables, **kwargs)
         except GraphQLError as err:
             # if error is due do parsing or local validation of the query (graphql.GraphQLError)
             # we refresh the schema and retry once
             if isinstance(err.__cause__, graphql.GraphQLError):
                 self._purge_graphql_schema_cache_dir()
                 self._gql_client = self._initizalize_graphql_client()
-                ret = _execute(document, variables)  # if it fails again, we crash here
+                ret = _execute(document, variables, **kwargs)  # if it fails again, we crash here
             else:
                 raise err
         return ret
