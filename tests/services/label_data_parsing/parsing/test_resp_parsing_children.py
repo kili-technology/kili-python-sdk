@@ -623,3 +623,87 @@ def test_relation_job():
 
     parsed_jobs_as_dict = parsed_jobs.to_dict()
     assert parsed_jobs_as_dict == json_resp
+
+
+def test_pose_estimation_with_children():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "POSE_A": {
+                            "children": [],
+                            "color": "#472CED",
+                            "name": "A",
+                            "points": [
+                                {
+                                    "code": "POINT_A1",
+                                    "name": "Point A1",
+                                    "mandatory": True,
+                                    "children": ["CLASSIFICATION_JOB"],
+                                },
+                            ],
+                        }
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Job name",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["pose"],
+                "isChild": False,
+            },
+            "CLASSIFICATION_JOB": {
+                "content": {
+                    "categories": {"CATEGORY_1": {"children": [], "name": "CATEGORY_1"}},
+                    "input": "radio",
+                },
+                "instruction": "CLASSIFICATION_JOB",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": True,
+            },
+        }
+    }
+
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"confidence": 100, "name": "POSE_A"}],
+                    "children": {},
+                    "jobName": "JOB_0",
+                    "kind": "POSE_ESTIMATION",
+                    "mid": "20220511112452SS-21114",
+                    "points": [
+                        {
+                            "categories": [{"confidence": 100, "name": "POSE_A"}],
+                            "children": {
+                                "CLASSIFICATION_JOB": {
+                                    "categories": [{"confidence": 100, "name": "CATEGORY_1"}]
+                                }
+                            },
+                            "code": "POINT_A1",
+                            "jobName": "JOB_0",
+                            "mid": "20220511112452SS-21114",
+                            "name": "Point A1",
+                            "point": {"x": 0.4853515625, "y": 0.203125},
+                        },
+                    ],
+                    "type": "marker",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    ann = parsed_jobs["JOB_0"].annotations[0]
+
+    assert ann.category.name == "POSE_A"
+    assert ann.points[0].category.name == "POSE_A"
+    assert ann.points[0].children["CLASSIFICATION_JOB"].categories[0].name == "CATEGORY_1"
+
+    parsed_jobs_as_dict = parsed_jobs.to_dict()
+    assert parsed_jobs_as_dict == json_resp

@@ -1,4 +1,3 @@
-# Feature is still under development and is not yet suitable for use by general users.
 """Module for the "annotations" key parsing of a job response."""
 
 import functools
@@ -53,8 +52,15 @@ class _BaseAnnotation:
                 job_name=self._job_name,
                 type_of_tool=self._json_data.get("type"),
             )
+        if "points" in self._json_data and isinstance(self._json_data["points"], List):
+            self._json_data["points"] = [
+                PoseEstimationPointAnnotation(
+                    project_info=self._project_info, job_name=self._job_name, annotation_json=point
+                )
+                for point in self._json_data["points"]
+            ]
         if self._json_data.get("children"):
-            self.children = self._json_data["children"]
+            self.children = self._json_data["children"]  # call children setter
 
     def __str__(self) -> str:
         return str(self._json_data)
@@ -67,7 +73,7 @@ class _BaseAnnotation:
         ret = {
             k: v
             for k, v in self._json_data.items()
-            if k not in ("categories", "children", "boundingPoly")
+            if k not in ("categories", "children", "boundingPoly", "points")
         }
         if "categories" in self._json_data:
             ret["categories"] = (
@@ -81,6 +87,8 @@ class _BaseAnnotation:
                 if isinstance(self._json_data["boundingPoly"], List)
                 else self._json_data["boundingPoly"].as_list()
             )
+        if "points" in self._json_data:
+            ret["points"] = [point.as_dict() for point in self._json_data["points"]]
         if "children" in self._json_data:
             ret["children"] = (
                 self._json_data["children"].to_dict()
@@ -392,8 +400,8 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
         return "OBJECT_DETECTION"
 
     @staticmethod
-    def _get_compatible_type_of_tools() -> Sequence[Literal["pose"]]:
-        return ("pose",)
+    def _get_compatible_type_of_tools() -> Sequence[Literal["pose", "marker"]]:
+        return ("pose", "marker")
 
     @property
     def kind(self) -> Literal["POSE_ESTIMATION"]:
@@ -404,9 +412,33 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
         return self._json_data["kind"]
 
     @property
-    def points(self) -> List[Dict]:
+    def points(self) -> List["PoseEstimationPointAnnotation"]:
         """Returns the list of the points composing the object."""
         return self._json_data["points"]
+
+
+class PoseEstimationPointAnnotation(PointAnnotation):
+    """Class for parsing a point object of a job response for pose estimation jobs."""
+
+    @property
+    def point(self) -> Dict[Literal["x", "y"], float]:
+        """Returns the coordinates of the point."""
+        return self._json_data["point"]
+
+    @property
+    def code(self) -> str:
+        """Returns the code identifier (unique for each point in an object)."""
+        return self._json_data["code"]
+
+    @property
+    def name(self) -> str:
+        """Returns the name of the point."""
+        return self._json_data["name"]
+
+    @property
+    def job_name(self) -> str:
+        """Returns the annotated point job's name."""
+        return self._json_data["jobName"]
 
 
 class EntityRelationAnnotation(_BaseAnnotation):
@@ -573,10 +605,20 @@ class AnnotationList:
             "type" in annotation._json_data
             and annotation._json_data["type"] not in self._job_interface["tools"]
         ):
-            raise InvalidMutationError(
-                f"Annotation of type '{annotation._json_data['type']}' cannot be added to this job"
-                f" with tools {self._job_interface['tools']}"
-            )
+            annotation_tool_type = annotation._json_data["type"]
+            job_interface_tools = self._job_interface["tools"]
+
+            # pose estimation jobs are a special case
+            # the job interface tools is "pose"
+            # but the annotation type is "marker"
+            if annotation_tool_type == "marker" and "pose" in job_interface_tools:
+                return
+
+            if annotation_tool_type not in job_interface_tools:
+                raise InvalidMutationError(
+                    f"Annotation of type '{annotation._json_data['type']}' cannot be added to this"
+                    f" job with tools {self._job_interface['tools']}"
+                )
 
     @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
