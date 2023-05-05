@@ -344,8 +344,14 @@ def test_copy_project_e2e_video(kili: "Kili", src_project_video):
 
     # assert labels
     assert len(labels_src) == len(labels_new) == 4
-    labels_src = sorted(labels_src, key=lambda label: label["secondsToLabel"])
-    labels_new = sorted(labels_new, key=lambda label: label["secondsToLabel"])
+    label_sort_key = lambda label: (
+        label["secondsToLabel"],
+        label["labelOf"]["externalId"],
+        label["labelType"],
+        label["modelName"],
+    )
+    labels_src = sorted(labels_src, key=label_sort_key)
+    labels_new = sorted(labels_new, key=label_sort_key)
     assert labels_src == labels_new
 
     # assert assets
