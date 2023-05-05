@@ -253,22 +253,18 @@ def src_project_video(kili: "Kili"):
         label_type="DEFAULT",
     )
     assert kili.count_labels(project_id=project["id"]) == 1
-    kili.append_labels(
-        [asset_id_array[1]],
+    kili.create_predictions(
+        project_id=project["id"],
+        asset_id_array=[asset_id_array[1]],
         json_response_array=[json_response_b],
-        author_id_array=[members_id_array[1]],
-        seconds_to_label_array=[42],
         model_name="yolo",
-        label_type="PREDICTION",
     )
     assert kili.count_labels(project_id=project["id"]) == 2
-    kili.append_labels(
-        [asset_id_array[1]],
+    kili.create_predictions(
+        project_id=project["id"],
+        asset_id_array=[asset_id_array[1]],
         json_response_array=[json_response_b],
-        author_id_array=None,
-        seconds_to_label_array=[2000],
         model_name="unet",
-        label_type="PREDICTION",
     )
     assert kili.count_labels(project_id=project["id"]) == 3
     kili.append_labels(
