@@ -1,8 +1,6 @@
 """Copy project implementation."""
 import itertools
 import logging
-import time
-import warnings
 from typing import Dict, Optional
 
 import kili.client as kili_client_module
@@ -276,7 +274,6 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             disable_tqdm=True,
         )
         labels = [label for label in labels if label["isLatestLabelForUser"]]
-        warnings.warn(f"gathering {len(labels)} labels to copy: {labels}", stacklevel=1)
 
         # `append_labels` does not take arrays for `model_name` and `label_type` arguments
         # we need to sort and group the labels by `model_name` and `label_type`
@@ -290,7 +287,6 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             key=lambda label: (label["labelType"], label["modelName"] is None, label["modelName"]),
         )
 
-        nb_labels_uploaded = 0
         for key, group in labels_iterator:
             label_type, _, model_name = key
             group = list(group)
@@ -305,29 +301,6 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             author_id_array = [members_new_project_map[label["author"]["email"]] for label in group]
             seconds_to_label_array = [label["secondsToLabel"] for label in group]
 
-            warnings.warn(
-                f"sending {len(group)} labels to kili for group {key}. {group}", stacklevel=1
-            )
-            warnings.warn(
-                f"sending {len(group)} labels to kili for group {key}. {asset_id_array}",
-                stacklevel=1,
-            )
-            warnings.warn(
-                f"sending {len(group)} labels to kili for group {key}. {asset_id_array}",
-                stacklevel=1,
-            )
-            warnings.warn(
-                f"sending {len(group)} labels to kili for group {key}. {seconds_to_label_array}",
-                stacklevel=1,
-            )
-
-            warnings.warn(
-                (
-                    "before append labels:"
-                    f" {self.kili.count_labels(project_id=new_project_id)} {self.kili.labels(project_id=new_project_id)}"
-                ),
-                stacklevel=1,
-            )
             self.kili.append_labels(
                 asset_id_array=asset_id_array,
                 json_response_array=json_response_array,
@@ -337,25 +310,3 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 label_type=label_type,
                 disable_tqdm=False,
             )
-            time.sleep(3)
-            warnings.warn(
-                (
-                    "after append labels:"
-                    f" {self.kili.count_labels(project_id=new_project_id)} {self.kili.labels(project_id=new_project_id)}"
-                ),
-                stacklevel=1,
-            )
-            assert nb_labels_uploaded + len(json_response_array) == self.kili.count_labels(
-                project_id=new_project_id
-            ), (
-                f"{nb_labels_uploaded} "
-                f" {len(json_response_array)} {self.kili.count_labels(project_id=new_project_id)}"
-            )
-            nb_labels_uploaded += len(json_response_array)
-
-        copied_labels = LabelQuery(self.kili.auth.client).count(
-            LabelWhere(project_id=from_project_id)
-        )
-        warnings.warn(f"sent {copied_labels} labels to kili", stacklevel=1)
-        if len(labels) != copied_labels:
-            raise ValueError(f"Only {copied_labels} labels copied out of {len(labels)} labels")
