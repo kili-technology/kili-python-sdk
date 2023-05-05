@@ -80,7 +80,7 @@ def mask_to_normalized_vertices(
 
     img_height, img_width = image.shape
     # pylint:disable=no-member
-    contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # type: ignore
 
     contours = [
         _opencv_contour_to_normalized_vertices(contour, img_width, img_height)
@@ -129,5 +129,5 @@ def normalized_vertices_to_mask(
         for vertice in normalized_vertices
     ]
     polygon = np.array([polygon])
-    cv2.fillPoly(img=mask, pts=polygon, color=255)  # pylint:disable=no-member
+    cv2.fillPoly(img=mask, pts=polygon, color=255)  # pylint:disable=no-member  # type: ignore
     return mask

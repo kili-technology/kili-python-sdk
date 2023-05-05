@@ -3,7 +3,6 @@ import itertools
 import logging
 from typing import Dict, Optional
 
-import kili.client as kili_client_module
 from kili import services
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
@@ -31,7 +30,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "reviewCoverage",
     ]
 
-    def __init__(self, kili: "kili_client_module.Kili") -> None:
+    def __init__(self, kili) -> None:
         self.disable_tqdm = False
         self.kili = kili
 
