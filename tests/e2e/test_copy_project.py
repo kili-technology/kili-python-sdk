@@ -154,7 +154,7 @@ json_response_b = {
 
 
 @pytest.fixture()
-def src_project_video(kili):
+def src_project_video(kili: "Kili"):
     interface = {
         "jobs": {
             "JOB_0": {
@@ -243,6 +243,7 @@ def src_project_video(kili):
         for x in members
         if x["invitationStatus"] != "DEFAULT_ACCEPTED" and x["activated"]
     ]
+    assert kili.count_labels(project_id=project["id"]) == 0
     kili.append_labels(
         [asset_id_array[0]],
         json_response_array=[json_response_a],
@@ -251,6 +252,7 @@ def src_project_video(kili):
         model_name=None,
         label_type="DEFAULT",
     )
+    assert kili.count_labels(project_id=project["id"]) == 1
     kili.append_labels(
         [asset_id_array[1]],
         json_response_array=[json_response_b],
@@ -259,6 +261,7 @@ def src_project_video(kili):
         model_name="yolo",
         label_type="PREDICTION",
     )
+    assert kili.count_labels(project_id=project["id"]) == 2
     kili.append_labels(
         [asset_id_array[1]],
         json_response_array=[json_response_b],
@@ -267,6 +270,7 @@ def src_project_video(kili):
         model_name="unet",
         label_type="PREDICTION",
     )
+    assert kili.count_labels(project_id=project["id"]) == 3
     kili.append_labels(
         [asset_id_array[2]],
         json_response_array=[{}],
@@ -275,6 +279,7 @@ def src_project_video(kili):
         model_name=None,
         label_type="REVIEW",
     )
+    assert kili.count_labels(project_id=project["id"]) == 4
 
     yield project
 
@@ -286,7 +291,7 @@ def md5_hash(filepath: Union[str, Path]):
     return hashlib.md5(open(filepath, "rb").read()).hexdigest()
 
 
-def test_copy_project_e2e_video(kili, src_project_video):
+def test_copy_project_e2e_video(kili: "Kili", src_project_video):
     new_proj_id = kili.copy_project(
         from_project_id=src_project_video["id"],
         description="new description",

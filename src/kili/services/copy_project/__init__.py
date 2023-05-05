@@ -1,6 +1,7 @@
 """Copy project implementation."""
 import itertools
 import logging
+import warnings
 from typing import Dict, Optional
 
 from kili import services
@@ -238,7 +239,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         return assets
 
     # pylint: disable=too-many-locals
-    def _copy_labels(self, from_project_id: str, new_project_id: str):
+    def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
         assets_new_project = AssetQuery(self.kili.auth.client)(
             AssetWhere(project_id=new_project_id),
             ["id", "externalId"],
@@ -273,6 +274,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             disable_tqdm=True,
         )
         labels = [label for label in labels if label["isLatestLabelForUser"]]
+        warnings.warn(f"gathering {len(labels)} labels to copy: {labels}", stacklevel=1)
 
         # `append_labels` does not take arrays for `model_name` and `label_type` arguments
         # we need to sort and group the labels by `model_name` and `label_type`
@@ -300,6 +302,22 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             author_id_array = [members_new_project_map[label["author"]["email"]] for label in group]
             seconds_to_label_array = [label["secondsToLabel"] for label in group]
 
+            warnings.warn(
+                f"sending {len(group)} labels to kili for group {key}. {group}", stacklevel=1
+            )
+            warnings.warn(
+                f"sending {len(group)} labels to kili for group {key}. {asset_id_array}",
+                stacklevel=1,
+            )
+            warnings.warn(
+                f"sending {len(group)} labels to kili for group {key}. {asset_id_array}",
+                stacklevel=1,
+            )
+            warnings.warn(
+                f"sending {len(group)} labels to kili for group {key}. {seconds_to_label_array}",
+                stacklevel=1,
+            )
+
             self.kili.append_labels(
                 asset_id_array=asset_id_array,
                 json_response_array=json_response_array,
@@ -309,3 +327,10 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 label_type=label_type,
                 disable_tqdm=False,
             )
+
+        copied_labels = LabelQuery(self.kili.auth.client).count(
+            LabelWhere(project_id=from_project_id)
+        )
+        warnings.warn(f"sent {copied_labels} labels to kili", stacklevel=1)
+        if len(labels) != copied_labels:
+            raise ValueError(f"Only {copied_labels} labels copied out of {len(labels)} labels")
