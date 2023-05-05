@@ -243,7 +243,7 @@ def src_project_video(kili: "Kili"):
         for x in members
         if x["invitationStatus"] != "DEFAULT_ACCEPTED" and x["activated"]
     ]
-    assert kili.count_labels(project_id=project["id"]) == 0
+    assert kili.count_labels(project_id=project["id"]) == 0, f"{kili.labels(project['id'])}"
     kili.append_labels(
         [asset_id_array[0]],
         json_response_array=[json_response_a],
@@ -252,21 +252,21 @@ def src_project_video(kili: "Kili"):
         model_name=None,
         label_type="DEFAULT",
     )
-    assert kili.count_labels(project_id=project["id"]) == 1
+    assert kili.count_labels(project_id=project["id"]) == 1, f"{kili.labels(project['id'])}"
     kili.create_predictions(
         project_id=project["id"],
         asset_id_array=[asset_id_array[1]],
         json_response_array=[json_response_b],
         model_name="yolo",
     )
-    assert kili.count_labels(project_id=project["id"]) == 2
+    assert kili.count_labels(project_id=project["id"]) == 2, f"{kili.labels(project['id'])}"
     kili.create_predictions(
         project_id=project["id"],
         asset_id_array=[asset_id_array[1]],
         json_response_array=[json_response_b],
         model_name="unet",
     )
-    assert kili.count_labels(project_id=project["id"]) == 3
+    assert kili.count_labels(project_id=project["id"]) == 3, f"{kili.labels(project['id'])}"
     kili.append_labels(
         [asset_id_array[2]],
         json_response_array=[{}],
@@ -275,7 +275,7 @@ def src_project_video(kili: "Kili"):
         model_name=None,
         label_type="REVIEW",
     )
-    assert kili.count_labels(project_id=project["id"]) == 4
+    assert kili.count_labels(project_id=project["id"]) == 4, f"{kili.labels(project['id'])}"
 
     yield project
 
