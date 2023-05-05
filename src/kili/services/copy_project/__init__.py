@@ -1,9 +1,11 @@
 """Copy project implementation."""
 import itertools
 import logging
+import time
 import warnings
 from typing import Dict, Optional
 
+import kili.client as kili_client_module
 from kili import services
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
@@ -31,7 +33,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "reviewCoverage",
     ]
 
-    def __init__(self, kili) -> None:
+    def __init__(self, kili: "kili_client_module.Kili") -> None:
         self.disable_tqdm = False
         self.kili = kili
 
@@ -288,6 +290,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             key=lambda label: (label["labelType"], label["modelName"] is None, label["modelName"]),
         )
 
+        nb_labels_uploaded = 0
         for key, group in labels_iterator:
             label_type, _, model_name = key
             group = list(group)
@@ -318,6 +321,13 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 stacklevel=1,
             )
 
+            warnings.warn(
+                (
+                    "before append labels:"
+                    f" {self.kili.count_labels(project_id=new_project_id)} {self.kili.labels(project_id=new_project_id)}"
+                ),
+                stacklevel=1,
+            )
             self.kili.append_labels(
                 asset_id_array=asset_id_array,
                 json_response_array=json_response_array,
@@ -327,6 +337,21 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 label_type=label_type,
                 disable_tqdm=False,
             )
+            time.sleep(3)
+            warnings.warn(
+                (
+                    "after append labels:"
+                    f" {self.kili.count_labels(project_id=new_project_id)} {self.kili.labels(project_id=new_project_id)}"
+                ),
+                stacklevel=1,
+            )
+            assert nb_labels_uploaded + len(json_response_array) == self.kili.count_labels(
+                project_id=new_project_id
+            ), (
+                f"{nb_labels_uploaded} "
+                f" {len(json_response_array)} {self.kili.count_labels(project_id=new_project_id)}"
+            )
+            nb_labels_uploaded += len(json_response_array)
 
         copied_labels = LabelQuery(self.kili.auth.client).count(
             LabelWhere(project_id=from_project_id)
