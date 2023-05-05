@@ -21,7 +21,7 @@ install_requires = [
     "Pillow",
     "cuid",
     "pydantic",
-    "urllib3>=1.26",
+    "urllib3>=1.26,<2.0.0",
     "ffmpeg-python",
     "gql[requests,websockets]",
 ]
