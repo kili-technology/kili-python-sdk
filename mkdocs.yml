@@ -36,7 +36,7 @@ nav:
       - Importing Assets:
           - Image Assets with Metadata: sdk/tutorials/importing_assets_and_labels.md
           - Video Assets: sdk/tutorials/importing_video_assets.md
-          - Text Assets: sdk/tutorials/import_text_assets.md
+          - Rich Text Assets: sdk/tutorials/import_text_assets.md
       - Importing Labels:
           - Introduction: sdk/tutorials/importing_labels.md
           - OpenAI NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
