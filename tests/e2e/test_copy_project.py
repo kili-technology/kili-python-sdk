@@ -157,7 +157,7 @@ json_response_b = {
 
 
 @pytest.fixture()
-def src_project(kili):
+def src_project_video(kili: "Kili"):
     interface = {
         "jobs": {
             "JOB_0": {
@@ -252,6 +252,7 @@ def src_project(kili):
         for x in members
         if x["invitationStatus"] != "DEFAULT_ACCEPTED" and x["activated"]
     ]
+    assert kili.count_labels(project_id=project["id"]) == 0, f"{kili.labels(project['id'])}"
     kili.append_labels(
         [asset_id_array[0]],
         json_response_array=[json_response_a],
@@ -260,22 +261,21 @@ def src_project(kili):
         model_name=None,
         label_type="DEFAULT",
     )
-    kili.append_labels(
-        [asset_id_array[1]],
+    assert kili.count_labels(project_id=project["id"]) == 1, f"{kili.labels(project['id'])}"
+    kili.create_predictions(
+        project_id=project["id"],
+        asset_id_array=[asset_id_array[1]],
         json_response_array=[json_response_b],
-        author_id_array=[members_id_array[1]],
-        seconds_to_label_array=[42],
         model_name="yolo",
-        label_type="PREDICTION",
     )
-    kili.append_labels(
-        [asset_id_array[1]],
+    assert kili.count_labels(project_id=project["id"]) == 2, f"{kili.labels(project['id'])}"
+    kili.create_predictions(
+        project_id=project["id"],
+        asset_id_array=[asset_id_array[1]],
         json_response_array=[json_response_b],
-        author_id_array=None,
-        seconds_to_label_array=[2000],
         model_name="unet",
-        label_type="PREDICTION",
     )
+    assert kili.count_labels(project_id=project["id"]) == 3, f"{kili.labels(project['id'])}"
     kili.append_labels(
         [asset_id_array[2]],
         json_response_array=[{}],
@@ -284,6 +284,7 @@ def src_project(kili):
         model_name=None,
         label_type="REVIEW",
     )
+    assert kili.count_labels(project_id=project["id"]) == 4, f"{kili.labels(project['id'])}"
 
     yield project
 
@@ -295,7 +296,7 @@ def md5_hash(filepath: Union[str, Path]):
     return hashlib.md5(open(filepath, "rb").read()).hexdigest()
 
 
-def test_copy_project_e2e(kili, src_project):
+def test_copy_project_e2e_video(kili: "Kili", src_project_video):
     new_proj_id = kili.copy_project(
         from_project_id=src_project["id"],
         description="new description",
@@ -352,8 +353,14 @@ def test_copy_project_e2e(kili, src_project):
 
     # assert labels
     assert len(labels_src) == len(labels_new) == 4
-    labels_src = sorted(labels_src, key=lambda label: label["secondsToLabel"])
-    labels_new = sorted(labels_new, key=lambda label: label["secondsToLabel"])
+    label_sort_key = lambda label: (
+        label["secondsToLabel"],
+        label["labelOf"]["externalId"],
+        label["labelType"],
+        label["modelName"],
+    )
+    labels_src = sorted(labels_src, key=label_sort_key)
+    labels_new = sorted(labels_new, key=label_sort_key)
     assert labels_src == labels_new
 
     # assert assets
