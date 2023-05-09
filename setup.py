@@ -57,6 +57,8 @@ dev_extra = [
     "ipykernel",
     # image utils
     "opencv-python",
+    # profiling
+    "pyinstrument",
 ]
 
 setup(
