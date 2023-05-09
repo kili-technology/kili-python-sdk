@@ -50,6 +50,7 @@ def process_notebook(notebook_filename):
                 reason="Feature not available on premise",
             ),
         ),
+        # "recipes/plugins_development.ipynb"
         "recipes/set_up_workflows.ipynb",
         "recipes/webhooks_example.ipynb",
     ],

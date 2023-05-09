@@ -24,10 +24,6 @@ from nbconvert import MarkdownExporter
 from nbconvert.preprocessors.base import Preprocessor
 from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
 
-IGNORED_NOTEBOOKS = [
-    "recipes/plugins_development.ipynb",
-]
-
 IGNORED_TUTORIALS = [
     "plugins_library",
 ]
@@ -247,9 +243,6 @@ class NotebookTestMissingError(Exception):
 
 def check_notebook_tested(ipynb_filepath: Path):
     """Check if notebook is tested."""
-    if f"recipes/{ipynb_filepath.name}" in IGNORED_NOTEBOOKS:
-        return
-
     with open("tests/test_notebooks.py", encoding="utf-8") as file:
         test_notebooks_module_str = file.read()
 
@@ -273,6 +266,19 @@ def check_colab_link_in_notebook(ipynb_filepath: Path):
         not in notebook_str
     ):
         raise ColabLinkMissingError(f"Colab link not found in {ipynb_filepath.name}.")
+
+
+class TutorialNameMissingError(Exception):
+    """Raised when tutorial name is not in tutorials homepage."""
+
+
+def check_in_tutorial_homepage(tutorial_name: str):
+    """Check if tutorial is in tutorials homepage."""
+    with open("docs/tutorials.md", encoding="utf-8") as file:
+        tutorials_homepage_str = file.read()
+
+    if tutorial_name not in tutorials_homepage_str:
+        raise TutorialNameMissingError(f"{tutorial_name} not found in tutorials homepage.")
 
 
 @click.command(name="notebook_tutorials_commit_hook")
@@ -342,6 +348,7 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         check_mkdocs_yml_up_to_date(md_filepath)
         check_notebook_tested(ipynb_filepath)
         check_colab_link_in_notebook(ipynb_filepath)
+        check_in_tutorial_homepage(tutorial_name)
         try:
             check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)
         except OutdatedMarkdownError:
