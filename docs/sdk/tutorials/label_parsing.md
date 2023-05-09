@@ -422,7 +422,7 @@ print(label.jobs["TRANSCRIPTION_JOB"].text)
 
 #### Standard object detection job
 
-For object detection jobs, a parsed label has an `.annotations` attribute:
+For standard object detection jobs, a parsed label has an `.annotations` attribute:
 
 
 ```python
