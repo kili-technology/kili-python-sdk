@@ -1,7 +1,7 @@
 """Services for data connections."""
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -23,6 +23,19 @@ from kili.entrypoints.mutations.data_connection.queries import (
 )
 
 LOGGER = None
+
+
+def get_azure_bucket_class():
+    """Lazy import since azure-storage-blob is not a required dependency."""
+    try:
+        from .azure import AzureBucket  # pylint: disable=import-outside-toplevel
+    except ImportError as err:
+        raise ImportError(
+            "The azure-storage-blob package is required to use Azure buckets. "
+            " Run `pip install kili[azure]` to install it."
+        ) from err
+
+    return AzureBucket
 
 
 def _get_logger() -> logging.Logger:
@@ -86,10 +99,48 @@ def validate_data_differences(
                 )
 
 
-def compute_differences(
-    auth: KiliAuth, data_connection_id: str, blob_paths: Optional[List[str]] = None
-) -> Dict:
+def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
     """Compute the data connection differences."""
+    logger = _get_logger()
+    logger.info("Computing the data connection differences")
+
+    data_connection = get_data_connection(
+        auth,
+        data_connection_id,
+        fields=[
+            "dataIntegration.azureIsUsingServiceCredentials",
+            "dataIntegration.platform",
+            "dataIntegration.azureSASToken",
+            "dataIntegration.azureConnectionURL",
+            "dataIntegration.id",
+        ],
+    )
+
+    data_integration = data_connection["dataIntegration"]
+
+    blob_paths: Optional[List[str]] = None
+    # for azure using credentials, it is required to provide the blob paths to compute the diffs
+    if (
+        data_integration["platform"].lower() == "azure"
+        and data_integration["azureIsUsingServiceCredentials"]
+    ):
+        logger.info("Azure data integration is using service credentials. Retrieving blob paths...")
+        if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
+            raise ValueError(
+                f"Cannot compute differences for data connection {data_connection_id} with data"
+                f" integration {data_integration['id']}. Need to provide \"azureSASToken\" and"
+                f' "azureConnectionURL" in data integration: {data_integration}'
+            )
+
+        azure_client = get_azure_bucket_class()(
+            sas_token=data_integration["azureSASToken"],
+            connection_url=data_integration["azureConnectionURL"],
+        )
+
+        azure_client.check_connection()
+
+        blob_paths = azure_client.list_blob_paths()
+
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
         variables["data"] = {"blobPaths": blob_paths}
@@ -114,6 +165,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 
     for attempt in Retrying(
         wait=wait_exponential(multiplier=1, min=1, max=4),
+        stop=stop_after_delay(60),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
     ):
@@ -148,7 +200,7 @@ def synchronize_data_connection(
         ],
     )
     if data_connection["isChecking"]:
-        raise ValueError(f"Data connection is still checking: {data_connection}")
+        raise ValueError(f"Data connection should not be checking: {data_connection}")
 
     added = data_connection["dataDifferencesSummary"]["added"]
     removed = data_connection["dataDifferencesSummary"]["removed"]

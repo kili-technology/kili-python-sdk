@@ -29,35 +29,41 @@ image_requires = [
     "opencv-python>=4.0.0,<5.0.0",
 ]
 
-dev_extra = [
-    # release
-    "bump2version",
-    # tests
-    "pytest",
-    "pytest-mock",
-    "pytest-cov",
-    "pytest-xdist[psutil]",
-    # documentation
-    "mkdocs",
-    "mkdocs-material",
-    "mkdocstrings",
-    "mkdocstrings-python-legacy",
-    "mkdocs-click",
-    "mike",
-    "pymdown-extensions",
-    # linting
-    "black",
-    "pre-commit",
-    "pylint",
-    "flake8-unused-arguments",
-    "pyright",
-    # notebooks tests
-    "nbformat",
-    "nbconvert",
-    "ipykernel",
-    # image utils
-    "opencv-python",
+azure_requires = [
+    "azure-storage-blob>=12.0.0,<13.0.0",
 ]
+
+dev_extra = (
+    [
+        # release
+        "bump2version",
+        # tests
+        "pytest",
+        "pytest-mock",
+        "pytest-cov",
+        "pytest-xdist[psutil]",
+        # documentation
+        "mkdocs",
+        "mkdocs-material",
+        "mkdocstrings",
+        "mkdocstrings-python-legacy",
+        "mkdocs-click",
+        "mike",
+        "pymdown-extensions",
+        # linting
+        "black",
+        "pre-commit",
+        "pylint",
+        "flake8-unused-arguments",
+        "pyright",
+        # notebooks tests
+        "nbformat",
+        "nbconvert",
+        "ipykernel",
+    ]
+    + image_requires
+    + azure_requires
+)
 
 setup(
     name="kili",
@@ -73,6 +79,7 @@ setup(
     extras_require={
         "dev": dev_extra,
         "image-utils": image_requires,
+        "azure": azure_requires,
     },
     include_package_data=True,
     entry_points={
