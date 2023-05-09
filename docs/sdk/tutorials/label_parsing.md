@@ -3,6 +3,8 @@
 
 # How to use the label parser
 
+This tutorial shows how to use the label parser to easily access labels' content.
+
 ## Setup
 
 
@@ -45,7 +47,7 @@ Is it however quite difficult to extract the label data from the `jsonResponse` 
 
 ## Parsed Label integration to kili.labels()
 
-The `kili.labels()` method has an `output_format` argument that allows to automatically parse the labels.
+The `kili.labels()` method has an `output_format` argument that enables automatic label parsing.
 
 ```python
 my_label = kili.labels(project_id="my_project_id", output_format='parsed_label')[0]
@@ -225,7 +227,7 @@ print(label_as_dict)
 
 ### Classification jobs
 
-We define a json interface for a two classification jobs:
+We define a json interface for two classification jobs:
 
 - a single-class classification job, with name `SINGLE_CLASS_JOB` and three categories `A`, `B` and `C`
 - a multi-class classification job, with name `MULTI_CLASS_JOB` and three categories `D`, `E` and `F`.
@@ -340,7 +342,7 @@ print(labels[0].jobs["SINGLE_CLASS_JOB"].category.confidence)
     75
 
 
-The `.category` attribute is forbidden for multi-categories classification jobs:
+The `.category` attribute is forbidden for multi-category classification jobs:
 
 
 ```python
@@ -390,7 +392,7 @@ for i, label in enumerate(labels):
 
 ### Transcription jobs
 
-For a transcription job, the `.text` allows to access the label data:
+For a transcription job, you can access the label data through the `.text` attribute:
 
 
 ```python
@@ -514,7 +516,7 @@ print(
 
 #### Point detection jobs
 
-The point coordinates of a point detection label is accessible through the `.point` attribute:
+The point coordinates of a point detection label are accessible through the `.point` attribute:
 
 
 ```python
@@ -670,7 +672,7 @@ print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].polyline)
 
 #### Pose estimation jobs
 
-A pose estimation parsed label annotation has a `.points` attribute that returns a list of the points composing the annotated object.
+A pose estimation parsed label annotation has a `.points` attribute that returns the list of points that make up the annotation.
 
 Read more about pose estimation json response in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#pose-estimation).
 
@@ -1211,6 +1213,14 @@ print("Number of annotations in this label: ", len(label.jobs["NER_JOB"].annotat
 
 
 ```python
+print(label.jobs["NER_JOB"].annotations == label.jobs["NER_JOB"].entity_annotations)
+```
+
+    True
+
+
+
+```python
 print(label.jobs["NER_JOB"].annotations[0].category)
 ```
 
@@ -1255,7 +1265,7 @@ for annotation in label.jobs["NER_JOB"].annotations:
 
 ### Named entities recognition in PDF jobs
 
-A NER in PDFs parsed label has a few additional attributes such as `.page_number_array` and `.polys`.
+For PDF assets, a parsed NER label has a few additional attributes such as `.page_number_array` and `.polys`.
 
 The description of those attributes can be found in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
 
@@ -1532,7 +1542,7 @@ print("End offset: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0
     End offset:  164
 
 
-Below, we print the entity recognition annotations unique IDs:
+Here is how to print the unique IDs and names of the entity recognition annotations:
 
 
 ```python
@@ -1689,9 +1699,9 @@ print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].end_objects)
     [{'mid': '20230502102129606-15732'}]
 
 
-### Children jobs
+### Child jobs
 
-For children jobs, the `.children` attribute allows to access the children labels:
+Use the `.children` attribute to access nested (child) labels:
 
 
 ```python
