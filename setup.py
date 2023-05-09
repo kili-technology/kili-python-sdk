@@ -21,7 +21,7 @@ install_requires = [
     "pydantic>=1.0.0,<2.0.0",
     "urllib3>=1.26,<2.0.0",
     "ffmpeg-python>=0.2.0,<0.3.0",
-    "gql[requests,websockets]>=3.0.0,<4.0.0",
+    "gql[requests,websockets]>=3.5.0b4,<4.0.0",
     "filelock>=3.0.0,<4.0.0",
 ]
 
