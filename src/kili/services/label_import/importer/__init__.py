@@ -111,7 +111,10 @@ class AbstractLabelImporter(ABC):
                     "data": {"labelType": label_type, "labelsData": batch_labels},
                     "where": {"idIn": [label["assetID"] for label in batch_labels]},
                 }
-                batch_result = self.auth.client.execute(GQL_APPEND_MANY_LABELS, variables)
+                # we increase the timeout because the import can take a long time
+                batch_result = self.auth.client.execute(
+                    GQL_APPEND_MANY_LABELS, variables, timeout=60
+                )
                 result.extend(format_result("data", batch_result, Label))
                 pbar.update(len(batch_labels))
         return result

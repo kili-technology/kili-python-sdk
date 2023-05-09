@@ -54,7 +54,7 @@ class MutationsLabel:
         Args:
             project_id: Identifier of the project.
             external_id_array: The external IDs of the assets for which we want to add predictions.
-            model_name_array: [Deprecated] use `model_name` instead.
+            model_name_array: Deprecated, use `model_name` instead.
             json_response_array: The predictions are given here. For examples,
                 see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
             model_name: The name of the model that generated the predictions

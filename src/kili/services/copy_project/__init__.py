@@ -238,7 +238,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         return assets
 
     # pylint: disable=too-many-locals
-    def _copy_labels(self, from_project_id: str, new_project_id: str):
+    def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
         assets_new_project = AssetQuery(self.kili.auth.client)(
             AssetWhere(project_id=new_project_id),
             ["id", "externalId"],

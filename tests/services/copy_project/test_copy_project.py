@@ -4,14 +4,6 @@ import pytest
 from kili.services.copy_project import ProjectCopier
 
 
-class FakeKili:
-    def __init__(self) -> None:
-        pass
-
-    def projects(self):
-        pass
-
-
 @pytest.mark.parametrize(
     "existing_projects, expected",
     [
@@ -21,7 +13,7 @@ class FakeKili:
     ],
 )
 def test__generate_project_title(existing_projects, expected, mocker):
-    kili = FakeKili()
-    mocker.patch.object(kili, "projects", return_value=existing_projects)
-    copy_proj = ProjectCopier(kili)
+    kili = mocker.MagicMock()
+    kili.projects.return_value = existing_projects
+    copy_proj = ProjectCopier(kili)  # type: ignore
     assert copy_proj._generate_project_title("Title") == expected
