@@ -6,24 +6,60 @@ We understand that getting started with a new product can sometimes be challengi
 
 Here is a brief overview of our tutorials:
 
-- 🐣 [Basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/): Learn how to set up a new project in Kili and configure its settings.
-- 📂 Assets import: Learn how to import assets into your Kili project.
-  - 📷 [Image Assets with Metadata](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/)
-  - 🎥 [Video Assets](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/)
-- 🏷️ Importing Labels: Learn how to import labels into your Kili project.
-  - 📖 [Introduction](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_labels/): Learn about the different types of label formats supported by Kili.
-  - 🔍 [OpenAI NER Pre-annotations](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/ner_pre_annotations_openai/)
-  - 🖼️ [OCR Pre-annotations](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/ocr_pre_annotations/)
-  - 🎞️ [Segmentation Pre-annotations](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/pixel_level_masks/)
-  - 💡 [Inference Labels](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/inference_labels/)
-- Working with labels:
-  - [Converting and](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/medical_imaging/)
-- 🔄 [Workflows](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/): Learn how to manage your review queue, set up consensus/honeypot, and prioritize assets to annotate.
-- 📦 [Exporting Project Data](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/): Learn how to export your project's assets and labels to different formats.
-- 🛠️ Plugins: Learn how to create and use custom plugins in Kili.
-  - 🔨 [Developing Plugins](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/): Learn how to create your own custom plugins.
-  - 📊 [Plugin Example - Programmatic QA](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/): Learn how to use a programmatic QA plugin.
-  - 📚 [Plugins Library](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_library/): See examples of plugins available in the plugins library.
-  - 🎣 [Webhooks](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/webhooks_example/): Learn how to use webhooks with Kili.
+## Basic project setup
 
-For more tutorials and recipes, please check out our [Github repository](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
+In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) you will learn how to set up a new project in Kili, configure its settings, and add assets and users to it.
+
+## Importing assets
+
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/) will show you how to import assets into your Kili project and add asset metadata.
+
+Because videos and Rich Text assets may be more complex to import, we’ve created separate tutorials devoted to them:
+
+- For information on importing video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/).
+- For information on importing rich text assets, see [here](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
+
+## Importing labels
+
+In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_labels/) you will learn how to import different types of label formats supported by Kili, including model-based pre-annotations and pre-existing labels from other projects.
+
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/ner_pre_annotations_openai/) explains how to use a powerful OpenAI Large Language Model (LLM) to generate pre-annotations, which will then be imported into a Named Entity Recognition (NER) Kili project.
+
+For other specific use cases, see these tutorials:
+
+- [Importing OCR pre-annotations](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/ocr_pre_annotations/)
+- [Importing segmentation pre-annotations](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/pixel_level_masks/)
+
+Additionally, we’ve devoted one [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/inference_labels/) to explaining the most common use cases for importing and using model-generated labels: actively monitoring the quality of a model currently  deployed to production to detect issues like data drift, and using a model to speed up the process of label creation.
+
+## Working with labels
+
+In this section, you’ll learn the various ways you can process labels with Kili.
+
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/medical_imaging/) shows you how to upload medical images to Kili using pydicom, upload dicom tags as metadata to your assets, download segmentation labels from Kili, and finally convert them to Numpy masks for visualization with matplotlib.
+
+The label parsing [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/) will show you how you can read and write label data more efficiently.
+
+## Managing workflows
+
+In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/) you will learn how to manage your review queue, set up quality assurance measures, assign specific labelers to assets, and prioritize assets to be annotated.
+
+## Exporting Project Data
+
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/) will show you how to export your project’s assets and labels to different formats supported by Kili.
+
+## Plugins
+
+A plugin is a custom Python script uploaded to Kili and triggered by an event that you define. For instance, you can trigger a specific action when a labeler clicks on Submit.
+
+In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) you will learn how to create your own custom plugins.
+
+[Here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_library/), you’ll find example use cases for using Kili plugins.
+
+For a more specific use case, follow [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/) on how to set up and use Kili plugins to monitor the quality of labels added to your project in real-time, without having to involve human reviewers.
+
+Webhooks are really similar to plugins, except they are self-hosted, and require a web service deployed at your end, callable by Kili. To learn how to use webhooks, follow [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/webhooks_example/).
+
+## More
+
+For more tutorials and recipes, see our [Github repository](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
