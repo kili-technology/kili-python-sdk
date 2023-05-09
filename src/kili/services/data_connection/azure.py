@@ -26,14 +26,14 @@ class AzureBucket:
         container_name = url_connection.path.lstrip("/")
         return storage_account, container_name
 
-    def check_connection(self):
+    def check_connection(self) -> None:
         iterator = self.storage_bucket.list_blobs()
 
         try:
-            next(iterator)
+            _ = next(iterator)
         except Exception as err:
             raise ValueError(
                 "Unable to connect to the Azure bucket. Please check your credentials."
             ) from err
-        else:
-            return
+
+        return
