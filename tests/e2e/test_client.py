@@ -6,9 +6,9 @@ from pyinstrument.profiler import Profiler
 
 def test_import_and_init_time_not_too_long():
     with Profiler() as profiler:
-        import kili.client
+        from kili.client import Kili
 
-        _ = kili.client.Kili()
+        _ = Kili()
 
     time_spent = profiler.last_session.duration  # type: ignore
     assert time_spent < 5, profiler.output_text(unicode=True)
