@@ -1,15 +1,17 @@
-import pyinstrument
 import timeit
 from unittest import mock
 
+from pyinstrument.profiler import Profiler
+
 
 def test_import_and_init_time_not_too_long():
-    with pyinstrument.Profiler() as profiler:
+    with Profiler() as profiler:
         import kili.client
+
         _ = kili.client.Kili()
-       
-    time_spent = profiler.last_session.duration
-    assert time_spent < 5, profiler.output_text(unicode=True, color=True)
+
+    time_spent = profiler.last_session.duration  # type: ignore
+    assert time_spent < 5, profiler.output_text(unicode=True)
 
 
 @mock.patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "True"})
