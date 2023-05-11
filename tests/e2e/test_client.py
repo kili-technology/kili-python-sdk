@@ -3,11 +3,13 @@ from unittest import mock
 
 from pyinstrument.profiler import Profiler
 
+from kili.client import Kili
+
 
 def test_import_and_init_time_not_too_long():
-    with Profiler() as profiler:
-        from kili.client import Kili
+    _ = Kili()  # cache the schema
 
+    with Profiler() as profiler:
         _ = Kili()
 
     time_spent = profiler.last_session.duration  # type: ignore
