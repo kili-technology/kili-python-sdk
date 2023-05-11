@@ -1,7 +1,7 @@
 """Services for data connections."""
 import logging
 import time
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -161,7 +161,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 
     if not data_connection["isChecking"]:
         compute_differences(auth, data_connection_id)
-        time.sleep(1)  # backend needs some time...
+        time.sleep(1)  # backend needs some time to refresh the "isChecking"
 
     for attempt in Retrying(
         wait=wait_exponential(multiplier=1, min=1, max=4),
@@ -174,7 +174,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
             if data_connection["isChecking"]:
                 raise ValueError(f"Data connection is still checking: {data_connection}")
 
-    time.sleep(1)  # backend needs some time...
+    time.sleep(1)  # backend needs some time to refresh the "isChecking"
 
 
 def synchronize_data_connection(
