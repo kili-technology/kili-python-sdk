@@ -14,7 +14,6 @@ from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
 from kili.entrypoints.mutations.user import MutationsUser
-from kili.entrypoints.queries.api_key import QueriesApiKey
 from kili.entrypoints.queries.asset import QueriesAsset
 from kili.entrypoints.queries.data_connection import QueriesDataConnection
 from kili.entrypoints.queries.data_integration import QueriesDataIntegration
@@ -42,7 +41,6 @@ class Kili(  # pylint: disable=too-many-ancestors
     MutationsProject,
     MutationsProjectVersion,
     MutationsUser,
-    QueriesApiKey,
     QueriesAsset,
     QueriesDataConnection,
     QueriesDataIntegration,

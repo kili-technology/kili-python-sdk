@@ -14,7 +14,6 @@ nav:
       - Getting Started: index.md
       - Tutorials: tutorials.md
       - Reference:
-          - API Key: sdk/api_key.md
           - Asset: sdk/asset.md
           - Cloud Storage: sdk/cloud_storage.md
           - Issue: sdk/issue.md
