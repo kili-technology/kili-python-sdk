@@ -1,13 +1,14 @@
 import timeit
 from unittest import mock
 
-from kili.client import Kili
 from pyinstrument.profiler import Profiler
+
+from kili.client import Kili
 
 
 def test_import_and_init_time_not_too_long():
     _ = Kili()  # cache the schema
-    
+
     with Profiler() as profiler:
         _ = Kili()
 
