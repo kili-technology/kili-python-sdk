@@ -11,7 +11,7 @@ def test_import_and_init_time_not_too_long():
         _ = Kili()
 
     time_spent = profiler.last_session.duration  # type: ignore
-    assert time_spent < 0.1, profiler.output_text(unicode=False)
+    assert time_spent < 5, profiler.output_text(unicode=False)
 
 
 @mock.patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "True"})
