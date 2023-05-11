@@ -38,6 +38,8 @@ In this section, you’ll learn the various ways you can process labels with Kil
 
 [This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/medical_imaging/) shows you how to upload medical images to Kili using pydicom, upload dicom tags as metadata to your assets, download segmentation labels from Kili, and finally convert them to Numpy masks for visualization with matplotlib.
 
+The [Tagtog to Kili](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/tagtog_to_kili/) tutorial will show you how to convert and import your tagtog assets and labels into Kili.
+
 The label parsing [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/) will show you how you can read and write label data more efficiently.
 
 ## Managing workflows
