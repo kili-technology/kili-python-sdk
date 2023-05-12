@@ -298,7 +298,7 @@ def md5_hash(filepath: Union[str, Path]):
 
 def test_copy_project_e2e_video(kili: "Kili", src_project_video):
     new_proj_id = kili.copy_project(
-        from_project_id=src_project["id"],
+        from_project_id=src_project_video["id"],
         description="new description",
         copy_assets=True,
         copy_labels=True,
@@ -310,7 +310,7 @@ def test_copy_project_e2e_video(kili: "Kili", src_project_video):
         + ProjectCopier.FIELDS_JSON_INTERFACE
     )
 
-    src_proj = kili.projects(project_id=src_project["id"], fields=proj_fields)[0]  # type: ignore
+    src_proj = kili.projects(project_id=src_project_video["id"], fields=proj_fields)[0]  # type: ignore
     new_proj = kili.projects(project_id=new_proj_id, fields=proj_fields)[0]  # type: ignore
 
     members_src = kili.project_users(
