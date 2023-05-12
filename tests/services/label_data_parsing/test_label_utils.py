@@ -396,4 +396,4 @@ def test_integration_of_label_parsing_in_kili_assets(mocker):
         assert isinstance(label, ParsedLabel)
         assert label.jobs["JOB_0"].text == "some text abc"
 
-    assert i == 0
+    assert i == 0  # type: ignore
