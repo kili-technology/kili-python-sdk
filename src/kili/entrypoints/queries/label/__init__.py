@@ -12,7 +12,6 @@ from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.core.helpers import (
     disable_tqdm_if_as_generator,
     validate_category_search_query,
@@ -20,6 +19,7 @@ from kili.core.helpers import (
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
+from kili.services.project import get_project
 from kili.services.types import ProjectId
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
@@ -301,13 +301,8 @@ class QueriesLabel:
                     " 'fields' argument."
                 )
 
-            project = next(
-                ProjectQuery(self.auth.client)(
-                    ProjectWhere(project_id=project_id),
-                    fields=["jsonInterface", "inputType"],
-                    options=QueryOptions(disable_tqdm=True, first=1, skip=0),
-                )
-            )
+            project = get_project(self.auth, project_id, ["jsonInterface", "inputType"])
+
             post_call_function = partial(
                 parse_labels,
                 json_interface=project["jsonInterface"],

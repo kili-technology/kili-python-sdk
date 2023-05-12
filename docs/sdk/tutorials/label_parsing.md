@@ -47,12 +47,13 @@ Is it however quite difficult to extract the label data from the `jsonResponse` 
 
 ## Parsed Label integration to kili.labels()
 
-The `kili.labels()` method has an `output_format` argument that enables automatic label parsing.
+The `kili.labels()` method has an `output_format` argument that enables automatic label parsing:
 
 ```python
 my_label = kili.labels(project_id="my_project_id", output_format='parsed_label')[0]
 
 # example of how to access the category name of the first label
+# (only for a classification job)
 my_label.jobs["MY_JOB_NAME"].category.name
 ```
 
@@ -61,11 +62,22 @@ Instead of:
 ```python
 my_label = kili.labels(project_id="my_project_id", output_format='dict')[0]
 
-# example of how to access the category name of the first label
 my_label["jsonResponse"]["jobs"]["MY_JOB_NAME"]["categories"][0]["name"]
 ```
 
 As you can see, the parsed label is much easier to use than the raw label, and helps you develop your own scripts faster using your IDE auto-completion, type checking, etc.
+
+## Parsed Label integration to kili.assets()
+
+The `kili.assets()` method has a `label_output_format` argument that enables automatic label parsing:
+
+```python
+my_asset = kili.assets(project_id="my_project_id", label_output_format='parsed_label')[0]
+
+# example of how to access the category name of the first label
+# (only for a classification job)
+my_asset["labels"][0].jobs["MY_JOB_NAME"].category.name
+```
 
 ## ParsedLabel class
 
