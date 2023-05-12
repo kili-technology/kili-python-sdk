@@ -50,7 +50,8 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         )
     )
     members = pd.DataFrame(members_list)
-    members = pd.concat([members.drop(["user"], axis=1), members["user"].apply(pd.Series)], axis=1)
+    # pylint: disable=line-too-long
+    members = pd.concat([members.drop(["user"], axis=1), members["user"].apply(pd.Series)], axis=1)  # type: ignore
     members = pd.concat(
         [members.drop(["organization"], axis=1), members["organization"].apply(pd.Series)],
         axis=1,
