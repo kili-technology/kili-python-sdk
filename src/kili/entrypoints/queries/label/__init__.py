@@ -197,6 +197,7 @@ class QueriesLabel:
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
         ],
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
