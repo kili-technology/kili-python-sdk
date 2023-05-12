@@ -305,7 +305,7 @@ class QueriesAsset:
             external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
-            label_output_format: If `parsed_label`, the labels with be parsed labels objects. More information on parsed labels in the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
+            label_output_format: If `parsed_label`, the labels in the assets will be parsed. More information on parsed labels in the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
