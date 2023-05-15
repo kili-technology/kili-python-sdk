@@ -307,9 +307,10 @@ class PluginUploader:
 
         if status != "ACTIVE":
             raise PluginCreationError(
-                "There was some error during the creation of the plugin. Please check your plugin's"
-                " code and try to overwrite the plugin with a new version of the code (you can use"
-                " kili.update_plugin() for that)."
+                "There was some error during the creation of the plugin. Please check your"
+                " plugin's code and try to overwrite the plugin with a new version of the code"
+                " (you can use kili.update_plugin() for that).Hint: You can get build errors"
+                f' using: kili.get_plugin_build_errors(plugin_name="{self.plugin_name}")'
             )
 
         message = f"Plugin {action} successfully"
