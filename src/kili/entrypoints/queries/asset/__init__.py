@@ -15,6 +15,8 @@ from kili.core.helpers import (
     validate_category_search_query,
 )
 from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
+from kili.services.project import get_project
+from kili.utils.labels.parsing import parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -98,6 +100,7 @@ class QueriesAsset:
         issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
+        label_output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -169,6 +172,7 @@ class QueriesAsset:
         issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
+        label_output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -240,6 +244,7 @@ class QueriesAsset:
         issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
+        label_output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[Dict], pd.DataFrame]:
@@ -300,6 +305,7 @@ class QueriesAsset:
             external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
+            label_output_format: If `parsed_label`, the labels in the assets will be parsed. More information on parsed labels in the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -433,7 +439,25 @@ class QueriesAsset:
         post_call_function, fields = get_download_assets_function(
             self.auth, download_media, fields, project_id, local_media_dir
         )
+
         assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
+
+        if label_output_format == "parsed_label":
+            if "labels.jsonResponse" not in fields:
+                raise ValueError(
+                    "The field 'labels.jsonResponse' is required to parse labels. Please add it to"
+                    " the 'fields' argument."
+                )
+
+            project = get_project(self.auth, project_id, ["jsonInterface", "inputType"])
+
+            def parse_labels_of_asset(asset: Dict) -> Dict:
+                asset["labels"] = parse_labels(
+                    asset["labels"], project["jsonInterface"], project["inputType"]
+                )
+                return asset
+
+            assets_gen = (parse_labels_of_asset(asset) for asset in assets_gen)
 
         if format == "pandas":
             return pd.DataFrame(list(assets_gen))

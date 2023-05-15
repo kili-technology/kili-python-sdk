@@ -25,10 +25,14 @@ class ParsedLabel(Dict):
 
         !!! Example
             ```python
-            label = kili.labels("project_id", output_format="parsed_label")[0]  # label is a ParsedLabel object
+            from kili.utils.labels.parsing import ParsedLabel
+
+            my_label = kili.labels("project_id")[0]  # my_label is a dict
+
+            my_parsed_label = ParsedLabel(my_label, json_interface, input_type)  # ParsedLabel object
 
             # Access the job "JOB_0" data through the attribute ".jobs":
-            print(parsed_label.jobs["JOB_0"])
+            print(my_parsed_label.jobs["JOB_0"])
             ```
 
         !!! info
@@ -51,10 +55,12 @@ class ParsedLabel(Dict):
 
         !!! Example
             ```python
-            label = kili.labels("project_id", output_format="parsed_label")[0]  # label is a ParsedLabel object
+            my_parsed_label = ParsedLabel(my_dict_label, json_interface, input_type)
 
             # Convert back to native Python dictionary
             my_label_as_dict = label.to_dict()
+
+            assert isinstance(my_label_as_dict, dict)  # True
             ```
         """
         ret = {k: deepcopy(v) for k, v in self.items() if k != "jsonResponse"}

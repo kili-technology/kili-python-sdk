@@ -4,6 +4,7 @@ from typing import Dict, Generator, List
 from typing_extensions import assert_type
 
 from kili.client import Kili
+from kili.entrypoints.queries.asset import QueriesAsset
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.services.label_data_parsing.annotation import Annotation, AnnotationList
 from kili.services.label_data_parsing.category import Category, CategoryList
@@ -260,11 +261,25 @@ def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
     )
 
 
+def test_integration_of_label_parsing_in_kili_asset_assert_types(mocker):
+    """This test does not check types at runtime, but rather during pyright type checking."""
+    _ = mocker.patch.object(Kili, "__init__", return_value=None)
+    _ = mocker.patch.object(QueriesAsset, "assets")
+    assert_type(Kili().assets("project_id"), List[Dict])
+    assert_type(Kili().assets("project_id", as_generator=True), Generator[Dict, None, None])
+    assert_type(Kili().assets("project_id", label_output_format="parsed_label"), List[Dict])
+    assert_type(
+        Kili().assets("project_id", label_output_format="parsed_label", as_generator=True),
+        Generator[Dict, None, None],
+    )
+
+
 def test_integration_of_label_parsing_in_kili_labels(mocker):
     mocker_project_query = mocker.patch(
         "kili.core.graphql.operations.project.queries.ProjectQuery.__call__",
-        return_value=iter(
-            [
+        side_effect=lambda *args, **kwargs: (
+            x
+            for x in [
                 {
                     "jsonInterface": {
                         "jobs": {
@@ -296,3 +311,89 @@ def test_integration_of_label_parsing_in_kili_labels(mocker):
     assert all(isinstance(labl, ParsedLabel) for labl in labels)  # pylint: disable=not-an-iterable
     assert len(labels) == 1
     assert labels[0].jobs["JOB_0"].text == "some text abc"  # pylint: disable=unsubscriptable-object
+
+
+def test_integration_of_label_parsing_in_kili_assets(mocker):
+    mocker_project_query = mocker.patch(
+        "kili.core.graphql.operations.project.queries.ProjectQuery.__call__",
+        side_effect=lambda *args, **kwargs: (
+            x
+            for x in [
+                {
+                    "jsonInterface": {
+                        "jobs": {
+                            "JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}
+                        }
+                    },
+                    "inputType": "TEXT",
+                }
+            ]
+        ),
+    )
+
+    mocker_label_query = mocker.patch(
+        "kili.core.graphql.operations.asset.queries.AssetQuery.get_number_of_elements_to_query",
+        return_value=1,
+    )
+
+    mocked_execute = mocker.MagicMock(
+        return_value={
+            "data": [
+                {
+                    "labels": [
+                        {
+                            "author": {
+                                "id": "cldbnzmmq00go0jwc20fq1jkl",
+                                "email": "john.doe@kili-technology.com",
+                            },
+                            "createdAt": "2023-05-11T16:01:48.093Z",
+                            "id": "clhjbhrul015m0k7hct21drz4",
+                            "jsonResponse": {"JOB_0": {"text": "some text abc"}},
+                        }
+                    ],
+                    "content": "https://storage.googleapis.com/label-backend-staging/",
+                    "createdAt": "2023-05-11T15:55:01.134Z",
+                    "externalId": (
+                        "4bad2303e43bfefa0169d890c68f5c9d--cherry-blossom-tree-blossom-trees.jpg"
+                    ),
+                    "id": "clhjb919i00002a6a2kwtp5qr",
+                    "isHoneypot": False,
+                    "jsonMetadata": {},
+                    "skipped": False,
+                    "status": "LABELED",
+                }
+            ]
+        }
+    )
+    mocker_auth = mocker.MagicMock()
+    mocker_auth.client.execute = mocked_execute
+    kili = QueriesAsset(auth=mocker_auth)
+
+    for label_output_format in ("dict", "parsed_label"):
+        assets = kili.assets(project_id="project_id", label_output_format=label_output_format)
+
+        assert_type(assets, List[Dict])  # static test with pyright
+        assert isinstance(assets, List)
+        assert len(assets) == 1
+        assert len(assets[0]["labels"]) == 1  # pylint: disable=unsubscriptable-object
+        label = assets[0]["labels"][0]  # pylint: disable=unsubscriptable-object
+        if label_output_format == "dict":
+            assert isinstance(label, Dict)
+            assert label["jsonResponse"]["JOB_0"]["text"] == "some text abc"
+        elif label_output_format == "parsed_label":
+            assert isinstance(label, ParsedLabel)
+            assert label.jobs["JOB_0"].text == "some text abc"
+
+    # test return a generator of assets with parsed labels
+    assets = kili.assets(
+        project_id="project_id", label_output_format="parsed_label", as_generator=True
+    )
+    assert_type(assets, Generator[Dict, None, None])  # static test with pyright
+    assert isinstance(assets, Generator)
+    for i, asset in enumerate(assets):
+        assert len(asset["labels"]) == 1
+        label = asset["labels"][0]
+        assert isinstance(label, ParsedLabel)
+        assert label.jobs["JOB_0"].text == "some text abc"
+
+    assert i == 0  # type: ignore
