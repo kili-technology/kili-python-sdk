@@ -32,7 +32,7 @@ For this recipe, we will use data from the [Apartment reviews](https://tagtog.co
 
 The dataset consists in guests' reviews of apartments/houses for short-term lodging and tourism-related activities. The reviews have been obtained from Inside Airbnb. Each review has been manually annotated in tagtog.
 
-Let's download the project data (you will need to be logged in tagtog to do so) by clicking this [link](https://tagtog.com/JaqenNLP/ApartmentReviews/-downloads/dataset-as-anndoc).
+To download the project data, it is required to be logged in to tagtog. Then, you can download the project data.
 
 Once the .zip file is downloaded, we can unzip it:
 
