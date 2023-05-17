@@ -50,7 +50,6 @@ class ParsedLabel(Dict):
         )
 
     def to_dict(self) -> Dict:
-        # pylint: disable=line-too-long
         """Returns a copy of the parsed label as a dict.
 
         !!! Example
