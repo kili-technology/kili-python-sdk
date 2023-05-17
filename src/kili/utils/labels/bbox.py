@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 
 from typing_extensions import Literal
 
-from .point import point_to_normalized_point
+from .point import normalized_point_to_point, point_to_normalized_point
 
 
 def bbox_points_to_normalized_vertices(
@@ -148,7 +148,7 @@ def normalized_vertices_to_bbox_points(
         ```
     """
     if len(normalized_vertices) != 4:
-        raise ValueError("normalized_vertices must have length 4.")
+        raise ValueError(f"normalized_vertices must have length 4. Got {len(normalized_vertices)}.")
 
     if (img_width is None) != (img_height is None):
         raise ValueError("img_width and img_height must be both None or both not None.")
@@ -156,21 +156,13 @@ def normalized_vertices_to_bbox_points(
     img_height = img_height or 1
     img_width = img_width or 1
 
-    top_left = {}
-    bottom_left = {}
-    bottom_right = {}
-    top_right = {}
+    ret = {}
 
-    for vertex, point in zip(normalized_vertices, (top_left, bottom_left, bottom_right, top_right)):
-        point["x"] = vertex["x"] * img_width
-        if origin_location == "top_left":
-            point["y"] = vertex["y"] * img_height
-        elif origin_location == "bottom_left":
-            point["y"] = (1 - vertex["y"]) * img_height
+    for vertex, point_name in zip(
+        normalized_vertices, ("top_left", "bottom_left", "bottom_right", "top_right")
+    ):
+        ret[point_name] = normalized_point_to_point(
+            vertex, img_width=img_width, img_height=img_height, origin_location=origin_location
+        )
 
-    return {
-        "top_left": top_left,
-        "bottom_left": bottom_left,
-        "bottom_right": bottom_right,
-        "top_right": top_right,
-    }
+    return ret
