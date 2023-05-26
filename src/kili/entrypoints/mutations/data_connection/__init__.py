@@ -56,7 +56,9 @@ class MutationsDataConnection:
             )
         )
         if len(data_integrations) == 0:
-            raise ValueError(f"Data integration with id {cloud_storage_integration_id} not found.")
+            raise ValueError(
+                f"Cloud storage integration with id {cloud_storage_integration_id} not found."
+            )
 
         variables = {
             "data": {
