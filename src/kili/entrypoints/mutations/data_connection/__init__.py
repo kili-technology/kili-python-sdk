@@ -7,6 +7,11 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.authentication import KiliAuth
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.data_integration.queries import (
+    DataIntegrationsQuery,
+    DataIntegrationWhere,
+)
 from kili.core.helpers import format_result
 from kili.entrypoints.queries.data_integration.queries import (
     GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS,
@@ -48,7 +53,21 @@ class MutationsDataConnection:
         Returns:
             A dict with the DataConnection ID.
         """
-        if selected_folders is None:
+        data_integrations = list(
+            DataIntegrationsQuery(self.auth.client)(
+                where=DataIntegrationWhere(data_integration_id=cloud_storage_integration_id),
+                fields=["platform"],
+                options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+            )
+        )
+        if len(data_integrations) == 0:
+            raise ValueError(f"Data integration with id {cloud_storage_integration_id} not found.")
+        data_integration = data_integrations[0]
+
+        platform = data_integration["platform"]
+
+        # cannot select folders for GCP
+        if selected_folders is None and platform != "GCP":
             variables = {"dataIntegrationId": cloud_storage_integration_id}
             try:
                 result = self.auth.client.execute(

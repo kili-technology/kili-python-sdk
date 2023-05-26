@@ -83,14 +83,17 @@ def get_test_cases() -> List[Tuple[str]]:
 def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
     if endpoint_short_name == "LTS":
         return "lts" in endpoint_url
-    elif endpoint_short_name == "STAGING":
+
+    if endpoint_short_name == "STAGING":
         return "staging" in endpoint_url
-    elif endpoint_short_name == "PREPROD":
+
+    if endpoint_short_name == "PREPROD":
         return "preprod" in endpoint_url
-    elif endpoint_short_name == "PROD":
+
+    if endpoint_short_name == "PROD":
         return "https://cloud" in endpoint_url
-    else:
-        raise ValueError(f"Unknown endpoint short name: {endpoint_short_name}")
+
+    raise ValueError(f"Unknown endpoint short name: {endpoint_short_name}")
 
 
 @pytest.mark.parametrize("endpoint_short_name,platform_name,data_integration_id", get_test_cases())

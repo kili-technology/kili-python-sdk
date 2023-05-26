@@ -102,7 +102,7 @@ def validate_data_differences(
 def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
     """Compute the data connection differences."""
     logger = _get_logger()
-    logger.info("Computing the data connection differences")
+    logger.info("Computing the data connection differences.")
 
     data_connection = get_data_connection(
         auth,
@@ -155,7 +155,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
     Trigger the computation if not already computing.
     """
     logger = _get_logger()
-    logger.info("Verifying that the data connection differences have been computed")
+    logger.info("Verifying that the data connection differences have been computed.")
 
     data_connection = get_data_connection(auth, data_connection_id, fields=["isChecking"])
 
