@@ -13,13 +13,8 @@ from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationWhere,
 )
 from kili.core.helpers import format_result
-from kili.entrypoints.queries.data_integration.queries import (
-    GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS,
-)
-from kili.exceptions import GraphQLError
 from kili.utils.logcontext import for_all_methods, log_call
 
-from .exceptions import AddDataConnectionError
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
@@ -56,30 +51,12 @@ class MutationsDataConnection:
         data_integrations = list(
             DataIntegrationsQuery(self.auth.client)(
                 where=DataIntegrationWhere(data_integration_id=cloud_storage_integration_id),
-                fields=["platform"],
+                fields=["id"],
                 options=QueryOptions(disable_tqdm=True, first=1, skip=0),
             )
         )
         if len(data_integrations) == 0:
             raise ValueError(f"Data integration with id {cloud_storage_integration_id} not found.")
-        data_integration = data_integrations[0]
-
-        platform = data_integration["platform"]
-
-        # cannot select folders for GCP
-        if selected_folders is None and platform != "GCP":
-            variables = {"dataIntegrationId": cloud_storage_integration_id}
-            try:
-                result = self.auth.client.execute(
-                    GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS, variables=variables
-                )
-            except GraphQLError as err:
-                raise AddDataConnectionError(
-                    f"The data integration with id {cloud_storage_integration_id} is not supported"
-                    " in the SDK yet. Use the Kili app to create a data connection instead."
-                ) from err
-            result = format_result("data", result)
-            selected_folders = [folder["key"] for folder in result]
 
         variables = {
             "data": {

@@ -2,11 +2,7 @@
 From https://docs.kili-technology.com/reference/graphql-api#enums."""
 from typing_extensions import Literal
 
-DataIntegrationPlatform = Literal[
-    "AWS",
-    "AZURE",
-    "GCP",
-]
+DataIntegrationPlatform = Literal["AWS", "Azure", "GCP"]
 
 
 DataIntegrationStatus = Literal["CONNECTEDDISCONNECTEDCHECKING"]

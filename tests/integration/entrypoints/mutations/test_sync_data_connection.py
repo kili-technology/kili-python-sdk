@@ -16,6 +16,13 @@ class MockerGetDataConnection:
         nb_of_assets: int,
         is_checking: bool,
         project_id: str,
+        data_integration: Dict = {
+            "azureIsUsingServiceCredentials": False,
+            "platform": "AWS",
+            "azureSASToken": "fake_token",
+            "azureConnectionURL": "fake_url",
+            "id": "fake_data_integration_id",
+        },
     ) -> None:
         self.added = added
         self.removed = removed
@@ -23,6 +30,7 @@ class MockerGetDataConnection:
         self.nb_of_assets = nb_of_assets
         self.is_checking = is_checking
         self.project_id = project_id
+        self.data_integration = data_integration
 
     def __call__(self, auth, data_connection_id: str, fields: List[str]) -> Dict[str, Any]:
         ret: Dict[str, Any] = {"id": data_connection_id}
@@ -41,6 +49,8 @@ class MockerGetDataConnection:
             ret["numberOfAssets"] = self.nb_of_assets
         if "projectId" in fields:
             ret["projectId"] = self.project_id
+        if any(field.startswith("dataIntegration.") for field in fields):
+            ret["dataIntegration"] = self.data_integration
 
         return ret
 
@@ -127,10 +137,10 @@ def test_synchronize_cloud_storage_connection(
         "kili.services.data_connection.trigger_validate_data_differences"
     )
     mocked_get_data_connection = mocker.patch("kili.services.data_connection.get_data_connection")
-    mocked_retrying = mocker.patch("kili.services.data_connection.Retrying", return_value=[])
+    mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
+    mocker.patch("kili.services.data_connection.Retrying", return_value=[])
 
     kili = MutationsDataConnection(auth=mocker.MagicMock(client=mocked_graphql_client))
-    mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
 
     kili.synchronize_cloud_storage_connection(
         cloud_storage_connection_id="my_data_connection_id",

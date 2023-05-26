@@ -25,19 +25,6 @@ from kili.entrypoints.mutations.data_connection.queries import (
 LOGGER = None
 
 
-def get_azure_bucket_class():
-    """Lazy import since azure-storage-blob is not a required dependency."""
-    try:
-        from .azure import AzureBucket  # pylint: disable=import-outside-toplevel
-    except ImportError as err:
-        raise ImportError(
-            "The azure-storage-blob package is required to use Azure buckets. "
-            " Run `pip install kili[azure]` to install it."
-        ) from err
-
-    return AzureBucket
-
-
 def _get_logger() -> logging.Logger:
     global LOGGER  # pylint: disable=global-statement
 
@@ -113,6 +100,7 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
             "dataIntegration.azureSASToken",
             "dataIntegration.azureConnectionURL",
             "dataIntegration.id",
+            "selectedFolders",
         ],
     )
 
@@ -121,7 +109,7 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
     blob_paths: Optional[List[str]] = None
     # for azure using credentials, it is required to provide the blob paths to compute the diffs
     if (
-        data_integration["platform"].lower() == "azure"
+        data_integration["platform"] == "Azure"
         and data_integration["azureIsUsingServiceCredentials"]
     ):
         logger.info("Azure data integration is using service credentials. Retrieving blob paths...")
@@ -132,14 +120,20 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
                 f' "azureConnectionURL" in data integration: {data_integration}'
             )
 
-        azure_client = get_azure_bucket_class()(
+        try:
+            from .azure import AzureBucket  # pylint: disable=import-outside-toplevel
+        except ImportError as err:
+            raise ImportError(
+                "The azure-storage-blob package is required to use Azure buckets. "
+                " Run `pip install kili[azure]` to install it."
+            ) from err
+
+        azure_client = AzureBucket(
             sas_token=data_integration["azureSASToken"],
             connection_url=data_integration["azureConnectionURL"],
         )
 
-        azure_client.check_connection()
-
-        blob_paths = azure_client.list_blob_paths()
+        blob_paths = azure_client.get_blob_paths()
 
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
