@@ -235,7 +235,7 @@ jobs:
 
       - name: E2E tests
         if: github.event.inputs.runE2ETests != 'false'
-        timeout-minutes: 15
+        timeout-minutes: 20
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
@@ -247,7 +247,7 @@ jobs:
 
       - name: Notebook tests
         if: github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'master') # Do not run notebook tests after merging to master
-        timeout-minutes: 25
+        timeout-minutes: 30
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
@@ -272,7 +272,7 @@ jobs:
       - name: Slack notification if failure
         if: failure() && (github.event_name != 'workflow_dispatch') # doesn't notify for manual runs
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {

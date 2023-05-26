@@ -6,9 +6,10 @@ from kili.core.helpers import format_result
 from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
 from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
+from kili.entrypoints.queries.api_key import QueriesApiKey
 
 
-class KiliInternal(MutationsOrganization):
+class KiliInternal(MutationsOrganization, QueriesApiKey):
     """Inherit classes for internal use by Kili Technology only."""
 
     def __init__(self, kili):
@@ -23,6 +24,7 @@ class KiliInternal(MutationsOrganization):
     @typechecked
     def reset_password(self, email: str):
         """Reset password.
+
         WARNING: This method is for internal use only.
 
         Args:
@@ -39,6 +41,7 @@ class KiliInternal(MutationsOrganization):
     @typechecked
     def delete_project(self, project_id: str):
         """Delete project permanently.
+
         WARNING: This resolver is for internal use by Kili Technology only.
 
         Args:

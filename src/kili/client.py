@@ -1,5 +1,7 @@
 """This script permits to initialize the Kili Python SDK client."""
 import os
+import sys
+import warnings
 
 from kili.core.authentication import KiliAuth
 from kili.core.graphql.graphql_client import GraphQLClientName
@@ -12,7 +14,6 @@ from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
 from kili.entrypoints.mutations.user import MutationsUser
-from kili.entrypoints.queries.api_key import QueriesApiKey
 from kili.entrypoints.queries.asset import QueriesAsset
 from kili.entrypoints.queries.data_connection import QueriesDataConnection
 from kili.entrypoints.queries.data_integration import QueriesDataIntegration
@@ -40,7 +41,6 @@ class Kili(  # pylint: disable=too-many-ancestors
     MutationsProject,
     MutationsProjectVersion,
     MutationsUser,
-    QueriesApiKey,
     QueriesAsset,
     QueriesDataConnection,
     QueriesDataIntegration,
@@ -59,7 +59,7 @@ class Kili(  # pylint: disable=too-many-ancestors
 
     def __init__(
         self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK
-    ):
+    ) -> None:
         """Initialize Kili client.
 
         Args:
@@ -84,6 +84,16 @@ class Kili(  # pylint: disable=too-many-ancestors
                 - your labels with: `kili.labels()`
                 - your projects with: `kili.projects()`
         """
+        if sys.version_info < (3, 8):
+            warnings.warn(
+                (
+                    "Kili SDK will stop supporting Python 3.7 in July"
+                    " 2023. Please upgrade to Python 3.8 or higher."
+                ),
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         if api_key is None:
             api_key = os.getenv("KILI_API_KEY")
         if api_endpoint is None:

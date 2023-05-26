@@ -62,7 +62,7 @@ jobs:
       - name: Slack notification
         id: slack
         if: success()
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {

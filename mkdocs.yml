@@ -14,7 +14,6 @@ nav:
       - Getting Started: index.md
       - Tutorials: tutorials.md
       - Reference:
-          - API Key: sdk/api_key.md
           - Asset: sdk/asset.md
           - Cloud Storage: sdk/cloud_storage.md
           - Issue: sdk/issue.md
@@ -35,17 +34,18 @@ nav:
       - Getting Started: tutorials.md
       - Basic Project Setup: sdk/tutorials/basic_project_setup.md
       - Importing Assets:
-          - Image Assets with Metadata: sdk/tutorials/importing_assets_and_labels.md
+          - Importing Assets: sdk/tutorials/importing_assets_and_labels.md
           - Video Assets: sdk/tutorials/importing_video_assets.md
           - Rich Text Assets: sdk/tutorials/import_text_assets.md
       - Importing Labels:
-          - Introduction: sdk/tutorials/importing_labels.md
+          - Importing Labels: sdk/tutorials/importing_labels.md
           - OpenAI NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
           - OCR Pre-annotations: sdk/tutorials/ocr_pre_annotations.md
           - Segmentation Pre-annotations: sdk/tutorials/pixel_level_masks.md
           - Inference Labels: sdk/tutorials/inference_labels.md
       - Working with Labels:
           - Converting and Visualizing Segmentation Labels: sdk/tutorials/medical_imaging.md
+          - Converting Tagtog Labels: sdk/tutorials/tagtog_to_kili.md
           - Parsing Labels: sdk/tutorials/label_parsing.md
       - Managing Workflows: sdk/tutorials/set_up_workflows.md
       - Exporting Project Data: sdk/tutorials/export_a_kili_project.md

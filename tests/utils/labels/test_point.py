@@ -14,3 +14,24 @@ def test_point_conversion():
     assert normalized_point_to_point(normalized_point, img_width, img_height) == pytest.approx(
         point
     )
+
+
+def test_origin_location_point_to_normalized_point():
+    point = {"x": 0.4, "y": 0.1}
+    assert point_to_normalized_point(point, origin_location="top_left") == {"x": 0.4, "y": 0.1}
+    assert point_to_normalized_point(point, origin_location="bottom_left") == {"x": 0.4, "y": 0.9}
+
+
+def test_origin_location_normalized_point_to_point():
+    vertex = {"x": 0.5, "y": 0.5}
+    assert (
+        normalized_point_to_point(vertex, origin_location="top_left")
+        == normalized_point_to_point(vertex, origin_location="bottom_left")
+        == vertex
+    )
+
+    vertex = {"x": 0.4, "y": 0.1}
+    assert normalized_point_to_point(vertex, origin_location="top_left") == {"x": 0.4, "y": 0.1}
+
+    vertex = {"x": 0.4, "y": 0.1}
+    assert normalized_point_to_point(vertex, origin_location="bottom_left") == {"x": 0.4, "y": 0.9}

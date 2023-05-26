@@ -34,10 +34,10 @@ def mask_to_normalized_vertices(
     See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#standard-object-detection) for more details.
 
     Args:
-        image: Binary mask. Should be an array of shape (height, width) with values 0 and 255.
+        image: Binary mask. Should be an array of shape (height, width) with values in {0, 255}.
 
     Returns:
-        Tuple: A tuple containing a list of normalized vertices and the hierarchy of the contours (see [documentation](https://docs.opencv.org/4.7.0/d9/d8b/tutorial_py_contours_hierarchy.html)).
+        Tuple: A tuple containing a list of normalized vertices and the hierarchy of the contours (see [OpenCV documentation](https://docs.opencv.org/4.7.0/d9/d8b/tutorial_py_contours_hierarchy.html)).
 
     !!! Example
         ```python
@@ -76,7 +76,7 @@ def mask_to_normalized_vertices(
 
     unique_values = np.unique(image).tolist()
     if not all(value in [0, 255] for value in unique_values):
-        raise ValueError(f"Image should be binary with values 0 and 255, got {unique_values}")
+        raise ValueError(f"Image should be binary with values in {{0, 255}}, got {unique_values}")
 
     img_height, img_width = image.shape
     # pylint:disable=no-member
@@ -107,7 +107,7 @@ def normalized_vertices_to_mask(
         img_height: Height of the image the segmentation is defined in.
 
     Returns:
-        A numpy array of shape (height, width) with values 0 and 255.
+        A numpy array of shape (height, width) with values in {0, 255}.
 
     !!! Example
         ```python
