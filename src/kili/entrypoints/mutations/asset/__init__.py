@@ -288,7 +288,7 @@ class MutationsAsset:
                 "isUsedForConsensus": batch["is_used_for_consensus_array"],
                 "isHoneypot": batch["is_honeypot_array"],
             }
-            data_array = [dict(zip(data, t)) for t in zip(*data.values())]
+            data_array = [dict(zip(data, t)) for t in zip(*data.values())]  # type: ignore
             return {
                 "whereArray": [{"id": asset_id} for asset_id in batch["asset_ids"]],
                 "dataArray": data_array,
@@ -351,7 +351,7 @@ class MutationsAsset:
                 "toBeLabeledBy": batch["to_be_labeled_by_array"],
                 "shouldResetToBeLabeledBy": batch["should_reset_to_be_labeled_by_array"],
             }
-            data_array = [dict(zip(data, t)) for t in zip(*data.values())]
+            data_array = [dict(zip(data, t)) for t in zip(*data.values())]  # type: ignore
             return {
                 "whereArray": [{"id": asset_id} for asset_id in batch["asset_ids"]],
                 "dataArray": data_array,
