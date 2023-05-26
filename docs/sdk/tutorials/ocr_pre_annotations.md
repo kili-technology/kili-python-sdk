@@ -7,7 +7,7 @@ In this tutorial we will see how to import OCR pre-annotations in Kili using [Go
 
 Pre-annotating your data with OCR will save you a lot of time when annotating transcriptions in Kili.
 
-The data that we use comes from [The Street View Text Dataset](http://www.iapr-tc11.org/mediawiki/index.php?title=The_Street_View_Text_Dataset).
+The data that we use comes from [The Street View Text Dataset](https://www.kaggle.com/datasets/nageshsingh/the-street-view-text-dataset).
 
 ## Loading an image from The Street View Dataset in Kili
 
