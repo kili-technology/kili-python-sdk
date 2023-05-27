@@ -93,7 +93,7 @@ def bbox_points_to_normalized_vertices(
         point_to_normalized_point(
             point, img_width=img_width, img_height=img_height, origin_location=origin_location
         )
-        for point in (top_left, bottom_left, bottom_right, top_right)
+        for point in (bottom_left, top_left, top_right, bottom_right)
     ]
 
     return vertices
@@ -159,7 +159,7 @@ def normalized_vertices_to_bbox_points(
     ret = {}
 
     for vertex, point_name in zip(
-        normalized_vertices, ("top_left", "bottom_left", "bottom_right", "top_right")
+        normalized_vertices, ("bottom_left", "top_left", "top_right", "bottom_right")
     ):
         ret[point_name] = normalized_point_to_point(
             vertex, img_width=img_width, img_height=img_height, origin_location=origin_location
