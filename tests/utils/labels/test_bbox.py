@@ -190,7 +190,6 @@ from kili.utils.labels.bbox import (
     ],
 )
 def test_bbox_points_to_normalized_vertices(test_name, inputs, output, origin_location):
-    # input test points are defined in the space with origin bottom left
     vertices = bbox_points_to_normalized_vertices(**inputs, origin_location=origin_location)
     for computed_vertex, expected_vertex in zip(vertices, output):  # type: ignore
         assert computed_vertex == pytest.approx(expected_vertex)
@@ -205,68 +204,3 @@ def test_bbox_points_to_normalized_vertices(test_name, inputs, output, origin_lo
     assert bbox_points["bottom_right"] == pytest.approx(inputs["bottom_right"])
     assert bbox_points["top_right"] == pytest.approx(inputs["top_right"])
     assert bbox_points["top_left"] == pytest.approx(inputs["top_left"])
-
-
-# DO NOT DELETE. USED FOR DEBUGGING
-# def debug_using_kili_project():
-#     kili = Kili()
-#     project = kili.create_project(
-#         input_type="IMAGE",
-#         json_interface={
-#             "jobs": {
-#                 "OBJECT_DETECTION_JOB": {
-#                     "content": {
-#                         "categories": {"A": {"children": [], "color": "#472CED", "name": "A"}},
-#                         "input": "radio",
-#                     },
-#                     "instruction": "Box",
-#                     "mlTask": "OBJECT_DETECTION",
-#                     "required": 1,
-#                     "tools": ["rectangle"],
-#                     "isChild": False,
-#                 }
-#             }
-#         },
-#         title="test bbox",
-#     )
-
-#     kili.append_many_to_dataset(
-#         project["id"],
-#         content_array=[
-#             "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"  # 1920 1080
-#         ],
-#         external_id_array=["car_1"],
-#     )
-
-#     points = {
-#         "bottom_left": {"x": 1000, "y": 700},
-#         "bottom_right": {"x": 1050, "y": 700},
-#         "top_right": {"x": 1050, "y": 750},
-#         "top_left": {"x": 1000, "y": 750},
-#         "img_width": 1920,
-#         "img_height": 1080,
-#     }
-#     normalizedVertices = bbox_points_to_normalized_vertices(**points)
-#     kili.append_labels(
-#         json_response_array=[
-#             {
-#                 "OBJECT_DETECTION_JOB": {
-#                     "annotations": [
-#                         {
-#                             "boundingPoly": [{"normalizedVertices": normalizedVertices}],
-#                             "categories": [{"name": "A"}],
-#                             "type": "rectangle",
-#                         }
-#                     ]
-#                 }
-#             }
-#         ],
-#         asset_external_id_array=["car_1"],
-#         project_id=project["id"],
-#     )
-
-
-# if __name__ == "__main__":
-#     from kili.client import Kili
-
-#     debug_using_kili_project()
