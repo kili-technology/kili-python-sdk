@@ -21,4 +21,10 @@ The module `kili.utils.labels` provides a set of helpers to convert point, bound
 
 `kili.utils.labels.image`
 
+!!! info "OpenCV"
+    It is recommended to install the image dependencies to use the image helpers.
+    ```bash
+    pip install kili[image-utils]
+    ```
+
 ::: kili.utils.labels.image

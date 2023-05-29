@@ -83,28 +83,33 @@ def get_test_cases() -> List[Tuple[str]]:
 def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
     if endpoint_short_name == "LTS":
         return "lts" in endpoint_url
-    elif endpoint_short_name == "STAGING":
+
+    if endpoint_short_name == "STAGING":
         return "staging" in endpoint_url
-    elif endpoint_short_name == "PREPROD":
+
+    if endpoint_short_name == "PREPROD":
         return "preprod" in endpoint_url
-    elif endpoint_short_name == "PROD":
+
+    if endpoint_short_name == "PROD":
         return "https://cloud" in endpoint_url
-    else:
-        raise ValueError(f"Unknown endpoint short name: {endpoint_short_name}")
+
+    raise ValueError(f"Unknown endpoint short name: {endpoint_short_name}")
 
 
 @pytest.mark.parametrize("endpoint_short_name,platform_name,data_integration_id", get_test_cases())
-@pytest.mark.skip(reason="This test is not stable")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
     endpoint_short_name: str,
     platform_name: str,
     data_integration_id: str,
-):
+) -> None:
     """E2e test for cloud storage methods."""
     if not is_same_endpoint(endpoint_short_name, kili.auth.api_endpoint):
-        pytest.skip("Skipping test because it is not the right endpoint.")
+        pytest.skip(
+            f"Skipping test because endpoint {kili.auth.api_endpoint} does not match"
+            f" {endpoint_short_name}"
+        )
 
     project_id = src_project["id"]
 
@@ -114,7 +119,7 @@ def test_e2e_synchronize_cloud_storage_connection(
         status="CONNECTED", cloud_storage_integration_id=data_integration_id
     )
     if len(data_integrations) != 1:
-        raise ValueError("No data integration found. Cannot run test.", data_integrations)
+        raise ValueError(f"Data integration {data_integration_id} not found. Cannot run test.")
 
     # Create a data connection
     data_connection_id = kili.add_cloud_storage_connection(
@@ -123,6 +128,7 @@ def test_e2e_synchronize_cloud_storage_connection(
 
     # Check that the data connection has been created
     data_connections = kili.cloud_storage_connections(
+        cloud_storage_connection_id=data_connection_id,
         project_id=project_id,
         fields=[
             "id",
@@ -144,7 +150,7 @@ def test_e2e_synchronize_cloud_storage_connection(
     print("Data connection:", data_connection)
 
     nb_assets = kili.count_assets(project_id=project_id)
-    assert nb_assets == 0, f"Expected no asset before sync. Got {nb_assets}"
+    assert nb_assets == 0, f"Expected no asset before sync. Got {nb_assets} assets."
 
     kili.synchronize_cloud_storage_connection(
         cloud_storage_connection_id=data_connection_id,

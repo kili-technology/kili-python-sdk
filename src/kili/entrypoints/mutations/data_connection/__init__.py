@@ -7,14 +7,14 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.authentication import KiliAuth
-from kili.core.helpers import format_result
-from kili.entrypoints.queries.data_integration.queries import (
-    GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS,
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.operations.data_integration.queries import (
+    DataIntegrationsQuery,
+    DataIntegrationWhere,
 )
-from kili.exceptions import GraphQLError
+from kili.core.helpers import format_result
 from kili.utils.logcontext import for_all_methods, log_call
 
-from .exceptions import AddDataConnectionError
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
@@ -48,19 +48,17 @@ class MutationsDataConnection:
         Returns:
             A dict with the DataConnection ID.
         """
-        if selected_folders is None:
-            variables = {"dataIntegrationId": cloud_storage_integration_id}
-            try:
-                result = self.auth.client.execute(
-                    GQL_GET_DATA_INTEGRATION_FOLDER_AND_SUBFOLDERS, variables=variables
-                )
-            except GraphQLError as err:
-                raise AddDataConnectionError(
-                    f"The data integration with id {cloud_storage_integration_id} is not supported"
-                    " in the SDK yet. Use the Kili app to create a data connection instead."
-                ) from err
-            result = format_result("data", result)
-            selected_folders = [folder["key"] for folder in result]
+        data_integrations = list(
+            DataIntegrationsQuery(self.auth.client)(
+                where=DataIntegrationWhere(data_integration_id=cloud_storage_integration_id),
+                fields=["id"],
+                options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+            )
+        )
+        if len(data_integrations) == 0:
+            raise ValueError(
+                f"Cloud storage integration with id {cloud_storage_integration_id} not found."
+            )
 
         variables = {
             "data": {
@@ -85,7 +83,6 @@ class MutationsDataConnection:
         cloud_storage_connection_id: str,
         delete_extraneous_files: bool = False,
     ) -> Dict:
-        # pylint: disable=line-too-long
         """Synchronize a cloud storage connection.
 
         This method will compute differences between the cloud storage connection and the project,
@@ -100,11 +97,6 @@ class MutationsDataConnection:
 
         Returns:
             A dict with the DataConnection ID.
-
-        !!! warning "Azure Blob Storage"
-            This method currently does not work for Azure cloud storage connection using credentials mode.
-            Use service account mode instead or use the Kili app to synchronize the data connection.
-            More information in the [documentation](https://docs.kili-technology.com/docs/creating-an-azure-blob-storage-integration#service-creds).
         """
         return services.synchronize_data_connection(
             self.auth, cloud_storage_connection_id, delete_extraneous_files

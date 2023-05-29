@@ -13,6 +13,12 @@
     It is used to import data from a cloud storage to a project.
     More information about how to use a cloud storage integration in a project can be found [here](https://docs.kili-technology.com/docs/adding-assets-to-project#adding-assets-located-in-remote-storage-integration).
 
+!!! info "Azure"
+    It is recommended to install the Azure dependencies to use the Azure cloud storage integration and connection.
+    ```bash
+    pip install kili[azure]
+    ```
+
 ## Queries
 
 ::: kili.entrypoints.queries.data_integration.__init__.QueriesDataIntegration
