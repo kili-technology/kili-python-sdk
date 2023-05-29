@@ -7,7 +7,7 @@ from kili.utils.labels.bbox import (
 
 
 @pytest.mark.parametrize(
-    "test_name,inputs,output",
+    "test_name,inputs,output,origin_location",
     [
         (
             "box full image pixels",
@@ -19,7 +19,8 @@ from kili.utils.labels.bbox import (
                 "img_width": 1920,
                 "img_height": 1080,
             },
-            [{"x": 0, "y": 0}, {"x": 0, "y": 1}, {"x": 1, "y": 1}, {"x": 1, "y": 0}],
+            [{"x": 0, "y": 1}, {"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 1, "y": 1}],
+            "bottom_left",
         ),
         (
             "box full image normalized pixels",
@@ -29,7 +30,8 @@ from kili.utils.labels.bbox import (
                 "top_right": {"x": 1, "y": 1},
                 "top_left": {"x": 0, "y": 1},
             },
-            [{"x": 0, "y": 0}, {"x": 0, "y": 1}, {"x": 1, "y": 1}, {"x": 1, "y": 0}],
+            [{"x": 0, "y": 1}, {"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 1, "y": 1}],
+            "bottom_left",
         ),
         (
             "box left half part of the image",
@@ -41,7 +43,8 @@ from kili.utils.labels.bbox import (
                 "img_width": 1920,
                 "img_height": 1080,
             },
-            [{"x": 0, "y": 0}, {"x": 0, "y": 1}, {"x": 0.5, "y": 1}, {"x": 0.5, "y": 0}],
+            [{"x": 0, "y": 1}, {"x": 0, "y": 0}, {"x": 0.5, "y": 0}, {"x": 0.5, "y": 1}],
+            "bottom_left",
         ),
         (
             "box left half part of the image already normalized",
@@ -51,7 +54,8 @@ from kili.utils.labels.bbox import (
                 "top_right": {"x": 0.5, "y": 1},
                 "top_left": {"x": 0, "y": 1},
             },
-            [{"x": 0, "y": 0}, {"x": 0, "y": 1}, {"x": 0.5, "y": 1}, {"x": 0.5, "y": 0}],
+            [{"x": 0, "y": 1}, {"x": 0, "y": 0}, {"x": 0.5, "y": 0}, {"x": 0.5, "y": 1}],
+            "bottom_left",
         ),
         (
             "box right half part of the image",
@@ -61,7 +65,8 @@ from kili.utils.labels.bbox import (
                 "top_right": {"x": 1, "y": 1},
                 "top_left": {"x": 0.5, "y": 1},
             },
-            [{"x": 0.5, "y": 0}, {"x": 0.5, "y": 1}, {"x": 1, "y": 1}, {"x": 1, "y": 0}],
+            [{"x": 0.5, "y": 1}, {"x": 0.5, "y": 0}, {"x": 1, "y": 0}, {"x": 1, "y": 1}],
+            "bottom_left",
         ),
         (
             "box horizontal center part of the image full width",
@@ -71,7 +76,8 @@ from kili.utils.labels.bbox import (
                 "top_right": {"x": 1, "y": 0.75},
                 "top_left": {"x": 0.0, "y": 0.75},
             },
-            [{"x": 0, "y": 0.25}, {"x": 0, "y": 0.75}, {"x": 1, "y": 0.75}, {"x": 1, "y": 0.25}],
+            [{"x": 0, "y": 0.75}, {"x": 0, "y": 0.25}, {"x": 1, "y": 0.25}, {"x": 1, "y": 0.75}],
+            "bottom_left",
         ),
         (
             "square small box bottom left corner",
@@ -84,11 +90,12 @@ from kili.utils.labels.bbox import (
                 "img_height": 1080,
             },
             [
-                {"x": 0, "y": 0.9907407407407407},
                 {"x": 0, "y": 1},
-                {"x": 0.005208333333333333, "y": 1},
-                {"x": 0.005208333333333333, "y": 0.9907407407407407},
+                {"x": 0, "y": 1070 / 1080},
+                {"x": 10 / 1920, "y": 1070 / 1080},
+                {"x": 10 / 1920, "y": 1},
             ],
+            "bottom_left",
         ),
         (
             "square small box bottom right corner",
@@ -101,11 +108,12 @@ from kili.utils.labels.bbox import (
                 "img_height": 1080,
             },
             [
-                {"x": 0.9947916666666666, "y": 0.9907407407407407},
-                {"x": 0.9947916666666666, "y": 1},
+                {"x": 1910 / 1920, "y": 1},
+                {"x": 1910 / 1920, "y": 1070 / 1080},
+                {"x": 1, "y": 1070 / 1080},
                 {"x": 1, "y": 1},
-                {"x": 1, "y": 0.9907407407407407},
             ],
+            "bottom_left",
         ),
         (
             "square small box top right corner",
@@ -118,11 +126,12 @@ from kili.utils.labels.bbox import (
                 "img_height": 1080,
             },
             [
-                {"x": 0.9947916666666666, "y": 0},
-                {"x": 0.9947916666666666, "y": 0.0092592592592593},
-                {"x": 1, "y": 0.0092592592592593},
+                {"x": 1910 / 1920, "y": 10 / 1080},
+                {"x": 1910 / 1920, "y": 0},
                 {"x": 1, "y": 0},
+                {"x": 1, "y": 10 / 1080},
             ],
+            "bottom_left",
         ),
         (
             "square small box top left corner",
@@ -135,11 +144,12 @@ from kili.utils.labels.bbox import (
                 "img_height": 1080,
             },
             [
+                {"x": 0, "y": 10 / 1080},
                 {"x": 0, "y": 0},
-                {"x": 0, "y": 0.0092592592592593},
-                {"x": 0.005208333333333333, "y": 0.0092592592592593},
-                {"x": 0.005208333333333333, "y": 0},
+                {"x": 10 / 1920, "y": 0},
+                {"x": 10 / 1920, "y": 10 / 1080},
             ],
+            "bottom_left",
         ),
         (
             "small box somewhere in the top right quarter of the image",
@@ -152,20 +162,43 @@ from kili.utils.labels.bbox import (
                 "img_height": 1080,
             },
             [
-                {"x": 0.5208333333333334, "y": 0.3055555555555556},
-                {"x": 0.5208333333333334, "y": 0.35185185185185186},
-                {"x": 0.546875, "y": 0.35185185185185186},
-                {"x": 0.546875, "y": 0.3055555555555556},
+                {"x": 1000 / 1920, "y": 1 - (700 / 1080)},
+                {"x": 1000 / 1920, "y": 1 - (750 / 1080)},
+                {"x": 1050 / 1920, "y": 1 - (750 / 1080)},
+                {"x": 1050 / 1920, "y": 1 - (700 / 1080)},
             ],
+            "bottom_left",
+        ),
+        (
+            "small box top left corner of the image. input points in kili space (top_left)",
+            {
+                "bottom_left": {"x": 0, "y": 10},
+                "bottom_right": {"x": 10, "y": 10},
+                "top_right": {"x": 10, "y": 0},
+                "top_left": {"x": 0, "y": 0},
+                "img_width": 1920,
+                "img_height": 1080,
+            },
+            [
+                {"x": 0, "y": 10 / 1080},
+                {"x": 0, "y": 0},
+                {"x": 10 / 1920, "y": 0},
+                {"x": 10 / 1920, "y": 10 / 1080},
+            ],
+            "top_left",
         ),
     ],
 )
-def test_bbox_points_to_normalized_vertices(test_name, inputs, output):
-    vertices = bbox_points_to_normalized_vertices(**inputs)
-    assert vertices == output
+def test_bbox_points_to_normalized_vertices(test_name, inputs, output, origin_location):
+    vertices = bbox_points_to_normalized_vertices(**inputs, origin_location=origin_location)
+    for computed_vertex, expected_vertex in zip(vertices, output):  # type: ignore
+        assert computed_vertex == pytest.approx(expected_vertex)
 
     bbox_points = normalized_vertices_to_bbox_points(
-        vertices, img_width=inputs.get("img_width"), img_height=inputs.get("img_height")
+        vertices,
+        img_width=inputs.get("img_width"),
+        img_height=inputs.get("img_height"),
+        origin_location=origin_location,
     )
     assert bbox_points["bottom_left"] == pytest.approx(inputs["bottom_left"])
     assert bbox_points["bottom_right"] == pytest.approx(inputs["bottom_right"])
@@ -205,14 +238,15 @@ def test_bbox_points_to_normalized_vertices(test_name, inputs, output):
 #     )
 
 #     points = {
-#         "bottom_left": {"x": 1000, "y": 700},
-#         "bottom_right": {"x": 1050, "y": 700},
-#         "top_right": {"x": 1050, "y": 750},
-#         "top_left": {"x": 1000, "y": 750},
+#         "bottom_left": {"x": 0, "y": 1070},
+#         "bottom_right": {"x": 500, "y": 1070},
+#         "top_right": {"x": 500, "y": 1080},
+#         "top_left": {"x": 0, "y": 1080},
 #         "img_width": 1920,
 #         "img_height": 1080,
 #     }
-#     normalizedVertices = bbox_points_to_normalized_vertices(**points)
+#     normalizedVertices = bbox_points_to_normalized_vertices(**points, origin_location="bottom_left")
+
 #     kili.append_labels(
 #         json_response_array=[
 #             {
