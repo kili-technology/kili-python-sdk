@@ -1,8 +1,9 @@
 """Test cloud storage methods."""
 
+import hashlib
 import json
 import os
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional
 
 import pytest
 
@@ -48,39 +49,11 @@ def src_project(kili: Kili):
     kili.delete_project(project["id"])
 
 
-def get_test_cases() -> List[Tuple[str]]:
-    """
-    KILI_TEST_DATA_INTEGRATION_ID is a json string of the form:
-    {
-        "LTS": {
-            "AWS": ["data_integration_id_1", "data_integration_id_2"],
-            "GCP": ["data_integration_id_1", "data_integration_id_2"],
-            "Azure": ["data_integration_id_1", "data_integration_id_2"],
-        },
-        "STAGING": {
-            "AWS": ["data_integration_id_1", "data_integration_id_2"],
-            ...
-        },
-        ...
-    }
-    """
-    test_cases = []
-
-    integrations_ids = os.environ.get("KILI_TEST_DATA_INTEGRATION_ID")
-    if integrations_ids is None:
-        return test_cases
-
-    integrations_ids = json.loads(integrations_ids)
-
-    for endpoint_short_name in integrations_ids:
-        for platform_name in integrations_ids[endpoint_short_name]:
-            for data_integration_id in integrations_ids[endpoint_short_name][platform_name]:
-                test_cases.append((endpoint_short_name, platform_name, data_integration_id))
-
-    return test_cases
+integrations_ids = json.loads(os.environ["KILI_TEST_DATA_INTEGRATION_ID"])
 
 
 def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
+    """Check if the endpoint url matches the endpoint short name."""
     if endpoint_short_name == "LTS":
         return "lts" in endpoint_url
 
@@ -96,13 +69,85 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
     raise ValueError(f"Unknown endpoint short name: {endpoint_short_name}")
 
 
-@pytest.mark.parametrize("endpoint_short_name,platform_name,data_integration_id", get_test_cases())
+# pylint: disable=line-too-long
+@pytest.mark.parametrize(
+    "endpoint_short_name,platform_name,data_integration_id,data_integration_id_hash,selected_folders,expected_nb_assets_after_sync",
+    [
+        (
+            "STAGING",
+            "AWS",
+            integrations_ids["STAGING"]["AWS"][0],
+            "e39a035e575dd2f41b9e722caf4e18c5",
+            None,
+            4,
+        ),
+        (
+            "STAGING",
+            "AWS",
+            integrations_ids["STAGING"]["AWS"][0],
+            "e39a035e575dd2f41b9e722caf4e18c5",
+            ["chickens"],
+            4,
+        ),
+        (
+            "STAGING",
+            "AWS",
+            integrations_ids["STAGING"]["AWS"][0],
+            "e39a035e575dd2f41b9e722caf4e18c5",
+            [],
+            0,
+        ),
+        (
+            "STAGING",
+            "Azure",
+            integrations_ids["STAGING"]["Azure"][0],
+            "5512237816bd1dde391368ed93332b75",
+            None,
+            5,
+        ),
+        (
+            "STAGING",
+            "Azure",
+            integrations_ids["STAGING"]["Azure"][1],
+            "3e7e98e2ab4af2d614d97acb7b970c2b",
+            None,
+            5,
+        ),
+        (
+            "STAGING",
+            "Azure",
+            integrations_ids["STAGING"]["Azure"][1],
+            "3e7e98e2ab4af2d614d97acb7b970c2b",
+            ["bears"],
+            5,
+        ),
+        (
+            "STAGING",
+            "Azure",
+            integrations_ids["STAGING"]["Azure"][1],
+            "3e7e98e2ab4af2d614d97acb7b970c2b",
+            [],
+            0,
+        ),
+        (
+            "STAGING",
+            "GCP",
+            integrations_ids["STAGING"]["GCP"][0],
+            "f474c0170c8daa09ec2e368ce4720c73",
+            None,
+            5,
+        ),
+    ],
+)
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
     endpoint_short_name: str,
     platform_name: str,
     data_integration_id: str,
+    data_integration_id_hash: str,
+    selected_folders: Optional[List[str]],
+    expected_nb_assets_after_sync: int,
 ) -> None:
     """E2e test for cloud storage methods."""
     if not is_same_endpoint(endpoint_short_name, kili.auth.api_endpoint):
@@ -110,6 +155,11 @@ def test_e2e_synchronize_cloud_storage_connection(
             f"Skipping test because endpoint {kili.auth.api_endpoint} does not match"
             f" {endpoint_short_name}"
         )
+
+    # Check that the data integration retrieved from secrets matches hash
+    assert (
+        data_integration_id_hash == hashlib.md5(data_integration_id.encode()).hexdigest()
+    ), f"Data integration {data_integration_id} does not match hash {data_integration_id_hash}"
 
     project_id = src_project["id"]
 
@@ -123,7 +173,9 @@ def test_e2e_synchronize_cloud_storage_connection(
 
     # Create a data connection
     data_connection_id = kili.add_cloud_storage_connection(
-        project_id=project_id, cloud_storage_integration_id=data_integration_id
+        project_id=project_id,
+        cloud_storage_integration_id=data_integration_id,
+        selected_folders=selected_folders,
     )["id"]
 
     # Check that the data connection has been created
@@ -158,4 +210,6 @@ def test_e2e_synchronize_cloud_storage_connection(
     )
 
     nb_assets = kili.count_assets(project_id=project_id)
-    assert nb_assets > 0, "Expected at least one asset after sync."
+    assert (
+        nb_assets == expected_nb_assets_after_sync
+    ), f"Expected {expected_nb_assets_after_sync} assets after sync. Got {nb_assets} assets."

@@ -82,6 +82,7 @@ class MutationsDataConnection:
         self,
         cloud_storage_connection_id: str,
         delete_extraneous_files: bool = False,
+        dry_run: bool = False,
     ) -> Dict:
         """Synchronize a cloud storage connection.
 
@@ -94,10 +95,12 @@ class MutationsDataConnection:
         Args:
             cloud_storage_connection_id: ID of the cloud storage connection.
             delete_extraneous_files: If True, delete extraneous files.
+            dry_run: If True, do not apply the differences.
+                This is useful to check the differences before applying them.
 
         Returns:
             A dict with the DataConnection ID.
         """
         return services.synchronize_data_connection(
-            self.auth, cloud_storage_connection_id, delete_extraneous_files
+            self.auth, cloud_storage_connection_id, delete_extraneous_files, dry_run
         )

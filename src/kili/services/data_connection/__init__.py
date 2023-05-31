@@ -81,8 +81,9 @@ def validate_data_differences(
             nb_assets_after = AssetQuery(auth.client).count(where)
             if abs(nb_assets_after - nb_assets_before) != diff:
                 raise ValueError(
-                    f"Number of assets after validation is not correct: before {nb_assets_before},"
-                    f" after {nb_assets_after}, diff {diff}"
+                    "Number of assets in project after validation is not correct: before"
+                    f" {nb_assets_before} assets, after {nb_assets_after} assets,"
+                    f" dataDifferencesSummary diff {diff}"
                 )
 
 
@@ -172,7 +173,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 
 
 def synchronize_data_connection(
-    auth: KiliAuth, data_connection_id: str, delete_extraneous_files: bool
+    auth: KiliAuth, data_connection_id: str, delete_extraneous_files: bool, dry_run: bool
 ) -> Dict:
     """Launch a data connection synchronization."""
     logger = _get_logger()
@@ -211,9 +212,15 @@ def synchronize_data_connection(
         "Found %d difference(s): %d assets to add, %d assets to remove.", total, added, removed
     )
 
+    if dry_run:
+        validate_data_differences_func = lambda *args, **kwargs: None  # type: ignore  # noqa: E731
+        logger.info("Dry run: no data will be added or removed.")
+    else:
+        validate_data_differences_func = validate_data_differences
+
     if removed > 0:
         if delete_extraneous_files:
-            validate_data_differences(auth, "REMOVE", data_connection)
+            validate_data_differences_func(auth, "REMOVE", data_connection)
             logger.info("Removed %d extraneous file(s).", removed)
         else:
             logger.info(
@@ -222,7 +229,7 @@ def synchronize_data_connection(
             )
 
     if added > 0:
-        validate_data_differences(auth, "ADD", data_connection)
+        validate_data_differences_func(auth, "ADD", data_connection)
         logger.info("Added %d file(s).", added)
 
     return get_data_connection(auth, data_connection_id, fields=["numberOfAssets", "projectId"])
