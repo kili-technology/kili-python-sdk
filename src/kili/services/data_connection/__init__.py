@@ -1,7 +1,7 @@
 """Services for data connections."""
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -107,7 +107,6 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
 
     data_integration = data_connection["dataIntegration"]
 
-    blob_paths: Optional[List[str]] = None
     # for azure using credentials, it is required to provide the blob paths to compute the diffs
     if (
         data_integration["platform"] == "Azure"
@@ -135,6 +134,10 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
         )
 
         blob_paths = azure_client.get_blob_paths()
+        # TODO: we get all blob paths, but we should only get the ones that are in the selected folders
+
+    else:
+        blob_paths = data_connection["selectedFolders"]
 
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
