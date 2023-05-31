@@ -134,7 +134,8 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
         )
 
         blob_paths = azure_client.get_blob_paths()
-        # TODO: we get all blob paths, but we should only get the ones that are in the selected folders
+        # TODO: we get all blob paths
+        # we should only get the ones that are in the selected folders
 
     else:
         blob_paths = data_connection["selectedFolders"]
@@ -216,7 +217,8 @@ def synchronize_data_connection(
     )
 
     if dry_run:
-        validate_data_differences_func = lambda *args, **kwargs: None  # type: ignore  # noqa: E731
+        # pylint: disable=unnecessary-lambda-assignment
+        validate_data_differences_func = lambda *args, **kwargs: None  # noqa: E731
         logger.info("Dry run: no data will be added or removed.")
     else:
         validate_data_differences_func = validate_data_differences
