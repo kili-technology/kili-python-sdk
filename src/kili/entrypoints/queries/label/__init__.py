@@ -3,7 +3,6 @@
 from functools import partial
 from typing import Dict, Generator, Iterable, List, Optional, Union, cast, overload
 
-import pandas as pd
 from typeguard import typechecked
 from typing_extensions import Literal
 
@@ -615,7 +614,7 @@ class QueriesLabel:
             "labelType",
         ],
         asset_fields: List[str] = ["externalId"],
-    ) -> pd.DataFrame:
+    ):
         # pylint: disable=line-too-long
         """Get the labels of a project as a pandas DataFrame.
 
@@ -627,8 +626,15 @@ class QueriesLabel:
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
 
         Returns:
-            pandas DataFrame containing the labels.
+            pd.DataFrame: A pandas DataFrame containing the labels.
         """
+        try:
+            import pandas as pd  # pylint: disable=import-outside-toplevel
+        except ImportError as err:
+            raise ImportError(
+                "You need to install pandas to use this function. Please run `pip install"
+                " kili[pandas]`."
+            ) from err
 
         services.get_project(self.auth, project_id, ["id"])
         assets_gen = AssetQuery(self.auth.client)(

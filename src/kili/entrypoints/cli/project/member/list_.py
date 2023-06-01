@@ -3,7 +3,6 @@
 from typing import Optional
 
 import click
-import pandas as pd
 from tabulate import tabulate
 
 from kili.core.graphql import QueryOptions
@@ -31,6 +30,13 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         kili project member list <project_id> --stdout-format pretty
         ```
     """
+    try:
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+    except ImportError as err:
+        raise ImportError(
+            "You need to install pandas to use this command. Run `pip install kili[pandas]`."
+        ) from err
+
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     members_list = list(
         ProjectUserQuery(kili.auth.client)(
