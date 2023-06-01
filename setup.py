@@ -5,6 +5,7 @@ from setuptools import find_packages, setup
 from src.kili import __version__
 
 install_requires = [
+    "pandas>=1.0.0,<3.0.0",
     "click>=8.0.0,<9.0.0",
     "requests>=2.0.0,<3.0.0",
     "tabulate>=0.9.0,<0.10.0",
@@ -22,7 +23,6 @@ install_requires = [
     "ffmpeg-python>=0.2.0,<0.3.0",
     "gql[requests,websockets]>=3.5.0b4,<4.0.0",
     "filelock>=3.0.0,<4.0.0",
-    "pandas>=1.0.0,<3.0.0",
 ]
 
 image_requires = [
