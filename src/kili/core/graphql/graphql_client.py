@@ -214,6 +214,7 @@ class GraphQLClient:
 
         document = query if isinstance(query, DocumentNode) else gql(query)
 
+        ret = {}
         try:
             ret = _execute(document, variables, **kwargs)
         except (GraphQLError, TransportServerError) as err:
