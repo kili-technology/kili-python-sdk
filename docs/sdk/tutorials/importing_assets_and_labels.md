@@ -155,7 +155,7 @@ Additionally, three specific metadata types can be used as information presented
 - `url`
 
 As an optional step, you can set data types for each type of your metadata.
-The default data type is `string`, but setting setting some of your metadata as `number` can really help apply filters on your assets later on.
+The default data type is `string`, but setting some of your metadata as `number` can really help apply filters on your assets later on.
 
 Note that we don't need to set data types for `imageUrl`, `text`, and `url`.
 
