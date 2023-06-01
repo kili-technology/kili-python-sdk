@@ -459,7 +459,7 @@ class QueriesAsset:
             assets_gen = (parse_labels_of_asset(asset) for asset in assets_gen)
 
         if format == "pandas":
-            return pd.DataFrame(list(assets_gen))  # pyright: ignore
+            return pd.DataFrame(list(assets_gen))
         if as_generator:
             return assets_gen
         return list(assets_gen)
