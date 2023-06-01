@@ -232,6 +232,7 @@ class GraphQLClient:
             if isinstance(err, TransportServerError):
                 if err.code == 401:
                     # if error is due to authentication, we retry once
+                    time.sleep(1)
                     ret = _execute(document, variables, **kwargs)
                 else:
                     raise err
