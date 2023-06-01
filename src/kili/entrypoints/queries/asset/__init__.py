@@ -1,8 +1,9 @@
 """Asset queries."""
 
 import warnings
-from typing import Dict, Generator, Iterable, List, Optional, overload
+from typing import Dict, Generator, Iterable, List, Optional, Union, overload
 
+import pandas as pd
 from typeguard import typechecked
 from typing_extensions import Literal
 
@@ -246,7 +247,7 @@ class QueriesAsset:
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Union[Iterable[Dict], pd.DataFrame]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
@@ -348,15 +349,6 @@ class QueriesAsset:
                 label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
         """
-        if format == "pandas":
-            try:
-                import pandas as pd  # pylint: disable=import-outside-toplevel
-            except ImportError as err:
-                raise ImportError(
-                    "You need to install pandas to use the format='pandas' option. Please run `pip"
-                    " install kili[pandas]`."
-                ) from err
-
         if format == "pandas" and as_generator:
             raise ValueError(
                 'Argument values as_generator==True and format=="pandas" are not compatible.'

@@ -22,6 +22,7 @@ install_requires = [
     "ffmpeg-python>=0.2.0,<0.3.0",
     "gql[requests,websockets]>=3.5.0b4,<4.0.0",
     "filelock>=3.0.0,<4.0.0",
+    "pandas>=1.0.0,<3.0.0",
 ]
 
 image_requires = [
@@ -30,10 +31,6 @@ image_requires = [
 
 azure_requires = [
     "azure-storage-blob>=12.0.0,<13.0.0",
-]
-
-pandas_requires = [
-    "pandas>=1.0.0,<2.0.0",
 ]
 
 dev_extra = (
@@ -68,7 +65,6 @@ dev_extra = (
     ]
     + image_requires
     + azure_requires
-    + pandas_requires
 )
 
 setup(
@@ -86,7 +82,6 @@ setup(
         "dev": dev_extra,
         "image-utils": image_requires,
         "azure": azure_requires,
-        "pandas": pandas_requires,
     },
     include_package_data=True,
     entry_points={
