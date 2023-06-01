@@ -108,11 +108,14 @@ jobs:
           echo "TEST_MODE_ARRAY=$json_str" >> $GITHUB_OUTPUT
 
   tests:
-    name: ${{ matrix.test_mode }}, ${{ matrix.os }}
+    name: ${{ matrix.test_mode }}, ${{ matrix.os }}, ${{ matrix.python-version }}
     if: github.repository == 'kili-technology/kili-python-sdk'
     strategy:
       matrix:
         test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array).array }}
+        os:
+          - windows-latest
+          - ubuntu-latest
         include:
           - os: windows-latest
             python-version: 3.11
