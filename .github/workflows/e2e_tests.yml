@@ -108,12 +108,20 @@ jobs:
           echo "TEST_MODE_ARRAY=$json_str" >> $GITHUB_OUTPUT
 
   tests:
-    name: ${{ matrix.test_mode }}, ${{ matrix.os }}
+    name: ${{ matrix.test_mode }}, ${{ matrix.os }}, ${{ matrix.python-version }}
     if: github.repository == 'kili-technology/kili-python-sdk'
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
         test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array).array }}
+        os:
+          - windows-latest
+          - ubuntu-latest
+        include:
+          - os: windows-latest
+            python-version: 3.11
+          - os: ubuntu-latest
+            python-version: 3.7
+
     runs-on: ${{ matrix.os }}
     needs: [test_setup]
     steps:
@@ -211,10 +219,10 @@ jobs:
         shell: bash
         run: rm -rf src # we want the previous release tests but the kili from master
 
-      - name: Set up Python 3.7
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: 3.7
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
 
       - name: Upgrade pip
@@ -256,6 +264,7 @@ jobs:
           KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
           KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
+          PYDEVD_DISABLE_FILE_VALIDATION: true
 
       - name: Check that kili SDK version has not changed
         shell: bash
