@@ -311,8 +311,7 @@ class QueriesAsset:
             Date strings should have format: "YYYY-MM-DD"
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            An asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
         Example:
             ```
