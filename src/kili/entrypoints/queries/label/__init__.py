@@ -627,9 +627,8 @@ class QueriesLabel:
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
 
         Returns:
-            pandas DataFrame containing the labels.
+            A pandas DataFrame containing the labels.
         """
-
         services.get_project(self.auth, project_id, ["id"])
         assets_gen = AssetQuery(self.auth.client)(
             AssetWhere(project_id=project_id),

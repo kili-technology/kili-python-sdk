@@ -59,5 +59,3 @@ def process_notebook(notebook_filename):
 def test_all_recipes(notebook_file):
     """Runs `process_notebook` on all notebooks in the git repository."""
     process_notebook(notebook_file)
-
-    return
