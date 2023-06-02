@@ -14,9 +14,10 @@ We will learn how to push model-generated labels to Kili and how to visualize th
 
 
 ```python
-import os
-from kili.client import Kili
 import getpass
+import os
+
+from kili.client import Kili
 
 if "KILI_API_KEY" not in os.environ:
     KILI_API_KEY = getpass.getpass("Please enter your API key: ")

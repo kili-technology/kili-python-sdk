@@ -20,19 +20,21 @@ First of all, let's import the packages, and install pydicom in case you don't h
 
 
 ```python
+import getpass
 import os
 import pickle
-import pydicom
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import numpy as np
-import getpass
-import wget
-import matplotlib.colors as mcolors
-from pathlib import Path
 from functools import reduce
-from kili.client import Kili
+from pathlib import Path
+
+import matplotlib.colors as mcolors
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import numpy as np
+import pydicom
+import wget
 from PIL import Image
+
+from kili.client import Kili
 ```
 
 ## Get data

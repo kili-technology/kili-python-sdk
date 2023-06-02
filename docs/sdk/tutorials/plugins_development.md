@@ -61,8 +61,9 @@ Do not hesitate to reach out to us if you need more.
 %load_ext autoreload
 %autoreload 2
 
-from kili.client import Kili
 import os
+
+from kili.client import Kili
 
 api_endpoint = os.getenv("KILI_API_ENDPOINT")
 api_key = os.getenv("KILI_API_KEY")
@@ -87,9 +88,11 @@ We recommend using a modern IDE like VScode to get type hints and autocompletion
 
 
 ```python
-from kili.plugins import PluginCore
-import numpy as np
 from typing import Dict
+
+import numpy as np
+
+from kili.plugins import PluginCore
 
 
 def custom_function(label: Dict):
@@ -276,8 +279,7 @@ You can set custom date rules for filtering your logs:
 
 
 ```python
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 
 dt = date.today()  # You can change this date if needed
 start_date = datetime.combine(dt, datetime.min.time())
