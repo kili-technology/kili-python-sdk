@@ -107,6 +107,7 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
 
     data_integration = data_connection["dataIntegration"]
 
+    blob_paths = None
     # for azure using credentials, it is required to provide the blob paths to compute the diffs
     if (
         data_integration["platform"] == "Azure"
@@ -133,12 +134,19 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
             connection_url=data_integration["azureConnectionURL"],
         )
 
-        blob_paths = azure_client.get_blob_paths()
-        # TODO: we get all blob paths
-        # we should only get the ones that are in the selected folders
+        blob_paths_in_bucket = azure_client.get_blob_paths()
 
-    else:
-        blob_paths = data_connection["selectedFolders"]
+        # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
+        # to keep only the ones in the data connection selected folders
+        if isinstance(data_connection["selectedFolders"], List):
+            blob_paths = [
+                blob_path
+                for blob_path in blob_paths_in_bucket
+                if any(
+                    blob_path.startswith(selected_folder)
+                    for selected_folder in data_connection["selectedFolders"]
+                )
+            ]
 
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
@@ -213,7 +221,7 @@ def synchronize_data_connection(
         return data_connection
 
     logger.info(
-        "Found %d difference(s): %d assets to add, %d assets to remove.", total, added, removed
+        "Found %d difference(s): %d asset(s) to add, %d asset(s) to remove.", total, added, removed
     )
 
     if dry_run:

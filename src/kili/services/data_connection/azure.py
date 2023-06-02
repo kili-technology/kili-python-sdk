@@ -22,8 +22,6 @@ class AzureBucket:
         self.client = BlobServiceClient(account_url=self.blob_sas_url)
         self.storage_bucket = self.client.get_container_client(self.container_name)
 
-        self.check_connection()
-
     @staticmethod
     def _split_connection_url_into_storage_account_and_container_name(
         connection_url: str,
@@ -35,20 +33,10 @@ class AzureBucket:
         container_name = url_connection.path.lstrip("/")
         return storage_account, container_name
 
-    def check_connection(self) -> None:
-        """Check the connection to the Azure bucket."""
-        iterator = self.storage_bucket.list_blobs()
-
-        try:
-            _ = next(iterator)
-        except Exception as err:
-            raise ValueError(
-                "Unable to connect to the Azure bucket. Please check your credentials."
-            ) from err
-
     def get_blob_paths(self) -> List[str]:
         """List files in the Azure bucket."""
-        return list(self.storage_bucket.list_blob_names())
+        ret = list(self.storage_bucket.list_blob_names())
+        return ret
 
     def get_blob_paths_as_tree(self) -> Dict:
         """Get a tree representation of the Azure bucket.
