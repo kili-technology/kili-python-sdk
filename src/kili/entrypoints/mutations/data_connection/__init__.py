@@ -95,11 +95,12 @@ class MutationsDataConnection:
         Args:
             cloud_storage_connection_id: ID of the cloud storage connection.
             delete_extraneous_files: If True, delete extraneous files.
-            dry_run: If True, do not apply the differences.
-                This is useful to check the differences before applying them.
+            dry_run: If True, will not synchronize the data connection but only print the
+                differences. This is useful to check the differences before applying them to the
+                project.
 
         Returns:
-            A dict with the DataConnection ID.
+            A dict with the cloud storage connection ID.
         """
         return services.synchronize_data_connection(
             self.auth, cloud_storage_connection_id, delete_extraneous_files, dry_run
