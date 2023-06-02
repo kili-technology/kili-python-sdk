@@ -30,9 +30,10 @@ First, let's install and import the required modules.
 
 
 ```python
-from kili.client import Kili
 import getpass
 import os
+
+from kili.client import Kili
 ```
 
 Now, let's set up variables needed to create an instance of the Kili object.

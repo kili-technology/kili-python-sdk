@@ -26,16 +26,17 @@ To use the google API, we need to install some packages:
 
 
 ```python
-import os
+import getpass
 import io
 import json
+import os
 
+import wget
 from google.cloud import vision
 from google.oauth2 import service_account
-from kili.client import Kili
 from PIL import Image
-import wget
-import getpass
+
+from kili.client import Kili
 ```
 
 We can now create the project ontology (json interface).
@@ -155,7 +156,7 @@ def detect_text(path):
     credentials = service_account.Credentials.from_service_account_info(GOOGLE_KEY)
     client = vision.ImageAnnotatorClient(credentials=credentials)
 
-    with io.open(path, "rb") as image_file:
+    with open(path, "rb") as image_file:
         content = image_file.read()
 
     response = client.text_detection({"content": content})

@@ -377,8 +377,7 @@ To monitor a certain plugin, you can get its logs by using the following command
 
 ```python
 import json
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 
 dt = (
     date.today()

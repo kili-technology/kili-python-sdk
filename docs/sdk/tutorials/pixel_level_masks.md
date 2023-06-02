@@ -31,17 +31,19 @@ Before starting, we install the requirements:
 %matplotlib inline
 
 import functools
-import time
+import getpass
 import json
+import os
+import time
+import urllib.request
+from random import randint
+
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-import getpass
-import urllib.request
 import requests
 from PIL import Image
-from random import randint
-import cv2
+
 from kili.client import Kili
 ```
 
