@@ -18,6 +18,7 @@ import websocket
 from filelock import FileLock
 from gql import Client, gql
 from gql.transport import exceptions
+from gql.transport.exceptions import TransportServerError
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
@@ -213,17 +214,28 @@ class GraphQLClient:
 
         document = query if isinstance(query, DocumentNode) else gql(query)
 
+        ret = {}
         try:
             ret = _execute(document, variables, **kwargs)
-        except GraphQLError as err:
-            # if error is due do parsing or local validation of the query (graphql.GraphQLError)
-            # we refresh the schema and retry once
-            if isinstance(err.__cause__, graphql.GraphQLError):
-                self._purge_graphql_schema_cache_dir()
-                self._gql_client = self._initizalize_graphql_client()
-                ret = _execute(document, variables, **kwargs)  # if it fails again, we crash here
-            else:
-                raise err
+        except (GraphQLError, TransportServerError) as err:
+            if isinstance(err, GraphQLError):
+                # if error is due do parsing or local validation of the query (graphql.GraphQLError)
+                # we refresh the schema and retry once
+                if isinstance(err.__cause__, graphql.GraphQLError):
+                    self._purge_graphql_schema_cache_dir()
+                    self._gql_client = self._initizalize_graphql_client()
+                    ret = _execute(
+                        document, variables, **kwargs
+                    )  # if it fails again, we crash here
+                else:
+                    raise err
+            if isinstance(err, TransportServerError):
+                if err.code == 401:
+                    # if error is due to authentication, we retry once
+                    time.sleep(1)
+                    ret = _execute(document, variables, **kwargs)
+                else:
+                    raise err
         return ret
 
 
