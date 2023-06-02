@@ -156,7 +156,7 @@ def detect_text(path):
     credentials = service_account.Credentials.from_service_account_info(GOOGLE_KEY)
     client = vision.ImageAnnotatorClient(credentials=credentials)
 
-    with io.open(path, "rb") as image_file:
+    with open(path, "rb") as image_file:
         content = image_file.read()
 
     response = client.text_detection({"content": content})
