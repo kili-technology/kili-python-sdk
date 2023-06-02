@@ -27,12 +27,13 @@ Let's start this tutorial by installing the packages we will need later on.
 
 
 ```python
-import os
 import getpass
 import json
-import openai
+import os
 from collections import defaultdict
+
 import numpy as np
+import openai
 from rich.console import Console
 from rich.table import Table
 ```

@@ -12,13 +12,15 @@
 
 
 ```python
-from kili.client import Kili
-from pathlib import Path
-from rich import print_json
-import pprint
-from bs4 import BeautifulSoup
 import json
 import os
+import pprint
+from pathlib import Path
+
+from bs4 import BeautifulSoup
+from rich import print_json
+
+from kili.client import Kili
 ```
 
 

@@ -41,8 +41,9 @@ export KILI_API_KEY=<YOUR_API_KEY>
 
 
 ```python
-from kili.client import Kili
 from pathlib import Path
+
+from kili.client import Kili
 
 kili = Kili()
 ```

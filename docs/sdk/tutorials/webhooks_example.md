@@ -313,9 +313,9 @@ Then, follow the rest of the tutorial to register the webhook with the `https` u
 
 
 ```python
-from kili.exceptions import GraphQLError
 import requests
 
+from kili.exceptions import GraphQLError
 
 # we get a new webhook listener
 res = requests.post("https://webhook.site/token")
