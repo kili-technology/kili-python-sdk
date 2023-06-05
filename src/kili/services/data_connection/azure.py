@@ -22,8 +22,6 @@ class AzureBucket:
         self.client = BlobServiceClient(account_url=self.blob_sas_url)
         self.storage_bucket = self.client.get_container_client(self.container_name)
 
-        self.check_connection()
-
     @staticmethod
     def _split_connection_url_into_storage_account_and_container_name(
         connection_url: str,
@@ -34,17 +32,6 @@ class AzureBucket:
         storage_account = url_connection.hostname.split(split_value)[0]  # type: ignore
         container_name = url_connection.path.lstrip("/")
         return storage_account, container_name
-
-    def check_connection(self) -> None:
-        """Check the connection to the Azure bucket."""
-        iterator = self.storage_bucket.list_blobs()
-
-        try:
-            _ = next(iterator)
-        except Exception as err:
-            raise ValueError(
-                "Unable to connect to the Azure bucket. Please check your credentials."
-            ) from err
 
     def get_blob_paths(self) -> List[str]:
         """List files in the Azure bucket."""
@@ -70,3 +57,29 @@ class AzureBucket:
                 current_node[filename] = None
 
         return filetree
+
+
+def get_blob_paths_azure_data_connection_with_service_credentials(
+    data_integration: Dict, data_connection: Dict
+) -> List[str]:
+    """Get the blob paths for an Azure data connection using service credentials."""
+    azure_client = AzureBucket(
+        sas_token=data_integration["azureSASToken"],
+        connection_url=data_integration["azureConnectionURL"],
+    )
+
+    blob_paths = azure_client.get_blob_paths()
+
+    # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
+    # to keep only the ones in the data connection selected folders
+    if isinstance(data_connection["selectedFolders"], List):
+        blob_paths = [
+            blob_path
+            for blob_path in blob_paths
+            if any(
+                blob_path.startswith(selected_folder)
+                for selected_folder in data_connection["selectedFolders"]
+            )
+        ]
+
+    return blob_paths

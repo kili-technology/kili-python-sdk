@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pytest
 
@@ -16,6 +16,7 @@ class MockerGetDataConnection:
         nb_of_assets: int,
         is_checking: bool,
         project_id: str,
+        selected_folders: Optional[List[str]],
         data_integration: Dict = {
             "azureIsUsingServiceCredentials": False,
             "platform": "AWS",
@@ -30,6 +31,7 @@ class MockerGetDataConnection:
         self.nb_of_assets = nb_of_assets
         self.is_checking = is_checking
         self.project_id = project_id
+        self.selected_folders = selected_folders
         self.data_integration = data_integration
 
     def __call__(self, auth, data_connection_id: str, fields: List[str]) -> Dict[str, Any]:
@@ -49,6 +51,8 @@ class MockerGetDataConnection:
             ret["numberOfAssets"] = self.nb_of_assets
         if "projectId" in fields:
             ret["projectId"] = self.project_id
+        if "selectedFolders" in fields:
+            ret["selectedFolders"] = self.selected_folders
         if any(field.startswith("dataIntegration.") for field in fields):
             ret["dataIntegration"] = self.data_integration
 
@@ -67,6 +71,7 @@ class MockerGetDataConnection:
                 "nb_of_assets": 100,
                 "is_checking": False,
                 "project_id": "fake_proj_id",
+                "selected_folders": None,
             },
             (
                 "Currently 100 asset(s) imported from the data connection.",
@@ -82,6 +87,7 @@ class MockerGetDataConnection:
                 "nb_of_assets": 50,
                 "is_checking": False,
                 "project_id": "fake_proj_id",
+                "selected_folders": None,
             },
             (
                 "Currently 50 asset(s) imported from the data connection.",
@@ -98,6 +104,7 @@ class MockerGetDataConnection:
                 "nb_of_assets": 50,
                 "is_checking": False,
                 "project_id": "fake_proj_id",
+                "selected_folders": None,
             },
             (
                 "Currently 50 asset(s) imported from the data connection.",
@@ -114,6 +121,7 @@ class MockerGetDataConnection:
                 "nb_of_assets": 2000,
                 "is_checking": False,
                 "project_id": "fake_proj_id",
+                "selected_folders": None,
             },
             (
                 "Currently 2000 asset(s) imported from the data connection.",
