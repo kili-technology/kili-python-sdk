@@ -2147,6 +2147,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">delete_extraneous_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize a cloud storage connection.</span>
 
@@ -2159,12 +2160,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 <span class="sd">        Args:</span>
 <span class="sd">            cloud_storage_connection_id: ID of the cloud storage connection.</span>
 <span class="sd">            delete_extraneous_files: If True, delete extraneous files.</span>
+<span class="sd">            dry_run: If True, will not synchronize the data connection but only print the</span>
+<span class="sd">                differences. This is useful to check the differences before applying them to the</span>
+<span class="sd">                project.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dict with the DataConnection ID.</span>
+<span class="sd">            A dict with the cloud storage connection ID.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">services</span><span class="o">.</span><span class="n">synchronize_data_connection</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span><span class="p">,</span> <span class="n">dry_run</span>
         <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2303,7 +2307,7 @@ If not provided, all folders of the data integration will be connected.</p></td>
 
 
 <h3 class="doc doc-heading" id="kili.entrypoints.mutations.data_connection.__init__.MutationsDataConnection.synchronize_cloud_storage_connection">
-<code class="highlight language-python"><span class="n">synchronize_cloud_storage_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">synchronize_cloud_storage_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2339,6 +2343,14 @@ If not provided, all folders of the data integration will be connected.</p></td>
         <td><p>If True, delete extraneous files.</p></td>
         <td><code>False</code></td>
       </tr>
+      <tr>
+        <td><code>dry_run</code></td>
+        <td><code>bool</code></td>
+        <td><p>If True, will not synchronize the data connection but only print the
+differences. This is useful to check the differences before applying them to the
+project.</p></td>
+        <td><code>False</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2352,7 +2364,7 @@ If not provided, all folders of the data integration will be connected.</p></td>
   <tbody>
     <tr>
       <td><code>Dict</code></td>
-      <td><p>A dict with the DataConnection ID.</p></td>
+      <td><p>A dict with the cloud storage connection ID.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2363,6 +2375,7 @@ If not provided, all folders of the data integration will be connected.</p></td>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cloud_storage_connection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">delete_extraneous_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize a cloud storage connection.</span>
 
@@ -2375,12 +2388,15 @@ If not provided, all folders of the data integration will be connected.</p></td>
 <span class="sd">    Args:</span>
 <span class="sd">        cloud_storage_connection_id: ID of the cloud storage connection.</span>
 <span class="sd">        delete_extraneous_files: If True, delete extraneous files.</span>
+<span class="sd">        dry_run: If True, will not synchronize the data connection but only print the</span>
+<span class="sd">            differences. This is useful to check the differences before applying them to the</span>
+<span class="sd">            project.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dict with the DataConnection ID.</span>
+<span class="sd">        A dict with the cloud storage connection ID.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">services</span><span class="o">.</span><span class="n">synchronize_data_connection</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="p">,</span> <span class="n">delete_extraneous_files</span><span class="p">,</span> <span class="n">dry_run</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>

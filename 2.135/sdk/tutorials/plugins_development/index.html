@@ -1385,8 +1385,9 @@
 <div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">load_ext</span> <span class="n">autoreload</span>
 <span class="o">%</span><span class="n">autoreload</span> <span class="mi">2</span>
 
-<span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 <span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 
 <span class="n">api_endpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;KILI_API_ENDPOINT&quot;</span><span class="p">)</span>
 <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;KILI_API_KEY&quot;</span><span class="p">)</span>
@@ -1401,9 +1402,11 @@
 <p>This cell should be the contents of the <code>.py</code> file that you will upload as a plugin at the end.</p>
 <p><strong>This file should define the <code>PluginHandler</code> class that will contain the proper methods.</strong></p>
 <p>We recommend using a modern IDE like VScode to get type hints and autocompletion on the methods.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">kili.plugins</span> <span class="kn">import</span> <span class="n">PluginCore</span>
 
 
 <span class="k">def</span> <span class="nf">custom_function</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
@@ -1537,8 +1540,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_logs</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">)</span>
 </code></pre></div>
 <p>You can set custom date rules for filtering your logs:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
 
 <span class="n">dt</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>  <span class="c1"># You can change this date if needed</span>
 <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>

@@ -1372,9 +1372,10 @@
 <p>To work with this notebook, you will have to install and instantiate Kili.</p>
 <div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
-<span class="kn">import</span> <span class="nn">getpass</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">getpass</span>
 <span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="s2">&quot;KILI_API_KEY&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
     <span class="n">KILI_API_KEY</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Please enter your API key: &quot;</span><span class="p">)</span>

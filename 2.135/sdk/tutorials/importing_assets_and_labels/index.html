@@ -1272,9 +1272,10 @@
 <p>First, let's install and import the required modules.</p>
 <div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span>  <span class="n">kili</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
-<span class="kn">import</span> <span class="nn">getpass</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">getpass</span>
 <span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 </code></pre></div>
 <p>Now, let's set up variables needed to create an instance of the Kili object.</p>
 <p>We will need your API key and Kili's API endpoint.</p>
@@ -1362,7 +1363,7 @@ The metadata can contain extra information like what language the document was w
 <li><code>url</code></li>
 </ul>
 <p>As an optional step, you can set data types for each type of your metadata.
-The default data type is <code>string</code>, but setting setting some of your metadata as <code>number</code> can really help apply filters on your assets later on.</p>
+The default data type is <code>string</code>, but setting some of your metadata as <code>number</code> can really help apply filters on your assets later on.</p>
 <p>Note that we don't need to set data types for <code>imageUrl</code>, <code>text</code>, and <code>url</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>

@@ -1516,9 +1516,9 @@ POST /                         200 OK
 </code></pre></div>
 <p>Then, follow the rest of the tutorial to register the webhook with the <code>https</code> url returned by <code>ngrok</code>.</p>
 <h2 id="step-4-register-activate-the-webhook">Step 4: Register &amp; activate the webhook</h2>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.exceptions</span> <span class="kn">import</span> <span class="n">GraphQLError</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 
+<span class="kn">from</span> <span class="nn">kili.exceptions</span> <span class="kn">import</span> <span class="n">GraphQLError</span>
 
 <span class="c1"># we get a new webhook listener</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;https://webhook.site/token&quot;</span><span class="p">)</span>
