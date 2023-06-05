@@ -134,14 +134,14 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
             connection_url=data_integration["azureConnectionURL"],
         )
 
-        blob_paths_in_bucket = azure_client.get_blob_paths()
+        blob_paths = azure_client.get_blob_paths()
 
         # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
         # to keep only the ones in the data connection selected folders
         if isinstance(data_connection["selectedFolders"], List):
             blob_paths = [
                 blob_path
-                for blob_path in blob_paths_in_bucket
+                for blob_path in blob_paths
                 if any(
                     blob_path.startswith(selected_folder)
                     for selected_folder in data_connection["selectedFolders"]
