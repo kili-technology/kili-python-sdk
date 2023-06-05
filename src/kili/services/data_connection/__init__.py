@@ -1,7 +1,7 @@
 """Services for data connections."""
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -73,7 +73,7 @@ def validate_data_differences(
 
     for attempt in Retrying(
         wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_delay(60),
+        stop=stop_after_delay(5 * 60),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
     ):
@@ -81,8 +81,9 @@ def validate_data_differences(
             nb_assets_after = AssetQuery(auth.client).count(where)
             if abs(nb_assets_after - nb_assets_before) != diff:
                 raise ValueError(
-                    f"Number of assets after validation is not correct: before {nb_assets_before},"
-                    f" after {nb_assets_after}, diff {diff}"
+                    "Number of assets in project after validation is not correct: before"
+                    f" {nb_assets_before} assets, after {nb_assets_after} assets,"
+                    f" dataDifferencesSummary diff {diff}"
                 )
 
 
@@ -106,13 +107,14 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
 
     data_integration = data_connection["dataIntegration"]
 
-    blob_paths: Optional[List[str]] = None
+    blob_paths = None
+
     # for azure using credentials, it is required to provide the blob paths to compute the diffs
     if (
         data_integration["platform"] == "Azure"
         and data_integration["azureIsUsingServiceCredentials"]
     ):
-        logger.info("Azure data integration is using service credentials. Retrieving blob paths...")
+        logger.info("Azure data integration is using service credentials. Retrieving blob paths.")
         if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
             raise ValueError(
                 f"Cannot compute differences for data connection {data_connection_id} with data"
@@ -121,19 +123,19 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
             )
 
         try:
-            from .azure import AzureBucket  # pylint: disable=import-outside-toplevel
+            # pylint: disable=import-outside-toplevel
+            from .azure import (
+                get_blob_paths_azure_data_connection_with_service_credentials,
+            )
         except ImportError as err:
             raise ImportError(
                 "The azure-storage-blob package is required to use Azure buckets. "
                 " Run `pip install kili[azure]` to install it."
             ) from err
 
-        azure_client = AzureBucket(
-            sas_token=data_integration["azureSASToken"],
-            connection_url=data_integration["azureConnectionURL"],
+        blob_paths = get_blob_paths_azure_data_connection_with_service_credentials(
+            data_connection=data_connection, data_integration=data_integration
         )
-
-        blob_paths = azure_client.get_blob_paths()
 
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
@@ -159,7 +161,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 
     for attempt in Retrying(
         wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_delay(60),
+        stop=stop_after_delay(5 * 60),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
     ):
@@ -172,7 +174,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 
 
 def synchronize_data_connection(
-    auth: KiliAuth, data_connection_id: str, delete_extraneous_files: bool
+    auth: KiliAuth, data_connection_id: str, delete_extraneous_files: bool, dry_run: bool
 ) -> Dict:
     """Launch a data connection synchronization."""
     logger = _get_logger()
@@ -208,12 +210,19 @@ def synchronize_data_connection(
         return data_connection
 
     logger.info(
-        "Found %d difference(s): %d assets to add, %d assets to remove.", total, added, removed
+        "Found %d difference(s): %d asset(s) to add, %d asset(s) to remove.", total, added, removed
     )
+
+    if dry_run:
+        # pylint: disable=unnecessary-lambda-assignment
+        validate_data_differences_func = lambda *args, **kwargs: None  # noqa: E731
+        logger.info("Dry run: no data will be added or removed.")
+    else:
+        validate_data_differences_func = validate_data_differences
 
     if removed > 0:
         if delete_extraneous_files:
-            validate_data_differences(auth, "REMOVE", data_connection)
+            validate_data_differences_func(auth, "REMOVE", data_connection)
             logger.info("Removed %d extraneous file(s).", removed)
         else:
             logger.info(
@@ -222,7 +231,7 @@ def synchronize_data_connection(
             )
 
     if added > 0:
-        validate_data_differences(auth, "ADD", data_connection)
+        validate_data_differences_func(auth, "ADD", data_connection)
         logger.info("Added %d file(s).", added)
 
     return get_data_connection(auth, data_connection_id, fields=["numberOfAssets", "projectId"])
