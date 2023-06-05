@@ -29,8 +29,9 @@ For other specific use cases, see these tutorials:
 
 - [Importing OCR pre-annotations](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/ocr_pre_annotations/)
 - [Importing segmentation pre-annotations](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/pixel_level_masks/)
+- [Importing DINOv2 Fine-tuned Labels](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/finetuning_dinov2.md)
 
-Additionally, we’ve devoted one [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/inference_labels/) to explaining the most common use cases for importing and using model-generated labels: actively monitoring the quality of a model currently  deployed to production to detect issues like data drift, and using a model to speed up the process of label creation.
+Additionally, we’ve devoted one [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/inference_labels/) to explaining the most common use cases for importing and using model-generated labels: actively monitoring the quality of a model currently deployed to production to detect issues like data drift, and using a model to speed up the process of label creation.
 
 ## Working with labels
 
