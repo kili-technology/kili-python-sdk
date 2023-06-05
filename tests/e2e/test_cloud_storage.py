@@ -49,11 +49,17 @@ def src_project(kili: Kili):
     kili.delete_project(project["id"])
 
 
-integrations_ids_str = os.getenv("KILI_TEST_DATA_INTEGRATION_ID")
-if not integrations_ids_str:
-    integrations_ids = {"STAGING": {"AWS": [""], "Azure": ["", ""], "GCP": [""]}}
-else:
-    integrations_ids = json.loads(integrations_ids_str)
+def _load_integration_ids() -> Dict:
+    """Load integration ids from environment variables."""
+    integrations_ids_str = os.getenv("KILI_TEST_DATA_INTEGRATION_ID")
+    if not integrations_ids_str:
+        integrations_ids = {"STAGING": {"AWS": [""], "Azure": ["", ""], "GCP": [""]}}
+    else:
+        integrations_ids = json.loads(integrations_ids_str)
+    return integrations_ids
+
+
+integrations_ids = _load_integration_ids()
 
 
 def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:

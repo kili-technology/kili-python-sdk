@@ -35,8 +35,7 @@ class AzureBucket:
 
     def get_blob_paths(self) -> List[str]:
         """List files in the Azure bucket."""
-        ret = list(self.storage_bucket.list_blob_names())
-        return ret
+        return list(self.storage_bucket.list_blob_names())
 
     def get_blob_paths_as_tree(self) -> Dict:
         """Get a tree representation of the Azure bucket.
@@ -58,3 +57,29 @@ class AzureBucket:
                 current_node[filename] = None
 
         return filetree
+
+
+def get_blob_paths_azure_data_connection_with_service_credentials(
+    data_integration: Dict, data_connection: Dict
+) -> List[str]:
+    """Get the blob paths for an Azure data connection using service credentials."""
+    azure_client = AzureBucket(
+        sas_token=data_integration["azureSASToken"],
+        connection_url=data_integration["azureConnectionURL"],
+    )
+
+    blob_paths = azure_client.get_blob_paths()
+
+    # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
+    # to keep only the ones in the data connection selected folders
+    if isinstance(data_connection["selectedFolders"], List):
+        blob_paths = [
+            blob_path
+            for blob_path in blob_paths
+            if any(
+                blob_path.startswith(selected_folder)
+                for selected_folder in data_connection["selectedFolders"]
+            )
+        ]
+
+    return blob_paths

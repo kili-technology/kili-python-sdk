@@ -108,12 +108,13 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
     data_integration = data_connection["dataIntegration"]
 
     blob_paths = None
+
     # for azure using credentials, it is required to provide the blob paths to compute the diffs
     if (
         data_integration["platform"] == "Azure"
         and data_integration["azureIsUsingServiceCredentials"]
     ):
-        logger.info("Azure data integration is using service credentials. Retrieving blob paths...")
+        logger.info("Azure data integration is using service credentials. Retrieving blob paths.")
         if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
             raise ValueError(
                 f"Cannot compute differences for data connection {data_connection_id} with data"
@@ -122,31 +123,19 @@ def compute_differences(auth: KiliAuth, data_connection_id: str) -> Dict:
             )
 
         try:
-            from .azure import AzureBucket  # pylint: disable=import-outside-toplevel
+            # pylint: disable=import-outside-toplevel
+            from .azure import (
+                get_blob_paths_azure_data_connection_with_service_credentials,
+            )
         except ImportError as err:
             raise ImportError(
                 "The azure-storage-blob package is required to use Azure buckets. "
                 " Run `pip install kili[azure]` to install it."
             ) from err
 
-        azure_client = AzureBucket(
-            sas_token=data_integration["azureSASToken"],
-            connection_url=data_integration["azureConnectionURL"],
+        blob_paths = get_blob_paths_azure_data_connection_with_service_credentials(
+            data_connection=data_connection, data_integration=data_integration
         )
-
-        blob_paths = azure_client.get_blob_paths()
-
-        # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
-        # to keep only the ones in the data connection selected folders
-        if isinstance(data_connection["selectedFolders"], List):
-            blob_paths = [
-                blob_path
-                for blob_path in blob_paths
-                if any(
-                    blob_path.startswith(selected_folder)
-                    for selected_folder in data_connection["selectedFolders"]
-                )
-            ]
 
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
