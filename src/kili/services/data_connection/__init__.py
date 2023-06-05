@@ -73,7 +73,7 @@ def validate_data_differences(
 
     for attempt in Retrying(
         wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_delay(60),
+        stop=stop_after_delay(5 * 60),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
     ):
@@ -161,7 +161,7 @@ def verify_diff_computed(auth: KiliAuth, data_connection_id: str) -> None:
 
     for attempt in Retrying(
         wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_delay(60),
+        stop=stop_after_delay(5 * 60),
         retry=retry_if_exception_type(ValueError),
         reraise=True,
     ):
