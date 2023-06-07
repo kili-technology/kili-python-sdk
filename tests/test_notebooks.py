@@ -33,6 +33,7 @@ def process_notebook(notebook_filename):
         "recipes/basic_project_setup.ipynb",
         "recipes/export_a_kili_project.ipynb",
         "recipes/frame_dicom_data.ipynb",
+        # "recipes/finetuning_dinov2.ipynb",  # not testable because requires GPU
         "recipes/import_text_assets.ipynb",
         "recipes/importing_assets_and_labels.ipynb",
         "recipes/importing_labels.ipynb",
