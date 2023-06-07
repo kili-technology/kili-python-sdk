@@ -202,8 +202,8 @@ class MutationsLabel:
             json_response_array: list of labels to append.
             author_id_array: list of the author id of the labels.
             seconds_to_label_array: list of times taken to produce the label, in seconds.
-            model_name: Only useful when uploading predictions.
-                Name of the model when uploading predictions.
+            model_name: Name of the model that generated the labels.
+                Only useful when uploading PREDICTION or INFERENCE labels.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
             project_id: Identifier of the project.
             asset_external_id_array: list of asset external ids to append labels on.
