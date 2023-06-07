@@ -34,6 +34,7 @@ dev_extra = [
     "pytest-mock",
     "pytest-cov",
     "pytest-xdist[psutil]",
+    "pytest-timeout",
     # documentation
     "mkdocs",
     "mkdocs-material",
