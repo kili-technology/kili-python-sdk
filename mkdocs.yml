@@ -43,7 +43,7 @@ nav:
           - OCR Pre-annotations: sdk/tutorials/ocr_pre_annotations.md
           - Segmentation Pre-annotations: sdk/tutorials/pixel_level_masks.md
           - Inference Labels: sdk/tutorials/inference_labels.md
-          - DINOv2 Fine-tuned Labels: sdk/tutorials/finetuning_dinov2.md
+          - DINOv2 Classification Pre-annotations: sdk/tutorials/finetuning_dinov2.md
       - Working with Labels:
           - Converting and Visualizing Segmentation Labels: sdk/tutorials/medical_imaging.md
           - Converting Tagtog Labels: sdk/tutorials/tagtog_to_kili.md

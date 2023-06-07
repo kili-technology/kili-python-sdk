@@ -5,11 +5,11 @@
 
 
 
-This tutorial shows how to use [DINOv2](https://dinov2.metademolab.com/) self-supervised vision transformer model to generate pre-annotations on a defect detection use case.
+This tutorial shows how to use the [DINOv2](https://dinov2.metademolab.com/) self-supervised vision transformer model to generate pre-annotations on a defect detection use case.
 
-Nowadays, foundations models (FMs) are capable of performing many tasks like NLP tasks for LLMs, but also computer vision tasks including classification and object detection.
+Modern foundation models (FMs) are capable of performing many diverse tasks; large language models can quickly and accurately process natural language while models focused on image processing are very good at computer vision tasks, such as object detection or classification.
 
-By fine-tuning a FM on a very limited set of examples, we can generate high-quality pre-annotations for a given task.
+By retraining an FM on a very limited set of examples, it is possible to even further improve its performance on a specific task, such as image classification. This process is called fine-tuning.
 
 Throughout this tutorial, we will:
 
@@ -52,20 +52,6 @@ from tqdm.notebook import tqdm
 from kili.client import Kili
 ```
 
-
-```python
-def set_seed(n: int):
-    random.seed(n)
-    np.random.seed(n)
-    torch.manual_seed(n)
-    torch.cuda.manual_seed(n)
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.deterministic = True
-
-
-set_seed(42)
-```
-
 To interact with Kili using the Python SDK, it is necessary to have a Kili account and an API key.
 
 
@@ -94,13 +80,13 @@ kili = Kili(
 
 In this section, we will create a project from scratch with existing labels on Kili.
 
-If you want to use your own project, you can simply skip this section and replace the `project_id` variable by yours.
+If you want to use your own project, you can simply skip this section and replace the `project_id` variable by your own project ID.
 
 ### Download assets & create project
 
-For this tutorial, we will use the real life industrial dataset of casting product dataset from Kaggle. You can download it [here](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product).
+For this tutorial, we will use a real-life image dataset of products created through the process of casting from Kaggle. You can download it from [here](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product).
 
-We will use the Kaggle API to download the dataset directly from the notebook.
+We will use the Kaggle API to download the dataset.
 
 
 ```python
@@ -139,6 +125,8 @@ print(len(os.listdir(data_dir / "ok_front")))
     781
     519
 
+
+The `ok_front` class has 519 images, and the `def_front` class has 781 images.
 
 Let's take a look at the images:
 
@@ -215,7 +203,8 @@ We can then prepare the assets to be uploaded to Kili:
 
 
 ```python
-# sort the assets by alternating between classes
+# sort the assets by alternating between classes so that both
+# classes show up in the first page of the labeling interface
 content_array = []
 iterator = zip((data_dir / "def_front").iterdir(), (data_dir / "ok_front").iterdir())
 for filepath_def, filepath_ok in iterator:
@@ -310,6 +299,7 @@ kili.append_labels(
     ],
 )
 
+# Replace the project_id below with your own project_id!
 print(f"\nAccess your project at: https://cloud.kili-technology.com/label/projects/{project_id}")
 ```
 
@@ -327,7 +317,7 @@ Now we have a configured project on our Kili organization, with some assets alre
 
 ## Model training
 
-In this section, we will fine-tune the DINOv2 model on using labeled images from a Kili project.
+In this section, we will fine-tune the DINOv2 model using labeled images from a Kili project.
 
 ### Dataset preparation
 
@@ -396,7 +386,9 @@ print(len(os.listdir(data_dir + "/train/NO")))
     100
 
 
-Below, we prepare the pipeline that loads the images and apply some transformations:
+Below, we prepare the pipeline that loads the images and applies some data augmentation. Data augmentation is a technique that consists of applying random transformations to the images to artificially increase the size of the dataset. This technique is very useful when the dataset is small, since it allows the model to see more images during training.
+
+For example, we can apply random horizontal and vertical flips and random rotations to the images:
 
 
 ```python
@@ -456,6 +448,8 @@ print(output.size())
 
 As you can see, the output is a vector of dimension 384. This is the embedding of the image.
 
+The embedding is a vector that represents the image in the DINOv2 model latent space. The embedding contains a compressed representation of the image, which is useful for many tasks, such as image classification.
+
 The embedding dimension is:
 
 - 384 for ViT-S (we are using this model in this tutorial).
@@ -486,6 +480,8 @@ class DinoVisionTransformerClassifier(nn.Module):
 model = DinoVisionTransformerClassifier()
 ```
 
+Below, we select the device to use for training. It is recommended to use a GPU for this task:
+
 
 ```python
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -497,7 +493,11 @@ model = model.train()
     Device:  cuda:0
 
 
-We use a binary cross-entropy loss to train the model, with the Adam optimizer:
+We use a binary cross-entropy loss to train the model, with the Adam optimizer.
+
+The binary cross-entropy loss is a standard loss function for binary classification tasks. The loss is like the error between the predicted class and the ground truth class. The higher the loss, the worse the model is.
+
+To decrease the loss, we will use the Adam optimizer, which is a widely used optimizer for neural networks. It is a stochastic gradient descent method that computes adaptive learning rates for each parameter of the model.
 
 
 ```python
@@ -505,9 +505,11 @@ criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-6)
 ```
 
+We also define the number of epochs to train the model. An epoch is a full pass through the training data.
+
 
 ```python
-num_epochs = 15  # an epoch is a pass over the training set
+num_epochs = 15
 ```
 
 
@@ -573,6 +575,10 @@ print("Finished training!")
     Finished training!
 
 
+As you can see on the plot below, the loss decreases as the number of epochs increases. This means that the model has successfully learned to classify images.
+
+When the loss stops decreasing, it means that the model has converged and that we can stop the training. In this case, we could have stopped the training after 11 epochs.
+
 
 ```python
 plt.plot(epoch_losses)
@@ -590,7 +596,7 @@ plt.show()
 
 Perfect! The model is now fine-tuned on the labeled images from Kili.
 
-## Predict with the model on non labeled assets
+## Predict with the model on unlabeled assets
 
 In this section, we will use the fine-tuned model to generate pre-annotations on a set of images to label.
 
@@ -650,6 +656,8 @@ data_transforms = transforms.Compose(
 )
 ```
 
+We switch the model to evaluation mode since we don't want to update the weights of the model anymore:
+
 
 ```python
 model = model.eval()
@@ -699,9 +707,11 @@ for asset in tqdm(non_labeled_assets):
 
 We now push the predictions to Kili as pre-annotations (prediction) and inference labels.
 
-The pre-annotations will be helpful for the labelers to label the assets.
+The pre-annotations will be helpful for the labelers to label the assets, since those pre-annotations will be displayed in the Kili interface. It will help them to label the assets faster.
 
 The inference labels will be used to evaluate the quality of the model against labelers.
+
+You can learn more about the different kinds of labels in the [Kili documentation](https://docs.kili-technology.com/docs/asset-lifecycle).
 
 
 ```python
@@ -840,10 +850,11 @@ kili.append_labels(
 );
 ```
 
-On the Kili interface, we can filter the assets based on the disagreements between manual labels and DINOv2-generated labels:
+In the Kili interface, we can filter the assets based on the disagreements between human-made labels and DINOv2-generated labels:
 
 
 ```python
+# replace the project id below with your own!
 print(
     f"https://cloud.kili-technology.com/label/projects/{project_id}/explore?inferenceMarkGte=0&inferenceMarkLte=0.75"
 )
