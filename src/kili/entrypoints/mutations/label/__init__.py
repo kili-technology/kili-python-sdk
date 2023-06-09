@@ -47,6 +47,7 @@ class MutationsLabel:
         json_response_array: Optional[List[dict]] = None,
         model_name: Optional[str] = None,
         asset_id_array: Optional[List[str]] = None,
+        disable_tqdm: bool = False,
     ) -> Dict:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
@@ -59,6 +60,7 @@ class MutationsLabel:
                 see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
             model_name: The name of the model that generated the predictions
             asset_id_array: The internal IDs of the assets for which we want to add predictions.
+            disable_tqdm: Disable tqdm progress bar.
 
         Returns:
             A result object which indicates if the mutation was successful, or an error message.
@@ -111,7 +113,9 @@ class MutationsLabel:
                 )
             )
         ]
-        services.import_labels_from_dict(self.auth, project_id, labels, "PREDICTION", model_name)
+        services.import_labels_from_dict(
+            self.auth, project_id, labels, "PREDICTION", model_name, disable_tqdm
+        )
         return {"id": project_id}
 
     @deprecate(
