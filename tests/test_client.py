@@ -1,5 +1,7 @@
 """Tests for the client to return correct ee."""
 import os
+import shutil
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -35,3 +37,15 @@ def test_wrong_api_key_shot(mocked_requests):
         os.environ.pop("KILI_API_KEY", None)
         with pytest.raises(AuthenticationFailed, match="failed with API key: no"):
             _ = Kili(api_key="no")
+
+
+@patch("io.open", side_effect=PermissionError("No write permissions"))
+@patch("os.mkdir", side_effect=PermissionError("No write permissions"))
+@patch.object(Path, "mkdir", side_effect=PermissionError("No write permissions"))
+def test_write_to_disk_without_permissions(*_):
+    """Test that we can still use kili even if we don't have write permissions."""
+    kili_cache_dir = Path.home() / ".cache" / "kili"
+    if kili_cache_dir.exists():
+        shutil.rmtree(kili_cache_dir)
+
+    _ = Kili()
