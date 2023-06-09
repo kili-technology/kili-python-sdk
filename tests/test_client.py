@@ -45,6 +45,7 @@ def test_wrong_api_key_shot(mocked_requests):
 @patch.object(Path, "mkdir", side_effect=PermissionError("No write permissions"))
 @patch.object(KiliAuth, "check_api_key_valid")
 @patch.object(KiliAuth, "check_expiry_of_key_is_close")
+@patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
 def test_write_to_disk_without_permissions(*_):
     """Test that we can still use kili even if we don't have write permissions."""
     kili_cache_dir = Path.home() / ".cache" / "kili"
