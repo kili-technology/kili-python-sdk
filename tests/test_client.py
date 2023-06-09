@@ -7,6 +7,7 @@ from unittest.mock import patch
 import pytest
 
 from kili.client import Kili
+from kili.core.authentication import KiliAuth
 from kili.exceptions import AuthenticationFailed
 
 
@@ -42,6 +43,8 @@ def test_wrong_api_key_shot(mocked_requests):
 @patch("io.open", side_effect=PermissionError("No write permissions"))
 @patch("os.mkdir", side_effect=PermissionError("No write permissions"))
 @patch.object(Path, "mkdir", side_effect=PermissionError("No write permissions"))
+@patch.object(KiliAuth, "check_api_key_valid")
+@patch.object(KiliAuth, "check_expiry_of_key_is_close")
 def test_write_to_disk_without_permissions(*_):
     """Test that we can still use kili even if we don't have write permissions."""
     kili_cache_dir = Path.home() / ".cache" / "kili"
