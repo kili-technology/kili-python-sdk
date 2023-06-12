@@ -21,6 +21,7 @@ warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 class KiliAuth:
     """Kili authentication class."""
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         api_key: str,
