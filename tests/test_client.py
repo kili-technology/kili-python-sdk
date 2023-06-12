@@ -40,16 +40,28 @@ def test_wrong_api_key_shot(mocked_requests):
             _ = Kili(api_key="no")
 
 
+@pytest.fixture
+def prepare_cache_dir():
+    """Prepare cache dir."""
+    kili_cache_dir = Path.home() / ".cache" / "kili"
+    if kili_cache_dir.exists():
+        shutil.rmtree(kili_cache_dir)
+
+    yield
+
+    if kili_cache_dir.exists():
+        shutil.rmtree(kili_cache_dir)
+
+
 @patch("io.open", side_effect=PermissionError("No write permissions"))
 @patch("os.mkdir", side_effect=PermissionError("No write permissions"))
 @patch.object(Path, "mkdir", side_effect=PermissionError("No write permissions"))
 @patch.object(KiliAuth, "check_api_key_valid")
 @patch.object(KiliAuth, "check_expiry_of_key_is_close")
 @patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
-def test_write_to_disk_without_permissions(*_):
+def test_write_to_disk_without_permissions_not_crash(*_):
     """Test that we can still use kili even if we don't have write permissions."""
-    kili_cache_dir = Path.home() / ".cache" / "kili"
-    if kili_cache_dir.exists():
-        shutil.rmtree(kili_cache_dir)
+    _ = Kili(graphql_client_params={"enable_schema_caching": False})
 
-    _ = Kili()
+    with pytest.raises(PermissionError):
+        _ = Kili()
