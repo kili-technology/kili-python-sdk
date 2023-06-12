@@ -2,6 +2,7 @@
 import os
 import sys
 import warnings
+from typing import Dict, Optional
 
 from kili.core.authentication import KiliAuth
 from kili.core.graphql.graphql_client import GraphQLClientName
@@ -57,8 +58,14 @@ class Kili(  # pylint: disable=too-many-ancestors
 ):
     """Kili Client."""
 
+    # pylint: disable=too-many-arguments
     def __init__(
-        self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK
+        self,
+        api_key: Optional[str] = None,
+        api_endpoint: Optional[str] = None,
+        verify: bool = True,
+        client_name: GraphQLClientName = GraphQLClientName.SDK,
+        graphql_client_params: Optional[Dict[str, object]] = None,
     ) -> None:
         """Initialize Kili client.
 
@@ -74,15 +81,21 @@ class Kili(  # pylint: disable=too-many-ancestors
             verify: Verify certificate. Set to False on local deployment without SSL.
             client_name: For internal use only.
                 Define the name of the graphQL client whith which graphQL calls will be sent.
+            graphql_client_params: Parameters to pass to the graphQL client.
 
         Returns:
-            Object container your API session
+            Instance of the Kili client.
 
         Examples:
-            list:
-                - your assets with: `kili.assets()`
-                - your labels with: `kili.labels()`
-                - your projects with: `kili.projects()`
+            ```python
+            from kili.client import Kili
+
+            kili = Kili()
+
+            kili.assets()  # list your assets
+            kili.labels()  # list your labels
+            kili.projects()  # list your projects
+            ```
         """
         if sys.version_info < (3, 8):
             warnings.warn(
@@ -96,6 +109,7 @@ class Kili(  # pylint: disable=too-many-ancestors
 
         if api_key is None:
             api_key = os.getenv("KILI_API_KEY")
+
         if api_endpoint is None:
             api_endpoint = os.getenv(
                 "KILI_API_ENDPOINT",
@@ -104,12 +118,14 @@ class Kili(  # pylint: disable=too-many-ancestors
 
         if api_key is None:
             raise AuthenticationFailed(api_key, api_endpoint)
+
         try:
             self.auth = KiliAuth(
                 api_key=api_key,
                 api_endpoint=api_endpoint,
                 client_name=client_name,
                 verify=verify,
+                graphql_client_params=graphql_client_params,
             )
             super().__init__(self.auth)
         except Exception as exception:

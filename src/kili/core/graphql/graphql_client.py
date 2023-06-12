@@ -29,13 +29,22 @@ from kili.core.graphql.clientnames import GraphQLClientName
 from kili.exceptions import GraphQLError
 from kili.utils.logcontext import LogContext
 
+DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR = Path.home() / ".cache" / "kili" / "graphql"
 
-# pylint: disable=too-many-instance-attributes
+
+# pylint: disable=too-many-instance-attributes, too-few-public-methods
 class GraphQLClient:
     """GraphQL client."""
 
+    # pylint: disable=too-many-arguments
     def __init__(
-        self, endpoint: str, api_key: str, client_name: GraphQLClientName, verify: bool = True
+        self,
+        endpoint: str,
+        api_key: str,
+        client_name: GraphQLClientName,
+        verify: bool = True,
+        enable_schema_caching: bool = True,
+        graphql_schema_cache_dir: Optional[Union[str, Path]] = DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,
     ) -> None:
         """Initialize the GraphQL client.
 
@@ -44,11 +53,17 @@ class GraphQLClient:
             api_key: Kili API key.
             client_name: Name of the client.
             verify: Whether to verify the SSL certificate.
+            enable_schema_caching: Whether to cache the GraphQL schema on disk.
+            graphql_schema_cache_dir: Directory where to cache the GraphQL schema.
         """
         self.endpoint = endpoint
         self.api_key = api_key
         self.client_name = client_name
         self.verify = verify
+        self.enable_schema_caching = enable_schema_caching
+        self.graphql_schema_cache_dir = (
+            Path(graphql_schema_cache_dir) if graphql_schema_cache_dir else None
+        )
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
@@ -66,10 +81,19 @@ class GraphQLClient:
             method="POST",
         )
 
-        # Use mutex to avoid multiple processes operating in the cache directory at the same time
-        self._cache_dir_lock = FileLock(
-            self.graphql_schema_cache_dir / "cache_dir.lock", timeout=15
-        )
+        if self.enable_schema_caching is True:
+            if self.graphql_schema_cache_dir is None:
+                raise ValueError(
+                    "You must specify a cache directory if you want to enable schema caching."
+                )
+
+            self.graphql_schema_cache_dir.mkdir(parents=True, exist_ok=True)
+
+            # mutex to avoid multiple processes operating in cache directory at the same time
+            self._cache_dir_lock = FileLock(
+                self.graphql_schema_cache_dir / "cache_dir.lock", timeout=15
+            )
+
         self._gql_client = self._initizalize_graphql_client()
 
     def _get_headers(self) -> Dict[str, str]:
@@ -101,10 +125,16 @@ class GraphQLClient:
                 introspection_args=self._get_introspection_args(),
             )
 
-        graphql_schema_path = self._get_graphql_schema_path()
+        if self.enable_schema_caching is False:
+            return Client(
+                transport=self._gql_transport,
+                fetch_schema_from_transport=True,
+                introspection_args=self._get_introspection_args(),
+            )
 
         # In some cases (local development), we cannot get the kili version from the backend
         # and therefore we cannot determine the schema version, so we don't cache the schema
+        graphql_schema_path = self._get_graphql_schema_path()
         if graphql_schema_path is None:
             return Client(
                 transport=self._gql_transport,
@@ -115,7 +145,9 @@ class GraphQLClient:
         with self._cache_dir_lock:
             if not (graphql_schema_path.is_file() and graphql_schema_path.stat().st_size > 0):
                 self._purge_graphql_schema_cache_dir()  # delete old schema files
-                schema_str = self._cache_graphql_schema(graphql_schema_path)
+                schema_str = self._get_graphql_schema_from_endpoint()
+                self._cache_graphql_schema(graphql_schema_path, schema_str)
+
             else:
                 schema_str = graphql_schema_path.read_text(encoding="utf-8")
 
@@ -125,8 +157,8 @@ class GraphQLClient:
             introspection_args=self._get_introspection_args(),
         )
 
-    def _cache_graphql_schema(self, graphql_schema_path: Path) -> str:
-        """Cache the graphql schema on disk."""
+    def _get_graphql_schema_from_endpoint(self) -> str:
+        """Get the GraphQL schema from the endpoint."""
         with Client(
             transport=self._gql_transport,
             fetch_schema_from_transport=True,
@@ -134,22 +166,20 @@ class GraphQLClient:
         ) as session:
             schema_str = print_schema(session.client.schema)  # type: ignore
 
+        return schema_str
+
+    def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
+        """Cache the graphql schema on disk."""
         with self._cache_dir_lock:
             with graphql_schema_path.open("w", encoding="utf-8") as file:
                 file.write(schema_str)
                 file.flush()
 
-        return schema_str
-
-    @property
-    def graphql_schema_cache_dir(self) -> Path:
-        """Get the path of the GraphQL schema cache directory."""
-        path = Path.home() / ".cache" / "kili" / "graphql"
-        path.mkdir(parents=True, exist_ok=True)
-        return path
-
     def _purge_graphql_schema_cache_dir(self) -> None:
         """Purge the schema cache directory."""
+        if self.graphql_schema_cache_dir is None:
+            return
+
         with self._cache_dir_lock:
             for file in self.graphql_schema_cache_dir.glob("*.graphql"):
                 file.unlink()
@@ -159,6 +189,9 @@ class GraphQLClient:
 
         Will return None if we cannot get the schema version.
         """
+        if self.graphql_schema_cache_dir is None:
+            return None
+
         endpoint_netloc = urlparse(self.endpoint).netloc
         version = self._get_kili_app_version()
         if version is None:

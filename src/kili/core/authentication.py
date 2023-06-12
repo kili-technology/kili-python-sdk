@@ -2,7 +2,7 @@
 import os
 import warnings
 from datetime import datetime, timedelta
-from typing import Dict
+from typing import Dict, Optional
 
 import requests
 
@@ -21,8 +21,14 @@ warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 class KiliAuth:
     """Kili authentication class."""
 
+    # pylint: disable=too-many-arguments
     def __init__(
-        self, api_key: str, api_endpoint: str, client_name: GraphQLClientName, verify=True
+        self,
+        api_key: str,
+        api_endpoint: str,
+        client_name: GraphQLClientName,
+        verify=True,
+        graphql_client_params: Optional[Dict[str, object]] = None,
     ) -> None:
         """Initialize KiliAuth.
 
@@ -31,6 +37,7 @@ class KiliAuth:
             api_endpoint: Kili API endpoint.
             client_name: Name of the client.
             verify: Whether to verify the SSL certificate.
+            graphql_client_params: Parameters to pass to the GraphQL client.
         """
         self.api_key = api_key
         self.api_endpoint = api_endpoint
@@ -47,6 +54,7 @@ class KiliAuth:
             api_key=api_key,
             client_name=client_name,
             verify=self.verify,
+            **(graphql_client_params or {}),
         )
 
         if not skip_checks:
