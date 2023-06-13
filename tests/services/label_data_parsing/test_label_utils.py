@@ -336,21 +336,21 @@ def test_integration_of_label_parsing_in_kili_assets(mocker):
         return_value=1,
     )
 
+    label = {
+        "author": {
+            "id": "cldbnzmmq00go0jwc20fq1jkl",
+            "email": "john.doe@kili-technology.com",
+        },
+        "createdAt": "2023-05-11T16:01:48.093Z",
+        "id": "clhjbhrul015m0k7hct21drz4",
+        "jsonResponse": {"JOB_0": {"text": "some text abc"}},
+    }
     mocked_execute = mocker.MagicMock(
         return_value={
             "data": [
                 {
-                    "labels": [
-                        {
-                            "author": {
-                                "id": "cldbnzmmq00go0jwc20fq1jkl",
-                                "email": "john.doe@kili-technology.com",
-                            },
-                            "createdAt": "2023-05-11T16:01:48.093Z",
-                            "id": "clhjbhrul015m0k7hct21drz4",
-                            "jsonResponse": {"JOB_0": {"text": "some text abc"}},
-                        }
-                    ],
+                    "labels": [label],
+                    "latestLabel": label,
                     "content": "https://storage.googleapis.com/label-backend-staging/",
                     "createdAt": "2023-05-11T15:55:01.134Z",
                     "externalId": (
@@ -369,31 +369,54 @@ def test_integration_of_label_parsing_in_kili_assets(mocker):
     mocker_auth.client.execute = mocked_execute
     kili = QueriesAsset(auth=mocker_auth)
 
+    fields = [
+        "content",
+        "createdAt",
+        "externalId",
+        "id",
+        "isHoneypot",
+        "jsonMetadata",
+        "labels.author.id",
+        "labels.author.email",
+        "labels.createdAt",
+        "labels.id",
+        "labels.jsonResponse",
+        "skipped",
+        "status",
+        "latestLabel.jsonResponse",
+    ]
+
     for label_output_format in ("dict", "parsed_label"):
-        assets = kili.assets(project_id="project_id", label_output_format=label_output_format)
+        assets = kili.assets(
+            project_id="project_id", label_output_format=label_output_format, fields=fields
+        )
 
         assert_type(assets, List[Dict])  # static test with pyright
         assert isinstance(assets, List)
         assert len(assets) == 1
         assert len(assets[0]["labels"]) == 1  # pylint: disable=unsubscriptable-object
-        label = assets[0]["labels"][0]  # pylint: disable=unsubscriptable-object
-        if label_output_format == "dict":
-            assert isinstance(label, Dict)
-            assert label["jsonResponse"]["JOB_0"]["text"] == "some text abc"
-        elif label_output_format == "parsed_label":
-            assert isinstance(label, ParsedLabel)
-            assert label.jobs["JOB_0"].text == "some text abc"
+        # pylint: disable=unsubscriptable-object
+        for label in (assets[0]["labels"][0], assets[0]["latestLabel"]):
+            if label_output_format == "dict":
+                assert isinstance(label, Dict)
+                assert label["jsonResponse"]["JOB_0"]["text"] == "some text abc"
+            elif label_output_format == "parsed_label":
+                assert isinstance(label, ParsedLabel)
+                assert label.jobs["JOB_0"].text == "some text abc"
 
     # test return a generator of assets with parsed labels
     assets = kili.assets(
-        project_id="project_id", label_output_format="parsed_label", as_generator=True
+        project_id="project_id",
+        label_output_format="parsed_label",
+        fields=fields,
+        as_generator=True,
     )
     assert_type(assets, Generator[Dict, None, None])  # static test with pyright
     assert isinstance(assets, Generator)
     for i, asset in enumerate(assets):
         assert len(asset["labels"]) == 1
-        label = asset["labels"][0]
-        assert isinstance(label, ParsedLabel)
-        assert label.jobs["JOB_0"].text == "some text abc"
+        for label in (asset["labels"][0], asset["latestLabel"]):
+            assert isinstance(label, ParsedLabel)
+            assert label.jobs["JOB_0"].text == "some text abc"
 
     assert i == 0  # type: ignore

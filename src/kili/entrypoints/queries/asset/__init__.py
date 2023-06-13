@@ -16,7 +16,7 @@ from kili.core.helpers import (
 )
 from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
 from kili.services.project import get_project
-from kili.utils.labels.parsing import parse_labels
+from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -442,18 +442,22 @@ class QueriesAsset:
         assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
 
         if label_output_format == "parsed_label":
-            if "labels.jsonResponse" not in fields:
-                raise ValueError(
-                    "The field 'labels.jsonResponse' is required to parse labels. Please add it to"
-                    " the 'fields' argument."
-                )
-
             project = get_project(self.auth, project_id, ["jsonInterface", "inputType"])
 
             def parse_labels_of_asset(asset: Dict) -> Dict:
-                asset["labels"] = parse_labels(
-                    asset["labels"], project["jsonInterface"], project["inputType"]
-                )
+                if "labels.jsonResponse" in fields:
+                    asset["labels"] = parse_labels(
+                        asset["labels"], project["jsonInterface"], project["inputType"]
+                    )
+                if (
+                    "latestLabel.jsonResponse" in fields
+                    and asset["latestLabel"]["jsonResponse"] is not None
+                ):
+                    asset["latestLabel"] = ParsedLabel(
+                        label=asset["latestLabel"],
+                        json_interface=project["jsonInterface"],
+                        input_type=project["inputType"],
+                    )
                 return asset
 
             assets_gen = (parse_labels_of_asset(asset) for asset in assets_gen)
