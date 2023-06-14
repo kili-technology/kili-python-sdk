@@ -275,6 +275,7 @@ class ContentBatchImporter(BaseBatchImporter):
             url_gen = threads.map(
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
+        # pylint: disable=line-too-long
         return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
 
@@ -309,6 +310,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 json_content_array,
                 ["text/plain"] * len(assets),
             )
+        # pylint: disable=line-too-long
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
     @pagination.api_throttle
