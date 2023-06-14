@@ -55,7 +55,7 @@ class VideoMixin:
         assert json_content
         json_content_index = range(len(json_content))
         json_content = dict(zip(json_content_index, json_content))
-        return AssetLike(**{**asset, "json_content": json_content})
+        return AssetLike(**{**asset, "json_content": json_content})  # type: ignore
 
 
 class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
@@ -66,7 +66,7 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
         json_metadata = asset.get("json_metadata", {})
         processing_parameters = self.get_video_processing_parameters(asset, from_frames=False)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
-        return AssetLike(**{**asset, "json_metadata": json_metadata})
+        return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
     def import_batch(self, assets: List[AssetLike], verify: bool):
         """Import a batch of video assets from content into Kili."""
@@ -82,7 +82,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         json_metadata = asset.get("json_metadata", {})
         processing_parameters = self.get_video_processing_parameters(asset, from_frames=True)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
-        return AssetLike(**{**asset, "json_metadata": json_metadata})
+        return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
     def import_batch(self, assets: List[AssetLike], verify: bool):
         """Import a batch of video assets from frames."""
@@ -118,7 +118,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
         cleaned_urls = (bucket.clean_signed_url(url, self.auth.api_endpoint) for url in url_gen)
-        return AssetLike(**{**asset, "json_content": list(cleaned_urls)})
+        return AssetLike(**{**asset, "json_content": list(cleaned_urls)})  # type: ignore
 
 
 class VideoDataImporter(BaseAssetImporter):

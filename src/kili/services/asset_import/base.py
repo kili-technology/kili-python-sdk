@@ -275,7 +275,8 @@ class ContentBatchImporter(BaseBatchImporter):
             url_gen = threads.map(
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
-        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]
+        # pylint: disable=line-too-long
+        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -287,7 +288,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
         json_content = asset.get("json_content", {})
         if not isinstance(json_content, str):
             json_content = dumps(json_content)
-        return AssetLike(**{**asset, "json_content": json_content})
+        return AssetLike(**{**asset, "json_content": json_content})  # type: ignore
 
     def upload_json_content_to_bucket(self, assets: List[AssetLike]):
         """Upload the json_contents to a bucket with signed urls."""
@@ -309,7 +310,8 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 json_content_array,
                 ["text/plain"] * len(assets),
             )
-        return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]
+        # pylint: disable=line-too-long
+        return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
     @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):

@@ -54,7 +54,7 @@ class KiliAuth:
             api_key=api_key,
             client_name=client_name,
             verify=self.verify,
-            **(graphql_client_params or {}),
+            **(graphql_client_params or {}),  # type: ignore
         )
 
         if not skip_checks:
