@@ -8,7 +8,7 @@ on:
         type: choice
         default: "latest release branch"
         options:
-          - master
+          - main
           - latest release branch
   workflow_call: # called from publish.yml
     secrets:
@@ -22,8 +22,8 @@ jobs:
     steps:
       - name: set checkout branch
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.branch }}" == "master" ]]; then
-              echo "REF=master" >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.branch }}" == "main" ]]; then
+              echo "REF=main" >> $GITHUB_ENV
           else
               last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
               echo "Last version: $last_version"

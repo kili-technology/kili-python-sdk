@@ -17,7 +17,7 @@ In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutori
 Because videos and Rich Text assets may be more complex to import, we’ve created separate tutorials devoted to them:
 
 - For information on importing video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/).
-- For information on importing rich text assets, see [here](https://github.com/kili-technology/kili-python-sdk/blob/master/recipes/import_text_assets.ipynb).
+- For information on importing rich text assets, see [here](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/import_text_assets.ipynb).
 
 ## Importing labels
 
@@ -65,4 +65,4 @@ Webhooks are really similar to plugins, except they are self-hosted, and require
 
 ## More
 
-For more tutorials and recipes, see our [Github repository](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
+For more tutorials and recipes, see our [Github repository](https://github.com/kili-technology/kili-python-sdk/tree/main/recipes).
