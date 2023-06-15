@@ -197,7 +197,7 @@ In this tutorial, we assume that our labels have already been downloaded and sto
 
 ```python
 wget.download(
-    "https://github.com/kili-technology/kili-python-sdk/blob/main/rerererecipes/conf/medical-labels.pkl?raw=true"
+    "https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/conf/medical-labels.pkl?raw=true"
 )
 
 with open("medical-labels.pkl", "rb") as f:
