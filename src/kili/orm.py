@@ -1,5 +1,6 @@
 """This script defines object-relational mapping helpers to ease
 the manipulation of Kili data structures."""
+import warnings
 from dataclasses import dataclass
 from typing import Dict
 
@@ -136,6 +137,14 @@ class Label(DictClass):
                 f'You did not fetch jsonResponse for label "{self["id"] if "id" in self else self}"'
             )
         if format_ == "simple":
+            warnings.warn(
+                (
+                    "The 'simple' format is deprecated and will be removed in version 3.0. Please"
+                    " use 'kili' format instead."
+                ),
+                DeprecationWarning,
+                stacklevel=1,
+            )
             job_names = self.jsonResponse.keys()
             if len(job_names) > 1:
                 return {

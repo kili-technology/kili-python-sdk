@@ -220,7 +220,6 @@ You can export your project data from the Kili UI (see [documentation](https://d
 | Format        | UI  | Python Client | Command Line Interface |
 | ------------- | --- | ------------- | ---------------------- |
 | Kili (raw)    | ✅   | ✅             | ✅                      |
-| Kili (simple) | ✅   | ❌             | ❌                      |
 | YOLO V4       | ✅   | ✅             | ✅                      |
 | YOLO V5       | ✅   | ✅             | ✅                      |
 | YOLO V7       | ❌   | ✅             | ✅                      |
