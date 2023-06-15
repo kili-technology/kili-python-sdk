@@ -540,7 +540,7 @@ project_id = kili.create_project(
 
 In the Kili project created, we can see the ontology that follows the same structure as the one in tagtog:
 
-<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/tagtog_4.png" width="700">
+<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/tagtog_4.png" width="700">
 
 ## Upload assets
 
@@ -584,7 +584,7 @@ kili.append_many_to_dataset(project_id, content_array=assets, external_id_array=
 
 Our assets have been successfully uploaded to Kili:
 
-<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/tagtog_5.png" width="700">
+<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/tagtog_5.png" width="700">
 
 ## Upload existing annotations
 
@@ -709,15 +709,15 @@ kili.append_labels(
 
 We can see that this asset's labels in tagtog labeling interface:
 
-<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/tagtog_6.png" width="600">
+<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/tagtog_6.png" width="600">
 
 match the Kili labels we converted previously:
 
-<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/tagtog_7.png" width="800">
+<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/tagtog_7.png" width="800">
 
 We also see that the entity labels (child annotations in Kili) are shown in the labeling interface:
 
-<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/tagtog_8.png" width="800">
+<img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/tagtog_8.png" width="800">
 
 ## Conclusion
 
