@@ -71,7 +71,7 @@ def src_project_image(kili):
 
     with NamedTemporaryFile(mode="w+b", suffix=".png", delete=False) as temp:
         with requests.get(
-            "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/docs/assets/kili_logo.png",
+            "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/docs/assets/kili_logo.png",
             timeout=20,
         ) as response:
             response.raise_for_status()

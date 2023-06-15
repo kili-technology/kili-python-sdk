@@ -70,7 +70,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - name: create PR to merge release branch and master
+      - name: create PR to merge release branch and main
         run: |
           git fetch --quiet
 
@@ -80,10 +80,10 @@ jobs:
           source ./.github/scripts/utils.sh  # to load the function get_sdk_version_from_setup_cfg
           sdk_version=$(get_sdk_version_from_setup_cfg)
 
-          # create a branch to merge the release branch and master
+          # create a branch to merge the release branch and main
           git checkout -b merge_release/$sdk_version
           git push --set-upstream origin merge_release/$sdk_version
-          gh pr create --title "chore: merge release/$sdk_version into master" --body "Merge release/$sdk_version into master" --base master
+          gh pr create --title "chore: merge release/$sdk_version into main" --body "Merge release/$sdk_version into main" --base main
         env:
           GH_TOKEN: ${{ github.token }} # needed for gh cli
 

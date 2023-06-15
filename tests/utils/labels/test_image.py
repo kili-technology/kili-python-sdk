@@ -11,7 +11,7 @@ from kili.utils.labels.image import (
 
 
 def test_mask_to_normalized_vertices():
-    mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png"
+    mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/HUMAN.mask.png"
     urllib.request.urlretrieve(mask_url, "mask.png")
 
     mask = cv2.imread("mask.png")[:, :, 0]  # pylint:disable=no-member  # type: ignore

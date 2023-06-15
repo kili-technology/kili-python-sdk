@@ -78,7 +78,7 @@ For more details, read the [SDK reference](https://python-sdk-docs.kili-technolo
 
 Check out our [tutorials](https://python-sdk-docs.kili-technology.com/latest/tutorials)! They will guide you through the main features of the Kili client.
 
-You can find several other recipes in this [folder](https://github.com/kili-technology/kili-python-sdk/tree/master/recipes).
+You can find several other recipes in this [folder](https://github.com/kili-technology/kili-python-sdk/tree/main/recipes).
 
 ## Examples
 

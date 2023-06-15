@@ -45,7 +45,7 @@ def mask_to_normalized_vertices(
         import cv2
         from kili.utils.labels.image import mask_to_normalized_vertices
 
-        mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/master/recipes/img/HUMAN.mask.png"
+        mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/HUMAN.mask.png"
         urllib.request.urlretrieve(mask_url, "mask.png")
 
         img = cv2.imread("mask.png")[:, :, 0]  # keep only height and width
