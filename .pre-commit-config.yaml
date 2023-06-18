@@ -28,7 +28,7 @@ repos:
           - flake8-bugbear>=20.0.0
           - flake8-unused-arguments
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.2
+    rev: v3.7.0
     hooks:
       - id: pyupgrade
         args: [--py37-plus]
