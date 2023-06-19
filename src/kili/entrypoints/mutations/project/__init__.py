@@ -23,6 +23,7 @@ from .queries import (
     GQL_CREATE_PROJECT,
     GQL_DELETE_FROM_ROLES,
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
+    GQL_PROJECT_UPDATE_ANONYMIZATION,
     GQL_UPDATE_PROPERTIES_IN_PROJECT,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
 )
@@ -410,3 +411,34 @@ class MutationsProject:
             copy_labels,
             disable_tqdm,
         )
+
+    @typechecked
+    def update_project_anonymization(
+        self, project_id: str, should_anonymize: bool = True
+    ) -> Dict[Literal["id"], str]:
+        """Anonymize the project for the labelers and reviewers.
+
+        !!! info
+            Compatible with versions of the Kili app >= 2.135.0
+
+        Args:
+            project_id: Identifier of the project
+            should_anonymize: The value to be applied. Defaults to `True`.
+
+        Returns:
+            A dict with the id of the project which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.update_project_anonymization(project_id=project_id)
+            >>> kili.update_project_anonymization(project_id=project_id, should_anonymize=False)
+        """
+        variables = {
+            "input": {
+                "id": project_id,
+                "shouldAnonymize": should_anonymize,
+            }
+        }
+
+        result = self.auth.client.execute(GQL_PROJECT_UPDATE_ANONYMIZATION, variables)
+        return format_result("data", result)
