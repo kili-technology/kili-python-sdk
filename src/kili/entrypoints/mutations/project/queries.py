@@ -123,3 +123,11 @@ mutation($where: ProjectWhere!) {
   data: deleteProjectAsynchronously(where: $where)
 }
 """
+
+GQL_PROJECT_UPDATE_ANONYMIZATION = f"""
+mutation($input: UpdateProjectAnonymizationInput!) {{
+  data: updateProjectAnonymization(input: $input) {{
+    {PROJECT_FRAGMENT_ID}
+  }}
+}}
+"""
