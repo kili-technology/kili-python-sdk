@@ -139,7 +139,7 @@ kili.append_many_to_dataset(
 )
 ```
 
-See the detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/).
+See the detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_metadata/).
 
 ### Importing predictions
 

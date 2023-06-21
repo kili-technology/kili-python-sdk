@@ -34,7 +34,7 @@ nav:
       - Getting Started: tutorials.md
       - Basic Project Setup: sdk/tutorials/basic_project_setup.md
       - Importing Assets:
-          - Importing Assets: sdk/tutorials/importing_assets_and_labels.md
+          - Importing Assets: sdk/tutorials/importing_assets_and_metadata.md
           - Video Assets: sdk/tutorials/importing_video_assets.md
           - Rich Text Assets: sdk/tutorials/import_text_assets.md
       - Importing Labels:

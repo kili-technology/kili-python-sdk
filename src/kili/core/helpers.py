@@ -224,14 +224,14 @@ def validate_category_search_query(query: str):
     Raises:
         ValueError: if `query` is invalid
     """
-    operator = pp.oneOf(">= <= > < ==")
+    operator = pp.oneOf(">= <= > < ==")  # pylint: disable=too-many-function-args
     number = pp.pyparsing_common.number()
     dot = "."
     word = pp.Word(pp.alphas, pp.alphanums + "_-*")
     identifier = word + dot + word + dot + "count"
     condition = identifier + operator + number
 
-    expr = pp.infixNotation(
+    expr = pp.infixNotation(  # pylint: disable=too-many-function-args
         condition,
         [
             (
