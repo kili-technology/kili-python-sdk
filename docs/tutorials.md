@@ -12,7 +12,7 @@ In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutori
 
 ## Importing assets
 
-[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_labels/) will show you how to import assets into your Kili project and add asset metadata.
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_metadata/) will show you how to import assets into your Kili project and add asset metadata.
 
 Because videos and Rich Text assets may be more complex to import, we’ve created separate tutorials devoted to them:
 
