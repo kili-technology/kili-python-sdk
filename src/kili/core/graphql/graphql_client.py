@@ -332,7 +332,7 @@ class SubscriptionGraphQLClient:
             "type": "connection_init",
             "payload": {"headers": headers, "Authorization": authorization},
         }
-        self._conn.send(json.dumps(payload))
+        self._conn.send(json.dumps(payload).encode("utf-8"))
         self._conn.recv()
 
     def _start(self, payload):
@@ -343,7 +343,7 @@ class SubscriptionGraphQLClient:
         """
         _id = gen_id()
         frame = {"id": _id, "type": "start", "payload": payload}
-        self._conn.send(json.dumps(frame))
+        self._conn.send(json.dumps(frame).encode("utf-8"))
         return _id
 
     def _stop(self, _id):
@@ -353,7 +353,7 @@ class SubscriptionGraphQLClient:
         - _id: connection id
         """
         payload = {"id": _id, "type": "stop"}
-        self._conn.send(json.dumps(payload))
+        self._conn.send(json.dumps(payload).encode("utf-8"))
         return self._conn.recv()
 
     def query(self, query: str, variables: Optional[Dict] = None, headers: Optional[Dict] = None):
