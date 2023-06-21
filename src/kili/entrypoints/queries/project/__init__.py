@@ -137,14 +137,12 @@ class QueriesProject:
             Date strings should have format: "YYYY-MM-DD"
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            A list of projects or a generator of projects if `as_generator` is `True`.
 
         Examples:
             >>> # List all my projects
             >>> kili.projects()
         """
-
         where = ProjectWhere(
             project_id=project_id,
             search_query=search_query,

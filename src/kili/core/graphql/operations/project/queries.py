@@ -30,14 +30,16 @@ class ProjectWhere(BaseQueryWhere):
 
     def graphql_where_builder(self):
         """Build the GraphQL Where payload sent in the resolver from the SDK ProjectWhere."""
-        return {
+        ret = {
             "id": self.project_id,
             "searchQuery": self.search_query,
             "shouldRelaunchKpiComputation": self.should_relaunch_kpi_computation,
             "updatedAtGte": self.updated_at_gte,
             "updatedAtLte": self.updated_at_lte,
-            "archived": self.archived,
         }
+        if self.archived is not None:
+            ret["archived"] = self.archived
+        return ret
 
 
 class ProjectQuery(GraphQLQuery):
