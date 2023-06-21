@@ -254,7 +254,7 @@ jobs:
           KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
 
       - name: Notebook tests
-        # we don't run notebook tests on push to master
+        # we don't run notebook tests on push to main
         if: github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main')
         timeout-minutes: 30
         run: pytest --timeout=300 -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
