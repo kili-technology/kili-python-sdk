@@ -22,7 +22,7 @@ Let's start this tutorial by installing the packages we will need later on.
 
 
 ```python
-!pip install kili datasets evaluate ipywidgets openai scikit-learn numpy rich
+%pip install kili datasets evaluate ipywidgets openai scikit-learn numpy rich
 ```
 
 

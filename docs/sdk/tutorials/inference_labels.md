@@ -9,7 +9,7 @@ We will learn how to push model-generated labels to Kili and how to visualize th
 
 
 ```python
-!pip install kili
+%pip install kili
 ```
 
 
@@ -147,15 +147,6 @@ kili.append_many_to_dataset(
 )
 ```
 
-
-
-
-
-
-    {'id': 'cleoicwgf02e50jx8e05zai93'}
-
-
-
 We simulate some model predictions:
 
 
@@ -186,18 +177,6 @@ kili.append_labels(
 )
 ```
 
-
-
-
-
-
-    [{'id': 'cleoicyaq01je0jvh7a6jecvt'},
-     {'id': 'cleoicyaq01jf0jvhaqtlh6mx'},
-     {'id': 'cleoicyaq01jg0jvh5w3sf52r'},
-     {'id': 'cleoicyaq01jh0jvhafbiad1z'}]
-
-
-
 Then, human labelers can annotate a subsample of the assets pushed to Kili.
 
 Note: you can automatically [prioritize assets](https://docs.kili-technology.com/docs/queue-prioritization) to be reviewed by a human by using the model's certainty score. When the model is unsure of its predictions, this may indicate wrong labels.
@@ -222,18 +201,6 @@ kili.append_labels(
     label_type="DEFAULT",
 )
 ```
-
-
-
-
-
-
-    [{'id': 'cleoicz3b02eg0jx8cub2c6q6'},
-     {'id': 'cleoicz3b02eh0jx8fe1iap2a'},
-     {'id': 'cleoicz3b02ei0jx8bi4ifnkw'},
-     {'id': 'cleoicz3b02ej0jx86n5c2m0a'}]
-
-
 
 You can now fetch the agreement between the human and the model, for human labels:
 
@@ -265,15 +232,19 @@ for label in labels:
             project_id=project_id,
             asset_id=asset_id,
             type_in=["INFERENCE"],
+            output_format="parsed_label",
             disable_tqdm=True,
         )[0]
         # get the human-made label
-        human_label = kili.labels(project_id=project_id, label_id=label["id"], disable_tqdm=True)[0]
+        human_label = kili.labels(
+            project_id=project_id,
+            label_id=label["id"],
+            output_format="parsed_label",
+            disable_tqdm=True,
+        )[0]
 
-        inference_category = inference_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0][
-            "name"
-        ]
-        human_category = human_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0]["name"]
+        inference_category = inference_label.jobs["CLASSIFICATION_JOB"].category.name
+        human_category = human_label.jobs["CLASSIFICATION_JOB"].category.name
         print(
             f"The model predicted {inference_category} but the human predicted {human_category} for"
             f" asset with id {asset_id}."
@@ -339,15 +310,6 @@ kili.append_many_to_dataset(
 )
 ```
 
-
-
-
-
-
-    {'id': 'cleoid1uc01k10jvhduat80fu'}
-
-
-
 `ground_truths` represents labels made by human annotators:
 
 
@@ -377,18 +339,6 @@ kili.append_labels(
 )
 ```
 
-
-
-
-
-
-    [{'id': 'cleoid3m802fg0jx831mhak3l'},
-     {'id': 'cleoid3m802fh0jx893nia1og'},
-     {'id': 'cleoid3m802fi0jx861b52nd5'},
-     {'id': 'cleoid3m802fj0jx8g5xj0lt2'}]
-
-
-
 We take 80% of the training data and use it to train a model.
 
 We can then run the trained model against the remaining 20% of the labeled assets, and upload predictions to Kili:
@@ -406,18 +356,6 @@ kili.append_labels(
     label_type="INFERENCE",
 )
 ```
-
-
-
-
-
-
-    [{'id': 'cleoid4au01k70jvh0iive67w'},
-     {'id': 'cleoid4au01k80jvheudkf7tc'},
-     {'id': 'cleoid4au01k90jvh9e5892br'},
-     {'id': 'cleoid4av01ka0jvh90mygj0s'}]
-
-
 
 
 ```python
@@ -445,17 +383,21 @@ for label in labels:
                 project_id=project_id,
                 asset_id=label["labelOf"]["id"],
                 type_in=["INFERENCE"],
+                output_format="parsed_label",
                 disable_tqdm=True,
             )
         )[0]
         human_label = list(
-            kili.labels(project_id=project_id, label_id=label["id"], disable_tqdm=True)
+            kili.labels(
+                project_id=project_id,
+                label_id=label["id"],
+                output_format="parsed_label",
+                disable_tqdm=True,
+            )
         )[0]
 
-        inference_category = inference_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0][
-            "name"
-        ]
-        human_category = human_label["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0]["name"]
+        inference_category = inference_label.jobs["CLASSIFICATION_JOB"].category.name
+        human_category = human_label.jobs["CLASSIFICATION_JOB"].category.name
 
         print(
             f"The human predicted {human_category} but the model predicted {inference_category} for"

@@ -23,7 +23,7 @@ Before starting, we install the requirements:
 
 
 ```python
-!pip install matplotlib Pillow kili opencv-python
+%pip install matplotlib Pillow kili opencv-python
 ```
 
 

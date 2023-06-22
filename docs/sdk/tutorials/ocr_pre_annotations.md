@@ -21,7 +21,7 @@ To use the google API, we need to install some packages:
 
 
 ```python
-!pip install google-cloud google-cloud-vision Pillow kili google-cloud-storage wget
+%pip install google-cloud google-cloud-vision Pillow kili google-cloud-storage wget
 ```
 
 
