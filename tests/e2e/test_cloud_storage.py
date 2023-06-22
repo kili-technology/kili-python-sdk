@@ -149,6 +149,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         ),
     ],
 )
+@pytest.mark.skip(reason="need to update data integration ids")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
