@@ -351,6 +351,7 @@ labeled_assets = kili.assets(
     download_media=True,
     local_media_dir=data_dir,
     first=nb_labeled_assets,
+    label_output_format="parsed_label",
 )
 
 print(f"\nRetrieved {len(labeled_assets)} labeled assets.")
@@ -372,7 +373,7 @@ Path("./data/train/YES").mkdir(parents=True, exist_ok=True)
 Path("./data/train/NO").mkdir(parents=True, exist_ok=True)
 
 for asset in labeled_assets:
-    class_name = asset["latestLabel"]["jsonResponse"]["CLASSIFICATION_JOB"]["categories"][0]["name"]
+    class_name = asset["latestLabel"].jobs["CLASSIFICATION_JOB"].category.name
     filepath = Path(asset["content"])
     filepath.rename(filepath.parent / "train" / class_name / filepath.name)
 

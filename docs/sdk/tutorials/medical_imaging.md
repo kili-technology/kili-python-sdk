@@ -276,8 +276,8 @@ img_width, img_height = im.size
 class_names = []
 masks = []
 for annotation in annotations:
-    class_name = annotation["categories"][0]["name"]
-    normalized_vertices = annotation["boundingPoly"][0]["normalizedVertices"]
+    class_name = annotation.category.name
+    normalized_vertices = annotation.bounding_poly[0].normalized_vertices
 
     # convert the label normalized vertices to a numpy mask
     mask = normalized_vertices_to_mask(normalized_vertices, img_width, img_height)
