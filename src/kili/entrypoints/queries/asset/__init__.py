@@ -449,10 +449,7 @@ class QueriesAsset:
                     asset["labels"] = parse_labels(
                         asset["labels"], project["jsonInterface"], project["inputType"]
                     )
-                if (
-                    "latestLabel.jsonResponse" in fields
-                    and asset["latestLabel"]["jsonResponse"] is not None
-                ):
+                if "latestLabel.jsonResponse" in fields and asset["latestLabel"] is not None:
                     asset["latestLabel"] = ParsedLabel(
                         label=asset["latestLabel"],
                         json_interface=project["jsonInterface"],

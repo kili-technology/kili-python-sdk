@@ -25,7 +25,7 @@ If you are looking for a more of-the-shelf capability, you can have a look at th
 
 
 ```python
-!pip install kili
+%pip install kili
 ```
 
 
@@ -105,7 +105,7 @@ kili.append_many_to_dataset(
     disable_tqdm=True,
 )
 
-asset_id = list(kili.assets(project_id=project_id, fields=["id"], disable_tqdm=True))[0]["id"]
+asset_id = kili.assets(project_id=project_id, fields=["id"], disable_tqdm=True)[0]["id"]
 ```
 
 This project has one job of bounding box creation with two categories.

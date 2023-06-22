@@ -564,7 +564,7 @@ class Annotation(
             ]
 
             ml_task = parent_class._get_compatible_ml_task()  # type: ignore
-            self._valid_attributes_for_ml_task[ml_task].update(parent_class_properties)
+            self._valid_attributes_for_ml_task[ml_task].update(parent_class_properties)  # type: ignore
 
             try:
                 type_of_tools = parent_class._get_compatible_type_of_tools()  # type: ignore
@@ -572,7 +572,7 @@ class Annotation(
                 continue
 
             for tool in type_of_tools:
-                self._valid_attributes_for_tool[tool].update(parent_class_properties)
+                self._valid_attributes_for_tool[tool].update(parent_class_properties)  # type: ignore
 
         super().__init__(annotation_json=json_data, project_info=project_info, job_name=job_name)
 

@@ -19,7 +19,7 @@ First, let's install and import the required modules.
 
 
 ```python
-!pip install  kili
+%pip install  kili
 ```
 
 
