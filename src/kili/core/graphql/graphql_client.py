@@ -256,19 +256,18 @@ class GraphQLClient:
 
         document = query if isinstance(query, DocumentNode) else gql(query)
 
-        ret = {}
         try:
-            ret = _execute(document, variables, **kwargs)
+            return _execute(document, variables, **kwargs)
         except GraphQLError as err:
             # if error is due do parsing or local validation of the query (graphql.GraphQLError)
             # we refresh the schema and retry once
             if isinstance(err.__cause__, graphql.GraphQLError):
                 self._purge_graphql_schema_cache_dir()
                 self._gql_client = self._initizalize_graphql_client()
-                ret = _execute(document, variables, **kwargs)  # if it fails again, we crash here
+                return _execute(document, variables, **kwargs)  # if it fails again, we crash here
 
             # if backend returned a 401 error, we retry a few times
-            elif isinstance(err.__cause__, TransportServerError):
+            if isinstance(err.__cause__, TransportServerError):
                 if err.__cause__.code == 401:
                     for attempt in Retrying(
                         stop=stop_after_delay(30),
@@ -277,12 +276,9 @@ class GraphQLClient:
                         reraise=True,
                     ):
                         with attempt:
-                            ret = _execute(document, variables, **kwargs)
+                            return _execute(document, variables, **kwargs)
 
-            else:
-                raise err
-
-        return ret
+            raise err
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
