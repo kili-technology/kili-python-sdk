@@ -86,7 +86,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "AWS",
-            integrations_ids["STAGING"]["AWS"][0],
+            "",
             "e39a035e575dd2f41b9e722caf4e18c5",
             None,
             4,
@@ -94,7 +94,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "AWS",
-            integrations_ids["STAGING"]["AWS"][0],
+            "",
             "e39a035e575dd2f41b9e722caf4e18c5",
             ["chickens"],
             4,
@@ -102,7 +102,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "AWS",
-            integrations_ids["STAGING"]["AWS"][0],
+            "",
             "e39a035e575dd2f41b9e722caf4e18c5",
             [],
             0,
@@ -110,7 +110,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "Azure",
-            integrations_ids["STAGING"]["Azure"][0],
+            "",
             "5512237816bd1dde391368ed93332b75",
             None,
             5,
@@ -118,7 +118,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "Azure",
-            integrations_ids["STAGING"]["Azure"][1],
+            "",
             "3e7e98e2ab4af2d614d97acb7b970c2b",
             None,
             5,
@@ -126,7 +126,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "Azure",
-            integrations_ids["STAGING"]["Azure"][1],
+            "",
             "3e7e98e2ab4af2d614d97acb7b970c2b",
             ["bears"],
             5,
@@ -134,7 +134,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "Azure",
-            integrations_ids["STAGING"]["Azure"][1],
+            "",
             "3e7e98e2ab4af2d614d97acb7b970c2b",
             [],
             0,
@@ -142,7 +142,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         (
             "STAGING",
             "GCP",
-            integrations_ids["STAGING"]["GCP"][0],
+            "",
             "f474c0170c8daa09ec2e368ce4720c73",
             None,
             5,
