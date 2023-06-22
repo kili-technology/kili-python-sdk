@@ -15,7 +15,7 @@ First of all, let's import the packages, and install pydicom in case you don't h
 
 
 ```python
-!pip install pydicom matplotlib Pillow wget numpy pandas kili
+%pip install pydicom matplotlib Pillow wget numpy pandas kili
 ```
 
 
@@ -147,7 +147,8 @@ json_interface = {
                 "input": "radio",
             },
             "required": True,
-            "tools": ["semantic"],
+            "tools": ["polygon"],
+            "isChild": False,
             "instruction": "Segmentation",
         },
     }
@@ -196,15 +197,24 @@ In this tutorial, we assume that our labels have already been downloaded and sto
 
 
 ```python
+from kili.utils.labels.parsing import ParsedLabel
+```
+
+
+```python
 wget.download(
     "https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/conf/medical-labels.pkl?raw=true"
 )
 
 with open("medical-labels.pkl", "rb") as f:
-    labels = pickle.load(f)
+    label = pickle.load(f)
 
-healthy = labels["CLASSIFICATION_JOB"]["categories"][0]["name"]
-annotations = labels["JOB_0"]["annotations"]
+label = ParsedLabel(
+    label={"jsonResponse": label}, json_interface=json_interface, input_type="IMAGE"
+)
+
+healthy = label.jobs["CLASSIFICATION_JOB"].category.name
+annotations = label.jobs["JOB_0"].annotations
 ```
 
 
@@ -217,16 +227,20 @@ print(healthy)
 
 In this example, `annotations` is a list containing 10 masks.
 
-A mask is represented by a Python dictionary where the vertices are stored in the `boundingPoly` key. See the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#od-standard) for more information about the json response format.
+A mask is represented by a Python list of vertices, each vertex being a list of two coordinates (x, y).
 
 
 ```python
-print(len(annotations), type(annotations))
-print(annotations[0].keys())
+print(len(annotations))
+print(type(annotations))
+print(len(annotations[0].bounding_poly[0].normalized_vertices))
+print(annotations[0].bounding_poly[0].normalized_vertices[0])
 ```
 
-    10 <class 'list'>
-    dict_keys(['boundingPoly', 'categories', 'mid', 'score', 'type'])
+    10
+    <class 'kili.services.label_data_parsing.annotation.AnnotationList'>
+    255
+    {'x': 0.401891, 'y': 0.024966000000015254}
 
 
 We assign a color to each class:
@@ -264,8 +278,8 @@ img_width, img_height = im.size
 class_names = []
 masks = []
 for annotation in annotations:
-    class_name = annotation["categories"][0]["name"]
-    normalized_vertices = annotation["boundingPoly"][0]["normalizedVertices"]
+    class_name = annotation.category.name
+    normalized_vertices = annotation.bounding_poly[0].normalized_vertices
 
     # convert the label normalized vertices to a numpy mask
     mask = normalized_vertices_to_mask(normalized_vertices, img_width, img_height)

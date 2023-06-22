@@ -53,7 +53,7 @@ Do not hesitate to reach out to us if you need more.
 
 
 ```python
-!pip install  kili
+%pip install  kili
 ```
 
 

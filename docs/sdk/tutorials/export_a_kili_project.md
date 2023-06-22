@@ -34,7 +34,7 @@ export KILI_API_KEY=<YOUR_API_KEY>
 
 
 ```python
-!pip install  kili
+%pip install  kili
 ```
 
 4) Import packages and instantiate `Kili`:
@@ -58,7 +58,11 @@ First, fetch the assets:
 
 
 ```python
-assets = kili.assets(your_project_id, fields=["externalId", "latestLabel.jsonResponse"])
+assets = kili.assets(
+    your_project_id,
+    fields=["externalId", "latestLabel.jsonResponse"],
+    label_output_format="parsed_label",
+)
 ```
 
 
@@ -79,9 +83,7 @@ You can now get your label, and write the category name into a text file for exa
 ```python
 for asset in assets:
     if asset["latestLabel"]:  # check if asset has annotations
-        class_ = asset["latestLabel"]["jsonResponse"]["JOB_0"]["annotations"][0]["categories"][0][
-            "name"
-        ]
+        class_ = asset["latestLabel"].jobs["JOB_0"].annotations[0].category.name
         with Path(asset["externalId"] + ".txt").open("w", encoding="utf-8") as f:
             f.write(class_)
 ```

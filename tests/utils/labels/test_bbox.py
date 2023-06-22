@@ -195,7 +195,7 @@ def test_bbox_points_to_normalized_vertices(test_name, inputs, output, origin_lo
         assert computed_vertex == pytest.approx(expected_vertex)
 
     bbox_points = normalized_vertices_to_bbox_points(
-        vertices,
+        vertices,  # type: ignore
         img_width=inputs.get("img_width"),
         img_height=inputs.get("img_height"),
         origin_location=origin_location,

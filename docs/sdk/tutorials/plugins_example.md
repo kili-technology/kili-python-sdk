@@ -14,7 +14,7 @@ This notebook is an end-to-end example that you can follow to: create a project,
 
 
 ```python
-!pip install kili
+%pip install kili
 ```
 
 
@@ -88,7 +88,7 @@ kili.append_many_to_dataset(
     project_id=project_id, content_array=content_array, external_id_array=names_array
 )
 
-asset_id = list(kili.assets(project_id=project_id, fields=["id"], disable_tqdm=True))[0]["id"]
+asset_id = kili.assets(project_id=project_id, fields=["id"], disable_tqdm=True)[0]["id"]
 ```
 
 This project has one job of bounding box creation with two categories.
