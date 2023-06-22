@@ -22,6 +22,10 @@ from gql.transport.exceptions import TransportServerError
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
+from tenacity import Retrying
+from tenacity.retry import retry_if_exception_cause_type
+from tenacity.stop import stop_after_delay
+from tenacity.wait import wait_exponential
 from typing_extensions import LiteralString
 
 from kili import __version__
@@ -238,37 +242,46 @@ class GraphQLClient:
                     },
                     **kwargs,
                 )
-            except (exceptions.TransportQueryError, graphql.GraphQLError) as err:
+            except (
+                graphql.GraphQLError,
+                exceptions.TransportError,
+                exceptions.TransportQueryError,
+            ) as err:
                 if isinstance(err, exceptions.TransportQueryError):
                     raise GraphQLError(error=err.errors) from err
                 if isinstance(err, graphql.GraphQLError):
                     raise GraphQLError(error=err.message) from err
-            return result  # type: ignore
+                raise GraphQLError(error=err) from err
+            return result
 
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         ret = {}
         try:
             ret = _execute(document, variables, **kwargs)
-        except (GraphQLError, TransportServerError) as err:
-            if isinstance(err, GraphQLError):
-                # if error is due do parsing or local validation of the query (graphql.GraphQLError)
-                # we refresh the schema and retry once
-                if isinstance(err.__cause__, graphql.GraphQLError):
-                    self._purge_graphql_schema_cache_dir()
-                    self._gql_client = self._initizalize_graphql_client()
-                    ret = _execute(
-                        document, variables, **kwargs
-                    )  # if it fails again, we crash here
-                else:
-                    raise err
-            if isinstance(err, TransportServerError):
-                if err.code == 401:
-                    # if error is due to authentication, we retry once
-                    time.sleep(1)
-                    ret = _execute(document, variables, **kwargs)
-                else:
-                    raise err
+        except GraphQLError as err:
+            # if error is due do parsing or local validation of the query (graphql.GraphQLError)
+            # we refresh the schema and retry once
+            if isinstance(err.__cause__, graphql.GraphQLError):
+                self._purge_graphql_schema_cache_dir()
+                self._gql_client = self._initizalize_graphql_client()
+                ret = _execute(document, variables, **kwargs)  # if it fails again, we crash here
+
+            # if backend returned a 401 error, we retry a few times
+            elif isinstance(err.__cause__, TransportServerError):
+                if err.__cause__.code == 401:
+                    for attempt in Retrying(
+                        stop=stop_after_delay(30),
+                        wait=wait_exponential(multiplier=1, min=2, max=10),
+                        retry=retry_if_exception_cause_type(TransportServerError),
+                        reraise=True,
+                    ):
+                        with attempt:
+                            ret = _execute(document, variables, **kwargs)
+
+            else:
+                raise err
+
         return ret
 
 
