@@ -49,19 +49,6 @@ def src_project(kili: Kili):
     kili.delete_project(project["id"])
 
 
-def _load_integration_ids() -> Dict:
-    """Load integration ids from environment variables."""
-    integrations_ids_str = os.getenv("KILI_TEST_DATA_INTEGRATION_ID")
-    if not integrations_ids_str:
-        integrations_ids = {"STAGING": {"AWS": [""], "Azure": ["", ""], "GCP": [""]}}
-    else:
-        integrations_ids = json.loads(integrations_ids_str)
-    return integrations_ids
-
-
-integrations_ids = _load_integration_ids()
-
-
 def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
     """Check if the endpoint url matches the endpoint short name."""
     if endpoint_short_name == "LTS":
@@ -81,81 +68,23 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
 
 # pylint: disable=line-too-long
 @pytest.mark.parametrize(
-    "endpoint_short_name,platform_name,data_integration_id,data_integration_id_hash,selected_folders,expected_nb_assets_after_sync",
+    "endpoint_short_name,platform_name,data_integration_id_hash,selected_folders,expected_nb_assets_after_sync",
     [
-        (
-            "STAGING",
-            "AWS",
-            "",
-            "e39a035e575dd2f41b9e722caf4e18c5",
-            None,
-            4,
-        ),
-        (
-            "STAGING",
-            "AWS",
-            "",
-            "e39a035e575dd2f41b9e722caf4e18c5",
-            ["chickens"],
-            4,
-        ),
-        (
-            "STAGING",
-            "AWS",
-            "",
-            "e39a035e575dd2f41b9e722caf4e18c5",
-            [],
-            0,
-        ),
-        (
-            "STAGING",
-            "Azure",
-            "",
-            "5512237816bd1dde391368ed93332b75",
-            None,
-            5,
-        ),
-        (
-            "STAGING",
-            "Azure",
-            "",
-            "3e7e98e2ab4af2d614d97acb7b970c2b",
-            None,
-            5,
-        ),
-        (
-            "STAGING",
-            "Azure",
-            "",
-            "3e7e98e2ab4af2d614d97acb7b970c2b",
-            ["bears"],
-            5,
-        ),
-        (
-            "STAGING",
-            "Azure",
-            "",
-            "3e7e98e2ab4af2d614d97acb7b970c2b",
-            [],
-            0,
-        ),
-        (
-            "STAGING",
-            "GCP",
-            "",
-            "f474c0170c8daa09ec2e368ce4720c73",
-            None,
-            5,
-        ),
+        ("PREPROD", "AWS", "b500515e72d83bb9f7e21adb71f04b25", None, 4),
+        ("PREPROD", "AWS", "b500515e72d83bb9f7e21adb71f04b25", ["chickens"], 4),
+        ("PREPROD", "AWS", "b500515e72d83bb9f7e21adb71f04b25", [], 0),
+        ("PREPROD", "Azure", "4614546f125681dcb16da4f0cc270bef", None, 5),
+        ("PREPROD", "Azure", "db299291ac41a3198420cabaa4dbf93b", None, 5),
+        ("PREPROD", "Azure", "db299291ac41a3198420cabaa4dbf93b", ["bears"], 5),
+        ("PREPROD", "Azure", "db299291ac41a3198420cabaa4dbf93b", [], 0),
+        ("PREPROD", "GCP", "38fb4280caacfbed9cb8a235441a1dc7", None, 5),
     ],
 )
-@pytest.mark.skip(reason="need to update data integration ids")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
     endpoint_short_name: str,
     platform_name: str,
-    data_integration_id: str,
     data_integration_id_hash: str,
     selected_folders: Optional[List[str]],
     expected_nb_assets_after_sync: int,
@@ -167,10 +96,17 @@ def test_e2e_synchronize_cloud_storage_connection(
             f" {endpoint_short_name}"
         )
 
-    # Check that the data integration retrieved from secrets matches hash
-    assert (
-        data_integration_id_hash == hashlib.md5(data_integration_id.encode()).hexdigest()
-    ), f"Data integration {data_integration_id} does not match hash {data_integration_id_hash}"
+    integrations_ids_str = os.getenv("KILI_TEST_DATA_INTEGRATION_ID", "{}")
+    integrations_ids = json.loads(integrations_ids_str)
+
+    data_integration_id = None
+    for integration_id in integrations_ids.get(endpoint_short_name, {}).get(platform_name, []):
+        if hashlib.md5(integration_id.encode()).hexdigest() == data_integration_id_hash:
+            data_integration_id = integration_id
+            break
+
+    if data_integration_id is None:
+        raise ValueError(f"Data integration with hash {data_integration_id_hash} not found.")
 
     project_id = src_project["id"]
 
