@@ -165,8 +165,8 @@ all_emails = [i["email"] for i in all_org_users]
 
 
 ```python
-roles = kili.append_to_roles(project_id, "no.such.email@no.such.domain.com", role="LABELER")
-print(roles["roles"][-1])
+user = kili.append_to_roles(project_id, "no.such.email@no.such.domain.com", role="LABELER")
+print(user)
 ```
 
     {'user': {'id': 'clcumy1fx15ci0lre0k21fnu7', 'email': 'no.such.email@no.such.domain.com'}, 'role': 'LABELER'}
