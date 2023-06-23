@@ -964,14 +964,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
-          Working with Labels
+          Converting Labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Working with Labels
+          Converting Labels
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -997,20 +997,6 @@
     <li class="md-nav__item">
       <a href="../tagtog_to_kili/" class="md-nav__link">
         Converting Tagtog Labels
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../label_parsing/" class="md-nav__link">
-        Parsing Labels
       </a>
     </li>
   
@@ -1043,10 +1029,58 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          Exporting Project Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exporting Project Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../export_a_kili_project/" class="md-nav__link">
-        Exporting Project Data
+        Exporting a Project
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        Parsing Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1228,7 +1262,7 @@
 <p><img src="https://drive.google.com/uc?export=view&id=1ceNwCgLwIyyjPwU42xIoz6mMT3enLewW" width="800"></p>
 <p>We will use the Google Vision API to perform Optical Character Recognition on the different inscriptions in this image.</p>
 <p>To use the google API, we need to install some packages:</p>
-<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">vision</span> <span class="n">Pillow</span> <span class="n">kili</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">storage</span> <span class="n">wget</span>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">vision</span> <span class="n">Pillow</span> <span class="n">kili</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">storage</span> <span class="n">wget</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">getpass</span>
 <span class="kn">import</span> <span class="nn">io</span>

@@ -1004,14 +1004,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
-          Working with Labels
+          Converting Labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Working with Labels
+          Converting Labels
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1037,20 +1037,6 @@
     <li class="md-nav__item">
       <a href="../tagtog_to_kili/" class="md-nav__link">
         Converting Tagtog Labels
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../label_parsing/" class="md-nav__link">
-        Parsing Labels
       </a>
     </li>
   
@@ -1083,10 +1069,58 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          Exporting Project Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exporting Project Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../export_a_kili_project/" class="md-nav__link">
-        Exporting Project Data
+        Exporting a Project
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        Parsing Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1302,7 +1336,7 @@
 <h1 id="how-to-import-inference-labels">How to import inference labels</h1>
 <p>In this tutorial, we will walk through the process of using Kili to evaluate the performance of a machine learning model in production.</p>
 <p>We will learn how to push model-generated labels to Kili and how to visualize their quality.</p>
-<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">getpass</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -1414,8 +1448,6 @@ Each time it receives an asset, we upload it to Kili along with the predicted la
     <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>{'id': 'cleoicwgf02e50jx8e05zai93'}
-</code></pre>
 <p>We simulate some model predictions:</p>
 <div class="highlight"><pre><span></span><code><span class="n">predictions</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
@@ -1438,11 +1470,6 @@ Each time it receives an asset, we upload it to Kili along with the predicted la
     <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>  <span class="c1"># We import model-generated labels as &quot;INFERENCE&quot; labels</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'cleoicyaq01je0jvh7a6jecvt'},
- {'id': 'cleoicyaq01jf0jvhaqtlh6mx'},
- {'id': 'cleoicyaq01jg0jvh5w3sf52r'},
- {'id': 'cleoicyaq01jh0jvhafbiad1z'}]
-</code></pre>
 <p>Then, human labelers can annotate a subsample of the assets pushed to Kili.</p>
 <p>Note: you can automatically <a href="https://docs.kili-technology.com/docs/queue-prioritization">prioritize assets</a> to be reviewed by a human by using the model's certainty score. When the model is unsure of its predictions, this may indicate wrong labels.</p>
 <div class="highlight"><pre><span></span><code><span class="n">ground_truths</span> <span class="o">=</span> <span class="p">{</span>
@@ -1463,11 +1490,6 @@ Each time it receives an asset, we upload it to Kili along with the predicted la
     <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'cleoicz3b02eg0jx8cub2c6q6'},
- {'id': 'cleoicz3b02eh0jx8fe1iap2a'},
- {'id': 'cleoicz3b02ei0jx8bi4ifnkw'},
- {'id': 'cleoicz3b02ej0jx86n5c2m0a'}]
-</code></pre>
 <p>You can now fetch the agreement between the human and the model, for human labels:</p>
 <div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
@@ -1486,15 +1508,19 @@ Each time it receives an asset, we upload it to Kili along with the predicted la
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
             <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
+            <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
             <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># get the human-made label</span>
-        <span class="n">human_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">human_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+            <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span>
-            <span class="s2">&quot;name&quot;</span>
-        <span class="p">]</span>
-        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> but the human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> for&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; asset with id </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2">.&quot;</span>
@@ -1543,8 +1569,6 @@ The model predicted BLACK but the human predicted RED for asset with id cleoicx8
     <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>{'id': 'cleoid1uc01k10jvhduat80fu'}
-</code></pre>
 <p><code>ground_truths</code> represents labels made by human annotators:</p>
 <div class="highlight"><pre><span></span><code><span class="n">ground_truths</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;BLACK&quot;</span><span class="p">,</span>
@@ -1566,11 +1590,6 @@ The model predicted BLACK but the human predicted RED for asset with id cleoicx8
     <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'cleoid3m802fg0jx831mhak3l'},
- {'id': 'cleoid3m802fh0jx893nia1og'},
- {'id': 'cleoid3m802fi0jx861b52nd5'},
- {'id': 'cleoid3m802fj0jx8g5xj0lt2'}]
-</code></pre>
 <p>We take 80% of the training data and use it to train a model.</p>
 <p>We can then run the trained model against the remaining 20% of the labeled assets, and upload predictions to Kili:</p>
 <div class="highlight"><pre><span></span><code><span class="n">test_labels</span> <span class="o">=</span> <span class="p">[</span>
@@ -1584,11 +1603,6 @@ The model predicted BLACK but the human predicted RED for asset with id cleoicx8
     <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'cleoid4au01k70jvh0iive67w'},
- {'id': 'cleoid4au01k80jvheudkf7tc'},
- {'id': 'cleoid4au01k90jvh9e5892br'},
- {'id': 'cleoid4av01ka0jvh90mygj0s'}]
-</code></pre>
 <div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
 <span class="p">)</span>
@@ -1604,17 +1618,21 @@ The model predicted BLACK but the human predicted RED for asset with id cleoicx8
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
                 <span class="n">asset_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;labelOf&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
                 <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
+                <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
                 <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">human_label</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+                <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+                <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+                <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span>
-            <span class="s2">&quot;name&quot;</span>
-        <span class="p">]</span>
-        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
 
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> but the model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> for&quot;</span>

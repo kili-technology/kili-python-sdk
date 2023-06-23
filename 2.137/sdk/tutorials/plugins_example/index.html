@@ -900,14 +900,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
-          Working with Labels
+          Converting Labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Working with Labels
+          Converting Labels
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -933,20 +933,6 @@
     <li class="md-nav__item">
       <a href="../tagtog_to_kili/" class="md-nav__link">
         Converting Tagtog Labels
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../label_parsing/" class="md-nav__link">
-        Parsing Labels
       </a>
     </li>
   
@@ -979,10 +965,58 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          Exporting Project Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exporting Project Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../export_a_kili_project/" class="md-nav__link">
-        Exporting Project Data
+        Exporting a Project
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        Parsing Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1294,7 +1328,7 @@
 <p>This notebook is an end-to-end example that you can follow to: create a project, upload a first plugin and activate it on this project, and finally start monitoring it.</p>
 <p><strong>NB: The plugin capabilities of Kili are under active development, and compatible with version 2.125.2 and later of Kili. Don't hesitate to reach out via Github or the Kili support to provide feedback.</strong></p>
 <h2 id="step-1-instantiate-kili">Step 1: Instantiate Kili</h2>
-<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.client</span> <span class="kn">import</span> <span class="n">Kili</span>
 
@@ -1353,7 +1387,7 @@
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="n">content_array</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="n">names_array</span>
 <span class="p">)</span>
 
-<span class="n">asset_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="n">asset_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 </code></pre></div>
 <p>This project has one job of bounding box creation with two categories.</p>
 <p>With our plugin, we want to make sure that the labelers don't create more than one bounding box of category A.</p>

@@ -1046,14 +1046,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
-          Working with Labels
+          Converting Labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Working with Labels
+          Converting Labels
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1079,20 +1079,6 @@
     <li class="md-nav__item">
       <a href="../tutorials/tagtog_to_kili/" class="md-nav__link">
         Converting Tagtog Labels
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tutorials/label_parsing/" class="md-nav__link">
-        Parsing Labels
       </a>
     </li>
   
@@ -1125,10 +1111,58 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          Exporting Project Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exporting Project Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../tutorials/export_a_kili_project/" class="md-nav__link">
-        Exporting Project Data
+        Exporting a Project
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/label_parsing/" class="md-nav__link">
+        Parsing Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1971,8 +2005,11 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">append_to_roles</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;LABELER&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;TEAM_MANAGER&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEWER&quot;</span><span class="p">,</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a user to a project.</span>
 
 <span class="sd">        !!! info</span>
@@ -1984,11 +2021,10 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 <span class="sd">            project_id: Identifier of the project</span>
 <span class="sd">            user_email: The email of the user.</span>
 <span class="sd">                This email is used as the unique identifier of the user.</span>
-<span class="sd">            role: One of {&quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;}.</span>
+<span class="sd">            role: The role of the user.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message.</span>
+<span class="sd">            A dictionnary with the project user information.</span>
 
 
 <span class="sd">        Examples:</span>
@@ -1999,7 +2035,15 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
             <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_APPEND_TO_ROLES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="n">project_data</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">project_user</span> <span class="ow">in</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;roles&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_email</span> <span class="ow">and</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">role</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">project_user</span>
+
+        <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to mutate user </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2"> to role </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2"> for project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">update_properties_in_project</span><span class="p">(</span>
@@ -2429,8 +2473,8 @@ This email is used as the unique identifier of the user.</p></td>
       </tr>
       <tr>
         <td><code>role</code></td>
-        <td><code>str</code></td>
-        <td><p>One of {"ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"}.</p></td>
+        <td><code>typing_extensions.Literal[&#39;ADMIN&#39;, &#39;TEAM_MANAGER&#39;, &#39;REVIEWER&#39;, &#39;LABELER&#39;]</code></td>
+        <td><p>The role of the user.</p></td>
         <td><code>&#39;LABELER&#39;</code></td>
       </tr>
   </tbody>
@@ -2445,9 +2489,8 @@ This email is used as the unique identifier of the user.</p></td>
   </thead>
   <tbody>
     <tr>
-      <td><code>Dict[str, Union[str, dict, list]]</code></td>
-      <td><p>A result object which indicates if the mutation was successful,
-    or an error message.</p></td>
+      <td><code>Dict</code></td>
+      <td><p>A dictionnary with the project user information.</p></td>
     </tr>
   </tbody>
 </table>
@@ -2459,8 +2502,11 @@ This email is used as the unique identifier of the user.</p></td>
           <summary>Source code in <code>kili/entrypoints/mutations/project/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@typechecked</span>
 <span class="k">def</span> <span class="nf">append_to_roles</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;LABELER&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;TEAM_MANAGER&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEWER&quot;</span><span class="p">,</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a user to a project.</span>
 
 <span class="sd">    !!! info</span>
@@ -2472,11 +2518,10 @@ This email is used as the unique identifier of the user.</p></td>
 <span class="sd">        project_id: Identifier of the project</span>
 <span class="sd">        user_email: The email of the user.</span>
 <span class="sd">            This email is used as the unique identifier of the user.</span>
-<span class="sd">        role: One of {&quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;}.</span>
+<span class="sd">        role: The role of the user.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message.</span>
+<span class="sd">        A dictionnary with the project user information.</span>
 
 
 <span class="sd">    Examples:</span>
@@ -2487,7 +2532,15 @@ This email is used as the unique identifier of the user.</p></td>
         <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_APPEND_TO_ROLES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="n">project_data</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">project_user</span> <span class="ow">in</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;roles&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_email</span> <span class="ow">and</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">role</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">project_user</span>
+
+    <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Failed to mutate user </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2"> to role </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2"> for project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

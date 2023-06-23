@@ -902,14 +902,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
-          Working with Labels
+          Converting Labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Working with Labels
+          Converting Labels
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1017,20 +1017,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../label_parsing/" class="md-nav__link">
-        Parsing Labels
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -1057,10 +1043,58 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          Exporting Project Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exporting Project Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../export_a_kili_project/" class="md-nav__link">
-        Exporting Project Data
+        Exporting a Project
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        Parsing Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1256,7 +1290,7 @@
 </ul>
 <p>Data used in this tutorial comes from the <a href="https://www.kaggle.com/c/rsna-pneumonia-detection-challenge/data">RSNA Pneumonia Detection Challenge</a> hosted on Kaggle.</p>
 <p>First of all, let's import the packages, and install pydicom in case you don't have it installed.</p>
-<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">pydicom</span> <span class="n">matplotlib</span> <span class="n">Pillow</span> <span class="n">wget</span> <span class="n">numpy</span> <span class="n">pandas</span> <span class="n">kili</span>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">pydicom</span> <span class="n">matplotlib</span> <span class="n">Pillow</span> <span class="n">wget</span> <span class="n">numpy</span> <span class="n">pandas</span> <span class="n">kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">getpass</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -1355,7 +1389,8 @@
                 <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;tools&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;semantic&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;tools&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;polygon&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Segmentation&quot;</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span>
@@ -1386,27 +1421,37 @@
 <p>Once your assets are labeled, you might want to download them and visualize them using matplotlib.</p>
 <p>To download your labels, simply use <code>kili.labels(project_id)</code>. You can also export your labels to a zip file using <code>kili.export_labels(project_id)</code>. For more information, see the <a href="https://docs.kili-technology.com/docs/exporting-project-data">documentation</a>.</p>
 <p>In this tutorial, we assume that our labels have already been downloaded and stored in a file <code>medical-labels.pkl</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.parsing</span> <span class="kn">import</span> <span class="n">ParsedLabel</span>
+</code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">wget</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
     <span class="s2">&quot;https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/conf/medical-labels.pkl?raw=true&quot;</span>
 <span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;medical-labels.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-<span class="n">healthy</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-<span class="n">annotations</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">]</span>
+<span class="n">label</span> <span class="o">=</span> <span class="n">ParsedLabel</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">},</span> <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span>
+<span class="p">)</span>
+
+<span class="n">healthy</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+<span class="n">annotations</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">healthy</span><span class="p">)</span>
 </code></pre></div>
 <pre><code>YES
 </code></pre>
 <p>In this example, <code>annotations</code> is a list containing 10 masks.</p>
-<p>A mask is represented by a Python dictionary where the vertices are stored in the <code>boundingPoly</code> key. See the <a href="https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#od-standard">documentation</a> for more information about the json response format.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">annotations</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<p>A mask is represented by a Python list of vertices, each vertex being a list of two coordinates (x, y).</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">annotations</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </code></pre></div>
-<pre><code>10 &lt;class 'list'&gt;
-dict_keys(['boundingPoly', 'categories', 'mid', 'score', 'type'])
+<pre><code>10
+&lt;class 'kili.services.label_data_parsing.annotation.AnnotationList'&gt;
+255
+{'x': 0.401891, 'y': 0.024966000000015254}
 </code></pre>
 <p>We assign a color to each class:</p>
 <div class="highlight"><pre><span></span><code><span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.prop_cycle&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span>
@@ -1432,8 +1477,8 @@ dict_keys(['boundingPoly', 'categories', 'mid', 'score', 'type'])
 <span class="n">class_names</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">masks</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
-    <span class="n">class_name</span> <span class="o">=</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-    <span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;boundingPoly&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">]</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span>
 
     <span class="c1"># convert the label normalized vertices to a numpy mask</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">normalized_vertices_to_mask</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">)</span>

@@ -1052,14 +1052,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
-          Working with Labels
+          Converting Labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Working with Labels
+          Converting Labels
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1085,20 +1085,6 @@
     <li class="md-nav__item">
       <a href="../tagtog_to_kili/" class="md-nav__link">
         Converting Tagtog Labels
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../label_parsing/" class="md-nav__link">
-        Parsing Labels
       </a>
     </li>
   
@@ -1131,10 +1117,58 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          Exporting Project Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exporting Project Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../export_a_kili_project/" class="md-nav__link">
-        Exporting Project Data
+        Exporting a Project
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        Parsing Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1617,6 +1651,7 @@
     <span class="n">download_media</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">local_media_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
     <span class="n">first</span><span class="o">=</span><span class="n">nb_labeled_assets</span><span class="p">,</span>
+    <span class="n">label_output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Retrieved </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">labeled_assets</span><span class="p">)</span><span class="si">}</span><span class="s2"> labeled assets.&quot;</span><span class="p">)</span>
@@ -1628,7 +1663,7 @@
 <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./data/train/NO&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">:</span>
-    <span class="n">class_name</span> <span class="o">=</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">][</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
     <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">])</span>
     <span class="n">filepath</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;train&quot;</span> <span class="o">/</span> <span class="n">class_name</span> <span class="o">/</span> <span class="n">filepath</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 

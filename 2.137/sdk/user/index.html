@@ -1004,14 +1004,14 @@
       
       
         <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
-          Working with Labels
+          Converting Labels
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Working with Labels
+          Converting Labels
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1037,20 +1037,6 @@
     <li class="md-nav__item">
       <a href="../tutorials/tagtog_to_kili/" class="md-nav__link">
         Converting Tagtog Labels
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tutorials/label_parsing/" class="md-nav__link">
-        Parsing Labels
       </a>
     </li>
   
@@ -1083,10 +1069,58 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          Exporting Project Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exporting Project Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../tutorials/export_a_kili_project/" class="md-nav__link">
-        Exporting Project Data
+        Exporting a Project
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/label_parsing/" class="md-nav__link">
+        Parsing Labels
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1723,7 +1757,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
         <span class="n">organization_role</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
 
 <span class="sd">        Args:</span>
@@ -1734,8 +1768,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
 <span class="sd">            lastname: Last name of the new user.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A result object which indicates if the mutation was successful,</span>
-<span class="sd">                or an error message.</span>
+<span class="sd">            A dictionary with the id of the new user.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1914,9 +1947,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
   </thead>
   <tbody>
     <tr>
-      <td></td>
-      <td><p>A result object which indicates if the mutation was successful,
-    or an error message.</p></td>
+      <td><code>Dict[typing_extensions.Literal[&#39;id&#39;], str]</code></td>
+      <td><p>A dictionary with the id of the new user.</p></td>
     </tr>
   </tbody>
 </table>
@@ -1930,7 +1962,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
     <span class="n">organization_role</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
 
 <span class="sd">    Args:</span>
@@ -1941,8 +1973,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#user">the do
 <span class="sd">        lastname: Last name of the new user.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A result object which indicates if the mutation was successful,</span>
-<span class="sd">            or an error message.</span>
+<span class="sd">        A dictionary with the id of the new user.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
