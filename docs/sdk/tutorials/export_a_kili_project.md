@@ -371,7 +371,7 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(your_project_id);
+kili.delete_project(your_project_id)
 ```
 
 ## Summary
