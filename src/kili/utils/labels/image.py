@@ -113,7 +113,12 @@ def normalized_vertices_to_mask(
         ```python
         from kili.utils.labels.image import normalized_vertices_to_mask
 
+        # if using raw dict label:
         normalized_vertices = label["jsonResponse"]["OBJECT_DETECTION_JOB"]["annotations"][0]["boundingPoly"][0]["normalizedVertices"]
+
+        # if using parsed label:
+        normalized_vertices = label.jobs["OBJECT_DETECTION_JOB"].annotations[0].bounding_poly[0].normalized_vertices
+
         img_height, img_width = 1080, 1920
         mask = normalized_vertices_to_mask(normalized_vertices, img_width, img_height)
         plt.imshow(mask)
