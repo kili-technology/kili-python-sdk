@@ -62,7 +62,7 @@ class MutationsProject:
             project_id: Identifier of the project
             user_email: The email of the user.
                 This email is used as the unique identifier of the user.
-            role: One of {"ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"}.
+            role: The role of the user.
 
         Returns:
             A dictionnary with the project user information.
