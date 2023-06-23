@@ -3,6 +3,7 @@
 from typing import Any, Dict, Optional
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.core.authentication import KiliAuth
 from kili.core.helpers import format_result
@@ -35,7 +36,7 @@ class MutationsUser:
         organization_role: str,
         firstname: Optional[str] = None,
         lastname: Optional[str] = None,
-    ):
+    ) -> Dict[Literal["id"], str]:
         """Add a user to your organization.
 
         Args:
@@ -46,8 +47,7 @@ class MutationsUser:
             lastname: Last name of the new user.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dictionary with the id of the new user.
         """
         variables = {
             "data": {

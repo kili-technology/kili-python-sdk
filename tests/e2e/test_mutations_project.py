@@ -53,3 +53,26 @@ def test_update_properties_in_project(kili, src_project):
         "instructions": "todo",
         "canSkipAsset": True,
     }
+
+
+def test_append_to_roles(kili: Kili, src_project):
+    added_user = kili.append_to_roles(
+        src_project["id"], user_email="test_append_to_roles@kili-technology.com", role="LABELER"
+    )
+
+    mutated_user = kili.append_to_roles(
+        src_project["id"], user_email="test_append_to_roles@kili-technology.com", role="REVIEWER"
+    )
+
+    assert added_user["role"] == "LABELER"
+    assert mutated_user["role"] == "REVIEWER"
+
+    assert (
+        added_user["user"]["email"]
+        == mutated_user["user"]["email"]
+        == "test_append_to_roles@kili-technology.com"
+    )
+    assert (
+        added_user["user"]["id"] is not None
+        and mutated_user["user"]["id"] == added_user["user"]["id"]
+    )
