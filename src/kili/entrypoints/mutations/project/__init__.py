@@ -1,7 +1,7 @@
 """Project mutations."""
 
 from json import dumps
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -13,6 +13,7 @@ from typing_extensions import Literal
 from kili import services
 from kili.core.authentication import KiliAuth
 from kili.core.helpers import format_result
+from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import NotFound
 from kili.services.copy_project import ProjectCopier
 from kili.utils.logcontext import for_all_methods, log_call
@@ -45,8 +46,11 @@ class MutationsProject:
 
     @typechecked
     def append_to_roles(
-        self, project_id: str, user_email: str, role: str = "LABELER"
-    ) -> Dict[str, Union[str, dict, list, None]]:
+        self,
+        project_id: str,
+        user_email: str,
+        role: Literal["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"] = "LABELER",
+    ) -> Dict:
         """Add a user to a project.
 
         !!! info
@@ -58,11 +62,10 @@ class MutationsProject:
             project_id: Identifier of the project
             user_email: The email of the user.
                 This email is used as the unique identifier of the user.
-            role: One of {"ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"}.
+            role: The role of the user.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dictionnary with the project user information.
 
 
         Examples:
@@ -73,7 +76,15 @@ class MutationsProject:
             "where": {"id": project_id},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
-        return format_result("data", result)
+
+        project_data = format_result("data", result)
+        for project_user in project_data["roles"]:
+            if project_user["user"]["email"] == user_email and project_user["role"] == role:
+                return project_user
+
+        raise MutationError(
+            f"Failed to mutate user {user_email} to role {role} for project {project_id}."
+        )
 
     @typechecked
     def update_properties_in_project(
