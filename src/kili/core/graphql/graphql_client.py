@@ -242,12 +242,11 @@ class GraphQLClient:
                     },
                     **kwargs,
                 )
-            except graphql.GraphQLError as err:
+
+            except graphql.GraphQLError as err:  # local validation error
                 raise GraphQLError(error=err.message) from err
-            except exceptions.TransportQueryError as err:
+            except exceptions.TransportQueryError as err:  # graphql query refused by the backend
                 raise GraphQLError(error=err.errors) from err
-            except exceptions.TransportError as err:
-                raise GraphQLError(error=err) from err
 
             return result
 
@@ -255,6 +254,7 @@ class GraphQLClient:
 
         try:
             return _execute(document, variables, **kwargs)
+
         except GraphQLError as err:
             # if error is due do parsing or local validation of the query (graphql.GraphQLError)
             # we refresh the schema and retry once
@@ -263,17 +263,19 @@ class GraphQLClient:
                 self._gql_client = self._initizalize_graphql_client()
                 return _execute(document, variables, **kwargs)  # if it fails again, we crash here
 
+            raise err
+
+        except TransportServerError as err:
             # if backend returned a 401 error, we retry a few times
-            if isinstance(err.__cause__, TransportServerError):
-                if err.__cause__.code == 401:
-                    for attempt in Retrying(
-                        stop=stop_after_delay(30),
-                        wait=wait_exponential(multiplier=1, min=2, max=10),
-                        retry=retry_if_exception_cause_type(TransportServerError),
-                        reraise=True,
-                    ):
-                        with attempt:
-                            return _execute(document, variables, **kwargs)
+            if err.code == 401:
+                for attempt in Retrying(
+                    stop=stop_after_delay(30),
+                    wait=wait_exponential(multiplier=1, min=2, max=10),
+                    retry=retry_if_exception_cause_type(TransportServerError),
+                    reraise=True,
+                ):
+                    with attempt:
+                        return _execute(document, variables, **kwargs)
 
             raise err
 
