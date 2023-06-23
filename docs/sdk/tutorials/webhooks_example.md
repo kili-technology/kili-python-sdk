@@ -503,3 +503,8 @@ print(f"Go to my webhook: {webhook_url_from_browser}")
 The status of your asset should have now changed to `LABELED`. In this webhook, previous issues remain but you can solve them through the API as well.
 
 Well done! You can now iterate on the script. To learn how to avoid latency when building and deploying your plugin, refer to the [plugins development](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) tutorial.
+
+
+```python
+kili.delete_project(project_id)
+```
