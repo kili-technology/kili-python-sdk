@@ -242,16 +242,13 @@ class GraphQLClient:
                     },
                     **kwargs,
                 )
-            except (
-                graphql.GraphQLError,
-                exceptions.TransportError,
-                exceptions.TransportQueryError,
-            ) as err:
-                if isinstance(err, exceptions.TransportQueryError):
-                    raise GraphQLError(error=err.errors) from err
-                if isinstance(err, graphql.GraphQLError):
-                    raise GraphQLError(error=err.message) from err
+            except graphql.GraphQLError as err:
+                raise GraphQLError(error=err.message) from err
+            except exceptions.TransportQueryError as err:
+                raise GraphQLError(error=err.errors) from err
+            except exceptions.TransportError as err:
                 raise GraphQLError(error=err) from err
+
             return result
 
         document = query if isinstance(query, DocumentNode) else gql(query)
