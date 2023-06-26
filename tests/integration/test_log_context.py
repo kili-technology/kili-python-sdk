@@ -40,10 +40,10 @@ class _FakePlatform:
 
 
 def test_log_context(mocker, monkeypatch):
-    mocker.patch("kili.client.KiliAuth.check_api_key_valid")
-    mocker.patch("kili.client.KiliAuth.check_expiry_of_key_is_close")
-    mocker.patch("kili.client.KiliAuth.get_user")
-    mocker.patch("kili.core.authentication.GraphQLClient")
+    mocker.patch.object(Kili, "check_api_key_valid")
+    mocker.patch.object(Kili, "check_expiry_of_key_is_close")
+    mocker.patch.object(Kili, "get_user")
+    mocker.patch("kili.client.GraphQLClient")
     mocker.patch("kili.utils.logcontext.datetime", _FakeDatetime())
     mocker.patch("kili.utils.logcontext.uuid", _FakeUUID())
     mocker.patch("kili.utils.logcontext.__version__", "1.0.0")
@@ -53,10 +53,10 @@ def test_log_context(mocker, monkeypatch):
     monkeypatch.setenv("KILI_API_ENDPOINT", "http://localhost")
 
     kili = Kili()
-    mocker.patch.object(kili.auth.client, "_cache_graphql_schema")
-    mocker.patch.object(kili.auth.client._gql_client, "execute")
+    mocker.patch.object(kili.graphql_client, "_cache_graphql_schema")
+    mocker.patch.object(kili.graphql_client._gql_client, "execute")
     kili.assets(project_id="toto")
-    called_args_list = kili.auth.client._gql_client.execute.call_args_list
+    called_args_list = kili.graphql_client._gql_client.execute.call_args_list
     for called_args in called_args_list:
         assert {
             key: value

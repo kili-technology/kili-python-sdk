@@ -37,7 +37,7 @@ class TestContentType(ImportTestCase):
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
         with self.assertRaises(MimeTypeError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
     @patch.object(AssetQuery, "count", return_value=1)
@@ -45,7 +45,7 @@ class TestContentType(ImportTestCase):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
     @patch.object(AssetQuery, "count", return_value=1)
@@ -53,16 +53,16 @@ class TestContentType(ImportTestCase):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
-            import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
     @patch.object(AssetQuery, "count", return_value=1)
     def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
-        self.auth.client.execute.reset_mock()
-        import_assets(self.auth, self.project_id, assets, disable_tqdm=True)
-        self.auth.client.execute.assert_called_once()
-        call_args = self.auth.client.execute.call_args[0]
+        self.kili.graphql_client.execute.reset_mock()
+        import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        self.kili.graphql_client.execute.assert_called_once()
+        call_args = self.kili.graphql_client.execute.call_args[0]
         external_id_array_call = call_args[1]["data"]["externalIDArray"]
         external_ids_are_uniques = len(set(external_id_array_call)) == len(external_id_array_call)
         try:
@@ -80,7 +80,7 @@ class TestContentType(ImportTestCase):
     def test_import_assets_verify(self, mocked_verify_batch_imported, *_):
         assets = [{"content": "https://hosted-data", "external_id": "externalid"}]
 
-        import_assets(self.auth, "project_id", assets, verify=False)
+        import_assets(self.kili, "project_id", assets, verify=False)
         mocked_verify_batch_imported.assert_not_called()
-        import_assets(self.auth, "project_id", assets, verify=True)
+        import_assets(self.kili, "project_id", assets, verify=True)
         mocked_verify_batch_imported.assert_called_once()

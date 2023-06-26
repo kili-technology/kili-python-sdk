@@ -8,7 +8,7 @@ from kili.entrypoints.queries.data_connection import QueriesDataConnection
 @patch("kili.core.graphql.GraphQLClient")
 def test_data_connections(mocked_graphql_client):
     """Test data_connections query."""
-    kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))
+    kili = QueriesDataConnection(kili=MagicMock(graphql_client=mocked_graphql_client))
     kili.cloud_storage_connections(project_id="789465123")
     mocked_graphql_client.execute.assert_called_once()
     query_sent = mocked_graphql_client.execute.call_args[0][0]
@@ -31,7 +31,7 @@ def test_data_connections(mocked_graphql_client):
 @patch("kili.core.graphql.GraphQLClient")
 def test_data_connection(mocked_graphql_client):
     """Test data_connection query."""
-    kili = QueriesDataConnection(auth=MagicMock(client=mocked_graphql_client))
+    kili = QueriesDataConnection(kili=MagicMock(graphql_client=mocked_graphql_client))
 
     with pytest.raises(ValueError, match="No data connection with id my_data_connection_id"):
         kili.cloud_storage_connections(

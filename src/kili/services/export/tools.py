@@ -2,7 +2,6 @@
 import warnings
 from typing import Dict, List, Optional
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import validate_category_search_query
@@ -61,9 +60,9 @@ def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportT
 THRESHOLD_WARN_MANY_ASSETS = 1000
 
 
-# pylint: disable=too-many-arguments, too-many-locals
+# pylint: disable=too-many-arguments, too-many-locals, missing-type-doc
 def fetch_assets(
-    auth: KiliAuth,
+    kili,
     project_id: str,
     asset_ids: Optional[List[str]],
     export_type: ExportType,
@@ -80,7 +79,7 @@ def fetch_assets(
     downloaded into the `$HOME/.cache` folder.
 
     Args:
-        auth: Kili authentication object
+        kili: Kili instance
         project_id: project id
         asset_ids: list of asset IDs
         export_type: type of export (latest label or all labels)
@@ -133,7 +132,7 @@ def fetch_assets(
     where = AssetWhere(**asset_where_params)
 
     if download_media:
-        count = AssetQuery(auth.client).count(where)
+        count = AssetQuery(kili.graphql_client).count(where)
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
                 (
@@ -145,9 +144,9 @@ def fetch_assets(
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(
-        auth, download_media, fields, project_id, local_media_dir
+        kili, download_media, fields, project_id, local_media_dir
     )
-    assets = list(AssetQuery(auth.client)(where, fields, options, post_call_function))
+    assets = list(AssetQuery(kili.graphql_client)(where, fields, options, post_call_function))
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 

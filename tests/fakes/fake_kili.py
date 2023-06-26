@@ -14,10 +14,10 @@ from tests.fakes.fake_data import (
 )
 
 
-class FakeAuth:
+class FakeKili:
     api_key = ""
     api_endpoint = "http://content-repository"
-    client = MagicMock()
+    graphql_client = MagicMock()
 
 
 def mocked_ProjectQuery(where, _fields, _options):
@@ -257,9 +257,3 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function=None):
 
 def mocked_AssetQuery_count(where) -> int:
     return len(mocked_AssetQuery(where, None, None, None))
-
-
-class FakeKili:
-    """Handke .assets and .project methods of Kili."""
-
-    auth = FakeAuth()

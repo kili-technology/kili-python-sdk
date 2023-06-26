@@ -5,7 +5,6 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from kili.core.authentication import KiliAuth
 from kili.core.helpers import format_result
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -18,13 +17,13 @@ class MutationsOrganization:
 
     # pylint: disable=too-many-arguments
 
-    def __init__(self, auth: KiliAuth):
+    def __init__(self, kili):
         """Initializes the subclass.
 
         Args:
-            auth: KiliAuth object
+            kili: Kili object
         """
-        self.auth = auth
+        self.kili = kili
 
     @typechecked
     def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str):
@@ -53,7 +52,7 @@ class MutationsOrganization:
                 "country": country,
             }
         }
-        result = self.auth.client.execute(GQL_CREATE_ORGANIZATION, variables)
+        result = self.kili.graphql_client.execute(GQL_CREATE_ORGANIZATION, variables)
         return format_result("data", result)
 
     @typechecked
@@ -81,5 +80,5 @@ class MutationsOrganization:
             variables["name"] = name
         if license_str is not None:
             variables["license"] = license_str
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
+        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
         return format_result("data", result)

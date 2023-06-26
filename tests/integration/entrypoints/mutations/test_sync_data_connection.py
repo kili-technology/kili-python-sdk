@@ -140,7 +140,6 @@ def test_synchronize_cloud_storage_connection(
     mocker,
 ) -> None:
     """Test synchronize_cloud_storage_connection mutation."""
-    mocked_graphql_client = mocker.MagicMock()
     mocked_trigger_validate_data_differences = mocker.patch(
         "kili.services.data_connection.trigger_validate_data_differences"
     )
@@ -148,7 +147,8 @@ def test_synchronize_cloud_storage_connection(
     mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
     mocker.patch("kili.services.data_connection.Retrying", return_value=[])
 
-    kili = MutationsDataConnection(auth=mocker.MagicMock(client=mocked_graphql_client))
+    mocked_kili = mocker.MagicMock()
+    kili = MutationsDataConnection(kili=mocked_kili)
 
     kili.synchronize_cloud_storage_connection(
         cloud_storage_connection_id="my_data_connection_id",
@@ -161,14 +161,14 @@ def test_synchronize_cloud_storage_connection(
 
     if delete_extraneous_files and data_connection_ret_values["removed"] > 0:
         mocked_trigger_validate_data_differences.assert_any_call(
-            kili.auth,
+            mocked_kili,
             "REMOVE",
             "my_data_connection_id",
         )
 
     if data_connection_ret_values["added"] > 0:
         mocked_trigger_validate_data_differences.assert_any_call(
-            kili.auth,
+            mocked_kili,
             "ADD",
             "my_data_connection_id",
         )

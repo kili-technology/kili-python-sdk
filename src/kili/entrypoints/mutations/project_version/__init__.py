@@ -4,7 +4,6 @@ from typing import Optional
 
 from typeguard import typechecked
 
-from kili.core.authentication import KiliAuth
 from kili.core.helpers import format_result
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -15,13 +14,13 @@ from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 class MutationsProjectVersion:  # pylint: disable=too-few-public-methods
     """Set of ProjectVersion mutations."""
 
-    def __init__(self, auth: KiliAuth):
+    def __init__(self, kili):
         """Initialize the subclass.
 
         Args:
-            auth: KiliAuth object
+            kili: Kili object
         """
-        self.auth = auth
+        self.kili = kili
 
     @typechecked
     def update_properties_in_project_version(self, project_version_id: str, content: Optional[str]):
@@ -43,5 +42,7 @@ class MutationsProjectVersion:  # pylint: disable=too-few-public-methods
             "content": content,
             "id": project_version_id,
         }
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION, variables)
+        result = self.kili.graphql_client.execute(
+            GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION, variables
+        )
         return format_result("data", result)

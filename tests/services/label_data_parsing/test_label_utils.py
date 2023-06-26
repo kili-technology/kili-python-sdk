@@ -300,9 +300,9 @@ def test_integration_of_label_parsing_in_kili_labels(mocker):
     mocked_execute = mocker.MagicMock(
         return_value={"data": [{"jsonResponse": {"JOB_0": {"text": "some text abc"}}}]}
     )
-    mocker_auth = mocker.MagicMock()
-    mocker_auth.client.execute = mocked_execute
-    kili = QueriesLabel(auth=mocker_auth)
+    mocker_kili = mocker.MagicMock()
+    mocker_kili.graphql_client.execute = mocked_execute
+    kili = QueriesLabel(kili=mocker_kili)
     labels = kili.labels(project_id="project_id", output_format="parsed_label")
 
     assert_type(labels, List[ParsedLabel])
@@ -365,9 +365,9 @@ def test_integration_of_label_parsing_in_kili_assets(mocker):
             ]
         }
     )
-    mocker_auth = mocker.MagicMock()
-    mocker_auth.client.execute = mocked_execute
-    kili = QueriesAsset(auth=mocker_auth)
+    mocker_kili = mocker.MagicMock()
+    mocker_kili.graphql_client.execute = mocked_execute
+    kili = QueriesAsset(kili=mocker_kili)
 
     fields = [
         "content",

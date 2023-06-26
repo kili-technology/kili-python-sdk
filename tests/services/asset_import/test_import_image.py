@@ -38,7 +38,7 @@ class ImageTestCase(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local image"}]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local image"],
@@ -48,25 +48,25 @@ class ImageTestCase(ImportTestCase):
             ["{}"],
             ["TODO"],
         )
-        self.auth.client.execute.assert_called_with(*expected_parameters)
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_one_hosted_image(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
-        self.auth.client.execute.assert_called_with(*expected_parameters)
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_one_local_tiff_image(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local tiff image"}]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_async_call(
             ["https://signed_url?id=id"],
             ["local tiff image"],
@@ -74,7 +74,7 @@ class ImageTestCase(ImportTestCase):
             ["{}"],
             "GEO_SATELLITE",
         )
-        self.auth.client.execute.assert_called_with(*expected_parameters)
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     @patch.object(AssetQuery, "count", return_value=1)  # 2 images are uploaded in different batches
     def test_upload_with_one_tiff_and_one_basic_image(self, *_):
@@ -86,7 +86,7 @@ class ImageTestCase(ImportTestCase):
             {"content": path_basic, "external_id": "local basic image"},
             {"content": path_tiff, "external_id": "local tiff image"},
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.kili, self.project_id, assets)
         expected_parameters_sync = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
             ["local basic image"],
@@ -104,7 +104,7 @@ class ImageTestCase(ImportTestCase):
             "GEO_SATELLITE",
         )
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
-        self.auth.client.execute.assert_has_calls(calls, any_order=True)
+        self.kili.graphql_client.execute.assert_has_calls(calls, any_order=True)
 
     @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_several_batches(self, *_):
@@ -118,14 +118,14 @@ class ImageTestCase(ImportTestCase):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
-        self.auth.client.execute.assert_called_with(*expected_parameters)
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "local image"}]
         with pytest.raises(UploadFromLocalDataForbiddenError):
-            import_assets(self.auth, self.project_id, assets)
+            import_assets(self.kili, self.project_id, assets)

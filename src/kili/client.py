@@ -2,10 +2,17 @@
 import os
 import sys
 import warnings
+from datetime import datetime, timedelta
 from typing import Dict, Optional
 
-from kili.core.authentication import KiliAuth
-from kili.core.graphql.graphql_client import GraphQLClientName
+import requests
+
+from kili import __version__
+from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
+from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
+from kili.core.graphql.operations.user.queries import GQL_ME
+from kili.core.helpers import format_result
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue
@@ -28,11 +35,13 @@ from kili.entrypoints.queries.project_user import QueriesProjectUser
 from kili.entrypoints.queries.project_version import QueriesProjectVersion
 from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
-from kili.exceptions import AuthenticationFailed
+from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.internal import KiliInternal
 
+warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
-class Kili(  # pylint: disable=too-many-ancestors
+
+class Kili(  # pylint: disable=too-many-ancestors, too-many-instance-attributes
     MutationsAsset,
     MutationsDataConnection,
     MutationsIssue,
@@ -71,11 +80,11 @@ class Kili(  # pylint: disable=too-many-ancestors
 
         Args:
             api_key: User API key generated
-                from https://cloud.kili-technology.com/label/my-account/api-key
-                Default to  KILI_API_KEY environment variable).
-                If not passed, requires the KILI_API_KEY environment variable to be set.
-            api_endpoint: Recipient of the HTTP operation
-                Default to  KILI_API_ENDPOINT environment variable).
+                from https://cloud.kili-technology.com/label/my-account/api-key.
+                Default to `KILI_API_KEY` environment variable.
+                If not passed, requires the `KILI_API_KEY` environment variable to be set.
+            api_endpoint: Recipient of the HTTP operation.
+                Default to `KILI_API_ENDPOINT` environment variable.
                 If not passed, default to Kili SaaS:
                 'https://cloud.kili-technology.com/api/label/v2/graphql'
             verify: Verify certificate. Set to False on local deployment without SSL.
@@ -97,15 +106,7 @@ class Kili(  # pylint: disable=too-many-ancestors
             kili.projects()  # list your projects
             ```
         """
-        if sys.version_info < (3, 8):
-            warnings.warn(
-                (
-                    "Kili SDK will stop supporting Python 3.7 in July"
-                    " 2023. Please upgrade to Python 3.8 or higher."
-                ),
-                DeprecationWarning,
-                stacklevel=1,
-            )
+        _deprecate_python_37()
 
         if api_key is None:
             api_key = os.getenv("KILI_API_KEY")
@@ -119,19 +120,94 @@ class Kili(  # pylint: disable=too-many-ancestors
         if api_key is None:
             raise AuthenticationFailed(api_key, api_endpoint)
 
-        try:
-            self.auth = KiliAuth(
-                api_key=api_key,
-                api_endpoint=api_endpoint,
-                client_name=client_name,
-                verify=verify,
-                graphql_client_params=graphql_client_params,
-            )
-            super().__init__(self.auth)
-        except Exception as exception:
-            exception_str = str(exception)
-            if "b'Unauthorized'" in exception_str:
-                raise AuthenticationFailed(api_key, api_endpoint) from exception
-            raise exception
+        self.api_key = api_key
+        self.api_endpoint = api_endpoint
+        self.verify = verify
+        self.client_name = client_name
+        self.graphql_client_params = graphql_client_params
+
+        skip_checks = os.environ.get("KILI_SDK_SKIP_CHECKS", None) is not None
+
+        if not skip_checks:
+            self.check_api_key_valid()
+
+        self.graphql_client = GraphQLClient(
+            endpoint=api_endpoint,
+            api_key=api_key,
+            client_name=client_name,
+            verify=self.verify,
+            **(graphql_client_params or {}),  # type: ignore
+        )
+
+        if not skip_checks:
+            self.check_expiry_of_key_is_close()
 
         self.internal = KiliInternal(self)
+
+        super().__init__(self)
+
+    def check_api_key_valid(self) -> None:
+        """Check that the api_key provided is valid."""
+        response = requests.post(
+            url=self.api_endpoint,
+            data='{"query":"{ me { id email } }"}',
+            verify=self.verify,
+            timeout=30,
+            headers={
+                "Authorization": f"X-API-Key: {self.api_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "apollographql-client-name": self.client_name.value,
+                "apollographql-client-version": __version__,
+            },
+        )
+        if response.status_code == 200 and "email" in response.text and "id" in response.text:
+            return
+
+        raise AuthenticationFailed(
+            api_key=self.api_key,
+            api_endpoint=self.api_endpoint,
+            error_msg=(
+                "Cannot check API key validity: status_code"
+                f" {response.status_code}\n\n{response.text}"
+            ),
+        )
+
+    def check_expiry_of_key_is_close(self) -> None:
+        """Check that the expiration date of the api_key is not too close."""
+        warn_days = 30
+
+        api_keys = APIKeyQuery(self.graphql_client)(
+            fields=["expiryDate"],
+            where=APIKeyWhere(api_key=self.api_key),
+            options=QueryOptions(disable_tqdm=True),
+        )
+
+        key_expiry = datetime.strptime(next(api_keys)["expiryDate"], r"%Y-%m-%dT%H:%M:%S.%fZ")
+        key_remaining_time = key_expiry - datetime.now()
+        key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
+        if key_soon_deprecated:
+            message = f"""
+                Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
+                You should generate a new one on My account > API KEY."""
+            warnings.warn(message, UserWarning, stacklevel=2)
+
+    def get_user(self) -> Dict:
+        """Get the current user from the api_key provided."""
+        result = self.graphql_client.execute(GQL_ME)
+        user = format_result("data", result)
+        if user is None or user["id"] is None or user["email"] is None:
+            raise UserNotFoundError("No user attached to the API key was found")
+        return user
+
+
+def _deprecate_python_37() -> None:
+    if sys.version_info < (3, 8):
+        warnings.warn(
+            (
+                "Kili SDK will stop supporting Python 3.7 in July"
+                " 2023. Please upgrade to Python 3.8 or higher."
+            ),
+            DeprecationWarning,
+            stacklevel=1,
+        )

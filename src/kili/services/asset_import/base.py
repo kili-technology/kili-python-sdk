@@ -13,7 +13,6 @@ from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -72,10 +71,8 @@ class LoggerParams(NamedTuple):
 class BaseBatchImporter:
     """Base class for BatchImporters."""
 
-    def __init__(
-        self, auth: KiliAuth, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm
-    ):
-        self.auth = auth
+    def __init__(self, kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm):
+        self.kili = kili
         self.project_id = project_params.project_id
         self.input_type = project_params.input_type
         self.is_hosted = batch_params.is_hosted
@@ -121,7 +118,7 @@ class BaseBatchImporter:
             with attempt:
                 assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
                 where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
-                nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
+                nb_assets_in_kili = AssetQuery(self.kili.graphql_client).count(where)
                 if len(assets_ids) != nb_assets_in_kili:
                     raise BatchImportError(
                         "Number of assets to upload is not equal to number of assets uploaded in"
@@ -201,7 +198,7 @@ class BaseBatchImporter:
             },
             "where": {"id": self.project_id},
         }
-        results = self.auth.client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
+        results = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
         return format_result("data", results, Asset)
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
@@ -218,7 +215,7 @@ class BaseBatchImporter:
             },
             "where": {"id": self.project_id},
         }
-        results = self.auth.client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
+        results = self.kili.graphql_client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
         return format_result("data", results, Asset)
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
@@ -266,7 +263,7 @@ class ContentBatchImporter(BaseBatchImporter):
             )
             for asset in assets
         ]
-        signed_urls = bucket.request_signed_urls(self.auth, asset_content_paths)
+        signed_urls = bucket.request_signed_urls(self.kili, asset_content_paths)
         data_and_content_type_array = self.get_type_and_data_from_content_array(
             list(map(lambda asset: asset.get("content"), assets))
         )
@@ -301,7 +298,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
             )
             for asset in assets
         ]
-        signed_urls = bucket.request_signed_urls(self.auth, asset_json_content_paths)
+        signed_urls = bucket.request_signed_urls(self.kili, asset_json_content_paths)
         json_content_array = [asset.get("json_content") for asset in assets]
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(
@@ -327,12 +324,12 @@ class BaseAssetImporter:
 
     def __init__(
         self,
-        auth: KiliAuth,
+        kili,
         project_params: ProjectParams,
         processing_params: ProcessingParams,
         logger_params: LoggerParams,
     ):
-        self.auth = auth
+        self.kili = kili
         self.project_params = project_params
         self.raise_error = processing_params.raise_error
         self.verify = processing_params.verify
@@ -355,13 +352,13 @@ class BaseAssetImporter:
         return False
 
     def _can_upload_from_local_data(self):
-        user_me = self.auth.get_user()
+        user_me = self.kili.get_user()
         where = OrganizationWhere(
             email=user_me["email"],
         )
         options = QueryOptions(disable_tqdm=True)
         organization = list(
-            OrganizationQuery(self.auth.client)(where, ["license.uploadLocalData"], options)
+            OrganizationQuery(self.kili.graphql_client)(where, ["license.uploadLocalData"], options)
         )[0]
         return organization["license"]["uploadLocalData"]
 
@@ -418,7 +415,7 @@ class BaseAssetImporter:
         """Filter out assets whose external_id is already in the project."""
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
-        assets_in_project = AssetQuery(self.auth.client)(
+        assets_in_project = AssetQuery(self.kili.graphql_client)(
             AssetWhere(project_id=self.project_params.project_id),
             ["externalId"],
             QueryOptions(disable_tqdm=True),

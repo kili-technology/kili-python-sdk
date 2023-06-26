@@ -5,25 +5,23 @@ from typing import List
 
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
 
 
-def get_issue_numbers(
-    auth: KiliAuth, project_id: str, type_: Literal["QUESTION", "ISSUE"], size: int
-):
+# pylint: disable=missing-type-doc
+def get_issue_numbers(kili, project_id: str, type_: Literal["QUESTION", "ISSUE"], size: int):
     """Get the next available issue number.
 
     Args:
-        auth: Kili Auth
-        project_id: Id of the project
-        type_: type of the issue to add
-        size: the number of issue to add
+        kili: Kili instance.
+        project_id: Id of the project.
+        type_: type of the issue to add.
+        size: the number of issue to add.
     """
-    issues = IssueQuery(auth.client)(
+    issues = IssueQuery(kili.graphql_client)(
         IssueWhere(
             project_id=project_id,
         ),
@@ -41,7 +39,7 @@ def get_issue_numbers(
     return list(range(first_issue_number, first_issue_number + size))
 
 
-def get_labels_asset_ids_map(auth: KiliAuth, project_id: str, label_id_array: List[str]):
+def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):
     """Return a dictionary that gives for every label id, its associated asset id.
 
     Returns:
@@ -55,7 +53,7 @@ def get_labels_asset_ids_map(auth: KiliAuth, project_id: str, label_id_array: Li
         id_contains=label_id_array,
     )
     labels = list(
-        LabelQuery(auth.client)(where=where, fields=["labelOf.id", "id"], options=options)
+        LabelQuery(kili.graphql_client)(where=where, fields=["labelOf.id", "id"], options=options)
     )
     labels_not_found = [
         label_id for label_id in label_id_array if label_id not in [label["id"] for label in labels]

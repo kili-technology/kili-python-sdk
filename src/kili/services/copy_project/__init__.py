@@ -79,7 +79,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         if copy_quality_settings:
             fields = fields + self.FIELDS_QUALITY_SETTINGS
 
-        src_project = services.get_project(self.kili.auth, from_project_id, fields)
+        src_project = services.get_project(self.kili, from_project_id, fields)
 
         if len(src_project["dataConnections"]) > 0 and copy_assets:
             raise NotImplementedError("Copying projects with cloud storage is not supported.")
@@ -178,7 +178,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 downloaded_assets = self._download_assets(from_project_id, fields, tmp_dir, assets)
                 return self._upload_assets(new_project_id, downloaded_assets)
 
-        asset_gen = AssetQuery(self.kili.auth.client)(
+        asset_gen = AssetQuery(self.kili.graphql_client)(
             where, fields, options, download_and_upload_assets
         )
         # Generator needs to be iterated over to actually fetch assets
@@ -187,7 +187,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     def _download_assets(self, from_project_id, fields, tmp_dir, assets):
         download_function, _ = get_download_assets_function(
-            self.kili.auth,
+            self.kili,
             download_media=True,
             fields=fields,
             project_id=from_project_id,
@@ -239,7 +239,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
-        assets_new_project = AssetQuery(self.kili.auth.client)(
+        assets_new_project = AssetQuery(self.kili.graphql_client)(
             AssetWhere(project_id=new_project_id),
             ["id", "externalId"],
             QueryOptions(disable_tqdm=True),
@@ -253,7 +253,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             member["user"]["email"]: member["user"]["id"] for member in members_new_project
         }
 
-        nb_labels_to_copy = LabelQuery(self.kili.auth.client).count(
+        nb_labels_to_copy = LabelQuery(self.kili.graphql_client).count(
             LabelWhere(project_id=from_project_id)
         )
         if nb_labels_to_copy == 0:

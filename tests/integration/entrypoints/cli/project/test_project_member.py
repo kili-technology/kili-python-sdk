@@ -97,13 +97,14 @@ def mocked__project_user_query(**kwargs):
 
 
 kili_client = MagicMock()
-kili_client.auth.client.endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+kili_client.kili.graphql_client.endpoint = (
+    "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+)
 kili_client.append_to_roles = append_to_roles_mock = MagicMock()
 kili_client.update_properties_in_role = update_properties_in_role_mock = MagicMock()
 kili_client.delete_from_roles = delete_from_roles_mock = MagicMock()
 
-kili = MagicMock()
-kili.Kili = MagicMock(return_value=kili_client)
+kili = MagicMock(return_value=kili_client)
 
 
 @patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)

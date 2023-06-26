@@ -68,12 +68,12 @@ class TextDataImporter(BaseAssetImporter):
             assets = self.filter_local_assets(assets, self.raise_error)
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = ContentBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
         elif data_type == TextDataType.HOSTED_FILE:
             batch_params = BatchParams(is_hosted=True, is_asynchronous=False)
             batch_importer = ContentBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
         elif data_type == TextDataType.RAW_TEXT:
             for asset in assets:
@@ -82,12 +82,12 @@ class TextDataImporter(BaseAssetImporter):
 
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = RawTextBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
         elif data_type == TextDataType.RICH_TEXT:
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = JsonContentBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
         else:
             raise ImportValidationError

@@ -23,14 +23,14 @@ class ImageDataImporter(BaseAssetImporter):
         if len(sync_assets) > 0:
             sync_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
             batch_importer = ContentBatchImporter(
-                self.auth, self.project_params, sync_batch_params, self.pbar
+                self.kili, self.project_params, sync_batch_params, self.pbar
             )
             result = self.import_assets_by_batch(sync_assets, batch_importer)
             results.append(result)
         if len(async_assets) > 0:
             async_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=True)
             batch_importer = ContentBatchImporter(
-                self.auth, self.project_params, async_batch_params, self.pbar
+                self.kili, self.project_params, async_batch_params, self.pbar
             )
             result = self.import_assets_by_batch(async_assets, batch_importer)
             results.append(result)

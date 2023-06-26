@@ -5,7 +5,6 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.project_user.queries import (
     ProjectUserQuery,
@@ -21,13 +20,13 @@ class QueriesProjectUser:
 
     # pylint: disable=too-many-arguments,redefined-builtin,dangerous-default-value,invalid-name
 
-    def __init__(self, auth: KiliAuth):
+    def __init__(self, kili):
         """Initialize the subclass.
 
         Args:
-            auth: KiliAuth object
+            kili: Kili object
         """
-        self.auth = auth
+        self.kili = kili
 
     @overload
     def project_users(
@@ -126,7 +125,7 @@ class QueriesProjectUser:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        project_users_gen = ProjectUserQuery(self.auth.client)(where, fields, options)
+        project_users_gen = ProjectUserQuery(self.kili.graphql_client)(where, fields, options)
 
         if as_generator:
             return project_users_gen
@@ -154,4 +153,4 @@ class QueriesProjectUser:
         where = ProjectUserWhere(
             project_id=project_id, email=email, _id=id, organization_id=organization_id
         )
-        return ProjectUserQuery(self.auth.client).count(where)
+        return ProjectUserQuery(self.kili.graphql_client).count(where)

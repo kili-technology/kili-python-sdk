@@ -4,6 +4,8 @@ from unittest import mock
 
 import graphql
 import pytest
+import pytest_mock
+from gql.transport.exceptions import TransportServerError
 
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.exceptions import GraphQLError
@@ -90,3 +92,62 @@ def test_graphql_client_cache(mocker):
 
     if SCHEMA_PATH.is_file():
         SCHEMA_PATH.unlink()
+
+
+def test_schema_caching_requires_cache_dir():
+    with pytest.raises(
+        Exception, match="must specify a cache directory if you want to enable schema caching"
+    ):
+        _ = GraphQLClient(
+            endpoint="",
+            api_key="",
+            client_name=GraphQLClientName.SDK,
+            enable_schema_caching=True,
+            graphql_schema_cache_dir=None,
+        )
+
+
+def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture):
+    mocker_gql = mocker.patch("kili.core.graphql.graphql_client.Client", return_value=None)
+    mocker.patch.dict(os.environ, {"KILI_SDK_SKIP_CHECKS": "true"})
+    client = GraphQLClient(
+        endpoint="",
+        api_key="",
+        client_name=GraphQLClientName.SDK,
+    )
+    mocker_gql.assert_called_with(
+        transport=client._gql_transport,
+        fetch_schema_from_transport=False,
+        introspection_args=client._get_introspection_args(),
+    )
+
+
+def test_retries_in_case_of_transport_server_error(mocker: pytest_mock.MockerFixture):
+    client = GraphQLClient(
+        endpoint="https://cloud.com",
+        api_key="",
+        client_name=GraphQLClientName.SDK,
+        enable_schema_caching=False,
+    )
+
+    nb_errors_to_raise = 3
+
+    def backend_answer(*args, **kwargs):
+        nonlocal nb_errors_to_raise
+        if nb_errors_to_raise > 0:
+            nb_errors_to_raise -= 1
+            raise TransportServerError("http 401 authentifcation failed", code=401)
+        return "success"
+
+    mocker_execute = mocker.patch.object(
+        client._gql_client,
+        "execute",
+        side_effect=backend_answer,
+    )
+
+    ret = client.execute("query { projects { id } }")
+
+    # first call + nb_errors_to_raise retries
+    assert mocker_execute.call_count == 1 + 3
+
+    assert ret == "success"

@@ -11,7 +11,6 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql.operations.asset.queries import (
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
 )
@@ -28,11 +27,12 @@ def generate_unique_id():
     return cuid.cuid()
 
 
-def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
+# pylint: disable=missing-type-doc
+def request_signed_urls(kili, file_urls: List[str]):
     """Get upload signed URLs.
 
     Args:
-        auth: Kili Auth
+        kili: Kili
         file_urls: the paths in Kili bucket of the data you upload. It must respect
             the convention projects/:projectId/assets/xxx.
     """
@@ -46,7 +46,7 @@ def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
         payload = {
             "filePaths": file_paths,
         }
-        urls_response = auth.client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
+        urls_response = kili.graphql_client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
         return urls_response["urls"]
 
     return [*itertools.chain(*map(get_file_batch_urls, file_batches))]

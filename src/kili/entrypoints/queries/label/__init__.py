@@ -8,7 +8,6 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili import services
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
@@ -31,13 +30,13 @@ class QueriesLabel:
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
 
-    def __init__(self, auth: KiliAuth):
+    def __init__(self, kili):
         """Initialize the subclass.
 
         Args:
-            auth: KiliAuth object
+            kili: Kili object
         """
-        self.auth = auth
+        self.kili = kili
 
     @overload
     def labels(
@@ -301,7 +300,7 @@ class QueriesLabel:
                     " 'fields' argument."
                 )
 
-            project = get_project(self.auth, project_id, ["jsonInterface", "inputType"])
+            project = get_project(self.kili, project_id, ["jsonInterface", "inputType"])
 
             post_call_function = partial(
                 parse_labels,
@@ -311,7 +310,9 @@ class QueriesLabel:
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        labels_gen = LabelQuery(self.auth.client)(where, fields, options, post_call_function)
+        labels_gen = LabelQuery(self.kili.graphql_client)(
+            where, fields, options, post_call_function
+        )
 
         if as_generator:
             return labels_gen
@@ -629,8 +630,8 @@ class QueriesLabel:
         Returns:
             A pandas DataFrame containing the labels.
         """
-        services.get_project(self.auth, project_id, ["id"])
-        assets_gen = AssetQuery(self.auth.client)(
+        services.get_project(self.kili, project_id, ["id"])
+        assets_gen = AssetQuery(self.kili.graphql_client)(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
@@ -713,7 +714,7 @@ class QueriesLabel:
             user_id=user_id,
             category_search=category_search,
         )
-        return LabelQuery(self.auth.client).count(where)
+        return LabelQuery(self.kili.graphql_client).count(where)
 
     def export_labels(
         self,
@@ -807,13 +808,13 @@ class QueriesLabel:
         """
         if external_ids is not None and asset_ids is None:
             id_map = infer_ids_from_external_ids(
-                auth=self.auth, asset_external_ids=external_ids, project_id=project_id
+                kili=self.kili, asset_external_ids=external_ids, project_id=project_id
             )
             asset_ids = [id_map[id] for id in external_ids]
 
         try:
             services.export_labels(
-                self.auth,
+                self.kili,
                 asset_ids=asset_ids,
                 project_id=cast(ProjectId, project_id),
                 export_type="latest",

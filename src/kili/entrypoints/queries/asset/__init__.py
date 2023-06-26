@@ -7,7 +7,6 @@ import pandas as pd
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import (
@@ -26,13 +25,13 @@ class QueriesAsset:
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin
 
-    def __init__(self, auth: KiliAuth):
+    def __init__(self, kili):
         """Initialize the subclass.
 
         Args:
-            auth: KiliAuth object
+            kili: Kili object
         """
-        self.auth = auth
+        self.kili = kili
 
     @overload
     def assets(
@@ -436,13 +435,15 @@ class QueriesAsset:
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         post_call_function, fields = get_download_assets_function(
-            self.auth, download_media, fields, project_id, local_media_dir
+            self.kili, download_media, fields, project_id, local_media_dir
         )
 
-        assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
+        assets_gen = AssetQuery(self.kili.graphql_client)(
+            where, fields, options, post_call_function
+        )
 
         if label_output_format == "parsed_label":
-            project = get_project(self.auth, project_id, ["jsonInterface", "inputType"])
+            project = get_project(self.kili, project_id, ["jsonInterface", "inputType"])
 
             def parse_labels_of_asset(asset: Dict) -> Dict:
                 if "labels.jsonResponse" in fields:
@@ -661,4 +662,4 @@ class QueriesAsset:
             issue_status=issue_status,
             issue_type=issue_type,
         )
-        return AssetQuery(self.auth.client).count(where)
+        return AssetQuery(self.kili.graphql_client).count(where)

@@ -8,7 +8,6 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import format_result, is_empty_list_with_warning
@@ -37,13 +36,13 @@ class MutationsAsset:
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    def __init__(self, auth: KiliAuth):
+    def __init__(self, kili) -> None:
         """Initialize the subclass.
 
         Args:
-            auth: KiliAuth object
+            kili: Kili client.
         """
-        self.auth = auth
+        self.kili = kili
 
     @typechecked
     def append_many_to_dataset(
@@ -151,7 +150,7 @@ class MutationsAsset:
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         result = import_assets(
-            self.auth,
+            self.kili,
             project_id=project_id,
             assets=assets,
             disable_tqdm=disable_tqdm,
@@ -251,7 +250,7 @@ class MutationsAsset:
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.kili, asset_ids, external_ids, project_id)
 
         saved_args = locals()
         parameters = {
@@ -334,7 +333,7 @@ class MutationsAsset:
         ):
             return []
 
-        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.kili, asset_ids, external_ids, project_id)
 
         parameters = {
             "asset_ids": asset_ids,
@@ -389,7 +388,7 @@ class MutationsAsset:
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
             return Asset()
 
-        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.kili, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -404,7 +403,7 @@ class MutationsAsset:
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been deleted."""
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_kili = AssetQuery(self.auth.client).count(
+            nb_assets_in_kili = AssetQuery(self.kili.graphql_client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
@@ -457,7 +456,7 @@ class MutationsAsset:
         ) or is_empty_list_with_warning("add_to_review", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.kili, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -476,7 +475,7 @@ class MutationsAsset:
             except TypeError:
                 return  # No assets have changed status
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_review = AssetQuery(self.auth.client).count(
+            nb_assets_in_review = AssetQuery(self.kili.graphql_client).count(
                 AssetWhere(
                     project_id=project_id,
                     asset_id_in=asset_ids,
@@ -497,7 +496,7 @@ class MutationsAsset:
         # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
         # it happens when no assets have been sent to review
         if isinstance(result, dict) and "id" in result:
-            assets_in_review = AssetQuery(self.auth.client)(
+            assets_in_review = AssetQuery(self.kili.graphql_client)(
                 AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
@@ -537,7 +536,7 @@ class MutationsAsset:
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(self.auth, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(self.kili, asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -552,7 +551,7 @@ class MutationsAsset:
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent back to queue."""
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_queue = AssetQuery(self.auth.client).count(
+            nb_assets_in_queue = AssetQuery(self.kili.graphql_client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
@@ -570,7 +569,7 @@ class MutationsAsset:
             last_batch_callback=verify_last_batch,
         )
         result = format_result("data", results[0])
-        assets_in_queue = AssetQuery(self.auth.client)(
+        assets_in_queue = AssetQuery(self.kili.graphql_client)(
             AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
             ["id"],
             QueryOptions(disable_tqdm=True),

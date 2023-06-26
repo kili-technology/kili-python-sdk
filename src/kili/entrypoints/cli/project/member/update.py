@@ -69,7 +69,7 @@ def update_member(
     if csv_path is not None:
         members_to_update = collect_members_from_csv(csv_path, role)
     elif project_id_src is not None:
-        members_to_update = collect_members_from_project(kili.auth, project_id_src, role)
+        members_to_update = collect_members_from_project(kili, project_id_src, role)
     else:
         assert emails is not None, (
             "When --csv-path and --from-project are not specified, you must add several email"
@@ -79,7 +79,7 @@ def update_member(
 
     count = 0
 
-    existing_members_gen = ProjectUserQuery(kili.auth.client)(
+    existing_members_gen = ProjectUserQuery(kili.graphql_client)(
         where=ProjectUserWhere(project_id=project_id),
         fields=["role", "activated", "user.email", "id", "user.id"],
         options=QueryOptions(disable_tqdm=True),
