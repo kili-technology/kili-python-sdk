@@ -18,7 +18,7 @@ class ImportTestCase(TestCase):
         self.project_id = "project_id"
         self.test_dir = tempfile.mkdtemp()
         self.downloader = LocalDownloader(self.test_dir)
-        self.auth = mocked_auth
+        self.kili = mocked_auth
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
@@ -73,7 +73,7 @@ class ImportTestCase(TestCase):
             {"content": "https://hosted-data", "external_id": external_id}
             for external_id in external_id_array
         ]
-        import_assets(self.auth, self.project_id, assets)
+        import_assets(self.kili, self.project_id, assets)
         expected_parameters_1 = self.get_expected_sync_call(
             ["https://hosted-data"] * IMPORT_BATCH_SIZE,
             [external_id_array[i] for i in range(IMPORT_BATCH_SIZE)],
@@ -93,4 +93,4 @@ class ImportTestCase(TestCase):
             ["TODO"] * 5,
         )
         calls = [call(*expected_parameters_1), call(*expected_parameters_2)]
-        self.auth.client.execute.assert_has_calls(calls, any_order=True)
+        self.kili.graphql_client.execute.assert_has_calls(calls, any_order=True)

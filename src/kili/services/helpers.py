@@ -3,7 +3,6 @@ from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.utils import pagination
@@ -20,7 +19,7 @@ PathLike = TypeVar("PathLike", Path, str)
 def check_exclusive_options(
     csv_path: Optional[PathLike], files: Optional[Iterable[PathLike]]
 ) -> None:
-    """Forbid mutual use of options and argument(s)"""
+    """Forbid mutual use of options and argument(s)."""
     if files is not None:
         files = list(files)
 
@@ -37,26 +36,28 @@ def check_exclusive_options(
 
 
 def get_external_id_from_file_path(path: PathLike) -> str:
-    """Return external_id from file's path
+    """Return external_id from file's path.
+
     ex: 'tree/leaf/file_name.txt- -> file_name
     """
     file_path = Path(path).parts[-1]
     return ".".join(file_path.split(".")[:-1])
 
 
-def is_target_job_in_json_interface(auth: KiliAuth, project_id: str, target_job_name: str):
+def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str):
     """Tell if the target job id is defined in the project's JSON interface."""
-    json_interface = get_project_field(auth, project_id, "jsonInterface")
+    json_interface = get_project_field(kili, project_id, "jsonInterface")
     return target_job_name in json_interface["jobs"]
 
 
+# pylint: disable=missing-type-doc
 def infer_ids_from_external_ids(
-    auth: KiliAuth, asset_external_ids: List[str], project_id: str
+    kili, asset_external_ids: List[str], project_id: str
 ) -> Dict[str, str]:
     """Infer asset ids from their external ids and project Id.
 
     Args:
-        auth: Kili authentication
+        kili: Kili
         asset_external_ids: asset external ids
         project_id: project id
 
@@ -67,7 +68,7 @@ def infer_ids_from_external_ids(
         NotFound: when there are asset_ids what have the same external id, or when external ids
         have not been found.
     """
-    id_map = _build_id_map(auth, asset_external_ids, project_id)
+    id_map = _build_id_map(kili, asset_external_ids, project_id)
 
     if len(id_map) < len(set(asset_external_ids)):
         assets_not_found = [
@@ -85,12 +86,12 @@ def infer_ids_from_external_ids(
     return id_map
 
 
-def _build_id_map(auth, asset_external_ids, project_id):
+def _build_id_map(kili, asset_external_ids, project_id):
     assets_generators: List[Generator[Dict, None, None]] = []
     # query all assets by external ids batches when there are too many
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
         assets_generators.append(
-            AssetQuery(auth.client)(
+            AssetQuery(kili.graphql_client)(
                 AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),

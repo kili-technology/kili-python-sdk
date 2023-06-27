@@ -4,8 +4,8 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
 from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.utils.logcontext import for_all_methods, log_call
@@ -15,15 +15,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesIssue:
     """Set of Issue queries."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,dangerous-default-value
-
-    def __init__(self, auth: KiliAuth):
-        """Initialize the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
 
     @overload
     def issues(
@@ -133,7 +127,7 @@ class QueriesIssue:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        issues_gen = IssueQuery(self.auth.client)(where, fields, options)
+        issues_gen = IssueQuery(self.graphql_client)(where, fields, options)
         if as_generator:
             return issues_gen
         return list(issues_gen)
@@ -170,4 +164,4 @@ class QueriesIssue:
             issue_type=issue_type,
             status=status,
         )
-        return IssueQuery(self.auth.client).count(where)
+        return IssueQuery(self.graphql_client).count(where)

@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 from kili.entrypoints.mutations.user.queries import (
     GQL_CREATE_USER,
@@ -18,16 +18,9 @@ from kili.exceptions import RemovedMethodError
 class MutationsUser:
     """Set of User mutations."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments
-
-    def __init__(self, auth: KiliAuth):
-        """Initialize the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
-
     @typechecked
     def create_user(
         self,
@@ -60,7 +53,7 @@ class MutationsUser:
             variables["data"]["firstname"] = firstname
         if lastname is not None:
             variables["data"]["lastname"] = lastname
-        result = self.auth.client.execute(GQL_CREATE_USER, variables)
+        result = self.graphql_client.execute(GQL_CREATE_USER, variables)
         return format_result("data", result)
 
     @typechecked
@@ -88,7 +81,7 @@ class MutationsUser:
             },
             "where": {"email": email},
         }
-        result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PASSWORD, variables)
         return format_result("data", result)
 
     def reset_password(self, email: str):
@@ -142,5 +135,5 @@ class MutationsUser:
             variables["organizationRole"] = organization_role
         if activated is not None:
             variables["activated"] = activated
-        result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
         return format_result("data", result)

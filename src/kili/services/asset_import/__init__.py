@@ -2,8 +2,6 @@
 
 from typing import Dict, List
 
-from kili.core.authentication import KiliAuth
-from kili.entrypoints.queries.project import QueriesProject
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
@@ -22,7 +20,7 @@ importer_by_type = {
 
 
 def import_assets(  # pylint: disable=too-many-arguments
-    auth: KiliAuth,
+    kili,
     project_id: str,
     assets: List[Dict],
     raise_error=True,
@@ -30,13 +28,12 @@ def import_assets(  # pylint: disable=too-many-arguments
     verify=True,
 ):
     """Import the selected assets into the specified project."""
-    kili = QueriesProject(auth=auth)
-    input_type = get_project_field(kili.auth, project_id, "inputType")
+    input_type = get_project_field(kili, project_id, "inputType")
 
     project_params = ProjectParams(project_id=project_id, input_type=input_type)
     processing_params = ProcessingParams(raise_error=raise_error, verify=verify)
     logger_params = LoggerParams(disable_tqdm=disable_tqdm)
-    importer_params = (auth, project_params, processing_params, logger_params)
+    importer_params = (kili, project_params, processing_params, logger_params)
 
     if input_type not in importer_by_type:
         raise NotImplementedError(f"There is no imported for the input type: {input_type}")

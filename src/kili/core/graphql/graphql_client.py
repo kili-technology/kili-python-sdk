@@ -23,7 +23,7 @@ from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
 from tenacity import Retrying
-from tenacity.retry import retry_if_exception_cause_type
+from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 from typing_extensions import LiteralString
@@ -271,7 +271,7 @@ class GraphQLClient:
                 for attempt in Retrying(
                     stop=stop_after_delay(30),
                     wait=wait_exponential(multiplier=1, min=2, max=10),
-                    retry=retry_if_exception_cause_type(TransportServerError),
+                    retry=retry_if_exception_type(TransportServerError),
                     reraise=True,
                 ):
                     with attempt:

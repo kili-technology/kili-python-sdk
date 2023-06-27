@@ -75,7 +75,7 @@ def create_project(
             json_interface = json.load(interface_file)
 
     elif project_id_src is not None:
-        json_interface = services.get_project_field(kili.auth, project_id_src, "jsonInterface")
+        json_interface = services.get_project_field(kili, project_id_src, "jsonInterface")
 
     result = kili.create_project(
         input_type=input_type,
@@ -85,5 +85,5 @@ def create_project(
     )
     project_id = result["id"]
 
-    project_url = get_project_url(project_id, kili.auth.client.endpoint)
+    project_url = get_project_url(project_id, kili.graphql_client.endpoint)
     print(tabulate([[project_id, project_url]], headers=["ID", "URL"], tablefmt=tablefmt))

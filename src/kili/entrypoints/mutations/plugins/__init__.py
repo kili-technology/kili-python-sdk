@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.core.authentication import KiliAuth
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.services.plugins import (
     PluginUploader,
     WebhookUploader,
@@ -18,13 +18,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class MutationsPlugins:
     """Set of Plugins mutations."""
 
-    def __init__(self, auth: KiliAuth):
-        """Initialize the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
+    graphql_client: GraphQLClient
 
     @typechecked
     def upload_plugin(
@@ -60,7 +54,7 @@ class MutationsPlugins:
         if not plugin_path:
             raise TypeError('"plugin_path is nullish, please provide a value')
 
-        return PluginUploader(self.auth, plugin_path, plugin_name, verbose).create_plugin()
+        return PluginUploader(self, plugin_path, plugin_name, verbose).create_plugin()
 
     @typechecked
     def create_webhook(
@@ -101,7 +95,7 @@ class MutationsPlugins:
         """
 
         return WebhookUploader(
-            self.auth, webhook_url, plugin_name, header, verbose, handler_types
+            self, webhook_url, plugin_name, header, verbose, handler_types
         ).create_webhook()
 
     @typechecked
@@ -136,7 +130,7 @@ class MutationsPlugins:
         """
 
         return WebhookUploader(
-            self.auth, new_webhook_url, plugin_name, new_header, verbose, handler_types
+            self, new_webhook_url, plugin_name, new_header, verbose, handler_types
         ).update_webhook()
 
     @typechecked
@@ -154,7 +148,7 @@ class MutationsPlugins:
         Examples:
             >>> kili.activate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
-        return activate_plugin(self.auth, plugin_name, project_id)
+        return activate_plugin(self, plugin_name, project_id)
 
     @typechecked
     def deactivate_plugin_on_project(self, plugin_name: str, project_id: str):
@@ -172,7 +166,7 @@ class MutationsPlugins:
         Examples:
             >>> kili.deactivate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
         """
-        return deactivate_plugin(self.auth, plugin_name, project_id)
+        return deactivate_plugin(self, plugin_name, project_id)
 
     @typechecked
     def delete_plugin(self, plugin_name: str):
@@ -188,7 +182,7 @@ class MutationsPlugins:
         Examples:
             >>> kili.delete_plugin(plugin_name="my_plugin_name")
         """
-        return delete_plugin(self.auth, plugin_name)
+        return delete_plugin(self, plugin_name)
 
     @typechecked
     def update_plugin(
@@ -227,4 +221,4 @@ class MutationsPlugins:
         if not plugin_name:
             raise TypeError('"plugin_name is nullish, please provide a value')
 
-        return PluginUploader(self.auth, plugin_path, plugin_name, verbose).update_plugin()
+        return PluginUploader(self, plugin_path, plugin_name, verbose).update_plugin()

@@ -21,7 +21,7 @@ class TestImportLabelsFromDict:
 
     def setup_class(self):
         self.kili = MagicMock()
-        self.kili.auth.client.execute = MagicMock()
+        self.kili.graphql_client.execute = MagicMock()
         with open("./tests/services/import_labels/fixtures/json_response_image.json") as json_file:
             self.json_response = json.load(json_file)
 
@@ -57,8 +57,10 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        self.kili.graphql_client.execute.assert_called_with(
+            GQL_APPEND_MANY_LABELS, call, timeout=60
+        )
 
     @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
     def test_import_default_labels_with_external_id(self, mocker):
@@ -93,8 +95,10 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        self.kili.graphql_client.execute.assert_called_with(
+            GQL_APPEND_MANY_LABELS, call, timeout=60
+        )
 
     def test_import_labels_with_optional_params(self):
         project_id = "project_id"
@@ -127,8 +131,10 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id"]},
         }
 
-        services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        self.kili.graphql_client.execute.assert_called_with(
+            GQL_APPEND_MANY_LABELS, call, timeout=60
+        )
 
     def test_return_error_when_give_unexisting_label_field(self):
         project_id = "project_id"
@@ -138,9 +144,7 @@ class TestImportLabelsFromDict:
             {"json_response": self.json_response, "asset_id": "asset_id", "unexisting_field": 3}
         ]
         with pytest.raises(pydantic.ValidationError):
-            services.import_labels_from_dict(
-                self.kili.auth, project_id, labels, label_type, model_name
-            )
+            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
 
     def test_return_error_when_give_wrong_field_type(self):
         project_id = "project_id"
@@ -154,9 +158,7 @@ class TestImportLabelsFromDict:
             }
         ]
         with pytest.raises(pydantic.ValidationError):
-            services.import_labels_from_dict(
-                self.kili.auth, project_id, labels, label_type, model_name
-            )
+            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
 
     @patch.object(
         AssetQuery,
@@ -195,8 +197,10 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        services.import_labels_from_dict(self.kili.auth, project_id, labels, label_type, model_name)
-        self.kili.auth.client.execute.assert_called_with(GQL_APPEND_MANY_LABELS, call, timeout=60)
+        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        self.kili.graphql_client.execute.assert_called_with(
+            GQL_APPEND_MANY_LABELS, call, timeout=60
+        )
 
     def test_import_predictions_without_giving_model_name(self):
         self.kili.assets = MagicMock(
@@ -208,6 +212,4 @@ class TestImportLabelsFromDict:
         labels = [{"json_response": self.json_response, "asset_external_id": "asset_external_id"}]
 
         with pytest.raises(ValueError):
-            services.import_labels_from_dict(
-                self.kili.auth, project_id, labels, label_type, model_name
-            )
+            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)

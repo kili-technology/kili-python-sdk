@@ -5,8 +5,8 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.notification.queries import (
     NotificationQuery,
     NotificationWhere,
@@ -19,15 +19,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesNotification:
     """Set of Notification queries."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,dangerous-default-value
-
-    def __init__(self, auth: KiliAuth):
-        """Initialize the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
 
     @overload
     def notifications(
@@ -120,7 +114,7 @@ class QueriesNotification:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        notifications_gen = NotificationQuery(self.auth.client)(where, fields, options)
+        notifications_gen = NotificationQuery(self.graphql_client)(where, fields, options)
 
         if as_generator:
             return notifications_gen
@@ -148,4 +142,4 @@ class QueriesNotification:
             notification_id=notification_id,
             user_id=user_id,
         )
-        return NotificationQuery(self.auth.client).count(where)
+        return NotificationQuery(self.graphql_client).count(where)

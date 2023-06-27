@@ -43,8 +43,8 @@ def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id
         "numberOfOpenQuestions",
         "numberOfSolvedQuestions",
     ]
-    project = services.get_project(kili.auth, project_id, query_fields)
-    metadata = get_project_metadata(project, kili.auth.client.endpoint)
+    project = services.get_project(kili, project_id, query_fields)
+    metadata = get_project_metadata(project, kili.graphql_client.endpoint)
     dataset_metrics, quality_metrics = get_project_metrics(project)
 
     print(tabulate(metadata, tablefmt="plain"), end="\n" * 2)

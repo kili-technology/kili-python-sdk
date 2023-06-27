@@ -6,8 +6,8 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 
 from kili import services
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
@@ -22,13 +22,7 @@ from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 class MutationsDataConnection:
     """Set of DataConnection mutations."""
 
-    def __init__(self, auth: KiliAuth):
-        """Initializes the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
+    graphql_client: GraphQLClient
 
     @typechecked
     def add_cloud_storage_connection(
@@ -49,7 +43,7 @@ class MutationsDataConnection:
             A dict with the DataConnection ID.
         """
         data_integrations = list(
-            DataIntegrationsQuery(self.auth.client)(
+            DataIntegrationsQuery(self.graphql_client)(
                 where=DataIntegrationWhere(data_integration_id=cloud_storage_integration_id),
                 fields=["id"],
                 options=QueryOptions(disable_tqdm=True, first=1, skip=0),
@@ -69,11 +63,11 @@ class MutationsDataConnection:
                 "selectedFolders": selected_folders,
             }
         }
-        result = self.auth.client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)
+        result = self.graphql_client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)
         result = format_result("data", result)
 
         # We trigger data difference computation (same behavior as in the frontend)
-        services.compute_differences(self.auth, result["id"])
+        services.compute_differences(self, result["id"])
 
         return result
 
@@ -103,5 +97,5 @@ class MutationsDataConnection:
             A dict with the cloud storage connection ID.
         """
         return services.synchronize_data_connection(
-            self.auth, cloud_storage_connection_id, delete_extraneous_files, dry_run
+            self, cloud_storage_connection_id, delete_extraneous_files, dry_run
         )
