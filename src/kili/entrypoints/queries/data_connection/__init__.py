@@ -6,8 +6,8 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili import services
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
@@ -21,15 +21,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesDataConnection:
     """Set of cloud storage connection queries."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,dangerous-default-value
-
-    def __init__(self, auth: KiliAuth):
-        """Initialize the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
 
     @overload
     def cloud_storage_connections(
@@ -126,7 +120,7 @@ class QueriesDataConnection:
         # call dataConnection resolver
         if cloud_storage_connection_id is not None:
             data_connection = services.get_data_connection(
-                self.auth, cloud_storage_connection_id, fields
+                self, cloud_storage_connection_id, fields
             )
             data_connection_list = [data_connection]
             if as_generator:
@@ -139,7 +133,7 @@ class QueriesDataConnection:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_connections_gen = DataConnectionsQuery(self.auth.client)(where, fields, options)
+        data_connections_gen = DataConnectionsQuery(self.graphql_client)(where, fields, options)
 
         if as_generator:
             return data_connections_gen

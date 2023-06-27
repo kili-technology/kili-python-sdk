@@ -105,7 +105,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
             )
             for frame_id in range(len(frames))
         ]
-        signed_urls = bucket.request_signed_urls(self.auth, asset_frames_paths)
+        signed_urls = bucket.request_signed_urls(self.kili, asset_frames_paths)
         data_array = []
         content_type_array = []
         for frame_path in frames:
@@ -117,7 +117,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
             url_gen = threads.map(
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
-        cleaned_urls = (bucket.clean_signed_url(url, self.auth.api_endpoint) for url in url_gen)
+        cleaned_urls = (bucket.clean_signed_url(url, self.kili.api_endpoint) for url in url_gen)
         return AssetLike(**{**asset, "json_content": list(cleaned_urls)})  # type: ignore
 
 
@@ -183,26 +183,26 @@ class VideoDataImporter(BaseAssetImporter):
             as_frames = self.should_cut_into_frames(assets)
             batch_params = BatchParams(is_hosted=False, is_asynchronous=as_frames)
             batch_importer = VideoContentBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
             batch_size = IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.HOSTED_FILE:
             as_frames = self.should_cut_into_frames(assets)
             batch_params = BatchParams(is_hosted=True, is_asynchronous=as_frames)
             batch_importer = VideoContentBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
             batch_size = IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.LOCAL_FRAMES:
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = FrameBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
             batch_size = FRAME_IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.HOSTED_FRAMES:
             batch_params = BatchParams(is_hosted=True, is_asynchronous=False)
             batch_importer = FrameBatchImporter(
-                self.auth, self.project_params, batch_params, self.pbar
+                self.kili, self.project_params, batch_params, self.pbar
             )
             batch_size = IMPORT_BATCH_SIZE
         else:

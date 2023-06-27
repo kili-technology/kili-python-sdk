@@ -6,8 +6,8 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate, format_result
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
@@ -22,16 +22,9 @@ from .queries import GQL_CREATE_ISSUES
 class MutationsIssue:
     """Set of Issue mutations."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments
-
-    def __init__(self, auth: KiliAuth):
-        """Initialize the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
-
     @deprecate(
         msg=(
             "append_to_issues is deprecated. Please use `create_issues` or `create_questions`"
@@ -67,7 +60,7 @@ class MutationsIssue:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        issue_number = get_issue_numbers(self.auth, project_id, type_, 1)[0]
+        issue_number = get_issue_numbers(self, project_id, type_, 1)[0]
         try:
             options = QueryOptions(disable_tqdm=True)
             where = LabelWhere(
@@ -75,7 +68,7 @@ class MutationsIssue:
                 label_id=label_id,
             )
             asset_id: str = list(
-                LabelQuery(self.auth.client)(where=where, fields=["labelOf.id"], options=options)
+                LabelQuery(self.graphql_client)(where=where, fields=["labelOf.id"], options=options)
             )[0]["labelOf"]["id"]
         except:
             # pylint: disable=raise-missing-from
@@ -96,7 +89,7 @@ class MutationsIssue:
             "where": {"id": asset_id},
         }
 
-        result = self.auth.client.execute(GQL_CREATE_ISSUES, variables)
+        result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
         return format_result("data", result)[0]
 
     @typechecked
@@ -119,8 +112,8 @@ class MutationsIssue:
             A list of dictionary with the `id` key of the created issues.
         """
         assert_all_arrays_have_same_size([label_id_array, object_mid_array, text_array])
-        issue_number_array = get_issue_numbers(self.auth, project_id, "ISSUE", len(label_id_array))
-        label_asset_ids_map = get_labels_asset_ids_map(self.auth, project_id, label_id_array)
+        issue_number_array = get_issue_numbers(self, project_id, "ISSUE", len(label_id_array))
+        label_asset_ids_map = get_labels_asset_ids_map(self, project_id, label_id_array)
         variables = {
             "issues": [
                 {
@@ -141,7 +134,7 @@ class MutationsIssue:
             "where": {"idIn": list(label_asset_ids_map.values())},
         }
 
-        result = self.auth.client.execute(GQL_CREATE_ISSUES, variables)
+        result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
         return format_result("data", result)
 
     @typechecked
@@ -165,9 +158,9 @@ class MutationsIssue:
             A list of dictionary with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
-        issue_number_array = get_issue_numbers(self.auth, project_id, "QUESTION", len(text_array))
+        issue_number_array = get_issue_numbers(self, project_id, "QUESTION", len(text_array))
         asset_id_array = get_asset_ids_or_throw_error(
-            self.auth, asset_id_array, asset_external_id_array, project_id
+            self, asset_id_array, asset_external_id_array, project_id
         )
         variables = {
             "issues": [
@@ -179,5 +172,5 @@ class MutationsIssue:
             "where": {"idIn": asset_id_array},
         }
 
-        result = self.auth.client.execute(GQL_CREATE_ISSUES, variables)
+        result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
         return format_result("data", result)

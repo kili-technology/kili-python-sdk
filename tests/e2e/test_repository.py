@@ -14,9 +14,9 @@ from kili.services.export import SDKContentRepository
 def test_get_content_stream_public_image(content_url):
     kili = Kili()
     content_repository = SDKContentRepository(
-        kili.auth.api_endpoint,
+        kili.api_endpoint,
         router_headers={
-            "Authorization": f"X-API-Key: {kili.auth.api_key}",
+            "Authorization": f"X-API-Key: {kili.api_key}",
         },
         verify_ssl=True,
     )

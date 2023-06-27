@@ -5,8 +5,8 @@ from typing import Dict, Generator, Iterable, List, Optional, overload
 from typeguard import typechecked
 from typing_extensions import Literal
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
@@ -19,15 +19,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesDataIntegration:
     """Set of cloud storage integration queries."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,dangerous-default-value
-
-    def __init__(self, auth: KiliAuth):
-        """Initialize the subclass.
-
-        Args:
-            auth: KiliAuth object
-        """
-        self.auth = auth
 
     @overload
     def cloud_storage_integrations(
@@ -110,7 +104,7 @@ class QueriesDataIntegration:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_integrations_gen = DataIntegrationsQuery(self.auth.client)(where, fields, options)
+        data_integrations_gen = DataIntegrationsQuery(self.graphql_client)(where, fields, options)
 
         if as_generator:
             return data_integrations_gen
@@ -144,4 +138,4 @@ class QueriesDataIntegration:
             status=status,
             organization_id=organization_id,
         )
-        return DataIntegrationsQuery(self.auth.client).count(where)
+        return DataIntegrationsQuery(self.graphql_client).count(where)

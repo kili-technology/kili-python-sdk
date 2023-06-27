@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
-from kili.core.authentication import KiliAuth
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.kili import KiliExporter
@@ -24,7 +23,7 @@ from kili.services.types import LogLevel, ProjectId
 
 
 def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
-    auth: KiliAuth,
+    kili,
     asset_ids: Optional[List[str]],
     project_id: ProjectId,
     export_type: ExportType,
@@ -39,7 +38,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     asset_filter_kwargs: Optional[Dict[str, object]] = None,
 ) -> None:
     """Export the selected assets into the required format, and save it into a file archive."""
-    get_project(auth, project_id, ["id"])
+    get_project(kili, project_id, ["id"])
 
     export_params = ExportParams(
         assets_ids=asset_ids,
@@ -57,9 +56,9 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     logger = get_logger(log_level)
 
     content_repository = SDKContentRepository(
-        auth.api_endpoint,
+        kili.api_endpoint,
         router_headers={
-            "Authorization": f"X-API-Key: {auth.api_key}",
+            "Authorization": f"X-API-Key: {kili.api_key}",
         },
         verify_ssl=True,
     )
@@ -79,7 +78,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         )  # ensures full mapping
         exporter_class = format_exporter_selector_mapping[label_format]
         exporter_class(
-            export_params, auth, logger, disable_tqdm, content_repository
+            export_params, kili, logger, disable_tqdm, content_repository
         ).export_project()
     else:
         raise ValueError(f'Label format "{label_format}" is not implemented or does not exist.')

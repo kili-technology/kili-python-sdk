@@ -1,7 +1,6 @@
 """Functions to activate/deactivate a plugin."""
 
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql.operations.plugin.mutations import (
     GQL_ACTIVATE_PLUGIN_ON_PROJECT,
     GQL_DEACTIVATE_PLUGIN_ON_PROJECT,
@@ -11,13 +10,13 @@ from kili.services.plugins.helpers import get_logger
 from kili.services.plugins.tools import check_errors_plugin_activation
 
 
-def activate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
+def activate_plugin(kili, plugin_name: str, project_id: str):
     """Create a plugin in Kili."""
     logger = get_logger()
 
     variables = {"pluginName": plugin_name, "projectId": project_id}
 
-    result = auth.client.execute(GQL_ACTIVATE_PLUGIN_ON_PROJECT, variables)
+    result = kili.graphql_client.execute(GQL_ACTIVATE_PLUGIN_ON_PROJECT, variables)
 
     has_failed, already_activated = check_errors_plugin_activation(result, plugin_name, project_id)
 
@@ -27,13 +26,13 @@ def activate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
     return format_result("data", result) if not already_activated else None
 
 
-def deactivate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
+def deactivate_plugin(kili, plugin_name: str, project_id: str):
     """Create a plugin in Kili."""
     logger = get_logger()
 
     variables = {"pluginName": plugin_name, "projectId": project_id}
 
-    result = auth.client.execute(GQL_DEACTIVATE_PLUGIN_ON_PROJECT, variables)
+    result = kili.graphql_client.execute(GQL_DEACTIVATE_PLUGIN_ON_PROJECT, variables)
 
     logger.info(f"Plugin {plugin_name} deactivated on project {project_id}")
 

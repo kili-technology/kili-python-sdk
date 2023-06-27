@@ -8,7 +8,6 @@ from typing import Dict, List, NamedTuple, Optional, Type
 
 import yaml
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.core.helpers import format_result, get_file_paths_to_upload
 from kili.core.utils import pagination
@@ -42,8 +41,8 @@ class LoggerParams(NamedTuple):
 class AbstractLabelImporter(ABC):
     """Abstract Label Importer."""
 
-    def __init__(self, auth: KiliAuth, logger_params: LoggerParams, input_format: LabelFormat):
-        self.auth = auth
+    def __init__(self, kili, logger_params: LoggerParams, input_format: LabelFormat):
+        self.kili = kili
         self.logger_params = logger_params
         self.input_format: LabelFormat = input_format
 
@@ -89,7 +88,7 @@ class AbstractLabelImporter(ABC):
         if should_retrieve_asset_ids:
             assert project_id
             asset_external_ids = [label["asset_external_id"] for label in labels]
-            asset_id_map = infer_ids_from_external_ids(self.auth, asset_external_ids, project_id)
+            asset_id_map = infer_ids_from_external_ids(self.kili, asset_external_ids, project_id)
             labels = [
                 {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels
             ]
@@ -112,7 +111,7 @@ class AbstractLabelImporter(ABC):
                     "where": {"idIn": [label["assetID"] for label in batch_labels]},
                 }
                 # we increase the timeout because the import can take a long time
-                batch_result = self.auth.client.execute(
+                batch_result = self.kili.graphql_client.execute(
                     GQL_APPEND_MANY_LABELS, variables, timeout=60
                 )
                 result.extend(format_result("data", batch_result, Label))

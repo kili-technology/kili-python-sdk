@@ -12,7 +12,7 @@ from kili.exceptions import GraphQLError
 
 def test_gql_bad_query_remote_validation():
     """Test validation by the server no local schema."""
-    client = Kili().auth.client
+    client = Kili().graphql_client
 
     query = """
     query MyQuery {
@@ -62,7 +62,7 @@ def test_outdated_cached_schema(mocker):
     SCHEMA_PATH.parent.mkdir(parents=True, exist_ok=True)
     SCHEMA_PATH.write_text(fake_schema)
 
-    client = Kili().auth.client
+    client = Kili().graphql_client
 
     client._gql_client.schema = build_ast_schema(parse(fake_schema))
 

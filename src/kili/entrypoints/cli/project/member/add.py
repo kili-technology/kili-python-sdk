@@ -68,7 +68,7 @@ def add_member(
     if csv_path is not None:
         members_to_add = collect_members_from_csv(csv_path, role)
     elif project_id_src is not None:
-        members_to_add = collect_members_from_project(kili.auth, project_id_src, role)
+        members_to_add = collect_members_from_project(kili, project_id_src, role)
     else:
         assert emails, (
             "When `--csv-path` and `--from-project` are not specified, you must add several email"
@@ -77,7 +77,7 @@ def add_member(
         members_to_add = collect_members_from_emails(emails, role)
 
     count = 0
-    existing_members = ProjectUserQuery(kili.auth.client)(
+    existing_members = ProjectUserQuery(kili.graphql_client)(
         where=ProjectUserWhere(project_id=project_id),
         fields=[
             "activated",

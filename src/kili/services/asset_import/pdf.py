@@ -16,7 +16,7 @@ class PdfDataImporter(BaseAssetImporter):
 
         batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
         batch_importer = ContentBatchImporter(
-            self.auth, self.project_params, batch_params, self.pbar
+            self.kili, self.project_params, batch_params, self.pbar
         )
         result = self.import_assets_by_batch(assets, batch_importer)
         return result

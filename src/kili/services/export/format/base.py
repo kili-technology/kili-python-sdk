@@ -10,7 +10,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
-from kili.core.authentication import KiliAuth
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
@@ -59,7 +58,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         export_params: ExportParams,
-        auth: KiliAuth,
+        kili,
         logger: logging.Logger,
         disable_tqdm: bool,
         content_repository: AbstractContentRepository,
@@ -71,7 +70,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.single_file: bool = export_params.single_file
         self.split_option: SplitOption = export_params.split_option
         self.disable_tqdm: bool = disable_tqdm
-        self.auth = auth
+        self.kili = kili
         self.logger: logging.Logger = logger
         self.content_repository: AbstractContentRepository = content_repository
         self.output_file = export_params.output_file
@@ -81,7 +80,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.asset_filter_kwargs = export_params.asset_filter_kwargs
 
         project_info = get_project(
-            self.auth, self.project_id, ["jsonInterface", "inputType", "title"]
+            self.kili, self.project_id, ["jsonInterface", "inputType", "title"]
         )
         self.project_json_interface = project_info["jsonInterface"]
         self.project_input_type = project_info["inputType"]
@@ -123,7 +122,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def create_readme_kili_file(self, root_folder: Path) -> None:
         """Create a README.kili.txt file to give information about exported labels."""
         readme_file_name = root_folder / self.project_id / "README.kili.txt"
-        project_info = get_project(self.auth, self.project_id, ["title", "id", "description"])
+        project_info = get_project(self.kili, self.project_id, ["title", "id", "description"])
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
             fout.write(b"Exported Labels from KILI\n=========================\n\n")
@@ -168,7 +167,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         with TemporaryDirectory() as export_root_folder:
             self.export_root_folder = export_root_folder
             assets = fetch_assets(
-                self.auth,
+                self.kili,
                 project_id=self.project_id,
                 asset_ids=self.assets_ids,
                 export_type=self.export_type,
@@ -226,7 +225,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 self.with_assets = True
 
     def _has_data_connection(self) -> bool:
-        data_connections_gen = DataConnectionsQuery(self.auth.client)(
+        data_connections_gen = DataConnectionsQuery(self.kili.graphql_client)(
             where=DataConnectionsWhere(project_id=self.project_id),
             fields=["id"],
             options=QueryOptions(disable_tqdm=True, first=1, skip=0),

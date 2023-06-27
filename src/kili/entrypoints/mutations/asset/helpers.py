@@ -1,7 +1,6 @@
 """Helpers for the asset mutations."""
 from typing import Dict, List, Optional
 
-from kili.core.authentication import KiliAuth
 from kili.core.helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.services.helpers import infer_ids_from_external_ids
@@ -33,7 +32,7 @@ def process_update_properties_in_assets_parameters(properties) -> Dict:
 
 
 def get_asset_ids_or_throw_error(
-    auth: KiliAuth,
+    kili,
     asset_ids: Optional[List[str]],
     external_ids: Optional[List[str]],
     project_id: Optional[str],
@@ -43,7 +42,7 @@ def get_asset_ids_or_throw_error(
 
     if asset_ids is None:
         id_map = infer_ids_from_external_ids(
-            auth=auth, asset_external_ids=external_ids, project_id=project_id  # type: ignore
+            kili=kili, asset_external_ids=external_ids, project_id=project_id  # type: ignore
         )
         asset_ids = [id_map[id] for id in external_ids]  # type: ignore
 

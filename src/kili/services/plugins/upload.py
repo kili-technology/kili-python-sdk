@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 from zipfile import ZipFile
 
-from kili.core.authentication import KiliAuth
 from kili.core.constants import (
     mime_extensions_for_py_scripts,
     mime_extensions_for_txt_files,
@@ -88,14 +87,14 @@ class WebhookUploader:
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        auth: KiliAuth,
+        kili,
         webhook_url: str,
         plugin_name: str,
         header: Optional[str],
         verbose: bool,
         handler_types: Optional[List[str]],
     ) -> None:
-        self.auth = auth
+        self.kili = kili
         self.webhook_url = webhook_url
         self.plugin_name = plugin_name or self.webhook_url
         self.header = header
@@ -111,7 +110,7 @@ class WebhookUploader:
             "header": self.header,
         }
 
-        result = self.auth.client.execute(GQL_CREATE_WEBHOOK, variables)
+        result = self.kili.graphql_client.execute(GQL_CREATE_WEBHOOK, variables)
 
         return format_result("data", result)
 
@@ -124,7 +123,7 @@ class WebhookUploader:
             "header": self.header,
         }
 
-        result = self.auth.client.execute(GQL_UPDATE_WEBHOOK, variables)
+        result = self.kili.graphql_client.execute(GQL_UPDATE_WEBHOOK, variables)
 
         return format_result("data", result)
 
@@ -132,10 +131,8 @@ class WebhookUploader:
 class PluginUploader:
     """Class to upload a plugin."""
 
-    def __init__(
-        self, auth: KiliAuth, plugin_path: str, plugin_name: Optional[str], verbose: bool
-    ) -> None:
-        self.auth = auth
+    def __init__(self, kili, plugin_path: str, plugin_name: Optional[str], verbose: bool) -> None:
+        self.kili = kili
         self.plugin_path = Path(plugin_path)
 
         if (not self.plugin_path.is_dir()) and (not self.plugin_path.is_file()):
@@ -221,9 +218,9 @@ class PluginUploader:
         variables = {"pluginName": self.plugin_name}
 
         if is_updating_plugin:
-            result = self.auth.client.execute(GQL_GENERATE_UPDATE_URL, variables)
+            result = self.kili.graphql_client.execute(GQL_GENERATE_UPDATE_URL, variables)
         else:
-            result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
+            result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN, variables)
 
         check_errors_plugin_upload(result, self.plugin_path, self.plugin_name)
         upload_url = format_result("data", result)
@@ -269,7 +266,7 @@ class PluginUploader:
         """Create plugin's runner."""
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
-        result = self.auth.client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
+        result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
     def _check_plugin_runner_status(self, update=False):
@@ -322,7 +319,7 @@ class PluginUploader:
         """Get the status of a plugin's runner."""
         variables = {"name": self.plugin_name}
 
-        result = self.auth.client.execute(GQL_GET_PLUGIN_RUNNER_STATUS, variables)
+        result = self.kili.graphql_client.execute(GQL_GET_PLUGIN_RUNNER_STATUS, variables)
 
         return format_result("data", result)
 
@@ -338,7 +335,7 @@ class PluginUploader:
         """Update plugin's runner."""
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
-        result = self.auth.client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
+        result = self.kili.graphql_client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
     def update_plugin(self):
