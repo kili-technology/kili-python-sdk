@@ -6,6 +6,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.utils.logcontext import for_all_methods, log_call
@@ -15,15 +16,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesProject:
     """Set of Project queries."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,dangerous-default-value
-
-    def __init__(self, kili):
-        """Initialize the subclass.
-
-        Args:
-            kili: Kili object
-        """
-        self.kili = kili
 
     @overload
     def projects(
@@ -152,7 +147,7 @@ class QueriesProject:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        projects_gen = ProjectQuery(self.kili.graphql_client)(where, fields, options)
+        projects_gen = ProjectQuery(self.graphql_client)(where, fields, options)
 
         if as_generator:
             return projects_gen
@@ -198,4 +193,4 @@ class QueriesProject:
             updated_at_lte=updated_at_lte,
             archived=archived,
         )
-        return ProjectQuery(self.kili.graphql_client).count(where)
+        return ProjectQuery(self.graphql_client).count(where)

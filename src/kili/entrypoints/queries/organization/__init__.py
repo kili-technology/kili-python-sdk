@@ -7,6 +7,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.organization.queries import (
     OrganizationMetricsWhere,
     OrganizationQuery,
@@ -20,15 +21,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesOrganization:
     """Set of Organization queries."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,dangerous-default-value
-
-    def __init__(self, kili):
-        """Initialize the subclass.
-
-        Args:
-            kili: Kili object
-        """
-        self.kili = kili
 
     @overload
     def organizations(
@@ -97,7 +92,7 @@ class QueriesOrganization:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        organizations_gen = OrganizationQuery(self.kili.graphql_client)(where, fields, options)
+        organizations_gen = OrganizationQuery(self.graphql_client)(where, fields, options)
 
         if as_generator:
             return organizations_gen
@@ -121,7 +116,7 @@ class QueriesOrganization:
             email=email,
             organization_id=organization_id,
         )
-        return OrganizationQuery(self.kili.graphql_client).count(where)
+        return OrganizationQuery(self.graphql_client).count(where)
 
     @typechecked
     def organization_metrics(
@@ -148,4 +143,4 @@ class QueriesOrganization:
         where = OrganizationMetricsWhere(
             organization_id=organization_id, start_date=start_date, end_date=end_date
         )
-        return OrganizationQuery(self.kili.graphql_client).metrics(where)
+        return OrganizationQuery(self.graphql_client).metrics(where)

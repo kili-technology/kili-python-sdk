@@ -5,6 +5,7 @@ from typing import Optional
 
 from typeguard import typechecked
 
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -15,16 +16,9 @@ from .queries import GQL_CREATE_ORGANIZATION, GQL_UPDATE_PROPERTIES_IN_ORGANIZAT
 class MutationsOrganization:
     """Set of Organization mutations."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments
-
-    def __init__(self, kili):
-        """Initializes the subclass.
-
-        Args:
-            kili: Kili object
-        """
-        self.kili = kili
-
     @typechecked
     def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str):
         """Create an organization.
@@ -52,7 +46,7 @@ class MutationsOrganization:
                 "country": country,
             }
         }
-        result = self.kili.graphql_client.execute(GQL_CREATE_ORGANIZATION, variables)
+        result = self.graphql_client.execute(GQL_CREATE_ORGANIZATION, variables)
         return format_result("data", result)
 
     @typechecked
@@ -80,5 +74,5 @@ class MutationsOrganization:
             variables["name"] = name
         if license_str is not None:
             variables["license"] = license_str
-        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
         return format_result("data", result)

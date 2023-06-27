@@ -19,7 +19,6 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
             kili: Kili object
         """
         self.kili = kili
-        super().__init__(self.kili)
 
     @typechecked
     def reset_password(self, email: str):

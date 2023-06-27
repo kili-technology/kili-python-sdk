@@ -144,8 +144,6 @@ class Kili(  # pylint: disable=too-many-ancestors, too-many-instance-attributes
 
         self.internal = KiliInternal(self)
 
-        super().__init__(self)
-
     def _check_api_key_valid(self) -> None:
         """Check that the api_key provided is valid."""
         response = requests.post(

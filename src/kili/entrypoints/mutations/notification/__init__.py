@@ -2,6 +2,7 @@
 
 from typeguard import typechecked
 
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -12,13 +13,7 @@ from .queries import GQL_CREATE_NOTIFICATION, GQL_UPDATE_PROPERTIES_IN_NOTIFICAT
 class MutationsNotification:
     """Set of Notification mutations."""
 
-    def __init__(self, kili):
-        """Initialize the subclass.
-
-        Args:
-            kili: Kili object
-        """
-        self.kili = kili
+    graphql_client: GraphQLClient
 
     @typechecked
     def create_notification(self, message: str, status: str, url: str, user_id: str):
@@ -44,7 +39,7 @@ class MutationsNotification:
                 "userID": user_id,
             }
         }
-        result = self.kili.graphql_client.execute(GQL_CREATE_NOTIFICATION, variables)
+        result = self.graphql_client.execute(GQL_CREATE_NOTIFICATION, variables)
         return format_result("data", result)
 
     @typechecked
@@ -71,5 +66,5 @@ class MutationsNotification:
             "status": status,
             "url": url,
         }
-        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables)
         return format_result("data", result)

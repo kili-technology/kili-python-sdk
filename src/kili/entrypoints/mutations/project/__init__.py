@@ -11,6 +11,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili import services
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import NotFound
@@ -33,16 +34,9 @@ from .queries import (
 class MutationsProject:
     """Set of Project mutations."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,too-many-locals
-
-    def __init__(self, kili):
-        """Initialize the subclass.
-
-        Args:
-            kili: Kili object
-        """
-        self.kili = kili
-
     @typechecked
     def append_to_roles(
         self,
@@ -74,7 +68,7 @@ class MutationsProject:
             "data": {"role": role, "userEmail": user_email},
             "where": {"id": project_id},
         }
-        result = self.kili.graphql_client.execute(GQL_APPEND_TO_ROLES, variables)
+        result = self.graphql_client.execute(GQL_APPEND_TO_ROLES, variables)
 
         project_data = format_result("data", result)
         for project_user in project_data["roles"]:
@@ -192,13 +186,13 @@ class MutationsProject:
             "title": title,
             "useHoneyPot": use_honeypot,
         }
-        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         result = format_result("data", result)
 
         variables.pop("projectID")
         variables = {k: v for k, v in variables.items() if v is not None}
 
-        new_project_settings = services.get_project(self.kili, project_id, list(variables.keys()))
+        new_project_settings = services.get_project(self, project_id, list(variables.keys()))
 
         result = {**result, **new_project_settings}
         return result
@@ -263,7 +257,7 @@ class MutationsProject:
                 "title": title,
             }
         }
-        result = self.kili.graphql_client.execute(GQL_CREATE_PROJECT, variables)
+        result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
         result = format_result("data", result)
 
         # We check during 60s for the project to be created
@@ -274,7 +268,7 @@ class MutationsProject:
             reraise=True,
         ):
             with attempt:
-                _ = services.get_project(self.kili, project_id=result["id"], fields=["id"])
+                _ = services.get_project(self, project_id=result["id"], fields=["id"])
 
         return result
 
@@ -306,7 +300,7 @@ class MutationsProject:
             "userID": user_id,
             "role": role,
         }
-        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
         return format_result("data", result)
 
     @typechecked
@@ -321,7 +315,7 @@ class MutationsProject:
                 or an error message.
         """
         variables = {"where": {"id": role_id}}
-        result = self.kili.graphql_client.execute(GQL_DELETE_FROM_ROLES, variables)
+        result = self.graphql_client.execute(GQL_DELETE_FROM_ROLES, variables)
         return format_result("data", result)
 
     @typechecked
@@ -336,7 +330,7 @@ class MutationsProject:
                 or an error message.
         """
         variables = {"where": {"id": project_id}}
-        result = self.kili.graphql_client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
+        result = self.graphql_client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
         return format_result("data", result)
 
     @typechecked
@@ -354,7 +348,7 @@ class MutationsProject:
             "archived": True,
         }
 
-        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result("data", result)
 
     @typechecked
@@ -373,7 +367,7 @@ class MutationsProject:
             "archived": False,
         }
 
-        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
         return format_result("data", result)
 
     @typechecked
@@ -450,5 +444,5 @@ class MutationsProject:
             }
         }
 
-        result = self.kili.graphql_client.execute(GQL_PROJECT_UPDATE_ANONYMIZATION, variables)
+        result = self.graphql_client.execute(GQL_PROJECT_UPDATE_ANONYMIZATION, variables)
         return format_result("data", result)

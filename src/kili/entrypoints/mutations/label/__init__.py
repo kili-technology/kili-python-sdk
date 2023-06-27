@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 
 from kili import services
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import deprecate, format_result
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
@@ -27,16 +28,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class MutationsLabel:
     """Set of Label mutations."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments
-
-    def __init__(self, kili):
-        """Initializes the subclass.
-
-        Args:
-            kili: Kili object
-        """
-        self.kili = kili
-
     @typechecked
     def create_predictions(
         self,
@@ -113,7 +107,7 @@ class MutationsLabel:
             )
         ]
         services.import_labels_from_dict(
-            self.kili, project_id, labels, "PREDICTION", model_name, disable_tqdm
+            self, project_id, labels, "PREDICTION", model_name, disable_tqdm
         )
         return {"id": project_id}
 
@@ -160,7 +154,7 @@ class MutationsLabel:
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
         """
         if author_id is None:
-            user = self.kili.get_user()
+            user = self.get_user()  # type: ignore  # pylint: disable=no-member
             author_id = user["id"]
 
         check_asset_identifier_arguments(
@@ -171,7 +165,7 @@ class MutationsLabel:
         if label_asset_id is None:
             assert label_asset_external_id and project_id
             label_asset_id = infer_ids_from_external_ids(
-                self.kili, [label_asset_external_id], project_id
+                self, [label_asset_external_id], project_id
             )[label_asset_external_id]
         variables = {
             "data": {
@@ -182,7 +176,7 @@ class MutationsLabel:
             },
             "where": {"id": label_asset_id},
         }
-        result = self.kili.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
+        result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
         return format_result("data", result, Label)
 
     @typechecked
@@ -256,7 +250,7 @@ class MutationsLabel:
             )
         ]
         return services.import_labels_from_dict(
-            self.kili, project_id, labels, label_type, model_name, disable_tqdm
+            self, project_id, labels, label_type, model_name, disable_tqdm
         )
 
     @typechecked
@@ -289,7 +283,7 @@ class MutationsLabel:
             "modelName": model_name,
             "jsonResponse": formatted_json_response,
         }
-        result = self.kili.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
         return format_result("data", result, Label)
 
     @typechecked
@@ -325,7 +319,7 @@ class MutationsLabel:
                 raise ValueError(
                     "Either provide `asset_id` or `asset_external_id` and `project_id`."
                 )
-            asset_id = infer_ids_from_external_ids(self.kili, [asset_external_id], project_id)[
+            asset_id = infer_ids_from_external_ids(self, [asset_external_id], project_id)[
                 asset_external_id
             ]
 
@@ -333,5 +327,5 @@ class MutationsLabel:
             "data": {"jsonResponse": dumps(json_response)},
             "where": {"id": asset_id},
         }
-        result = self.kili.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
+        result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
         return format_result("data", result, Label)

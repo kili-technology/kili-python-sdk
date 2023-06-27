@@ -6,6 +6,7 @@ from typeguard import typechecked
 from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.utils.logcontext import for_all_methods, log_call
@@ -15,16 +16,9 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesApiKey:
     """Set of ApiKey queries."""
 
+    graphql_client: GraphQLClient
+
     # pylint: disable=too-many-arguments,dangerous-default-value
-
-    def __init__(self, kili):
-        """Initialize the subclass.
-
-        Args:
-            kili: Kili object
-        """
-        self.kili = kili
-
     @overload
     def api_keys(
         self,
@@ -98,7 +92,7 @@ class QueriesApiKey:
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        api_keys_gen = APIKeyQuery(self.kili.graphql_client)(where, fields, options)
+        api_keys_gen = APIKeyQuery(self.graphql_client)(where, fields, options)
 
         if as_generator:
             return api_keys_gen
@@ -129,4 +123,4 @@ class QueriesApiKey:
             1
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        return APIKeyQuery(self.kili.graphql_client).count(where)
+        return APIKeyQuery(self.graphql_client).count(where)
