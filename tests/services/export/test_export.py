@@ -699,8 +699,8 @@ def test_export_with_asset_filter_kwargs(mocker):
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
-    mocker_kili = mocker.MagicMock()
-    kili = QueriesLabel(kili=mocker_kili)
+    kili = QueriesLabel()
+    kili.graphql_client = mocker.MagicMock()
     kili.export_labels(
         project_id="fake_proj_id",
         filename="fake_filename",
@@ -727,8 +727,8 @@ def test_export_with_asset_filter_kwargs(mocker):
         },
     )
 
-    query_sent = mocker_kili.graphql_client.execute.call_args[0][0]
-    assert_where = mocker_kili.graphql_client.execute.call_args[0][1]["where"]
+    query_sent = kili.graphql_client.execute.call_args[0][0]
+    assert_where = kili.graphql_client.execute.call_args[0][1]["where"]
 
     assert "query assets($where: AssetWhere!" in query_sent
     assert "data: assets(where: $where" in query_sent
@@ -754,7 +754,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     )
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
-    kili = QueriesLabel(kili=mocker.MagicMock())
+    kili = QueriesLabel()
 
     with pytest.raises(NameError, match="Unknown asset filter arguments"):
         kili.export_labels(
@@ -823,7 +823,7 @@ def mock_kili(mocker, with_data_connection):
             return_value=(i for i in [{"id": "fake_data_connection_id"}]),
         )
 
-    kili = QueriesLabel(kili=mocker.MagicMock())
+    kili = QueriesLabel()
     return kili
 
 

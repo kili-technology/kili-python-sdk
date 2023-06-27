@@ -41,7 +41,7 @@ from kili.internal import KiliInternal
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
 
-class Kili(  # pylint: disable=too-many-ancestors, too-many-instance-attributes
+class Kili(  # pylint: disable=too-many-ancestors
     MutationsAsset,
     MutationsDataConnection,
     MutationsIssue,

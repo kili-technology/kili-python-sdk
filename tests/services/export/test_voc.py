@@ -57,7 +57,7 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
         return_value=(i for i in [{"id": "fake_data_connection_id"}]),
     )
 
-    kili = QueriesLabel(kili=mocker.MagicMock())
+    kili = QueriesLabel()
 
     with pytest.raises(
         NotAccessibleAssetError,

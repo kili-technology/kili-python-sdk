@@ -129,7 +129,7 @@ class TestCheckWarnEmptyList(TestCase):
     """Tests for the check_warn_empty_list helper."""
 
     def test_kwargs_empty(self, mocked__mutate_from_paginated_call):
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
             match=(
@@ -142,7 +142,7 @@ class TestCheckWarnEmptyList(TestCase):
         mocked__mutate_from_paginated_call.assert_not_called()
 
     def test_args_empty(self, mocked__mutate_from_paginated_call):
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
             match=(
@@ -156,7 +156,7 @@ class TestCheckWarnEmptyList(TestCase):
 
     def test_none(self, mocked__mutate_from_paginated_call):
         """Test that the helper does not raise a warning if args are None."""
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():
                 warnings.simplefilter("error")
@@ -164,7 +164,7 @@ class TestCheckWarnEmptyList(TestCase):
         mocked__mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_one_empty(self, mocked__mutate_from_paginated_call):
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
             match=(
@@ -177,7 +177,7 @@ class TestCheckWarnEmptyList(TestCase):
         mocked__mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_one_empty_2(self, mocked__mutate_from_paginated_call):
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
             match=(
@@ -190,21 +190,21 @@ class TestCheckWarnEmptyList(TestCase):
         mocked__mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
         mocked__mutate_from_paginated_call.assert_called_once()
 
     def test_args_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)
         mocked__mutate_from_paginated_call.assert_called_once()
 
     def test_warn_change_asset_external_ids(self, mocked__mutate_from_paginated_call):
-        kili = MutationsAsset(kili=MagicMock())
+        kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
             match=(

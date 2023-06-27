@@ -1,20 +1,25 @@
 """Label subscription."""
 
-from dataclasses import dataclass
 from typing import Callable
 
 from typeguard import typechecked
 
-from kili.core.graphql.graphql_client import GraphQLClient, SubscriptionGraphQLClient
+from kili.core.graphql.graphql_client import SubscriptionGraphQLClient
 
 from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 
 
-@dataclass
+# pylint: disable=too-few-public-methods
 class SubscriptionsLabel:
     """Set of Label subscriptions."""
 
-    graphql_client: GraphQLClient
+    def __init__(self, kili):
+        """Initialize the subclass.
+
+        Args:
+            kili: Kili object
+        """
+        self.kili = kili
 
     @typechecked
     def label_created_or_updated(
@@ -34,10 +39,10 @@ class SubscriptionsLabel:
             For more detailed examples on how to use Webhooks,
             See [the related recipe](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/webhooks.ipynb)
         """
-        ws_endpoint = self.graphql_client.endpoint.replace("http", "ws")
+        ws_endpoint = self.kili.graphql_client.endpoint.replace("http", "ws")
         websocket = SubscriptionGraphQLClient(ws_endpoint)
         headers = {"Accept": "application/json", "Content-Type": "application/json"}
-        authorization = f"X-API-Key: {self.api_key}"  # type: ignore  # pylint: disable=no-member
+        authorization = f"X-API-Key: {self.kili.api_key}"
         headers["Authorization"] = authorization
         variables = {"projectID": project_id}
         websocket.subscribe(
