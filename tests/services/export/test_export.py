@@ -700,6 +700,8 @@ def test_export_with_asset_filter_kwargs(mocker):
     )
     mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
     kili = QueriesLabel()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.export_labels(
         project_id="fake_proj_id",
@@ -755,6 +757,9 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
     kili = QueriesLabel()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
 
     with pytest.raises(NameError, match="Unknown asset filter arguments"):
         kili.export_labels(
@@ -771,6 +776,9 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     mocker,
 ):
     kili = mock_kili(mocker, with_data_connection=True)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
 
     with pytest.raises(
         NotCompatibleOptions,
@@ -831,6 +839,9 @@ def test_when_exporting_without_assets_given_a_project_that_needs_them_it_should
     mocker,
 ):
     kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
 
     with pytest.warns(
         UserWarning,
