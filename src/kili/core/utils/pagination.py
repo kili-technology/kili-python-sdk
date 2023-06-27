@@ -120,7 +120,7 @@ def _mutate_from_paginated_call(
     for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
         payload = generate_variables(batch)
         try:
-            result = api_throttle(self.kili.graphql_client.execute)(request, payload)
+            result = api_throttle(self.graphql_client.execute)(request, payload)
         except GraphQLError as err:
             raise GraphQLError(error=err.error, batch_number=batch_number) from err
         results.append(result)
