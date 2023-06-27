@@ -55,8 +55,8 @@ def prepare_cache_dir():
 @patch("io.open", side_effect=PermissionError("No write permissions"))
 @patch("os.mkdir", side_effect=PermissionError("No write permissions"))
 @patch.object(Path, "mkdir", side_effect=PermissionError("No write permissions"))
-@patch.object(Kili, "check_api_key_valid")
-@patch.object(Kili, "check_expiry_of_key_is_close")
+@patch.object(Kili, "_check_api_key_valid")
+@patch.object(Kili, "_check_expiry_of_key_is_close")
 @patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
 def test_write_to_disk_without_permissions_not_crash(*_):
     """Test that we can still use kili even if we don't have write permissions."""

@@ -12,8 +12,8 @@ from kili.core.graphql.operations.api_key.queries import APIKeyQuery
 
 
 @pytest.mark.skipif(platform.system() == "Windows", reason="Does not work on Windows")
-def test_check_expiry_of_key_is_close(mocker: pytest_mock.MockerFixture):
-    mocker.patch.object(Kili, "check_api_key_valid", return_value=True)
+def test__check_expiry_of_key_is_close(mocker: pytest_mock.MockerFixture):
+    mocker.patch.object(Kili, "_check_api_key_valid", return_value=True)
     mocker.patch.object(Kili, "get_user", return_value={"id": "id", "email": "email"})
     mocker.patch("kili.client.GraphQLClient")
     mocker.patch("kili.client._deprecate_python_37", return_value=None)

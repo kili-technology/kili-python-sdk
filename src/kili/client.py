@@ -129,7 +129,7 @@ class Kili(  # pylint: disable=too-many-ancestors, too-many-instance-attributes
         skip_checks = os.environ.get("KILI_SDK_SKIP_CHECKS", None) is not None
 
         if not skip_checks:
-            self.check_api_key_valid()
+            self._check_api_key_valid()
 
         self.graphql_client = GraphQLClient(
             endpoint=api_endpoint,
@@ -140,13 +140,13 @@ class Kili(  # pylint: disable=too-many-ancestors, too-many-instance-attributes
         )
 
         if not skip_checks:
-            self.check_expiry_of_key_is_close()
+            self._check_expiry_of_key_is_close()
 
         self.internal = KiliInternal(self)
 
         super().__init__(self)
 
-    def check_api_key_valid(self) -> None:
+    def _check_api_key_valid(self) -> None:
         """Check that the api_key provided is valid."""
         response = requests.post(
             url=self.api_endpoint,
@@ -173,7 +173,7 @@ class Kili(  # pylint: disable=too-many-ancestors, too-many-instance-attributes
             ),
         )
 
-    def check_expiry_of_key_is_close(self) -> None:
+    def _check_expiry_of_key_is_close(self) -> None:
         """Check that the expiration date of the api_key is not too close."""
         warn_days = 30
 
