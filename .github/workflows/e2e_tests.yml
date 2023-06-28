@@ -120,7 +120,7 @@ jobs:
           - os: windows-latest
             python-version: 3.11
           - os: ubuntu-latest
-            python-version: 3.7
+            python-version: 3.8
 
     runs-on: ${{ matrix.os }}
     needs: [test_setup]

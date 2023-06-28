@@ -1,11 +1,20 @@
 """Label queries."""
 
 from functools import partial
-from typing import Dict, Generator, Iterable, List, Optional, Union, cast, overload
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Union,
+    cast,
+    overload,
+)
 
 import pandas as pd
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili import services
 from kili.core.graphql import QueryOptions

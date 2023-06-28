@@ -1,9 +1,8 @@
 """User mutations."""
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional
 
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result

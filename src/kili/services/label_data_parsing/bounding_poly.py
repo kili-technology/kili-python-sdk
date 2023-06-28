@@ -1,9 +1,8 @@
 """Module for the "boundingPoly" key parsing of an object detection job response."""
 
-from typing import Dict, Iterator, List, Optional, Union
+from typing import Dict, Iterator, List, Literal, Optional, Union
 
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from .exceptions import InvalidMutationError
 from .types import NormalizedVertex, Project

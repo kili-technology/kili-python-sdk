@@ -1,6 +1,5 @@
 """This script permits to initialize the Kili Python SDK client."""
 import os
-import sys
 import warnings
 from datetime import datetime, timedelta
 from typing import Dict, Optional
@@ -106,8 +105,6 @@ class Kili(  # pylint: disable=too-many-ancestors
             kili.projects()  # list your projects
             ```
         """
-        _deprecate_python_37()
-
         if api_key is None:
             api_key = os.getenv("KILI_API_KEY")
 
@@ -197,15 +194,3 @@ class Kili(  # pylint: disable=too-many-ancestors
         if user is None or user["id"] is None or user["email"] is None:
             raise UserNotFoundError("No user attached to the API key was found")
         return user
-
-
-def _deprecate_python_37() -> None:
-    if sys.version_info < (3, 8):
-        warnings.warn(
-            (
-                "Kili SDK will stop supporting Python 3.7 in July"
-                " 2023. Please upgrade to Python 3.8 or higher."
-            ),
-            DeprecationWarning,
-            stacklevel=1,
-        )

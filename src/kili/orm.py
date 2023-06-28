@@ -2,9 +2,7 @@
 the manipulation of Kili data structures."""
 import warnings
 from dataclasses import dataclass
-from typing import Dict
-
-from typing_extensions import Literal
+from typing import Dict, Literal
 
 
 class DictClass(dict):

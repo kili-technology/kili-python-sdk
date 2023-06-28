@@ -1,13 +1,12 @@
 """Services for data connections."""
 import logging
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Literal
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
-from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere

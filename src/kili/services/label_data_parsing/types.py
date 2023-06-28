@@ -1,8 +1,8 @@
 """Types for label data parsing module."""
 
-from typing import Dict
+from typing import Dict, Literal
 
-from typing_extensions import Literal, TypedDict
+from typing_extensions import TypedDict
 
 from kili.core.enums import InputType
 from kili.services.types import Jobs

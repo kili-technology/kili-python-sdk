@@ -1,10 +1,9 @@
 """Issue mutations."""
 
 from itertools import repeat
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient
