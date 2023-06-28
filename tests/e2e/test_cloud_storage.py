@@ -90,9 +90,9 @@ def test_e2e_synchronize_cloud_storage_connection(
     expected_nb_assets_after_sync: int,
 ) -> None:
     """E2e test for cloud storage methods."""
-    if not is_same_endpoint(endpoint_short_name, kili.auth.api_endpoint):
+    if not is_same_endpoint(endpoint_short_name, kili.api_endpoint):
         pytest.skip(
-            f"Skipping test because endpoint {kili.auth.api_endpoint} does not match"
+            f"Skipping test because endpoint {kili.api_endpoint} does not match"
             f" {endpoint_short_name}"
         )
 
