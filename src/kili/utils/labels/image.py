@@ -92,9 +92,7 @@ def mask_to_normalized_vertices(
 
 
 def normalized_vertices_to_mask(
-    normalized_vertices: List[Dict[str, float]],
-    img_width: Union[int, float],
-    img_height: Union[int, float],
+    normalized_vertices: List[Dict[str, float]], img_width: int, img_height: int
 ) -> np.ndarray:
     # pylint: disable=line-too-long
     """Converts a Kili label with normalized vertices to a binary mask.
