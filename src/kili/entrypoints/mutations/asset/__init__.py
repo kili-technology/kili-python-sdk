@@ -7,6 +7,7 @@ from tenacity import retry
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient
@@ -51,7 +52,7 @@ class MutationsAsset:
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         wait_until_availability: bool = True,
-    ) -> Optional[Dict[str, str]]:
+    ) -> Optional[Dict[Literal["id"], str]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -91,7 +92,7 @@ class MutationsAsset:
                 If `False`, the function will return faster but the assets might not be fully processed by the server.
 
         Returns:
-            A result object which indicates if the mutation was successful, or an error message.
+            A dictionary with the project `id`.
 
         Examples:
             >>> kili.append_many_to_dataset(
@@ -169,7 +170,7 @@ class MutationsAsset:
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict]:
+    ) -> List[Dict[Literal["id"], str]]:
         """Update the properties of one or more assets.
 
         Args:
@@ -198,8 +199,7 @@ class MutationsAsset:
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A list of dictionaries with the asset ids.
 
         Examples:
             >>> kili.update_properties_in_assets(
@@ -303,7 +303,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict]:
+    ) -> List[Dict[Literal["id"], str]]:
         """Update the external IDs of one or more assets.
 
         Args:
@@ -313,8 +313,7 @@ class MutationsAsset:
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A list of dictionaries with the asset ids.
 
         Examples:
             >>> kili.change_asset_external_ids(
@@ -365,7 +364,7 @@ class MutationsAsset:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Asset:
+    ) -> Optional[Dict[Literal["id"], str]]:
         """Delete assets from a project.
 
         Args:
@@ -374,13 +373,12 @@ class MutationsAsset:
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict object with the project `id`.
         """
         if is_empty_list_with_warning(
             "delete_many_from_dataset", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
-            return Asset()
+            return None
 
         asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
 
@@ -413,7 +411,7 @@ class MutationsAsset:
             GQL_DELETE_MANY_FROM_DATASET,
             last_batch_callback=verify_last_batch,
         )
-        return format_result("data", results[0], Asset)
+        return format_result("data", results[0])
 
     @typechecked
     def add_to_review(

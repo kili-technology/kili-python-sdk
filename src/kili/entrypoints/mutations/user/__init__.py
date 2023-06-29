@@ -12,7 +12,6 @@ from kili.entrypoints.mutations.user.queries import (
     GQL_UPDATE_PASSWORD,
     GQL_UPDATE_PROPERTIES_IN_USER,
 )
-from kili.exceptions import RemovedMethodError
 
 
 class MutationsUser:
@@ -59,8 +58,9 @@ class MutationsUser:
     @typechecked
     def update_password(
         self, email: str, old_password: str, new_password_1: str, new_password_2: str
-    ):
-        """Allow to modify the password that you use to connect to Kili. \
+    ) -> Dict[Literal["id"], str]:
+        """Allow to modify the password that you use to connect to Kili.
+
         This resolver only works for on-premise installations without Auth0.
 
         Args:
@@ -70,8 +70,7 @@ class MutationsUser:
             new_password_2: A confirmation field for the new password
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict with the user id.
         """
         variables = {
             "data": {
@@ -84,18 +83,6 @@ class MutationsUser:
         result = self.graphql_client.execute(GQL_UPDATE_PASSWORD, variables)
         return format_result("data", result)
 
-    def reset_password(self, email: str):
-        """Reset password.
-
-        !!! warning "Method removed"
-            This method is not available anymore.
-            Please use the Kili App instead to reset your password.
-        """
-        raise RemovedMethodError(
-            "reset_password() is not available anymore. Please use the Kili App instead to reset"
-            " your password."
-        )
-
     @typechecked
     def update_properties_in_user(
         self,
@@ -105,7 +92,7 @@ class MutationsUser:
         organization_id: Optional[str] = None,
         organization_role: Optional[str] = None,
         activated: Optional[bool] = None,
-    ):
+    ) -> Dict[Literal["id"], str]:
         """Update the properties of a user.
 
         Args:
@@ -117,10 +104,8 @@ class MutationsUser:
                 One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".
             activated: In case we want to deactivate a user, but keep it.
 
-
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict with the user id.
         """
         variables: Dict[str, Any] = {
             "email": email,

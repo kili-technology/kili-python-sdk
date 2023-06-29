@@ -74,8 +74,7 @@ class QueriesProjectVersion:
             as_generator: If `True`, a generator on the project versions is returned.
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            An iterable of dictionaries containing the project versions information.
         """
         where = ProjectVersionWhere(
             project_id=project_id,

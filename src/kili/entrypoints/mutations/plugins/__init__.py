@@ -2,6 +2,7 @@
 from typing import List, Optional
 
 from typeguard import typechecked
+from typing_extensions import LiteralString
 
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.services.plugins import (
@@ -27,7 +28,7 @@ class MutationsPlugins:
         plugin_name: Optional[str] = None,
         verbose: bool = True,
         **kwargs  # pylint: disable=missing-param-doc
-    ):
+    ) -> LiteralString:
         """Uploads a plugin.
 
         Args:
@@ -39,7 +40,7 @@ class MutationsPlugins:
             verbose: If false, minimal logs are displayed
 
         Returns:
-            A result object which indicates if the mutation was successful, or an error message.
+            A string which indicates if the mutation was successful, or an error message.
 
         Examples:
             >>> kili.upload_plugin(plugin_path="./path/to/my/folder")
@@ -64,9 +65,10 @@ class MutationsPlugins:
         header: Optional[str] = None,
         verbose: bool = True,
         handler_types: Optional[List[str]] = None,
-    ):
+    ) -> str:
         # pylint: disable=line-too-long,too-many-arguments
         """Create a webhook linked to Kili's events.
+
         For a complete example, refer to the notebook `webhooks_example` on kili repo.
 
         Args:
@@ -87,7 +89,7 @@ class MutationsPlugins:
                 By default, is [`onSubmit`, `onReview`].
 
         Returns:
-            A result object which indicates if the mutation was successful,
+            A string which indicates if the mutation was successful,
                 or an error message.
 
         Examples:
@@ -106,7 +108,7 @@ class MutationsPlugins:
         new_header: Optional[str] = None,
         verbose: bool = True,
         handler_types: Optional[List[str]] = None,
-    ):
+    ) -> str:
         # pylint: disable=line-too-long,too-many-arguments
         """Update a webhook linked to Kili's events.
 
@@ -122,7 +124,7 @@ class MutationsPlugins:
                 By default, is [`onSubmit`, `onReview`]
 
         Returns:
-            A result object which indicates if the mutation was successful,
+            A string which indicates if the mutation was successful,
                 or an error message.
 
         Examples:
@@ -134,7 +136,7 @@ class MutationsPlugins:
         ).update_webhook()
 
     @typechecked
-    def activate_plugin_on_project(self, plugin_name: str, project_id: str):
+    def activate_plugin_on_project(self, plugin_name: str, project_id: str) -> Optional[str]:
         # pylint: disable=line-too-long
         """Activates a plugin on a project.
 
@@ -143,7 +145,7 @@ class MutationsPlugins:
             project_id: Identifier of the project
 
         Returns:
-            A result object which indicates if the mutation was successful, or an error message.
+            A string which indicates if the mutation was successful, or an error message.
 
         Examples:
             >>> kili.activate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")
@@ -151,7 +153,7 @@ class MutationsPlugins:
         return activate_plugin(self, plugin_name, project_id)
 
     @typechecked
-    def deactivate_plugin_on_project(self, plugin_name: str, project_id: str):
+    def deactivate_plugin_on_project(self, plugin_name: str, project_id: str) -> str:
         # pylint: disable=line-too-long
         """Activates a plugin on a project.
 
@@ -160,7 +162,7 @@ class MutationsPlugins:
             project_id: Identifier of the project
 
         Returns:
-            A result object which indicates if the mutation was successful,
+            A string which indicates if the mutation was successful,
                 or an error message.
 
         Examples:
@@ -169,14 +171,14 @@ class MutationsPlugins:
         return deactivate_plugin(self, plugin_name, project_id)
 
     @typechecked
-    def delete_plugin(self, plugin_name: str):
+    def delete_plugin(self, plugin_name: str) -> str:
         """Deletes a plugin.
 
         Args:
             plugin_name: Name of the plugin
 
         Returns:
-            A result object which indicates if the mutation was successful,
+            A string which indicates if the mutation was successful,
                 or an error message.
 
         Examples:
@@ -191,7 +193,7 @@ class MutationsPlugins:
         plugin_name: Optional[str] = None,
         verbose: bool = True,
         **kwargs  # pylint: disable=missing-param-doc
-    ):
+    ) -> LiteralString:
         """Update a plugin with new code.
 
         Args:
@@ -203,7 +205,7 @@ class MutationsPlugins:
             verbose: If false, minimal logs are displayed
 
         Returns:
-            A result object which indicates if the mutation was successful,
+            A string which indicates if the mutation was successful,
                 or an error message.
 
         Examples:

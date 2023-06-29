@@ -6,7 +6,7 @@ from kili.core.helpers import format_result
 from .helpers import get_logger
 
 
-def delete_plugin(kili, plugin_name: str):
+def delete_plugin(kili, plugin_name: str) -> str:
     """Create a plugin in Kili."""
     logger = get_logger()
 

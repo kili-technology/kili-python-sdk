@@ -5,6 +5,7 @@ from json import dumps
 from typing import Dict, List, Optional
 
 from typeguard import typechecked
+from typing_extensions import Literal
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
@@ -41,7 +42,7 @@ class MutationsLabel:
         model_name: Optional[str] = None,
         asset_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
-    ) -> Dict:
+    ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
@@ -56,7 +57,7 @@ class MutationsLabel:
             disable_tqdm: Disable tqdm progress bar.
 
         Returns:
-            A result object which indicates if the mutation was successful, or an error message.
+            A dictionary with the project `id`.
 
         !!! example "Recipe"
             For more detailed examples on how to create predictions, see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
@@ -191,7 +192,7 @@ class MutationsLabel:
         project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
-    ) -> List:
+    ) -> List[Dict[Literal["id"], str]]:
         """Append labels to assets.
 
         Args:
@@ -207,8 +208,7 @@ class MutationsLabel:
             disable_tqdm: Disable tqdm progress bar.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A list of dictionaries with the label ids.
 
         Examples:
             >>> kili.append_labels(
@@ -260,7 +260,7 @@ class MutationsLabel:
         seconds_to_label: Optional[int] = None,
         model_name: Optional[str] = None,
         json_response: Optional[dict] = None,
-    ) -> Label:
+    ) -> Dict[Literal["id"], str]:
         """Update properties of a label.
 
         Args:
@@ -270,8 +270,7 @@ class MutationsLabel:
             json_response: The label is given here
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dictionary with the label `id`.
 
         Examples:
             >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
@@ -284,7 +283,7 @@ class MutationsLabel:
             "jsonResponse": formatted_json_response,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
-        return format_result("data", result, Label)
+        return format_result("data", result)
 
     @typechecked
     def create_honeypot(
@@ -311,8 +310,7 @@ class MutationsLabel:
                 Either provide `asset_id` or `asset_external_id` and `project_id`.
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dictionary-like object representing the created label.
         """
         if asset_id is None:
             if asset_external_id is None or project_id is None:

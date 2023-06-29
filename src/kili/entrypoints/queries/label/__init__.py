@@ -241,7 +241,7 @@ class QueriesLabel:
             Date strings should have format: "YYYY-MM-DD"
 
         Returns:
-            A result object which contains the query if it was successful, else an error message.
+            An iterable of labels.
 
         Examples:
             >>> kili.labels(project_id=project_id, fields=['jsonResponse', 'labelOf.externalId']) # returns a list of all labels of a project and their assets external ID
@@ -417,7 +417,7 @@ class QueriesLabel:
             category_search: Query to filter labels based on the content of their jsonResponse
 
         Returns:
-            A result object which contains the query if it was successful, else an error message.
+            An iterable of labels.
 
         Examples:
             >>> kili.predictions(project_id=project_id) # returns a list of prediction labels of a project
@@ -560,7 +560,7 @@ class QueriesLabel:
             category_search: Query to filter labels based on the content of their jsonResponse
 
         Returns:
-            A result object which contains the query if it was successful, else an error message.
+            An iterable of inference labels.
 
         Examples:
             >>> kili.inferences(project_id=project_id) # returns a list of inference labels of a project
