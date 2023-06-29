@@ -76,7 +76,7 @@ json_interface = {
 
 
 ```python
-title = "Webhooks test project"
+title = "[Kili SDK Notebook]: Webhooks example test project"
 description = "My first project with a webhook"
 input_type = "IMAGE"
 

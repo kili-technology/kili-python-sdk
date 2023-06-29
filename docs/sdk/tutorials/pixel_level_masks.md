@@ -91,7 +91,7 @@ project = kili.create_project(
     description="COCO dataset",
     input_type="IMAGE",
     json_interface=json_interface,
-    title="Motorcycle annotation",
+    title="[Kili SDK Notebook]: Motorcycle annotation segmentation project",
 )
 
 project_id = project["id"]

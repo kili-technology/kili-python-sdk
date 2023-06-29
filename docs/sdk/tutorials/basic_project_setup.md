@@ -78,7 +78,7 @@ interface = {
 }
 
 result = kili.create_project(
-    title="Test Project",
+    title="[Kili SDK Notebook]: Basic Project Setup",
     description="Project Description",
     input_type="IMAGE",
     json_interface=interface,

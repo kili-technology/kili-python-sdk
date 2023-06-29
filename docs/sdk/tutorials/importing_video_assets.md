@@ -93,7 +93,7 @@ interface = {
 }
 
 result = kili.create_project(
-    title="Test Project",
+    title="[Kili SDK Notebook]: Importing Video Assets",
     description="Project Description",
     input_type="VIDEO",
     json_interface=interface,

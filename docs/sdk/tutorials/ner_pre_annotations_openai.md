@@ -358,7 +358,7 @@ Let's now create the project with its ontology:
 
 ```python
 project = kili.create_project(
-    title="CoNLL Named Entity Recognition with OpenAI pre-annotations",
+    title="[Kili SDK Notebook]: CoNLL Named Entity Recognition with OpenAI pre-annotations",
     input_type="TEXT",
     json_interface=json_interface,
 )

@@ -80,7 +80,7 @@ interface = {
 }
 
 result = kili.create_project(
-    title="Test Project",
+    title="[Kili SDK Notebook]: Importing labels",
     description="Project Description",
     input_type="IMAGE",
     json_interface=interface,

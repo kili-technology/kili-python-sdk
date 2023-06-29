@@ -48,11 +48,6 @@ kili = Kili(
 )
 ```
 
-
-```python
-project_id = "<YOUR PROJECT ID>"
-```
-
 For information on how to set up a Kili project, refer to the [basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) tutorial.
 
 ## Managing reviews

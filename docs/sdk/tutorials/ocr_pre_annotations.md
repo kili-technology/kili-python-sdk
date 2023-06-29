@@ -93,7 +93,7 @@ project = kili.create_project(
     description="OCR street view",
     input_type="IMAGE",
     json_interface=json_interface,
-    title="Street text annotation",
+    title="[Kili SDK Notebook]: Street text OCR annotation project",
 )
 project_id = project["id"]
 ```
