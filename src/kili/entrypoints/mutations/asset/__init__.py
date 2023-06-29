@@ -169,6 +169,7 @@ class MutationsAsset:
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         project_id: Optional[str] = None,
+        page_resolutions_array: Optional[List[dict]] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Update the properties of one or more assets.
 
@@ -196,6 +197,9 @@ class MutationsAsset:
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
+            page_resolutions_array: The resolution of each page of the asset (for PDF projects).
+              Note that each element of the array should contain all the pages resolutions of the
+              corresponding asset.
 
         Returns:
             A list of dictionaries with the asset ids.
@@ -211,6 +215,21 @@ class MutationsAsset:
                     priorities=[None, 2],
                     status_array=['LABELED', 'REVIEWED'],
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
+                )
+
+                # The following call updates the pages resolutions of PDF assets.
+            >>> kili.update_properties_in_assets(
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    page_resolutions_array=[
+                        [
+                            {"width": 480, "height": 640, "pageNumber": 0},
+                            {"width": 480, "height": 640, "pageNumber": 1},
+                        ],[
+                            {"width": 340, "height": 512, "pageNumber": 0},
+                            {"width": 680, "height": 1024, "pageNumber": 1},
+                            {"width": 680, "height": 1024, "pageNumber": 2},
+                        ]
+                    ],
                 )
         """
         if is_empty_list_with_warning(
@@ -262,6 +281,7 @@ class MutationsAsset:
                 "status_array",
                 "is_used_for_consensus_array",
                 "is_honeypot_array",
+                "page_resolutions_array",
             ]
         }
         properties_to_batch = process_update_properties_in_assets_parameters(parameters)
@@ -279,6 +299,7 @@ class MutationsAsset:
                 "status": batch["status_array"],
                 "isUsedForConsensus": batch["is_used_for_consensus_array"],
                 "isHoneypot": batch["is_honeypot_array"],
+                "pageResolutions": batch["page_resolutions_array"],
             }
             data_array = [dict(zip(data, t)) for t in zip(*data.values())]  # type: ignore
             return {

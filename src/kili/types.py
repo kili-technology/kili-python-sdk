@@ -1,6 +1,7 @@
 # pylint: disable:invalid-name,too-many-instance-attributes
 """GraphQL types."""
 
+from dataclasses import dataclass
 from typing import Dict, List
 
 from typing_extensions import TypedDict
@@ -19,6 +20,14 @@ from kili.core.enums import (
     Status,
 )
 from kili.core.helpers import deprecate
+
+
+@dataclass
+class PageResolution:
+    width: float
+    height: float
+    pageNumber: int
+    rotation: int = 0
 
 
 @deprecate()
