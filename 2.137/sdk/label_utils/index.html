@@ -19,7 +19,7 @@
         <link rel="next" href="../label_parsing/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -2049,7 +2049,12 @@ If not, the method will return the output points' coordinates normalized to <cod
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.bbox</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_bbox_points</span>
 
+<span class="c1"># if using raw dict label:</span>
 <span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;boundingPoly&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">]</span>
+
+<span class="c1"># if using parsed label:</span>
+<span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span>
+
 <span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1920</span>
 <span class="n">bbox_points</span> <span class="o">=</span> <span class="n">normalized_vertices_to_bbox_points</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">)</span>
 </code></pre></div>
@@ -2100,7 +2105,12 @@ If not, the method will return the output points' coordinates normalized to <cod
 <span class="sd">        ```python</span>
 <span class="sd">        from kili.utils.labels.bbox import normalized_vertices_to_bbox_points</span>
 
+<span class="sd">        # if using raw dict label:</span>
 <span class="sd">        normalized_vertices = label[&quot;jsonResponse&quot;][&quot;OBJECT_DETECTION_JOB&quot;][&quot;annotations&quot;][0][&quot;boundingPoly&quot;][0][&quot;normalizedVertices&quot;]</span>
+
+<span class="sd">        # if using parsed label:</span>
+<span class="sd">        normalized_vertices = label.jobs[&quot;OBJECT_DETECTION_JOB&quot;].annotations[0].bounding_poly[0].normalized_vertices</span>
+
 <span class="sd">        img_height, img_width = 1080, 1920</span>
 <span class="sd">        bbox_points = normalized_vertices_to_bbox_points(normalized_vertices, img_width, img_height)</span>
 <span class="sd">        ```</span>
@@ -2391,7 +2401,12 @@ See the <a href="https://docs.kili-technology.com/reference/export-object-entity
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.labels.image</span> <span class="kn">import</span> <span class="n">normalized_vertices_to_mask</span>
 
+<span class="c1"># if using raw dict label:</span>
 <span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;boundingPoly&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;normalizedVertices&quot;</span><span class="p">]</span>
+
+<span class="c1"># if using parsed label:</span>
+<span class="n">normalized_vertices</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span>
+
 <span class="n">img_height</span><span class="p">,</span> <span class="n">img_width</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1920</span>
 <span class="n">mask</span> <span class="o">=</span> <span class="n">normalized_vertices_to_mask</span><span class="p">(</span><span class="n">normalized_vertices</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
@@ -2423,7 +2438,12 @@ See the <a href="https://docs.kili-technology.com/reference/export-object-entity
 <span class="sd">        ```python</span>
 <span class="sd">        from kili.utils.labels.image import normalized_vertices_to_mask</span>
 
+<span class="sd">        # if using raw dict label:</span>
 <span class="sd">        normalized_vertices = label[&quot;jsonResponse&quot;][&quot;OBJECT_DETECTION_JOB&quot;][&quot;annotations&quot;][0][&quot;boundingPoly&quot;][0][&quot;normalizedVertices&quot;]</span>
+
+<span class="sd">        # if using parsed label:</span>
+<span class="sd">        normalized_vertices = label.jobs[&quot;OBJECT_DETECTION_JOB&quot;].annotations[0].bounding_poly[0].normalized_vertices</span>
+
 <span class="sd">        img_height, img_width = 1080, 1920</span>
 <span class="sd">        mask = normalized_vertices_to_mask(normalized_vertices, img_width, img_height)</span>
 <span class="sd">        plt.imshow(mask)</span>
@@ -2499,7 +2519,7 @@ See the <a href="https://docs.kili-technology.com/reference/export-object-entity
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
         
           <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>

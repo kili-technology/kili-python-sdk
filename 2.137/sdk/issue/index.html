@@ -19,7 +19,7 @@
         <link rel="next" href="../label/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -1333,15 +1333,9 @@
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesIssue</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Issue queries.&quot;&quot;&quot;</span>
 
+    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,dangerous-default-value</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            auth: KiliAuth object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">issues</span><span class="p">(</span>
@@ -1451,7 +1445,7 @@
         <span class="p">)</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-        <span class="n">issues_gen</span> <span class="o">=</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">issues_gen</span> <span class="o">=</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">issues_gen</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">issues_gen</span><span class="p">)</span>
@@ -1488,7 +1482,7 @@
             <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -1611,7 +1605,7 @@ represents issues and questions in the app</p></td>
         <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
         <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1798,7 +1792,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
     <span class="p">)</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-    <span class="n">issues_gen</span> <span class="o">=</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">issues_gen</span> <span class="o">=</span> <span class="n">IssueQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">issues_gen</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">issues_gen</span><span class="p">)</span>
@@ -1833,16 +1827,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsIssue</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Issue mutations.&quot;&quot;&quot;</span>
 
+    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
+
     <span class="c1"># pylint: disable=too-many-arguments</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            auth: KiliAuth object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
-
     <span class="nd">@deprecate</span><span class="p">(</span>
         <span class="n">msg</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">&quot;append_to_issues is deprecated. Please use `create_issues` or `create_questions`&quot;</span>
@@ -1878,7 +1865,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
 <span class="sd">            A result object which indicates if the mutation was successful,</span>
 <span class="sd">                or an error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">issue_number</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">issue_number</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">where</span> <span class="o">=</span> <span class="n">LabelWhere</span><span class="p">(</span>
@@ -1886,7 +1873,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
                 <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-                <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+                <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
             <span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;labelOf&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="c1"># pylint: disable=raise-missing-from</span>
@@ -1907,7 +1894,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
             <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">},</span>
         <span class="p">}</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@typechecked</span>
@@ -1930,8 +1917,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
 <span class="sd">            A list of dictionary with the `id` key of the created issues.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">label_id_array</span><span class="p">,</span> <span class="n">object_mid_array</span><span class="p">,</span> <span class="n">text_array</span><span class="p">])</span>
-        <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_id_array</span><span class="p">))</span>
-        <span class="n">label_asset_ids_map</span> <span class="o">=</span> <span class="n">get_labels_asset_ids_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">label_id_array</span><span class="p">)</span>
+        <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_id_array</span><span class="p">))</span>
+        <span class="n">label_asset_ids_map</span> <span class="o">=</span> <span class="n">get_labels_asset_ids_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">label_id_array</span><span class="p">)</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="p">{</span>
@@ -1952,7 +1939,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
             <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">label_asset_ids_map</span><span class="o">.</span><span class="n">values</span><span class="p">())},</span>
         <span class="p">}</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -1976,9 +1963,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
 <span class="sd">            A list of dictionary with the `id` key of the created questions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">text_array</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">])</span>
-        <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_array</span><span class="p">))</span>
+        <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_array</span><span class="p">))</span>
         <span class="n">asset_id_array</span> <span class="o">=</span> <span class="n">get_asset_ids_or_throw_error</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">,</span> <span class="n">asset_external_id_array</span><span class="p">,</span> <span class="n">project_id</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">,</span> <span class="n">asset_external_id_array</span><span class="p">,</span> <span class="n">project_id</span>
         <span class="p">)</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -1990,7 +1977,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#issue">the d
             <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">asset_id_array</span><span class="p">},</span>
         <span class="p">}</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2124,7 +2111,7 @@ and provide better performances.</p>
 <span class="sd">        A result object which indicates if the mutation was successful,</span>
 <span class="sd">            or an error message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">issue_number</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">issue_number</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">LabelWhere</span><span class="p">(</span>
@@ -2132,7 +2119,7 @@ and provide better performances.</p>
             <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+            <span class="n">LabelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;labelOf&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="c1"># pylint: disable=raise-missing-from</span>
@@ -2153,7 +2140,7 @@ and provide better performances.</p>
         <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">},</span>
     <span class="p">}</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>
         </details>
@@ -2251,8 +2238,8 @@ and provide better performances.</p>
 <span class="sd">        A list of dictionary with the `id` key of the created issues.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">label_id_array</span><span class="p">,</span> <span class="n">object_mid_array</span><span class="p">,</span> <span class="n">text_array</span><span class="p">])</span>
-    <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_id_array</span><span class="p">))</span>
-    <span class="n">label_asset_ids_map</span> <span class="o">=</span> <span class="n">get_labels_asset_ids_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">label_id_array</span><span class="p">)</span>
+    <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_id_array</span><span class="p">))</span>
+    <span class="n">label_asset_ids_map</span> <span class="o">=</span> <span class="n">get_labels_asset_ids_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">label_id_array</span><span class="p">)</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
@@ -2273,7 +2260,7 @@ and provide better performances.</p>
         <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">label_asset_ids_map</span><span class="o">.</span><span class="n">values</span><span class="p">())},</span>
     <span class="p">}</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2372,9 +2359,9 @@ and provide better performances.</p>
 <span class="sd">        A list of dictionary with the `id` key of the created questions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">text_array</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">])</span>
-    <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_array</span><span class="p">))</span>
+    <span class="n">issue_number_array</span> <span class="o">=</span> <span class="n">get_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_array</span><span class="p">))</span>
     <span class="n">asset_id_array</span> <span class="o">=</span> <span class="n">get_asset_ids_or_throw_error</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">,</span> <span class="n">asset_external_id_array</span><span class="p">,</span> <span class="n">project_id</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="p">,</span> <span class="n">asset_external_id_array</span><span class="p">,</span> <span class="n">project_id</span>
     <span class="p">)</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -2386,7 +2373,7 @@ and provide better performances.</p>
         <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">asset_id_array</span><span class="p">},</span>
     <span class="p">}</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_CREATE_ISSUES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2445,7 +2432,7 @@ and provide better performances.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
         
           <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>

@@ -19,7 +19,7 @@
         <link rel="next" href="../user/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -1305,15 +1305,9 @@
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesProjectVersion</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of ProjectVersion queries.&quot;&quot;&quot;</span>
 
+    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
+
     <span class="c1"># pylint: disable=too-many-arguments,dangerous-default-value</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            auth: KiliAuth object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">project_version</span><span class="p">(</span>
@@ -1374,7 +1368,7 @@
         <span class="p">)</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-        <span class="n">project_versions_gen</span> <span class="o">=</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">project_versions_gen</span> <span class="o">=</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">project_versions_gen</span>
@@ -1393,7 +1387,7 @@
         <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -1472,7 +1466,7 @@
     <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1597,7 +1591,7 @@ of creation, first to last).</p></td>
     <span class="p">)</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-    <span class="n">project_versions_gen</span> <span class="o">=</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">project_versions_gen</span> <span class="o">=</span> <span class="n">ProjectVersionQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">project_versions_gen</span>
@@ -1633,13 +1627,7 @@ of creation, first to last).</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsProjectVersion</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of ProjectVersion mutations.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">KiliAuth</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subclass.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            auth: KiliAuth object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
+    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">update_properties_in_project_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
@@ -1661,7 +1649,7 @@ of creation, first to last).</p></td>
             <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_version_id</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -1760,7 +1748,7 @@ of creation, first to last).</p></td>
         <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
         <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_version_id</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -1819,7 +1807,7 @@ of creation, first to last).</p></td>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
         
           <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
