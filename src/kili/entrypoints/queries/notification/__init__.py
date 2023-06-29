@@ -103,10 +103,8 @@ class QueriesNotification:
             as_generator: If `True`, a generator on the notifications is returned.
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            An iterable of notifications.
         """
-
         where = NotificationWhere(
             has_been_seen=has_been_seen,
             notification_id=notification_id,

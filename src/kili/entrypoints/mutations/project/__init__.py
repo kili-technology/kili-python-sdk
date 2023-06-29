@@ -58,7 +58,7 @@ class MutationsProject:
             role: The role of the user.
 
         Returns:
-            A dictionnary with the project user information.
+            A dictionary with the project user information.
 
 
         Examples:
@@ -273,7 +273,9 @@ class MutationsProject:
         return result
 
     @typechecked
-    def update_properties_in_role(self, role_id: str, project_id: str, user_id: str, role: str):
+    def update_properties_in_role(
+        self, role_id: str, project_id: str, user_id: str, role: str
+    ) -> Dict:
         """Update properties of a role.
 
         !!! info
@@ -291,8 +293,7 @@ class MutationsProject:
                 Possible choices are: `ADMIN`, `TEAM_MANAGER`, `REVIEWER`, `LABELER`
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dictionary with the project user information.
         """
         variables = {
             "roleID": role_id,
@@ -304,15 +305,14 @@ class MutationsProject:
         return format_result("data", result)
 
     @typechecked
-    def delete_from_roles(self, role_id: str):
+    def delete_from_roles(self, role_id: str) -> Dict[Literal["id"], str]:
         """Delete users by their role_id.
 
         Args:
             role_id: Identifier of the project user (not the ID of the user)
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict with the project id.
         """
         variables = {"where": {"id": role_id}}
         result = self.graphql_client.execute(GQL_DELETE_FROM_ROLES, variables)
@@ -326,22 +326,21 @@ class MutationsProject:
             project_id: Identifier of the project
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A string with the deleted project id.
         """
         variables = {"where": {"id": project_id}}
         result = self.graphql_client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
         return format_result("data", result)
 
     @typechecked
-    def archive_project(self, project_id: str):
+    def archive_project(self, project_id: str) -> Dict[Literal["id"], str]:
         """Archive a project.
 
         Args:
-            project_id: Identifier of the project
+            project_id: Identifier of the project.
 
         Returns:
-            A result object which indicates if the mutation was successful, or an error message.
+            A dict with the id of the project.
         """
         variables = {
             "projectID": project_id,
@@ -352,15 +351,14 @@ class MutationsProject:
         return format_result("data", result)
 
     @typechecked
-    def unarchive_project(self, project_id: str):
+    def unarchive_project(self, project_id: str) -> Dict[Literal["id"], str]:
         """Unarchive a project.
 
         Args:
             project_id: Identifier of the project
 
         Returns:
-            A result object which indicates if the mutation was successful,
-                or an error message.
+            A dict with the id of the project.
         """
         variables = {
             "projectID": project_id,

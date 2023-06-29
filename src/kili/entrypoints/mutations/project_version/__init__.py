@@ -1,6 +1,6 @@
 """Project version mutations."""
 
-from typing import Optional
+from typing import Dict, Optional
 
 from typeguard import typechecked
 
@@ -18,7 +18,9 @@ class MutationsProjectVersion:  # pylint: disable=too-few-public-methods
     graphql_client: GraphQLClient
 
     @typechecked
-    def update_properties_in_project_version(self, project_version_id: str, content: Optional[str]):
+    def update_properties_in_project_version(
+        self, project_version_id: str, content: Optional[str]
+    ) -> Dict:
         """Update properties of a project version.
 
         Args:
@@ -26,12 +28,13 @@ class MutationsProjectVersion:  # pylint: disable=too-few-public-methods
             content: Link to download the project version
 
         Returns:
-            A result object which indicates if the mutation was successful.
+            A dictionary containing the updated project version.
 
         Examples:
             >>> kili.update_properties_in_project_version(
                     project_version_id=project_version_id,
-                    content='test')
+                    content='test'
+                )
         """
         variables = {
             "content": content,

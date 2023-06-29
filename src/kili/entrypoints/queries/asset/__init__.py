@@ -559,8 +559,7 @@ class QueriesAsset:
             Date strings should have format: "YYYY-MM-DD"
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            The number of assets that match the given constraints.
 
         Examples:
             >>> kili.count_assets(project_id=project_id)

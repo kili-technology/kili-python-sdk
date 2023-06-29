@@ -106,8 +106,7 @@ class QueriesProjectUser:
             as_generator: If `True`, a generator on the project users is returned.
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            An iterable with the project users that match the criteria.
 
         Examples:
             ```

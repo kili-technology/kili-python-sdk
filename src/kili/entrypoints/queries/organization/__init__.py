@@ -79,8 +79,7 @@ class QueriesOrganization:
             as_generator: If `True`, a generator on the organizations is returned.
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            An iterable of organizations.
 
         Examples:
             >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
@@ -109,8 +108,7 @@ class QueriesOrganization:
             organization_id: Identifier of the organization
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            An integer corresponding to the number of organizations that match the criteria.
         """
         where = OrganizationWhere(
             email=email,
@@ -133,8 +131,7 @@ class QueriesOrganization:
             end_date: End date of the metrics computation
 
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            A dictionary containing the metrics of the organization.
         """
         if start_date is None:
             start_date = datetime.now()

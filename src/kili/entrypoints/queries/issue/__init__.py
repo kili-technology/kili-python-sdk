@@ -108,8 +108,8 @@ class QueriesIssue:
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the issues is returned.
         Returns:
-            A result object which contains the query if it was successful,
-                or an error message.
+            An iterable of issues objects represented as `dict`.
+
         Examples:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """

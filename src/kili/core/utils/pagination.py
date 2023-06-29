@@ -42,7 +42,7 @@ def batch_object_builder(
 ) -> Iterator[Dict[str, Optional[List[Any]]]]:
     """Generate a paginated iterator for several variables
     Args:
-        properties_to_batch: a dictionnary of properties to be batched.
+        properties_to_batch: a dictionary of properties to be batched.
         batch_size: the size of the batches to produce
     """
     if len(list(filter(None, properties_to_batch.values()))) == 0:
@@ -91,7 +91,7 @@ def _mutate_from_paginated_call(
 
     Args:
         self: kili
-        properties_to_batch: a dictionnary of properties to be batched.
+        properties_to_batch: a dictionary of properties to be batched.
             constants across batch are defined in the generate_variables function
         generate_variables: function that takes batched properties and return
             a graphQL payload for request for this batch

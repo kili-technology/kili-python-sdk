@@ -1,6 +1,8 @@
 """Functions to activate/deactivate a plugin."""
 
 
+from typing import Optional
+
 from kili.core.graphql.operations.plugin.mutations import (
     GQL_ACTIVATE_PLUGIN_ON_PROJECT,
     GQL_DEACTIVATE_PLUGIN_ON_PROJECT,
@@ -10,7 +12,7 @@ from kili.services.plugins.helpers import get_logger
 from kili.services.plugins.tools import check_errors_plugin_activation
 
 
-def activate_plugin(kili, plugin_name: str, project_id: str):
+def activate_plugin(kili, plugin_name: str, project_id: str) -> Optional[str]:
     """Create a plugin in Kili."""
     logger = get_logger()
 
@@ -26,7 +28,7 @@ def activate_plugin(kili, plugin_name: str, project_id: str):
     return format_result("data", result) if not already_activated else None
 
 
-def deactivate_plugin(kili, plugin_name: str, project_id: str):
+def deactivate_plugin(kili, plugin_name: str, project_id: str) -> str:
     """Create a plugin in Kili."""
     logger = get_logger()
 

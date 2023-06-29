@@ -34,13 +34,13 @@ class MutationsDataConnection:
         """Connect a cloud storage to a project.
 
         Args:
-            project_id: ID of the project.
-            cloud_storage_integration_id: ID of the cloud storage integration.
+            project_id: Id of the project.
+            cloud_storage_integration_id: Id of the cloud storage integration.
             selected_folders: List of folders of the data integration to connect to the project.
                 If not provided, all folders of the data integration will be connected.
 
         Returns:
-            A dict with the DataConnection ID.
+            A dict with the DataConnection Id.
         """
         data_integrations = list(
             DataIntegrationsQuery(self.graphql_client)(
@@ -87,14 +87,14 @@ class MutationsDataConnection:
             cloud storage integration anymore but that are still in the project.
 
         Args:
-            cloud_storage_connection_id: ID of the cloud storage connection.
+            cloud_storage_connection_id: Id of the cloud storage connection.
             delete_extraneous_files: If True, delete extraneous files.
             dry_run: If True, will not synchronize the data connection but only print the
                 differences. This is useful to check the differences before applying them to the
                 project.
 
         Returns:
-            A dict with the cloud storage connection ID.
+            A dict with the cloud storage connection Id.
         """
         return services.synchronize_data_connection(
             self, cloud_storage_connection_id, delete_extraneous_files, dry_run

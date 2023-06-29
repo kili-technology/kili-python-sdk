@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 from zipfile import ZipFile
 
+from typing_extensions import LiteralString
+
 from kili.core.constants import (
     mime_extensions_for_py_scripts,
     mime_extensions_for_txt_files,
@@ -101,7 +103,7 @@ class WebhookUploader:
         self.verbose = verbose
         self.handler_types = handler_types
 
-    def create_webhook(self):
+    def create_webhook(self) -> str:
         """Create a webhook receiving Kili events."""
         variables = {
             "handlerTypes": self.handler_types,
@@ -114,7 +116,7 @@ class WebhookUploader:
 
         return format_result("data", result)
 
-    def update_webhook(self):
+    def update_webhook(self) -> str:
         """Update a webhook receiving Kili events."""
         variables = {
             "handlerTypes": self.handler_types,
@@ -269,7 +271,7 @@ class PluginUploader:
         result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return format_result("data", result)
 
-    def _check_plugin_runner_status(self, update=False):
+    def _check_plugin_runner_status(self, update=False) -> LiteralString:
         """Check the status of a plugin's runner until it is active."""
         logger = get_logger()
 
