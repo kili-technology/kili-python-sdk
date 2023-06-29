@@ -80,7 +80,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         ("PREPROD", "GCP", "38fb4280caacfbed9cb8a235441a1dc7", None, 5),
     ],
 )
-@pytest.mark.skip(reason="data integrations on preprod dead")
+@pytest.mark.skip(reason="data integrations dead on preprod")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
