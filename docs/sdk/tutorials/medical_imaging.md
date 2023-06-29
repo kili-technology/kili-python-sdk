@@ -159,7 +159,7 @@ We can now use the Kili SDK to create our project and upload our images to the p
 
 
 ```python
-title = "Medical Imaging with Kili Technology"
+title = "[Kili SDK Notebook]: Medical Imaging with Kili Technology"
 description = "This is a test project"
 input_type = "IMAGE"
 

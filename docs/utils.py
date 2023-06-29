@@ -268,6 +268,21 @@ def check_colab_link_in_notebook(ipynb_filepath: Path):
         raise ColabLinkMissingError(f"Colab link not found in {ipynb_filepath.name}.")
 
 
+def check_create_project_has_good_title_in_notebook(ipynb_filepath: Path):
+    """Check if project(s) created in notebook have a good title.
+
+    Prefix should be: "[Kili SDK Notebook]: ..."
+    """
+    with open(ipynb_filepath, encoding="utf-8") as file:
+        notebook_str = file.read()
+
+    if ".create_project(" in notebook_str and "[Kili SDK Notebook]: " not in notebook_str:
+        raise ValueError(
+            f"Project(s) created in {ipynb_filepath.name} should have '[Kili SDK Notebook]: ...'"
+            " prefix for monitoring purpose."
+        )
+
+
 class TutorialNameMissingError(Exception):
     """Raised when tutorial name is not in tutorials homepage."""
 
@@ -348,6 +363,7 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         check_mkdocs_yml_up_to_date(md_filepath)
         check_notebook_tested(ipynb_filepath)
         check_colab_link_in_notebook(ipynb_filepath)
+        check_create_project_has_good_title_in_notebook(ipynb_filepath)
         check_in_tutorial_homepage(tutorial_name)
         try:
             check_markdown_up_to_date(ipynb_filepath, md_filepath, DEFAULT_REMOVE_CELL_TAGS)

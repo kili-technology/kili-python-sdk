@@ -65,7 +65,7 @@ json_interface = {
 
 
 ```python
-title = "Plugins test project"
+title = "[Kili SDK Notebook]: Plugins test project"
 description = "My first project with a plugin"
 input_type = "IMAGE"
 

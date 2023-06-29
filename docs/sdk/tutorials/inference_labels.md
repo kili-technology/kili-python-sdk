@@ -103,7 +103,9 @@ json_interface = {
 }
 
 project_id = kili.create_project(
-    title="Project demo inference", input_type="IMAGE", json_interface=json_interface
+    title="[Kili SDK Notebook]: Project demo inference",
+    input_type="IMAGE",
+    json_interface=json_interface,
 )["id"]
 ```
 
@@ -276,7 +278,9 @@ We start with a human-labeled dataset and we insert model predictions to it, to 
 
 ```python
 project_id = kili.create_project(
-    title="Project demo inference 2", input_type="IMAGE", json_interface=json_interface
+    title="[Kili SDK Notebook]: Project demo inference 2",
+    input_type="IMAGE",
+    json_interface=json_interface,
 )["id"]
 ```
 

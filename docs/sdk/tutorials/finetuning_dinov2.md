@@ -173,7 +173,7 @@ Next, we create the Kili project with its ontology showing the two categories:
 
 
 ```python
-project_title = "Demo - DINOv2 Classification"
+project_title = "[Kili SDK Notebook]: Demo - DINOv2 Classification"
 
 json_interface = {
     "jobs": {

@@ -534,7 +534,9 @@ Let's create the text project with our ontology:
 
 ```python
 project_id = kili.create_project(
-    input_type="TEXT", json_interface=json_interface, title="Tagtog to Kili recipe"
+    input_type="TEXT",
+    json_interface=json_interface,
+    title="[Kili SDK Notebook]: Tagtog to Kili recipe",
 )["id"]
 ```
 

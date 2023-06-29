@@ -78,7 +78,9 @@ Next, we create a project:
 
 ```python
 project_id = kili.create_project(
-    json_interface=json_interface, input_type="TEXT", title="Import text assets tutorial"
+    json_interface=json_interface,
+    input_type="TEXT",
+    title="[Kili SDK Notebook]: Import text assets",
 )["id"]
 ```
 

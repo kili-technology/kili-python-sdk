@@ -79,7 +79,7 @@ interface = {
 }
 
 result = kili.create_project(
-    title="Test Project",
+    title="[Kili SDK Notebook]: Importing assets with metadata",
     description="Project Description",
     input_type="IMAGE",
     json_interface=interface,
