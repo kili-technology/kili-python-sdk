@@ -1,4 +1,5 @@
 """Test module for the GraphQL client."""
+import concurrent.futures
 from pathlib import Path
 from unittest import mock
 
@@ -7,6 +8,7 @@ from gql.transport import exceptions
 from graphql import build_ast_schema, parse
 
 from kili.client import Kili
+from kili.core.graphql.operations.user.queries import GQL_ME
 from kili.exceptions import GraphQLError
 
 
@@ -79,3 +81,14 @@ def test_outdated_cached_schema(mocker):
 
     if SCHEMA_PATH.is_file():
         SCHEMA_PATH.unlink()
+
+
+def test_kili_client_can_be_used_in_multiple_threads():
+    kili = Kili()
+
+    NB_THREADS = 10
+    with concurrent.futures.ThreadPoolExecutor(max_workers=NB_THREADS) as executor:
+        futures = [executor.submit(kili.graphql_client.execute, GQL_ME) for _ in range(NB_THREADS)]
+        for future in concurrent.futures.as_completed(futures):
+            assert future.result()["data"]["id"]
+            assert future.result()["data"]["email"]

@@ -71,6 +71,10 @@ class GraphQLClient:
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
+        # mutex to avoid multiple threads sending queries to the backend at the same time
+        # (which can happen if we use the same client in multiple threads)
+        self._execute_lock = threading.Lock()
+
         gql_requests_logger.setLevel(logging.WARNING)
 
         self._gql_transport = RequestsHTTPTransport(
@@ -253,7 +257,8 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         try:
-            return _execute(document, variables, **kwargs)
+            with self._execute_lock:
+                return _execute(document, variables, **kwargs)
 
         except GraphQLError as err:
             # if error is due do parsing or local validation of the query (graphql.GraphQLError)
