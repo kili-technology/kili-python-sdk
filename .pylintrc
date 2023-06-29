@@ -71,6 +71,7 @@ disable=raw-checker-failed,
         duplicate-code,
         logging-fstring-interpolation,
         cyclic-import,
+        too-few-public-methods,
 
 
 # Enable the message, report, category or checker with the given id(s). You can
