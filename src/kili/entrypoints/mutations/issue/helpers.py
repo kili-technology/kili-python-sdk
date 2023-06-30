@@ -1,9 +1,7 @@
 """Helpers for the issue mutations."""
 
 
-from typing import List
-
-from typing_extensions import Literal
+from typing import List, Literal
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere

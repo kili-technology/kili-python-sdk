@@ -1,8 +1,6 @@
 """GraphQL Queries of Issues."""
 
-from typing import List, Optional
-
-from typing_extensions import Literal
+from typing import List, Literal, Optional
 
 from kili.core.graphql import BaseQueryWhere, GraphQLQuery
 

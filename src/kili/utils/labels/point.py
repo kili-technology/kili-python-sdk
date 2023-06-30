@@ -1,8 +1,6 @@
 """Helpers to create point annotations."""
 
-from typing import Dict, Optional, Union
-
-from typing_extensions import Literal
+from typing import Dict, Literal, Optional, Union
 
 
 def point_to_normalized_point(

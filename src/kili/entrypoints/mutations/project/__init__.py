@@ -1,14 +1,13 @@
 """Project mutations."""
 
 from json import dumps
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient

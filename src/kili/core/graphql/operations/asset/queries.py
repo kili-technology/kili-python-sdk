@@ -1,9 +1,7 @@
 """GraphQL Queries of Assets."""
 
 
-from typing import List, Optional
-
-from typing_extensions import Literal
+from typing import List, Literal, Optional
 
 from kili.core.graphql import BaseQueryWhere, GraphQLQuery
 from kili.orm import Asset as AssetFormatType

@@ -1,8 +1,7 @@
 """Types specific to import."""
-from typing import Dict, List, NewType, Optional
+from typing import Dict, List, Literal, NewType, Optional
 
 from pydantic import BaseModel, Extra, StrictInt, StrictStr, validator
-from typing_extensions import Literal
 
 Classes = NewType("Classes", Dict[int, str])
 LabelFormat = Literal["yolo_v4", "yolo_v5", "yolo_v7", "kili", "raw"]

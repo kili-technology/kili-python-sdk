@@ -2,10 +2,9 @@
 
 import functools
 from collections import defaultdict
-from typing import Dict, Iterator, List, Optional, Sequence, Union
+from typing import Dict, Iterator, List, Literal, Optional, Sequence, Union
 
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili.services.label_data_parsing import category as category_module
 from kili.services.label_data_parsing import json_response as json_response_module

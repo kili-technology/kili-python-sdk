@@ -1,7 +1,5 @@
 """Types used by the conversion service."""
-from typing import Callable, Dict, NamedTuple, Tuple
-
-from typing_extensions import Literal
+from typing import Callable, Dict, Literal, NamedTuple, Tuple
 
 ExportType = Literal["latest", "normal"]
 SplitOption = Literal["split", "merged"]

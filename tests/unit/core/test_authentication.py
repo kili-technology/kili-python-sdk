@@ -16,7 +16,6 @@ def test__check_expiry_of_key_is_close(mocker: pytest_mock.MockerFixture):
     mocker.patch.object(Kili, "_check_api_key_valid", return_value=True)
     mocker.patch.object(Kili, "get_user", return_value={"id": "id", "email": "email"})
     mocker.patch("kili.client.GraphQLClient")
-    mocker.patch("kili.client._deprecate_python_37", return_value=None)
 
     with patch.object(
         APIKeyQuery, "__call__", return_value=iter([{"expiryDate": "2021-01-01T00:00:00.000Z"}])

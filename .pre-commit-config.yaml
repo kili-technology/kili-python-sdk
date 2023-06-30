@@ -31,7 +31,7 @@ repos:
     rev: v3.3.2
     hooks:
       - id: pyupgrade
-        args: [--py37-plus]
+        args: [--py38-plus]
   - repo: https://github.com/srstevenson/nb-clean
     rev: 2.4.0
     hooks:

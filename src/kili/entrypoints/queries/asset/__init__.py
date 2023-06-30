@@ -1,11 +1,10 @@
 """Asset queries."""
 
 import warnings
-from typing import Dict, Generator, Iterable, List, Optional, Union, overload
+from typing import Dict, Generator, Iterable, List, Literal, Optional, Union, overload
 
 import pandas as pd
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient

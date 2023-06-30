@@ -1,8 +1,6 @@
 """Helpers to create boundingPoly rectangle annotations."""
 
-from typing import Dict, List, Optional, Union
-
-from typing_extensions import Literal
+from typing import Dict, List, Literal, Optional, Union
 
 from .point import normalized_point_to_point, point_to_normalized_point
 

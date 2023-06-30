@@ -1,7 +1,7 @@
 """Types used by the conversion service."""
-from typing import Any, Dict, List, NamedTuple, NewType, Tuple, Union
+from typing import Any, Dict, List, Literal, NamedTuple, NewType, Tuple, Union
 
-from typing_extensions import Literal, TypedDict
+from typing_extensions import TypedDict
 
 InputType = Literal["TEXT", "IMAGE"]
 AssetId = NewType("AssetId", str)
