@@ -25,6 +25,7 @@ from kili.entrypoints.mutations.asset.queries import (
 from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
+from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
 
 from ..exceptions import MutationError
@@ -169,7 +170,9 @@ class MutationsAsset:
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         project_id: Optional[str] = None,
-        page_resolutions_array: Optional[List[dict]] = None,
+        page_resolutions_array: Optional[
+            Union[List[List[dict]], List[List[PageResolution]]]
+        ] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Update the properties of one or more assets.
 
@@ -199,7 +202,9 @@ class MutationsAsset:
             project_id: The project ID. Only required if `external_ids` argument is provided.
             page_resolutions_array: The resolution of each page of the asset (for PDF projects).
               Note that each element of the array should contain all the pages resolutions of the
-              corresponding asset.
+              corresponding asset. Each resolution can be passed as a
+              `kili.utils.assets.PageResolution` object, or as a dictionary with keys `width`,
+                `height`, `pageNumber` and optionally `rotation`.
 
         Returns:
             A list of dictionaries with the asset ids.
@@ -222,12 +227,12 @@ class MutationsAsset:
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     page_resolutions_array=[
                         [
-                            {"width": 480, "height": 640, "pageNumber": 0},
-                            {"width": 480, "height": 640, "pageNumber": 1},
+                            PageResolution(width=480, height=640, pageNumber=0)},
+                            PageResolution(width=480, height=640, pageNumber=1)},
                         ],[
-                            {"width": 340, "height": 512, "pageNumber": 0},
-                            {"width": 680, "height": 1024, "pageNumber": 1},
-                            {"width": 680, "height": 1024, "pageNumber": 2},
+                            PageResolution(width=340, height=512, pageNumber=0},
+                            PageResolution(width=680, height=1024, pageNumber=1, rotation=90},
+                            PageResolution(width=680, height=1024, pageNumber=2},
                         ]
                     ],
                 )
@@ -287,6 +292,17 @@ class MutationsAsset:
         properties_to_batch = process_update_properties_in_assets_parameters(parameters)
 
         def generate_variables(batch: Dict) -> Dict:
+            page_resolutions_array_batch = []
+            for page_resolution_array in batch["page_resolutions_array"]:
+                output_page_resolution_array = []
+                for page_resolution in page_resolution_array:
+                    output_page_resolution_array.append(
+                        page_resolution.as_dict()
+                        if isinstance(page_resolution, PageResolution)
+                        else page_resolution
+                    )
+                page_resolutions_array_batch.append(output_page_resolution_array)
+
             data = {
                 "priority": batch["priorities"],
                 "jsonMetadata": batch["json_metadatas"],
@@ -299,7 +315,7 @@ class MutationsAsset:
                 "status": batch["status_array"],
                 "isUsedForConsensus": batch["is_used_for_consensus_array"],
                 "isHoneypot": batch["is_honeypot_array"],
-                "pageResolutions": batch["page_resolutions_array"],
+                "pageResolutions": page_resolutions_array_batch,
             }
             data_array = [dict(zip(data, t)) for t in zip(*data.values())]  # type: ignore
             return {
