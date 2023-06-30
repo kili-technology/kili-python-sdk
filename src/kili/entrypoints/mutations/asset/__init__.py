@@ -1,13 +1,12 @@
 """Asset mutations."""
 
 import warnings
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient

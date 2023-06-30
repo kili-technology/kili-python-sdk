@@ -2,10 +2,9 @@
 
 import warnings
 from json import dumps
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
-from typing_extensions import Literal
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
