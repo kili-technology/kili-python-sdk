@@ -11,7 +11,7 @@ Let's start by install Kili:
 
 
 ```python
-%pip install kili
+%pip install kili[image-utils] numpy
 ```
 
 
@@ -20,6 +20,8 @@ import getpass
 import json
 import os
 from pprint import pprint
+
+import numpy as np
 
 from kili.client import Kili
 ```
@@ -539,7 +541,7 @@ kili.append_many_to_dataset(
 
 
 
-    {'id': 'cljih95sr00gp0j6e34er61n8'}
+    {'id': 'cljilughf00kc0j5yh367gp3v'}
 
 
 
@@ -555,6 +557,7 @@ from kili.utils.labels.bbox import (
     bbox_points_to_normalized_vertices,
     point_to_normalized_point,
 )
+from kili.utils.labels.image import mask_to_normalized_vertices
 ```
 
 
@@ -566,6 +569,7 @@ for image_id in external_id_array:
     img_width = img_info["width"]
     img_height = img_info["height"]
 
+    # json response contains the label data for the image
     json_resp = {}
 
     # Transcription job
@@ -573,9 +577,10 @@ for image_id in external_id_array:
         ann for ann in captions_val2017["annotations"] if ann["image_id"] == int(image_id)
     ]
     json_resp["TRANSCRIPTION_JOB"] = {
-        "text": img_captions[0]["caption"]
-    }  # only take the 1st caption
+        "text": img_captions[0]["caption"]  # only take the 1st caption
+    }
 
+    # Object detection and segmentation jobs
     coco_annotations = [
         ann for ann in instances_val2017["annotations"] if ann["image_id"] == int(image_id)
     ]
@@ -632,7 +637,36 @@ for image_id in external_id_array:
                 kili_annotations_segm.append(kili_ann_segm)
         else:
             # a crowd (iscrowd=1 in which case RLE (run-length encoding) is used)
-            raise NotImplementedError("Crowd segmentation not implemented yet")
+            rle_counts = coco_segmentations["counts"]
+            # we work with a flat image to simplify the code
+            mask = np.zeros(img_height * img_width, dtype=np.uint8)
+            pixel_index = 0
+            for i, count in enumerate(rle_counts):
+                if i % 2 == 0:
+                    # we skip pixels
+                    pixel_index += count
+                else:
+                    # we set pixels' value
+                    mask[pixel_index : pixel_index + count] = 255
+                    pixel_index += count
+
+            # we reshape the mask to its original shape
+            # and we transpose it to have the same shape as the image
+            # (i.e. (height, width))
+            mask = mask.reshape((img_width, img_height)).T
+
+            # we convert the mask to normalized vertices
+            # hierarchy is not used here. It is used for polygons with holes.
+            normalized_vertices, hierarchy = mask_to_normalized_vertices(mask)
+            for contour in normalized_vertices:
+                kili_ann_segm = {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": contour}],
+                    "categories": [{"name": category_id_to_name[coco_ann["category_id"]]}],
+                    "type": "semantic",
+                    "mid": str(coco_ann["id"]) + "_segm_crowd",
+                }
+                kili_annotations_segm.append(kili_ann_segm)
 
     json_resp["OBJECT_DETECTION_JOB"] = {"annotations": kili_annotations_bbox}
     json_resp["SEGMENTATION_JOB"] = {"annotations": kili_annotations_segm}
@@ -654,16 +688,16 @@ kili.append_labels(
 
 
 
-    [{'id': 'cljijvth2000h0j5yhfjb6fir'},
-     {'id': 'cljijvth3000i0j5y1eq53n98'},
-     {'id': 'cljijvth3000j0j5y6duc2lto'},
-     {'id': 'cljijvth3000k0j5yhw16cm78'},
-     {'id': 'cljijvth3000l0j5ybvgp4teq'},
-     {'id': 'cljijvth3000m0j5ygcbg3a9r'},
-     {'id': 'cljijvth3000n0j5yeyj5fwp1'},
-     {'id': 'cljijvth3000o0j5y9d750rid'},
-     {'id': 'cljijvth3000p0j5y4mepbjvk'},
-     {'id': 'cljijvth3000q0j5y0hvfgrd2'}]
+    [{'id': 'cljinqsjc00050jb98m9c58j7'},
+     {'id': 'cljinqsjc00060jb90cgb68bs'},
+     {'id': 'cljinqsjd00070jb99t2bg1po'},
+     {'id': 'cljinqsjd00080jb947f6et8k'},
+     {'id': 'cljinqsjd00090jb9d6nl4mj9'},
+     {'id': 'cljinqsjd000a0jb98k28cdmu'},
+     {'id': 'cljinqsjd000b0jb98hoofpwf'},
+     {'id': 'cljinqsjd000c0jb9elhih8la'},
+     {'id': 'cljinqsjd000d0jb9733ldicu'},
+     {'id': 'cljinqsjd000e0jb9emvuclwn'}]
 
 
 
