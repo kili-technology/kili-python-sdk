@@ -1,0 +1,406 @@
+{
+    "annotations": [
+        {
+            "caption": "A small closed toilet in a cramped space.",
+            "id": 441,
+            "image_id": 331352
+        },
+        {
+            "caption": "A tan toilet and sink combination in a small room.",
+            "id": 540,
+            "image_id": 331352
+        },
+        {
+            "caption": "This is an advanced toilet with a sink and control panel.",
+            "id": 981,
+            "image_id": 331352
+        },
+        {
+            "caption": "A close-up picture of a toilet with a fountain.",
+            "id": 1392,
+            "image_id": 331352
+        },
+        {
+            "caption": "Off white toilet with a faucet and controls. ",
+            "id": 2970,
+            "image_id": 331352
+        },
+        {
+            "caption": "a person with a shopping cart on a city street ",
+            "id": 107395,
+            "image_id": 252219
+        },
+        {
+            "caption": "City dwellers walk by as a homeless man begs for cash.",
+            "id": 109132,
+            "image_id": 252219
+        },
+        {
+            "caption": "People walking past a homeless man begging on a city street",
+            "id": 111433,
+            "image_id": 252219
+        },
+        {
+            "caption": "a homeless man holding a cup and standing next to a shopping cart on a street",
+            "id": 114199,
+            "image_id": 252219
+        },
+        {
+            "caption": "People are walking on the street by a homeless person.",
+            "id": 114511,
+            "image_id": 252219
+        },
+        {
+            "caption": "The shiny motorcycle has been put on display.",
+            "id": 369673,
+            "image_id": 480985
+        },
+        {
+            "caption": "A man is in a kitchen making pizzas.",
+            "id": 370509,
+            "image_id": 397133
+        },
+        {
+            "caption": "Man in apron standing on front of oven with pans and bakeware",
+            "id": 370584,
+            "image_id": 397133
+        },
+        {
+            "caption": "A baker is working in the kitchen rolling dough.",
+            "id": 372252,
+            "image_id": 397133
+        },
+        {
+            "caption": "A person standing by a stove in a kitchen.",
+            "id": 372765,
+            "image_id": 397133
+        },
+        {
+            "caption": "The new motorcycle on display is very shiny.",
+            "id": 372865,
+            "image_id": 480985
+        },
+        {
+            "caption": "A motorcycle is parked inside of a building.",
+            "id": 374665,
+            "image_id": 480985
+        },
+        {
+            "caption": "A table with pies being made and a person standing near a wall with pots and pans hanging on the wall.",
+            "id": 375891,
+            "image_id": 397133
+        },
+        {
+            "caption": "A brand new motorcycle on display at a show.",
+            "id": 377983,
+            "image_id": 480985
+        },
+        {
+            "caption": "The front end of a red motorcycle that is on display.",
+            "id": 380866,
+            "image_id": 480985
+        },
+        {
+            "caption": "a blue bike parked on a side walk ",
+            "id": 429740,
+            "image_id": 174482
+        },
+        {
+            "caption": "A bicycle is chained to a fixture on a city street",
+            "id": 430565,
+            "image_id": 174482
+        },
+        {
+            "caption": "A blue bicycle sits on a sidewalk near a street.",
+            "id": 430589,
+            "image_id": 174482
+        },
+        {
+            "caption": "A bicycle is locked up to a post",
+            "id": 431771,
+            "image_id": 174482
+        },
+        {
+            "caption": "a bike sits parked next to a street ",
+            "id": 435809,
+            "image_id": 174482
+        },
+        {
+            "caption": "A row of white toilets sitting on top of a dirt ground.",
+            "id": 443857,
+            "image_id": 458054
+        },
+        {
+            "caption": "A bunch of dirty looking white toilets in a row outside.",
+            "id": 450799,
+            "image_id": 458054
+        },
+        {
+            "caption": "There is a row of used and broken toilets in a field.",
+            "id": 451921,
+            "image_id": 458054
+        },
+        {
+            "caption": "A row of toilets with broken seat tops on the ground.",
+            "id": 462229,
+            "image_id": 458054
+        },
+        {
+            "caption": "LOTS OF BROKEN TOILETS SITTING OUT ON A LAWN",
+            "id": 464194,
+            "image_id": 458054
+        },
+        {
+            "caption": "A bathroom that has a broken wall in the shower.",
+            "id": 501985,
+            "image_id": 403385
+        },
+        {
+            "caption": "A bathroom looks clean but is missing tile at the shower stall.",
+            "id": 507367,
+            "image_id": 403385
+        },
+        {
+            "caption": "A view of a bathroom that needs to be fixed up.",
+            "id": 508369,
+            "image_id": 403385
+        },
+        {
+            "caption": "a shower toilet and sink in a basement bathroom",
+            "id": 510313,
+            "image_id": 403385
+        },
+        {
+            "caption": "A very big whit rest room with a shabby looking shower.",
+            "id": 510664,
+            "image_id": 403385
+        },
+        {
+            "caption": "a couple of buckets in a white room",
+            "id": 576538,
+            "image_id": 6818
+        },
+        {
+            "caption": "A bathroom with no toilets and a red and green bucket. ",
+            "id": 582160,
+            "image_id": 6818
+        },
+        {
+            "caption": "a shower room with two buckets, tolet paper holder and soap.",
+            "id": 585472,
+            "image_id": 6818
+        },
+        {
+            "caption": "A standing toilet in a bathroom next to a window.",
+            "id": 585544,
+            "image_id": 6818
+        },
+        {
+            "caption": "This picture looks like a janitors closet with buckets on the floor.",
+            "id": 586015,
+            "image_id": 6818
+        },
+        {
+            "caption": "The dining table near the kitchen has a bowl of fruit on it.",
+            "id": 597185,
+            "image_id": 37777
+        },
+        {
+            "caption": "A small kitchen has various appliances and a table.",
+            "id": 598568,
+            "image_id": 37777
+        },
+        {
+            "caption": "The kitchen is clean and ready for us to see.",
+            "id": 599939,
+            "image_id": 37777
+        },
+        {
+            "caption": "A kitchen and dining area decorated in white.",
+            "id": 601877,
+            "image_id": 37777
+        },
+        {
+            "caption": "A kitchen that has a bowl of fruit on the table.",
+            "id": 603617,
+            "image_id": 37777
+        },
+        {
+            "caption": "A person on a skateboard and bike at a skate park.",
+            "id": 647151,
+            "image_id": 87038
+        },
+        {
+            "caption": "A man on a skateboard performs a trick at the skate park",
+            "id": 653244,
+            "image_id": 87038
+        },
+        {
+            "caption": "A skateboarder jumps into the air as he performs a skateboard trick.",
+            "id": 653436,
+            "image_id": 87038
+        },
+        {
+            "caption": "Athletes performing tricks on a BMX bicycle and a skateboard.",
+            "id": 654318,
+            "image_id": 87038
+        },
+        {
+            "caption": "a man falls off his skateboard in a skate park.",
+            "id": 654543,
+            "image_id": 87038
+        }
+    ],
+    "images": [
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000397133.jpg",
+            "date_captured": "2013-11-14 17:02:52",
+            "file_name": "000000397133.jpg",
+            "flickr_url": "http://farm7.staticflickr.com/6116/6255196340_da26cf2c9e_z.jpg",
+            "height": 427,
+            "id": 397133,
+            "license": 4,
+            "width": 640
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000037777.jpg",
+            "date_captured": "2013-11-14 20:55:31",
+            "file_name": "000000037777.jpg",
+            "flickr_url": "http://farm9.staticflickr.com/8429/7839199426_f6d48aa585_z.jpg",
+            "height": 230,
+            "id": 37777,
+            "license": 1,
+            "width": 352
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000252219.jpg",
+            "date_captured": "2013-11-14 22:32:02",
+            "file_name": "000000252219.jpg",
+            "flickr_url": "http://farm4.staticflickr.com/3446/3232237447_13d84bd0a1_z.jpg",
+            "height": 428,
+            "id": 252219,
+            "license": 4,
+            "width": 640
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000087038.jpg",
+            "date_captured": "2013-11-14 23:11:37",
+            "file_name": "000000087038.jpg",
+            "flickr_url": "http://farm8.staticflickr.com/7355/8825114508_b0fa4d7168_z.jpg",
+            "height": 480,
+            "id": 87038,
+            "license": 1,
+            "width": 640
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000174482.jpg",
+            "date_captured": "2013-11-14 23:16:55",
+            "file_name": "000000174482.jpg",
+            "flickr_url": "http://farm8.staticflickr.com/7020/6478877255_242f741dd1_z.jpg",
+            "height": 388,
+            "id": 174482,
+            "license": 6,
+            "width": 640
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000403385.jpg",
+            "date_captured": "2013-11-15 00:09:17",
+            "file_name": "000000403385.jpg",
+            "flickr_url": "http://farm4.staticflickr.com/3526/3768289025_b29315b582_z.jpg",
+            "height": 511,
+            "id": 403385,
+            "license": 4,
+            "width": 640
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000006818.jpg",
+            "date_captured": "2013-11-15 01:52:52",
+            "file_name": "000000006818.jpg",
+            "flickr_url": "http://farm3.staticflickr.com/2318/2068039201_b967c69504_z.jpg",
+            "height": 640,
+            "id": 6818,
+            "license": 4,
+            "width": 427
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000480985.jpg",
+            "date_captured": "2013-11-15 13:09:24",
+            "file_name": "000000480985.jpg",
+            "flickr_url": "http://farm3.staticflickr.com/2336/1634911562_703ff01cff_z.jpg",
+            "height": 500,
+            "id": 480985,
+            "license": 6,
+            "width": 375
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000458054.jpg",
+            "date_captured": "2013-11-15 13:13:31",
+            "file_name": "000000458054.jpg",
+            "flickr_url": "http://farm9.staticflickr.com/8010/7579121084_7f1d01cd39_z.jpg",
+            "height": 426,
+            "id": 458054,
+            "license": 4,
+            "width": 640
+        },
+        {
+            "coco_url": "http://images.cocodataset.org/val2017/000000331352.jpg",
+            "date_captured": "2013-11-15 13:55:22",
+            "file_name": "000000331352.jpg",
+            "flickr_url": "http://farm1.staticflickr.com/53/136223761_7764eb56fa_z.jpg",
+            "height": 500,
+            "id": 331352,
+            "license": 4,
+            "width": 351
+        }
+    ],
+    "info": {
+        "contributor": "COCO Consortium",
+        "date_created": "2017/09/01",
+        "description": "COCO 2017 Dataset",
+        "url": "http://cocodataset.org",
+        "version": "1.0",
+        "year": 2017
+    },
+    "licenses": [
+        {
+            "id": 1,
+            "name": "Attribution-NonCommercial-ShareAlike License",
+            "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/"
+        },
+        {
+            "id": 2,
+            "name": "Attribution-NonCommercial License",
+            "url": "http://creativecommons.org/licenses/by-nc/2.0/"
+        },
+        {
+            "id": 3,
+            "name": "Attribution-NonCommercial-NoDerivs License",
+            "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/"
+        },
+        {
+            "id": 4,
+            "name": "Attribution License",
+            "url": "http://creativecommons.org/licenses/by/2.0/"
+        },
+        {
+            "id": 5,
+            "name": "Attribution-ShareAlike License",
+            "url": "http://creativecommons.org/licenses/by-sa/2.0/"
+        },
+        {
+            "id": 6,
+            "name": "Attribution-NoDerivs License",
+            "url": "http://creativecommons.org/licenses/by-nd/2.0/"
+        },
+        {
+            "id": 7,
+            "name": "No known copyright restrictions",
+            "url": "http://flickr.com/commons/usage/"
+        },
+        {
+            "id": 8,
+            "name": "United States Government Work",
+            "url": "http://www.usa.gov/copyright.shtml"
+        }
+    ]
+}
