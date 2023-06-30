@@ -292,17 +292,6 @@ class MutationsAsset:
         properties_to_batch = process_update_properties_in_assets_parameters(parameters)
 
         def generate_variables(batch: Dict) -> Dict:
-            page_resolutions_array_batch = []
-            for page_resolution_array in batch["page_resolutions_array"]:
-                output_page_resolution_array = []
-                for page_resolution in page_resolution_array:
-                    output_page_resolution_array.append(
-                        page_resolution.as_dict()
-                        if isinstance(page_resolution, PageResolution)
-                        else page_resolution
-                    )
-                page_resolutions_array_batch.append(output_page_resolution_array)
-
             data = {
                 "priority": batch["priorities"],
                 "jsonMetadata": batch["json_metadatas"],
@@ -315,7 +304,7 @@ class MutationsAsset:
                 "status": batch["status_array"],
                 "isUsedForConsensus": batch["is_used_for_consensus_array"],
                 "isHoneypot": batch["is_honeypot_array"],
-                "pageResolutions": page_resolutions_array_batch,
+                "pageResolutions": batch["page_resolutions_array"],
             }
             data_array = [dict(zip(data, t)) for t in zip(*data.values())]  # type: ignore
             return {
