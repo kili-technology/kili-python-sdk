@@ -36,8 +36,8 @@ def process_update_properties_in_assets_parameters(
     }
 
     argument_to_gql_mapping = {
-        "assetIds": asset_ids,
-        "externalIds": external_ids,
+        "assetId": asset_ids,
+        "externalId": external_ids,
         "priority": priorities,
         "jsonMetadata": json_metadatas,
         "consensusMark": consensus_marks,
