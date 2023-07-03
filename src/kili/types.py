@@ -1,6 +1,5 @@
 # pylint: disable:invalid-name,too-many-instance-attributes
 """GraphQL types."""
-
 from typing import Dict, List
 
 from typing_extensions import TypedDict
@@ -21,6 +20,8 @@ from kili.core.enums import (
 from kili.core.helpers import deprecate
 
 
+#######
+# The following types are deprecated and will be removed in the next major release.
 @deprecate()
 class License(TypedDict):
     """A Wrapper for License GraphQL object."""
