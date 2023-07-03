@@ -99,7 +99,7 @@ def mocked_ProjectQuery(where, _fields, _options):
         return [
             {
                 "title": "test OD project",
-                "id": "object_detection",
+                "id": project_id,
                 "description": "This is a test project",
                 "jsonInterface": json_interface,
                 "inputType": "IMAGE",
@@ -128,7 +128,7 @@ def mocked_ProjectQuery(where, _fields, _options):
         return [
             {
                 "title": "test OD video project",
-                "id": "object_detection_video_project_id",
+                "id": project_id,
                 "description": "This is a test project",
                 "jsonInterface": json_interface,
                 "inputType": "VIDEO",
@@ -161,7 +161,7 @@ def mocked_ProjectQuery(where, _fields, _options):
         return [
             {
                 "title": "test text project",
-                "id": "text_classification",
+                "id": project_id,
                 "description": "This is a TC test project",
                 "jsonInterface": json_interface,
                 "inputType": "TEXT",
@@ -204,7 +204,7 @@ def mocked_ProjectQuery(where, _fields, _options):
         return [
             {
                 "title": "segmentation",
-                "id": "semantic_segmentation",
+                "id": project_id,
                 "description": "This is a semantic segmentation test project",
                 "jsonInterface": json_interface,
                 "inputType": "IMAGE",
