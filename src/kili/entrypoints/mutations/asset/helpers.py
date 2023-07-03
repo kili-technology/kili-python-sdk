@@ -7,7 +7,7 @@ from kili.services.helpers import infer_ids_from_external_ids
 from kili.utils.assets import PageResolution
 
 
-def process_update_properties_in_assets_parameters(properties) -> Dict:
+def process_update_properties_in_assets_parameters(properties: Dict) -> Dict:
     """Process arguments of the update_properties_in_assets method
     and return the properties for the paginated loop.
 
@@ -38,9 +38,10 @@ def process_update_properties_in_assets_parameters(properties) -> Dict:
         map(is_none_or_empty, properties["to_be_labeled_by_array"])
     )
 
-    properties["page_resolutions_array"] = _ensure_page_resolution_dicts(
-        properties["page_resolutions_array"]
-    )
+    if "page_resolutions_array" in properties:
+        properties["page_resolutions_array"] = _ensure_page_resolution_dicts(
+            properties["page_resolutions_array"]
+        )
 
     return properties
 
@@ -50,6 +51,10 @@ def _ensure_page_resolution_dicts(
 ):
     page_resolutions_array_batch = []
     for page_resolution_array in page_resolutions_array:
+        if page_resolution_array is None:
+            page_resolutions_array_batch.append(None)
+            continue
+
         output_page_resolution_array = []
         for page_resolution in page_resolution_array:
             output_page_resolution_array.append(
