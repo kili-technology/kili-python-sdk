@@ -84,7 +84,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.normalized_coordinates = export_params.normalized_coordinates
 
         self.project = get_project(
-            self.kili, self.project_id, ["jsonInterface", "inputType", "title", "description"]
+            self.kili, self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]
         )
 
     @abstractmethod
