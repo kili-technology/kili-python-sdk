@@ -559,6 +559,8 @@ def test_export_service_layout(
                 "log_level": "INFO",
                 "with_assets": True,
                 "annotation_modifier": None,
+                "asset_filter_kwargs": None,
+                "normalized_coordinates": True,
             }
 
             default_kwargs.update(test_case["export_kwargs"])
@@ -684,6 +686,8 @@ def test_export_service_errors(
             "log_level": "INFO",
             "with_assets": True,
             "annotation_modifier": None,
+            "asset_filter_kwargs": None,
+            "normalized_coordinates": True,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
