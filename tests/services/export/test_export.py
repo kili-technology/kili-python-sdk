@@ -868,24 +868,26 @@ def test_when_exporting_without_assets_given_a_project_that_needs_them_it_should
 def test_convert_to_non_normalized_coords(mocker: pytest_mock.MockerFixture):
     mocker.patch.object(KiliExporter, "__init__", return_value=None)
     exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
-    exporter.project_input_type = "PDF"
-    exporter.project_json_interface = {
-        "jobs": {
-            "OBJECT_DETECTION_JOB": {
-                "content": {
-                    "categories": {
-                        "A": {"children": [], "color": "#472CED", "name": "A"},
-                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+    exporter.project = {
+        "inputType": "PDF",
+        "jsonInterface": {
+            "jobs": {
+                "OBJECT_DETECTION_JOB": {
+                    "content": {
+                        "categories": {
+                            "A": {"children": [], "color": "#472CED", "name": "A"},
+                            "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                        },
+                        "input": "radio",
                     },
-                    "input": "radio",
-                },
-                "instruction": "BB",
-                "mlTask": "OBJECT_DETECTION",
-                "required": 1,
-                "tools": ["rectangle"],
-                "isChild": False,
+                    "instruction": "BB",
+                    "mlTask": "OBJECT_DETECTION",
+                    "required": 1,
+                    "tools": ["rectangle"],
+                    "isChild": False,
+                }
             }
-        }
+        },
     }
     asset = {
         "latestLabel": {
