@@ -89,7 +89,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.project_json_interface = project_info["jsonInterface"]
         self.project_input_type = project_info["inputType"]
         self.project_title = project_info["title"]
-        self.project_description = project_info["description"]
+        self.project_description = project_info.get("description", "")
 
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
