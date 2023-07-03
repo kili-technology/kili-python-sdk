@@ -7,6 +7,7 @@ from unittest.mock import patch
 from zipfile import ZipFile
 
 import pytest
+import pytest_mock
 
 from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
@@ -17,7 +18,8 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.kili import KiliExporter
+from kili.services.export.format.base import ExportParams
+from kili.services.export.format.kili import AbstractExporter, KiliExporter
 from tests.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.fakes.fake_kili import (
     FakeKili,
@@ -857,3 +859,143 @@ def test_when_exporting_without_assets_given_a_project_that_needs_them_it_should
             layout="merged",
             with_assets=False,
         )
+
+
+def test_convert_to_non_normalized_coords(mocker: pytest_mock.MockerFixture):
+    mocker.patch.object(KiliExporter, "__init__", return_value=None)
+    exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+    exporter.project_input_type = "PDF"
+    exporter.project_json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "BB",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["rectangle"],
+                "isChild": False,
+            }
+        }
+    }
+    asset = {
+        "latestLabel": {
+            "author": {
+                "id": "user-feat1-1",
+                "email": "test+admin+1@kili-technology.com",
+                "firstname": "Feat1",
+                "lastname": "Test Admin",
+                "name": "Feat1 Test Admin",
+            },
+            "jsonResponse": {
+                "OBJECT_DETECTION_JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "annotations": [
+                                {
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                {"x": 0.47, "y": 0.1},
+                                                {"x": 0.47, "y": 0.23},
+                                                {"x": 0.67, "y": 0.23},
+                                                {"x": 0.67, "y": 0.1},
+                                            ]
+                                        }
+                                    ],
+                                    "pageNumberArray": [1],
+                                    "polys": [
+                                        {
+                                            "normalizedVertices": [
+                                                {"x": 0.47, "y": 0.1},
+                                                {"x": 0.47, "y": 0.23},
+                                                {"x": 0.67, "y": 0.23},
+                                                {"x": 0.67, "y": 0.1},
+                                            ]
+                                        }
+                                    ],
+                                }
+                            ],
+                            "categories": [{"confidence": 100, "name": "A"}],
+                            "content": "",
+                            "mid": "20230703112327217-43948",
+                            "type": "rectangle",
+                        },
+                    ]
+                }
+            },
+            "createdAt": "2023-07-03T12:18:08.825Z",
+            "isLatestLabelForUser": True,
+            "labelType": "DEFAULT",
+            "modelName": None,
+        },
+        "pageResolutions": [
+            {"pageNumber": 0, "height": 842, "width": 595, "rotation": 0},
+            {"pageNumber": 1, "height": 842, "width": 595, "rotation": 0},
+        ],
+    }
+    scaled_asset = exporter.convert_to_non_normalized_coords(asset)  # type: ignore
+
+    assert scaled_asset == {
+        "latestLabel": {
+            "author": {
+                "id": "user-feat1-1",
+                "email": "test+admin+1@kili-technology.com",
+                "firstname": "Feat1",
+                "lastname": "Test Admin",
+                "name": "Feat1 Test Admin",
+            },
+            "jsonResponse": {
+                "OBJECT_DETECTION_JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "annotations": [
+                                {
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                {"x": 0.47 * 595, "y": 0.1 * 842},
+                                                {"x": 0.47 * 595, "y": 0.23 * 842},
+                                                {"x": 0.67 * 595, "y": 0.23 * 842},
+                                                {"x": 0.67 * 595, "y": 0.1 * 842},
+                                            ]
+                                        }
+                                    ],
+                                    "pageNumberArray": [1],
+                                    "polys": [
+                                        {
+                                            "normalizedVertices": [
+                                                {"x": 0.47 * 595, "y": 0.1 * 842},
+                                                {"x": 0.47 * 595, "y": 0.23 * 842},
+                                                {"x": 0.67 * 595, "y": 0.23 * 842},
+                                                {"x": 0.67 * 595, "y": 0.1 * 842},
+                                            ]
+                                        }
+                                    ],
+                                }
+                            ],
+                            "categories": [{"confidence": 100, "name": "A"}],
+                            "content": "",
+                            "mid": "20230703112327217-43948",
+                            "type": "rectangle",
+                        },
+                    ]
+                }
+            },
+            "createdAt": "2023-07-03T12:18:08.825Z",
+            "isLatestLabelForUser": True,
+            "labelType": "DEFAULT",
+            "modelName": None,
+        },
+        "pageResolutions": [
+            {"pageNumber": 0, "height": 842, "width": 595, "rotation": 0},
+            {"pageNumber": 1, "height": 842, "width": 595, "rotation": 0},
+        ],
+    }

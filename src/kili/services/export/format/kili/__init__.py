@@ -16,13 +16,13 @@ class KiliExporter(AbstractExporter):
 
     ASSETS_DIR_NAME = "assets"
 
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
 
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
 
-    def _save_assets_export(self, assets: List[Asset], output_filename: Path):
+    def _save_assets_export(self, assets: List[Asset], output_filename: Path) -> None:
         """Save the assets to a file and return the link to that file."""
         self.logger.info("Exporting to kili format...")
 
@@ -52,7 +52,7 @@ class KiliExporter(AbstractExporter):
 
         self.logger.warning(output_filename)
 
-    def _clean_filepaths(self, assets: List[Asset]):
+    def _clean_filepaths(self, assets: List[Asset]) -> List[Asset]:
         # pylint: disable=line-too-long
         """Remove TemporaryDirectory() prefix from filepaths in "jsonContent" and "content" fields."""
         for asset in assets:
@@ -69,7 +69,7 @@ class KiliExporter(AbstractExporter):
                 asset["jsonContent"] = json_content_list
         return assets
 
-    def _cut_video_assets(self, assets: List[Asset]):
+    def _cut_video_assets(self, assets: List[Asset]) -> List[Asset]:
         """Cut video assets into frames."""
         for asset in assets:
             if asset["jsonContent"] == "" and os.path.isfile(asset["content"]):
@@ -85,9 +85,9 @@ class KiliExporter(AbstractExporter):
                 )
         return assets
 
-    def process_and_save(self, assets: List[Asset], output_filename: Path):
+    def process_and_save(self, assets: List[Asset], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
-        clean_assets = self.pre_process_assets(assets, self.label_format)
+        clean_assets = self.preprocess_assets(assets, self.label_format)
         return self._save_assets_export(
             clean_assets,
             output_filename,

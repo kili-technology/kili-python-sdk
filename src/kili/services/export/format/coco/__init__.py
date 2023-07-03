@@ -57,7 +57,7 @@ class CocoExporter(AbstractExporter):
 
     def process_and_save(self, assets: List[Asset], output_filename: Path):
         """Extract formatted annotations from labels."""
-        clean_assets = self.pre_process_assets(assets, self.label_format)
+        clean_assets = self.preprocess_assets(assets, self.label_format)
 
         self._save_assets_export(
             clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier

@@ -3,6 +3,7 @@
 import csv
 import json
 import logging
+import os
 import shutil
 import warnings
 from abc import ABC, abstractmethod
@@ -48,6 +49,7 @@ class ExportParams(NamedTuple):
     with_assets: bool
     annotation_modifier: Optional[CocoAnnotationModifier]
     asset_filter_kwargs: Optional[Dict[str, object]]
+    normalized_coordinates: bool
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -63,6 +65,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         disable_tqdm: bool,
         content_repository: AbstractContentRepository,
     ):  # pylint: disable=too-many-arguments
+        """Initialize the exporter."""
         self.project_id: ProjectId = export_params.project_id
         self.assets_ids: Optional[List[str]] = export_params.assets_ids
         self.export_type: ExportType = export_params.export_type
@@ -78,13 +81,15 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.export_root_folder: Path = Path()
         self.annotation_modifier = export_params.annotation_modifier
         self.asset_filter_kwargs = export_params.asset_filter_kwargs
+        self.normalized_coordinates = export_params.normalized_coordinates
 
         project_info = get_project(
-            self.kili, self.project_id, ["jsonInterface", "inputType", "title"]
+            self.kili, self.project_id, ["jsonInterface", "inputType", "title", "description"]
         )
         self.project_json_interface = project_info["jsonInterface"]
         self.project_input_type = project_info["inputType"]
         self.project_title = project_info["title"]
+        self.project_description = project_info["description"]
 
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
@@ -122,13 +127,12 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def create_readme_kili_file(self, root_folder: Path) -> None:
         """Create a README.kili.txt file to give information about exported labels."""
         readme_file_name = root_folder / self.project_id / "README.kili.txt"
-        project_info = get_project(self.kili, self.project_id, ["title", "id", "description"])
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
             fout.write(b"Exported Labels from KILI\n=========================\n\n")
-            fout.write(f"- Project name: {project_info['title']}\n".encode())
+            fout.write(f"- Project name: {self.project_title}\n".encode())
             fout.write(f"- Project identifier: {self.project_id}\n".encode())
-            fout.write(f"- Project description: {project_info['description']}\n".encode())
+            fout.write(f"- Project description: {self.project_description}\n".encode())
             fout.write(f'- Export date: {datetime.now().strftime("%Y%m%d-%H%M%S")}\n'.encode())
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
@@ -158,11 +162,16 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         Return the name of the exported archive file.
         """
+        if self.project_input_type != "PDF" and self.normalized_coordinates is False:
+            raise NotCompatibleOptions(
+                "The `normalized_coordinates=False` option is only available for PDF projects."
+            )
+
         self._check_arguments_compatibility()
         self._check_project_compatibility()
         self._check_and_ensure_asset_access()
 
-        self.logger.warning("Fetching assets...")
+        self.logger.info("Fetching assets...")
 
         with TemporaryDirectory() as export_root_folder:
             self.export_root_folder = export_root_folder
@@ -176,13 +185,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),
                 asset_filter_kwargs=self.asset_filter_kwargs,
+                normalized_coordinates=self.normalized_coordinates,
             )
             # if the asset["externalId"] has slashes in it, the export will not work
             # since the slashes will be interpreted as folders
-            if any(
-                asset["externalId"].find("/") != -1 or asset["externalId"].find("\\") != -1
-                for asset in assets
-            ):
+            if any(asset["externalId"].find(os.sep) != -1 for asset in assets):
                 raise NotExportableAssetError(
                     "The export is not supported for assets with externalIds that contain slashes."
                     " Please remove the slashes from the externalIds using"
@@ -267,8 +274,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         label["jsonResponse"] = json_response
         return label
 
-    @staticmethod
-    def pre_process_assets(assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
+    def preprocess_assets(self, assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
         """Format labels in the requested format, and filter out autosave labels."""
         assets_in_format = []
         for asset in assets:
@@ -286,4 +292,78 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             assets_in_format.append(asset)
 
         clean_assets = AbstractExporter._filter_out_autosave_labels(assets_in_format)
+
+        if self.normalized_coordinates is False:
+            assets = [self.convert_to_non_normalized_coords(asset) for asset in assets]
+
         return clean_assets
+
+    def convert_to_non_normalized_coords(self, asset: Asset) -> Asset:
+        """Convert asset JSON response to non-normalized coordinates."""
+
+        def _scale_normalized_vertices(
+            norm_vertices: List[Dict], width: int, height: int
+        ) -> List[Dict]:
+            return [
+                {"x": vertex["x"] * width, "y": vertex["y"] * height} for vertex in norm_vertices
+            ]
+
+        def _scale_normalized_vertices_pdf_annotation(
+            annotation: Dict, asset_page_resolutions: List[Dict]
+        ) -> Dict:
+            # pdf annotations have two layers of "annotations"
+            if "annotations" in annotation:
+                annotation["annotations"] = [
+                    _scale_normalized_vertices_pdf_annotation(ann, asset_page_resolutions)
+                    for ann in annotation["annotations"]
+                ]
+                return annotation
+
+            # make sure that the page resolutions are sorted by page number
+            asset_page_resolutions = sorted(asset_page_resolutions, key=lambda x: x["pageNumber"])
+
+            for key in ("polys", "boundingPoly"):
+                annotation[key] = [
+                    {
+                        **value,
+                        "normalizedVertices": _scale_normalized_vertices(
+                            value["normalizedVertices"],
+                            width=asset_page_resolutions[page_number - 1]["width"],
+                            height=asset_page_resolutions[page_number - 1]["height"],
+                        ),
+                    }
+                    for value, page_number in zip(annotation[key], annotation["pageNumberArray"])
+                ]
+
+            return annotation
+
+        if self.project_input_type == "PDF":
+            for job_name in asset.get("latestLabel", {}).get("jsonResponse", {}):
+                if self.project_json_interface["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
+                    continue
+
+                if (
+                    asset.get("latestLabel", {})
+                    .get("jsonResponse", {})
+                    .get(job_name, {})
+                    .get("annotations")
+                ):
+                    asset["latestLabel"]["jsonResponse"][job_name]["annotations"] = [
+                        _scale_normalized_vertices_pdf_annotation(ann, asset["pageResolutions"])
+                        for ann in asset["latestLabel"]["jsonResponse"][job_name]["annotations"]
+                    ]
+
+                if asset.get("labels"):
+                    labels = []
+                    for label in asset["labels"]:
+                        if label.get("jsonResponse", {}).get(job_name, {}).get("annotations"):
+                            label["jsonResponse"][job_name]["annotations"] = [
+                                _scale_normalized_vertices_pdf_annotation(
+                                    ann, asset["pageResolutions"]
+                                )
+                                for ann in label["jsonResponse"][job_name]["annotations"]
+                            ]
+                        labels.append(label)
+                    asset["labels"] = labels
+
+        return asset
