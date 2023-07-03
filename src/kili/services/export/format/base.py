@@ -333,9 +333,9 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
             return annotation
 
-        if self.project["input_type"] == "PDF":
+        if self.project["inputType"] == "PDF":
             for job_name in asset.get("latestLabel", {}).get("jsonResponse", {}):
-                if self.project["json_interface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
+                if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
                     continue
 
                 if (

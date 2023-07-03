@@ -37,9 +37,9 @@ class VocExporter(AbstractExporter):
 
     def _check_project_compatibility(self) -> None:
         """Check if the export label format is compatible with the project."""
-        if self.project["input_type"] not in ("IMAGE", "VIDEO"):
+        if self.project["inputType"] not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
-                f"Project with input type '{self.project['input_type']}' not compatible with"
+                f"Project with input type '{self.project['inputType']}' not compatible with"
                 " Pascal VOC export format."
             )
 
@@ -62,7 +62,7 @@ class VocExporter(AbstractExporter):
         labels_folder.mkdir(parents=True, exist_ok=True)
 
         for asset in tqdm(assets, disable=self.disable_tqdm):
-            _process_asset(asset, labels_folder, self.project["input_type"], self.compatible_jobs)
+            _process_asset(asset, labels_folder, self.project["inputType"], self.compatible_jobs)
 
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)

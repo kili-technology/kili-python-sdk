@@ -75,14 +75,14 @@ class CocoExporter(AbstractExporter):
     ):
         """Save the assets to a file and return the link to that file."""
         if self.split_option == "split":
-            for job_name, job in self.project["json_interface"]["jobs"].items():
+            for job_name, job in self.project["jsonInterface"]["jobs"].items():
                 if self._is_job_compatible(job):
                     _convert_kili_semantic_to_coco(
                         jobs={job_name: job},
                         assets=assets,
                         output_dir=Path(output_directory) / self.project["id"],
                         title=self.project["title"],
-                        project_input_type=self.project["input_type"],
+                        project_input_type=self.project["inputType"],
                         annotation_modifier=annotation_modifier,
                         merged=False,
                     )
@@ -92,13 +92,13 @@ class CocoExporter(AbstractExporter):
             _convert_kili_semantic_to_coco(
                 jobs={
                     k: job
-                    for k, job in self.project["json_interface"]["jobs"].items()
+                    for k, job in self.project["jsonInterface"]["jobs"].items()
                     if self._is_job_compatible(job)
                 },
                 assets=assets,
                 output_dir=Path(output_directory) / self.project["id"],
                 title=self.project["title"],
-                project_input_type=self.project["input_type"],
+                project_input_type=self.project["inputType"],
                 annotation_modifier=annotation_modifier,
                 merged=True,
             )
