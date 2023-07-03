@@ -83,13 +83,9 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.asset_filter_kwargs = export_params.asset_filter_kwargs
         self.normalized_coordinates = export_params.normalized_coordinates
 
-        project_info = get_project(
+        self.project = get_project(
             self.kili, self.project_id, ["jsonInterface", "inputType", "title", "description"]
         )
-        self.project_json_interface = project_info["jsonInterface"]
-        self.project_input_type = project_info["inputType"]
-        self.project_title = project_info["title"]
-        self.project_description = project_info.get("description", "")
 
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
@@ -108,7 +104,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """Get all job names compatible with the export format."""
         return tuple(
             job_name
-            for job_name, job in self.project_json_interface["jobs"].items()
+            for job_name, job in self.project["jsonInterface"]["jobs"].items()
             if self._is_job_compatible(job)
         )
 
@@ -130,9 +126,9 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
             fout.write(b"Exported Labels from KILI\n=========================\n\n")
-            fout.write(f"- Project name: {self.project_title}\n".encode())
-            fout.write(f"- Project identifier: {self.project_id}\n".encode())
-            fout.write(f"- Project description: {self.project_description}\n".encode())
+            fout.write(f"- Project name: {self.project['title']}\n".encode())
+            fout.write(f"- Project identifier: {self.project['id']}\n".encode())
+            fout.write(f"- Project description: {self.project['description']}\n".encode())
             fout.write(f'- Export date: {datetime.now().strftime("%Y%m%d-%H%M%S")}\n'.encode())
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
@@ -162,7 +158,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         Return the name of the exported archive file.
         """
-        if self.project_input_type != "PDF" and self.normalized_coordinates is False:
+        if self.project["inputType"] != "PDF" and self.normalized_coordinates is False:
             raise NotCompatibleOptions(
                 "The `normalized_coordinates=False` option is only available for PDF projects."
             )
@@ -337,9 +333,9 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
             return annotation
 
-        if self.project_input_type == "PDF":
+        if self.project["input_type"] == "PDF":
             for job_name in asset.get("latestLabel", {}).get("jsonResponse", {}):
-                if self.project_json_interface["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
+                if self.project["json_interface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
                     continue
 
                 if (

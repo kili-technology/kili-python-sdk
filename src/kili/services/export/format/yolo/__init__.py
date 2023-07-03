@@ -27,11 +27,11 @@ class YoloExporter(AbstractExporter):
 
         if self.split_option == "merged":
             self.merged_categories_id = self._get_merged_categories(
-                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+                self.project["json_interface"], JobMLTask.ObjectDetection, JobTool.Rectangle
             )
         else:
             self.categories_by_job = self._get_categories_by_job(
-                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+                self.project["json_interface"], JobMLTask.ObjectDetection, JobTool.Rectangle
             )
 
     def _check_arguments_compatibility(self):
@@ -43,9 +43,9 @@ class YoloExporter(AbstractExporter):
 
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
-        if self.project_input_type not in ("IMAGE", "VIDEO"):
+        if self.project["input_type"] not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
-                f"Project with input type '{self.project_input_type}' not compatible with YOLO"
+                f"Project with input type '{self.project['input_type']}' not compatible with YOLO"
                 " export format."
             )
 
@@ -153,7 +153,7 @@ class YoloExporter(AbstractExporter):
                 categories_id,
                 self.content_repository,
                 self.with_assets,
-                self.project_input_type,
+                self.project["inputType"],
             )
             if video_filenames:
                 video_metadata[asset["externalId"]] = video_filenames

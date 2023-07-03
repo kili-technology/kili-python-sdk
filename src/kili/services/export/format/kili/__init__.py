@@ -27,7 +27,7 @@ class KiliExporter(AbstractExporter):
         self.logger.info("Exporting to kili format...")
 
         if self.with_assets:
-            if self.project_input_type == "VIDEO":
+            if self.project["inputType"] == "VIDEO":
                 assets = self._cut_video_assets(assets)
 
             assets = self._clean_filepaths(assets)
