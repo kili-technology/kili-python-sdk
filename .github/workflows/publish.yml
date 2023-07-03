@@ -7,6 +7,8 @@ jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v3
 
@@ -35,13 +37,14 @@ jobs:
           KILI_API_ENDPOINT: https://preproduction.cloud.kili-technology.com/api/label/v2/graphql
           KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY_PREPROD }}
 
-      - name: Publish
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-          python -m twine upload dist/*
+      - name: Publish to test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+      - name: Publish to PyPI
+        if: startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Slack notification
         id: slack
