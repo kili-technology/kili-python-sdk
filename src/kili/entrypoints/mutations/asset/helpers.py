@@ -1,5 +1,5 @@
 """Helpers for the asset mutations."""
-from typing import Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 from kili.core.helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
@@ -7,48 +7,64 @@ from kili.services.helpers import infer_ids_from_external_ids
 from kili.utils.assets import PageResolution
 
 
-def process_update_properties_in_assets_parameters(properties: Dict) -> Dict:
+# pylint: disable=too-many-locals
+def process_update_properties_in_assets_parameters(
+    asset_ids: List[str],
+    *,
+    external_ids: Optional[List[int]] = None,
+    priorities: Optional[List[int]] = None,
+    json_metadatas: Optional[List[Union[dict, str]]] = None,
+    consensus_marks: Optional[List[float]] = None,
+    honeypot_marks: Optional[List[float]] = None,
+    to_be_labeled_by_array: Optional[List[List[str]]] = None,
+    contents: Optional[List[str]] = None,
+    json_contents: Optional[List[str]] = None,
+    status_array: Optional[List[str]] = None,
+    is_used_for_consensus_array: Optional[List[bool]] = None,
+    is_honeypot_array: Optional[List[bool]] = None,
+    page_resolutions_array: Optional[Union[List[List[dict]], List[List[PageResolution]]]] = None,
+) -> Dict:
     """Process arguments of the update_properties_in_assets method
-    and return the properties for the paginated loop.
+    and return the properties for the paginating loop."""
+    assert asset_ids
+    nb_assets_to_modify = len(asset_ids)
 
-    properties should have the following keys:
-        - asset_ids: list of asset ids.
-        - json_metadatas: list of json metadatas, can be none.
-        - to_be_labeled_by_array: list of users, must be iterable.
-        - page_resolutions_array: list of page resolutions, must be iterable.
-    """
-    formatted_json_metadatas = None
-    if properties["json_metadatas"] is None:
-        formatted_json_metadatas = None
-    else:
-        if isinstance(properties["json_metadatas"], list):
-            formatted_json_metadatas = list(map(format_metadata, properties["json_metadatas"]))
-        else:
-            raise TypeError(
-                "json_metadatas",
-                "Should be either a None or a list of None, string, list or dict",
-            )
-    properties["json_metadatas"] = formatted_json_metadatas
-    assert properties["asset_ids"]
-    nb_assets_to_modify = len(properties["asset_ids"])
-    properties = {
-        k: convert_to_list_of_none(v, length=nb_assets_to_modify) for k, v in properties.items()
+    input_handlers: Dict[str, Callable[[List], List]] = {
+        "jsonMetadata": _handle_json_metadata,
+        "shouldResetToBeLabeledBy": _handle_should_reset_to_be_labeled_by,
+        "pageResolutions": _handle_page_resolutions_array,
     }
-    properties["should_reset_to_be_labeled_by_array"] = list(
-        map(is_none_or_empty, properties["to_be_labeled_by_array"])
-    )
 
-    if "page_resolutions_array" in properties:
-        properties["page_resolutions_array"] = _ensure_page_resolution_dicts(
-            properties["page_resolutions_array"]
-        )
+    argument_to_gql_mapping = {
+        "assetIds": asset_ids,
+        "exteranlIds": external_ids,
+        "priority": priorities,
+        "jsonMetadata": json_metadatas,
+        "consensusMark": consensus_marks,
+        "honeypotMark": honeypot_marks,
+        "toBeLabeledBy": to_be_labeled_by_array,
+        "shouldResetToBeLabeledBy": to_be_labeled_by_array,
+        "content": contents,
+        "jsonContent": json_contents,
+        "status": status_array,
+        "isUsedForConsensus": is_used_for_consensus_array,
+        "isHoneypot": is_honeypot_array,
+        "pageResolutions": page_resolutions_array,
+    }
 
-    return properties
+    return {
+        k: input_handlers.get(k, lambda x: x)(convert_to_list_of_none(v, nb_assets_to_modify))
+        for k, v in argument_to_gql_mapping.items()
+        if v is not None
+    }
 
 
-def _ensure_page_resolution_dicts(
+# pylint: enable=too-many-locals
+
+
+def _handle_page_resolutions_array(
     page_resolutions_array: Union[List[List[PageResolution]], List[List[Dict]]]
-):
+) -> List[List[Dict]]:
     page_resolutions_array_batch = []
     for page_resolution_array in page_resolutions_array:
         if page_resolution_array is None:
@@ -64,6 +80,14 @@ def _ensure_page_resolution_dicts(
             )
         page_resolutions_array_batch.append(output_page_resolution_array)
     return page_resolutions_array_batch
+
+
+def _handle_should_reset_to_be_labeled_by(to_be_labeled_by_array):
+    return list(map(is_none_or_empty, to_be_labeled_by_array))
+
+
+def _handle_json_metadata(json_metadatas) -> List:
+    return list(map(format_metadata, json_metadatas))
 
 
 def get_asset_ids_or_throw_error(
