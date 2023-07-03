@@ -284,7 +284,7 @@ class MutationsAsset:
         )
 
         def generate_variables(batch: Dict) -> Dict:
-            asset_ids = batch.pop("assetIds")
+            asset_ids = batch.pop("assetId")
             data_array = [dict(zip(batch, t)) for t in zip(*batch.values())]  # type: ignore
             return {
                 "whereArray": [{"id": asset_id} for asset_id in asset_ids],
@@ -338,7 +338,7 @@ class MutationsAsset:
         )
 
         def generate_variables(batch: Dict) -> Dict:
-            asset_ids = batch.pop("assetIds")
+            asset_ids = batch.pop("assetId")
             data_array = [dict(zip(batch, t)) for t in zip(*batch.values())]  # type: ignore
             return {
                 "whereArray": [{"id": asset_id} for asset_id in asset_ids],
