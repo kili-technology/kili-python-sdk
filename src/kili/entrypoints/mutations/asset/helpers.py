@@ -9,7 +9,14 @@ from kili.utils.assets import PageResolution
 
 def process_update_properties_in_assets_parameters(properties) -> Dict:
     """Process arguments of the update_properties_in_assets method
-    and return the properties for the paginated loop."""
+    and return the properties for the paginated loop.
+
+    properties should have the following keys:
+        - asset_ids: list of asset ids.
+        - json_metadatas: list of json metadatas, can be none.
+        - to_be_labeled_by_array: list of users, must be iterable.
+        - page_resolutions_array: list of page resolutions, must be iterable.
+    """
     formatted_json_metadatas = None
     if properties["json_metadatas"] is None:
         formatted_json_metadatas = None
