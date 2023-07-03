@@ -822,6 +822,7 @@ def mock_kili(mocker, with_data_connection):
         "inputType": "IMAGE",
         "title": "",
         "description": "This is a mocked project",
+        "id": "fake_proj_id",
     }
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
     mocker.patch(
