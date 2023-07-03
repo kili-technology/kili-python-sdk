@@ -154,7 +154,6 @@ class MutationsAsset:
         return result
 
     @typechecked
-    # pylint: disable=unused-argument
     def update_properties_in_assets(
         self,
         asset_ids: Optional[List[str]] = None,
@@ -269,46 +268,26 @@ class MutationsAsset:
 
         asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
 
-        saved_args = locals()
-        parameters = {
-            k: v
-            for (k, v) in saved_args.items()
-            if k
-            in [
-                "asset_ids",
-                "priorities",
-                "json_metadatas",
-                "consensus_marks",
-                "honeypot_marks",
-                "to_be_labeled_by_array",
-                "contents",
-                "json_contents",
-                "status_array",
-                "is_used_for_consensus_array",
-                "is_honeypot_array",
-                "page_resolutions_array",
-            ]
-        }
-        properties_to_batch = process_update_properties_in_assets_parameters(parameters)
+        properties_to_batch = process_update_properties_in_assets_parameters(
+            asset_ids,
+            priorities=priorities,
+            json_metadatas=json_metadatas,
+            consensus_marks=consensus_marks,
+            honeypot_marks=honeypot_marks,
+            to_be_labeled_by_array=to_be_labeled_by_array,
+            contents=contents,
+            json_contents=json_contents,
+            status_array=status_array,
+            is_used_for_consensus_array=is_used_for_consensus_array,
+            is_honeypot_array=is_honeypot_array,
+            page_resolutions_array=page_resolutions_array,
+        )
 
         def generate_variables(batch: Dict) -> Dict:
-            data = {
-                "priority": batch["priorities"],
-                "jsonMetadata": batch["json_metadatas"],
-                "consensusMark": batch["consensus_marks"],
-                "honeypotMark": batch["honeypot_marks"],
-                "toBeLabeledBy": batch["to_be_labeled_by_array"],
-                "shouldResetToBeLabeledBy": batch["should_reset_to_be_labeled_by_array"],
-                "content": batch["contents"],
-                "jsonContent": batch["json_contents"],
-                "status": batch["status_array"],
-                "isUsedForConsensus": batch["is_used_for_consensus_array"],
-                "isHoneypot": batch["is_honeypot_array"],
-                "pageResolutions": batch["page_resolutions_array"],
-            }
-            data_array = [dict(zip(data, t)) for t in zip(*data.values())]  # type: ignore
+            asset_ids = batch.pop("assetIds")
+            data_array = [dict(zip(batch, t)) for t in zip(*batch.values())]  # type: ignore
             return {
-                "whereArray": [{"id": asset_id} for asset_id in batch["asset_ids"]],
+                "whereArray": [{"id": asset_id} for asset_id in asset_ids],
                 "dataArray": data_array,
             }
 
@@ -353,24 +332,16 @@ class MutationsAsset:
 
         asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
 
-        parameters = {
-            "asset_ids": asset_ids,
-            "new_external_ids": new_external_ids,
-            "json_metadatas": None,
-            "to_be_labeled_by_array": None,
-        }
-        properties_to_batch = process_update_properties_in_assets_parameters(parameters)
+        properties_to_batch = process_update_properties_in_assets_parameters(
+            asset_ids=asset_ids,
+            external_ids=new_external_ids,
+        )
 
         def generate_variables(batch: Dict) -> Dict:
-            data = {
-                "externalId": batch["new_external_ids"],
-                "jsonMetadata": batch["json_metadatas"],
-                "toBeLabeledBy": batch["to_be_labeled_by_array"],
-                "shouldResetToBeLabeledBy": batch["should_reset_to_be_labeled_by_array"],
-            }
-            data_array = [dict(zip(data, t)) for t in zip(*data.values())]  # type: ignore
+            asset_ids = batch.pop("assetIds")
+            data_array = [dict(zip(batch, t)) for t in zip(*batch.values())]  # type: ignore
             return {
-                "whereArray": [{"id": asset_id} for asset_id in batch["asset_ids"]],
+                "whereArray": [{"id": asset_id} for asset_id in asset_ids],
                 "dataArray": data_array,
             }
 

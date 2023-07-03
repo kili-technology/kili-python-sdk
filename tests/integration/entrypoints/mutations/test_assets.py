@@ -49,17 +49,6 @@ def test_given_page_resolutions_when_i_call_update_properties_in_assets_it_calls
             "whereArray": [{"id": "asset_id"}],
             "dataArray": [
                 {
-                    "priority": None,
-                    "jsonMetadata": None,
-                    "consensusMark": None,
-                    "honeypotMark": None,
-                    "toBeLabeledBy": None,
-                    "shouldResetToBeLabeledBy": True,
-                    "content": None,
-                    "jsonContent": None,
-                    "status": None,
-                    "isUsedForConsensus": None,
-                    "isHoneypot": None,
                     "pageResolutions": [
                         {"width": 100, "height": 200, "pageNumber": 1},
                         {"width": 200, "height": 300, "pageNumber": 0},
