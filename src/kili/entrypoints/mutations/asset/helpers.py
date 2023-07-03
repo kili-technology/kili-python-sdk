@@ -11,7 +11,7 @@ from kili.utils.assets import PageResolution
 def process_update_properties_in_assets_parameters(
     asset_ids: List[str],
     *,
-    external_ids: Optional[List[int]] = None,
+    external_ids: Optional[List[str]] = None,
     priorities: Optional[List[int]] = None,
     json_metadatas: Optional[List[Union[dict, str]]] = None,
     consensus_marks: Optional[List[float]] = None,
