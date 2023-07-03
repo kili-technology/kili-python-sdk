@@ -10,14 +10,14 @@ LabelFormat = Literal["yolo_v4", "yolo_v5", "yolo_v7", "kili", "raw"]
 class ClientInputLabelData(BaseModel, extra=Extra.forbid):
     """Data about a label to append, given by client in client-side function."""
 
-    asset_id: Optional[StrictStr]
-    asset_external_id: Optional[StrictStr]
+    asset_id: Optional[StrictStr] = None
+    asset_external_id: Optional[StrictStr] = None
     json_response: dict
-    author_id: Optional[StrictStr]
-    seconds_to_label: Optional[StrictInt]
+    author_id: Optional[StrictStr] = None
+    seconds_to_label: Optional[StrictInt] = None
 
 
-class _ClientInputLabelsValidator(BaseModel, extra=Extra.forbid):
+class ClientInputLabelsValidator(BaseModel, extra=Extra.forbid):
     """Validates the data about a label to append."""
 
     labels: List[Dict]
@@ -27,7 +27,7 @@ class _ClientInputLabelsValidator(BaseModel, extra=Extra.forbid):
         """Validate the data of one label."""
         if label.get("asset_external_id") is None and label.get("asset_id") is None:
             raise ValueError("You must either provide the asset_id or external_id")
-        return ClientInputLabelData(**label)
+        return ClientInputLabelData(**label).dict()
 
     @validator("labels")
     def all_labels_use_the_same_asset_identifier(cls, labels):  # pylint: disable=no-self-argument
