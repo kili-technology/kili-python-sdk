@@ -1094,14 +1094,14 @@ def test_convert_to_non_normalized_coords_2(mocker: pytest_mock.MockerFixture):
 
         assert Path(f"{extract_folder}/README.kili.txt").is_file()
         assert Path(f"{extract_folder}/labels").is_dir()
-        assert Path(f"{extract_folder}/labels/Cas_technique_n°9.pdf.json").is_file()
+        assert Path(f"{extract_folder}/labels/Cas_technique_n9.pdf.json").is_file()
 
-        with Path(f"{extract_folder}/labels/Cas_technique_n°9.pdf.json").open() as f:
+        with Path(f"{extract_folder}/labels/Cas_technique_n9.pdf.json").open() as f:
             output = json.load(f)
 
     assert output == {
         "content": "https://storage.googleapis.com/label-backend-staging/projects/cljo5b3jjd31f9k8blj7/assets/cljo5b4dcf",
-        "externalId": "Cas technique n°9.pdf",
+        "externalId": "Cas technique n9.pdf",
         "id": "cljo5b42500042a6akiuy79o7",
         "jsonContent": "",
         "jsonMetadata": {},
