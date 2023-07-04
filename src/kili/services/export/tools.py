@@ -66,11 +66,12 @@ def fetch_assets(
     project_id: str,
     asset_ids: Optional[List[str]],
     export_type: ExportType,
-    label_type_in: Optional[List[str]] = None,
-    disable_tqdm: bool = False,
-    download_media: bool = False,
-    local_media_dir: Optional[str] = None,
-    asset_filter_kwargs: Optional[Dict[str, object]] = None,
+    label_type_in: Optional[List[str]],
+    disable_tqdm: bool,
+    download_media: bool,
+    local_media_dir: Optional[str],
+    asset_filter_kwargs: Optional[Dict[str, object]],
+    normalized_coordinates: Optional[bool],
 ) -> List[Dict]:
     """Fetches assets.
 
@@ -88,6 +89,7 @@ def fetch_assets(
         download_media: tell to download the media in the cache folder.
         local_media_dir: Directory where the media are downloaded if `download_media` is True.
         asset_filter_kwargs: Optional dictionary of arguments to filter the assets to export.
+        normalized_coordinates: whether the export should use normalized coordinates.
 
     Returns:
         List of fetched assets.
@@ -141,6 +143,14 @@ def fetch_assets(
                 ),
                 stacklevel=3,
             )
+
+    if normalized_coordinates is False:
+        fields += [
+            "pageResolutions.pageNumber",
+            "pageResolutions.height",
+            "pageResolutions.width",
+            "pageResolutions.rotation",
+        ]
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(

@@ -22,30 +22,35 @@ from ...media.video import cut_video
 class YoloExporter(AbstractExporter):
     """Common code for Yolo exporters."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         if self.split_option == "merged":
             self.merged_categories_id = self._get_merged_categories(
-                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+                self.project["jsonInterface"], JobMLTask.ObjectDetection, JobTool.Rectangle
             )
         else:
             self.categories_by_job = self._get_categories_by_job(
-                self.project_json_interface, JobMLTask.ObjectDetection, JobTool.Rectangle
+                self.project["jsonInterface"], JobMLTask.ObjectDetection, JobTool.Rectangle
             )
 
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
         if self.single_file:
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not be exported into a single file."
             )
 
+        if self.normalized_coordinates is False:
+            raise NotCompatibleOptions(
+                "The YOLO annotation format does not support pixel coordinates."
+            )
+
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
-        if self.project_input_type not in ("IMAGE", "VIDEO"):
+        if self.project["inputType"] not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
-                f"Project with input type '{self.project_input_type}' not compatible with YOLO"
+                f"Project with input type '{self.project['inputType']}' not compatible with YOLO"
                 " export format."
             )
 
@@ -153,7 +158,7 @@ class YoloExporter(AbstractExporter):
                 categories_id,
                 self.content_repository,
                 self.with_assets,
-                self.project_input_type,
+                self.project["inputType"],
             )
             if video_filenames:
                 video_metadata[asset["externalId"]] = video_filenames

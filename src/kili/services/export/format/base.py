@@ -3,6 +3,7 @@
 import csv
 import json
 import logging
+import os
 import shutil
 import warnings
 from abc import ABC, abstractmethod
@@ -48,6 +49,7 @@ class ExportParams(NamedTuple):
     with_assets: bool
     annotation_modifier: Optional[CocoAnnotationModifier]
     asset_filter_kwargs: Optional[Dict[str, object]]
+    normalized_coordinates: Optional[bool]
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -55,6 +57,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     requires_asset_access = False
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         export_params: ExportParams,
@@ -62,7 +65,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         logger: logging.Logger,
         disable_tqdm: bool,
         content_repository: AbstractContentRepository,
-    ):  # pylint: disable=too-many-arguments
+    ) -> None:
+        """Initialize the exporter."""
         self.project_id: ProjectId = export_params.project_id
         self.assets_ids: Optional[List[str]] = export_params.assets_ids
         self.export_type: ExportType = export_params.export_type
@@ -78,13 +82,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.export_root_folder: Path = Path()
         self.annotation_modifier = export_params.annotation_modifier
         self.asset_filter_kwargs = export_params.asset_filter_kwargs
+        self.normalized_coordinates = export_params.normalized_coordinates
 
-        project_info = get_project(
-            self.kili, self.project_id, ["jsonInterface", "inputType", "title"]
+        self.project = get_project(
+            self.kili, self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]
         )
-        self.project_json_interface = project_info["jsonInterface"]
-        self.project_input_type = project_info["inputType"]
-        self.project_title = project_info["title"]
 
     @abstractmethod
     def _check_arguments_compatibility(self) -> None:
@@ -94,16 +96,16 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
 
+    @abstractmethod
     def _is_job_compatible(self, job: Job) -> bool:
         """Check if the export label format is compatible with the job."""
-        raise NotImplementedError
 
     @property
     def compatible_jobs(self) -> Tuple[str]:
         """Get all job names compatible with the export format."""
         return tuple(
             job_name
-            for job_name, job in self.project_json_interface["jobs"].items()
+            for job_name, job in self.project["jsonInterface"]["jobs"].items()
             if self._is_job_compatible(job)
         )
 
@@ -122,13 +124,12 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def create_readme_kili_file(self, root_folder: Path) -> None:
         """Create a README.kili.txt file to give information about exported labels."""
         readme_file_name = root_folder / self.project_id / "README.kili.txt"
-        project_info = get_project(self.kili, self.project_id, ["title", "id", "description"])
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
         with readme_file_name.open("wb") as fout:
             fout.write(b"Exported Labels from KILI\n=========================\n\n")
-            fout.write(f"- Project name: {project_info['title']}\n".encode())
-            fout.write(f"- Project identifier: {self.project_id}\n".encode())
-            fout.write(f"- Project description: {project_info['description']}\n".encode())
+            fout.write(f"- Project name: {self.project['title']}\n".encode())
+            fout.write(f"- Project identifier: {self.project['id']}\n".encode())
+            fout.write(f"- Project description: {self.project['description']}\n".encode())
             fout.write(f'- Export date: {datetime.now().strftime("%Y%m%d-%H%M%S")}\n'.encode())
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
@@ -162,7 +163,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self._check_project_compatibility()
         self._check_and_ensure_asset_access()
 
-        self.logger.warning("Fetching assets...")
+        self.logger.info("Fetching assets...")
 
         with TemporaryDirectory() as export_root_folder:
             self.export_root_folder = export_root_folder
@@ -176,13 +177,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),
                 asset_filter_kwargs=self.asset_filter_kwargs,
+                normalized_coordinates=self.normalized_coordinates,
             )
             # if the asset["externalId"] has slashes in it, the export will not work
             # since the slashes will be interpreted as folders
-            if any(
-                asset["externalId"].find("/") != -1 or asset["externalId"].find("\\") != -1
-                for asset in assets
-            ):
+            if any(asset["externalId"].find(os.sep) != -1 for asset in assets):
                 raise NotExportableAssetError(
                     "The export is not supported for assets with externalIds that contain slashes."
                     " Please remove the slashes from the externalIds using"
@@ -191,7 +190,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
             self.process_and_save(assets, self.output_file)
 
-    def _check_and_ensure_asset_access(self):
+    def _check_and_ensure_asset_access(self) -> None:
         """Check asset access.
 
         If there is a data connection, and that the format requires a data access, or that
@@ -255,7 +254,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return clean_assets
 
     @staticmethod
-    def _format_json_response(label: Label, label_format: LabelFormat):
+    def _format_json_response(label: Label, label_format: LabelFormat) -> Label:
         """Format the label JSON response in the requested format."""
         formatted_json_response = label.json_response(format_=label_format)
         json_response = {}
@@ -267,8 +266,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         label["jsonResponse"] = json_response
         return label
 
-    @staticmethod
-    def pre_process_assets(assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
+    def preprocess_assets(self, assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
         """Format labels in the requested format, and filter out autosave labels."""
         assets_in_format = []
         for asset in assets:
@@ -286,4 +284,5 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             assets_in_format.append(asset)
 
         clean_assets = AbstractExporter._filter_out_autosave_labels(assets_in_format)
+
         return clean_assets

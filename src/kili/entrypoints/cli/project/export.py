@@ -48,6 +48,12 @@ from kili.services.types import ProjectId
     default=True,
     help="Download assets in the export.",
 )
+@click.option(
+    "--normalized-coordinates/--pixel-coordinates",
+    type=bool,
+    default=None,
+    help="Whether to use normalized coordinates or not.",
+)
 @Options.api_key
 @Options.endpoint
 @Options.project_id
@@ -64,7 +70,8 @@ def export_labels(
     project_id: str,
     verbose: bool,
     with_assets: bool,
-):
+    normalized_coordinates: Optional[bool],
+) -> None:
     # pylint: disable=line-too-long
     """Export the Kili labels of a project to a given format.
 
@@ -114,6 +121,7 @@ def export_labels(
             with_assets=with_assets,
             annotation_modifier=None,
             asset_filter_kwargs=None,
+            normalized_coordinates=normalized_coordinates,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))

@@ -736,6 +736,7 @@ class QueriesLabel:
         external_ids: Optional[List[str]] = None,
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
         asset_filter_kwargs: Optional[Dict[str, object]] = None,
+        normalized_coordinates: Optional[bool] = None,
     ) -> None:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
@@ -780,6 +781,8 @@ class QueriesLabel:
                 - `metadata_where`
 
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
+            normalized_coordinates: If True, the coordinates of the pixel coordinates are normalized between 0 and 1. If False, the coordinates are in pixels.
+                This parameter is only effective on the Kili (a.k.a raw) format.
 
         !!! Info
             The supported formats are:
@@ -834,6 +837,7 @@ class QueriesLabel:
                 with_assets=with_assets,
                 annotation_modifier=annotation_modifier,
                 asset_filter_kwargs=asset_filter_kwargs,
+                normalized_coordinates=normalized_coordinates,
             )
         except NoCompatibleJobError as excp:
             print(str(excp))

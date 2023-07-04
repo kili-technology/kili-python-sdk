@@ -7,7 +7,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from kili.orm import Asset, JobMLTask, JobTool
-from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotCompatibleInputType,
+    NotCompatibleOptions,
+)
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.format.coco.types import (
     CocoAnnotation,
@@ -33,14 +37,18 @@ class CocoExporter(AbstractExporter):
 
     requires_asset_access = True
 
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
+        if self.normalized_coordinates is True:
+            raise NotCompatibleOptions(
+                "The COCO annotation format does not support normalized coordinates."
+            )
 
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
-        if self.project_input_type not in ("IMAGE", "VIDEO"):
+        if self.project["inputType"] not in ("IMAGE", "VIDEO"):
             raise NotCompatibleInputType(
-                f"Project with input type '{self.project_input_type}' not compatible with COCO"
+                f"Project with input type '{self.project['inputType']}' not compatible with COCO"
                 " export format."
             )
 
@@ -57,7 +65,7 @@ class CocoExporter(AbstractExporter):
 
     def process_and_save(self, assets: List[Asset], output_filename: Path):
         """Extract formatted annotations from labels."""
-        clean_assets = self.pre_process_assets(assets, self.label_format)
+        clean_assets = self.preprocess_assets(assets, self.label_format)
 
         self._save_assets_export(
             clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier
@@ -75,14 +83,14 @@ class CocoExporter(AbstractExporter):
     ):
         """Save the assets to a file and return the link to that file."""
         if self.split_option == "split":
-            for job_name, job in self.project_json_interface["jobs"].items():
+            for job_name, job in self.project["jsonInterface"]["jobs"].items():
                 if self._is_job_compatible(job):
                     _convert_kili_semantic_to_coco(
                         jobs={job_name: job},
                         assets=assets,
-                        output_dir=Path(output_directory) / self.project_id,
-                        title=self.project_title,
-                        project_input_type=self.project_input_type,
+                        output_dir=Path(output_directory) / self.project["id"],
+                        title=self.project["title"],
+                        project_input_type=self.project["inputType"],
                         annotation_modifier=annotation_modifier,
                         merged=False,
                     )
@@ -92,13 +100,13 @@ class CocoExporter(AbstractExporter):
             _convert_kili_semantic_to_coco(
                 jobs={
                     k: job
-                    for k, job in self.project_json_interface["jobs"].items()
+                    for k, job in self.project["jsonInterface"]["jobs"].items()
                     if self._is_job_compatible(job)
                 },
                 assets=assets,
-                output_dir=Path(output_directory) / self.project_id,
-                title=self.project_title,
-                project_input_type=self.project_input_type,
+                output_dir=Path(output_directory) / self.project["id"],
+                title=self.project["title"],
+                project_input_type=self.project["inputType"],
                 annotation_modifier=annotation_modifier,
                 merged=True,
             )
