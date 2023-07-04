@@ -24,9 +24,10 @@ class KiliExporter(AbstractExporter):
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
 
-    def _is_job_compatible(self, job: Job) -> None:
+    def _is_job_compatible(self, job: Job) -> bool:
         """Check if the export label format is compatible with the job."""
         _ = job
+        return True  # kili format is compatible with all jobs
 
     def _save_assets_export(self, assets: List[Asset], output_filename: Path) -> None:
         """Save the assets to a file and return the link to that file."""

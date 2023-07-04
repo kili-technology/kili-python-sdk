@@ -49,9 +49,9 @@ from kili.services.types import ProjectId
     help="Download assets in the export.",
 )
 @click.option(
-    "--normalized-coordinates/--not-normalized-coordinates",
+    "--normalized-coordinates/--pixel-coordinates",
     type=bool,
-    default=True,
+    default=None,
     help="Whether to use normalized coordinates or not.",
 )
 @Options.api_key
@@ -70,7 +70,7 @@ def export_labels(
     project_id: str,
     verbose: bool,
     with_assets: bool,
-    normalized_coordinates: bool,
+    normalized_coordinates: Optional[bool],
 ) -> None:
     # pylint: disable=line-too-long
     """Export the Kili labels of a project to a given format.

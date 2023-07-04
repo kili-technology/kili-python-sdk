@@ -43,7 +43,7 @@ class YoloExporter(AbstractExporter):
 
         if self.normalized_coordinates is False:
             raise NotCompatibleOptions(
-                "The COCO annotation format does not support pixel coordinates."
+                "The YOLO annotation format does not support pixel coordinates."
             )
 
     def _check_project_compatibility(self) -> None:
