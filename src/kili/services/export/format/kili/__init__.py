@@ -156,9 +156,7 @@ def _scale_all_vertices_in_object(object_, width: int, height: int):
         return [_scale_all_vertices_in_object(obj, width=width, height=height) for obj in object_]
 
     if isinstance(object_, Dict):
-        if "x" in object_ and "y" in object_:
-            # change asset["width"] and asset["height"] once we have the dimensions
-            # for image and video assets
+        if all(key in ("x", "y") for key in object_.keys()):
             return _scale_vertex(object_, width=width, height=height)
         return {
             key: _scale_all_vertices_in_object(value, width=width, height=height)
