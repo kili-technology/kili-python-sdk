@@ -71,7 +71,7 @@ def fetch_assets(
     download_media: bool,
     local_media_dir: Optional[str],
     asset_filter_kwargs: Optional[Dict[str, object]],
-    normalized_coordinates: bool,
+    normalized_coordinates: Optional[bool],
 ) -> List[Dict]:
     """Fetches assets.
 

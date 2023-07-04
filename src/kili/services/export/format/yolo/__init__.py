@@ -22,7 +22,7 @@ from ...media.video import cut_video
 class YoloExporter(AbstractExporter):
     """Common code for Yolo exporters."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         if self.split_option == "merged":
@@ -34,11 +34,16 @@ class YoloExporter(AbstractExporter):
                 self.project["jsonInterface"], JobMLTask.ObjectDetection, JobTool.Rectangle
             )
 
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
         if self.single_file:
             raise NotCompatibleOptions(
                 f"The label format {self.label_format} can not be exported into a single file."
+            )
+
+        if self.normalized_coordinates is False:
+            raise NotCompatibleOptions(
+                "The COCO annotation format does not support pixel coordinates."
             )
 
     def _check_project_compatibility(self) -> None:

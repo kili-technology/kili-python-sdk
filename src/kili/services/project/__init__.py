@@ -1,13 +1,13 @@
 """Service module for projects."""
 
-from typing import List
+from typing import Dict, List
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.exceptions import NotFound
 
 
-def get_project(kili, project_id: str, fields: List[str]):
+def get_project(kili, project_id: str, fields: List[str]) -> Dict:
     """Get a project from its id or raise a NotFound Error if not found."""
     projects = list(
         ProjectQuery(kili.graphql_client)(

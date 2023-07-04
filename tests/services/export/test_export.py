@@ -943,11 +943,11 @@ def test_convert_to_non_normalized_coords(mocker: pytest_mock.MockerFixture):
             "modelName": None,
         },
         "pageResolutions": [
-            {"pageNumber": 0, "height": 842, "width": 595, "rotation": 0},
             {"pageNumber": 1, "height": 842, "width": 595, "rotation": 0},
+            {"pageNumber": 2, "height": 842, "width": 595, "rotation": 0},
         ],
     }
-    scaled_asset = exporter.convert_to_non_normalized_coords(asset)  # type: ignore
+    scaled_asset = exporter.convert_to_pixel_coords(asset)  # type: ignore
 
     assert scaled_asset == {
         "latestLabel": {
@@ -1002,7 +1002,7 @@ def test_convert_to_non_normalized_coords(mocker: pytest_mock.MockerFixture):
             "modelName": None,
         },
         "pageResolutions": [
-            {"pageNumber": 0, "height": 842, "width": 595, "rotation": 0},
             {"pageNumber": 1, "height": 842, "width": 595, "rotation": 0},
+            {"pageNumber": 2, "height": 842, "width": 595, "rotation": 0},
         ],
     }

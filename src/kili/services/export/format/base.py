@@ -49,7 +49,7 @@ class ExportParams(NamedTuple):
     with_assets: bool
     annotation_modifier: Optional[CocoAnnotationModifier]
     asset_filter_kwargs: Optional[Dict[str, object]]
-    normalized_coordinates: bool
+    normalized_coordinates: Optional[bool]
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -57,6 +57,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     requires_asset_access = False
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         export_params: ExportParams,
@@ -64,7 +65,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         logger: logging.Logger,
         disable_tqdm: bool,
         content_repository: AbstractContentRepository,
-    ):  # pylint: disable=too-many-arguments
+    ) -> None:
         """Initialize the exporter."""
         self.project_id: ProjectId = export_params.project_id
         self.assets_ids: Optional[List[str]] = export_params.assets_ids
@@ -95,9 +96,9 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
 
+    @abstractmethod
     def _is_job_compatible(self, job: Job) -> bool:
         """Check if the export label format is compatible with the job."""
-        raise NotImplementedError
 
     @property
     def compatible_jobs(self) -> Tuple[str]:
@@ -158,11 +159,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         Return the name of the exported archive file.
         """
-        if self.project["inputType"] != "PDF" and self.normalized_coordinates is False:
-            raise NotCompatibleOptions(
-                "The `normalized_coordinates=False` option is only available for PDF projects."
-            )
-
         self._check_arguments_compatibility()
         self._check_project_compatibility()
         self._check_and_ensure_asset_access()
@@ -194,7 +190,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
             self.process_and_save(assets, self.output_file)
 
-    def _check_and_ensure_asset_access(self):
+    def _check_and_ensure_asset_access(self) -> None:
         """Check asset access.
 
         If there is a data connection, and that the format requires a data access, or that
@@ -258,7 +254,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return clean_assets
 
     @staticmethod
-    def _format_json_response(label: Label, label_format: LabelFormat):
+    def _format_json_response(label: Label, label_format: LabelFormat) -> Label:
         """Format the label JSON response in the requested format."""
         formatted_json_response = label.json_response(format_=label_format)
         json_response = {}
@@ -289,77 +285,4 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         clean_assets = AbstractExporter._filter_out_autosave_labels(assets_in_format)
 
-        if self.normalized_coordinates is False:
-            assets = [self.convert_to_non_normalized_coords(asset) for asset in assets]
-
         return clean_assets
-
-    def convert_to_non_normalized_coords(self, asset: Asset) -> Asset:
-        """Convert asset JSON response to non-normalized coordinates."""
-
-        def _scale_normalized_vertices(
-            norm_vertices: List[Dict], width: int, height: int
-        ) -> List[Dict]:
-            return [
-                {"x": vertex["x"] * width, "y": vertex["y"] * height} for vertex in norm_vertices
-            ]
-
-        def _scale_normalized_vertices_pdf_annotation(
-            annotation: Dict, asset_page_resolutions: List[Dict]
-        ) -> Dict:
-            # pdf annotations have two layers of "annotations"
-            if "annotations" in annotation:
-                annotation["annotations"] = [
-                    _scale_normalized_vertices_pdf_annotation(ann, asset_page_resolutions)
-                    for ann in annotation["annotations"]
-                ]
-                return annotation
-
-            # make sure that the page resolutions are sorted by page number
-            asset_page_resolutions = sorted(asset_page_resolutions, key=lambda x: x["pageNumber"])
-
-            for key in ("polys", "boundingPoly"):
-                annotation[key] = [
-                    {
-                        **value,
-                        "normalizedVertices": _scale_normalized_vertices(
-                            value["normalizedVertices"],
-                            width=asset_page_resolutions[page_number - 1]["width"],
-                            height=asset_page_resolutions[page_number - 1]["height"],
-                        ),
-                    }
-                    for value, page_number in zip(annotation[key], annotation["pageNumberArray"])
-                ]
-
-            return annotation
-
-        if self.project["inputType"] == "PDF":
-            for job_name in asset.get("latestLabel", {}).get("jsonResponse", {}):
-                if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
-                    continue
-
-                if (
-                    asset.get("latestLabel", {})
-                    .get("jsonResponse", {})
-                    .get(job_name, {})
-                    .get("annotations")
-                ):
-                    asset["latestLabel"]["jsonResponse"][job_name]["annotations"] = [
-                        _scale_normalized_vertices_pdf_annotation(ann, asset["pageResolutions"])
-                        for ann in asset["latestLabel"]["jsonResponse"][job_name]["annotations"]
-                    ]
-
-                if asset.get("labels"):
-                    labels = []
-                    for label in asset["labels"]:
-                        if label.get("jsonResponse", {}).get(job_name, {}).get("annotations"):
-                            label["jsonResponse"][job_name]["annotations"] = [
-                                _scale_normalized_vertices_pdf_annotation(
-                                    ann, asset["pageResolutions"]
-                                )
-                                for ann in label["jsonResponse"][job_name]["annotations"]
-                            ]
-                        labels.append(label)
-                    asset["labels"] = labels
-
-        return asset

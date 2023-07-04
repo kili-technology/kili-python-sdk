@@ -36,7 +36,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     with_assets: bool,
     annotation_modifier: Optional[CocoAnnotationModifier],
     asset_filter_kwargs: Optional[Dict[str, object]],
-    normalized_coordinates: bool,
+    normalized_coordinates: Optional[bool],
 ) -> None:
     """Export the selected assets into the required format, and save it into a file archive."""
     get_project(kili, project_id, ["id"])

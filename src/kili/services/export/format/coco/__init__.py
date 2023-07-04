@@ -7,7 +7,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from kili.orm import Asset, JobMLTask, JobTool
-from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleInputType
+from kili.services.export.exceptions import (
+    NoCompatibleJobError,
+    NotCompatibleInputType,
+    NotCompatibleOptions,
+)
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.format.coco.types import (
     CocoAnnotation,
@@ -33,8 +37,12 @@ class CocoExporter(AbstractExporter):
 
     requires_asset_access = True
 
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
+        if self.normalized_coordinates is True:
+            raise NotCompatibleOptions(
+                "The COCO annotation format does not support normalized coordinates."
+            )
 
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""

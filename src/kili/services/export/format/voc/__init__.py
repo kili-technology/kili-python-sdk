@@ -24,15 +24,21 @@ class VocExporter(AbstractExporter):
 
     requires_asset_access = True
 
-    def _check_arguments_compatibility(self):
+    def _check_arguments_compatibility(self) -> None:
         """Check if the export label format is compatible with the export options."""
         if self.single_file:
             raise NotCompatibleOptions(
                 "The Pascal VOC annotation format cannot be exported into a single file.",
             )
+
         if self.split_option != "merged":
             raise NotCompatibleOptions(
                 "The current implementation only supports merged annotations."
+            )
+
+        if self.normalized_coordinates is True:
+            raise NotCompatibleOptions(
+                "The Pascal VOC annotation format does not support normalized coordinates."
             )
 
     def _check_project_compatibility(self) -> None:

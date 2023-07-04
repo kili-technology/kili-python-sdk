@@ -3,11 +3,13 @@
 import json
 import os
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
+from kili.services.types import Job
 
+from ...exceptions import NotCompatibleInputType
 from ...media.video import cut_video
 
 
@@ -21,6 +23,10 @@ class KiliExporter(AbstractExporter):
 
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
+
+    def _is_job_compatible(self, job: Job) -> None:
+        """Check if the export label format is compatible with the job."""
+        _ = job
 
     def _save_assets_export(self, assets: List[Asset], output_filename: Path) -> None:
         """Save the assets to a file and return the link to that file."""
@@ -88,6 +94,15 @@ class KiliExporter(AbstractExporter):
     def process_and_save(self, assets: List[Asset], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
         clean_assets = self.preprocess_assets(assets, self.label_format)
+
+        if self.normalized_coordinates is False:
+            if self.project["inputType"] == "PDF":
+                clean_assets = [self.convert_to_pixel_coords(asset) for asset in clean_assets]
+            else:
+                raise NotCompatibleInputType(
+                    "Export with pixel coordinates is currently only available for PDF assets."
+                )
+
         return self._save_assets_export(
             clean_assets,
             output_filename,
@@ -97,3 +112,100 @@ class KiliExporter(AbstractExporter):
     def images_folder(self) -> Path:
         """Export images folder."""
         return self.base_folder / self.ASSETS_DIR_NAME
+
+    def convert_to_pixel_coords(self, asset: Asset) -> Asset:
+        """Convert asset JSON response normalized vertices to pixel coordinates."""
+        if asset.get("latestLabel", {}).get("jsonResponse", {}):
+            asset["latestLabel"]["jsonResponse"] = self._scale_label_vertices(
+                asset["latestLabel"]["jsonResponse"], asset
+            )
+
+        if asset.get("labels"):
+            for label in asset["labels"]:
+                if label.get("jsonResponse", {}):
+                    label["jsonResponse"] = self._scale_label_vertices(label["jsonResponse"], asset)
+
+        return asset
+
+    def _scale_label_vertices(self, json_resp: Dict, asset: Dict) -> Dict:
+        scaler_func = (
+            _scale_normalized_vertices_pdf_annotation
+            if self.project["inputType"] == "PDF"
+            else _scale_normalized_vertices_image_annotation
+        )
+
+        for job_name in json_resp.keys():
+            if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
+                continue
+
+            if json_resp.get(job_name, {}).get("annotations"):
+                json_resp[job_name]["annotations"] = [
+                    scaler_func(ann, asset) for ann in json_resp[job_name]["annotations"]
+                ]
+
+        return json_resp
+
+
+def _scale_vertex(vertex: Dict, width: int, height: int) -> Dict:
+    return {"x": vertex["x"] * width, "y": vertex["y"] * height}
+
+
+def _scale_normalized_vertices(norm_vertices: List[Dict], width: int, height: int) -> List[Dict]:
+    return [_scale_vertex(vertex, width=width, height=height) for vertex in norm_vertices]
+
+
+def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> Dict:
+    """Scale normalized vertices of a PDF annotation.
+
+    PDF annotations are different from image annotations because the asset width/height can vary.
+    """
+    if "annotations" in annotation:
+        # pdf annotations have two layers of "annotations"
+        # https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs
+        annotation["annotations"] = [
+            _scale_normalized_vertices_pdf_annotation(ann, asset)
+            for ann in annotation["annotations"]
+        ]
+        return annotation
+
+    # make sure that the page resolutions are sorted by page number
+    asset_page_resolutions = asset["pageResolutions"]
+    asset_page_resolutions = sorted(asset_page_resolutions, key=lambda x: x["pageNumber"])
+
+    # an annotation has three keys:
+    # - pageNumberArray: list of page numbers
+    # - polys: list of polygons
+    # - boundingPoly: list of bounding polygons
+    # each polygon is a dict with a key "normalizedVertices" that is a list of vertices
+    for key in ("polys", "boundingPoly"):
+        annotation[key] = [
+            {
+                "normalizedVertices": _scale_normalized_vertices(
+                    value["normalizedVertices"],
+                    width=asset_page_resolutions[page_number]["width"],
+                    height=asset_page_resolutions[page_number]["height"],
+                ),
+            }
+            for value, page_number in zip(annotation[key], annotation["pageNumberArray"])
+        ]
+
+    return annotation
+
+
+def _scale_normalized_vertices_image_annotation(annotation: Dict, asset: Dict) -> Dict:
+    raise NotImplementedError("Image and video annotations are not yet supported.")
+
+    # def _scale_all_vertices(object_, asset: Dict):
+    #     if isinstance(object_, List):
+    #         return [_scale_all_vertices(obj, asset) for obj in object_]
+
+    #     if isinstance(object_, Dict):
+    #         if "x" in object_ and "y" in object_:
+    #             # change asset["width"] and asset["height"] once we have the dimensions
+    #             # for image and video assets
+    #             return _scale_vertex(object_, width=asset["width"], height=asset["height"])
+    #         return {key: _scale_all_vertices(value, asset) for key, value in object_.items()}
+
+    #     return object_
+
+    # return _scale_all_vertices(annotation, asset)  # type: ignore
