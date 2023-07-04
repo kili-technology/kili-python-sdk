@@ -151,8 +151,21 @@ def _scale_vertex(vertex: Dict, width: int, height: int) -> Dict:
     return {"x": vertex["x"] * width, "y": vertex["y"] * height}
 
 
-def _scale_normalized_vertices(norm_vertices: List[Dict], width: int, height: int) -> List[Dict]:
-    return [_scale_vertex(vertex, width=width, height=height) for vertex in norm_vertices]
+def _scale_all_vertices_in_object(object_, width: int, height: int):
+    if isinstance(object_, List):
+        return [_scale_all_vertices_in_object(obj, width=width, height=height) for obj in object_]
+
+    if isinstance(object_, Dict):
+        if "x" in object_ and "y" in object_:
+            # change asset["width"] and asset["height"] once we have the dimensions
+            # for image and video assets
+            return _scale_vertex(object_, width=width, height=height)
+        return {
+            key: _scale_all_vertices_in_object(value, width=width, height=height)
+            for key, value in object_.items()
+        }
+
+    return object_
 
 
 def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> Dict:
@@ -169,9 +182,13 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
         ]
         return annotation
 
-    # make sure that the page resolutions are sorted by page number
-    asset_page_resolutions = asset["pageResolutions"]
-    asset_page_resolutions = sorted(asset_page_resolutions, key=lambda x: x["pageNumber"])
+    page_number_to_dimensions = {
+        page_resolution["pageNumber"]: {
+            "width": page_resolution["width"],
+            "height": page_resolution["height"],
+        }
+        for page_resolution in asset["pageResolutions"]
+    }
 
     # an annotation has three keys:
     # - pageNumberArray: list of page numbers
@@ -181,10 +198,11 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
     for key in ("polys", "boundingPoly"):
         annotation[key] = [
             {
-                "normalizedVertices": _scale_normalized_vertices(
+                **value,  # keep the original normalizedVertices
+                "vertices": _scale_all_vertices_in_object(
                     value["normalizedVertices"],
-                    width=asset_page_resolutions[page_number]["width"],
-                    height=asset_page_resolutions[page_number]["height"],
+                    width=page_number_to_dimensions[page_number]["width"],
+                    height=page_number_to_dimensions[page_number]["height"],
                 ),
             }
             for value, page_number in zip(annotation[key], annotation["pageNumberArray"])
@@ -195,18 +213,4 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
 
 def _scale_normalized_vertices_image_annotation(annotation: Dict, asset: Dict) -> Dict:
     raise NotImplementedError("Image and video annotations are not yet supported.")
-
-    # def _scale_all_vertices(object_, asset: Dict):
-    #     if isinstance(object_, List):
-    #         return [_scale_all_vertices(obj, asset) for obj in object_]
-
-    #     if isinstance(object_, Dict):
-    #         if "x" in object_ and "y" in object_:
-    #             # change asset["width"] and asset["height"] once we have the dimensions
-    #             # for image and video assets
-    #             return _scale_vertex(object_, width=asset["width"], height=asset["height"])
-    #         return {key: _scale_all_vertices(value, asset) for key, value in object_.items()}
-
-    #     return object_
-
-    # return _scale_all_vertices(annotation, asset)  # type: ignore
+    # return _scale_all_vertices_in_object(annotation, asset)  # type: ignore

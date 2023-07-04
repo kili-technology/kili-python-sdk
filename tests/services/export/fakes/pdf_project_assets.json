@@ -1,0 +1,247 @@
+[
+    {
+        "content": "https://storage.googleapis.com/label-backend-staging/projects/cljo5b3jjd31f9k8blj7/assets/cljo5b4dcf",
+        "externalId": "Cas technique n°9.pdf",
+        "id": "cljo5b42500042a6akiuy79o7",
+        "jsonContent": "",
+        "jsonMetadata": {},
+        "latestLabel": {
+            "author": {
+                "email": "test+admin+1@kili-technology.com",
+                "firstname": "Feat1",
+                "id": "user-feat1-1",
+                "lastname": "Test Admin"
+            },
+            "createdAt": "2023-07-04T10:40:52.065Z",
+            "isLatestLabelForUser": true,
+            "jsonResponse": {
+                "CLASSIFICATION_JOB": {
+                    "categories": [
+                        {
+                            "confidence": 100,
+                            "name": "C"
+                        }
+                    ]
+                },
+                "OBJECT_DETECTION_JOB": {
+                    "annotations": [
+                        {
+                            "annotations": [
+                                {
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                [
+                                                    {
+                                                        "x": 0.024123653461525008,
+                                                        "y": 0.009304248327663437
+                                                    },
+                                                    {
+                                                        "x": 0.024123653461525008,
+                                                        "y": 0.13956372491495156
+                                                    },
+                                                    {
+                                                        "x": 0.1864100494754205,
+                                                        "y": 0.13956372491495156
+                                                    },
+                                                    {
+                                                        "x": 0.1864100494754205,
+                                                        "y": 0.009304248327663437
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ],
+                                    "pageNumberArray": [
+                                        1
+                                    ],
+                                    "polys": [
+                                        {
+                                            "normalizedVertices": [
+                                                [
+                                                    {
+                                                        "x": 0.024123653461525008,
+                                                        "y": 0.009304248327663437
+                                                    },
+                                                    {
+                                                        "x": 0.024123653461525008,
+                                                        "y": 0.13956372491495156
+                                                    },
+                                                    {
+                                                        "x": 0.1864100494754205,
+                                                        "y": 0.13956372491495156
+                                                    },
+                                                    {
+                                                        "x": 0.1864100494754205,
+                                                        "y": 0.009304248327663437
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "categories": [
+                                {
+                                    "confidence": 100,
+                                    "name": "A"
+                                }
+                            ],
+                            "children": {},
+                            "content": "",
+                            "mid": "20230704124040213-29399"
+                        },
+                        {
+                            "annotations": [
+                                {
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                [
+                                                    {
+                                                        "x": 0.7785360889855797,
+                                                        "y": 0.831179517271267
+                                                    },
+                                                    {
+                                                        "x": 0.7785360889855797,
+                                                        "y": 0.9180191683294592
+                                                    },
+                                                    {
+                                                        "x": 0.8816098810484593,
+                                                        "y": 0.9180191683294592
+                                                    },
+                                                    {
+                                                        "x": 0.8816098810484593,
+                                                        "y": 0.831179517271267
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ],
+                                    "pageNumberArray": [
+                                        1
+                                    ],
+                                    "polys": [
+                                        {
+                                            "normalizedVertices": [
+                                                [
+                                                    {
+                                                        "x": 0.7785360889855797,
+                                                        "y": 0.831179517271267
+                                                    },
+                                                    {
+                                                        "x": 0.7785360889855797,
+                                                        "y": 0.9180191683294592
+                                                    },
+                                                    {
+                                                        "x": 0.8816098810484593,
+                                                        "y": 0.9180191683294592
+                                                    },
+                                                    {
+                                                        "x": 0.8816098810484593,
+                                                        "y": 0.831179517271267
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "categories": [
+                                {
+                                    "confidence": 100,
+                                    "name": "B"
+                                }
+                            ],
+                            "children": {},
+                            "content": "",
+                            "mid": "20230704124043531-11579"
+                        },
+                        {
+                            "annotations": [
+                                {
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                [
+                                                    {
+                                                        "x": 0.7646922448406724,
+                                                        "y": 0.13165433196683027
+                                                    },
+                                                    {
+                                                        "x": 0.7646922448406724,
+                                                        "y": 0.21722964774526993
+                                                    },
+                                                    {
+                                                        "x": 0.9076834776157575,
+                                                        "y": 0.21722964774526993
+                                                    },
+                                                    {
+                                                        "x": 0.9076834776157575,
+                                                        "y": 0.13165433196683027
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ],
+                                    "pageNumberArray": [
+                                        2
+                                    ],
+                                    "polys": [
+                                        {
+                                            "normalizedVertices": [
+                                                [
+                                                    {
+                                                        "x": 0.7646922448406724,
+                                                        "y": 0.13165433196683027
+                                                    },
+                                                    {
+                                                        "x": 0.7646922448406724,
+                                                        "y": 0.21722964774526993
+                                                    },
+                                                    {
+                                                        "x": 0.9076834776157575,
+                                                        "y": 0.21722964774526993
+                                                    },
+                                                    {
+                                                        "x": 0.9076834776157575,
+                                                        "y": 0.13165433196683027
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "categories": [
+                                {
+                                    "confidence": 100,
+                                    "name": "B"
+                                }
+                            ],
+                            "children": {},
+                            "content": "",
+                            "mid": "20230704124045705-1891"
+                        }
+                    ]
+                }
+            },
+            "labelType": "DEFAULT",
+            "modelName": null
+        },
+        "pageResolutions": [
+            {
+                "height": 842,
+                "pageNumber": 1,
+                "rotation": 0,
+                "width": 595
+            },
+            {
+                "height": 595,
+                "pageNumber": 2,
+                "rotation": 0,
+                "width": 420
+            }
+        ]
+    }
+]
