@@ -20,7 +20,7 @@ install_requires = [
     "pyyaml",
     "Pillow",
     "cuid",
-    "pydantic",
+    "pydantic<2",
     "urllib3>=1.26,<2.0.0",
     "ffmpeg-python",
     "gql[requests,websockets]",
