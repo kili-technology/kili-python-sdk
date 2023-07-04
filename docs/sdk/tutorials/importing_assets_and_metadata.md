@@ -224,104 +224,13 @@ If you want to add metadata based on Optical Character Recognition, the process 
 
 For more information on adding asset metadata, refer to our [documentation](https://docs.kili-technology.com/docs/adding-asset-metadata).
 
-## Adding the page resolution to PDFs
-For the assets that have been loaded after the 2023-07-05, the PDF assets should carry the page resolution information. For the others, it is possible to backfill the page resolutions using:
-
-
-```python
-# project creation with PDF input type
-
-interface = {
-    "jobs": {
-        "CLASSIFICATION_JOB": {
-            "mlTask": "CLASSIFICATION",
-            "content": {
-                "categories": {
-                    "RESEARCH": {"name": "Research", "children": [], "id": "category1"},
-                    "GUIDELINES": {"name": "Guidelines", "children": [], "id": "category2"},
-                    "TREND_ANALYSIS": {"children": [], "name": "Trend analysis", "id": "category3"},
-                },
-                "input": "radio",
-            },
-            "instruction": "Paper type",
-            "required": 1,
-            "isChild": False,
-            "isNew": False,
-        },
-    }
-}
-
-project = kili.create_project(
-    title="[Kili SDK Notebook]: Importing assets with metadata - PDF",
-    description="Project Description",
-    input_type="PDF",
-    json_interface=interface,
-)
-
-project_id_pdf = project["id"]
-
-assets = kili.append_many_to_dataset(
-    project_id=project_id_pdf,
-    content_array=[
-        "https://arxiv.org/pdf/2306.17766",
-        "https://arxiv.org/pdf/2306.17582",
-        "https://arxiv.org/pdf/2306.17514",
-    ],
-    external_id_array=external_ids,
-)
-```
-
-
-
-
-```python
-b  # Add page resolution to PDF assets
-
-from kili.utils.assets import PageResolution
-
-kili.update_properties_in_assets(
-    project_id=project_id,
-    external_ids=external_ids,
-    page_resolutions_array=[
-        [
-            PageResolution(page_number=0, height=700, width=500),
-            PageResolution(page_number=1, height=700, width=500),
-            PageResolution(page_number=2, height=700, width=500),
-            PageResolution(page_number=4, height=700, width=500),
-        ],
-        [
-            PageResolution(page_number=0, height=700, width=500),
-            PageResolution(page_number=1, height=700, width=500),
-            PageResolution(page_number=2, height=700, width=500),
-            PageResolution(page_number=3, height=700, width=500),
-        ],
-        [
-            PageResolution(page_number=0, height=700, width=500),
-            PageResolution(page_number=1, height=700, width=500),
-            PageResolution(page_number=2, height=700, width=500),
-            PageResolution(page_number=3, height=700, width=500),
-        ],
-    ],
-)
-```
-
-
-
-
-    [{'id': 'cljmyz7au0006xjz0wsvwe3jd'},
-     {'id': 'cljmyz7au0007xjz0qeez4l2c'},
-     {'id': 'cljmyz7au0008xjz02yx1r1d6'}]
-
-
-
 ## Cleanup
 
 We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
-kili.delete_project(project_id_pdf)
+kili.delete_project(project_id);
 ```
 
 ## Summary

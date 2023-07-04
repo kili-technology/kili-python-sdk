@@ -36,6 +36,7 @@ nav:
       - Importing Assets:
           - Importing Assets: sdk/tutorials/importing_assets_and_metadata.md
           - Video Assets: sdk/tutorials/importing_video_assets.md
+          - PDF Assets: sdk/tutorials/importing_pdf_assets.md
           - Rich Text Assets: sdk/tutorials/import_text_assets.md
       - Importing Labels:
           - Importing Labels: sdk/tutorials/importing_labels.md

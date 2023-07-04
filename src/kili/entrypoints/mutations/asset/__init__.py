@@ -226,12 +226,12 @@ class MutationsAsset:
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     page_resolutions_array=[
                         [
-                            PageResolution(width=480, height=640, page_number=0),
                             PageResolution(width=480, height=640, page_number=1),
+                            PageResolution(width=480, height=640, page_number=2),
                         ],[
-                            PageResolution(width=340, height=512, page_number=0),
-                            PageResolution(width=680, height=1024, page_number=1, rotation=90),
-                            PageResolution(width=680, height=1024, page_number=2),
+                            PageResolution(width=340, height=512, page_number=1),
+                            PageResolution(width=680, height=1024, page_number=2, rotation=90),
+                            PageResolution(width=680, height=1024, page_number=3),
                         ]
                     ],
                 )
