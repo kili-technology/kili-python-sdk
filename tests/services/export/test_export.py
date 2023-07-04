@@ -560,7 +560,7 @@ def test_export_service_layout(
                 "with_assets": True,
                 "annotation_modifier": None,
                 "asset_filter_kwargs": None,
-                "normalized_coordinates": True,
+                "normalized_coordinates": None,
             }
 
             default_kwargs.update(test_case["export_kwargs"])
@@ -687,7 +687,7 @@ def test_export_service_errors(
             "with_assets": True,
             "annotation_modifier": None,
             "asset_filter_kwargs": None,
-            "normalized_coordinates": True,
+            "normalized_coordinates": None,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
