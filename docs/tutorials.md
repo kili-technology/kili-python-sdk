@@ -16,9 +16,9 @@ In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutori
 
 Because videos and Rich Text assets may be more complex to import, we’ve created separate tutorials devoted to them:
 
-- For video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/video_assets/).
-- For rich text assets, see [here](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/import_text_assets.ipynb).
-- For PDF assets, see [here](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/importing_pdf_assets.ipynb).
+- For video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/).
+- For rich text assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/import_text_assets).
+- For PDF assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_pdf_assets).
 
 ## Importing labels
 
