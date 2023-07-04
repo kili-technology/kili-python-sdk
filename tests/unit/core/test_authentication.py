@@ -1,4 +1,5 @@
 import datetime
+import platform
 import warnings
 from unittest.mock import patch
 
@@ -10,6 +11,7 @@ from kili.core.graphql.graphql_client import GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery
 
 
+@pytest.mark.skipif(platform.system() == "Windows", reason="Mocking fails on Windows")
 def test__check_expiry_of_key_is_close(mocker: pytest_mock.MockerFixture):
     mocker.patch.object(Kili, "_check_api_key_valid", return_value=True)
     mocker.patch.object(Kili, "get_user", return_value={"id": "id", "email": "email"})
