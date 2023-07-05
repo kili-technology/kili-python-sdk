@@ -1,11 +1,11 @@
 # several test modes:
 # - ALL: run all modes below (only useful for manual trigger)
 # - CUSTOM: choose git branch and endpoint (only useful for manual trigger)
-# - MAIN_PREPROD: main branch against PREPROD
+# - MAIN_STAGING: main branch against STAGING
 # - RELEASE_PREPROD: latest release branch against PREPROD
 # - MAIN_LTS: main branch against LTS
-# - PREV_RELEASE_TESTS_PREPROD: SDK from main, previous release tests against PREPROD
-# - LTS_CYCLE_FIRST_SDK_PREPROD: test with first SDK of LTS cycle, against PREPROD
+# - PREV_RELEASE_TESTS_STAGING: SDK from main, previous release tests against STAGING
+# - LTS_CYCLE_FIRST_SDK_STAGING: test with first SDK of LTS cycle, against STAGING
 
 name: E2E tests
 on:
@@ -22,18 +22,18 @@ on:
         type: boolean
         default: true
       testMode:
-        description: "Test mode: ALL (run all modes), CUSTOM (specify branch and endpoint), MAIN_PREPROD (main branch against PREPROD), RELEASE_PREPROD (latest release branch against PREPROD), MAIN_LTS (main branch against LTS), PREV_RELEASE_TESTS_PREPROD (SDK from main, previous release tests against PREPROD), LTS_CYCLE_FIRST_SDK_PREPROD (test with first SDK of LTS cycle, against PREPROD)"
+        description: "Test mode: ALL (run all modes), CUSTOM (specify branch and endpoint), MAIN_STAGING (main branch against STAGING), RELEASE_PREPROD (latest release branch against PREPROD), MAIN_LTS (main branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from main, previous release tests against STAGING), LTS_CYCLE_FIRST_SDK_STAGING (test with first SDK of LTS cycle, against STAGING)"
         required: true
         type: choice
-        default: "MAIN_PREPROD"
+        default: "MAIN_STAGING"
         options:
           - ALL
           - CUSTOM
-          - MAIN_PREPROD
+          - MAIN_STAGING
           - RELEASE_PREPROD
           - MAIN_LTS
-          - PREV_RELEASE_TESTS_PREPROD
-          - LTS_CYCLE_FIRST_SDK_PREPROD
+          - PREV_RELEASE_TESTS_STAGING
+          - LTS_CYCLE_FIRST_SDK_STAGING
       customBranch:
         description: "Custom branch to test a PR (only used if test mode is CUSTOM)"
         required: false
@@ -43,7 +43,7 @@ on:
         description: "Custom endpoint to test a PR (only used if test mode is CUSTOM)"
         required: false
         type: choice
-        default: "PREPROD"
+        default: "STAGING"
         options:
           - "STAGING"
           - "PROD"
@@ -54,10 +54,10 @@ on:
       - "release/**"
       - main
   schedule:
-    #- cron: "0 7,15 * * 1-5" # MAIN_PREPROD
+    - cron: "0 7,15 * * 1-5" # MAIN_STAGING
     - cron: "0 9 * * 1-5" # MAIN_LTS
-    #- cron: "0 11 * * 1-5" # PREV_RELEASE_TESTS_PREPROD
-    #- cron: "0 13 * * 1-5" # LTS_CYCLE_FIRST_SDK_PREPROD
+    - cron: "0 11 * * 1-5" # PREV_RELEASE_TESTS_STAGING
+    - cron: "0 13 * * 1-5" # LTS_CYCLE_FIRST_SDK_STAGING
 
 jobs:
   test_setup:
@@ -76,29 +76,29 @@ jobs:
             if [[ "${{ github.ref_name }}" == release/* ]]; then
               json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
             else
-              json_str="{\"array\": [\"MAIN_PREPROD\"]}"
+              json_str="{\"array\": [\"MAIN_STAGING\"]}"
             fi
 
           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
 
             if [[ "${{ github.event.schedule }}" == "0 7,15 * * 1-5" ]]; then
-              json_str="{\"array\": [\"MAIN_PREPROD\"]}"
+              json_str="{\"array\": [\"MAIN_STAGING\"]}"
 
             elif [[ "${{ github.event.schedule }}" == "0 9 * * 1-5" ]]; then
               json_str="{\"array\": [\"MAIN_LTS\"]}"
 
             elif [[ "${{ github.event.schedule }}" == "0 11 * * 1-5" ]]; then
-              json_str="{\"array\": [\"PREV_RELEASE_TESTS_PREPROD\"]}"
+              json_str="{\"array\": [\"PREV_RELEASE_TESTS_STAGING\"]}"
 
             elif [[ "${{ github.event.schedule }}" == "0 13 * * 1-5" ]]; then
-              json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_PREPROD\"]}"
+              json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
 
             fi
 
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
 
             if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
-              json_str="{\"array\": [\"MAIN_PREPROD\", \"RELEASE_PREPROD\", \"MAIN_LTS\", \"PREV_RELEASE_TESTS_PREPROD\", \"LTS_CYCLE_FIRST_SDK_PREPROD\"]}"
+              json_str="{\"array\": [\"MAIN_STAGING\", \"RELEASE_PREPROD\", \"MAIN_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
             else
               json_str="{\"array\": [\"${{ github.event.inputs.testMode }}\"]}"
             fi
@@ -133,18 +133,18 @@ jobs:
       - name: Check that test mode is valid
         shell: bash
         run: |
-          if [[ ${{ env.TEST_MODE }} != "MAIN_PREPROD" ]] && \
+          if [[ ${{ env.TEST_MODE }} != "MAIN_STAGING" ]] && \
              [[ ${{ env.TEST_MODE }} != "CUSTOM" ]] && \
              [[ ${{ env.TEST_MODE }} != "RELEASE_PREPROD" ]] && \
              [[ ${{ env.TEST_MODE }} != "MAIN_LTS" ]] && \
-             [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_PREPROD" ]] && \
-             [[ ${{ env.TEST_MODE }} != "LTS_CYCLE_FIRST_SDK_PREPROD" ]]; then
+             [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_STAGING" ]] && \
+             [[ ${{ env.TEST_MODE }} != "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
             echo "TEST_MODE is not valid: ${{ env.TEST_MODE }}"
             exit 1
           fi
 
       - name: Set first SDK version of LTS cycle
-        if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK_PREPROD'
+        if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK_STAGING'
         shell: bash
         run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
@@ -160,9 +160,9 @@ jobs:
       - name: Set checkout branch/tag and endpoint
         shell: bash
         run: |
-          if [[ "${{ env.TEST_MODE }}" == "MAIN_PREPROD" ]]; then
+          if [[ "${{ env.TEST_MODE }}" == "MAIN_STAGING" ]]; then
             echo "REF=main" >> $GITHUB_ENV
-            echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
+            echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "RELEASE_PREPROD" ]]; then
             echo "REF=${{ env.LASTEST_RELEASE_BRANCH }}" >> $GITHUB_ENV
@@ -172,13 +172,13 @@ jobs:
             echo "REF=main" >> $GITHUB_ENV
             echo "TEST_AGAINST=LTS" >> $GITHUB_ENV
 
-          elif [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_PREPROD" ]]; then
+          elif [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_STAGING" ]]; then
             echo "REF=${{ env.LASTEST_RELEASE_BRANCH }}" >> $GITHUB_ENV
-            echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
+            echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
 
-          elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK_PREPROD" ]]; then
+          elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
             echo "REF=${{ env.LTS_CYCLE_FIRST_SDK_REF }}" >> $GITHUB_ENV
-            echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
+            echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "CUSTOM" ]]; then
             echo "REF=${{ github.event.inputs.customBranch }}" >> $GITHUB_ENV
@@ -215,8 +215,8 @@ jobs:
         with:
           ref: ${{ env.REF }}
 
-      - name: Delete src for PREV_RELEASE_TESTS_PREPROD mode
-        if: env.TEST_MODE == 'PREV_RELEASE_TESTS_PREPROD'
+      - name: Delete src for PREV_RELEASE_TESTS_STAGING mode
+        if: env.TEST_MODE == 'PREV_RELEASE_TESTS_STAGING'
         shell: bash
         run: rm -rf src # we want the previous release tests but the kili from main
 
@@ -232,7 +232,7 @@ jobs:
       - name: Install kili
         shell: bash
         run: |
-          if [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_PREPROD" ]]; then
+          if [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_STAGING" ]]; then
             pip install "kili[dev] @ git+https://github.com/kili-technology/kili-python-sdk.git@main"
           else
             pip install -e ".[dev]"

@@ -37,6 +37,12 @@ jobs:
           KILI_API_ENDPOINT: https://preproduction.cloud.kili-technology.com/api/label/v2/graphql
           KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY_PREPROD }}
 
+      - name: Make sure we are on a tag
+        if: ! startsWith(github.ref, 'refs/tags')
+        run: |
+          echo "This is not a tag, exiting"
+          exit 1
+
       - name: Publish to test PyPI
         if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
