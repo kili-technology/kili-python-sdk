@@ -38,6 +38,7 @@ jobs:
           KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY_PREPROD }}
 
       - name: Publish to test PyPI
+        if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
