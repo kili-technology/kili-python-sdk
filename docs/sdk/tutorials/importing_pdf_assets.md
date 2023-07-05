@@ -116,7 +116,7 @@ assets = kili.append_many_to_dataset(
 
 You can now update and check the resolutions of the pdf assets.
 
-⚠️ This step is only necessary for assets that have been annotated after 2023-07-05.
+⚠️ This step is only necessary for assets that have been annotated before the 2023-07-05. Before this date, the page resolutions were not stored once a label was submitted, so if you need to backfill this value if you need it.
 
 
 ```python
