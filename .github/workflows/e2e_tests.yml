@@ -54,10 +54,10 @@ on:
       - "release/**"
       - main
   schedule:
-    - cron: "0 7,15 * * 1-5" # MAIN_PREPROD
+    #- cron: "0 7,15 * * 1-5" # MAIN_PREPROD
     - cron: "0 9 * * 1-5" # MAIN_LTS
-    - cron: "0 11 * * 1-5" # PREV_RELEASE_TESTS_PREPROD
-    - cron: "0 13 * * 1-5" # LTS_CYCLE_FIRST_SDK_PREPROD
+    #- cron: "0 11 * * 1-5" # PREV_RELEASE_TESTS_PREPROD
+    #- cron: "0 13 * * 1-5" # LTS_CYCLE_FIRST_SDK_PREPROD
 
 jobs:
   test_setup:
