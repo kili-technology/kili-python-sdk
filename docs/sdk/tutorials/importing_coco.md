@@ -471,13 +471,77 @@ Below, we import some useful functions to convert annotations to Kili label form
 
 
 ```python
-import itertools
+from typing import Dict, List
 
 from kili.utils.labels.bbox import (
     bbox_points_to_normalized_vertices,
     point_to_normalized_point,
 )
 from kili.utils.labels.image import mask_to_normalized_vertices
+```
+
+
+```python
+def coco_bbox_annotation_to_normalized_vertices(
+    coco_ann: Dict, *, img_width: int, img_height: int
+) -> List[Dict]:
+    x, y, width, height = coco_ann["bbox"]
+    ret = bbox_points_to_normalized_vertices(
+        bottom_left={"x": x, "y": y + height},
+        bottom_right={"x": x + width, "y": y + height},
+        top_right={"x": x + width, "y": y},
+        top_left={"x": x, "y": y},
+        img_height=img_height,
+        img_width=img_width,
+        origin_location="top_left",
+    )
+    return ret
+```
+
+
+```python
+def coco_segm_annotation_to_normalized_vertices(
+    coco_ann: Dict, *, img_width: int, img_height: int
+) -> List[List[Dict]]:
+    coco_segmentations = coco_ann["segmentation"]
+
+    ret = []
+    for coco_segm in coco_segmentations:
+        if coco_ann["iscrowd"] == 0:
+            # a single object (iscrowd=0 in which case polygons are used)[
+            vertices = [
+                point_to_normalized_point(
+                    point={"x": x, "y": y},
+                    img_height=img_height,
+                    img_width=img_width,
+                    origin_location="top_left",
+                )
+                for x, y in zip(coco_segm[::2], coco_segm[1::2])
+            ]
+            ret.append(vertices)
+
+        else:
+            # a crowd (iscrowd=1 in which case RLE (run-length encoding) is used)
+            rle_counts = coco_segmentations["counts"]
+            mask = np.zeros(img_height * img_width, dtype=np.uint8)  # flat image
+            pixel_index = 0
+            for i, count in enumerate(rle_counts):
+                if i % 2 == 1:
+                    # we set pixels' value
+                    mask[pixel_index : pixel_index + count] = 255
+                pixel_index += count
+
+            # we reshape the mask to its original shape
+            # and we transpose it to have the same shape as the image
+            # (i.e. (height, width))
+            mask = mask.reshape((img_width, img_height)).T
+
+            # we convert the mask to normalized vertices
+            # hierarchy is not used here. It is used for polygons with holes.
+            normalized_vertices, hierarchy = mask_to_normalized_vertices(mask)
+            ret.extend(normalized_vertices)
+
+    return ret
 ```
 
 
@@ -497,7 +561,7 @@ for image_id in external_id_array:
         ann for ann in captions_val2017["annotations"] if ann["image_id"] == int(image_id)
     ]
     json_resp["TRANSCRIPTION_JOB"] = {
-        "text": img_captions[0]["caption"]  # we only take the 1st caption
+        "text": img_captions[0]["caption"]  # we only take the 1st caption for sake of simplicity
     }
 
     ### Object detection and segmentation annotations
@@ -512,19 +576,12 @@ for image_id in external_id_array:
         ### Object detection job
         if coco_ann["iscrowd"] == 0:
             # we skip crowd annotations bbox since they tend to be very large
-            x, y, width, height = coco_ann["bbox"]
             kili_ann_bbox = {
                 "children": {},
                 "boundingPoly": [
                     {
-                        "normalizedVertices": bbox_points_to_normalized_vertices(
-                            bottom_left={"x": x, "y": y + height},
-                            bottom_right={"x": x + width, "y": y + height},
-                            top_right={"x": x + width, "y": y},
-                            top_left={"x": x, "y": y},
-                            img_height=img_height,
-                            img_width=img_width,
-                            origin_location="top_left",
+                        "normalizedVertices": coco_bbox_annotation_to_normalized_vertices(
+                            coco_ann, img_width=img_width, img_height=img_height
                         )
                     }
                 ],
@@ -535,62 +592,19 @@ for image_id in external_id_array:
             kili_annotations_bbox.append(kili_ann_bbox)
 
         ### Segmentation job
-        coco_segmentations = coco_ann["segmentation"]
-        if coco_ann["iscrowd"] == 0:
-            # a single object (iscrowd=0 in which case polygons are used)
-            for coco_segm in coco_segmentations:
-                kili_ann_segm = {
-                    "children": {},
-                    "boundingPoly": [
-                        {
-                            "normalizedVertices": [
-                                point_to_normalized_point(
-                                    point={"x": x, "y": y},
-                                    img_height=img_height,
-                                    img_width=img_width,
-                                    origin_location="top_left",
-                                )
-                                for x, y in zip(coco_segm[::2], coco_segm[1::2])
-                            ]
-                        }
-                    ],
-                    "categories": [{"name": category_id_to_name[coco_ann["category_id"]]}],
-                    "type": "semantic",
-                    "mid": str(coco_ann["id"]) + "_segm",
-                }
-                kili_annotations_segm.append(kili_ann_segm)
-        else:
-            # a crowd (iscrowd=1 in which case RLE (run-length encoding) is used)
-            rle_counts = coco_segmentations["counts"]
-            # we work with a flat image to simplify the code
-            mask = np.zeros(img_height * img_width, dtype=np.uint8)
-            pixel_index = 0
-            for i, count in enumerate(rle_counts):
-                if i % 2 == 0:
-                    # we skip pixels
-                    pixel_index += count
-                else:
-                    # we set pixels' value
-                    mask[pixel_index : pixel_index + count] = 255
-                    pixel_index += count
-
-            # we reshape the mask to its original shape
-            # and we transpose it to have the same shape as the image
-            # (i.e. (height, width))
-            mask = mask.reshape((img_width, img_height)).T
-
-            # we convert the mask to normalized vertices
-            # hierarchy is not used here. It is used for polygons with holes.
-            normalized_vertices, hierarchy = mask_to_normalized_vertices(mask)
-            for contour in normalized_vertices:
-                kili_ann_segm = {
-                    "children": {},
-                    "boundingPoly": [{"normalizedVertices": contour}],
-                    "categories": [{"name": category_id_to_name[coco_ann["category_id"]]}],
-                    "type": "semantic",
-                    "mid": str(coco_ann["id"]) + "_segm_crowd",
-                }
-                kili_annotations_segm.append(kili_ann_segm)
+        for i, norm_vertices in enumerate(
+            coco_segm_annotation_to_normalized_vertices(
+                coco_ann, img_width=img_width, img_height=img_height
+            )
+        ):
+            kili_ann_segm = {
+                "children": {},
+                "boundingPoly": [{"normalizedVertices": norm_vertices}],
+                "categories": [{"name": category_id_to_name[coco_ann["category_id"]]}],
+                "type": "semantic",
+                "mid": str(coco_ann["id"]) + "_segm_" + str(i),
+            }
+            kili_annotations_segm.append(kili_ann_segm)
 
     json_resp["OBJECT_DETECTION_JOB"] = {"annotations": kili_annotations_bbox}
     json_resp["SEGMENTATION_JOB"] = {"annotations": kili_annotations_segm}
