@@ -1387,7 +1387,7 @@
 </code></pre></div>
 <h2 id="update-and-check-the-resolutions">Update and check the resolutions</h2>
 <p>You can now update and check the resolutions of the pdf assets.</p>
-<p>⚠️ This step is only necessary for assets that have been annotated after 2023-07-05.</p>
+<p>⚠️ This step is only necessary for assets that have been annotated before the 2023-07-05. Before this date, the page resolutions were not stored once a label was submitted, so if you need to backfill this value if you need it.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kili.utils.assets</span> <span class="kn">import</span> <span class="n">PageResolution</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
