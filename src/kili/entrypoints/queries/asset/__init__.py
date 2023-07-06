@@ -49,6 +49,7 @@ class QueriesAsset:
             "status",
         ],
         asset_id_in: Optional[List[str]] = None,
+        asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         disable_tqdm: bool = False,
@@ -121,6 +122,7 @@ class QueriesAsset:
             "status",
         ],
         asset_id_in: Optional[List[str]] = None,
+        asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         disable_tqdm: bool = False,
@@ -193,6 +195,7 @@ class QueriesAsset:
             "status",
         ],
         asset_id_in: Optional[List[str]] = None,
+        asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         disable_tqdm: bool = False,
@@ -248,6 +251,7 @@ class QueriesAsset:
             project_id: Identifier of the project.
             asset_id: Identifier of the asset to retrieve.
             asset_id_in: A list of the IDs of the assets to retrieve.
+            asset_id_not_in: A list of the IDs of the assets to exclude.
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
@@ -397,6 +401,7 @@ class QueriesAsset:
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
+            asset_id_not_in=asset_id_not_in,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
             external_id_strictly_in=external_id_strictly_in or external_id_contains,
@@ -464,6 +469,7 @@ class QueriesAsset:
         project_id: str,
         asset_id: Optional[str] = None,
         asset_id_in: Optional[List[str]] = None,
+        asset_id_not_in: Optional[List[str]] = None,
         external_id_contains: Optional[List[str]] = None,
         metadata_where: Optional[dict] = None,
         status_in: Optional[List[str]] = None,
@@ -513,6 +519,7 @@ class QueriesAsset:
             project_id: Identifier of the project
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
+            asset_id_not_in: A list of the ids of the assets to exclude.
             external_id_contains: Deprecated. Use `external_id_strictly_in` instead.
             metadata_where: Filters by the values of the metadata of the asset.
             status_in: Returned assets should have a status that belongs to that list, if given. Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
@@ -624,6 +631,7 @@ class QueriesAsset:
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
+            asset_id_not_in=asset_id_not_in,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
             external_id_strictly_in=external_id_strictly_in or external_id_contains,
