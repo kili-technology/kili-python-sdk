@@ -17,6 +17,7 @@ class AssetWhere(BaseQueryWhere):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_id_in: Optional[List[str]] = None,
+        asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gte: Optional[float] = None,
         consensus_mark_lte: Optional[float] = None,
         external_id_strictly_in: Optional[List[str]] = None,
@@ -49,6 +50,7 @@ class AssetWhere(BaseQueryWhere):
         self.project_id = project_id
         self.asset_id = asset_id
         self.asset_id_in = asset_id_in
+        self.asset_id_not_in = asset_id_not_in
         self.consensus_mark_gte = consensus_mark_gte
         self.consensus_mark_lte = consensus_mark_lte
         self.external_id_strictly_in = external_id_strictly_in
@@ -94,6 +96,7 @@ class AssetWhere(BaseQueryWhere):
             "honeypotMarkGte": self.honeypot_mark_gte,
             "honeypotMarkLte": self.honeypot_mark_lte,
             "idIn": self.asset_id_in,
+            "idNotIn": self.asset_id_not_in,
             "metadata": self.metadata_where,
             "label": {
                 "typeIn": self.label_type_in,
