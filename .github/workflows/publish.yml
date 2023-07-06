@@ -8,7 +8,11 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     permissions:
+      # needed to publish to PyPI
       id-token: write
+      # needed to create a PR to merge the release branch and main
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
 
@@ -47,13 +51,11 @@ jobs:
           fi
 
       - name: Publish to test PyPI
-        if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to PyPI
-        if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Slack notification
@@ -102,7 +104,6 @@ jobs:
 
   deploy-documentation:
     uses: ./.github/workflows/deploy_doc.yml
-    if: ${{ always() }} # Run even if the previous job fails
     needs: [publish] # Run after the previous job
     secrets:
       SLACK_WEBHOOK_URL_PYTHON_SDK: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
