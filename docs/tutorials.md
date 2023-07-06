@@ -44,6 +44,8 @@ The [Tagtog to Kili](https://python-sdk-docs.kili-technology.com/latest/sdk/tuto
 
 The label parsing [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/) will show you how you can read and write label data more efficiently.
 
+This [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_coco/) shows how to import COCO annotations into Kili.
+
 ## Managing workflows
 
 In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/) you will learn how to manage your review queue, set up quality assurance measures, assign specific labelers to assets, and prioritize assets to be annotated.
