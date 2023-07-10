@@ -1,3 +1,4 @@
+import time
 import uuid
 
 import pytest
@@ -28,6 +29,8 @@ def projects_uuid(kili: Kili):
         title="test_projects.py not archived 2" + projects_uuid,
     )["id"]
     kili.archive_project(proj_id_archived)
+
+    time.sleep(1)  # wait for the project to be archived (replica lag)
 
     yield projects_uuid
 
