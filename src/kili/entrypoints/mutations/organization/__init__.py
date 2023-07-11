@@ -22,6 +22,7 @@ class MutationsOrganization:
     @typechecked
     def create_organization(self, name: str, address: str, zip_code: str, city: str, country: str):
         """Create an organization.
+
         WARNING: This method is for internal use only.
 
         Each user must be linked to an organization
@@ -57,6 +58,7 @@ class MutationsOrganization:
         license: Optional[dict] = None,
     ):  # pylint: disable=redefined-builtin
         """Modify an organization.
+
         WARNING: This method is for internal use only.
 
         Args:
