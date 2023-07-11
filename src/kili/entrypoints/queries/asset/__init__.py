@@ -389,10 +389,8 @@ class QueriesAsset:
         ):
             if arg_value:
                 warnings.warn(
-                    (
-                        f"'{arg_name}' is deprecated, please use"
-                        f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead."
-                    ),
+                    f"'{arg_name}' is deprecated, please use"
+                    f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
                     DeprecationWarning,
                     stacklevel=1,
                 )
@@ -619,10 +617,8 @@ class QueriesAsset:
         ):
             if arg_value:
                 warnings.warn(
-                    (
-                        f"'{arg_name}' is deprecated, please use"
-                        f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead."
-                    ),
+                    f"'{arg_name}' is deprecated, please use"
+                    f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
                     DeprecationWarning,
                     stacklevel=1,
                 )

@@ -114,10 +114,8 @@ class MutationsAsset:
 
         if status_array is not None:
             warnings.warn(
-                (
-                    "status_array is deprecated, asset status is automatically computed based on"
-                    " its labels and cannot be overwritten."
-                ),
+                "status_array is deprecated, asset status is automatically computed based on"
+                " its labels and cannot be overwritten.",
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -245,22 +243,18 @@ class MutationsAsset:
 
         if status_array is not None:
             warnings.warn(
-                (
-                    "status_array is deprecated, asset status is automatically computed based on"
-                    " its labels and cannot be overwritten."
-                ),
+                "status_array is deprecated, asset status is automatically computed based on"
+                " its labels and cannot be overwritten.",
                 DeprecationWarning,
                 stacklevel=1,
             )
 
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
-                (
-                    "The use of `external_ids` argument has changed. It is now used to identify"
-                    " which properties of which assets to update. Please use"
-                    " `kili.change_asset_external_ids()` method instead to change asset external"
-                    " IDs."
-                ),
+                "The use of `external_ids` argument has changed. It is now used to identify"
+                " which properties of which assets to update. Please use"
+                " `kili.change_asset_external_ids()` method instead to change asset external"
+                " IDs.",
                 DeprecationWarning,
                 stacklevel=1,
             )

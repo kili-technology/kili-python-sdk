@@ -215,10 +215,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         else:
             if self.requires_asset_access and not self.with_assets:
                 warnings.warn(
-                    (
-                        "For an export to this format, the download of assets cannot be disabled,"
-                        " so they will be downloaded anyway."
-                    ),
+                    "For an export to this format, the download of assets cannot be disabled,"
+                    " so they will be downloaded anyway.",
                     stacklevel=2,
                 )
                 self.with_assets = True

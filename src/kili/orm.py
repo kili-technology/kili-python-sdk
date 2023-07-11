@@ -136,10 +136,8 @@ class Label(DictClass):
             )
         if format_ == "simple":
             warnings.warn(
-                (
-                    "The 'simple' format is deprecated and will be removed in version 3.0. Please"
-                    " use 'kili' format instead."
-                ),
+                "The 'simple' format is deprecated and will be removed in version 3.0. Please"
+                " use 'kili' format instead.",
                 DeprecationWarning,
                 stacklevel=1,
             )
