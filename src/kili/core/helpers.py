@@ -326,10 +326,8 @@ def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: bool):
     if as_generator and not disable_tqdm:
         disable_tqdm = True
         warnings.warn(
-            (
-                "tqdm has been forced disabled because its behavior is not compatible with the"
-                " generator return type"
-            ),
+            "tqdm has been forced disabled because its behavior is not compatible with the"
+            " generator return type",
             stacklevel=2,
         )
     return disable_tqdm
@@ -370,10 +368,8 @@ def is_empty_list_with_warning(method_name: str, argument_name: str, argument_va
     """
     if isinstance(argument_value, List) and len(argument_value) == 0:
         warnings.warn(
-            (
-                f"Method '{method_name}' did nothing because the following argument"
-                f" is empty: {argument_name}."
-            ),
+            f"Method '{method_name}' did nothing because the following argument"
+            f" is empty: {argument_name}.",
             stacklevel=5,
         )
         return True

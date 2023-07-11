@@ -137,10 +137,8 @@ def fetch_assets(
         count = AssetQuery(kili.graphql_client).count(where)
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
-                (
-                    f"Downloading many assets ({count}). This might take a while. Consider"
-                    " disabling assets download in the options."
-                ),
+                f"Downloading many assets ({count}). This might take a while. Consider"
+                " disabling assets download in the options.",
                 stacklevel=3,
             )
 

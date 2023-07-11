@@ -431,10 +431,8 @@ class BaseAssetImporter:
         nb_duplicate_assets = len(assets) - len(filtered_assets)
         if nb_duplicate_assets > 0:
             warnings.warn(
-                (
-                    f"{nb_duplicate_assets} assets were not imported because their external_id are"
-                    " already in the project"
-                ),
+                f"{nb_duplicate_assets} assets were not imported because their external_id are"
+                " already in the project",
                 stacklevel=2,
             )
         return filtered_assets

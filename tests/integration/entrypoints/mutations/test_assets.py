@@ -40,11 +40,9 @@ def test_given_page_resolutions_when_i_call_update_properties_in_assets_it_calls
 
     # Then
     kili.graphql_client.execute.assert_called_once_with(
-        (
-            "\nmutation(\n    $whereArray: [AssetWhere!]!\n    $dataArray: [AssetData!]!\n) {\n"
-            "  data: updatePropertiesInAssets(\n    where: $whereArray,\n    data: $dataArray\n"
-            "  ) {\n    id\n  }\n}\n"
-        ),
+        "\nmutation(\n    $whereArray: [AssetWhere!]!\n    $dataArray: [AssetData!]!\n) {\n"
+        "  data: updatePropertiesInAssets(\n    where: $whereArray,\n    data: $dataArray\n"
+        "  ) {\n    id\n  }\n}\n",
         {
             "whereArray": [{"id": "asset_id"}],
             "dataArray": [

@@ -112,10 +112,8 @@ def update_member(
                 )
         else:
             warnings.warn(
-                (
-                    f"{email} is not an active member of the project."
-                    " Use kili project member add to add member."
-                ),
+                f"{email} is not an active member of the project."
+                " Use kili project member add to add member.",
                 stacklevel=1,
             )
 

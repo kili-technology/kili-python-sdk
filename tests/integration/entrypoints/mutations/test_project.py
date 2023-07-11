@@ -9,9 +9,7 @@ def test_update_project_anonymization(mocker: pytest_mock.MockerFixture):
     kili.update_project_anonymization(project_id="project_id", should_anonymize=True)
 
     kili.graphql_client.execute.assert_called_once_with(
-        (
-            "\nmutation($input: UpdateProjectAnonymizationInput!) {\n  data:"
-            " updateProjectAnonymization(input: $input) {\n    \nid\n\n  }\n}\n"
-        ),
+        "\nmutation($input: UpdateProjectAnonymizationInput!) {\n  data:"
+        " updateProjectAnonymization(input: $input) {\n    \nid\n\n  }\n}\n",
         {"input": {"id": "project_id", "shouldAnonymize": True}},
     )

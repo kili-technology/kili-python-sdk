@@ -82,11 +82,9 @@ class MutationsLabel:
                     " your calls by models."
                 )
             warnings.warn(
-                (
-                    "The use of `model_name_array` is deprecated. Creating predictions from"
-                    " different models is not supported anymore. Please use `model_name` argument"
-                    " instead to provide the predictions model name."
-                ),
+                "The use of `model_name_array` is deprecated. Creating predictions from"
+                " different models is not supported anymore. Please use `model_name` argument"
+                " instead to provide the predictions model name.",
                 DeprecationWarning,
                 stacklevel=1,
             )
