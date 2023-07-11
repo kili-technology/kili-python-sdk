@@ -347,6 +347,17 @@ class MutationsProject:
         }
 
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+
+        for attempt in Retrying(
+            stop=stop_after_delay(60),
+            wait=wait_fixed(1),
+            reraise=True,
+        ):
+            with attempt:
+                project = services.get_project(self, project_id, fields=["archivedAt"])
+                if project["archivedAt"]:
+                    break
+
         return format_result("data", result)
 
     @typechecked
