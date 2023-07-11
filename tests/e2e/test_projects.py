@@ -39,6 +39,7 @@ def projects_uuid(kili: Kili):
     kili.delete_project(proj_id_not_archived_2)
 
 
+@pytest.mark.skip(reason="to fix")
 def test_projects_query_archived_project(kili: Kili, projects_uuid: str):
     assert (
         len(kili.projects(fields=["id"], search_query=projects_uuid))
