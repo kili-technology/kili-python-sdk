@@ -20,6 +20,8 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         """
         self.kili = kili
 
+        self.graphql_client = kili.graphql_client
+
     @typechecked
     def reset_password(self, email: str):
         """Reset password.
@@ -34,7 +36,7 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
                 or an error message.
         """
         variables = {"where": {"email": email}}
-        result = self.kili.graphql_client.execute(GQL_RESET_PASSWORD, variables)
+        result = self.graphql_client.execute(GQL_RESET_PASSWORD, variables)
         return format_result("data", result)
 
     @typechecked
@@ -51,5 +53,5 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
                 or an error message.
         """
         variables = {"projectID": project_id}
-        result = self.kili.graphql_client.execute(GQL_DELETE_PROJECT, variables)
+        result = self.graphql_client.execute(GQL_DELETE_PROJECT, variables)
         return format_result("data", result)
