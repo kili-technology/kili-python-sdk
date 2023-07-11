@@ -12,7 +12,6 @@ def kili() -> Kili:
 
 @pytest.fixture
 def projects_uuid(kili: Kili):
-    kili = Kili()
     projects_uuid = str(uuid.uuid4())
     proj_id_archived = kili.create_project(
         input_type="TEXT", json_interface={}, title="test_projects.py archived" + projects_uuid
@@ -27,6 +26,7 @@ def projects_uuid(kili: Kili):
         json_interface={},
         title="test_projects.py not archived 2" + projects_uuid,
     )["id"]
+
     kili.archive_project(proj_id_archived)
 
     yield projects_uuid
