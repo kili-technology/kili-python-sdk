@@ -11,7 +11,7 @@ repos:
       - id: docformatter
         args: [--in-place, --wrap-summaries=0, --wrap-descriptions=0, --black]
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
       - id: black-jupyter
