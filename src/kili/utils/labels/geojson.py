@@ -111,7 +111,7 @@ def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]):
     return ret
 
 
-def kili_bbox_annotation_to_geojson_polygon(bbox_annotation: Dict[str, Any]):
+def kili_bbox_annotation_to_geojson_feature_polygon(bbox_annotation: Dict[str, Any]):
     """Convert a Kili bounding box annotation to a geojson feature polygon.
 
     Args:
@@ -166,13 +166,12 @@ def kili_polygon_to_geojson_polygon(normalized_vertices: List[Dict[str, float]])
     """Convert a Kili polygon to a geojson polygon."""
     ret = {"type": "Polygon", "coordinates": []}
     bbox = [[vertex["x"], vertex["y"]] for vertex in normalized_vertices]
-    # the first and last positions must be the same
-    bbox.append(bbox[0])
+    bbox.append(bbox[0])  # the first and last positions must be the same
     ret["coordinates"] = [bbox]
     return ret
 
 
-def kili_polygon_annotation_to_geojson_polygon(polygon_annotation: Dict[str, Any]):
+def kili_polygon_annotation_to_geojson_feature_polygon(polygon_annotation: Dict[str, Any]):
     """Convert a Kili polygon annotation to a geojson feature polygon."""
     polygon = polygon_annotation
     assert (
@@ -192,14 +191,16 @@ def kili_polygon_annotation_to_geojson_polygon(polygon_annotation: Dict[str, Any
     return ret
 
 
-def kili_line_to_geojson_linestring(polyline: List[Dict[str, float]]):
+def kili_line_to_geojson_linestring(
+    polyline: List[Dict[str, float]]
+) -> Dict[Literal["type", "coordinates"], Union[Literal["LineString"], List[List[float]]]]:
     """Convert a Kili line to a geojson linestring."""
     ret = {"type": "LineString", "coordinates": []}
     ret["coordinates"] = [[vertex["x"], vertex["y"]] for vertex in polyline]
-    return ret
+    return ret  # type: ignore
 
 
-def kili_line_annotation_to_geojson_linestring(polyline_annotation: Dict[str, Any]):
+def kili_line_annotation_to_geojson_feature_linestring(polyline_annotation: Dict[str, Any]):
     """Convert a Kili line annotation to a geojson feature linestring."""
     assert (
         polyline_annotation["type"] == "polyline"
@@ -214,3 +215,38 @@ def kili_line_annotation_to_geojson_linestring(polyline_annotation: Dict[str, An
         ret["properties"] = {}
         ret["properties"]["categories"] = polyline_annotation["categories"]
     return ret
+
+
+def kili_segmentation_to_geojson_polygon(bounding_poly: List[Dict[str, List[Dict[str, Any]]]]):
+    ret = {"type": "Polygon", "coordinates": []}
+    for norm_vertices_dict in bounding_poly:
+        bbox = [[vertex["x"], vertex["y"]] for vertex in norm_vertices_dict["normalizedVertices"]]
+        bbox.append(bbox[0])  # the first and last positions must be the same
+        ret["coordinates"].append(bbox)
+    return ret
+
+
+def kili_segmentation_annotation_to_geojson_feature_polygon(
+    segmentation_annotation: Dict[str, Any]
+):
+    """Convert a Kili segmentation annotation to a geojson feature polygon."""
+    assert (
+        segmentation_annotation["type"] == "semantic"
+    ), f"Annotation type must be `semantic`, got: {segmentation_annotation['type']}"
+    ret = {
+        "type": "Feature",
+        "geometry": kili_segmentation_to_geojson_polygon(segmentation_annotation["boundingPoly"]),
+    }
+    if "mid" in segmentation_annotation:
+        ret["id"] = segmentation_annotation["mid"]
+    if "categories" in segmentation_annotation:
+        ret["properties"] = {}
+        ret["properties"]["categories"] = segmentation_annotation["categories"]
+    return ret
+
+
+def features_list_to_feature_collection(
+    features: List[Dict],
+) -> Dict[Literal["type", "features"], Union[str, List[Dict]]]:
+    """Convert a list of features to a feature collection."""
+    return {"type": "FeatureCollection", "features": features}
