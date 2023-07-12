@@ -28,11 +28,13 @@ def kili_point_to_geojson_point(
     return {"type": "Point", "coordinates": [point["x"], point["y"]]}
 
 
-def kili_point_annotation_to_geojson_feature_point(point: Dict[str, Any]) -> Dict[str, Any]:
+def kili_point_annotation_to_geojson_feature_point(
+    point_annotation: Dict[str, Any]
+) -> Dict[str, Any]:
     """Convert a Kili point annotation to a geojson feature point.
 
     Args:
-        point: a Kili point annotation:
+        point_annotation: a Kili point annotation:
             ```python
             {
                 'children': {},
@@ -55,6 +57,8 @@ def kili_point_annotation_to_geojson_feature_point(point: Dict[str, Any]) -> Dic
             }
             ```
     """
+    point = point_annotation
+    assert point["type"] == "marker", f"Annotation type must be `marker`, got: {point['type']}"
     ret = {"type": "Feature", "geometry": kili_point_to_geojson_point(point["point"])}
     if "mid" in point:
         ret["id"] = point["mid"]
@@ -65,7 +69,28 @@ def kili_point_annotation_to_geojson_feature_point(point: Dict[str, Any]) -> Dic
 
 
 def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]):
-    """Convert a Kili bounding box to a geojson polygon."""
+    """Convert a Kili bounding box to a geojson polygon.
+
+    Args:
+        normalized_vertices: a Kili bounding polygon normalized vertices.
+
+    Returns:
+        A geojson polygon:
+            ```python
+            {
+                'type': 'Polygon',
+                'coordinates': [
+                    [
+                        [4.426411498889343, 52.195226518404574],
+                        [4.433707313141323, 52.195226518404574],
+                        [4.433707313141323, 52.19969942041263],
+                        [4.426411498889343, 52.19969942041263],
+                        [4.426411498889343, 52.195226518404574]
+                    ]
+                ]
+            }
+            ```
+    """
     vertex_name_to_value = {}
     for vertex, point_name in zip(
         normalized_vertices, ("bottom_left", "top_left", "top_right", "bottom_right")
@@ -86,8 +111,44 @@ def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]):
     return ret
 
 
-def kili_bbox_annotation_to_geojson_polygon(bbox: Dict[str, Any]):
-    """Convert a Kili bounding box annotation to a geojson feature polygon."""
+def kili_bbox_annotation_to_geojson_polygon(bbox_annotation: Dict[str, Any]):
+    """Convert a Kili bounding box annotation to a geojson feature polygon.
+
+    Args:
+        bbox_annotation: a Kili bounding box annotation:
+            ```python
+            {
+                'children': {},
+                'boundingPoly': [
+                    {
+                        'normalizedVertices': [...]
+                    }
+                ],
+                'categories': [{'name': 'A'}],
+                'mid': 'mid_object',
+                'type': 'rectangle'
+            }
+            ```
+
+    Returns:
+        A geojson feature polygon:
+            ```python
+            {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [
+                        [
+                            ...
+                        ]
+                    ]
+                },
+                'id': 'mid_object',
+                'properties': {'categories': [{'name': 'A'}]}
+            }
+            ```
+    """
+    bbox = bbox_annotation
     assert bbox["type"] == "rectangle", f"Annotation type must be `rectangle`, got: {bbox['type']}"
     ret = {
         "type": "Feature",
@@ -98,4 +159,34 @@ def kili_bbox_annotation_to_geojson_polygon(bbox: Dict[str, Any]):
     if "categories" in bbox:
         ret["properties"] = {}
         ret["properties"]["categories"] = bbox["categories"]
+    return ret
+
+
+def kili_polygon_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]):
+    """Convert a Kili polygon to a geojson polygon."""
+    ret = {"type": "Polygon", "coordinates": []}
+    bbox = [[vertex["x"], vertex["y"]] for vertex in normalized_vertices]
+    # the first and last positions must be the same
+    bbox.append(bbox[0])
+    ret["coordinates"] = [bbox]
+    return ret
+
+
+def kili_polygon_annotation_to_geojson_polygon(polygon_annotation: Dict[str, Any]):
+    """Convert a Kili polygon annotation to a geojson feature polygon."""
+    polygon = polygon_annotation
+    assert (
+        polygon["type"] == "polygon"
+    ), f"Annotation type must be `polygon`, got: {polygon['type']}"
+    ret = {
+        "type": "Feature",
+        "geometry": kili_polygon_to_geojson_polygon(
+            polygon["boundingPoly"][0]["normalizedVertices"]
+        ),
+    }
+    if "mid" in polygon:
+        ret["id"] = polygon["mid"]
+    if "categories" in polygon:
+        ret["properties"] = {}
+        ret["properties"]["categories"] = polygon["categories"]
     return ret
