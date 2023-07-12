@@ -28,3 +28,7 @@ The module `kili.utils.labels` provides a set of helpers to convert point, bound
     ```
 
 ::: kili.utils.labels.image
+
+## GeoJson
+
+::: kili.utils.labels.geojson
