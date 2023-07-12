@@ -1,5 +1,3 @@
-import json
-
 from kili.utils.labels.geojson import (
     features_list_to_feature_collection,
     kili_bbox_annotation_to_geojson_feature_polygon,
@@ -37,7 +35,11 @@ def test_kili_point_to_geojson_feature_point():
         "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [long, lat]},
         "id": "20230712140607850-1660",
-        "properties": {"categories": [{"name": "A"}]},
+        "properties": {
+            "categories": [{"name": "A"}],
+            "type": "marker",
+            "children": {},
+        },
     }
     assert kili_point_annotation_to_geojson_feature_point(kili_point_annotation) == expected
 
@@ -95,7 +97,11 @@ def test_kili_bbox_annotation_to_geojson_polygon():
             "coordinates": [bbox],
         },
         "id": "20230712152136805-42164",
-        "properties": {"categories": [{"name": "CATEGORY_A"}]},
+        "properties": {
+            "categories": [{"name": "CATEGORY_A"}],
+            "type": "rectangle",
+            "children": {},
+        },
     }
 
     output = kili_bbox_annotation_to_geojson_feature_polygon(kili_bbox_ann)
@@ -195,7 +201,11 @@ def test_kili_polygon_annotation_to_geojson_polygon():
             ],
             "type": "Polygon",
         },
-        "properties": {"categories": [{"name": "A"}]},
+        "properties": {
+            "categories": [{"name": "A"}],
+            "type": "polygon",
+            "children": {},
+        },
         "type": "Feature",
         "id": "20230712154012841-65343",
     }
@@ -253,7 +263,11 @@ def test_kili_line_annotation_to_geojson_linestring():
     assert output == {
         "type": "Feature",
         "id": "20230712161027535-42230",
-        "properties": {"categories": [{"name": "A"}]},
+        "properties": {
+            "categories": [{"name": "A"}],
+            "type": "polyline",
+            "children": {},
+        },
         "geometry": {
             "coordinates": [
                 [4.46935731459989, 52.19176987673034],
@@ -389,7 +403,11 @@ def test_kili_segmentation_annotation_to_geojson_polygon():
             ],
         },
         "id": "20230712163555037-91494",
-        "properties": {"categories": [{"name": "A"}]},
+        "properties": {
+            "categories": [{"name": "A"}],
+            "type": "semantic",
+            "children": {},
+        },
     }
 
 

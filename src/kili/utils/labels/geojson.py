@@ -62,9 +62,7 @@ def kili_point_annotation_to_geojson_feature_point(
     ret = {"type": "Feature", "geometry": kili_point_to_geojson_point(point["point"])}
     if "mid" in point:
         ret["id"] = point["mid"]
-    if "categories" in point:
-        ret["properties"] = {}
-        ret["properties"]["categories"] = point["categories"]
+    ret["properties"] = {k: v for k, v in point.items() if k not in ["point", "mid"]}
     return ret
 
 
@@ -156,9 +154,7 @@ def kili_bbox_annotation_to_geojson_feature_polygon(bbox_annotation: Dict[str, A
     }
     if "mid" in bbox:
         ret["id"] = bbox["mid"]
-    if "categories" in bbox:
-        ret["properties"] = {}
-        ret["properties"]["categories"] = bbox["categories"]
+    ret["properties"] = {k: v for k, v in bbox.items() if k not in ["boundingPoly", "mid"]}
     return ret
 
 
@@ -185,9 +181,7 @@ def kili_polygon_annotation_to_geojson_feature_polygon(polygon_annotation: Dict[
     }
     if "mid" in polygon:
         ret["id"] = polygon["mid"]
-    if "categories" in polygon:
-        ret["properties"] = {}
-        ret["properties"]["categories"] = polygon["categories"]
+    ret["properties"] = {k: v for k, v in polygon.items() if k not in ["boundingPoly", "mid"]}
     return ret
 
 
@@ -211,9 +205,9 @@ def kili_line_annotation_to_geojson_feature_linestring(polyline_annotation: Dict
     }
     if "mid" in polyline_annotation:
         ret["id"] = polyline_annotation["mid"]
-    if "categories" in polyline_annotation:
-        ret["properties"] = {}
-        ret["properties"]["categories"] = polyline_annotation["categories"]
+    ret["properties"] = {
+        k: v for k, v in polyline_annotation.items() if k not in ["mid", "polyline"]
+    }
     return ret
 
 
@@ -239,9 +233,9 @@ def kili_segmentation_annotation_to_geojson_feature_polygon(
     }
     if "mid" in segmentation_annotation:
         ret["id"] = segmentation_annotation["mid"]
-    if "categories" in segmentation_annotation:
-        ret["properties"] = {}
-        ret["properties"]["categories"] = segmentation_annotation["categories"]
+    ret["properties"] = {
+        k: v for k, v in segmentation_annotation.items() if k not in ["mid", "boundingPoly"]
+    }
     return ret
 
 
