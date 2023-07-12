@@ -190,3 +190,27 @@ def kili_polygon_annotation_to_geojson_polygon(polygon_annotation: Dict[str, Any
         ret["properties"] = {}
         ret["properties"]["categories"] = polygon["categories"]
     return ret
+
+
+def kili_line_to_geojson_linestring(polyline: List[Dict[str, float]]):
+    """Convert a Kili line to a geojson linestring."""
+    ret = {"type": "LineString", "coordinates": []}
+    ret["coordinates"] = [[vertex["x"], vertex["y"]] for vertex in polyline]
+    return ret
+
+
+def kili_line_annotation_to_geojson_linestring(polyline_annotation: Dict[str, Any]):
+    """Convert a Kili line annotation to a geojson feature linestring."""
+    assert (
+        polyline_annotation["type"] == "polyline"
+    ), f"Annotation type must be `polyline`, got: {polyline_annotation['type']}"
+    ret = {
+        "type": "Feature",
+        "geometry": kili_line_to_geojson_linestring(polyline_annotation["polyline"]),
+    }
+    if "mid" in polyline_annotation:
+        ret["id"] = polyline_annotation["mid"]
+    if "categories" in polyline_annotation:
+        ret["properties"] = {}
+        ret["properties"]["categories"] = polyline_annotation["categories"]
+    return ret
