@@ -1,3 +1,4 @@
+"""Bounding box conversion functions between Kili and geojson formats."""
 from typing import Any, Dict, List, Optional
 
 

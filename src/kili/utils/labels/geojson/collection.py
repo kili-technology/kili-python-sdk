@@ -1,3 +1,4 @@
+"""Geojson collection module."""
 import warnings
 from typing import Any, Dict, List, Literal, Sequence, Union
 

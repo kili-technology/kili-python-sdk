@@ -1,3 +1,4 @@
+"""Geojson segmentation utilities."""
 from typing import Any, Dict, List, Optional
 
 

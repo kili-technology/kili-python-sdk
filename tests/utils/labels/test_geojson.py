@@ -529,5 +529,5 @@ def test_kili_json_response_to_feature_collection():
     }
 
     # geojson to json resp
-    output = geojson_feature_collection_to_json_response(output)
+    output = geojson_feature_collection_to_json_response(output)  # type: ignore
     assert output == json_response
