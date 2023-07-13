@@ -31,7 +31,10 @@ def test_kili_point_to_geojson_feature_point():
         "mid": "20230712140607850-1660",
         "type": "marker",
     }
-    expected = {
+    output = kili_point_annotation_to_geojson_feature_point(
+        kili_point_annotation, job_name="POINT_JOB"
+    )
+    assert output == {
         "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [long, lat]},
         "id": "20230712140607850-1660",
@@ -39,9 +42,9 @@ def test_kili_point_to_geojson_feature_point():
             "categories": [{"name": "A"}],
             "type": "marker",
             "children": {},
+            "job": "POINT_JOB",
         },
     }
-    assert kili_point_annotation_to_geojson_feature_point(kili_point_annotation) == expected
 
 
 def test_kili_bbox_to_geojson_polygon():
@@ -90,7 +93,10 @@ def test_kili_bbox_annotation_to_geojson_polygon():
         [4.426411498889343, 52.19969942041263],
         [4.426411498889343, 52.195226518404574],
     ]
-    expected = {
+
+    output = kili_bbox_annotation_to_geojson_feature_polygon(kili_bbox_ann, job_name="BBOX_JOB")
+
+    assert output == {
         "type": "Feature",
         "geometry": {
             "type": "Polygon",
@@ -101,11 +107,9 @@ def test_kili_bbox_annotation_to_geojson_polygon():
             "categories": [{"name": "CATEGORY_A"}],
             "type": "rectangle",
             "children": {},
+            "job": "BBOX_JOB",
         },
     }
-
-    output = kili_bbox_annotation_to_geojson_feature_polygon(kili_bbox_ann)
-    assert output == expected
 
 
 def test_kili_polygon_to_geojson_polygon():
@@ -177,7 +181,7 @@ def test_kili_polygon_annotation_to_geojson_polygon():
         "type": "polygon",
     }
 
-    output = kili_polygon_annotation_to_geojson_feature_polygon(polygon_ann)
+    output = kili_polygon_annotation_to_geojson_feature_polygon(polygon_ann, job_name="POLYGON_JOB")
 
     assert output == {
         "geometry": {
@@ -205,6 +209,7 @@ def test_kili_polygon_annotation_to_geojson_polygon():
             "categories": [{"name": "A"}],
             "type": "polygon",
             "children": {},
+            "job": "POLYGON_JOB",
         },
         "type": "Feature",
         "id": "20230712154012841-65343",
@@ -258,7 +263,7 @@ def test_kili_line_annotation_to_geojson_linestring():
         "type": "polyline",
     }
 
-    output = kili_line_annotation_to_geojson_feature_linestring(ann)
+    output = kili_line_annotation_to_geojson_feature_linestring(ann, job_name="LINE_JOB")
 
     assert output == {
         "type": "Feature",
@@ -267,6 +272,7 @@ def test_kili_line_annotation_to_geojson_linestring():
             "categories": [{"name": "A"}],
             "type": "polyline",
             "children": {},
+            "job": "LINE_JOB",
         },
         "geometry": {
             "coordinates": [
@@ -371,7 +377,9 @@ def test_kili_segmentation_annotation_to_geojson_polygon():
         "type": "semantic",
     }
 
-    output = kili_segmentation_annotation_to_geojson_feature_polygon(ann)
+    output = kili_segmentation_annotation_to_geojson_feature_polygon(
+        ann, job_name="SEGMENTATION_JOB"
+    )
 
     assert output == {
         "type": "Feature",
@@ -407,6 +415,7 @@ def test_kili_segmentation_annotation_to_geojson_polygon():
             "categories": [{"name": "A"}],
             "type": "semantic",
             "children": {},
+            "job": "SEGMENTATION_JOB",
         },
     }
 

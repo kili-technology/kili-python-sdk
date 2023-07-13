@@ -5,7 +5,7 @@ Kili format: geospatial labels `x` stands for longitude and `y` for latitude.
 Geojson format: Points are [x, y] or [x, y, z]. They may be [longitude, latitude].
 Elevation is an optional third number. They are decimal numbers.
 """
-from typing import Any, Dict, List, Literal, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 
 def kili_point_to_geojson_point(
@@ -29,7 +29,7 @@ def kili_point_to_geojson_point(
 
 
 def kili_point_annotation_to_geojson_feature_point(
-    point_annotation: Dict[str, Any]
+    point_annotation: Dict[str, Any], job_name: Optional[str] = None
 ) -> Dict[str, Any]:
     """Convert a Kili point annotation to a geojson feature point.
 
@@ -44,6 +44,7 @@ def kili_point_annotation_to_geojson_feature_point(
                 'type': 'marker'
             }
             ```
+        job_name: the name of the job to which the annotation belongs.
 
     Returns:
         A geojson feature point:
@@ -63,6 +64,8 @@ def kili_point_annotation_to_geojson_feature_point(
     if "mid" in point:
         ret["id"] = point["mid"]
     ret["properties"] = {k: v for k, v in point.items() if k not in ["point", "mid"]}
+    if job_name is not None:
+        ret["properties"]["job"] = job_name
     return ret
 
 
@@ -109,7 +112,9 @@ def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]):
     return ret
 
 
-def kili_bbox_annotation_to_geojson_feature_polygon(bbox_annotation: Dict[str, Any]):
+def kili_bbox_annotation_to_geojson_feature_polygon(
+    bbox_annotation: Dict[str, Any], job_name: Optional[str] = None
+):
     """Convert a Kili bounding box annotation to a geojson feature polygon.
 
     Args:
@@ -155,6 +160,8 @@ def kili_bbox_annotation_to_geojson_feature_polygon(bbox_annotation: Dict[str, A
     if "mid" in bbox:
         ret["id"] = bbox["mid"]
     ret["properties"] = {k: v for k, v in bbox.items() if k not in ["boundingPoly", "mid"]}
+    if job_name is not None:
+        ret["properties"]["job"] = job_name
     return ret
 
 
@@ -167,7 +174,9 @@ def kili_polygon_to_geojson_polygon(normalized_vertices: List[Dict[str, float]])
     return ret
 
 
-def kili_polygon_annotation_to_geojson_feature_polygon(polygon_annotation: Dict[str, Any]):
+def kili_polygon_annotation_to_geojson_feature_polygon(
+    polygon_annotation: Dict[str, Any], job_name: Optional[str] = None
+):
     """Convert a Kili polygon annotation to a geojson feature polygon."""
     polygon = polygon_annotation
     assert (
@@ -182,6 +191,8 @@ def kili_polygon_annotation_to_geojson_feature_polygon(polygon_annotation: Dict[
     if "mid" in polygon:
         ret["id"] = polygon["mid"]
     ret["properties"] = {k: v for k, v in polygon.items() if k not in ["boundingPoly", "mid"]}
+    if job_name is not None:
+        ret["properties"]["job"] = job_name
     return ret
 
 
@@ -194,7 +205,9 @@ def kili_line_to_geojson_linestring(
     return ret  # type: ignore
 
 
-def kili_line_annotation_to_geojson_feature_linestring(polyline_annotation: Dict[str, Any]):
+def kili_line_annotation_to_geojson_feature_linestring(
+    polyline_annotation: Dict[str, Any], job_name: Optional[str] = None
+):
     """Convert a Kili line annotation to a geojson feature linestring."""
     assert (
         polyline_annotation["type"] == "polyline"
@@ -208,6 +221,8 @@ def kili_line_annotation_to_geojson_feature_linestring(polyline_annotation: Dict
     ret["properties"] = {
         k: v for k, v in polyline_annotation.items() if k not in ["mid", "polyline"]
     }
+    if job_name is not None:
+        ret["properties"]["job"] = job_name
     return ret
 
 
@@ -221,7 +236,7 @@ def kili_segmentation_to_geojson_polygon(bounding_poly: List[Dict[str, List[Dict
 
 
 def kili_segmentation_annotation_to_geojson_feature_polygon(
-    segmentation_annotation: Dict[str, Any]
+    segmentation_annotation: Dict[str, Any], job_name: Optional[str] = None
 ):
     """Convert a Kili segmentation annotation to a geojson feature polygon."""
     assert (
@@ -236,6 +251,8 @@ def kili_segmentation_annotation_to_geojson_feature_polygon(
     ret["properties"] = {
         k: v for k, v in segmentation_annotation.items() if k not in ["mid", "boundingPoly"]
     }
+    if job_name is not None:
+        ret["properties"]["job"] = job_name
     return ret
 
 
