@@ -3,7 +3,7 @@
 Kili format: geospatial labels `x` stands for longitude and `y` for latitude.
 
 Geojson format: Points are [x, y] or [x, y, z]. They may be [longitude, latitude].
-Elevation is an optional third number. They are decimal numbers.
+Elevation `z` is an optional third number. They are decimal numbers.
 """
 from typing import Any, Dict, List, Literal, Optional, Union
 
@@ -28,10 +28,10 @@ def kili_point_to_geojson_point(
     return {"type": "Point", "coordinates": [point["x"], point["y"]]}
 
 
-def kili_point_annotation_to_geojson_feature_point(
+def kili_point_annotation_to_geojson_point_feature(
     point_annotation: Dict[str, Any], job_name: Optional[str] = None
 ) -> Dict[str, Any]:
-    """Convert a Kili point annotation to a geojson feature point.
+    """Convert a Kili point annotation to a geojson point feature.
 
     Args:
         point_annotation: a Kili point annotation:
@@ -47,7 +47,7 @@ def kili_point_annotation_to_geojson_feature_point(
         job_name: the name of the job to which the annotation belongs.
 
     Returns:
-        A geojson feature point:
+        A geojson point feature:
             ```python
             {
                 'type': 'Feature',
@@ -60,6 +60,7 @@ def kili_point_annotation_to_geojson_feature_point(
     """
     point = point_annotation
     assert point["type"] == "marker", f"Annotation type must be `marker`, got: {point['type']}"
+
     ret = {"type": "Feature", "geometry": kili_point_to_geojson_point(point["point"])}
     if "mid" in point:
         ret["id"] = point["mid"]
@@ -112,10 +113,10 @@ def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]):
     return ret
 
 
-def kili_bbox_annotation_to_geojson_feature_polygon(
+def kili_bbox_annotation_to_geojson_polygon_feature(
     bbox_annotation: Dict[str, Any], job_name: Optional[str] = None
 ):
-    """Convert a Kili bounding box annotation to a geojson feature polygon.
+    """Convert a Kili bounding box annotation to a geojson polygon feature.
 
     Args:
         bbox_annotation: a Kili bounding box annotation:
@@ -132,9 +133,10 @@ def kili_bbox_annotation_to_geojson_feature_polygon(
                 'type': 'rectangle'
             }
             ```
+        job_name: the name of the job to which the annotation belongs.
 
     Returns:
-        A geojson feature polygon:
+        A geojson polygon feature:
             ```python
             {
                 'type': 'Feature',
@@ -153,6 +155,7 @@ def kili_bbox_annotation_to_geojson_feature_polygon(
     """
     bbox = bbox_annotation
     assert bbox["type"] == "rectangle", f"Annotation type must be `rectangle`, got: {bbox['type']}"
+
     ret = {
         "type": "Feature",
         "geometry": kili_bbox_to_geojson_polygon(bbox["boundingPoly"][0]["normalizedVertices"]),
@@ -174,14 +177,15 @@ def kili_polygon_to_geojson_polygon(normalized_vertices: List[Dict[str, float]])
     return ret
 
 
-def kili_polygon_annotation_to_geojson_feature_polygon(
+def kili_polygon_annotation_to_geojson_polygon_feature(
     polygon_annotation: Dict[str, Any], job_name: Optional[str] = None
 ):
-    """Convert a Kili polygon annotation to a geojson feature polygon."""
+    """Convert a Kili polygon annotation to a geojson polygon feature."""
     polygon = polygon_annotation
     assert (
         polygon["type"] == "polygon"
     ), f"Annotation type must be `polygon`, got: {polygon['type']}"
+
     ret = {
         "type": "Feature",
         "geometry": kili_polygon_to_geojson_polygon(
@@ -205,13 +209,14 @@ def kili_line_to_geojson_linestring(
     return ret  # type: ignore
 
 
-def kili_line_annotation_to_geojson_feature_linestring(
+def kili_line_annotation_to_geojson_linestring_feature(
     polyline_annotation: Dict[str, Any], job_name: Optional[str] = None
 ):
-    """Convert a Kili line annotation to a geojson feature linestring."""
+    """Convert a Kili line annotation to a geojson linestring feature."""
     assert (
         polyline_annotation["type"] == "polyline"
     ), f"Annotation type must be `polyline`, got: {polyline_annotation['type']}"
+
     ret = {
         "type": "Feature",
         "geometry": kili_line_to_geojson_linestring(polyline_annotation["polyline"]),
@@ -235,13 +240,14 @@ def kili_segmentation_to_geojson_polygon(bounding_poly: List[Dict[str, List[Dict
     return ret
 
 
-def kili_segmentation_annotation_to_geojson_feature_polygon(
+def kili_segmentation_annotation_to_geojson_polygon_feature(
     segmentation_annotation: Dict[str, Any], job_name: Optional[str] = None
 ):
-    """Convert a Kili segmentation annotation to a geojson feature polygon."""
+    """Convert a Kili segmentation annotation to a geojson polygon feature."""
     assert (
         segmentation_annotation["type"] == "semantic"
     ), f"Annotation type must be `semantic`, got: {segmentation_annotation['type']}"
+
     ret = {
         "type": "Feature",
         "geometry": kili_segmentation_to_geojson_polygon(segmentation_annotation["boundingPoly"]),
@@ -261,3 +267,116 @@ def features_list_to_feature_collection(
 ) -> Dict[Literal["type", "features"], Union[str, List[Dict]]]:
     """Convert a list of features to a feature collection."""
     return {"type": "FeatureCollection", "features": features}
+
+
+def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]):
+    """Convert a geojson point feature to a Kili point annotation."""
+    assert point.get("type") == "Feature", f"Feature type must be `Feature`, got: {point['type']}"
+    assert (
+        point["geometry"]["type"] == "Point"
+    ), f"Geometry type must be `Point`, got: {point['geometry']['type']}"
+
+    ret = {
+        "children": point["properties"].get("children", {}),
+        "categories": point["properties"]["categories"],
+        "type": "marker",
+    }
+    ret["point"] = {
+        "x": point["geometry"]["coordinates"][0],
+        "y": point["geometry"]["coordinates"][1],
+    }
+    if "id" in point:
+        ret["mid"] = point["id"]
+    return ret
+
+
+def geojson_polygon_feature_to_kili_bbox_annotation(polygon: Dict[str, Any]):
+    """Convert a geojson polygon feature to a Kili bounding box annotation."""
+    assert (
+        polygon.get("type") == "Feature"
+    ), f"Feature type must be `Feature`, got: {polygon['type']}"
+    assert (
+        polygon["geometry"]["type"] == "Polygon"
+    ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
+
+    ret = {
+        "children": polygon["properties"].get("children", {}),
+        "categories": polygon["properties"]["categories"],
+        "type": "rectangle",
+    }
+    # geojson polygon has one more point than kili bounding box
+    coords = polygon["geometry"]["coordinates"][0]
+    normalized_vertices = [
+        {"x": coords[0][0], "y": coords[0][1]},
+        {"x": coords[3][0], "y": coords[3][1]},
+        {"x": coords[2][0], "y": coords[2][1]},
+        {"x": coords[1][0], "y": coords[1][1]},
+    ]
+    ret["boundingPoly"] = [{"normalizedVertices": normalized_vertices}]
+    if "id" in polygon:
+        ret["mid"] = polygon["id"]
+    return ret
+
+
+def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]):
+    """Convert a geojson polygon feature to a Kili polygon annotation."""
+    assert (
+        polygon.get("type") == "Feature"
+    ), f"Feature type must be `Feature`, got: {polygon['type']}"
+    assert (
+        polygon["geometry"]["type"] == "Polygon"
+    ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
+
+    ret = {
+        "children": polygon["properties"].get("children", {}),
+        "categories": polygon["properties"]["categories"],
+        "type": "polygon",
+    }
+    coords = polygon["geometry"]["coordinates"][0]
+    normalized_vertices = [{"x": coord[0], "y": coord[1]} for coord in coords[:-1]]
+    ret["boundingPoly"] = [{"normalizedVertices": normalized_vertices}]
+    if "id" in polygon:
+        ret["mid"] = polygon["id"]
+    return ret
+
+
+def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]):
+    """Convert a geojson linestring feature to a Kili line annotation."""
+    assert line.get("type") == "Feature", f"Feature type must be `Feature`, got: {line['type']}"
+    assert (
+        line["geometry"]["type"] == "LineString"
+    ), f"Geometry type must be `LineString`, got: {line['geometry']['type']}"
+
+    ret = {
+        "children": line["properties"].get("children", {}),
+        "categories": line["properties"]["categories"],
+        "type": "polyline",
+    }
+    ret["polyline"] = [{"x": coord[0], "y": coord[1]} for coord in line["geometry"]["coordinates"]]
+    if "id" in line:
+        ret["mid"] = line["id"]
+    return ret
+
+
+def geojson_polygon_feature_to_kili_segmentation_annotation(polygon: Dict[str, Any]):
+    """Convert a geojson polygon feature to a Kili segmentation annotation."""
+    assert (
+        polygon.get("type") == "Feature"
+    ), f"Feature type must be `Feature`, got: {polygon['type']}"
+    assert (
+        polygon["geometry"]["type"] == "Polygon"
+    ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
+
+    ret = {
+        "children": polygon["properties"].get("children", {}),
+        "categories": polygon["properties"]["categories"],
+        "type": "semantic",
+    }
+    coords = polygon["geometry"]["coordinates"]
+    ret["boundingPoly"] = [
+        {"normalizedVertices": [{"x": coord[0], "y": coord[1]} for coord in polygon[:-1]]}
+        for polygon in coords
+    ]
+    if "id" in polygon:
+        ret["mid"] = polygon["id"]
+    return ret
