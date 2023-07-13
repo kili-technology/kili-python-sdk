@@ -7,16 +7,20 @@ def kili_point_to_geojson_point(
     """Convert a Kili point to a geojson point.
 
     Args:
-        point: a Kili point (vertex):
-            ```python
-            {"x": 1.0, "y": 2.0}
-            ```
+        point: a Kili point (vertex).
 
     Returns:
-        A geojson point:
-            ```python
-            {"type": "Point", "coordinates": [1.0, 2.0]}
-            ```
+        A geojson point.
+
+    !!! Example
+        ```python
+        >>> point = {"x": 1.0, "y": 2.0}
+        >>> kili_point_to_geojson_point(point)
+        {
+            "type": "Point",
+            "coordinates": [1.0, 2.0]
+        }
+        ```
     """
     return {"type": "Point", "coordinates": [point["x"], point["y"]]}
 
@@ -27,29 +31,36 @@ def kili_point_annotation_to_geojson_point_feature(
     """Convert a Kili point annotation to a geojson point feature.
 
     Args:
-        point_annotation: a Kili point annotation:
-            ```python
-            {
-                'children': {},
-                'point': {'x': -79.0, 'y': -3.0},
-                'categories': [{'name': 'A'}],
-                'mid': 'mid_object',
-                'type': 'marker'
-            }
-            ```
+        point_annotation: a Kili point annotation.
         job_name: the name of the job to which the annotation belongs.
 
     Returns:
-        A geojson point feature:
-            ```python
-            {
-                'type': 'Feature',
-                'geometry': {'type': 'Point',
+        A geojson point feature.
+
+    !!! Example
+        ```python
+        >>> point = {
+            'children': {},
+            'point': {'x': -79.0, 'y': -3.0},
+            'categories': [{'name': 'A'}],
+            'mid': 'mid_object',
+            'type': 'marker'
+        }
+        >>> kili_point_annotation_to_geojson_point_feature(point)
+        {
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
                 'coordinates': [-79.0, -3.0]},
                 'id': 'mid_object',
-                'properties': {'categories': [{'name': 'A'}]}
+                'properties': {
+                    'categories': [{'name': 'A'}],
+                    'children': {},
+                    'type': 'marker'
+                }
             }
-            ```
+        }
+        ```
     """
     point = point_annotation
     assert point["type"] == "marker", f"Annotation type must be `marker`, got: {point['type']}"
@@ -63,8 +74,33 @@ def kili_point_annotation_to_geojson_point_feature(
     return ret
 
 
-def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]):
-    """Convert a geojson point feature to a Kili point annotation."""
+def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert a geojson point feature to a Kili point annotation.
+
+    Args:
+        point: a geojson point feature.
+
+    Returns:
+        A Kili point annotation.
+
+    !!! Example
+        ```python
+        >>> point = {
+            'type': 'Feature',
+            'geometry': {'type': 'Point', 'coordinates': [-79.0, -3.0]},
+            'id': 'mid_object',
+            'properties': {'categories': [{'name': 'A'}]}
+        }
+        >>> geojson_point_feature_to_kili_point_annotation(point)
+        {
+            'children': {},
+            'point': {'x': -79.0, 'y': -3.0},
+            'categories': [{'name': 'A'}],
+            'mid': 'mid_object',
+            'type': 'marker'
+        }
+        ```
+    """
     assert point.get("type") == "Feature", f"Feature type must be `Feature`, got: {point['type']}"
     assert (
         point["geometry"]["type"] == "Point"
