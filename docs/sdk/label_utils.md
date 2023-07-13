@@ -31,4 +31,31 @@ The module `kili.utils.labels` provides a set of helpers to convert point, bound
 
 ## GeoJson
 
-::: kili.utils.labels.geojson
+!!! info Geospatial imagery
+    Label coordinates of GeoTIFF files (with geospatial metadata) are expressed in latitude and longitude where `x` stands for longitude and `y` for latitude.
+
+    Read more about Kili labeling features for geospatial imagery [here](https://docs.kili-technology.com/docs/geospatialtiled-imagery).
+
+### Point
+
+::: kili.utils.labels.geojson.point
+
+### Line
+
+::: kili.utils.labels.geojson.line
+
+### Bounding box
+
+::: kili.utils.labels.geojson.bbox
+
+### Polygon
+
+::: kili.utils.labels.geojson.polygon
+
+### Segmentation
+
+::: kili.utils.labels.geojson.segmentation
+
+### Collection
+
+::: kili.utils.labels.geojson.collection
