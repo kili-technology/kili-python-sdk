@@ -1,8 +1,8 @@
-from typing import Dict, List, Literal, Union
+from typing import Dict, List, Literal, Sequence, Union
 
 
-def features_list_to_feature_collection(
-    features: List[Dict],
+def features_to_feature_collection(
+    features: Sequence[Dict],
 ) -> Dict[Literal["type", "features"], Union[str, List[Dict]]]:
     """Convert a list of features to a feature collection.
 
@@ -32,7 +32,7 @@ def features_list_to_feature_collection(
                 }
             }
         ]
-        >>> features_list_to_feature_collection(features)
+        >>> features_to_feature_collection(features)
         {
             'type': 'FeatureCollection',
             'features': [
@@ -56,4 +56,4 @@ def features_list_to_feature_collection(
         }
         ```
     """
-    return {"type": "FeatureCollection", "features": features}
+    return {"type": "FeatureCollection", "features": list(features)}

@@ -1,5 +1,5 @@
 from kili.utils.labels.geojson import (
-    features_list_to_feature_collection,
+    features_to_feature_collection,
     geojson_linestring_feature_to_kili_line_annotation,
     geojson_point_feature_to_kili_point_annotation,
     geojson_polygon_feature_to_kili_bbox_annotation,
@@ -447,7 +447,7 @@ def test_kili_segmentation_annotation_to_geojson_polygon_feature():
     assert output == ann
 
 
-def test_features_list_to_feature_collection():
+def test_features_to_feature_collection():
     feat1 = {
         "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
@@ -461,11 +461,13 @@ def test_features_list_to_feature_collection():
         },
         "properties": {"prop0": "value0", "prop1": 0.0},
     }
-    features = [feat1, feat2]
 
-    output = features_list_to_feature_collection(features)
-
-    assert output == {
+    assert features_to_feature_collection([feat1, feat2]) == {
         "type": "FeatureCollection",
-        "features": features,
+        "features": [feat1, feat2],
+    }
+
+    assert features_to_feature_collection((feat1, feat2)) == {
+        "type": "FeatureCollection",
+        "features": [feat1, feat2],
     }
