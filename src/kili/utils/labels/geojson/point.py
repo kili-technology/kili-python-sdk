@@ -110,7 +110,7 @@ def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]) -> Dic
     ), f"Geometry type must be `Point`, got: {point['geometry']['type']}"
 
     ret = {
-        "children": point["properties"].get("kili").get("children", {}),
+        "children": point["properties"].get("kili", {}).get("children", {}),
         "categories": point["properties"]["kili"]["categories"],
         "type": "marker",
     }

@@ -172,7 +172,7 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
     ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
 
     ret = {
-        "children": polygon["properties"].get("kili").get("children", {}),
+        "children": polygon["properties"].get("kili", {}).get("children", {}),
         "categories": polygon["properties"]["kili"]["categories"],
         "type": "semantic",
     }

@@ -186,12 +186,12 @@ def geojson_feature_collection_to_json_response(
     json_response = {}
 
     for feature in feature_collection["features"]:
-        if feature.get("properties").get("kili").get("job") is None:
+        if feature.get("properties").get("kili", {}).get("job") is None:
             raise ValueError(f"Job name is missing in the GeoJson feature {feature}")
 
         job_name = feature["properties"]["kili"]["job"]
 
-        if feature.get("properties").get("kili").get("type") is None:
+        if feature.get("properties").get("kili", {}).get("type") is None:
             raise ValueError(f"Annotation `type` is missing in the GeoJson feature {feature}")
 
         annotation_tool = feature["properties"]["kili"]["type"]

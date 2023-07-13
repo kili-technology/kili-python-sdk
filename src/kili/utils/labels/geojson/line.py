@@ -125,7 +125,7 @@ def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]) -> 
     ), f"Geometry type must be `LineString`, got: {line['geometry']['type']}"
 
     ret = {
-        "children": line["properties"].get("kili").get("children", {}),
+        "children": line["properties"].get("kili", {}).get("children", {}),
         "categories": line["properties"]["kili"]["categories"],
         "type": "polyline",
     }

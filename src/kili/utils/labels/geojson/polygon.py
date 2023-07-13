@@ -145,7 +145,7 @@ def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]) 
     ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
 
     ret = {
-        "children": polygon["properties"].get("kili").get("children", {}),
+        "children": polygon["properties"].get("kili", {}).get("children", {}),
         "categories": polygon["properties"]["kili"]["categories"],
         "type": "polygon",
     }
