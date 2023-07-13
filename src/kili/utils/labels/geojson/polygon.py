@@ -67,10 +67,12 @@ def kili_polygon_annotation_to_geojson_polygon_feature(
                 'coordinates': [[[-79.0, -3.0], [-79.0, -3.0]]]},
                 'id': 'mid_object',
                 'properties': {
-                    'categories': [{'name': 'A'}],
-                    'children': {},
-                    'type': 'polygon',
-                    'job': 'job_name'
+                    'kili': {
+                        'categories': [{'name': 'A'}],
+                        'children': {},
+                        'type': 'polygon',
+                        'job': 'job_name'
+                    }
                 }
             }
         }
@@ -89,9 +91,11 @@ def kili_polygon_annotation_to_geojson_polygon_feature(
     }
     if "mid" in polygon:
         ret["id"] = polygon["mid"]
-    ret["properties"] = {k: v for k, v in polygon.items() if k not in ["boundingPoly", "mid"]}
+    ret["properties"] = {
+        "kili": {k: v for k, v in polygon.items() if k not in ["boundingPoly", "mid"]}
+    }
     if job_name is not None:
-        ret["properties"]["job"] = job_name
+        ret["properties"]["kili"]["job"] = job_name
     return ret
 
 
@@ -113,10 +117,12 @@ def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]) 
                 'coordinates': [[[-79.0, -3.0], [-79.0, -3.0]]]},
                 'id': 'mid_object',
                 'properties': {
-                    'categories': [{'name': 'A'}],
-                    'children': {},
-                    'type': 'polygon',
-                    'job': 'job_name'
+                    'kili': {
+                        'categories': [{'name': 'A'}],
+                        'children': {},
+                        'type': 'polygon',
+                        'job': 'job_name'
+                    }
                 }
             }
         }
@@ -138,8 +144,8 @@ def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]) 
     ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
 
     ret = {
-        "children": polygon["properties"].get("children", {}),
-        "categories": polygon["properties"]["categories"],
+        "children": polygon["properties"].get("kili").get("children", {}),
+        "categories": polygon["properties"]["kili"]["categories"],
         "type": "polygon",
     }
     coords = polygon["geometry"]["coordinates"][0]

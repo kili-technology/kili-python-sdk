@@ -1,11 +1,26 @@
 import warnings
 from typing import Any, Dict, List, Literal, Sequence, Union
 
-from .bbox import kili_bbox_annotation_to_geojson_polygon_feature
-from .line import kili_line_annotation_to_geojson_linestring_feature
-from .point import kili_point_annotation_to_geojson_point_feature
-from .polygon import kili_polygon_annotation_to_geojson_polygon_feature
-from .segmentation import kili_segmentation_annotation_to_geojson_polygon_feature
+from .bbox import (
+    geojson_polygon_feature_to_kili_bbox_annotation,
+    kili_bbox_annotation_to_geojson_polygon_feature,
+)
+from .line import (
+    geojson_linestring_feature_to_kili_line_annotation,
+    kili_line_annotation_to_geojson_linestring_feature,
+)
+from .point import (
+    geojson_point_feature_to_kili_point_annotation,
+    kili_point_annotation_to_geojson_point_feature,
+)
+from .polygon import (
+    geojson_polygon_feature_to_kili_polygon_annotation,
+    kili_polygon_annotation_to_geojson_polygon_feature,
+)
+from .segmentation import (
+    geojson_polygon_feature_to_kili_segmentation_annotation,
+    kili_segmentation_annotation_to_geojson_polygon_feature,
+)
 
 
 def features_to_feature_collection(
@@ -66,13 +81,13 @@ def features_to_feature_collection(
     return {"type": "FeatureCollection", "features": list(features)}
 
 
-def kili_label_to_feature_collection(
+def kili_json_response_to_feature_collection(
     json_response: Dict[str, Any]
 ) -> Dict[Literal["type", "features"], Union[str, List[Dict]]]:
-    """Convert a Kili label to a Geojson feature collection.
+    """Convert a Kili label json response to a Geojson feature collection.
 
     Args:
-        json_response: a Kili label.
+        json_response: a Kili label json response.
 
     Returns:
         A Geojson feature collection.
@@ -87,7 +102,7 @@ def kili_label_to_feature_collection(
                 'annotations': [...]
             }
         }
-        >>> kili_label_to_feature_collection(json_response)
+        >>> kili_json_response_to_feature_collection(json_response)
         {
             'type': 'FeatureCollection',
             'features': [
@@ -135,12 +150,61 @@ def kili_label_to_feature_collection(
             features.append(feature)
 
     if jobs_skipped:
-        warnings.warn(
-            f"Jobs {jobs_skipped} do not have annotations and will be skipped.", stacklevel=2
-        )
+        warnings.warn(f"Jobs {jobs_skipped} cannot be exported to GeoJson format.", stacklevel=2)
     if ann_tools_not_supported:
         warnings.warn(
             f"Annotation tools {ann_tools_not_supported} are not supported and will be skipped.",
             stacklevel=2,
         )
     return features_to_feature_collection(features)
+
+
+def geojson_feature_collection_to_json_response(
+    feature_collection: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Convert a Geojson feature collection to a Kili label json response.
+
+    Args:
+        feature_collection: a Geojson feature collection.
+
+    Returns:
+        A Kili label json response.
+    """
+    assert (
+        feature_collection["type"] == "FeatureCollection"
+    ), f"Feature collection type must be `FeatureCollection`, got: {feature_collection['type']}"
+
+    annotation_tool_to_converter = {
+        "rectangle": geojson_polygon_feature_to_kili_bbox_annotation,
+        "marker": geojson_point_feature_to_kili_point_annotation,
+        "polygon": geojson_polygon_feature_to_kili_polygon_annotation,
+        "polyline": geojson_linestring_feature_to_kili_line_annotation,
+        "semantic": geojson_polygon_feature_to_kili_segmentation_annotation,
+    }
+
+    json_response = {}
+
+    for feature in feature_collection["features"]:
+        if feature.get("properties").get("kili").get("job") is None:
+            raise ValueError(f"Job name is missing in the GeoJson feature {feature}")
+
+        job_name = feature["properties"]["kili"]["job"]
+
+        if feature.get("properties").get("kili").get("type") is None:
+            raise ValueError(f"Annotation `type` is missing in the GeoJson feature {feature}")
+
+        annotation_tool = feature["properties"]["kili"]["type"]
+
+        if annotation_tool not in annotation_tool_to_converter:
+            raise ValueError(f"Annotation tool {annotation_tool} is not supported.")
+
+        kili_annotation = annotation_tool_to_converter[annotation_tool](feature)
+
+        if job_name not in json_response:
+            json_response[job_name] = {}
+        if "annotations" not in json_response[job_name]:
+            json_response[job_name]["annotations"] = []
+
+        json_response[job_name]["annotations"].append(kili_annotation)
+
+    return json_response

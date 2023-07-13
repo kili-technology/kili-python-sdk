@@ -2,6 +2,7 @@ import json
 
 from kili.utils.labels.geojson import (
     features_to_feature_collection,
+    geojson_feature_collection_to_json_response,
     geojson_linestring_feature_to_kili_line_annotation,
     geojson_point_feature_to_kili_point_annotation,
     geojson_polygon_feature_to_kili_bbox_annotation,
@@ -9,7 +10,7 @@ from kili.utils.labels.geojson import (
     geojson_polygon_feature_to_kili_segmentation_annotation,
     kili_bbox_annotation_to_geojson_polygon_feature,
     kili_bbox_to_geojson_polygon,
-    kili_label_to_feature_collection,
+    kili_json_response_to_feature_collection,
     kili_line_annotation_to_geojson_linestring_feature,
     kili_line_to_geojson_linestring,
     kili_point_annotation_to_geojson_point_feature,
@@ -49,10 +50,12 @@ def test_kili_point_annotation_to_geojson_point_feature():
         "geometry": {"type": "Point", "coordinates": [long, lat]},
         "id": "20230712140607850-1660",
         "properties": {
-            "categories": [{"name": "A"}],
-            "type": "marker",
-            "children": {},
-            "job": "POINT_JOB",
+            "kili": {
+                "categories": [{"name": "A"}],
+                "type": "marker",
+                "children": {},
+                "job": "POINT_JOB",
+            }
         },
     }
 
@@ -118,10 +121,12 @@ def test_kili_bbox_annotation_to_geojson_polygon_feature():
         },
         "id": "20230712152136805-42164",
         "properties": {
-            "categories": [{"name": "CATEGORY_A"}],
-            "type": "rectangle",
-            "children": {},
-            "job": "BBOX_JOB",
+            "kili": {
+                "categories": [{"name": "CATEGORY_A"}],
+                "type": "rectangle",
+                "children": {},
+                "job": "BBOX_JOB",
+            }
         },
     }
 
@@ -224,10 +229,12 @@ def test_kili_polygon_annotation_to_geojson_polygon_feature():
             "type": "Polygon",
         },
         "properties": {
-            "categories": [{"name": "A"}],
-            "type": "polygon",
-            "children": {},
-            "job": "POLYGON_JOB",
+            "kili": {
+                "categories": [{"name": "A"}],
+                "type": "polygon",
+                "children": {},
+                "job": "POLYGON_JOB",
+            }
         },
         "type": "Feature",
         "id": "20230712154012841-65343",
@@ -291,10 +298,12 @@ def test_kili_line_annotation_to_geojson_linestring_feature():
         "type": "Feature",
         "id": "20230712161027535-42230",
         "properties": {
-            "categories": [{"name": "A"}],
-            "type": "polyline",
-            "children": {},
-            "job": "LINE_JOB",
+            "kili": {
+                "categories": [{"name": "A"}],
+                "type": "polyline",
+                "children": {},
+                "job": "LINE_JOB",
+            }
         },
         "geometry": {
             "coordinates": [
@@ -438,10 +447,12 @@ def test_kili_segmentation_annotation_to_geojson_polygon_feature():
         },
         "id": "20230712163555037-91494",
         "properties": {
-            "categories": [{"name": "A"}],
-            "type": "semantic",
-            "children": {},
-            "job": "SEGMENTATION_JOB",
+            "kili": {
+                "categories": [{"name": "A"}],
+                "type": "semantic",
+                "children": {},
+                "job": "SEGMENTATION_JOB",
+            }
         },
     }
 
@@ -476,11 +487,9 @@ def test_features_to_feature_collection():
     }
 
 
-def test_kili_label_to_feature_collection():
+def test_kili_json_response_to_feature_collection():
     with open("./recipes/datasets/geojson_tutorial_labels.json", encoding="utf-8") as f:
         json_response = json.load(f)
-
-    output = kili_label_to_feature_collection(json_response)
 
     features = []
     for bbox_ann in json_response["BBOX_DETECTION_JOB"]["annotations"]:
@@ -512,7 +521,13 @@ def test_kili_label_to_feature_collection():
             )
         )
 
+    # json resp to geojson
+    output = kili_json_response_to_feature_collection(json_response)
     assert output == {
         "type": "FeatureCollection",
         "features": features,
     }
+
+    # geojson to json resp
+    output = geojson_feature_collection_to_json_response(output)
+    assert output == json_response

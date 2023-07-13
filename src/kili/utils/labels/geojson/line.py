@@ -56,9 +56,11 @@ def kili_line_annotation_to_geojson_linestring_feature(
                 'coordinates': [[-79.0, -3.0], [-79.0, -3.0]]},
                 'id': 'mid_object',
                 'properties': {
-                    'categories': [{'name': 'A'}],
-                    'children': {},
-                    'job': 'job_name'
+                    'kili': {
+                        'categories': [{'name': 'A'}],
+                        'children': {},
+                        'job': 'job_name'
+                    }
                 }
         }
         ```
@@ -74,10 +76,10 @@ def kili_line_annotation_to_geojson_linestring_feature(
     if "mid" in polyline_annotation:
         ret["id"] = polyline_annotation["mid"]
     ret["properties"] = {
-        k: v for k, v in polyline_annotation.items() if k not in ["mid", "polyline"]
+        "kili": {k: v for k, v in polyline_annotation.items() if k not in ["mid", "polyline"]}
     }
     if job_name is not None:
-        ret["properties"]["job"] = job_name
+        ret["properties"]["kili"]["job"] = job_name
     return ret
 
 
@@ -99,9 +101,11 @@ def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]) -> 
                 'coordinates': [[-79.0, -3.0], [-79.0, -3.0]]},
                 'id': 'mid_object',
                 'properties': {
-                    'categories': [{'name': 'A'}],
-                    'children': {},
-                    'job': 'job_name'
+                    'kili': {
+                        'categories': [{'name': 'A'}],
+                        'children': {},
+                        'job': 'job_name'
+                    }
                 }
         }
         >>> geojson_linestring_feature_to_kili_line_annotation(line)
@@ -120,8 +124,8 @@ def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]) -> 
     ), f"Geometry type must be `LineString`, got: {line['geometry']['type']}"
 
     ret = {
-        "children": line["properties"].get("children", {}),
-        "categories": line["properties"]["categories"],
+        "children": line["properties"].get("kili").get("children", {}),
+        "categories": line["properties"]["kili"]["categories"],
         "type": "polyline",
     }
     ret["polyline"] = [{"x": coord[0], "y": coord[1]} for coord in line["geometry"]["coordinates"]]

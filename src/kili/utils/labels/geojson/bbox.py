@@ -100,10 +100,12 @@ def kili_bbox_annotation_to_geojson_polygon_feature(
             },
             'id': 'mid_object',
             'properties': {
-                'categories': [{'name': 'A'}],
-                'children': {},
-                'type': 'rectangle',
-                'job': 'job_name'
+                'kili': {
+                    'categories': [{'name': 'A'}],
+                    'children': {},
+                    'type': 'rectangle',
+                    'job': 'job_name'
+                }
             }
         }
         ```
@@ -117,9 +119,11 @@ def kili_bbox_annotation_to_geojson_polygon_feature(
     }
     if "mid" in bbox:
         ret["id"] = bbox["mid"]
-    ret["properties"] = {k: v for k, v in bbox.items() if k not in ["boundingPoly", "mid"]}
+    ret["properties"] = {
+        "kili": {k: v for k, v in bbox.items() if k not in ["boundingPoly", "mid"]}
+    }
     if job_name is not None:
-        ret["properties"]["job"] = job_name
+        ret["properties"]["kili"]["job"] = job_name
     return ret
 
 
@@ -150,10 +154,12 @@ def geojson_polygon_feature_to_kili_bbox_annotation(polygon: Dict[str, Any]) -> 
             },
             'id': 'mid_object',
             'properties': {
-                'categories': [{'name': 'A'}],
-                'children': {},
-                'type': 'rectangle',
-                'job': 'job_name'
+                'kili': {
+                    'categories': [{'name': 'A'}],
+                    'children': {},
+                    'type': 'rectangle',
+                    'job': 'job_name'
+                }
             }
         }
         >>> geojson_polygon_feature_to_kili_bbox_annotation(polygon)
@@ -183,8 +189,8 @@ def geojson_polygon_feature_to_kili_bbox_annotation(polygon: Dict[str, Any]) -> 
     ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
 
     ret = {
-        "children": polygon["properties"].get("children", {}),
-        "categories": polygon["properties"]["categories"],
+        "children": polygon["properties"].get("kili").get("children", {}),
+        "categories": polygon["properties"]["kili"]["categories"],
         "type": "rectangle",
     }
     # geojson polygon has one more point than kili bounding box

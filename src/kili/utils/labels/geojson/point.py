@@ -54,9 +54,11 @@ def kili_point_annotation_to_geojson_point_feature(
                 'coordinates': [-79.0, -3.0]},
                 'id': 'mid_object',
                 'properties': {
-                    'categories': [{'name': 'A'}],
-                    'children': {},
-                    'type': 'marker'
+                    'kili': {
+                        'categories': [{'name': 'A'}],
+                        'children': {},
+                        'type': 'marker'
+                    }
                 }
             }
         }
@@ -68,9 +70,9 @@ def kili_point_annotation_to_geojson_point_feature(
     ret = {"type": "Feature", "geometry": kili_point_to_geojson_point(point["point"])}
     if "mid" in point:
         ret["id"] = point["mid"]
-    ret["properties"] = {k: v for k, v in point.items() if k not in ["point", "mid"]}
+    ret["properties"] = {"kili": {k: v for k, v in point.items() if k not in ["point", "mid"]}}
     if job_name is not None:
-        ret["properties"]["job"] = job_name
+        ret["properties"]["kili"]["job"] = job_name
     return ret
 
 
@@ -89,7 +91,7 @@ def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]) -> Dic
             'type': 'Feature',
             'geometry': {'type': 'Point', 'coordinates': [-79.0, -3.0]},
             'id': 'mid_object',
-            'properties': {'categories': [{'name': 'A'}]}
+            'properties': {'kili': {'categories': [{'name': 'A'}]}}
         }
         >>> geojson_point_feature_to_kili_point_annotation(point)
         {
@@ -107,8 +109,8 @@ def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]) -> Dic
     ), f"Geometry type must be `Point`, got: {point['geometry']['type']}"
 
     ret = {
-        "children": point["properties"].get("children", {}),
-        "categories": point["properties"]["categories"],
+        "children": point["properties"].get("kili").get("children", {}),
+        "categories": point["properties"]["kili"]["categories"],
         "type": "marker",
     }
     ret["point"] = {

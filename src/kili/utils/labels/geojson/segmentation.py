@@ -84,10 +84,12 @@ def kili_segmentation_annotation_to_geojson_polygon_feature(
             },
             'id': 'mid_object',
             'properties': {
-                'categories': [{'name': 'A'}],
-                'children': {},
-                'type': 'semantic',
-                'job': 'job_name'
+                'kili': {
+                    'categories': [{'name': 'A'}],
+                    'children': {},
+                    'type': 'semantic',
+                    'job': 'job_name'
+                }
             }
         }
         ```
@@ -103,10 +105,12 @@ def kili_segmentation_annotation_to_geojson_polygon_feature(
     if "mid" in segmentation_annotation:
         ret["id"] = segmentation_annotation["mid"]
     ret["properties"] = {
-        k: v for k, v in segmentation_annotation.items() if k not in ["mid", "boundingPoly"]
+        "kili": {
+            k: v for k, v in segmentation_annotation.items() if k not in ["mid", "boundingPoly"]
+        }
     }
     if job_name is not None:
-        ret["properties"]["job"] = job_name
+        ret["properties"]["kili"]["job"] = job_name
     return ret
 
 
@@ -138,10 +142,12 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
             },
             'id': 'mid_object',
             'properties': {
-                'categories': [{'name': 'A'}],
-                'children': {},
-                'type': 'semantic',
-                'job': 'job_name'
+                'kili': {
+                    'categories': [{'name': 'A'}],
+                    'children': {},
+                    'type': 'semantic',
+                    'job': 'job_name'
+                }
             }
         }
         >>> geojson_polygon_feature_to_kili_segmentation_annotation(polygon)
@@ -165,8 +171,8 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
     ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
 
     ret = {
-        "children": polygon["properties"].get("children", {}),
-        "categories": polygon["properties"]["categories"],
+        "children": polygon["properties"].get("kili").get("children", {}),
+        "categories": polygon["properties"]["kili"]["categories"],
         "type": "semantic",
     }
     coords = polygon["geometry"]["coordinates"]

@@ -139,7 +139,7 @@ kili.append_many_to_dataset(project_id, content_array=["sample.tif"], external_i
 
 
 
-    {'id': 'clk158s2z01gm0k79dmuraz1f'}
+    {'id': 'clk1946aj00w40j4zhdu3erip'}
 
 
 
@@ -176,7 +176,7 @@ kili.append_labels(
 
 
 
-    [{'id': 'clk158y0501h00k7918o30fkx'}]
+    [{'id': 'clk194cnf00we0j4zay9z3trk'}]
 
 
 
@@ -204,6 +204,7 @@ Kili SDK provides a set of label utils to convert Kili labels to GeoJSON:
 from kili.utils.labels.geojson import (
     features_to_feature_collection,
     kili_bbox_annotation_to_geojson_polygon_feature,
+    kili_json_response_to_feature_collection,
     kili_line_annotation_to_geojson_linestring_feature,
     kili_point_annotation_to_geojson_point_feature,
     kili_polygon_annotation_to_geojson_polygon_feature,
@@ -273,24 +274,22 @@ Finally, we convert all features into a FeatureCollection:
 
 ```python
 feature_collection = features_to_feature_collection(features)
+```
 
+You can even do all the code above with just one utility function:
+
+
+```python
+feature_collection = kili_json_response_to_feature_collection(label.json_response)
+```
+
+Note that if some jobs in your ontology cannot be converted to GeoJSON, the function will raise warnings and return a GeoJSON FeatureCollection with only the features that could be converted.
+
+
+```python
 with open("label.geojson", "w") as f:
     json.dump(feature_collection, f)
 ```
-
-
-    ---------------------------------------------------------------------------
-
-    NameError                                 Traceback (most recent call last)
-
-    Cell In[2], line 1
-    ----> 1 feature_collection = features_to_feature_collection(features)
-          3 with open("label.geojson", "w") as f:
-          4     json.dump(feature_collection, f)
-
-
-    NameError: name 'features_to_feature_collection' is not defined
-
 
 And we can visualize the GeoJSON file `label.geojson` with our annotations by uploading it to [geojson.io]([geojson.io](https://geojson.io/#map=11.33/52.2094/4.4093)):
 
@@ -299,6 +298,8 @@ And we can visualize the GeoJSON file `label.geojson` with our annotations by up
 Notice that the GeoJSON file also contains some of the label metadata like the annotation mid, the category, etc.
 
 ## GeoJSON to Kili labels
+
+Now, let's do the opposite: we will convert a GeoJSON file to Kili labels.
 
 
 ```python
