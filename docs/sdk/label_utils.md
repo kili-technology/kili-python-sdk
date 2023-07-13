@@ -23,6 +23,7 @@ The module `kili.utils.labels` provides a set of helpers to convert point, bound
 
 !!! info "OpenCV"
     It is recommended to install the image dependencies to use the image helpers.
+
     ```bash
     pip install kili[image-utils]
     ```
@@ -35,6 +36,23 @@ The module `kili.utils.labels` provides a set of helpers to convert point, bound
     Label coordinates of GeoTIFF files (with geospatial metadata) are expressed in latitude and longitude where `x` stands for longitude and `y` for latitude.
 
     Read more about Kili labeling features for geospatial imagery [here](https://docs.kili-technology.com/docs/geospatialtiled-imagery).
+
+!!! warning Geospatial imagery
+    If the geotiff image asset does not have geospatial metadata, the coordinates will be expressed in normalized coordinates, and the export to GeoJSON will not be accurate since the geospatial information is missing.
+
+    To check if your image asset has geospatial metadata, you can use the following code snippet:
+
+    ```python
+    >>> asset = kili.assets(..., fields=["jsonContent"])[0]
+    >>> print(asset['jsonContent'])
+
+    # asset without geospatial metadata
+    [{"imageUrl": "https://...", "initEpsg": -1, "useClassicCoordinates": true}]
+
+    # asset with geospatial metadata
+    # note that the epsg and initEpsg may be different for your asset
+    [{"bounds": [[...], [...]], "epsg": "EPSG4326", "imageUrl": "https://...", "initEpsg": 4326, "useClassicCoordinates": false}]
+    ```
 
 ### Point
 
