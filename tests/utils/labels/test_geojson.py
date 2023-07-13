@@ -1,3 +1,5 @@
+import json
+
 from kili.utils.labels.geojson import (
     features_to_feature_collection,
     geojson_linestring_feature_to_kili_line_annotation,
@@ -7,6 +9,7 @@ from kili.utils.labels.geojson import (
     geojson_polygon_feature_to_kili_segmentation_annotation,
     kili_bbox_annotation_to_geojson_polygon_feature,
     kili_bbox_to_geojson_polygon,
+    kili_label_to_feature_collection,
     kili_line_annotation_to_geojson_linestring_feature,
     kili_line_to_geojson_linestring,
     kili_point_annotation_to_geojson_point_feature,
@@ -470,4 +473,46 @@ def test_features_to_feature_collection():
     assert features_to_feature_collection((feat1, feat2)) == {
         "type": "FeatureCollection",
         "features": [feat1, feat2],
+    }
+
+
+def test_kili_label_to_feature_collection():
+    with open("./recipes/datasets/geojson_tutorial_labels.json", encoding="utf-8") as f:
+        json_response = json.load(f)
+
+    output = kili_label_to_feature_collection(json_response)
+
+    features = []
+    for bbox_ann in json_response["BBOX_DETECTION_JOB"]["annotations"]:
+        features.append(
+            kili_bbox_annotation_to_geojson_polygon_feature(bbox_ann, job_name="BBOX_DETECTION_JOB")
+        )
+    for point_ann in json_response["POINT_DETECTION_JOB"]["annotations"]:
+        features.append(
+            kili_point_annotation_to_geojson_point_feature(
+                point_ann, job_name="POINT_DETECTION_JOB"
+            )
+        )
+    for polygon_ann in json_response["POLYGON_DETECTION_JOB"]["annotations"]:
+        features.append(
+            kili_polygon_annotation_to_geojson_polygon_feature(
+                polygon_ann, job_name="POLYGON_DETECTION_JOB"
+            )
+        )
+    for line_ann in json_response["LINE_DETECTION_JOB"]["annotations"]:
+        features.append(
+            kili_line_annotation_to_geojson_linestring_feature(
+                line_ann, job_name="LINE_DETECTION_JOB"
+            )
+        )
+    for segmentation_ann in json_response["SEGMENTATION_JOB"]["annotations"]:
+        features.append(
+            kili_segmentation_annotation_to_geojson_polygon_feature(
+                segmentation_ann, job_name="SEGMENTATION_JOB"
+            )
+        )
+
+    assert output == {
+        "type": "FeatureCollection",
+        "features": features,
     }

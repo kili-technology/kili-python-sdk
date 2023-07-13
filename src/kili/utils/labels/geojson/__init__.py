@@ -4,7 +4,7 @@ from .bbox import (
     kili_bbox_annotation_to_geojson_polygon_feature,
     kili_bbox_to_geojson_polygon,
 )
-from .collection import features_to_feature_collection
+from .collection import features_to_feature_collection, kili_label_to_feature_collection
 from .line import (
     geojson_linestring_feature_to_kili_line_annotation,
     kili_line_annotation_to_geojson_linestring_feature,
@@ -43,4 +43,5 @@ __all__ = [
     "kili_polygon_to_geojson_polygon",
     "kili_segmentation_annotation_to_geojson_polygon_feature",
     "kili_segmentation_to_geojson_polygon",
+    "kili_label_to_feature_collection",
 ]
