@@ -14,21 +14,21 @@ def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]) ->
     !!! Example
         ```python
         >>> normalized_vertices = [
-            {'x': 0.0, 'y': 0.0},
-            {'x': 0.0, 'y': 1.0},
-            {'x': 1.0, 'y': 1.0},
-            {'x': 1.0, 'y': 0.0}
+            {'x': 12.0, 'y': 3.0},
+            {'x': 12.0, 'y': 4.0},
+            {'x': 13.0, 'y': 4.0},
+            {'x': 13.0, 'y': 3.0}
         ]
         >>> kili_bbox_to_geojson_polygon(normalized_vertices)
         {
             'type': 'Polygon',
             'coordinates': [
                 [
-                    [0.0, 0.0],
-                    [0.0, 1.0],
-                    [1.0, 1.0],
-                    [1.0, 0.0],
-                    [0.0, 0.0]
+                    [12.0, 3.0],
+                    [12.0, 4.0],
+                    [13.0, 4.0],
+                    [13.0, 3.0],
+                    [12.0, 3.0]
                 ]
             ]
         }
@@ -73,10 +73,10 @@ def kili_bbox_annotation_to_geojson_polygon_feature(
             'boundingPoly': [
                     {
                         'normalizedVertices': [
-                            {'x': 0.0, 'y': 0.0},
-                            {'x': 0.0, 'y': 1.0},
-                            {'x': 1.0, 'y': 1.0},
-                            {'x': 1.0, 'y': 0.0}
+                            {'x': -12.6, 'y': 12.87},
+                            {'x': -42.6, 'y': 22.17},
+                            {'x': -17.6, 'y': -22.4},
+                            {'x': 2.6, 'y': -1.87}
                         ]
                     }
                 ],
@@ -91,11 +91,11 @@ def kili_bbox_annotation_to_geojson_polygon_feature(
                 'type': 'Polygon',
                 'coordinates': [
                     [
-                        [0.0, 0.0],
-                        [0.0, 1.0],
-                        [1.0, 1.0],
-                        [1.0, 0.0],
-                        [0.0, 0.0]
+                        [-12.6, 12.87],
+                        [-42.6, 22.17],
+                        [-17.6, -22.4],
+                        [2.6, -1.87],
+                        [-12.6, 12.87]
                     ]
                 ]
             },
@@ -137,6 +137,10 @@ def geojson_polygon_feature_to_kili_bbox_annotation(polygon: Dict[str, Any]) -> 
     Returns:
         A Kili bounding box annotation.
 
+    !!! Warning
+        This method requires the `kili` key to be present in the geojson feature properties.
+        In particular, the `kili` dictionary must contain the `categories` of the annotation.
+
     !!! Example
         ```python
         >>> polygon = {
@@ -145,11 +149,11 @@ def geojson_polygon_feature_to_kili_bbox_annotation(polygon: Dict[str, Any]) -> 
                 'type': 'Polygon',
                 'coordinates': [
                     [
-                        [0.0, 0.0],
-                        [0.0, 1.0],
-                        [1.0, 1.0],
-                        [1.0, 0.0],
-                        [0.0, 0.0]
+                        [-12.6, 12.87],
+                        [-42.6, 22.17],
+                        [-17.6, -22.4],
+                        [2.6, -1.87],
+                        [-12.6, 12.87]
                     ]
                 ]
             },
@@ -169,10 +173,10 @@ def geojson_polygon_feature_to_kili_bbox_annotation(polygon: Dict[str, Any]) -> 
             'boundingPoly': [
                     {
                         'normalizedVertices': [
-                            {'x': 0.0, 'y': 0.0},
-                            {'x': 0.0, 'y': 1.0},
-                            {'x': 1.0, 'y': 1.0},
-                            {'x': 1.0, 'y': 0.0}
+                            {'x': -12.6, 'y': 12.87},
+                            {'x': -42.6, 'y': 22.17},
+                            {'x': -17.6, 'y': -22.4},
+                            {'x': 2.6, 'y': -1.87}
                         ]
                     }
                 ],

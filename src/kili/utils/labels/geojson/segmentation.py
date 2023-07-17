@@ -126,6 +126,10 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
     Returns:
         A Kili segmentation annotation.
 
+    !!! Warning
+        This method requires the `kili` key to be present in the geojson feature properties.
+        In particular, the `kili` dictionary must contain the `categories` of the annotation.
+
     !!! Example
         ```python
         >>> polygon = {

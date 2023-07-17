@@ -14,21 +14,21 @@ def kili_polygon_to_geojson_polygon(normalized_vertices: List[Dict[str, float]])
     !!! Example
         ```python
         >>> normalized_vertices = [
-            {'x': 0.0, 'y': 0.0},
-            {'x': 0.0, 'y': 1.0},
-            {'x': 1.0, 'y': 1.0},
-            {'x': 1.0, 'y': 0.0}
+            {'x': 10.42, 'y': 27.12},
+            {'x': 1.53, 'y': 14.57},
+            {'x': 147.45, 'y': 14.12},
+            {'x': 14.23, 'y': 0.23}
         ]
         >>> kili_polygon_to_geojson_polygon(normalized_vertices)
         {
             'type': 'Polygon',
             'coordinates': [
                 [
-                    [0.0, 0.0],
-                    [0.0, 1.0],
-                    [1.0, 1.0],
-                    [1.0, 0.0],
-                    [0.0, 0.0]
+                    [10.42, 27.12],
+                    [1.53, 14.57],
+                    [147.45, 14.12],
+                    [14.23, 0.23],
+                    [10.42, 27.12]
                 ]
             ]
         }
@@ -108,6 +108,10 @@ def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]) 
 
     Returns:
         A Kili polygon annotation.
+
+    !!! Warning
+        This method requires the `kili` key to be present in the geojson feature properties.
+        In particular, the `kili` dictionary must contain the `categories` of the annotation.
 
     !!! Example
         ```python

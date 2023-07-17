@@ -2,7 +2,7 @@ import json
 
 from kili.utils.labels.geojson import (
     features_to_feature_collection,
-    geojson_feature_collection_to_json_response,
+    geojson_feature_collection_to_kili_json_response,
     geojson_linestring_feature_to_kili_line_annotation,
     geojson_point_feature_to_kili_point_annotation,
     geojson_polygon_feature_to_kili_bbox_annotation,
@@ -529,5 +529,5 @@ def test_kili_json_response_to_feature_collection():
     }
 
     # geojson to json resp
-    output = geojson_feature_collection_to_json_response(output)  # type: ignore
+    output = geojson_feature_collection_to_kili_json_response(output)  # type: ignore
     assert output == json_response

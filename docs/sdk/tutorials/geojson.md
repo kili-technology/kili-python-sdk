@@ -273,7 +273,7 @@ Now, let's do the opposite: we will convert a GeoJSON file to Kili labels.
 
 
 ```python
-from kili.utils.labels.geojson import geojson_feature_collection_to_json_response
+from kili.utils.labels.geojson import geojson_feature_collection_to_kili_json_response
 ```
 
 
@@ -284,7 +284,7 @@ with open("label.geojson", "r") as f:
 
 
 ```python
-json_resp = geojson_feature_collection_to_json_response(geojson_features)
+json_resp = geojson_feature_collection_to_kili_json_response(geojson_features)
 ```
 
 We can check that the label converted from the GeoJSON file is the same as the original label:

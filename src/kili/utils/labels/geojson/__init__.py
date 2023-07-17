@@ -6,7 +6,7 @@ from .bbox import (
 )
 from .collection import (
     features_to_feature_collection,
-    geojson_feature_collection_to_json_response,
+    geojson_feature_collection_to_kili_json_response,
     kili_json_response_to_feature_collection,
 )
 from .line import (
@@ -48,5 +48,5 @@ __all__ = [
     "kili_segmentation_annotation_to_geojson_polygon_feature",
     "kili_segmentation_to_geojson_polygon",
     "kili_json_response_to_feature_collection",
-    "geojson_feature_collection_to_json_response",
+    "geojson_feature_collection_to_kili_json_response",
 ]

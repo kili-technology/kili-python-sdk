@@ -1,10 +1,8 @@
 """Geojson linestring utilities."""
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Optional
 
 
-def kili_line_to_geojson_linestring(
-    polyline: List[Dict[str, float]]
-) -> Dict[Literal["type", "coordinates"], Union[Literal["LineString"], List[List[float]]]]:
+def kili_line_to_geojson_linestring(polyline: List[Dict[str, float]]) -> Dict[str, Any]:
     """Convert a Kili line to a geojson linestring.
 
     Args:
@@ -92,6 +90,10 @@ def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]) -> 
 
     Returns:
         A Kili line annotation.
+
+    !!! Warning
+        This method requires the `kili` key to be present in the geojson feature properties.
+        In particular, the `kili` dictionary must contain the `categories` of the annotation.
 
     !!! Example
         ```python

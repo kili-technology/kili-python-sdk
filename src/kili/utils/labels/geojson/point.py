@@ -86,6 +86,10 @@ def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]) -> Dic
     Returns:
         A Kili point annotation.
 
+    !!! Warning
+        This method requires the `kili` key to be present in the geojson feature properties.
+        In particular, the `kili` dictionary must contain the `categories` of the annotation.
+
     !!! Example
         ```python
         >>> point = {

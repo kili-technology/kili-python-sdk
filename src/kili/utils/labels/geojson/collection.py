@@ -160,7 +160,7 @@ def kili_json_response_to_feature_collection(
     return features_to_feature_collection(features)
 
 
-def geojson_feature_collection_to_json_response(
+def geojson_feature_collection_to_kili_json_response(
     feature_collection: Dict[str, Any]
 ) -> Dict[str, Any]:
     """Convert a Geojson feature collection to a Kili label json response.
@@ -170,6 +170,45 @@ def geojson_feature_collection_to_json_response(
 
     Returns:
         A Kili label json response.
+
+    !!! Warning
+        This method requires the `kili` key to be present in the geojson features' properties.
+        In particular, the `kili` dictionary of a feature must contain the `categories` and `type` of the annotation.
+        It must also contain the `job` name.
+
+    !!! Example
+        ```python
+        >>> feature_collection = {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        ...
+                    },
+                    'properties': {
+                        'kili': {
+                            'categories': [{'name': 'A'}],
+                            'type': 'marker',
+                            'job': 'POINT_DETECTION_JOB'
+                        }
+                    }
+                },
+            ]
+        }
+        >>> geojson_feature_collection_to_kili_json_response(feature_collection)
+        {
+            'POINT_DETECTION_JOB': {
+                'annotations': [
+                    {
+                        'categories': [{'name': 'A'}],
+                        'type': 'marker',
+                        'point': ...
+                    }
+                ]
+            }
+        }
+        ```
     """
     assert (
         feature_collection["type"] == "FeatureCollection"
