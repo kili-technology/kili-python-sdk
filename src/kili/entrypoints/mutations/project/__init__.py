@@ -347,6 +347,7 @@ class MutationsProject:
         }
 
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
+
         return format_result("data", result)
 
     @typechecked
