@@ -488,7 +488,7 @@ def test_features_to_feature_collection():
 
 
 def test_kili_json_response_to_feature_collection():
-    with open("./recipes/datasets/geojson_tutorial_labels.json", encoding="utf-8") as f:
+    with open("./recipes/datasets/geojson_tutorial_kili_label.json", encoding="utf-8") as f:
         json_response = json.load(f)
 
     features = []

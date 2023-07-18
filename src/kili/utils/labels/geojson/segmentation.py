@@ -116,19 +116,25 @@ def kili_segmentation_annotation_to_geojson_polygon_feature(
 
 
 def geojson_polygon_feature_to_kili_segmentation_annotation(
-    polygon: Dict[str, Any]
+    polygon: Dict[str, Any],
+    categories: Optional[List[Dict]] = None,
+    children: Optional[Dict] = None,
+    mid: Optional[str] = None,
 ) -> Dict[str, Any]:
+    # pylint: disable=line-too-long
     """Convert a geojson polygon feature to a Kili segmentation annotation.
 
     Args:
         polygon: a geojson polygon feature.
+        categories: the categories of the annotation.
+            If not provided, the categories are taken from the `kili` key of the geojson feature properties.
+        children: the children of the annotation.
+            If not provided, the children are taken from the `kili` key of the geojson feature properties.
+        mid: the mid of the annotation.
+            If not provided, the mid is taken from the `id` key of the geojson feature.
 
     Returns:
         A Kili segmentation annotation.
-
-    !!! Warning
-        This method requires the `kili` key to be present in the geojson feature properties.
-        In particular, the `kili` dictionary must contain the `categories` of the annotation.
 
     !!! Example
         ```python
@@ -175,9 +181,12 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
         polygon["geometry"]["type"] == "Polygon"
     ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
 
+    children = children or polygon["properties"].get("kili", {}).get("children", {})
+    categories = categories or polygon["properties"]["kili"]["categories"]
+
     ret = {
-        "children": polygon["properties"].get("kili", {}).get("children", {}),
-        "categories": polygon["properties"]["kili"]["categories"],
+        "children": children,
+        "categories": categories,
         "type": "semantic",
     }
     coords = polygon["geometry"]["coordinates"]
@@ -185,6 +194,10 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
         {"normalizedVertices": [{"x": coord[0], "y": coord[1]} for coord in polygon[:-1]]}
         for polygon in coords
     ]
-    if "id" in polygon:
+
+    if mid is not None:
+        ret["mid"] = mid
+    elif "id" in polygon:
         ret["mid"] = polygon["id"]
+
     return ret

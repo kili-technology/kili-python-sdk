@@ -100,18 +100,27 @@ def kili_polygon_annotation_to_geojson_polygon_feature(
     return ret
 
 
-def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]) -> Dict[str, Any]:
+def geojson_polygon_feature_to_kili_polygon_annotation(
+    polygon: Dict[str, Any],
+    categories: Optional[List[Dict]] = None,
+    children: Optional[Dict] = None,
+    mid: Optional[str] = None,
+) -> Dict[str, Any]:
+    # pylint: disable=line-too-long
     """Convert a geojson polygon feature to a Kili polygon annotation.
 
     Args:
         polygon: a geojson polygon feature.
+        categories: the categories of the annotation.
+            If not provided, the categories are taken from the `kili` key of the geojson feature properties.
+        children: the children of the annotation.
+            If not provided, the children are taken from the `kili` key of the geojson feature properties.
+        mid: the mid of the annotation.
+            If not provided, the mid is taken from the `id` key of the geojson feature.
+
 
     Returns:
         A Kili polygon annotation.
-
-    !!! Warning
-        This method requires the `kili` key to be present in the geojson feature properties.
-        In particular, the `kili` dictionary must contain the `categories` of the annotation.
 
     !!! Example
         ```python
@@ -120,14 +129,14 @@ def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]) 
             'geometry': {
                 'type': 'Polygon',
                 'coordinates': [[[-79.0, -3.0], [-79.0, -3.0]]]},
-                'id': 'mid_object',
-                'properties': {
-                    'kili': {
-                        'categories': [{'name': 'A'}],
-                        'children': {},
-                        'type': 'polygon',
-                        'job': 'job_name'
-                    }
+            },
+            'id': 'mid_object',
+            'properties': {
+                'kili': {
+                    'categories': [{'name': 'A'}],
+                    'children': {},
+                    'type': 'polygon',
+                    'job': 'job_name'
                 }
             }
         }
@@ -148,14 +157,21 @@ def geojson_polygon_feature_to_kili_polygon_annotation(polygon: Dict[str, Any]) 
         polygon["geometry"]["type"] == "Polygon"
     ), f"Geometry type must be `Polygon`, got: {polygon['geometry']['type']}"
 
+    children = children or polygon["properties"].get("kili", {}).get("children", {})
+    categories = categories or polygon["properties"]["kili"]["categories"]
+
     ret = {
-        "children": polygon["properties"].get("kili", {}).get("children", {}),
-        "categories": polygon["properties"]["kili"]["categories"],
+        "children": children,
+        "categories": categories,
         "type": "polygon",
     }
     coords = polygon["geometry"]["coordinates"][0]
     normalized_vertices = [{"x": coord[0], "y": coord[1]} for coord in coords[:-1]]
     ret["boundingPoly"] = [{"normalizedVertices": normalized_vertices}]
-    if "id" in polygon:
+
+    if mid is not None:
+        ret["mid"] = mid
+    elif "id" in polygon:
         ret["mid"] = polygon["id"]
+
     return ret

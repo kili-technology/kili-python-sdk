@@ -77,18 +77,26 @@ def kili_point_annotation_to_geojson_point_feature(
     return ret
 
 
-def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]) -> Dict[str, Any]:
+def geojson_point_feature_to_kili_point_annotation(
+    point: Dict[str, Any],
+    categories: Optional[List[Dict]] = None,
+    children: Optional[Dict] = None,
+    mid: Optional[str] = None,
+) -> Dict[str, Any]:
+    # pylint: disable=line-too-long
     """Convert a geojson point feature to a Kili point annotation.
 
     Args:
         point: a geojson point feature.
+        categories: the categories of the annotation.
+            If not provided, the categories are taken from the `kili` key of the geojson feature properties.
+        children: the children of the annotation.
+            If not provided, the children are taken from the `kili` key of the geojson feature properties.
+        mid: the mid of the annotation.
+            If not provided, the mid is taken from the `id` key of the geojson feature.
 
     Returns:
         A Kili point annotation.
-
-    !!! Warning
-        This method requires the `kili` key to be present in the geojson feature properties.
-        In particular, the `kili` dictionary must contain the `categories` of the annotation.
 
     !!! Example
         ```python
@@ -113,15 +121,22 @@ def geojson_point_feature_to_kili_point_annotation(point: Dict[str, Any]) -> Dic
         point["geometry"]["type"] == "Point"
     ), f"Geometry type must be `Point`, got: {point['geometry']['type']}"
 
+    children = children or point["properties"].get("kili", {}).get("children", {})
+    categories = categories or point["properties"]["kili"]["categories"]
+
     ret = {
-        "children": point["properties"].get("kili", {}).get("children", {}),
-        "categories": point["properties"]["kili"]["categories"],
+        "children": children,
+        "categories": categories,
         "type": "marker",
     }
     ret["point"] = {
         "x": point["geometry"]["coordinates"][0],
         "y": point["geometry"]["coordinates"][1],
     }
-    if "id" in point:
+
+    if mid is not None:
+        ret["mid"] = mid
+    elif "id" in point:
         ret["mid"] = point["id"]
+
     return ret

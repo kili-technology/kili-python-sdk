@@ -82,18 +82,26 @@ def kili_line_annotation_to_geojson_linestring_feature(
     return ret
 
 
-def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]) -> Dict[str, Any]:
+def geojson_linestring_feature_to_kili_line_annotation(
+    line: Dict[str, Any],
+    categories: Optional[List[Dict]] = None,
+    children: Optional[Dict] = None,
+    mid: Optional[str] = None,
+) -> Dict[str, Any]:
+    # pylint: disable=line-too-long
     """Convert a geojson linestring feature to a Kili line annotation.
 
     Args:
         line: a geojson linestring feature.
+        categories: the categories of the annotation.
+            If not provided, the categories are taken from the `kili` key of the geojson feature properties.
+        children: the children of the annotation.
+            If not provided, the children are taken from the `kili` key of the geojson feature properties.
+        mid: the mid of the annotation.
+            If not provided, the mid is taken from the `id` key of the geojson feature.
 
     Returns:
         A Kili line annotation.
-
-    !!! Warning
-        This method requires the `kili` key to be present in the geojson feature properties.
-        In particular, the `kili` dictionary must contain the `categories` of the annotation.
 
     !!! Example
         ```python
@@ -102,14 +110,15 @@ def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]) -> 
             'geometry': {
                 'type': 'LineString',
                 'coordinates': [[-79.0, -3.0], [-79.0, -3.0]]},
-                'id': 'mid_object',
-                'properties': {
-                    'kili': {
-                        'categories': [{'name': 'A'}],
-                        'children': {},
-                        'job': 'job_name'
-                    }
+            }
+            'id': 'mid_object',
+            'properties': {
+                'kili': {
+                    'categories': [{'name': 'A'}],
+                    'children': {},
+                    'job': 'job_name'
                 }
+            }
         }
         >>> geojson_linestring_feature_to_kili_line_annotation(line)
         {
@@ -126,12 +135,19 @@ def geojson_linestring_feature_to_kili_line_annotation(line: Dict[str, Any]) -> 
         line["geometry"]["type"] == "LineString"
     ), f"Geometry type must be `LineString`, got: {line['geometry']['type']}"
 
+    children = children or line["properties"].get("kili", {}).get("children", {})
+    categories = categories or line["properties"]["kili"]["categories"]
+
     ret = {
-        "children": line["properties"].get("kili", {}).get("children", {}),
-        "categories": line["properties"]["kili"]["categories"],
+        "children": children,
+        "categories": categories,
         "type": "polyline",
     }
     ret["polyline"] = [{"x": coord[0], "y": coord[1]} for coord in line["geometry"]["coordinates"]]
-    if "id" in line:
+
+    if mid is not None:
+        ret["mid"] = mid
+    elif "id" in line:
         ret["mid"] = line["id"]
+
     return ret
