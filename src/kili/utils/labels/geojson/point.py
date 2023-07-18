@@ -1,10 +1,8 @@
 """Point label utils."""
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Optional
 
 
-def kili_point_to_geojson_point(
-    point: Dict[str, float]
-) -> Dict[Literal["type", "coordinates"], Union[Literal["Point"], List[float]]]:
+def kili_point_to_geojson_point(point: Dict[str, float]) -> Dict[str, Any]:
     """Convert a Kili point to a geojson point.
 
     Args:

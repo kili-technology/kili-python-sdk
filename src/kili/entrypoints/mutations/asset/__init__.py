@@ -198,9 +198,9 @@ class MutationsAsset:
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
             page_resolutions_array: The resolution of each page of the asset (for PDF projects).
-              Note that each element of the array should contain all the pages resolutions of the
-              corresponding asset. Each resolution can be passed as a
-              `kili.utils.assets.PageResolution` object, or as a dictionary with keys `width`,
+                Note that each element of the array should contain all the pages resolutions of the
+                corresponding asset. Each resolution can be passed as a
+                `kili.utils.assets.PageResolution` object, or as a dictionary with keys `width`,
                 `height`, `pageNumber` and optionally `rotation`.
 
         Returns:

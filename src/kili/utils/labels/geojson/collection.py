@@ -1,6 +1,6 @@
 """Geojson collection module."""
 import warnings
-from typing import Any, Dict, List, Literal, Sequence, Union
+from typing import Any, Dict, Sequence
 
 from .bbox import (
     geojson_polygon_feature_to_kili_bbox_annotation,
@@ -26,7 +26,7 @@ from .segmentation import (
 
 def features_to_feature_collection(
     features: Sequence[Dict],
-) -> Dict[Literal["type", "features"], Union[str, List[Dict]]]:
+) -> Dict[str, Any]:
     """Convert a list of features to a feature collection.
 
     Args:
@@ -82,9 +82,7 @@ def features_to_feature_collection(
     return {"type": "FeatureCollection", "features": list(features)}
 
 
-def kili_json_response_to_feature_collection(
-    json_response: Dict[str, Any]
-) -> Dict[Literal["type", "features"], Union[str, List[Dict]]]:
+def kili_json_response_to_feature_collection(json_response: Dict[str, Any]) -> Dict[str, Any]:
     """Convert a Kili label json response to a Geojson feature collection.
 
     Args:
