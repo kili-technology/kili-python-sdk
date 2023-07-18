@@ -2,24 +2,24 @@
 from typing import Any, Dict, List, Optional
 
 
-def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]) -> Dict[str, Any]:
+def kili_bbox_to_geojson_polygon(vertices: List[Dict[str, float]]) -> Dict[str, Any]:
     """Convert a Kili bounding box to a geojson polygon.
 
     Args:
-        normalized_vertices: a Kili bounding polygon normalized vertices.
+        vertices: Kili bounding polygon vertices.
 
     Returns:
         A geojson polygon.
 
     !!! Example
         ```python
-        >>> normalized_vertices = [
+        >>> vertices = [
             {'x': 12.0, 'y': 3.0},
             {'x': 12.0, 'y': 4.0},
             {'x': 13.0, 'y': 4.0},
             {'x': 13.0, 'y': 3.0}
         ]
-        >>> kili_bbox_to_geojson_polygon(normalized_vertices)
+        >>> kili_bbox_to_geojson_polygon(vertices)
         {
             'type': 'Polygon',
             'coordinates': [
@@ -36,7 +36,7 @@ def kili_bbox_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]) ->
     """
     vertex_name_to_value = {}
     for vertex, point_name in zip(
-        normalized_vertices, ("bottom_left", "top_left", "top_right", "bottom_right")
+        vertices, ("bottom_left", "top_left", "top_right", "bottom_right")
     ):
         vertex_name_to_value[point_name] = vertex
 
@@ -60,7 +60,7 @@ def kili_bbox_annotation_to_geojson_polygon_feature(
     """Convert a Kili bounding box annotation to a geojson polygon feature.
 
     Args:
-        bbox_annotation: a Kili bounding box annotation:
+        bbox_annotation: a Kili bounding box annotation.
         job_name: the name of the job to which the annotation belongs.
 
     Returns:

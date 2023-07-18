@@ -2,24 +2,24 @@
 from typing import Any, Dict, List, Optional
 
 
-def kili_polygon_to_geojson_polygon(normalized_vertices: List[Dict[str, float]]) -> Dict[str, Any]:
+def kili_polygon_to_geojson_polygon(vertices: List[Dict[str, float]]) -> Dict[str, Any]:
     """Convert a Kili polygon to a geojson polygon.
 
     Args:
-        normalized_vertices: a Kili polygon normalized vertices.
+        vertices: Kili polygon vertices.
 
     Returns:
         A geojson polygon.
 
     !!! Example
         ```python
-        >>> normalized_vertices = [
+        >>> vertices = [
             {'x': 10.42, 'y': 27.12},
             {'x': 1.53, 'y': 14.57},
             {'x': 147.45, 'y': 14.12},
             {'x': 14.23, 'y': 0.23}
         ]
-        >>> kili_polygon_to_geojson_polygon(normalized_vertices)
+        >>> kili_polygon_to_geojson_polygon(vertices)
         {
             'type': 'Polygon',
             'coordinates': [
@@ -34,7 +34,7 @@ def kili_polygon_to_geojson_polygon(normalized_vertices: List[Dict[str, float]])
         }
         ```
     """
-    polygon = [[vertex["x"], vertex["y"]] for vertex in normalized_vertices]
+    polygon = [[vertex["x"], vertex["y"]] for vertex in vertices]
     polygon.append(polygon[0])  # the first and last positions must be the same
     return {"type": "Polygon", "coordinates": [polygon]}
 

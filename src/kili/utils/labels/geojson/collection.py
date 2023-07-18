@@ -163,6 +163,7 @@ def kili_json_response_to_feature_collection(
 def geojson_feature_collection_to_kili_json_response(
     feature_collection: Dict[str, Any]
 ) -> Dict[str, Any]:
+    # pylint: disable=line-too-long
     """Convert a Geojson feature collection to a Kili label json response.
 
     Args:
