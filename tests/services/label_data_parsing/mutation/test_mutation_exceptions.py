@@ -324,52 +324,6 @@ def test_add_annotation_ner_wrong_category_name():
         )
 
 
-def test_set_normalized_vertices_wrong_values():
-    json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "content": {
-                    "categories": {
-                        "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
-                        "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
-                    },
-                    "input": "radio",
-                },
-                "instruction": "Categories",
-                "isChild": False,
-                "tools": ["semantic"],
-                "mlTask": "OBJECT_DETECTION",
-                "models": {},
-                "isVisible": True,
-                "required": 0,
-            }
-        }
-    }
-
-    json_resp = {
-        "JOB_0": {
-            "annotations": [
-                {
-                    "children": {},
-                    "boundingPoly": [
-                        {"normalizedVertices": [{"x": 0.5141441957015471, "y": 0.6164292619007603}]}
-                    ],
-                    "categories": [{"name": "OBJECT_B"}],
-                    "mid": "20230329145907681-18624",
-                    "type": "semantic",
-                }
-            ]
-        }
-    }
-
-    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
-    parsed_jobs = ParsedJobs(json_response=json_resp, project_info=project_info)
-    with pytest.raises(ValueError):
-        parsed_jobs["JOB_0"].annotations[0].bounding_poly[0].normalized_vertices = [
-            {"x": 10000, "y": 0}
-        ]
-
-
 def test_add_semantic_annotation_to_bbox_job():
     json_interface = {
         "jobs": {

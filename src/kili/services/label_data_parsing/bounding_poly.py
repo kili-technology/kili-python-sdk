@@ -76,10 +76,6 @@ class BoundingPoly:
         vertices = normalized_vertices if self._type_of_tool else normalized_vertices[0]
         for vertex in vertices:
             assert isinstance(vertex, dict), f"Vertex {vertex} is not a dict."
-            if not 0 <= vertex["x"] <= 1:
-                raise ValueError(f"Vertex x coordinate with value {vertex['x']} is not in [0, 1].")
-            if not 0 <= vertex["y"] <= 1:
-                raise ValueError(f"Vertex y coordinate with value {vertex['y']} is not in [0, 1].")
 
         self._json_data["normalizedVertices"] = normalized_vertices
 

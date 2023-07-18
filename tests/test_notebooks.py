@@ -34,6 +34,7 @@ def process_notebook(notebook_filename):
         "recipes/export_a_kili_project.ipynb",
         "recipes/frame_dicom_data.ipynb",
         # "recipes/finetuning_dinov2.ipynb",  # not testable because requires GPU
+        "recipes/geojson.ipynb",
         "recipes/importing_coco.ipynb",
         "recipes/import_text_assets.ipynb",
         "recipes/importing_assets_and_metadata.ipynb",
