@@ -8,30 +8,35 @@ from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
 from kili.services.export.types import ExportType
 
-DEFAULT_FIELDS = [
+COMMON_FIELDS = [
     "id",
-    "content",
     "externalId",
+    "content",
+    "jsonContent",
     "jsonMetadata",
+    "pageResolutions.pageNumber",
+    "pageResolutions.height",
+    "pageResolutions.width",
+    "pageResolutions.rotation",
+    "resolution.height",
+    "resolution.width",
+]
+
+DEFAULT_FIELDS = COMMON_FIELDS + [
+    "labels.jsonResponse",
     "labels.author.id",
     "labels.author.email",
     "labels.author.firstname",
     "labels.author.lastname",
-    "labels.jsonResponse",
     "labels.createdAt",
     "labels.isLatestLabelForUser",
     "labels.labelType",
     "labels.modelName",
 ]
-LATEST_LABEL_FIELDS = [
-    "id",
-    "content",
-    "externalId",
-    "jsonContent",
-    "jsonMetadata",
+LATEST_LABEL_FIELDS = COMMON_FIELDS + [
+    "latestLabel.jsonResponse",
     "latestLabel.author.id",
     "latestLabel.author.email",
-    "latestLabel.jsonResponse",
     "latestLabel.author.firstname",
     "latestLabel.author.lastname",
     "latestLabel.createdAt",
@@ -71,7 +76,6 @@ def fetch_assets(
     download_media: bool,
     local_media_dir: Optional[str],
     asset_filter_kwargs: Optional[Dict[str, object]],
-    normalized_coordinates: Optional[bool],
 ) -> List[Dict]:
     """Fetches assets.
 
@@ -89,7 +93,6 @@ def fetch_assets(
         download_media: tell to download the media in the cache folder.
         local_media_dir: Directory where the media are downloaded if `download_media` is True.
         asset_filter_kwargs: Optional dictionary of arguments to filter the assets to export.
-        normalized_coordinates: whether the export should use normalized coordinates.
 
     Returns:
         List of fetched assets.
@@ -141,14 +144,6 @@ def fetch_assets(
                 " disabling assets download in the options.",
                 stacklevel=3,
             )
-
-    if normalized_coordinates is False:
-        fields += [
-            "pageResolutions.pageNumber",
-            "pageResolutions.height",
-            "pageResolutions.width",
-            "pageResolutions.rotation",
-        ]
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(

@@ -177,7 +177,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),
                 asset_filter_kwargs=self.asset_filter_kwargs,
-                normalized_coordinates=self.normalized_coordinates,
             )
             # if the asset["externalId"] has slashes in it, the export will not work
             # since the slashes will be interpreted as folders

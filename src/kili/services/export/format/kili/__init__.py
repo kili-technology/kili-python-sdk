@@ -9,7 +9,7 @@ from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job
 
-from ...exceptions import NotCompatibleInputType
+from ...exceptions import NotCompatibleInputType, NotCompatibleOptions
 from ...media.video import cut_video
 
 
@@ -97,12 +97,7 @@ class KiliExporter(AbstractExporter):
         clean_assets = self.preprocess_assets(assets, self.label_format)
 
         if self.normalized_coordinates is False:
-            if self.project["inputType"] == "PDF":
-                clean_assets = [self.convert_to_pixel_coords(asset) for asset in clean_assets]
-            else:
-                raise NotCompatibleInputType(
-                    "Export with pixel coordinates is currently only available for PDF assets."
-                )
+            clean_assets = [self.convert_to_pixel_coords(asset) for asset in clean_assets]
 
         return self._save_assets_export(
             clean_assets,
@@ -116,6 +111,12 @@ class KiliExporter(AbstractExporter):
 
     def convert_to_pixel_coords(self, asset: Asset) -> Asset:
         """Convert asset JSON response normalized vertices to pixel coordinates."""
+        if _is_geotiff_asset_with_lat_lon_coords(asset):
+            raise NotCompatibleOptions(
+                "Cannot convert to pixel coordinates since asset '{asset['externalId']}' has"
+                " latitude and longitude coordinates."
+            )
+
         if asset.get("latestLabel", {}).get("jsonResponse", {}):
             asset["latestLabel"]["jsonResponse"] = self._scale_label_vertices(
                 asset["latestLabel"]["jsonResponse"], asset
@@ -129,22 +130,55 @@ class KiliExporter(AbstractExporter):
         return asset
 
     def _scale_label_vertices(self, json_resp: Dict, asset: Dict) -> Dict:
-        scaler_func = (
-            _scale_normalized_vertices_pdf_annotation
-            if self.project["inputType"] == "PDF"
-            else _scale_normalized_vertices_image_annotation
-        )
+        if self.project["inputType"] in ("IMAGE", "PDF"):
+            scaler = (
+                _scale_normalized_vertices_pdf_annotation
+                if self.project["inputType"] == "PDF"
+                else _scale_normalized_vertices_image_video_annotation
+            )
 
-        for job_name in json_resp.keys():
-            if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
-                continue
+            for job_name in json_resp.keys():
+                if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
+                    continue
 
-            if json_resp.get(job_name, {}).get("annotations"):
-                json_resp[job_name]["annotations"] = [
-                    scaler_func(ann, asset) for ann in json_resp[job_name]["annotations"]
-                ]
+                if json_resp.get(job_name, {}).get("annotations"):
+                    json_resp[job_name]["annotations"] = [
+                        scaler(ann, asset) for ann in json_resp[job_name]["annotations"]
+                    ]
+
+        elif self.project["inputType"] == "VIDEO":
+            for _, frame_resp in json_resp.items():
+                for job_name in frame_resp.keys():
+                    if (
+                        self.project["jsonInterface"]["jobs"][job_name]["mlTask"]
+                        != "OBJECT_DETECTION"
+                    ):
+                        continue
+
+                    if frame_resp.get(job_name, {}).get("annotations"):
+                        frame_resp[job_name]["annotations"] = [
+                            _scale_normalized_vertices_image_video_annotation(ann, asset)
+                            for ann in frame_resp[job_name]["annotations"]
+                        ]
+
+        else:
+            raise NotCompatibleInputType(
+                f"Labels of input type {self.project['inputType']} cannot be converted to pixel"
+                " coordinates."
+            )
 
         return json_resp
+
+
+def _is_geotiff_asset_with_lat_lon_coords(asset: Dict) -> bool:
+    """Check if asset is a geotiff with lat/lon coordinates."""
+    if (
+        isinstance(asset["jsonContent"], List)
+        and len(asset["jsonContent"]) > 0
+        and asset["jsonContent"][0].get("initEpsg") != -1
+    ):
+        return True
+    return False
 
 
 def _scale_vertex(vertex: Dict, width: int, height: int) -> Dict:
@@ -156,7 +190,7 @@ def _scale_all_vertices_in_object(object_, width: int, height: int):
         return [_scale_all_vertices_in_object(obj, width=width, height=height) for obj in object_]
 
     if isinstance(object_, Dict):
-        if all(key in ("x", "y") for key in object_.keys()):
+        if sorted(object_.keys()) == ["x", "y"]:
             return _scale_vertex(object_, width=width, height=height)
         return {
             key: _scale_all_vertices_in_object(value, width=width, height=height)
@@ -209,6 +243,37 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
     return annotation
 
 
-def _scale_normalized_vertices_image_annotation(annotation: Dict, asset: Dict) -> Dict:
-    raise NotImplementedError("Image and video annotations are not yet supported.")
-    # return _scale_all_vertices_in_object(annotation, asset)  # type: ignore
+def _scale_normalized_vertices_image_video_annotation(annotation: Dict, asset: Dict) -> Dict:
+    """Scale normalized vertices of an image/video object detection annotation."""
+    width = asset["resolution"]["width"]
+    height = asset["resolution"]["height"]
+
+    if "boundingPoly" in annotation:
+        annotation["boundingPoly"] = [
+            {
+                **norm_vertices_dict,  # keep the original normalizedVertices
+                "vertices": _scale_all_vertices_in_object(
+                    norm_vertices_dict["normalizedVertices"], width=width, height=height
+                ),
+            }
+            for norm_vertices_dict in annotation["boundingPoly"]
+        ]
+
+    if "point" in annotation:
+        annotation["point"] = _scale_all_vertices_in_object(
+            annotation["point"], width=width, height=height
+        )
+
+    if "polyline" in annotation:
+        annotation["polyline"] = _scale_all_vertices_in_object(
+            annotation["polyline"], width=width, height=height
+        )
+
+    if "points" in annotation:
+        for point_dict in annotation["points"]:
+            if "point" in point_dict:
+                point_dict["point"] = _scale_all_vertices_in_object(
+                    point_dict["point"], width=width, height=height
+                )
+
+    return annotation
