@@ -5,7 +5,6 @@ import json
 import logging
 import os
 import shutil
-import warnings
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
@@ -29,11 +28,7 @@ from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
-from ..exceptions import (
-    NotAccessibleAssetError,
-    NotCompatibleOptions,
-    NotExportableAssetError,
-)
+from ..exceptions import NotCompatibleOptions, NotExportableAssetError
 
 
 class ExportParams(NamedTuple):
@@ -54,8 +49,6 @@ class ExportParams(NamedTuple):
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     """Abstract class defining the interface for all exporters."""
-
-    requires_asset_access = False
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -197,28 +190,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         If not, if the format requires a data access, ensure that the assets are requested.
         """
-        if self._has_data_connection():
-            data_conn_excp_str = (
-                "Export with download of assets is not allowed on projects with data connections"
+        if self._has_data_connection() and self.with_assets:
+            raise NotCompatibleOptions(
+                "Export with download of assets is not allowed on projects with data connections."
+                " Please disable the download of assets by setting `with_assets=False`."
             )
-            if self.requires_asset_access:
-                raise NotAccessibleAssetError(
-                    f"{data_conn_excp_str}. This export format requires accessing the image height"
-                    " and width."
-                )
-            if self.with_assets:
-                raise NotCompatibleOptions(
-                    f"{data_conn_excp_str}. Please disable the download of assets by setting"
-                    " `with_assets=False`."
-                )
-        else:
-            if self.requires_asset_access and not self.with_assets:
-                warnings.warn(
-                    "For an export to this format, the download of assets cannot be disabled,"
-                    " so they will be downloaded anyway.",
-                    stacklevel=2,
-                )
-                self.with_assets = True
 
     def _has_data_connection(self) -> bool:
         data_connections_gen = DataConnectionsQuery(self.kili.graphql_client)(
