@@ -7,10 +7,12 @@ from unittest.mock import patch
 from zipfile import ZipFile
 
 import pytest
+import pytest_mock
 
 from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.queries.label import QueriesLabel
+from kili.orm import Asset
 from kili.services import export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -776,31 +778,6 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
         )
 
 
-def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it_should_crash(
-    mocker,
-):
-    kili = mock_kili(mocker, with_data_connection=True)
-    kili.api_endpoint = "https://"  # type: ignore
-    kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-
-    with pytest.raises(
-        NotCompatibleOptions,
-        match=(
-            "Export with download of assets is not allowed on projects with data"
-            " connections. Please disable the download of assets by setting"
-            " `with_assets=False`."
-        ),
-    ):
-        kili.export_labels(
-            project_id="fake_proj_id",
-            filename="fake_filename",
-            fmt="yolo_v5",
-            layout="merged",
-            with_assets=True,
-        )
-
-
 def mock_kili(mocker, with_data_connection):
     get_project_return_val = {
         "jsonInterface": {
@@ -838,3 +815,124 @@ def mock_kili(mocker, with_data_connection):
 
     kili = QueriesLabel()
     return kili
+
+
+def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it_should_crash(
+    mocker,
+):
+    kili = mock_kili(mocker, with_data_connection=True)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
+
+    with pytest.raises(
+        NotCompatibleOptions,
+        match=(
+            "Export with download of assets is not allowed on projects with data"
+            " connections. Please disable the download of assets by setting"
+            " `with_assets=False`."
+        ),
+    ):
+        kili.export_labels(
+            project_id="fake_proj_id",
+            filename="fake_filename",
+            fmt="yolo_v5",
+            layout="merged",
+            with_assets=True,
+        )
+
+
+def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[
+            Asset(asset)
+            for asset in [
+                {
+                    "latestLabel": {
+                        "author": {
+                            "id": "user-feat1-1",
+                            "email": "test+admin+1@kili-technology.com",
+                            "firstname": "Feat1",
+                            "lastname": "Test Admin",
+                        },
+                        "jsonResponse": {
+                            "OBJECT_DETECTION_JOB": {
+                                "annotations": [
+                                    {
+                                        "children": {},
+                                        "boundingPoly": [
+                                            {
+                                                "normalizedVertices": [
+                                                    {"x": 4.1, "y": 52.2},
+                                                    {"x": 4.5, "y": 52.7},
+                                                    {"x": 4.5, "y": 52.3},
+                                                    {"x": 4.1, "y": 52.4},
+                                                ]
+                                            }
+                                        ],
+                                        "categories": [{"name": "A"}],
+                                        "mid": "20230719110559896-2495",
+                                        "type": "rectangle",
+                                    }
+                                ]
+                            }
+                        },
+                        "createdAt": "2023-07-19T09:06:03.028Z",
+                        "isLatestLabelForUser": True,
+                        "labelType": "DEFAULT",
+                        "modelName": None,
+                    },
+                    "resolution": None,
+                    "pageResolutions": None,
+                    "id": "clk9i0hn000002a68a2zcd1v7",
+                    "externalId": "sample.tif",
+                    "content": (
+                        "https://storage.googleapis.com/label-backend-staging/projects/clk9g"
+                    ),
+                    "jsonContent": [
+                        {
+                            "bounds": [
+                                [4.472843633775792, 52.16687253311844],
+                                [4.3235700288901775, 52.258603570959444],
+                            ],
+                            "epsg": "EPSG4326",
+                            "imageUrl": "https://staging.cloud.kili-technology.com/api/label/v2/files?id=projects/clk9id",
+                            "initEpsg": 4326,
+                            "useClassicCoordinates": False,
+                        }
+                    ],
+                    "jsonMetadata": {},
+                }
+            ]
+        ],
+    )
+
+    kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
+
+    with pytest.raises(
+        NotCompatibleOptions,
+        match=(
+            "Cannot export geotiff assets with geospatial coordinates in coco format. Please use"
+            " 'raw' or 'kili' format instead."
+        ),
+    ):
+        kili.export_labels(
+            "fake_proj_id",
+            "export.zip",
+            fmt="coco",
+        )
+
+    with pytest.raises(
+        NotCompatibleOptions,
+        match=(
+            "Cannot export geotiff assets with geospatial coordinates with"
+            " `normalized_coordinates=False`."
+        ),
+    ):
+        kili.export_labels("fake_proj_id", "export.zip", fmt="kili", normalized_coordinates=False)

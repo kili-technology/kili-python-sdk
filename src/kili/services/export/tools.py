@@ -2,6 +2,8 @@
 import warnings
 from typing import Dict, List, Optional
 
+import requests
+
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import validate_category_search_query
@@ -163,11 +165,21 @@ def get_fields_to_fetch(export_type: ExportType):
 
 def is_geotiff_asset_with_lat_lon_coords(asset: Dict) -> bool:
     """Check if asset is a geotiff with lat/lon coordinates."""
+    if "jsonContent" not in asset:
+        return False
+
+    if isinstance(asset["jsonContent"], str) and asset["jsonContent"].startswith("http"):
+        response = requests.get(asset["jsonContent"], timeout=30)
+        json_content = response.json()
+
+    else:
+        json_content = asset["jsonContent"]
+
     return (
-        isinstance(asset["jsonContent"], List)
-        and len(asset["jsonContent"]) > 0
-        and isinstance(asset["jsonContent"][0], Dict)
-        and asset["jsonContent"][0].get("useClassicCoordinates") is False
-        and "epsg" in asset["jsonContent"][0]
-        and asset["jsonContent"][0]["epsg"] != "TiledImage"
+        isinstance(json_content, List)
+        and len(json_content) > 0
+        and isinstance(json_content[0], Dict)
+        and json_content[0].get("useClassicCoordinates") is False
+        and "epsg" in json_content[0]
+        and json_content[0]["epsg"] != "TiledImage"
     )
