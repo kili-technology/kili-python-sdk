@@ -838,27 +838,3 @@ def mock_kili(mocker, with_data_connection):
 
     kili = QueriesLabel()
     return kili
-
-
-def test_when_exporting_without_assets_given_a_project_that_needs_them_it_should_issue_a_warning_and_ensure(
-    mocker,
-):
-    kili = mock_kili(mocker, with_data_connection=False)
-    kili.api_endpoint = "https://"  # type: ignore
-    kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-
-    with pytest.warns(
-        UserWarning,
-        match=(
-            "For an export to this format, the download of assets cannot be disabled,"
-            " so they will be downloaded anyway."
-        ),
-    ):
-        kili.export_labels(
-            project_id="fake_proj_id",
-            filename="fake_filename",
-            fmt="coco",
-            layout="merged",
-            with_assets=False,
-        )

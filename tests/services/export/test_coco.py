@@ -10,10 +10,7 @@ from PIL import Image
 
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
-from kili.services.export.exceptions import (
-    NoCompatibleJobError,
-    NotAccessibleAssetError,
-)
+from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
 from kili.services.export.format.coco import (
     CocoExporter,
     _convert_kili_semantic_to_coco,
@@ -600,16 +597,13 @@ def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_sho
     kili.graphql_client = mocker.MagicMock()
 
     with pytest.raises(
-        NotAccessibleAssetError,
-        match=(
-            "Export with download of assets is not allowed on projects with data"
-            " connections. This export format requires accessing the image height and width."
-        ),
+        NotCompatibleOptions,
+        match="Export with download of assets is not allowed on projects with data connections.",
     ):
         kili.export_labels(
             project_id="fake_proj_id",
             filename="fake_filename",
             fmt="coco",
             layout="merged",
-            with_assets=False,
+            with_assets=True,
         )
