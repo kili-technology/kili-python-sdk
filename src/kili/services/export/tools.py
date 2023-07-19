@@ -166,6 +166,7 @@ def is_geotiff_asset_with_lat_lon_coords(asset: Dict) -> bool:
     return (
         isinstance(asset["jsonContent"], List)
         and len(asset["jsonContent"]) > 0
+        and isinstance(asset["jsonContent"][0], Dict)
         and asset["jsonContent"][0].get("useClassicCoordinates") is False
         and "epsg" in asset["jsonContent"][0]
         and asset["jsonContent"][0]["epsg"] != "TiledImage"
