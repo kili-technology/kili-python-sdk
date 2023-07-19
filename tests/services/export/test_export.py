@@ -532,6 +532,34 @@ def get_file_tree(folder: str):
                 },
             },
         ),
+        (
+            "pascal voc format image project no assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "pascal_voc",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.xml": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "coco format image project no assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "coco",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels.json": {},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
