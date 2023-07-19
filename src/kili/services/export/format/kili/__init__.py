@@ -111,7 +111,7 @@ class KiliExporter(AbstractExporter):
 
     def convert_to_pixel_coords(self, asset: Asset) -> Asset:
         """Convert asset JSON response normalized vertices to pixel coordinates."""
-        if asset.get("latestLabel", {}).get("jsonResponse", {}):
+        if asset.get("latestLabel", {}) and asset["latestLabel"].get("jsonResponse", {}):
             asset["latestLabel"]["jsonResponse"] = self._scale_label_vertices(
                 asset["latestLabel"]["jsonResponse"], asset
             )

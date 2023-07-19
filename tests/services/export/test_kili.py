@@ -16,6 +16,7 @@ from tests.fakes.fake_data import (
 
 from .expected.image_project_assets_unnormalized import image_project_asset_unnormalized
 from .expected.pdf_project_assets_unnormalized import pdf_project_asset_unnormalized
+from .expected.video_project_assets_unnormalized import video_project_asset_unnormalized
 
 
 def test_preprocess_assets(mocker: pytest_mock.MockFixture):
@@ -372,3 +373,71 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
             output = json.load(f)
 
     assert output == image_project_asset_unnormalized
+
+
+def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixture):
+    get_project_return_val = {
+        "jsonInterface": {
+            "jobs": {
+                "OBJECT_DETECTION_JOB": {
+                    "content": {
+                        "categories": {"A": {"children": [], "color": "#472CED", "name": "A"}},
+                        "input": "radio",
+                    },
+                    "instruction": "BBOX",
+                    "mlTask": "OBJECT_DETECTION",
+                    "required": 1,
+                    "tools": ["rectangle"],
+                    "isChild": False,
+                    "models": {"tracking": {}},
+                }
+            }
+        },
+        "inputType": "VIDEO",
+        "title": "Object tracking on video",
+        "description": "Use bounding-box to track objects across video frames.",
+        "id": "fake_proj_id",
+    }
+
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    mocker.patch(
+        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
+        return_value=(i for i in [get_project_return_val]),
+    )
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[
+            Asset(asset)
+            for asset in json.load(open("./tests/services/export/fakes/video_project_assets.json"))
+        ],
+    )
+
+    kili = QueriesLabel()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
+
+    kili.export_labels(
+        "fake_proj_id",
+        "export_pixel_coords_kili_video.zip",
+        fmt="kili",
+        normalized_coordinates=False,
+    )
+
+    with TemporaryDirectory() as extract_folder:
+        with ZipFile("export_pixel_coords_kili_video.zip", "r") as z_f:
+            # extract in a temp dir
+            z_f.extractall(extract_folder)
+
+        assert Path(f"{extract_folder}/README.kili.txt").is_file()
+        assert Path(f"{extract_folder}/labels").is_dir()
+        assert Path(f"{extract_folder}/labels/Click_here_to_start.json").is_file()
+
+        with Path(f"{extract_folder}/labels/Click_here_to_start.json").open() as f:
+            output = json.load(f)
+
+    assert output == video_project_asset_unnormalized
