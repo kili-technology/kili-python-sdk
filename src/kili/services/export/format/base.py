@@ -29,6 +29,7 @@ from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
 from ..exceptions import NotCompatibleOptions, NotExportableAssetError
+from ..tools import is_geotiff_asset_with_lat_lon_coords
 
 
 class ExportParams(NamedTuple):
@@ -180,6 +181,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                     " `kili.change_asset_external_ids()` and try again."
                 )
 
+            self._check_geotiff_asset(assets)
+
             self.process_and_save(assets, self.output_file)
 
     def _check_and_ensure_asset_access(self) -> None:
@@ -203,6 +206,26 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             options=QueryOptions(disable_tqdm=True, first=1, skip=0),
         )
         return len(list(data_connections_gen)) > 0
+
+    def _check_geotiff_asset(self, assets: List[Dict]) -> None:
+        """Check if one of the assets is a geotiff asset.
+
+        If one of the assets is a geotiff asset, then we can only allow the export for Kili format
+        and cannot allow normalized_coordinates=False.
+        """
+        for asset in assets:
+            if is_geotiff_asset_with_lat_lon_coords(asset):
+                if self.label_format not in ("raw", "kili"):
+                    raise NotCompatibleOptions(
+                        "Cannot export geotiff assets with geospatial coordinates in"
+                        f" {self.label_format} format. Please use 'raw' or 'kili' format instead."
+                    )
+
+                if self.normalized_coordinates is False:
+                    raise NotCompatibleOptions(
+                        "Cannot export geotiff assets with geospatial coordinates with"
+                        " `normalized_coordinates=False`."
+                    )
 
     @property
     def base_folder(self) -> Path:

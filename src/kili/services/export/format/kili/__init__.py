@@ -9,7 +9,7 @@ from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job
 
-from ...exceptions import NotCompatibleInputType, NotCompatibleOptions
+from ...exceptions import NotCompatibleInputType
 from ...media.video import cut_video
 
 
@@ -111,12 +111,6 @@ class KiliExporter(AbstractExporter):
 
     def convert_to_pixel_coords(self, asset: Asset) -> Asset:
         """Convert asset JSON response normalized vertices to pixel coordinates."""
-        if _is_geotiff_asset_with_lat_lon_coords(asset):
-            raise NotCompatibleOptions(
-                f"Cannot convert to pixel coordinates since asset '{asset['externalId']}' has"
-                " latitude and longitude coordinates."
-            )
-
         if asset.get("latestLabel", {}).get("jsonResponse", {}):
             asset["latestLabel"]["jsonResponse"] = self._scale_label_vertices(
                 asset["latestLabel"]["jsonResponse"], asset
@@ -168,17 +162,6 @@ class KiliExporter(AbstractExporter):
             )
 
         return json_resp
-
-
-def _is_geotiff_asset_with_lat_lon_coords(asset: Dict) -> bool:
-    """Check if asset is a geotiff with lat/lon coordinates."""
-    return (
-        isinstance(asset["jsonContent"], List)
-        and len(asset["jsonContent"]) > 0
-        and asset["jsonContent"][0].get("useClassicCoordinates") is False
-        and "epsg" in asset["jsonContent"][0]
-        and asset["jsonContent"][0]["epsg"] != "TiledImage"
-    )
 
 
 def _scale_vertex(vertex: Dict, width: int, height: int) -> Dict:

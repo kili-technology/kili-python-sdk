@@ -159,3 +159,14 @@ def get_fields_to_fetch(export_type: ExportType):
     if export_type == "latest":
         return LATEST_LABEL_FIELDS
     return DEFAULT_FIELDS
+
+
+def is_geotiff_asset_with_lat_lon_coords(asset: Dict) -> bool:
+    """Check if asset is a geotiff with lat/lon coordinates."""
+    return (
+        isinstance(asset["jsonContent"], List)
+        and len(asset["jsonContent"]) > 0
+        and asset["jsonContent"][0].get("useClassicCoordinates") is False
+        and "epsg" in asset["jsonContent"][0]
+        and asset["jsonContent"][0]["epsg"] != "TiledImage"
+    )

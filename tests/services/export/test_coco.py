@@ -294,7 +294,7 @@ def test__get_coco_image_annotations_without_annotation():
 )
 @patch.object(CocoExporter, "__init__", lambda x: None)
 def test__check_project_compatibility(jobs, expected_error):
-    exporter = CocoExporter()  # type: ignore
+    exporter = CocoExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
     exporter.project = {"inputType": "IMAGE", "jsonInterface": {"jobs": jobs}}
     if expected_error:
         with pytest.raises(expected_error):
