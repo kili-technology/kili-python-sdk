@@ -87,4 +87,4 @@ class OrganizationQuery(GraphQLQuery):
         """Execute the organizationMetrics operation."""
         payload = {"where": where.graphql_payload}
         result = self.client.execute(self.GQL_ORGANIZATION_METRICS, payload)
-        return format_result("data", result)
+        return self.format_result("data", result)

@@ -37,7 +37,7 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         """
         variables = {"where": {"email": email}}
         result = self.graphql_client.execute(GQL_RESET_PASSWORD, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def delete_project(self, project_id: str):
@@ -54,4 +54,4 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         """
         variables = {"projectID": project_id}
         result = self.graphql_client.execute(GQL_DELETE_PROJECT, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

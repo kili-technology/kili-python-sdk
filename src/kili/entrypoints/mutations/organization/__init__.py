@@ -48,7 +48,7 @@ class MutationsOrganization:
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_ORGANIZATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_properties_in_organization(
@@ -77,4 +77,4 @@ class MutationsOrganization:
         if license_str is not None:
             variables["license"] = license_str
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

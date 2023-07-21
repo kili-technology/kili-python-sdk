@@ -54,7 +54,7 @@ def trigger_validate_data_differences(
         "processingParameters": None,
     }
     result = kili.graphql_client.execute(GQL_VALIDATE_DATA_DIFFERENCES, variables)
-    data_connection = format_result("data", result)
+    data_connection = self.format_result("data", result)
     return data_connection
 
 
@@ -139,7 +139,7 @@ def compute_differences(kili, data_connection_id: str) -> Dict:
     if blob_paths is not None:
         variables["data"] = {"blobPaths": blob_paths}
     result = kili.graphql_client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
-    data_connection = format_result("data", result)
+    data_connection = self.format_result("data", result)
     return data_connection
 
 

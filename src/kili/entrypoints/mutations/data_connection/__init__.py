@@ -64,7 +64,7 @@ class MutationsDataConnection:
             }
         }
         result = self.graphql_client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)
-        result = format_result("data", result)
+        result = self.format_result("data", result)
 
         # We trigger data difference computation (same behavior as in the frontend)
         services.compute_differences(self, result["id"])

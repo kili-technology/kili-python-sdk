@@ -89,7 +89,7 @@ class MutationsIssue:
         }
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)[0]
+        return self.format_result("data", result)[0]
 
     @typechecked
     def create_issues(
@@ -134,7 +134,7 @@ class MutationsIssue:
         }
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def create_questions(
@@ -172,4 +172,4 @@ class MutationsIssue:
         }
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

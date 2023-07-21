@@ -21,7 +21,7 @@ from kili.core.graphql.operations.plugin.mutations import (
     GQL_UPDATE_WEBHOOK,
 )
 from kili.core.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
-from kili.core.helpers import format_result, get_data_type
+from kili.core.helpers import get_data_type
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory
@@ -114,7 +114,7 @@ class WebhookUploader:
 
         result = self.kili.graphql_client.execute(GQL_CREATE_WEBHOOK, variables)
 
-        return format_result("data", result)
+        return self.kili.format_result("data", result)
 
     def update_webhook(self) -> str:
         """Update a webhook receiving Kili events."""
@@ -127,7 +127,7 @@ class WebhookUploader:
 
         result = self.kili.graphql_client.execute(GQL_UPDATE_WEBHOOK, variables)
 
-        return format_result("data", result)
+        return self.kili.format_result("data", result)
 
 
 class PluginUploader:
@@ -225,7 +225,7 @@ class PluginUploader:
             result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN, variables)
 
         check_errors_plugin_upload(result, self.plugin_path, self.plugin_name)
-        upload_url = format_result("data", result)
+        upload_url = self.kili.format_result("data", result)
         return upload_url
 
     def _create_zip(self, tmp_directory: Path):
@@ -269,7 +269,7 @@ class PluginUploader:
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
-        return format_result("data", result)
+        return self.kili.format_result("data", result)
 
     def _check_plugin_runner_status(self, update=False) -> LiteralString:
         """Check the status of a plugin's runner until it is active."""
@@ -323,7 +323,7 @@ class PluginUploader:
 
         result = self.kili.graphql_client.execute(GQL_GET_PLUGIN_RUNNER_STATUS, variables)
 
-        return format_result("data", result)
+        return self.kili.format_result("data", result)
 
     def create_plugin(self):
         """Create a plugin in Kili."""
@@ -338,7 +338,7 @@ class PluginUploader:
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.kili.graphql_client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
-        return format_result("data", result)
+        return self.kili.format_result("data", result)
 
     def update_plugin(self):
         """Update a plugin in Kili."""

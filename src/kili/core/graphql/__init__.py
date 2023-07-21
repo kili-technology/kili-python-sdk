@@ -2,11 +2,12 @@
 
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
+import requests
 
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
-from kili.core.helpers import format_result
+from kili.core.helpers import build_format_result, format_result
 from kili.core.utils.pagination import api_throttle
 from kili.utils.tqdm import tqdm
 
@@ -48,8 +49,10 @@ class GraphQLQuery(ABC):
     def __init__(
         self,
         client: GraphQLClient,
+        http_client: requests.Session
     ) -> None:
         self.client = client
+        self.format_result = build_format_result(http_client)
 
     @staticmethod
     @abstractmethod
@@ -85,7 +88,7 @@ class GraphQLQuery(ABC):
         """Count the number of objects matching the given where payload."""
         payload = {"where": where.graphql_payload}
         count_result = self.client.execute(self.COUNT_QUERY, payload)
-        return format_result("data", count_result, int)
+        return self.format_result("data", count_result, int)
 
     def get_number_of_elements_to_query(self, where: BaseQueryWhere, options: QueryOptions):
         """Return the total number of element to query for one query.
@@ -149,7 +152,7 @@ class GraphQLQuery(ABC):
                     )
                     payload = {"where": where.graphql_payload, "skip": skip, "first": first}
                     rows = api_throttle(self.client.execute)(query, payload)
-                    rows = format_result("data", rows, self.FORMAT_TYPE)
+                    rows = self.format_result("data", rows, self.FORMAT_TYPE)
 
                     if rows is None or len(rows) == 0:
                         break

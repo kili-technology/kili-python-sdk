@@ -114,8 +114,10 @@ class MutationsAsset:
 
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on"
-                " its labels and cannot be overwritten.",
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -243,18 +245,22 @@ class MutationsAsset:
 
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on"
-                " its labels and cannot be overwritten.",
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
 
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
-                "The use of `external_ids` argument has changed. It is now used to identify"
-                " which properties of which assets to update. Please use"
-                " `kili.change_asset_external_ids()` method instead to change asset external"
-                " IDs.",
+                (
+                    "The use of `external_ids` argument has changed. It is now used to identify"
+                    " which properties of which assets to update. Please use"
+                    " `kili.change_asset_external_ids()` method instead to change asset external"
+                    " IDs."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -401,7 +407,7 @@ class MutationsAsset:
             GQL_DELETE_MANY_FROM_DATASET,
             last_batch_callback=verify_last_batch,
         )
-        return format_result("data", results[0])
+        return self.format_result("data", results[0])
 
     @typechecked
     def add_to_review(
@@ -474,7 +480,7 @@ class MutationsAsset:
             GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
             last_batch_callback=verify_last_batch,
         )
-        result = format_result("data", results[0])
+        result = self.format_result("data", results[0])
         # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
         # it happens when no assets have been sent to review
         if isinstance(result, dict) and "id" in result:
@@ -550,7 +556,7 @@ class MutationsAsset:
             GQL_SEND_BACK_ASSETS_TO_QUEUE,
             last_batch_callback=verify_last_batch,
         )
-        result = format_result("data", results[0])
+        result = self.format_result("data", results[0])
         assets_in_queue = AssetQuery(self.graphql_client)(
             AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
             ["id"],

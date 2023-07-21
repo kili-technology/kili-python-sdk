@@ -40,7 +40,7 @@ class MutationsNotification:
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_NOTIFICATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_properties_in_notification(
@@ -67,4 +67,4 @@ class MutationsNotification:
             "url": url,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

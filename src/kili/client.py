@@ -11,7 +11,7 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
-from kili.core.helpers import format_result
+from kili.core.helpers import build_format_result
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue
@@ -136,6 +136,9 @@ class Kili(  # pylint: disable=too-many-ancestors
             **(graphql_client_params or {}),  # type: ignore
         )
 
+        self.http_client = requests.Session()
+        self.http_client.verify = verify
+
         if not skip_checks:
             self._check_expiry_of_key_is_close()
 
@@ -143,7 +146,7 @@ class Kili(  # pylint: disable=too-many-ancestors
 
     def _check_api_key_valid(self) -> None:
         """Check that the api_key provided is valid."""
-        response = requests.post(
+        response = self.http_client.post(
             url=self.api_endpoint,
             data='{"query":"{ me { id email } }"}',
             verify=self.verify,
@@ -172,7 +175,7 @@ class Kili(  # pylint: disable=too-many-ancestors
         """Check that the expiration date of the api_key is not too close."""
         warn_days = 30
 
-        api_keys = APIKeyQuery(self.graphql_client)(
+        api_keys = APIKeyQuery(self.graphql_client, self.http_client)(
             fields=["expiryDate"],
             where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),
@@ -190,7 +193,11 @@ class Kili(  # pylint: disable=too-many-ancestors
     def get_user(self) -> Dict:
         """Get the current user from the api_key provided."""
         result = self.graphql_client.execute(GQL_ME)
-        user = format_result("data", result)
+        user = self.format_result("data", result)
         if user is None or user["id"] is None or user["email"] is None:
             raise UserNotFoundError("No user attached to the API key was found")
         return user
+
+    def format_result(self, *args, **kwargs):
+        """Format the result of a graphQL query. FIXME: this should not be used at that level."""
+        return build_format_result(self.http_client)(*args, **kwargs)

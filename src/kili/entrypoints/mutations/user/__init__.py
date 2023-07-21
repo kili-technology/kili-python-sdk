@@ -52,7 +52,7 @@ class MutationsUser:
         if lastname is not None:
             variables["data"]["lastname"] = lastname
         result = self.graphql_client.execute(GQL_CREATE_USER, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_password(
@@ -80,7 +80,7 @@ class MutationsUser:
             "where": {"email": email},
         }
         result = self.graphql_client.execute(GQL_UPDATE_PASSWORD, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_properties_in_user(
@@ -120,4 +120,4 @@ class MutationsUser:
         if activated is not None:
             variables["activated"] = activated
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

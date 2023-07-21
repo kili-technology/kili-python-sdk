@@ -7,7 +7,7 @@ from kili.core.graphql.operations.plugin.mutations import (
     GQL_ACTIVATE_PLUGIN_ON_PROJECT,
     GQL_DEACTIVATE_PLUGIN_ON_PROJECT,
 )
-from kili.core.helpers import format_result
+
 from kili.services.plugins.helpers import get_logger
 from kili.services.plugins.tools import check_errors_plugin_activation
 
@@ -25,7 +25,7 @@ def activate_plugin(kili, plugin_name: str, project_id: str) -> Optional[str]:
     if not already_activated and not has_failed:
         logger.info(f'Plugin with name "{plugin_name}" activated on project "{project_id}"')
 
-    return format_result("data", result) if not already_activated else None
+    return kili.format_result("data", result) if not already_activated else None
 
 
 def deactivate_plugin(kili, plugin_name: str, project_id: str) -> str:
@@ -38,4 +38,4 @@ def deactivate_plugin(kili, plugin_name: str, project_id: str) -> str:
 
     logger.info(f"Plugin {plugin_name} deactivated on project {project_id}")
 
-    return format_result("data", result)
+    return kili.format_result("data", result)

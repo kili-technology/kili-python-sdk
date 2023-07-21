@@ -82,9 +82,11 @@ class MutationsLabel:
                     " your calls by models."
                 )
             warnings.warn(
-                "The use of `model_name_array` is deprecated. Creating predictions from"
-                " different models is not supported anymore. Please use `model_name` argument"
-                " instead to provide the predictions model name.",
+                (
+                    "The use of `model_name_array` is deprecated. Creating predictions from"
+                    " different models is not supported anymore. Please use `model_name` argument"
+                    " instead to provide the predictions model name."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -175,7 +177,7 @@ class MutationsLabel:
             "where": {"id": label_asset_id},
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
-        return format_result("data", result, Label)
+        return self.format_result("data", result, Label)
 
     @typechecked
     def append_labels(  # pylint: disable=dangerous-default-value
@@ -280,7 +282,7 @@ class MutationsLabel:
             "jsonResponse": formatted_json_response,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def create_honeypot(
@@ -323,4 +325,4 @@ class MutationsLabel:
             "where": {"id": asset_id},
         }
         result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
-        return format_result("data", result, Label)
+        return self.format_result("data", result, Label)

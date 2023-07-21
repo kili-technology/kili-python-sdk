@@ -199,7 +199,7 @@ class BaseBatchImporter:
             "where": {"id": self.project_id},
         }
         results = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
-        return format_result("data", results, Asset)
+        return self.format_resultesult("data", results, Asset)
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with synchronous resolver."""
@@ -216,7 +216,7 @@ class BaseBatchImporter:
             "where": {"id": self.project_id},
         }
         results = self.kili.graphql_client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
-        return format_result("data", results, Asset)
+        return self.format_result("data", results, Asset)
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets to Kili with the right resolver."""
@@ -431,8 +431,10 @@ class BaseAssetImporter:
         nb_duplicate_assets = len(assets) - len(filtered_assets)
         if nb_duplicate_assets > 0:
             warnings.warn(
-                f"{nb_duplicate_assets} assets were not imported because their external_id are"
-                " already in the project",
+                (
+                    f"{nb_duplicate_assets} assets were not imported because their external_id are"
+                    " already in the project"
+                ),
                 stacklevel=2,
             )
         return filtered_assets
