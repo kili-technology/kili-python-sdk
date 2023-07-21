@@ -959,8 +959,8 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
     with pytest.raises(
         NotCompatibleOptions,
         match=(
-            "Cannot export geotiff assets with geospatial coordinates with"
-            " `normalized_coordinates=False`."
+            "Cannot export geotiff assets with geospatial latitude and longitude coordinates with"
+            " normalized_coordinates=False. Please use `normalized_coordinates=None` instead."
         ),
     ):
         kili.export_labels("fake_proj_id", "export.zip", fmt="kili", normalized_coordinates=False)
