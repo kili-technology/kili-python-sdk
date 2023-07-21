@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import List, NamedTuple, Optional
 
 from kili.core.graphql import GraphQLQuery, QueryOptions
-from kili.core.helpers import format_result
 
 
 class PluginBuildErrorsWhere(NamedTuple):

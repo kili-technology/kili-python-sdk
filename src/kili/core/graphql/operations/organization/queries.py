@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import Dict, Optional
 
 from kili.core.graphql import BaseQueryWhere, GraphQLQuery
-from kili.core.helpers import format_result
 
 
 class OrganizationWhere(BaseQueryWhere):

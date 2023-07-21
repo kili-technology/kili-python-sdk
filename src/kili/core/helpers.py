@@ -20,16 +20,6 @@ from kili.core.constants import mime_extensions_for_IV2
 T = TypeVar("T")
 
 
-def build_format_result(http_client: requests.Session) -> Callable:
-    """Builds a function that formats the result of the GraphQL queries that uses
-    a specific http client."""
-
-    def format_result_with_http_client(name: str, result: dict, object_: Optional[Type] = None):
-        return format_result(name, result, object_, http_client)
-
-    return format_result_with_http_client
-
-
 def format_result(
     name: str, result: dict, object_: Optional[Type[T]], http_client: requests.Session
 ) -> T:
@@ -101,6 +91,7 @@ def format_json_dict(result: Dict, http_client: requests.Session) -> Dict:
 
     Args:
         result: result of a GraphQL query
+        http_client: http client to use for the query
     """
     for key, value in result.items():
         if key in ["jsonInterface", "jsonMetadata", "jsonResponse"]:
@@ -131,6 +122,7 @@ def format_json(
 
     Args:
         result: result of a GraphQL query
+        http_client: http client to use for the query
     """
     if result is None:
         return result

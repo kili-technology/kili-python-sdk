@@ -1,17 +1,19 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
+from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar
 import requests
 
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
-from kili.core.helpers import build_format_result, format_result
+from kili.core.helpers import format_result
 from kili.core.utils.pagination import api_throttle
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
+
+T = TypeVar("T")
 
 
 class QueryOptions(NamedTuple):
@@ -46,13 +48,9 @@ class GraphQLQuery(ABC):
     It factorizes code for executing paginated queries
     """
 
-    def __init__(
-        self,
-        client: GraphQLClient,
-        http_client: requests.Session
-    ) -> None:
+    def __init__(self, client: GraphQLClient, http_client: requests.Session) -> None:
         self.client = client
-        self.format_result = build_format_result(http_client)
+        self.http_client = http_client
 
     @staticmethod
     @abstractmethod
@@ -204,3 +202,7 @@ class GraphQLQuery(ABC):
             fragment += f" {field}"
 
         return fragment
+
+    def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
+        """Format the result of a graphQL query."""
+        return format_result(name, result, object_, self.http_client)

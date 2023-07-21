@@ -21,6 +21,8 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         self.kili = kili
 
         self.graphql_client = kili.graphql_client
+        self.http_client = kili.http_client
+        self.format_result = kili.format_result
 
     @typechecked
     def reset_password(self, email: str):
