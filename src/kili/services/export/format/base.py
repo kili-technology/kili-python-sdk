@@ -181,7 +181,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                     " `kili.change_asset_external_ids()` and try again."
                 )
 
-            self._check_geotiff_asset(assets)
+            self._check_geotiff_export_compatibility(assets)
 
             self.process_and_save(assets, self.output_file)
 
@@ -207,25 +207,29 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
         return len(list(data_connections_gen)) > 0
 
-    def _check_geotiff_asset(self, assets: List[Dict]) -> None:
-        """Check if one of the assets is a geotiff asset.
+    def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:
+        # pylint: disable=line-too-long
+        """Check if one of the assets is a geotiff asset, and if the export params are compatible.
 
-        If one of the assets is a geotiff asset, then we can only allow the export for Kili format
-        and cannot allow normalized_coordinates=False.
+        If one of the assets is a geotiff asset, then:
+
+        - we can only allow the export for Kili format, since geotiff normalizedVertices are lat/lon coordinates
+        - we cannot allow normalized_coordinates != None, for the same reason
         """
-        for asset in assets:
-            if is_geotiff_asset_with_lat_lon_coords(asset):
-                if self.label_format not in ("raw", "kili"):
-                    raise NotCompatibleOptions(
-                        "Cannot export geotiff assets with geospatial coordinates in"
-                        f" {self.label_format} format. Please use 'raw' or 'kili' format instead."
-                    )
+        has_geotiff_asset = any(is_geotiff_asset_with_lat_lon_coords(asset) for asset in assets)
+        if has_geotiff_asset:
+            if self.label_format not in ("raw", "kili"):
+                raise NotCompatibleOptions(
+                    "Cannot export geotiff assets with geospatial coordinates in"
+                    f" {self.label_format} format. Please use 'raw' or 'kili' format instead."
+                )
 
-                if self.normalized_coordinates is False:
-                    raise NotCompatibleOptions(
-                        "Cannot export geotiff assets with geospatial coordinates with"
-                        " `normalized_coordinates=False`."
-                    )
+            if self.normalized_coordinates is not None:
+                raise NotCompatibleOptions(
+                    "Cannot export geotiff assets with geospatial latitude and longitude"
+                    f" coordinates with normalized_coordinates={self.normalized_coordinates}."
+                    " Please use `normalized_coordinates=None` instead."
+                )
 
     @property
     def base_folder(self) -> Path:

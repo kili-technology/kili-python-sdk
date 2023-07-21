@@ -327,6 +327,42 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
                     "tools": ["semantic"],
                     "isChild": False,
                 },
+                "POSE_ESTIMATION_JOB": {
+                    "content": {
+                        "categories": {
+                            "HEAD": {
+                                "children": [],
+                                "name": "Head",
+                                "color": "#733AFB",
+                                "points": [
+                                    {
+                                        "code": "RIGHT_EARBASE",
+                                        "name": "Right earbase",
+                                        "id": "point53",
+                                    },
+                                    {"code": "RIGHT_EYE", "name": "Right eye", "id": "point54"},
+                                    {"code": "NOSE", "name": "Nose", "id": "point55"},
+                                    {"code": "LEFT_EYE", "name": "Left eye", "id": "point56"},
+                                    {
+                                        "code": "LEFT_EARBASE",
+                                        "name": "Left earbase",
+                                        "id": "point57",
+                                    },
+                                ],
+                                "id": "category58",
+                            }
+                        },
+                        "input": "radio",
+                    },
+                    "instruction": "Body parts from the animal point of view",
+                    "isChild": False,
+                    "tools": ["pose"],
+                    "mlTask": "OBJECT_DETECTION",
+                    "models": {},
+                    "isVisible": True,
+                    "required": 1,
+                    "isNew": False,
+                },
             }
         },
     }

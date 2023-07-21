@@ -140,6 +140,72 @@
                             "type": "semantic"
                         }
                     ]
+                },
+                "POSE_ESTIMATION_JOB": {
+                    "annotations": [
+                        {
+                            "categories": [
+                                {
+                                    "name": "HEAD"
+                                }
+                            ],
+                            "children": {},
+                            "mid": "20230220175803297-40094",
+                            "points": [
+                                {
+                                    "children": {},
+                                    "code": "RIGHT_EARBASE",
+                                    "mid": "20230220170039711-76095",
+                                    "point": {
+                                        "x": 0.350897302238901,
+                                        "y": 0.18537832978498114
+                                    },
+                                    "type": "marker"
+                                },
+                                {
+                                    "children": {},
+                                    "code": "RIGHT_EYE",
+                                    "mid": "20230220170039711-75233",
+                                    "point": {
+                                        "x": 0.3581081932428414,
+                                        "y": 0.2305347416594279
+                                    },
+                                    "type": "marker"
+                                },
+                                {
+                                    "children": {},
+                                    "code": "NOSE",
+                                    "mid": "20230220170039711-59132",
+                                    "point": {
+                                        "x": 0.38815357242592613,
+                                        "y": 0.32807259130823285
+                                    },
+                                    "type": "marker"
+                                },
+                                {
+                                    "children": {},
+                                    "code": "LEFT_EYE",
+                                    "mid": "20230220170039711-27852",
+                                    "point": {
+                                        "x": 0.4386476019456967,
+                                        "y": 0.23889914422760516
+                                    },
+                                    "type": "marker"
+                                },
+                                {
+                                    "children": {},
+                                    "code": "LEFT_EARBASE",
+                                    "mid": "20230220170039711-40802",
+                                    "point": {
+                                        "x": 0.46187314422288966,
+                                        "y": 0.1875659030559057
+                                    },
+                                    "type": "marker"
+                                }
+                            ],
+                            "type": "pose"
+                        }
+                    ]
                 }
             },
             "labelType": "DEFAULT",

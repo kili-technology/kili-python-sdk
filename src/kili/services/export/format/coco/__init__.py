@@ -23,7 +23,7 @@ from kili.services.export.types import CocoAnnotationModifier
 from kili.services.types import Job, JobName
 from kili.utils.tqdm import tqdm
 
-from ...media.image import get_image_dimensions
+from ...media.image import get_frame_dimensions, get_image_dimensions
 from ...media.video import cut_video, get_video_dimensions
 
 DATA_SUBDIR = "data"
@@ -333,7 +333,7 @@ def _get_images_and_annotation_for_videos(
         frame_ext = ""
         # jsonContent with frames
         if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
-            width, height = get_image_dimensions(asset)
+            width, height = get_frame_dimensions(asset)
             frame_ext = Path(asset["jsonContent"][0]).suffix
 
         # video with shouldUseNativeVideo set to True (no frames available)

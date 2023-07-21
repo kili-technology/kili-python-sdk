@@ -3,7 +3,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Dict, List
+from typing import Callable, Dict, List
 
 from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
@@ -111,49 +111,35 @@ class KiliExporter(AbstractExporter):
 
     def convert_to_pixel_coords(self, asset: Asset) -> Asset:
         """Convert asset JSON response normalized vertices to pixel coordinates."""
-        if asset.get("latestLabel", {}) and asset["latestLabel"].get("jsonResponse", {}):
-            asset["latestLabel"]["jsonResponse"] = self._scale_label_vertices(
-                asset["latestLabel"]["jsonResponse"], asset
-            )
+        if asset.get("latestLabel", {}):
+            self._scale_label_vertices(asset["latestLabel"], asset)
 
         if asset.get("labels"):
             for label in asset["labels"]:
-                if label.get("jsonResponse", {}):
-                    label["jsonResponse"] = self._scale_label_vertices(label["jsonResponse"], asset)
+                self._scale_label_vertices(label, asset)
 
         return asset
 
-    def _scale_label_vertices(self, json_resp: Dict, asset: Dict) -> Dict:
-        if self.project["inputType"] in ("IMAGE", "PDF"):
-            scaler = (
-                _scale_normalized_vertices_pdf_annotation
-                if self.project["inputType"] == "PDF"
-                else _scale_normalized_vertices_image_video_annotation
+    def _scale_label_vertices(self, label: Dict, asset: Dict) -> None:
+        if not label.get("jsonResponse", {}):
+            return
+
+        if self.project["inputType"] == "PDF":
+            self._scale_json_response_vertices(
+                label["jsonResponse"], asset, _scale_normalized_vertices_pdf_annotation
             )
 
-            for job_name in json_resp.keys():
-                if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
-                    continue
-
-                if json_resp.get(job_name, {}).get("annotations"):
-                    json_resp[job_name]["annotations"] = [
-                        scaler(ann, asset) for ann in json_resp[job_name]["annotations"]
-                    ]
+        elif self.project["inputType"] == "IMAGE":
+            self._scale_json_response_vertices(
+                label["jsonResponse"], asset, _scale_normalized_vertices_image_video_annotation
+            )
 
         elif self.project["inputType"] == "VIDEO":
-            for _, frame_resp in json_resp.items():
-                for job_name in frame_resp.keys():
-                    if (
-                        self.project["jsonInterface"]["jobs"][job_name]["mlTask"]
-                        != "OBJECT_DETECTION"
-                    ):
-                        continue
-
-                    if frame_resp.get(job_name, {}).get("annotations"):
-                        frame_resp[job_name]["annotations"] = [
-                            _scale_normalized_vertices_image_video_annotation(ann, asset)
-                            for ann in frame_resp[job_name]["annotations"]
-                        ]
+            for _, frame_resp in label["jsonResponse"].items():
+                if frame_resp:
+                    self._scale_json_response_vertices(
+                        frame_resp, asset, _scale_normalized_vertices_image_video_annotation
+                    )
 
         else:
             raise NotCompatibleInputType(
@@ -161,102 +147,111 @@ class KiliExporter(AbstractExporter):
                 " coordinates."
             )
 
-        return json_resp
+    def _scale_json_response_vertices(
+        self, json_resp: Dict, asset: Dict, annotation_scaler: Callable[[Dict, Dict], None]
+    ) -> None:
+        for job_name in json_resp.keys():
+            if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
+                continue
+
+            if json_resp.get(job_name, {}).get("annotations"):
+                for ann in json_resp[job_name]["annotations"]:
+                    annotation_scaler(ann, asset)
 
 
 def _scale_vertex(vertex: Dict, width: int, height: int) -> Dict:
     return {"x": vertex["x"] * width, "y": vertex["y"] * height}
 
 
-def _scale_all_vertices_in_object(object_, width: int, height: int):
+def _scale_all_vertices(object_, width: int, height: int):
     if isinstance(object_, List):
-        return [_scale_all_vertices_in_object(obj, width=width, height=height) for obj in object_]
+        return [_scale_all_vertices(obj, width=width, height=height) for obj in object_]
 
     if isinstance(object_, Dict):
         if sorted(object_.keys()) == ["x", "y"]:
             return _scale_vertex(object_, width=width, height=height)
         return {
-            key: _scale_all_vertices_in_object(value, width=width, height=height)
+            key: _scale_all_vertices(value, width=width, height=height)
             for key, value in object_.items()
         }
 
     return object_
 
 
-def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> Dict:
+def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> None:
     """Scale normalized vertices of a PDF annotation.
 
     PDF annotations are different from image annotations because the asset width/height can vary.
+
+    PDF only have BBox detection, so we only scale the boundingPoly and polys keys.
     """
     if "annotations" in annotation:
         # pdf annotations have two layers of "annotations"
         # https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs
-        annotation["annotations"] = [
+        for ann in annotation["annotations"]:
             _scale_normalized_vertices_pdf_annotation(ann, asset)
-            for ann in annotation["annotations"]
-        ]
-        return annotation
-
-    page_number_to_dimensions = {
-        page_resolution["pageNumber"]: {
-            "width": page_resolution["width"],
-            "height": page_resolution["height"],
-        }
-        for page_resolution in asset["pageResolutions"]
-    }
 
     # an annotation has three keys:
     # - pageNumberArray: list of page numbers
     # - polys: list of polygons
     # - boundingPoly: list of bounding polygons
     # each polygon is a dict with a key "normalizedVertices" that is a list of vertices
-    for key in ("polys", "boundingPoly"):
-        annotation[key] = [
-            {
-                **value,  # keep the original normalizedVertices
-                "vertices": _scale_all_vertices_in_object(
-                    value["normalizedVertices"],
-                    width=page_number_to_dimensions[page_number]["width"],
-                    height=page_number_to_dimensions[page_number]["height"],
-                ),
+    if "polys" in annotation and "boundingPoly" in annotation:
+        page_number_to_dimensions = {
+            page_resolution["pageNumber"]: {
+                "width": page_resolution["width"],
+                "height": page_resolution["height"],
             }
-            for value, page_number in zip(annotation[key], annotation["pageNumberArray"])
-        ]
+            for page_resolution in asset["pageResolutions"]
+        }
 
-    return annotation
+        for key in ("polys", "boundingPoly"):
+            annotation[key] = [
+                {
+                    **value,  # keep the original normalizedVertices
+                    "vertices": _scale_all_vertices(
+                        value["normalizedVertices"],
+                        width=page_number_to_dimensions[page_number]["width"],
+                        height=page_number_to_dimensions[page_number]["height"],
+                    ),
+                }
+                for value, page_number in zip(annotation[key], annotation["pageNumberArray"])
+            ]
 
 
-def _scale_normalized_vertices_image_video_annotation(annotation: Dict, asset: Dict) -> Dict:
+def _scale_normalized_vertices_image_video_annotation(annotation: Dict, asset: Dict) -> None:
     """Scale normalized vertices of an image/video object detection annotation."""
     width = asset["resolution"]["width"]
     height = asset["resolution"]["height"]
 
+    # bbox, segmentation, polygons
     if "boundingPoly" in annotation:
         annotation["boundingPoly"] = [
             {
                 **norm_vertices_dict,  # keep the original normalizedVertices
-                "vertices": _scale_all_vertices_in_object(
+                "vertices": _scale_all_vertices(
                     norm_vertices_dict["normalizedVertices"], width=width, height=height
                 ),
             }
             for norm_vertices_dict in annotation["boundingPoly"]
         ]
 
+    # point jobs
     if "point" in annotation:
-        annotation["point"] = _scale_all_vertices_in_object(
+        annotation["pointPixels"] = _scale_all_vertices(
             annotation["point"], width=width, height=height
         )
 
+    # line, vector jobs
     if "polyline" in annotation:
-        annotation["polyline"] = _scale_all_vertices_in_object(
+        annotation["polylinePixels"] = _scale_all_vertices(
             annotation["polyline"], width=width, height=height
         )
 
+    # pose estimation jobs
     if "points" in annotation:
         for point_dict in annotation["points"]:
             if "point" in point_dict:
-                point_dict["point"] = _scale_all_vertices_in_object(
+                point_dict["pointPixels"] = _scale_all_vertices(
                     point_dict["point"], width=width, height=height
                 )
-
-    return annotation
